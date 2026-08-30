@@ -27,6 +27,7 @@ from src.views.account_hub_view import get_account_hub_view
 from src.views.order_product_flow_view import get_order_product_flow_view
 from src.views.hotel_vertical_view import get_hotel_vertical_view
 from src.views.store_business_view import get_store_business_view
+from src.views.listing_creation_view import get_listing_creation_view
 
 # Define Master Header & Styles
 header_and_styles = """<!DOCTYPE html>
@@ -711,7 +712,9 @@ const SCREENS = [
   // Phase D — Product & Vertical Completeness
   'orderDetail','refundRequest','writeReview','sellerOrderDetail','sellerPayouts','hotelSearch','hotelDetail','hotelBooking',
   // Phase E — Store & Business System (Prompt 05)
-  'createStore','storeOnboarding','storeSettings','storeVerification','storeAnalytics'
+  'createStore','storeOnboarding','storeSettings','storeVerification','storeAnalytics',
+  // Phase F — Universal Listing & Selling Engine (Prompt 06)
+  'listingAttributes','listingPreview'
 ];
 const GROUPS = {
   searchTab: ['all','products','stores','services','travel'],
@@ -741,7 +744,8 @@ const NO_NAV = [
   'onboardWelcome','onboardType','onboardIdentity','onboardOtp','onboardBuyer','onboardSeller','onboardBusiness','onboardVerify','onboardReview','onboardSuccess',
   'signIn','forgotPassword','resetPassword','verifyEmail',
   'editProfile','addAddress','editAddress','deleteAccount','refundRequest','writeReview','sellerOrderDetail','hotelBooking',
-  'createStore','storeOnboarding','storeSettings','storeVerification','storeAnalytics'
+  'createStore','storeOnboarding','storeSettings','storeVerification','storeAnalytics',
+  'listingAttributes','listingPreview'
 ];
 
 /**
@@ -936,7 +940,25 @@ class Component extends DCLogic {
     storeOpenTime: '08:00',
     storeCloseTime: '18:30',
     storeLocationStreet: 'Boulevard de la Liberté, Akwa Commercial Zone',
-    storeLocationLandmark: 'Next to Total Akwa Roundabout'
+    storeLocationLandmark: 'Next to Total Akwa Roundabout',
+
+    // ── Phase F: Universal Listing Engine State ──
+    newListingType: 'PHYSICAL_PRODUCT',
+    newListingCategory: 'smartphones',
+    newListingCategoryName: 'Smartphones & Electronics',
+    newListingTitle: 'Apple MacBook Air 13” M2 (Space Grey) — 8GB / 256GB SSD',
+    newListingPrice: '745 000',
+    attrBrand: 'Apple',
+    attrStorage: '256GB',
+    attrRam: '8GB',
+    attrColor: 'Space Grey',
+    listingFulfillmentModel: 'DELIVERY_OR_PICKUP',
+    previewListingTitle: 'Apple MacBook Air 13” M2 (Space Grey) — 8GB / 256GB SSD',
+    previewListingPriceFormatted: '745 000 XAF',
+    previewListingCondition: 'BRAND NEW · SEALED BOX',
+    previewListingStock: 14,
+    previewListingDescription: 'Brand new sealed in box with 12-month Apple warranty. 8GB Unified RAM, 256GB SSD, Space Grey color. Instant pickup in Douala Akwa or Express courier delivery across Cameroon.',
+    publishBusy: false
   };
 
   go = (s) => this.setState(st => ({ screen: s, stack: [...st.stack, st.screen], toast: '' }));
@@ -2248,6 +2270,54 @@ class Component extends DCLogic {
         ]).then(done).catch(done);
       },
 
+      // ══════════════════════════════════════════════════════════════════
+      // PHASE F — UNIVERSAL LISTING & SELLING ENGINE (Prompt 06)
+      // ══════════════════════════════════════════════════════════════════
+      newListingCategoryName: this.state.newListingCategoryName,
+      attrBrand: this.state.attrBrand,
+      attrStorage: this.state.attrStorage,
+      attrRam: this.state.attrRam,
+      attrColor: this.state.attrColor,
+      listingFulfillmentModel: this.state.listingFulfillmentModel,
+      updateAttrBrand: (e) => this.setState({ attrBrand: e && e.target ? e.target.value : e }),
+      updateAttrStorage: (e) => this.setState({ attrStorage: e && e.target ? e.target.value : e }),
+      updateAttrRam: (e) => this.setState({ attrRam: e && e.target ? e.target.value : e }),
+      updateAttrColor: (e) => this.setState({ attrColor: e && e.target ? e.target.value : e }),
+      updateListingFulfillmentModel: (e) => this.setState({ listingFulfillmentModel: e && e.target ? e.target.value : e }),
+      proceedToPricing: () => this.go('uploadPrice'),
+      openListingPreview: () => this.go('listingPreview'),
+      previewListingTitle: this.state.previewListingTitle,
+      previewListingPriceFormatted: this.state.previewListingPriceFormatted,
+      previewListingCondition: this.state.previewListingCondition,
+      previewListingStock: this.state.previewListingStock,
+      previewListingDescription: this.state.previewListingDescription,
+      publishBusy: this.state.publishBusy,
+      submitFinalPublish: () => {
+        this.setState({ publishBusy: true });
+        const api = getApi();
+        const done = () => {
+          this.setState({ publishBusy: false });
+          this.toast('Your listing is now LIVE across Cameroon!');
+          this.go('uploadSuccess');
+        };
+        if (!api) { setTimeout(done, 600); return; }
+        api.createListing({
+          storeId: 'store_orca_electronics',
+          listingType: this.state.newListingType,
+          categoryId: this.state.newListingCategory,
+          title: this.state.newListingTitle,
+          basePriceMinor: 745000,
+          currency: 'XAF',
+          fulfillmentModel: this.state.listingFulfillmentModel,
+          attributes: {
+            brand: this.state.attrBrand,
+            storage: this.state.attrStorage,
+            ram: this.state.attrRam,
+            color: this.state.attrColor
+          }
+        }).then(done).catch(done);
+      },
+
       // Authentication State & Header CTA Reactivity
       isLoggedIn: this.state.isLoggedIn,
       authStatus: this.state.authStatus,
@@ -2357,6 +2427,7 @@ full_html = (
     + get_community_view()
     + get_travel_view()
     + get_store_business_view()
+    + get_listing_creation_view()
     + footer_and_scripts
 )
 

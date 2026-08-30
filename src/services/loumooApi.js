@@ -528,6 +528,83 @@
   };
 
   /* ====================================================================== */
+  /* UNIVERSAL LISTINGS & COMMERCE — server/modules/listing/presentation/routes/listingRoutes.js */
+  /* ====================================================================== */
+
+  LoumooApiClient.prototype.getTaxonomy = function () {
+    return this.request('/api/v1/listings/taxonomy');
+  };
+
+  LoumooApiClient.prototype.getCategorySchema = function (categoryId) {
+    return this.request('/api/v1/listings/taxonomy/' + encodeURIComponent(categoryId) + '/schema');
+  };
+
+  LoumooApiClient.prototype.createListing = function (payload) {
+    return this.request('/api/v1/listings', { method: 'POST', body: payload });
+  };
+
+  LoumooApiClient.prototype.getSellerListings = function (params) {
+    return this.request('/api/v1/listings/seller' + qs(params));
+  };
+
+  LoumooApiClient.prototype.getListing = function (id) {
+    return this.request('/api/v1/listings/' + encodeURIComponent(id));
+  };
+
+  LoumooApiClient.prototype.updateListing = function (id, updates) {
+    return this.request('/api/v1/listings/' + encodeURIComponent(id), { method: 'PATCH', body: updates });
+  };
+
+  LoumooApiClient.prototype.getListingPreview = function (id) {
+    return this.request('/api/v1/listings/' + encodeURIComponent(id) + '/preview');
+  };
+
+  LoumooApiClient.prototype.publishListing = function (id) {
+    return this.request('/api/v1/listings/' + encodeURIComponent(id) + '/publish', { method: 'POST' });
+  };
+
+  LoumooApiClient.prototype.pauseListing = function (id) {
+    return this.request('/api/v1/listings/' + encodeURIComponent(id) + '/pause', { method: 'POST' });
+  };
+
+  LoumooApiClient.prototype.archiveListing = function (id) {
+    return this.request('/api/v1/listings/' + encodeURIComponent(id) + '/archive', { method: 'POST' });
+  };
+
+  LoumooApiClient.prototype.addListingMedia = function (id, mediaPayload) {
+    return this.request('/api/v1/listings/' + encodeURIComponent(id) + '/media', { method: 'POST', body: mediaPayload });
+  };
+
+  LoumooApiClient.prototype.removeListingMedia = function (id, mediaId) {
+    return this.request('/api/v1/listings/' + encodeURIComponent(id) + '/media/' + encodeURIComponent(mediaId), { method: 'DELETE' });
+  };
+
+  LoumooApiClient.prototype.generateListingVariants = function (id, optionsMap, basePriceMinor) {
+    return this.request('/api/v1/listings/' + encodeURIComponent(id) + '/variants', {
+      method: 'POST',
+      body: { optionsMap: optionsMap, basePriceMinor: basePriceMinor }
+    });
+  };
+
+  LoumooApiClient.prototype.updateListingVariant = function (id, variantId, updates) {
+    return this.request('/api/v1/listings/' + encodeURIComponent(id) + '/variants/' + encodeURIComponent(variantId), {
+      method: 'PATCH',
+      body: updates
+    });
+  };
+
+  LoumooApiClient.prototype.updateListingInventory = function (id, onHand, variantId) {
+    return this.request('/api/v1/listings/' + encodeURIComponent(id) + '/inventory', {
+      method: 'PATCH',
+      body: { onHand: onHand, variantId: variantId }
+    });
+  };
+
+  LoumooApiClient.prototype.getListingAiSuggestions = function (payload) {
+    return this.request('/api/v1/listings/ai/suggest', { method: 'POST', body: payload });
+  };
+
+  /* ====================================================================== */
   /* CATALOG — server/modules/catalog/routes/catalogRoutes.js               */
   /* ====================================================================== */
 

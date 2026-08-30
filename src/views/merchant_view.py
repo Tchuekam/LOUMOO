@@ -293,18 +293,20 @@ def get_merchant_view():
 
     <!-- Form Inputs -->
     <div class="card-premium" style="display:flex;flex-direction:column;gap:12px">
-      <div>
-        <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:4px;display:block">LISTING TITLE</label>
-        <input type="text" class="input" value="Apple MacBook Air 13” M2 (2023)">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);display:block">LISTING TITLE</label>
+        <button onClick="{{ say.aiTitle }}" style="border:none;background:var(--color-accent-100);color:var(--color-accent);padding:2px 8px;border-radius:var(--radius-sm);font:700 10.5px/1 var(--font-heading);cursor:pointer">⚡ AI ENHANCE</button>
       </div>
+      <input type="text" class="input" value="{{ newListingTitle }}">
+
       <div>
         <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:4px;display:block">DESCRIPTION &amp; KEY SPECS</label>
-        <textarea class="input" style="min-height:90px;padding:10px 14px;resize:vertical">Brand new sealed in box. 8GB Unified RAM, 256GB SSD, Space Grey color. Full 12-month Apple warranty included.</textarea>
+        <textarea class="input" style="min-height:90px;padding:10px 14px;resize:vertical">{{ previewListingDescription }}</textarea>
       </div>
     </div>
 
-    <button onClick="{{ on.uploadPrice }}" class="btn btn-primary btn-block" style="height:48px;font-size:14px">
-      CONTINUE TO PRICING &amp; LOGISTICS <span>→</span>
+    <button onClick="{{ on.listingAttributes }}" class="btn btn-primary btn-block" style="height:48px;font-size:14px;cursor:pointer">
+      CONTINUE TO ATTRIBUTES &amp; SPECS <span>→</span>
     </button>
   </div>
 </div>
@@ -320,7 +322,7 @@ def get_merchant_view():
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
     </button>
     <div>
-      <h4 style="margin:0;font-size:16px">Price &amp; Shipping · Step 3 of 3</h4>
+      <h4 style="margin:0;font-size:16px">Price &amp; Shipping · Step 4 of 5</h4>
       <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary)">Set price and delivery coverage</div>
     </div>
   </div>
@@ -330,7 +332,7 @@ def get_merchant_view():
     <div class="card-premium" style="display:flex;flex-direction:column;gap:12px">
       <div>
         <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:4px;display:block">SELLING PRICE (XAF)</label>
-        <input type="text" class="input" value="745 000" style="font-weight:800;font-size:18px">
+        <input type="text" class="input" value="{{ newListingPrice }}" style="font-weight:800;font-size:18px">
       </div>
       <div style="font:500 11.5px/1 var(--font-body);color:var(--color-text-muted)">
         Market suggestion: Similar M2 laptops in Douala sell for XAF 730 000 - 760 000.
@@ -348,8 +350,8 @@ def get_merchant_view():
       </div>
     </div>
 
-    <button onClick="{{ publish }}" class="btn btn-primary btn-block" style="height:48px;font-size:14px">
-      PUBLISH LISTING TO LOUMOO <span>✓</span>
+    <button onClick="{{ openListingPreview }}" class="btn btn-primary btn-block" style="height:48px;font-size:14px;cursor:pointer">
+      PREVIEW LIVE PRODUCT PAGE <span>👁️</span>
     </button>
   </div>
 </div>
