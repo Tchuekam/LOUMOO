@@ -76,6 +76,33 @@ class CacheService {
     return true;
   }
 
+  async del(key, namespace = 'loumoo') {
+    return this.delete(key, namespace);
+  }
+
+  async delPattern(pattern, namespace = 'loumoo') {
+    const fullPattern = this._getKey(pattern, namespace);
+    try {
+      if (this.redis && this.redis.status === 'ready') {
+        const keys = await this.redis.keys(fullPattern);
+        if (keys && keys.length > 0) {
+          await this.redis.del(...keys);
+        }
+      }
+    } catch (e) {
+      logger.warn(`[CacheService] Redis delPattern failed for ${fullPattern}: ${e.message}`);
+    }
+
+    // Pattern matching on memory fallback
+    const regexPattern = new RegExp('^' + fullPattern.replace(/\*/g, '.*') + '$');
+    for (const key of this.memoryFallback.keys()) {
+      if (regexPattern.test(key)) {
+        this.memoryFallback.delete(key);
+      }
+    }
+    return true;
+  }
+
   async remember(key, ttlSeconds, fetchFn, namespace = 'loumoo') {
     const cached = await this.get(key, namespace);
     if (cached !== null && cached !== undefined) {

@@ -8,12 +8,14 @@ class UserProfile {
     id,
     clerkUserId,
     phoneNumber = null,
+    phone = null,
     email = null,
     firstName = '',
     lastName = '',
     avatarUrl = null,
     city = 'Douala',
     primaryRole = 'customer',
+    role = null,
     isPhoneVerified = false,
     isEmailVerified = false,
     buyerInterests = [],
@@ -33,13 +35,13 @@ class UserProfile {
   }) {
     this.id = id;
     this.clerkUserId = clerkUserId;
-    this.phoneNumber = phoneNumber;
+    this.phoneNumber = phoneNumber || phone;
     this.email = email;
     this.firstName = firstName;
     this.lastName = lastName;
     this.avatarUrl = avatarUrl;
     this.city = city;
-    this.primaryRole = primaryRole;
+    this.primaryRole = role || primaryRole;
     this.isPhoneVerified = isPhoneVerified;
     this.isEmailVerified = isEmailVerified;
     this.buyerInterests = buyerInterests;
@@ -56,6 +58,14 @@ class UserProfile {
     this.metadata = metadata;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
+  }
+
+  get role() {
+    return this.primaryRole;
+  }
+
+  get phone() {
+    return this.phoneNumber;
   }
 
   get fullName() {

@@ -83,6 +83,8 @@ module.exports = {
   getAdminClient: () => adminClient,
   getPublicClient: () => publicClient,
   SupabaseClient: {
+    getAdmin: () => adminClient,
+    getPublic: () => publicClient,
     getAdminClient: () => adminClient,
     getPublicClient: () => publicClient,
     checkHealth: SupabaseDatabase.checkHealth

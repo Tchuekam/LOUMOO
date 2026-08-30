@@ -22,7 +22,7 @@ class AccountSecurityService {
   async getActiveSessions(clerkUserId) {
     try {
       const sessionList = await this.clerk.sessions.getSessionList({ userId: clerkUserId });
-      if (sessionList && sessionList.data) {
+      if (sessionList && Array.isArray(sessionList.data) && sessionList.data.length > 0) {
         return sessionList.data.map(s => ({
           id: s.id,
           status: s.status,

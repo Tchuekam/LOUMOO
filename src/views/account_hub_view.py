@@ -1,0 +1,908 @@
+# -*- coding: utf-8 -*-
+"""
+LOUMOO AUTHENTICATED ACCOUNT VIEWS (PHASE B)
+
+Every screen here renders the real backend read models — no hardcoded counts,
+no decorative controls. Each has explicit loading, empty, error and success
+states drawn from the existing Modernist design system.
+
+  is.accountDashboard       GET  /api/v1/users/me/dashboard      AccountDashboardUseCase
+  is.editProfile            PATCH /api/v1/users/me               UpdateUserProfileUseCase
+  is.addresses              GET  /api/v1/users/me/addresses      AddressManagementUseCase
+  is.addAddress             POST /api/v1/users/me/addresses      AddressManagementUseCase
+  is.editAddress            PATCH /api/v1/users/me/addresses/:id AddressManagementUseCase
+  is.notificationPreferences GET/PATCH /notifications/preferences NotificationPreferencesUseCase
+  is.privacySettings        GET/PATCH /api/v1/users/me/privacy   PrivacyPreferencesUseCase
+  is.securitySettings       GET  /api/v1/users/me/sessions       AccountSecurityService
+  is.followedStores         GET  /api/v1/users/me/followed-stores FollowedStoresUseCase
+  is.userActivity           GET  /api/v1/users/me/activities     UserActivityUseCase
+  is.deleteAccount          DELETE /api/v1/users/me              DeleteAccountUseCase
+"""
+
+
+def get_account_hub_view():
+    return """
+<!-- ══════════════════════════════════════════════════════════════════════════
+     ACCOUNT DASHBOARD (is.accountDashboard)
+     Read model: AccountDashboardUseCase.getDashboard()
+     ══════════════════════════════════════════════════════════════════════ -->
+<sc-if value="{{ is.accountDashboard }}">
+<div style="padding-bottom:32px">
+
+  <!-- Sticky header -->
+  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+    <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;flex-shrink:0">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <h4 style="margin:0;font-size:16px;flex:1">My Account</h4>
+    <button onClick="{{ on.settings }}" aria-label="Open settings" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;flex-shrink:0">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9V12a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </button>
+  </div>
+
+  <div style="padding:16px;max-width:820px;margin:0 auto">
+
+    <!-- ── LOADING SKELETON ── -->
+    <sc-if value="{{ dashboardLoading }}">
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div class="skel" style="height:132px;border-radius:var(--radius-md)"></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px">
+          <div class="skel" style="height:88px;border-radius:var(--radius-md)"></div>
+          <div class="skel" style="height:88px;border-radius:var(--radius-md)"></div>
+          <div class="skel" style="height:88px;border-radius:var(--radius-md)"></div>
+          <div class="skel" style="height:88px;border-radius:var(--radius-md)"></div>
+        </div>
+        <div class="skel skel-row"></div>
+        <div class="skel skel-row"></div>
+      </div>
+    </sc-if>
+
+    <!-- ── ERROR ── -->
+    <sc-if value="{{ !dashboardLoading && dashboardError }}">
+      <div class="card-premium" style="text-align:center;padding:32px 20px;display:flex;flex-direction:column;align-items:center;gap:14px">
+        <div style="width:56px;height:56px;border-radius:50%;background:var(--color-accent-sale-100);color:var(--color-accent-sale);display:flex;align-items:center;justify-content:center">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+        </div>
+        <div style="font:800 16px/1.3 var(--font-heading);color:var(--color-text)">We couldn't load your account</div>
+        <div style="font:400 13px/1.5 var(--font-body);color:var(--color-text-secondary);max-width:340px">{{ dashboardError }}</div>
+        <button onClick="{{ loadDashboard }}" class="btn btn-primary" style="height:42px;padding:0 22px;cursor:pointer">TRY AGAIN</button>
+      </div>
+    </sc-if>
+
+    <!-- ── LOADED ── -->
+    <sc-if value="{{ !dashboardLoading && !dashboardError && dashboard }}">
+      <div style="display:flex;flex-direction:column;gap:16px">
+
+        <!-- Identity + completion meter -->
+        <div class="card-premium" style="display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;align-items:center;gap:14px">
+            <div style="width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,var(--color-accent) 0%,#003d8a 100%);color:#fff;display:flex;align-items:center;justify-content:center;font:800 20px/1 var(--font-heading);flex-shrink:0">
+              {{ userInitials }}
+            </div>
+            <div style="flex:1;min-width:0">
+              <div style="font:800 17px/1.25 var(--font-heading);color:var(--color-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ dashboard.profile.name }}</div>
+              <div style="font:400 12.5px/1.4 var(--font-body);color:var(--color-text-secondary);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ dashboard.profile.email }}</div>
+              <div style="display:flex;align-items:center;gap:6px;margin-top:6px;flex-wrap:wrap">
+                <span class="tag tag-accent" style="min-height:20px;padding:2px 8px;font-size:10px">{{ dashboardRoleLabel }}</span>
+                <sc-if value="{{ dashboard.profile.isPhoneVerified }}">
+                  <span class="tag" style="min-height:20px;padding:2px 8px;font-size:10px;background:var(--color-success-100);color:var(--color-success)">PHONE VERIFIED</span>
+                </sc-if>
+                <sc-if value="{{ dashboard.profile.isEmailVerified }}">
+                  <span class="tag" style="min-height:20px;padding:2px 8px;font-size:10px;background:var(--color-success-100);color:var(--color-success)">EMAIL VERIFIED</span>
+                </sc-if>
+              </div>
+            </div>
+            <button onClick="{{ openEditProfile }}" aria-label="Edit profile" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;flex-shrink:0">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+            </button>
+          </div>
+
+          <!-- Real completion percentage from the backend read model -->
+          <div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+              <span style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);letter-spacing:.06em">PROFILE COMPLETION</span>
+              <span style="font:800 13px/1 var(--font-heading);color:var(--color-accent)">{{ dashboard.profile.completionPercentage }}%</span>
+            </div>
+            <div style="height:6px;background:var(--color-divider);border-radius:3px;overflow:hidden">
+              <div style="width:{{ dashboardCompletionWidth }};height:100%;background:var(--color-accent);border-radius:3px;transition:width .4s ease"></div>
+            </div>
+          </div>
+
+          <!-- Outstanding setup, computed server-side -->
+          <sc-if value="{{ dashboardHasMissingSetup }}">
+            <div style="background:var(--color-accent-energy-100);border-radius:var(--radius-sm);padding:12px 14px">
+              <div style="font:700 11px/1 var(--font-heading);color:var(--color-accent-energy-text);letter-spacing:.06em;margin-bottom:8px">FINISH SETTING UP</div>
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <sc-for list="{{ dashboard.profile.missingSetup }}" as="task">
+                  <div style="display:flex;align-items:center;gap:8px">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-energy-text)" stroke-width="2.4" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/></svg>
+                    <span style="font:500 12px/1.4 var(--font-body);color:var(--color-accent-energy-text)">{{ task }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+
+        <!-- Live counts -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px">
+          <button onClick="{{ openPurchases }}" class="card-premium" style="text-align:left;cursor:pointer;border:1px solid var(--color-divider);display:flex;flex-direction:column;gap:8px;padding:16px">
+            <div style="width:34px;height:34px;border-radius:50%;background:var(--color-accent-100);color:var(--color-accent);display:flex;align-items:center;justify-content:center">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M5 7h14l-1.2 12.1a2 2 0 0 1-2 1.9H8.2a2 2 0 0 1-2-1.9z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/></svg>
+            </div>
+            <div style="font:800 24px/1 var(--font-heading);color:var(--color-text)">{{ dashboard.counts.activeDeliveries }}</div>
+            <div style="font:600 11.5px/1.3 var(--font-body);color:var(--color-text-secondary)">Active deliveries</div>
+          </button>
+
+          <button onClick="{{ on.saved }}" class="card-premium" style="text-align:left;cursor:pointer;border:1px solid var(--color-divider);display:flex;flex-direction:column;gap:8px;padding:16px">
+            <div style="width:34px;height:34px;border-radius:50%;background:var(--color-accent-sale-100);color:var(--color-accent-sale);display:flex;align-items:center;justify-content:center">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1L12 21l7.7-7.7 1.1-1a5.5 5.5 0 0 0 0-7.7z"/></svg>
+            </div>
+            <div style="font:800 24px/1 var(--font-heading);color:var(--color-text)">{{ dashboard.counts.savedItems }}</div>
+            <div style="font:600 11.5px/1.3 var(--font-body);color:var(--color-text-secondary)">Saved items</div>
+          </button>
+
+          <button onClick="{{ openFollowedStores }}" class="card-premium" style="text-align:left;cursor:pointer;border:1px solid var(--color-divider);display:flex;flex-direction:column;gap:8px;padding:16px">
+            <div style="width:34px;height:34px;border-radius:50%;background:var(--color-success-100);color:var(--color-success);display:flex;align-items:center;justify-content:center">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M2 3h20l-2 10H4L2 3z"/><path d="M6 13v7a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-7"/></svg>
+            </div>
+            <div style="font:800 24px/1 var(--font-heading);color:var(--color-text)">{{ dashboard.counts.followedStores }}</div>
+            <div style="font:600 11.5px/1.3 var(--font-body);color:var(--color-text-secondary)">Followed stores</div>
+          </button>
+
+          <button onClick="{{ openAddresses }}" class="card-premium" style="text-align:left;cursor:pointer;border:1px solid var(--color-divider);display:flex;flex-direction:column;gap:8px;padding:16px">
+            <div style="width:34px;height:34px;border-radius:50%;background:var(--color-neutral-200);color:var(--color-text);display:flex;align-items:center;justify-content:center">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+            <div style="font:800 24px/1 var(--font-heading);color:var(--color-text)">{{ dashboard.counts.addresses }}</div>
+            <div style="font:600 11.5px/1.3 var(--font-body);color:var(--color-text-secondary)">Saved addresses</div>
+          </button>
+        </div>
+
+        <!-- Escrow protection status -->
+        <sc-if value="{{ dashboard.escrowProtection.enabled }}">
+          <div style="display:flex;align-items:center;gap:12px;background:var(--color-success-100);border-radius:var(--radius-md);padding:14px 16px">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-success)" stroke-width="2" style="flex-shrink:0"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <div style="flex:1;min-width:0">
+              <div style="font:700 13px/1.3 var(--font-heading);color:var(--color-success)">{{ dashboard.escrowProtection.badge }}</div>
+              <div style="font:400 11.5px/1.35 var(--font-body);color:var(--color-text-secondary);margin-top:2px">{{ dashboardDisputeLabel }}</div>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- Default delivery address -->
+        <div class="card-premium" style="display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <span style="font:700 12px/1 var(--font-heading);letter-spacing:.08em;color:var(--color-text-muted);text-transform:uppercase">Default Delivery Address</span>
+            <button onClick="{{ openAddresses }}" style="border:none;background:transparent;padding:0;font:700 11.5px/1 var(--font-heading);color:var(--color-accent);cursor:pointer">MANAGE</button>
+          </div>
+
+          <sc-if value="{{ dashboard.defaultAddress }}">
+            <div style="display:flex;align-items:flex-start;gap:12px">
+              <div style="width:34px;height:34px;border-radius:50%;background:var(--color-accent-100);color:var(--color-accent);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              </div>
+              <div style="flex:1;min-width:0">
+                <div style="font:700 13.5px/1.3 var(--font-heading);color:var(--color-text)">{{ dashboard.defaultAddress.recipientName }}</div>
+                <div style="font:400 12.5px/1.5 var(--font-body);color:var(--color-text-secondary);margin-top:3px;word-break:break-word">{{ dashboardDefaultAddressLine }}</div>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ !dashboard.defaultAddress }}">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:10px;padding:14px 0;text-align:center">
+              <div style="font:400 12.5px/1.5 var(--font-body);color:var(--color-text-secondary)">No delivery address saved yet.</div>
+              <button onClick="{{ openAddAddress }}" class="btn btn-secondary" style="height:38px;padding:0 18px;font-size:12px;cursor:pointer">ADD AN ADDRESS</button>
+            </div>
+          </sc-if>
+        </div>
+
+        <!-- Recent activity -->
+        <div class="card-premium" style="display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <span style="font:700 12px/1 var(--font-heading);letter-spacing:.08em;color:var(--color-text-muted);text-transform:uppercase">Recent Activity</span>
+            <button onClick="{{ openActivity }}" style="border:none;background:transparent;padding:0;font:700 11.5px/1 var(--font-heading);color:var(--color-accent);cursor:pointer">VIEW ALL</button>
+          </div>
+
+          <sc-if value="{{ dashboardHasActivity }}">
+            <div style="display:flex;flex-direction:column">
+              <sc-for list="{{ dashboard.recentActivities }}" as="act">
+                <div style="display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-top:{{ $index === 0 ? 'none' : '1px solid var(--color-divider)' }}">
+                  <div style="width:30px;height:30px;border-radius:50%;background:var(--color-neutral-200);color:var(--color-text);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                  </div>
+                  <div style="flex:1;min-width:0">
+                    <div style="font:700 12.5px/1.3 var(--font-heading);color:var(--color-text)">{{ act.title }}</div>
+                    <div style="font:400 11.5px/1.4 var(--font-body);color:var(--color-text-secondary);margin-top:2px;word-break:break-word">{{ act.description }}</div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ !dashboardHasActivity }}">
+            <div style="text-align:center;padding:16px 0;font:400 12.5px/1.5 var(--font-body);color:var(--color-text-secondary)">
+              Your account activity will appear here as you shop.
+            </div>
+          </sc-if>
+        </div>
+
+        <!-- Account shortcuts -->
+        <div class="card-premium" style="display:flex;flex-direction:column;padding:4px 16px">
+          <button onClick="{{ openPurchases }}" style="border:none;border-bottom:1px solid var(--color-divider);background:transparent;text-align:left;padding:14px 0;display:flex;align-items:center;gap:12px;cursor:pointer">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--color-text)" stroke-width="1.8" style="flex-shrink:0"><path d="M5 7h14l-1.2 12.1a2 2 0 0 1-2 1.9H8.2a2 2 0 0 1-2-1.9z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/></svg>
+            <span style="flex:1;font:600 13px/1 var(--font-body);color:var(--color-text)">Purchase history</span>
+            <span style="color:var(--color-text-muted)">→</span>
+          </button>
+          <button onClick="{{ openNotifPrefs }}" style="border:none;border-bottom:1px solid var(--color-divider);background:transparent;text-align:left;padding:14px 0;display:flex;align-items:center;gap:12px;cursor:pointer">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--color-text)" stroke-width="1.8" style="flex-shrink:0"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+            <span style="flex:1;font:600 13px/1 var(--font-body);color:var(--color-text)">Notification preferences</span>
+            <span style="color:var(--color-text-muted)">→</span>
+          </button>
+          <button onClick="{{ openSecurity }}" style="border:none;background:transparent;text-align:left;padding:14px 0;display:flex;align-items:center;gap:12px;cursor:pointer">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--color-text)" stroke-width="1.8" style="flex-shrink:0"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <span style="flex:1;font:600 13px/1 var(--font-body);color:var(--color-text)">Security &amp; devices</span>
+            <span style="color:var(--color-text-muted)">→</span>
+          </button>
+        </div>
+
+      </div>
+    </sc-if>
+  </div>
+</div>
+</sc-if>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     EDIT PROFILE (is.editProfile) — PATCH /api/v1/users/me
+     ══════════════════════════════════════════════════════════════════════ -->
+<sc-if value="{{ is.editProfile }}">
+<div style="padding-bottom:32px">
+
+  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+    <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;flex-shrink:0">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <h4 style="margin:0;font-size:16px">Edit Profile</h4>
+  </div>
+
+  <div style="padding:16px;max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:14px">
+
+    <!-- Avatar & identity summary -->
+    <div class="card-premium" style="display:flex;align-items:center;gap:14px">
+      <div style="width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,var(--color-accent) 0%,#003d8a 100%);color:#fff;display:flex;align-items:center;justify-content:center;font:800 20px/1 var(--font-heading);flex-shrink:0">
+        {{ userInitials }}
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="font:700 14px/1.3 var(--font-heading);color:var(--color-text)">{{ profileFormFirstName }} {{ profileFormLastName }}</div>
+        <div style="font:400 12px/1.4 var(--font-body);color:var(--color-text-secondary);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ regEmail }}</div>
+      </div>
+    </div>
+
+    <!-- Editable fields -->
+    <div class="card-premium" style="display:flex;flex-direction:column;gap:16px">
+      <div style="font:700 12px/1 var(--font-heading);letter-spacing:.08em;color:var(--color-text-muted);text-transform:uppercase">Personal Information</div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px">
+        <div>
+          <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">FIRST NAME</label>
+          <input type="text" class="input" value="{{ profileFormFirstName }}" placeholder="e.g. Rostand" onInput="{{ updateProfileFirstName }}">
+        </div>
+        <div>
+          <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">LAST NAME</label>
+          <input type="text" class="input" value="{{ profileFormLastName }}" placeholder="e.g. Tchuekam" onInput="{{ updateProfileLastName }}">
+        </div>
+      </div>
+
+      <div>
+        <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">CITY / LOCATION</label>
+        <select class="input" style="cursor:pointer" value="{{ profileFormCity }}" onChange="{{ updateProfileCity }}">
+          <option value="douala">Douala (Akwa, Bonanjo, Bonapriso, Bali, Deido)</option>
+          <option value="yaounde">Yaoundé (Bastos, Omnisports, Centre, Mendong)</option>
+          <option value="bafoussam">Bafoussam (Ouest)</option>
+          <option value="kribi">Kribi (Océan / Tara)</option>
+          <option value="limbe">Limbé / Buea (South West)</option>
+          <option value="garoua">Garoua / Maroua (Nord / Extrême-Nord)</option>
+        </select>
+      </div>
+
+      <div style="display:flex;align-items:flex-start;gap:10px;background:var(--color-neutral-100);border-radius:var(--radius-sm);padding:12px 14px">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-muted)" stroke-width="2" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        <span style="font:400 11.5px/1.45 var(--font-body);color:var(--color-text-secondary)">
+          Your email and phone number secure your escrow payments, so they're changed through verification rather than this form.
+        </span>
+      </div>
+    </div>
+
+    <!-- Seller fields -->
+    <sc-if value="{{ profileIsSeller }}">
+      <div class="card-premium" style="display:flex;flex-direction:column;gap:16px">
+        <div style="font:700 12px/1 var(--font-heading);letter-spacing:.08em;color:var(--color-text-muted);text-transform:uppercase">Boutique Profile</div>
+
+        <div>
+          <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">STORE / BUSINESS NAME</label>
+          <input type="text" class="input" value="{{ profileFormBusinessName }}" placeholder="e.g. Orca Electronics Douala" onInput="{{ updateProfileBusinessName }}">
+        </div>
+
+        <div>
+          <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">SELLER TYPE</label>
+          <select class="input" style="cursor:pointer" value="{{ profileFormSellerType }}" onChange="{{ updateProfileSellerType }}">
+            <option value="individual">Individual seller</option>
+            <option value="pro">Professional boutique</option>
+            <option value="service">Service provider</option>
+          </select>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- Error state -->
+    <sc-if value="{{ profileFormError }}">
+      <div role="alert" style="display:flex;align-items:flex-start;gap:10px;background:var(--color-accent-sale-100);border:1px solid var(--color-accent-sale);border-radius:var(--radius-sm);padding:12px 14px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-sale)" stroke-width="2" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+        <span style="font:600 12.5px/1.45 var(--font-body);color:var(--color-accent-sale)">{{ profileFormError }}</span>
+      </div>
+    </sc-if>
+
+    <!-- Save button -->
+    <button onClick="{{ submitProfileUpdate }}" disabled="{{ profileSaving || !profileFormDirty }}" class="btn btn-primary btn-block" style="height:48px;font-size:14px;cursor:{{ profileSaving ? 'wait' : (profileFormDirty ? 'pointer' : 'default') }};opacity:{{ profileSaving || !profileFormDirty ? '0.6' : '1' }}">
+      <sc-if value="{{ profileSaving }}">
+        <span class="spinner-inline" aria-hidden="true"></span>
+        <span>SAVING CHANGES…</span>
+      </sc-if>
+      <sc-if value="{{ !profileSaving }}">
+        <span>{{ profileFormDirty ? 'SAVE CHANGES' : 'NO CHANGES TO SAVE' }}</span>
+      </sc-if>
+    </button>
+
+  </div>
+</div>
+</sc-if>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     ADDRESS BOOK LIST (is.addresses) — GET /api/v1/users/me/addresses
+     ══════════════════════════════════════════════════════════════════════ -->
+<sc-if value="{{ is.addresses }}">
+<div style="padding-bottom:32px">
+
+  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+    <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;flex-shrink:0">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <h4 style="margin:0;font-size:16px;flex:1">Delivery Addresses</h4>
+    <button onClick="{{ openAddAddress }}" class="btn btn-secondary" style="height:34px;padding:0 12px;font-size:12px;cursor:pointer">
+      + ADD NEW
+    </button>
+  </div>
+
+  <div style="padding:16px;max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:14px">
+
+    <sc-if value="{{ addressesLoading }}">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div class="skel" style="height:96px;border-radius:var(--radius-md)"></div>
+        <div class="skel" style="height:96px;border-radius:var(--radius-md)"></div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ !addressesLoading && (!addressesList || addressesList.length === 0) }}">
+      <div class="card-premium" style="text-align:center;padding:36px 20px;display:flex;flex-direction:column;align-items:center;gap:12px">
+        <div style="width:52px;height:52px;border-radius:50%;background:var(--color-neutral-200);color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <div style="font:800 16px/1.3 var(--font-heading);color:var(--color-text)">No addresses saved</div>
+        <div style="font:400 13px/1.4 var(--font-body);color:var(--color-text-secondary);max-width:320px">Save your home, office or boutique address for instant escrow checkout across Cameroon.</div>
+        <button onClick="{{ openAddAddress }}" class="btn btn-primary" style="height:42px;padding:0 20px;margin-top:6px;cursor:pointer">+ ADD YOUR FIRST ADDRESS</button>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ !addressesLoading && addressesList && addressesList.length > 0 }}">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <sc-for list="{{ addressesList }}" as="addr">
+          <div class="card-premium" style="padding:16px;display:flex;flex-direction:column;gap:10px;border:{{ addr.isDefault ? '2px solid var(--color-accent)' : '1px solid var(--color-divider)' }}">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between">
+              <div style="display:flex;align-items:center;gap:8px">
+                <span style="font:800 14.5px/1.2 var(--font-heading);color:var(--color-text)">{{ addr.recipientName }}</span>
+                <sc-if value="{{ addr.isDefault }}">
+                  <span class="tag tag-accent" style="min-height:18px;padding:1px 6px;font-size:9.5px">DEFAULT</span>
+                </sc-if>
+              </div>
+              <div style="display:flex;align-items:center;gap:6px">
+                <button onClick="{{ () => editAddressItem(addr) }}" aria-label="Edit address" style="border:none;background:transparent;color:var(--color-accent);font:700 11.5px/1 var(--font-heading);cursor:pointer;padding:4px">EDIT</button>
+                <span style="color:var(--color-divider)">·</span>
+                <button onClick="{{ () => confirmDeleteAddress(addr.id) }}" aria-label="Delete address" style="border:none;background:transparent;color:var(--color-accent-sale);font:700 11.5px/1 var(--font-heading);cursor:pointer;padding:4px">DELETE</button>
+              </div>
+            </div>
+
+            <div style="font:400 13px/1.4 var(--font-body);color:var(--color-text-secondary)">
+              {{ addr.streetAddress }} · {{ addr.city }}, {{ addr.region || 'Cameroon' }}
+            </div>
+            <div style="font:500 12px/1 var(--font-body);color:var(--color-text-muted);display:flex;align-items:center;gap:6px">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              <span>+237 {{ addr.phoneNumber }}</span>
+            </div>
+
+            <sc-if value="{{ !addr.isDefault }}">
+              <div style="border-top:1px solid var(--color-divider);padding-top:8px;margin-top:2px">
+                <button onClick="{{ () => makeDefaultAddress(addr.id) }}" style="border:none;background:transparent;color:var(--color-text-secondary);font:600 11.5px/1 var(--font-body);padding:0;cursor:pointer;display:flex;align-items:center;gap:4px">
+                  <span>☆ Set as default delivery address</span>
+                </button>
+              </div>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+  </div>
+</div>
+</sc-if>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     ADD / EDIT ADDRESS MODAL / SCREEN (is.addAddress, is.editAddress)
+     ══════════════════════════════════════════════════════════════════════ -->
+<sc-if value="{{ is.addAddress || is.editAddress }}">
+<div style="padding-bottom:32px">
+
+  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+    <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;flex-shrink:0">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <h4 style="margin:0;font-size:16px">{{ is.editAddress ? 'Edit Address' : 'Add New Address' }}</h4>
+  </div>
+
+  <div style="padding:16px;max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:14px">
+
+    <div class="card-premium" style="display:flex;flex-direction:column;gap:14px">
+      <div>
+        <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">RECIPIENT FULL NAME</label>
+        <input type="text" class="input" value="{{ addressFormName }}" placeholder="e.g. Rostand Tchuekam" onInput="{{ updateAddressFormName }}">
+      </div>
+
+      <div>
+        <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">PHONE NUMBER (MOMO / DELIVERY)</label>
+        <div style="display:flex;align-items:center">
+          <span style="background:var(--color-neutral-200);border:1px solid var(--color-divider);border-right:none;border-radius:var(--radius-sm) 0 0 var(--radius-sm);height:44px;padding:0 12px;display:flex;align-items:center;font:700 13px/1 var(--font-body);color:var(--color-text-secondary)">+237</span>
+          <input type="tel" class="input" style="border-top-left-radius:0;border-bottom-left-radius:0" value="{{ addressFormPhone }}" placeholder="690 12 34 56" onInput="{{ updateAddressFormPhone }}">
+        </div>
+      </div>
+
+      <div>
+        <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">CITY</label>
+        <select class="input" style="cursor:pointer" value="{{ addressFormCity }}" onChange="{{ updateAddressFormCity }}">
+          <option value="douala">Douala (Littoral)</option>
+          <option value="yaounde">Yaoundé (Centre)</option>
+          <option value="bafoussam">Bafoussam (Ouest)</option>
+          <option value="kribi">Kribi (Sud)</option>
+          <option value="limbe">Limbé / Buea (Sud-Ouest)</option>
+          <option value="garoua">Garoua (Nord)</option>
+          <option value="maroua">Maroua (Extrême-Nord)</option>
+          <option value="bamenda">Bamenda (Nord-Ouest)</option>
+          <option value="bertoua">Bertoua (Est)</option>
+          <option value="ebolowa">Ebolowa (Sud)</option>
+        </select>
+      </div>
+
+      <div>
+        <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">NEIGHBORHOOD &amp; STREET ADDRESS</label>
+        <input type="text" class="input" value="{{ addressFormStreet }}" placeholder="e.g. Akwa, Face Hôtel Prince de Galles" onInput="{{ updateAddressFormStreet }}">
+      </div>
+
+      <div style="display:flex;align-items:center;gap:10px;padding-top:6px">
+        <input type="checkbox" id="addrDefCheck" checked="{{ addressFormIsDefault }}" onChange="{{ toggleAddressFormDefault }}" style="width:18px;height:18px;cursor:pointer">
+        <label for="addrDefCheck" style="font:600 13px/1.2 var(--font-body);color:var(--color-text);cursor:pointer">Set as default delivery address</label>
+      </div>
+    </div>
+
+    <sc-if value="{{ addressFormError }}">
+      <div role="alert" style="display:flex;align-items:flex-start;gap:10px;background:var(--color-accent-sale-100);border:1px solid var(--color-accent-sale);border-radius:var(--radius-sm);padding:12px 14px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-sale)" stroke-width="2" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+        <span style="font:600 12.5px/1.45 var(--font-body);color:var(--color-accent-sale)">{{ addressFormError }}</span>
+      </div>
+    </sc-if>
+
+    <button onClick="{{ submitAddressForm }}" disabled="{{ addressFormSaving }}" class="btn btn-primary btn-block" style="height:48px;font-size:14px;cursor:{{ addressFormSaving ? 'wait' : 'pointer' }}">
+      <sc-if value="{{ addressFormSaving }}">
+        <span class="spinner-inline" aria-hidden="true"></span>
+        <span>SAVING ADDRESS…</span>
+      </sc-if>
+      <sc-if value="{{ !addressFormSaving }}">
+        <span>{{ is.editAddress ? 'UPDATE ADDRESS' : 'SAVE ADDRESS' }}</span>
+      </sc-if>
+    </button>
+
+  </div>
+</div>
+</sc-if>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     NOTIFICATION PREFERENCES (is.notificationPreferences)
+     ══════════════════════════════════════════════════════════════════════ -->
+<sc-if value="{{ is.notificationPreferences }}">
+<div style="padding-bottom:32px">
+
+  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+    <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;flex-shrink:0">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <h4 style="margin:0;font-size:16px">Notification Preferences</h4>
+  </div>
+
+  <div style="padding:16px;max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:16px">
+
+    <!-- Channels Section -->
+    <div class="card-premium" style="display:flex;flex-direction:column;gap:14px">
+      <div style="font:700 12px/1 var(--font-heading);letter-spacing:.08em;color:var(--color-text-muted);text-transform:uppercase">Notification Channels</div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--color-divider)">
+        <div>
+          <div style="font:700 13.5px/1.2 var(--font-heading);color:var(--color-text)">In-App Notifications</div>
+          <div style="font:400 12px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Activity badges &amp; alerts inside LOUMOO</div>
+        </div>
+        <input type="checkbox" checked="{{ notifInApp }}" onChange="{{ toggleNotifInApp }}" style="width:20px;height:20px;cursor:pointer">
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--color-divider)">
+        <div>
+          <div style="font:700 13.5px/1.2 var(--font-heading);color:var(--color-text)">Email Receipts &amp; Alerts</div>
+          <div style="font:400 12px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Order confirmations &amp; security notifications</div>
+        </div>
+        <input type="checkbox" checked="{{ notifEmail }}" onChange="{{ toggleNotifEmail }}" style="width:20px;height:20px;cursor:pointer">
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0">
+        <div>
+          <div style="font:700 13.5px/1.2 var(--font-heading);color:var(--color-text)">SMS / Push Notifications</div>
+          <div style="font:400 12px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Real-time MoMo escrow updates &amp; carrier deliveries</div>
+        </div>
+        <input type="checkbox" checked="{{ notifPush }}" onChange="{{ toggleNotifPush }}" style="width:20px;height:20px;cursor:pointer">
+      </div>
+    </div>
+
+    <!-- Categories Section -->
+    <div class="card-premium" style="display:flex;flex-direction:column;gap:14px">
+      <div style="font:700 12px/1 var(--font-heading);letter-spacing:.08em;color:var(--color-text-muted);text-transform:uppercase">Event Categories</div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--color-divider)">
+        <div>
+          <div style="font:700 13.5px/1.2 var(--font-heading);color:var(--color-text)">Orders &amp; Escrow Tracking</div>
+          <div style="font:400 12px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Payment held, dispatch, transit &amp; delivery confirm</div>
+        </div>
+        <input type="checkbox" checked="{{ notifOrders }}" onChange="{{ toggleNotifOrders }}" style="width:20px;height:20px;cursor:pointer">
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--color-divider)">
+        <div>
+          <div style="font:700 13.5px/1.2 var(--font-heading);color:var(--color-text)">Followed Stores &amp; Price Drops</div>
+          <div style="font:400 12px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">New arrivals &amp; discounts from merchants you follow</div>
+        </div>
+        <input type="checkbox" checked="{{ notifFollowed }}" onChange="{{ toggleNotifFollowed }}" style="width:20px;height:20px;cursor:pointer">
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--color-divider)">
+        <div>
+          <div style="font:700 13.5px/1.2 var(--font-heading);color:var(--color-text)">Promotions &amp; Black FreeDay</div>
+          <div style="font:400 12px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Exclusive flash sales, vouchers &amp; weekend deals</div>
+        </div>
+        <input type="checkbox" checked="{{ notifPromos }}" onChange="{{ toggleNotifPromos }}" style="width:20px;height:20px;cursor:pointer">
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0">
+        <div>
+          <div style="font:700 13.5px/1.2 var(--font-heading);color:var(--color-text)">Security &amp; Account Alerts</div>
+          <div style="font:400 12px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">New login locations, password resets &amp; verification codes</div>
+        </div>
+        <input type="checkbox" checked="true" disabled="true" style="width:20px;height:20px;cursor:not-allowed">
+      </div>
+    </div>
+
+    <button onClick="{{ saveNotifPrefs }}" disabled="{{ notifSaving }}" class="btn btn-primary btn-block" style="height:48px;font-size:14px;cursor:pointer">
+      <sc-if value="{{ notifSaving }}">
+        <span class="spinner-inline" aria-hidden="true"></span>
+        <span>SAVING PREFERENCES…</span>
+      </sc-if>
+      <sc-if value="{{ !notifSaving }}">
+        <span>SAVE PREFERENCES</span>
+      </sc-if>
+    </button>
+
+  </div>
+</div>
+</sc-if>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     PRIVACY & CONSENT (is.privacySettings)
+     ══════════════════════════════════════════════════════════════════════ -->
+<sc-if value="{{ is.privacySettings }}">
+<div style="padding-bottom:32px">
+
+  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+    <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;flex-shrink:0">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <h4 style="margin:0;font-size:16px">Privacy &amp; Data Controls</h4>
+  </div>
+
+  <div style="padding:16px;max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:16px">
+
+    <div class="card-premium" style="display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--color-divider)">
+        <div>
+          <div style="font:700 13.5px/1.2 var(--font-heading);color:var(--color-text)">Personalized Recommendations</div>
+          <div style="font:400 12px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Tailor marketplace search &amp; feed based on browsing</div>
+        </div>
+        <input type="checkbox" checked="{{ privacyPersonalization }}" onChange="{{ togglePrivacyPersonalization }}" style="width:20px;height:20px;cursor:pointer">
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--color-divider)">
+        <div>
+          <div style="font:700 13.5px/1.2 var(--font-heading);color:var(--color-text)">Usage &amp; Performance Analytics</div>
+          <div style="font:400 12px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Help improve LOUMOO app stability and speed</div>
+        </div>
+        <input type="checkbox" checked="{{ privacyAnalytics }}" onChange="{{ togglePrivacyAnalytics }}" style="width:20px;height:20px;cursor:pointer">
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0">
+        <div>
+          <div style="font:700 13.5px/1.2 var(--font-heading);color:var(--color-text)">Marketing Communications</div>
+          <div style="font:400 12px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Allow special deals and promotional updates</div>
+        </div>
+        <input type="checkbox" checked="{{ privacyMarketing }}" onChange="{{ togglePrivacyMarketing }}" style="width:20px;height:20px;cursor:pointer">
+      </div>
+    </div>
+
+    <button onClick="{{ savePrivacySettings }}" disabled="{{ privacySaving }}" class="btn btn-primary btn-block" style="height:48px;font-size:14px;cursor:pointer">
+      <sc-if value="{{ privacySaving }}">
+        <span class="spinner-inline" aria-hidden="true"></span>
+        <span>SAVING PRIVACY SETTINGS…</span>
+      </sc-if>
+      <sc-if value="{{ !privacySaving }}">
+        <span>SAVE PRIVACY SETTINGS</span>
+      </sc-if>
+    </button>
+
+  </div>
+</div>
+</sc-if>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     SECURITY & ACTIVE SESSIONS (is.securitySettings)
+     ══════════════════════════════════════════════════════════════════════ -->
+<sc-if value="{{ is.securitySettings }}">
+<div style="padding-bottom:32px">
+
+  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+    <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;flex-shrink:0">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <h4 style="margin:0;font-size:16px">Security &amp; Active Sessions</h4>
+  </div>
+
+  <div style="padding:16px;max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:16px">
+
+    <div class="card-premium" style="display:flex;flex-direction:column;gap:14px">
+      <div style="font:700 12px/1 var(--font-heading);letter-spacing:.08em;color:var(--color-text-muted);text-transform:uppercase">Active Devices &amp; Sessions</div>
+
+      <sc-if value="{{ sessionsLoading }}">
+        <div class="skel" style="height:72px;border-radius:var(--radius-md)"></div>
+      </sc-if>
+
+      <sc-if value="{{ !sessionsLoading }}">
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <sc-for list="{{ activeSessionsList }}" as="sess">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;border-radius:var(--radius-sm);background:{{ sess.isCurrent ? 'var(--color-accent-100)' : 'var(--color-surface-subtle)' }};border:1px solid {{ sess.isCurrent ? 'var(--color-accent-300)' : 'var(--color-divider)' }}">
+              <div style="display:flex;align-items:center;gap:12px">
+                <div style="width:36px;height:36px;border-radius:50%;background:{{ sess.isCurrent ? 'var(--color-accent)' : 'var(--color-neutral-300)' }};color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
+                </div>
+                <div>
+                  <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text);display:flex;align-items:center;gap:6px">
+                    <span>{{ sess.device || 'Mobile App / Browser' }}</span>
+                    <sc-if value="{{ sess.isCurrent }}">
+                      <span class="tag tag-accent" style="min-height:18px;padding:1px 6px;font-size:9.5px">THIS DEVICE</span>
+                    </sc-if>
+                  </div>
+                  <div style="font:400 11.5px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">
+                    {{ sess.location || 'Douala, Cameroon' }} · {{ sess.lastActive || 'Active now' }}
+                  </div>
+                </div>
+              </div>
+
+              <sc-if value="{{ !sess.isCurrent }}">
+                <button onClick="{{ () => revokeUserSession(sess.id) }}" class="btn btn-secondary" style="height:32px;padding:0 12px;font-size:11px;color:var(--color-accent-sale);cursor:pointer">REVOKE</button>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+    </div>
+
+    <!-- Password & Security Options -->
+    <div class="card-premium" style="display:flex;flex-direction:column;gap:10px">
+      <button onClick="{{ on.forgotPassword }}" style="border:none;background:transparent;text-align:left;padding:12px 0;display:flex;align-items:center;justify-content:space-between;cursor:pointer">
+        <div>
+          <div style="font:700 13.5px/1.2 var(--font-heading);color:var(--color-text)">Change Password</div>
+          <div style="font:400 12px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Send a secure verification link to update password</div>
+        </div>
+        <span style="color:var(--color-text-muted)">→</span>
+      </button>
+    </div>
+
+  </div>
+</div>
+</sc-if>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     FOLLOWED STORES (is.followedStores)
+     ══════════════════════════════════════════════════════════════════════ -->
+<sc-if value="{{ is.followedStores }}">
+<div style="padding-bottom:32px">
+
+  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+    <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;flex-shrink:0">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <h4 style="margin:0;font-size:16px">Followed Stores</h4>
+  </div>
+
+  <div style="padding:16px;max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:14px">
+
+    <sc-if value="{{ followedStoresLoading }}">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div class="skel" style="height:84px;border-radius:var(--radius-md)"></div>
+        <div class="skel" style="height:84px;border-radius:var(--radius-md)"></div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ !followedStoresLoading && (!followedStoresList || followedStoresList.length === 0) }}">
+      <div class="card-premium" style="text-align:center;padding:36px 20px;display:flex;flex-direction:column;align-items:center;gap:12px">
+        <div style="width:52px;height:52px;border-radius:50%;background:var(--color-neutral-200);color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 3h20l-2 10H4L2 3z"/><path d="M6 13v7a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-7"/></svg>
+        </div>
+        <div style="font:800 16px/1.3 var(--font-heading);color:var(--color-text)">No followed stores yet</div>
+        <div style="font:400 13px/1.4 var(--font-body);color:var(--color-text-secondary);max-width:320px">Follow verified boutiques and merchants to get notified of new stock &amp; flash discounts.</div>
+        <button onClick="{{ on.store }}" class="btn btn-primary" style="height:42px;padding:0 20px;margin-top:6px;cursor:pointer">EXPLORE BOUTIQUES</button>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ !followedStoresLoading && followedStoresList && followedStoresList.length > 0 }}">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <sc-for list="{{ followedStoresList }}" as="store">
+          <div class="card-premium" style="padding:16px;display:flex;align-items:center;justify-content:space-between">
+            <div style="display:flex;align-items:center;gap:12px">
+              <div style="width:44px;height:44px;border-radius:50%;background:var(--color-accent-100);color:var(--color-accent);display:flex;align-items:center;justify-content:center;font:800 16px/1 var(--font-heading)">
+                🏪
+              </div>
+              <div>
+                <div style="font:700 14px/1.2 var(--font-heading);color:var(--color-text);display:flex;align-items:center;gap:6px">
+                  <span>{{ store.storeName || store.name }}</span>
+                  <span class="tag tag-accent" style="min-height:18px;padding:1px 6px;font-size:9.5px">VERIFIED</span>
+                </div>
+                <div style="font:400 12px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">
+                  {{ store.city || 'Douala' }} · {{ store.productCount || '240' }} items
+                </div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <button onClick="{{ on.store }}" class="btn btn-secondary" style="height:34px;padding:0 12px;font-size:12px;cursor:pointer">VISIT</button>
+              <button onClick="{{ () => unfollowStoreItem(store.storeId || store.id) }}" style="border:none;background:transparent;color:var(--color-text-muted);font:600 12px/1 var(--font-body);cursor:pointer;padding:4px">UNFOLLOW</button>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+  </div>
+</div>
+</sc-if>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     ACTIVITY HISTORY (is.userActivity)
+     ══════════════════════════════════════════════════════════════════════ -->
+<sc-if value="{{ is.userActivity }}">
+<div style="padding-bottom:32px">
+
+  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+    <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;flex-shrink:0">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <h4 style="margin:0;font-size:16px">Activity History</h4>
+  </div>
+
+  <div style="padding:16px;max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:14px">
+
+    <sc-if value="{{ activityLoading }}">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="skel" style="height:64px;border-radius:var(--radius-md)"></div>
+        <div class="skel" style="height:64px;border-radius:var(--radius-md)"></div>
+        <div class="skel" style="height:64px;border-radius:var(--radius-md)"></div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ !activityLoading && (!activityList || activityList.length === 0) }}">
+      <div class="card-premium" style="text-align:center;padding:36px 20px">
+        <div style="font:400 13px/1.4 var(--font-body);color:var(--color-text-secondary)">No activity recorded yet. As you buy, sell, or save products, your history will show here.</div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ !activityLoading && activityList && activityList.length > 0 }}">
+      <div class="card-premium" style="display:flex;flex-direction:column">
+        <sc-for list="{{ activityList }}" as="act">
+          <div style="display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-top:{{ $index === 0 ? 'none' : '1px solid var(--color-divider)' }}">
+            <div style="width:34px;height:34px;border-radius:50%;background:var(--color-neutral-200);color:var(--color-text);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            </div>
+            <div style="flex:1;min-width:0">
+              <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">{{ act.title || act.action }}</div>
+              <div style="font:400 12px/1.4 var(--font-body);color:var(--color-text-secondary);margin-top:2px">{{ act.description || act.metadata }}</div>
+              <div style="font:500 11px/1 var(--font-body);color:var(--color-text-muted);margin-top:4px">{{ act.createdAt || 'Recent' }}</div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+  </div>
+</div>
+</sc-if>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     DELETE ACCOUNT (is.deleteAccount) — DELETE /api/v1/users/me
+     ══════════════════════════════════════════════════════════════════════ -->
+<sc-if value="{{ is.deleteAccount }}">
+<div style="padding-bottom:32px">
+
+  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+    <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;flex-shrink:0">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <h4 style="margin:0;font-size:16px;color:var(--color-accent-sale)">Delete Account</h4>
+  </div>
+
+  <div style="padding:16px;max-width:640px;margin:0 auto;display:flex;flex-direction:column;gap:16px">
+
+    <div class="card-premium" style="border:1.5px solid var(--color-accent-sale);background:var(--color-accent-sale-100);padding:20px;display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-sale)" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg>
+        <span style="font:800 15px/1 var(--font-heading);color:var(--color-accent-sale)">PERMANENT ACCOUNT DELETION</span>
+      </div>
+      <div style="font:400 13px/1.5 var(--font-body);color:var(--color-text)">
+        Deleting your account will revoke access to all active listings, saved items, and account settings. In accordance with financial regulations, past completed transactional records are securely retained in an anonymized ledger.
+      </div>
+    </div>
+
+    <div class="card-premium" style="display:flex;flex-direction:column;gap:14px">
+      <div>
+        <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">REASON FOR LEAVING (OPTIONAL)</label>
+        <select class="input" style="cursor:pointer" value="{{ deleteAccountReason }}" onChange="{{ updateDeleteAccountReason }}">
+          <option value="not_using">I no longer use this platform</option>
+          <option value="second_account">I have another account</option>
+          <option value="privacy">Privacy concerns</option>
+          <option value="other">Other reason</option>
+        </select>
+      </div>
+
+      <div>
+        <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">TYPE "DELETE MY ACCOUNT" TO CONFIRM</label>
+        <input type="text" class="input" value="{{ deleteAccountConfirmText }}" placeholder="DELETE MY ACCOUNT" onInput="{{ updateDeleteAccountConfirmText }}">
+      </div>
+    </div>
+
+    <sc-if value="{{ deleteAccountError }}">
+      <div role="alert" style="display:flex;align-items:flex-start;gap:10px;background:var(--color-accent-sale-100);border:1px solid var(--color-accent-sale);border-radius:var(--radius-sm);padding:12px 14px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-sale)" stroke-width="2" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+        <span style="font:600 12.5px/1.45 var(--font-body);color:var(--color-accent-sale)">{{ deleteAccountError }}</span>
+      </div>
+    </sc-if>
+
+    <button onClick="{{ submitDeleteAccount }}" disabled="{{ deleteAccountBusy || deleteAccountConfirmText !== 'DELETE MY ACCOUNT' }}" class="btn btn-primary btn-block" style="height:50px;background:var(--color-accent-sale);border-color:var(--color-accent-sale);cursor:{{ deleteAccountConfirmText === 'DELETE MY ACCOUNT' ? 'pointer' : 'not-allowed' }};opacity:{{ deleteAccountConfirmText === 'DELETE MY ACCOUNT' ? '1' : '0.5' }}">
+      <sc-if value="{{ deleteAccountBusy }}">
+        <span class="spinner-inline" aria-hidden="true"></span>
+        <span>DELETING ACCOUNT…</span>
+      </sc-if>
+      <sc-if value="{{ !deleteAccountBusy }}">
+        <span>PERMANENTLY DELETE MY ACCOUNT</span>
+      </sc-if>
+    </button>
+
+  </div>
+</div>
+</sc-if>
+"""

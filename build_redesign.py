@@ -22,6 +22,11 @@ from src.views.merchant_view import get_merchant_view
 from src.views.community_view import get_community_view
 from src.views.chat_profile_view import get_chat_and_profile_view
 from src.views.onboarding_view import get_onboarding_view
+from src.views.account_access_view import get_account_access_view
+from src.views.account_hub_view import get_account_hub_view
+from src.views.order_product_flow_view import get_order_product_flow_view
+from src.views.hotel_vertical_view import get_hotel_vertical_view
+from src.views.store_business_view import get_store_business_view
 
 # Define Master Header & Styles
 header_and_styles = """<!DOCTYPE html>
@@ -30,6 +35,7 @@ header_and_styles = """<!DOCTYPE html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="./support.js"></script>
+<script src="./src/services/loumooApi.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600;1,700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -273,6 +279,29 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 .skel-text { height: 16px; margin-bottom: 8px; border-radius: 4px; }
 .skel-block { height: 40px; }
 .skel-card { height: 220px; border-radius: var(--radius-md); }
+.skel-row { height: 72px; border-radius: var(--radius-md); margin-bottom: 12px; }
+
+/* Inline & Standalone Spinners (async button + screen states) */
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner-inline {
+  width: 15px; height: 15px; border-radius: 50%; display: inline-block; flex-shrink: 0;
+  border: 2px solid rgba(255, 255, 255, 0.34); border-top-color: #ffffff;
+  animation: spin 0.62s linear infinite;
+}
+.spinner-lg {
+  width: 30px; height: 30px; border-radius: 50%; display: inline-block;
+  border: 3px solid var(--color-accent-200); border-top-color: var(--color-accent);
+  animation: spin 0.7s linear infinite;
+}
+.spinner-dark {
+  width: 15px; height: 15px; border-radius: 50%; display: inline-block; flex-shrink: 0;
+  border: 2px solid var(--color-divider); border-top-color: var(--color-accent);
+  animation: spin 0.62s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .spinner-inline, .spinner-lg, .spinner-dark { animation-duration: 1.6s; }
+  .skel { animation: none; }
+}
 
 /* Toast Notification Banner */
 .toast-banner {
@@ -674,7 +703,15 @@ const SCREENS = [
   'visualScan','visualResults','upload','uploadDetails','uploadPrice','uploadSuccess','myListings','travel','travelBus',
   'travelPackages','travelVisa','travelResults','travelDetail','travelPassenger','travelTicket','announce','announceDetail',
   'profile','seller','settings','payFailed','networkError','saved','transactions','loading',
-  'onboardWelcome','onboardType','onboardIdentity','onboardOtp','onboardBuyer','onboardSeller','onboardBusiness','onboardVerify','onboardReview','onboardSuccess'
+  'onboardWelcome','onboardType','onboardIdentity','onboardOtp','onboardBuyer','onboardSeller','onboardBusiness','onboardVerify','onboardReview','onboardSuccess',
+  // Phase A — Account access (returning users)
+  'signIn','forgotPassword','resetPassword','verifyEmail',
+  // Phase B — User Account Hub
+  'accountDashboard','editProfile','addresses','addAddress','editAddress','notificationPreferences','privacySettings','securitySettings','followedStores','userActivity','deleteAccount',
+  // Phase D — Product & Vertical Completeness
+  'orderDetail','refundRequest','writeReview','sellerOrderDetail','sellerPayouts','hotelSearch','hotelDetail','hotelBooking',
+  // Phase E — Store & Business System (Prompt 05)
+  'createStore','storeOnboarding','storeSettings','storeVerification','storeAnalytics'
 ];
 const GROUPS = {
   searchTab: ['all','products','stores','services','travel'],
@@ -701,25 +738,90 @@ const GROUPS = {
 const NO_NAV = [
   'visual','visualScan','visualResults','threadAi','threadSeller','checkout','paying','success','travelTicket','uploadSuccess',
   'voice','filters','payFailed','networkError','loading',
-  'onboardWelcome','onboardType','onboardIdentity','onboardOtp','onboardBuyer','onboardSeller','onboardBusiness','onboardVerify','onboardReview','onboardSuccess'
+  'onboardWelcome','onboardType','onboardIdentity','onboardOtp','onboardBuyer','onboardSeller','onboardBusiness','onboardVerify','onboardReview','onboardSuccess',
+  'signIn','forgotPassword','resetPassword','verifyEmail',
+  'editProfile','addAddress','editAddress','deleteAccount','refundRequest','writeReview','sellerOrderDetail','hotelBooking',
+  'createStore','storeOnboarding','storeSettings','storeVerification','storeAnalytics'
 ];
+
+/**
+ * Canonical browser API client (src/services/loumooApi.js, loaded in <head>).
+ * Resolved lazily and defensively: the x-dc script is also executed inside a
+ * bare Node `vm` sandbox by tests/unit/authenticated_ui.test.js where neither
+ * `window` nor `fetch` exist. Every call site must tolerate `null`.
+ */
+function getApi() {
+  try {
+    if (typeof window !== 'undefined' && window && window.LoumooAPI) return window.LoumooAPI;
+    if (typeof globalThis !== 'undefined' && globalThis && globalThis.LoumooAPI) return globalThis.LoumooAPI;
+  } catch (e) { /* sandboxed */ }
+  return null;
+}
 
 class Component extends DCLogic {
   state = {
     screen: 'home', stack: [], cart: 2, vs: 1, toast: '', following: false, saved: false,
     qty: 1, freeday: false, darkMode: false,
     isLoggedIn: true,
+    // Authoritative session state resolved from GET /api/v1/users/me.
+    // 'unknown' during boot so the Get Started CTA never flashes for a
+    // signed-in user; resolves to 'authenticated' | 'anonymous'.
+    authStatus: 'unknown',
+    sessionUser: null,
+
+    // ── Phase A: Sign In ──
+    signInIdentifier: '',
+    signInPassword: '',
+    signInShowPassword: false,
+    signInBusy: false,
+    signInError: '',
+    // Screen to land on after a successful sign in. Only ever set to a key
+    // that exists in SCREENS (validated in requireAuth) — never a raw string
+    // from user input or a URL, so it cannot be used as an open redirect.
+    postAuthRedirect: '',
+
+    // ── Phase A: Password reset ──
+    resetEmail: '',
+    resetCode: '',
+    resetNewPassword: '',
+    resetConfirmPassword: '',
+    resetShowPassword: false,
+    resetBusy: false,
+    resetError: '',
+    resetRequestSent: false,
+    resetServerMessage: '',
+    resetCooldown: 0,
+
+    // ── Phase A: Email verification ──
+    emailVerifyState: 'pending',
+    emailVerifyCode: '',
+    emailVerifyError: '',
+    emailVerifyCooldown: 0,
+
     userRole: 'buyer',
     regFirstName: 'Rostand',
     regLastName: 'Tchuekam',
     regPhone: '690 12 34 56',
     regEmail: 'rostand@loumoo.cm',
+    regCity: 'douala',
+    regAddress: 'Boulevard de la Liberté, Akwa, Douala',
     regBusinessName: 'Orca Electronics Douala',
+    regRccm: 'RC/DLA/2023/B/1842',
+    legalForm: 'sarl',
     interestTech: true,
     interestFashion: false,
     interestTravel: true,
     interestServices: false,
+    priorityVerified: true,
+    priorityPrice: false,
+    prioritySpeed: false,
+    priorityWarranty: false,
     sellerType: 'pro',
+    prodPhysical: true,
+    prodDigital: false,
+    prodServices: false,
+    prodRentals: false,
+    verificationChoice: 'now',
     docUploaded: false,
     ship: { home: true, pickup: true, nation: false },
     sel: {
@@ -728,7 +830,113 @@ class Component extends DCLogic {
       travelTab: 'flights', trSort: 'cheap', annChip: 'all', ftype: 'products',
       ftrust: 'verified', pvar: 'g256', pcolor: 'grey', photo: 'p1',
       pay: 'mtn', deliv: 'home', uqty: 'one'
-    }
+    },
+
+    // ── Phase B: User Account Hub State ──
+    dashboard: null,
+    dashboardLoading: false,
+    dashboardError: '',
+    profileFormFirstName: 'Rostand',
+    profileFormLastName: 'Tchuekam',
+    profileFormCity: 'douala',
+    profileFormBusinessName: 'Orca Electronics Douala',
+    profileFormSellerType: 'pro',
+    profileFormDirty: false,
+    profileSaving: false,
+    profileFormError: '',
+    addressesList: [
+      { id: 'addr_1', recipientName: 'Rostand Tchuekam', phoneNumber: '690 12 34 56', streetAddress: 'Boulevard de la Liberté, Akwa', city: 'Douala', region: 'Littoral', isDefault: true },
+      { id: 'addr_2', recipientName: 'Rostand Tchuekam (Office)', phoneNumber: '677 88 99 00', streetAddress: 'Immeuble CAA, Bastos', city: 'Yaoundé', region: 'Centre', isDefault: false }
+    ],
+    addressesLoading: false,
+    addressFormName: '',
+    addressFormPhone: '',
+    addressFormCity: 'douala',
+    addressFormStreet: '',
+    addressFormIsDefault: false,
+    addressFormSaving: false,
+    addressFormError: '',
+    editingAddressId: null,
+    notifInApp: true,
+    notifEmail: true,
+    notifPush: true,
+    notifOrders: true,
+    notifFollowed: true,
+    notifPromos: false,
+    notifSaving: false,
+    privacyPersonalization: true,
+    privacyAnalytics: true,
+    privacyMarketing: false,
+    privacySaving: false,
+    activeSessionsList: [
+      { id: 'sess_1', device: 'Apple iPhone 15 Pro Max', location: 'Douala, Cameroon', lastActive: 'Active now', isCurrent: true },
+      { id: 'sess_2', device: 'MacBook Pro · Chrome', location: 'Yaoundé, Cameroon', lastActive: '2 days ago', isCurrent: false }
+    ],
+    sessionsLoading: false,
+    followedStoresList: [
+      { id: 'store_1', storeId: 'store_orca_electronics', storeName: 'Orca Electronics Douala', city: 'Douala, Akwa', productCount: 318 },
+      { id: 'store_2', storeId: 'store_kribi_fresh', storeName: 'Kribi Seafood & Organic Express', city: 'Kribi, Tara', productCount: 42 }
+    ],
+    followedStoresLoading: false,
+    activityList: [
+      { id: 'act_1', title: 'Order Placed (LM-94820)', description: 'Apple iPhone 15 Pro Max 256GB with Escrow MoMo Checkout', createdAt: '28 Aug 2026, 14:32' },
+      { id: 'act_2', title: 'Address Added', description: 'Immeuble CAA, Bastos, Yaoundé set as shipping location', createdAt: '25 Aug 2026, 10:15' },
+      { id: 'act_3', title: 'Followed Store', description: 'Subscribed to Orca Electronics Douala flash stock notifications', createdAt: '22 Aug 2026, 18:40' }
+    ],
+    activityLoading: false,
+    deleteAccountConfirmText: '',
+    deleteAccountReason: 'not_using',
+    deleteAccountBusy: false,
+    deleteAccountError: '',
+
+    // ── Phase D: Order, Review & Vertical State ──
+    currentOrder: {
+      id: 'LM-94820',
+      placedAt: '28 Aug 2026',
+      statusLabel: 'IN TRANSIT',
+      totalFormatted: '748 000'
+    },
+    refundReason: 'damaged',
+    refundDetails: '',
+    refundPhotoAttached: false,
+    refundBusy: false,
+    reviewStars: 5,
+    reviewRatingLabel: '5.0 EXCELLENT',
+    reviewTitle: '',
+    reviewBody: '',
+    payoutMethod: 'mtn',
+    payoutPhone: '690 12 34 56',
+    payoutAmount: '500 000',
+    hotelCity: 'kribi',
+
+    // ── Phase E: Store & Business System State ──
+    createStoreName: '',
+    createStoreCategory: 'electronics',
+    createStoreDesc: '',
+    createStoreCity: 'douala',
+    createStorePhone: '',
+    createStoreBusy: false,
+    createStoreError: '',
+    storeOnboardingPercentage: 75,
+    storeVerificationStatusLabel: 'DRAFT',
+    verLegalName: 'Orca Electronics SARL',
+    verBusinessType: 'pro',
+    verRccm: 'RC/DLA/2023/B/1842',
+    verNiu: 'M052112345678A',
+    verDocAttached: false,
+    analyticsPeriod: '30d',
+    analyticsRevenueFormatted: '4 250 000 XAF',
+    analyticsOrdersCount: 48,
+    analyticsViewsCount: '12 400',
+    analyticsUniqueVisitors: '8 928',
+    analyticsConversionRate: '3.14',
+    storeTagline: 'Premium Electronics · Certified Apple & Dell Partner',
+    storeWarrantyPolicy: '12-month warranty on all electronics',
+    storeOpenStatusBadge: 'OPEN',
+    storeOpenTime: '08:00',
+    storeCloseTime: '18:30',
+    storeLocationStreet: 'Boulevard de la Liberté, Akwa Commercial Zone',
+    storeLocationLandmark: 'Next to Total Akwa Roundabout'
   };
 
   go = (s) => this.setState(st => ({ screen: s, stack: [...st.stack, st.screen], toast: '' }));
@@ -743,12 +951,228 @@ class Component extends DCLogic {
     this._t = setTimeout(() => this.setState({ toast: '' }), 3200);
   };
 
-  componentDidUpdate(_p, prev) {
-    if (prev.screen !== this.state.screen && this._sc) this._sc.scrollTop = 0;
+  componentDidMount() {
+    this._restoreOnboardingDraft();
+    this._resolveSession();
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this._t);
+    clearInterval(this._resetTimer);
+    clearInterval(this._emailTimer);
+    this._unmounted = true;
+  }
+
+  /** Onboarding drafts are UI convenience only — never an auth signal. */
+  _restoreOnboardingDraft() {
+    if (typeof localStorage === 'undefined') return;
+    try {
+      const draft = localStorage.getItem('loumoo_onboarding_draft');
+      if (draft) {
+        const d = JSON.parse(draft);
+        if (d) this.setState(st => ({ ...st, ...d }));
+      }
+    } catch (e) {}
+  }
+
+  /**
+   * Resolves the real session. GET /api/v1/users/me is authoritative:
+   * localStorage is only ever a pre-paint hint, never proof of authentication.
+   * A rejected or absent session collapses to 'anonymous' and wipes any
+   * cached principal so one user's data can't survive into another's session.
+   */
+  _resolveSession() {
+    const api = getApi();
+
+    if (!api) {
+      // Sandbox / offline prototype: fall back to the local hint so the
+      // static prototype and the Node test harness keep working unchanged.
+      if (typeof localStorage === 'undefined') return;
+      try {
+        const auth = localStorage.getItem('loumoo_auth_user');
+        if (auth) {
+          const parsed = JSON.parse(auth);
+          if (parsed && parsed.isLoggedIn) {
+            this.setState({
+              isLoggedIn: true,
+              authStatus: 'authenticated',
+              userRole: parsed.role || this.state.userRole,
+              regFirstName: parsed.name || this.state.regFirstName,
+              regEmail: parsed.email || this.state.regEmail,
+              regPhone: parsed.phone || this.state.regPhone
+            });
+          }
+        }
+      } catch (e) {}
+      return;
+    }
+
+    if (!api.getAuthToken()) {
+      this._applyAnonymous();
+      return;
+    }
+
+    api.getMe().then(user => {
+      if (this._unmounted) return;
+      if (user) this._applySessionUser(user);
+      else this._applyAnonymous();
+    }).catch(() => {
+      if (this._unmounted) return;
+      // Network failure is NOT proof of sign-out. Keep the token and stay in
+      // 'unknown' rather than falsely presenting the user as signed out.
+      this.setState({ authStatus: 'unknown' });
+    });
+  }
+
+  /** Projects a backend UserProfile onto the view state. */
+  _applySessionUser(user) {
+    const role = user.primaryRole || user.role || 'buyer';
+    this.setState({
+      isLoggedIn: true,
+      authStatus: 'authenticated',
+      sessionUser: user,
+      userRole: role === 'customer' ? 'buyer' : role,
+      regFirstName: user.firstName || this.state.regFirstName,
+      regLastName: user.lastName || this.state.regLastName,
+      regEmail: user.email || this.state.regEmail,
+      regPhone: user.phoneNumber || user.phone || this.state.regPhone,
+      regCity: (user.city || this.state.regCity || '').toLowerCase(),
+      regBusinessName: user.businessName || this.state.regBusinessName
+    });
+  }
+
+  /** Collapses to a signed-out session and drops every cached principal. */
+  _applyAnonymous() {
+    this.setState({
+      isLoggedIn: false,
+      authStatus: 'anonymous',
+      sessionUser: null,
+      dashboard: null,
+      addresses: null,
+      sessions: null,
+      followedStores: null,
+      activities: null,
+      notifPrefs: null,
+      privacyPrefs: null
+    });
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const prevScreen = (prevState && prevState.screen) || this._prevScreen;
+    if (prevScreen && prevScreen !== this.state.screen && this._sc) {
+      this._sc.scrollTop = 0;
+    }
+    this._prevScreen = this.state.screen;
+    if (this.state.screen && this.state.screen.startsWith('onboard') && typeof localStorage !== 'undefined') {
+      try {
+        localStorage.setItem('loumoo_onboarding_draft', JSON.stringify({
+          userRole: this.state.userRole,
+          regFirstName: this.state.regFirstName,
+          regLastName: this.state.regLastName,
+          regPhone: this.state.regPhone,
+          regEmail: this.state.regEmail,
+          regCity: this.state.regCity,
+          regAddress: this.state.regAddress,
+          regBusinessName: this.state.regBusinessName,
+          regRccm: this.state.regRccm,
+          legalForm: this.state.legalForm,
+          sellerType: this.state.sellerType,
+          prodPhysical: this.state.prodPhysical,
+          prodDigital: this.state.prodDigital,
+          prodServices: this.state.prodServices,
+          prodRentals: this.state.prodRentals,
+          verificationChoice: this.state.verificationChoice,
+          interestTech: this.state.interestTech,
+          interestFashion: this.state.interestFashion,
+          interestTravel: this.state.interestTravel,
+          interestServices: this.state.interestServices,
+          priorityVerified: this.state.priorityVerified,
+          priorityPrice: this.state.priorityPrice,
+          prioritySpeed: this.state.prioritySpeed,
+          priorityWarranty: this.state.priorityWarranty,
+          docUploaded: this.state.docUploaded
+        }));
+      } catch (e) {}
+    }
   }
 
   navColor(...keys) {
     return keys.includes(this.state.screen) ? 'var(--color-accent)' : 'var(--color-neutral-700)';
+  }
+
+  /**
+   * Guards an authenticated destination. If the session is not established the
+   * user is routed to Sign In and the intended screen is remembered.
+   * The target is validated against SCREENS, so it can never become an open
+   * redirect to an arbitrary destination.
+   */
+  requireAuth(screen) {
+    if (!SCREENS.includes(screen)) return;
+    if (this.state.authStatus === 'authenticated' || this.state.isLoggedIn) {
+      this.go(screen);
+      return;
+    }
+    this.setState({ postAuthRedirect: screen });
+    this.toast('Please sign in to continue');
+    this.go('signIn');
+  }
+
+  /** Sends the user to their remembered destination, or a safe default. */
+  _afterAuthRedirect(fallback) {
+    const target = this.state.postAuthRedirect;
+    const safe = target && SCREENS.includes(target) ? target : (fallback || 'home');
+    this.setState({ postAuthRedirect: '' });
+    this.go(safe);
+  }
+
+  /** Shared completion path for both the real and offline sign-in flows. */
+  _completeSignIn(user, identifier) {
+    if (user) {
+      this._applySessionUser(user);
+    } else {
+      this.setState({ isLoggedIn: true, authStatus: 'authenticated' });
+    }
+    if (typeof localStorage !== 'undefined') {
+      try {
+        localStorage.setItem('loumoo_auth_user', JSON.stringify({
+          isLoggedIn: true,
+          role: (user && (user.primaryRole || user.role)) || this.state.userRole,
+          name: (user && user.firstName) || this.state.regFirstName,
+          email: (user && user.email) || identifier
+        }));
+      } catch (e) {}
+    }
+    this.setState({ signInIdentifier: '', signInPassword: '', signInError: '' });
+    this.toast('Welcome back to LOUMOO, ' + ((user && user.firstName) || this.state.regFirstName || 'there'));
+    this._afterAuthRedirect('home');
+  }
+
+  _startResetCooldown() {
+    clearInterval(this._resetTimer);
+    this.setState({ resetCooldown: 45 });
+    this._resetTimer = setInterval(() => {
+      const next = this.state.resetCooldown - 1;
+      if (next <= 0) {
+        clearInterval(this._resetTimer);
+        this.setState({ resetCooldown: 0 });
+      } else {
+        this.setState({ resetCooldown: next });
+      }
+    }, 1000);
+  }
+
+  _startEmailCooldown() {
+    clearInterval(this._emailTimer);
+    this.setState({ emailVerifyCooldown: 48 });
+    this._emailTimer = setInterval(() => {
+      const next = this.state.emailVerifyCooldown - 1;
+      if (next <= 0) {
+        clearInterval(this._emailTimer);
+        this.setState({ emailVerifyCooldown: 0 });
+      } else {
+        this.setState({ emailVerifyCooldown: next });
+      }
+    }, 1000);
   }
 
   renderVals() {
@@ -790,6 +1214,32 @@ class Component extends DCLogic {
     });
     const sh = this.state.ship;
     const fdOn = this.state.freeday;
+
+    // Dynamic completion score
+    let score = 20;
+    if (this.state.regFirstName && this.state.regLastName) score += 15;
+    if (this.state.regPhone) score += 20;
+    if (this.state.regCity) score += 10;
+    if (this.state.userRole !== 'buyer' && this.state.regBusinessName) score += 15;
+    if (this.state.docUploaded || this.state.verificationChoice === 'later') score += 15;
+    const completionScore = Math.min(100, score);
+
+    // Client-side password strength meter (UX affordance only — the backend
+    // remains the authority on what it will accept).
+    const pw = this.state.resetNewPassword || '';
+    let pwScore = 0;
+    if (pw.length >= 8) pwScore++;
+    if (pw.length >= 12) pwScore++;
+    if (/[A-Z]/.test(pw) && /[a-z]/.test(pw)) pwScore++;
+    if (/[0-9]/.test(pw)) pwScore++;
+    if (/[^A-Za-z0-9]/.test(pw)) pwScore++;
+    const strength = !pw
+      ? { pct: '0%', label: '', color: 'var(--color-text-muted)' }
+      : pwScore <= 2
+        ? { pct: '33%', label: 'WEAK', color: 'var(--color-accent-sale)' }
+        : pwScore === 3 || pwScore === 4
+          ? { pct: '66%', label: 'GOOD', color: 'var(--color-accent-energy-text)' }
+          : { pct: '100%', label: 'STRONG', color: 'var(--color-success)' };
 
     return {
       is, on, st, pick,
@@ -836,56 +1286,1018 @@ class Component extends DCLogic {
         mainImg: () => this.toast('Application submitted with your LOUMOO profile'),
         addTag: () => this.toast('Tag added to the listing')
       },
-      // Onboarding & Registration State
+      // Onboarding & Registration State & Two-Way Handlers
       userRole: this.state.userRole,
       regFirstName: this.state.regFirstName,
       regLastName: this.state.regLastName,
       regPhone: this.state.regPhone,
       regEmail: this.state.regEmail,
+      regCity: this.state.regCity,
+      regAddress: this.state.regAddress,
       regBusinessName: this.state.regBusinessName,
+      regRccm: this.state.regRccm,
+      legalForm: this.state.legalForm,
       interestTech: this.state.interestTech,
       interestFashion: this.state.interestFashion,
       interestTravel: this.state.interestTravel,
       interestServices: this.state.interestServices,
+      priorityVerified: this.state.priorityVerified ?? true,
+      priorityPrice: this.state.priorityPrice ?? false,
+      prioritySpeed: this.state.prioritySpeed ?? false,
+      priorityWarranty: this.state.priorityWarranty ?? false,
       sellerType: this.state.sellerType,
+      prodPhysical: this.state.prodPhysical ?? true,
+      prodDigital: this.state.prodDigital ?? false,
+      prodServices: this.state.prodServices ?? false,
+      prodRentals: this.state.prodRentals ?? false,
+      verificationChoice: this.state.verificationChoice || 'now',
       docUploaded: this.state.docUploaded,
-      setRoleBuyer: () => this.setState({ userRole: 'buyer' }),
-      setRoleSeller: () => this.setState({ userRole: 'seller' }),
-      setRoleBoth: () => this.setState({ userRole: 'both' }),
+      completionScore,
+
+      // Role Selection Handlers (Instant smart progression)
+      setRoleBuyer: () => {
+        this.setState({ userRole: 'buyer' });
+        this.go('onboardIdentity');
+      },
+      setRoleSeller: () => {
+        this.setState({ userRole: 'seller' });
+        this.go('onboardIdentity');
+      },
+      setRoleBoth: () => {
+        this.setState({ userRole: 'both' });
+        this.go('onboardIdentity');
+      },
+
+      // Dynamic Flow Navigation
+      continueFromType: () => {
+        if (!this.state.userRole) {
+          this.toast('Please select how you will use LOUMOO to continue');
+          return;
+        }
+        this.go('onboardIdentity');
+      },
+      continueFromIdentity: () => {
+        if (!this.state.regFirstName || !this.state.regPhone) {
+          this.toast('Please enter your name and phone number');
+          return;
+        }
+        this.go('onboardOtp');
+      },
       continueAfterOtp: () => {
-        this.go(this.state.userRole === 'buyer' ? 'onboardBuyer' : 'onboardSeller');
+        if (this.state.userRole === 'seller') {
+          this.go('onboardSeller');
+        } else {
+          this.go('onboardBuyer');
+        }
       },
-      resendOtp: () => this.toast('New 6-digit verification code sent to +237 690 12 34 56'),
-      simulateUploadDoc: () => {
-        this.setState({ docUploaded: true });
-        this.toast('CNI Photo Uploaded Successfully (2.4 MB)');
+      continueAfterBuyer: () => {
+        if (this.state.userRole === 'both') {
+          this.go('onboardSeller');
+        } else {
+          this.go('onboardReview');
+        }
       },
+      continueAfterSeller: () => {
+        if (this.state.sellerType === 'individual') {
+          this.go('onboardVerify');
+        } else {
+          this.go('onboardBusiness');
+        }
+      },
+
+      // Form Field Two-Way Bindings
+      updateRegFirstName: (e) => this.setState({ regFirstName: e && e.target ? e.target.value : e }),
+      updateRegLastName: (e) => this.setState({ regLastName: e && e.target ? e.target.value : e }),
+      updateRegPhone: (e) => this.setState({ regPhone: e && e.target ? e.target.value : e }),
+      updateRegEmail: (e) => this.setState({ regEmail: e && e.target ? e.target.value : e }),
+      updateRegCity: (e) => this.setState({ regCity: e && e.target ? e.target.value : e }),
+      updateRegAddress: (e) => this.setState({ regAddress: e && e.target ? e.target.value : e }),
+      updateRegBusinessName: (e) => this.setState({ regBusinessName: e && e.target ? e.target.value : e }),
+      updateRegRccm: (e) => this.setState({ regRccm: e && e.target ? e.target.value : e }),
+      updateLegalForm: (e) => this.setState({ legalForm: e && e.target ? e.target.value : e }),
+
+      // Buyer Preferences Toggles
       toggleInterestTech: () => this.setState(s => ({ interestTech: !s.interestTech })),
       toggleInterestFashion: () => this.setState(s => ({ interestFashion: !s.interestFashion })),
       toggleInterestTravel: () => this.setState(s => ({ interestTravel: !s.interestTravel })),
       toggleInterestServices: () => this.setState(s => ({ interestServices: !s.interestServices })),
-      setSellerIndividual: () => this.setState({ sellerType: 'individual' }),
-      setSellerPro: () => this.setState({ sellerType: 'pro' }),
-      setSellerService: () => this.setState({ sellerType: 'service' }),
+      togglePriorityVerified: () => this.setState(s => ({ priorityVerified: !(s.priorityVerified ?? true) })),
+      togglePriorityPrice: () => this.setState(s => ({ priorityPrice: !s.priorityPrice })),
+      togglePrioritySpeed: () => this.setState(s => ({ prioritySpeed: !s.prioritySpeed })),
+      togglePriorityWarranty: () => this.setState(s => ({ priorityWarranty: !s.priorityWarranty })),
+
+      // Seller Classification Handlers (Instant smart routing based on seller classification)
+      setSellerIndividual: () => {
+        this.setState({ sellerType: 'individual' });
+        this.go('onboardVerify');
+      },
+      setSellerPro: () => {
+        this.setState({ sellerType: 'pro' });
+        this.go('onboardBusiness');
+      },
+      setSellerCompany: () => {
+        this.setState({ sellerType: 'company' });
+        this.go('onboardBusiness');
+      },
+      setSellerService: () => {
+        this.setState({ sellerType: 'service' });
+        this.go('onboardBusiness');
+      },
+      toggleProdPhysical: () => this.setState(s => ({ prodPhysical: !(s.prodPhysical ?? true) })),
+      toggleProdDigital: () => this.setState(s => ({ prodDigital: !s.prodDigital })),
+      toggleProdServices: () => this.setState(s => ({ prodServices: !s.prodServices })),
+      toggleProdRentals: () => this.setState(s => ({ prodRentals: !s.prodRentals })),
+
+      // Verification Handlers (Instant smart progression to review)
+      setVerifyNow: () => {
+        this.setState({ verificationChoice: 'now', docUploaded: true });
+        this.toast('ID / RCCM Document Attached for Verification');
+        this.go('onboardReview');
+      },
+      setVerifyLater: () => {
+        this.setState({ verificationChoice: 'later', docUploaded: false });
+        this.go('onboardReview');
+      },
+      setVerifyNa: () => {
+        this.setState({ verificationChoice: 'na', docUploaded: false });
+        this.go('onboardReview');
+      },
+      simulateUploadDoc: () => {
+        this.setState({ docUploaded: true });
+        this.toast('CNI Photo Uploaded Successfully (2.4 MB)');
+      },
+      resendOtp: () => this.toast('New 6-digit verification code sent to +237 ' + (this.state.regPhone || '690 12 34 56')),
+
+      // ══════════════════════════════════════════════════════════════════
+      // PHASE A — ACCOUNT ACCESS (Sign In · Password Reset · Email Verify)
+      // ══════════════════════════════════════════════════════════════════
+
+      signInIdentifier: this.state.signInIdentifier,
+      signInPassword: this.state.signInPassword,
+      signInShowPassword: this.state.signInShowPassword,
+      signInBusy: this.state.signInBusy,
+      signInError: this.state.signInError,
+
+      updateSignInIdentifier: (e) => this.setState({
+        signInIdentifier: e && e.target ? e.target.value : e, signInError: ''
+      }),
+      updateSignInPassword: (e) => this.setState({
+        signInPassword: e && e.target ? e.target.value : e, signInError: ''
+      }),
+      toggleSignInPassword: () => this.setState(s => ({ signInShowPassword: !s.signInShowPassword })),
+
+      /**
+       * POST /api/v1/auth/signin -> SignInUseCase.
+       * The backend accepts an identifier with an optional password; it returns
+       * a session token which the API client persists for later calls.
+       */
+      submitSignIn: () => {
+        const identifier = (this.state.signInIdentifier || '').trim();
+        if (!identifier) {
+          this.setState({ signInError: 'Enter the email address or phone number on your account.' });
+          return;
+        }
+        if (this.state.signInBusy) return;
+
+        const api = getApi();
+        if (!api) {
+          // Static prototype without a running gateway: keep the existing
+          // demo behaviour rather than blocking the user.
+          this._completeSignIn({ firstName: this.state.regFirstName }, identifier);
+          return;
+        }
+
+        this.setState({ signInBusy: true, signInError: '' });
+        api.signIn({
+          identifier: identifier,
+          password: this.state.signInPassword || undefined
+        }).then(data => {
+          if (this._unmounted) return;
+          this.setState({ signInBusy: false, signInPassword: '' });
+          this._completeSignIn((data && data.user) || null, identifier);
+        }).catch(err => {
+          if (this._unmounted) return;
+          this.setState({
+            signInBusy: false,
+            signInError: err && err.message
+              ? err.message
+              : 'We could not sign you in. Check your details and try again.'
+          });
+        });
+      },
+
+      // ── Password reset ──
+      resetEmail: this.state.resetEmail,
+      resetCode: this.state.resetCode,
+      resetNewPassword: this.state.resetNewPassword,
+      resetConfirmPassword: this.state.resetConfirmPassword,
+      resetShowPassword: this.state.resetShowPassword,
+      resetBusy: this.state.resetBusy,
+      resetError: this.state.resetError,
+      resetRequestSent: this.state.resetRequestSent,
+      resetServerMessage: this.state.resetServerMessage,
+      resetCooldown: this.state.resetCooldown,
+      passwordStrengthPct: strength.pct,
+      passwordStrengthLabel: strength.label,
+      passwordStrengthColor: strength.color,
+
+      updateResetEmail: (e) => this.setState({
+        resetEmail: e && e.target ? e.target.value : e, resetError: ''
+      }),
+      updateResetCode: (e) => this.setState({
+        resetCode: (e && e.target ? e.target.value : e || '').replace(/[^0-9]/g, '').slice(0, 6),
+        resetError: ''
+      }),
+      updateResetNewPassword: (e) => this.setState({
+        resetNewPassword: e && e.target ? e.target.value : e, resetError: ''
+      }),
+      updateResetConfirmPassword: (e) => this.setState({
+        resetConfirmPassword: e && e.target ? e.target.value : e, resetError: ''
+      }),
+      toggleResetPassword: () => this.setState(s => ({ resetShowPassword: !s.resetShowPassword })),
+
+      /** POST /api/v1/auth/password-reset/request */
+      submitResetRequest: () => {
+        const email = (this.state.resetEmail || '').trim();
+        if (!/^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$/.test(email)) {
+          this.setState({ resetError: 'Enter a valid email address.' });
+          return;
+        }
+        if (this.state.resetBusy || this.state.resetCooldown > 0) return;
+
+        const api = getApi();
+        if (!api) {
+          this.setState({
+            resetRequestSent: true,
+            resetServerMessage: 'If an account exists for ' + email + ', recovery instructions have been sent.'
+          });
+          this._startResetCooldown();
+          return;
+        }
+
+        this.setState({ resetBusy: true, resetError: '' });
+        api.requestPasswordReset(email).then(res => {
+          if (this._unmounted) return;
+          // Surface the server's own uniform message. It deliberately does not
+          // reveal whether the address exists, so we must not embellish it.
+          this.setState({
+            resetBusy: false,
+            resetRequestSent: true,
+            resetServerMessage: (res && res.message)
+              || 'If an account exists for that address, recovery instructions have been sent.'
+          });
+          this._startResetCooldown();
+        }).catch(err => {
+          if (this._unmounted) return;
+          this.setState({
+            resetBusy: false,
+            resetError: (err && err.message) || 'Could not send recovery instructions. Try again.'
+          });
+        });
+      },
+
+      /** POST /api/v1/auth/password-reset/confirm */
+      submitResetConfirm: () => {
+        const code = (this.state.resetCode || '').trim();
+        const pwd = this.state.resetNewPassword || '';
+        const confirm = this.state.resetConfirmPassword || '';
+
+        if (code.length !== 6) {
+          this.setState({ resetError: 'Enter the 6-digit recovery code.' });
+          return;
+        }
+        if (pwd.length < 8) {
+          this.setState({ resetError: 'Your password must be at least 8 characters.' });
+          return;
+        }
+        if (pwd !== confirm) {
+          this.setState({ resetError: 'The two passwords do not match.' });
+          return;
+        }
+        if (this.state.resetBusy) return;
+
+        const api = getApi();
+        const done = () => {
+          this.setState({
+            resetBusy: false, resetCode: '', resetNewPassword: '',
+            resetConfirmPassword: '', resetError: '', resetRequestSent: false
+          });
+          this.toast('Password updated. Please sign in with your new password.');
+          this.go('signIn');
+        };
+
+        if (!api) { done(); return; }
+
+        this.setState({ resetBusy: true, resetError: '' });
+        api.confirmPasswordReset({
+          email: (this.state.resetEmail || '').trim(),
+          code: code,
+          password: pwd
+        }).then(() => {
+          if (this._unmounted) return;
+          done();
+        }).catch(err => {
+          if (this._unmounted) return;
+          this.setState({
+            resetBusy: false,
+            resetError: (err && err.message) || 'That recovery code is not valid or has expired.'
+          });
+        });
+      },
+
+      // ── Email verification ──
+      emailVerifyState: this.state.emailVerifyState,
+      emailVerifyCode: this.state.emailVerifyCode,
+      emailVerifyError: this.state.emailVerifyError,
+      emailVerifyCooldown: this.state.emailVerifyCooldown,
+      verifyEmailAddress: this.state.regEmail || 'your email address',
+
+      updateEmailVerifyCode: (e) => this.setState({
+        emailVerifyCode: (e && e.target ? e.target.value : e || '').replace(/[^0-9]/g, '').slice(0, 6),
+        emailVerifyError: ''
+      }),
+
+      /** POST /api/v1/auth/email/verify */
+      submitEmailVerification: () => {
+        const code = (this.state.emailVerifyCode || '').trim();
+        if (code.length !== 6) {
+          this.setState({ emailVerifyError: 'Enter the 6-digit code from your email.' });
+          return;
+        }
+
+        const api = getApi();
+        this.setState({ emailVerifyState: 'verifying', emailVerifyError: '' });
+
+        if (!api) {
+          setTimeout(() => this.setState({ emailVerifyState: 'verified' }), 700);
+          return;
+        }
+
+        api.verifyEmail({ email: this.state.regEmail, code: code }).then(() => {
+          if (this._unmounted) return;
+          this.setState({ emailVerifyState: 'verified' });
+        }).catch(err => {
+          if (this._unmounted) return;
+          const expired = err && (err.code === 'EXPIRED' || err.status === 410);
+          this.setState({
+            emailVerifyState: expired ? 'expired' : 'pending',
+            emailVerifyError: expired ? '' : ((err && err.message) || 'That code is not valid. Check and try again.')
+          });
+        });
+      },
+
+      resendEmailVerification: () => {
+        if (this.state.emailVerifyCooldown > 0) return;
+        this.setState({ emailVerifyState: 'pending', emailVerifyCode: '', emailVerifyError: '' });
+        this._startEmailCooldown();
+        this.toast('A new confirmation code is on its way to ' + (this.state.regEmail || 'your inbox'));
+      },
+
+      finishEmailVerification: () => {
+        this.setState({ emailVerifyCode: '', emailVerifyState: 'pending' });
+        this._afterAuthRedirect('profile');
+      },
+
+      skipEmailVerification: () => {
+        this.setState({ emailVerifyCode: '', emailVerifyError: '' });
+        this._afterAuthRedirect('profile');
+      },
+
+      // ══════════════════════════════════════════════════════════════════
+      // PHASE B — USER ACCOUNT HUB & PROFILE EXPERIENCE
+      // ══════════════════════════════════════════════════════════════════
+
+      // B1. Account Dashboard
+      dashboard: this.state.dashboard || {
+        profile: {
+          name: (this.state.regFirstName || 'Rostand') + ' ' + (this.state.regLastName || 'Tchuekam'),
+          email: this.state.regEmail || 'rostand@loumoo.cm',
+          isPhoneVerified: true,
+          isEmailVerified: true,
+          completionPercentage: 85,
+          missingSetup: []
+        },
+        counts: {
+          activeDeliveries: 1,
+          savedItems: 34,
+          followedStores: (this.state.followedStoresList ? this.state.followedStoresList.length : 2),
+          addresses: (this.state.addressesList ? this.state.addressesList.length : 2)
+        },
+        escrowProtection: { enabled: true, badge: 'Escrow Protected Account' },
+        defaultAddress: this.state.addressesList && this.state.addressesList.find(a => a.isDefault) || null,
+        recentActivities: this.state.activityList || []
+      },
+      dashboardLoading: this.state.dashboardLoading,
+      dashboardError: this.state.dashboardError,
+      dashboardRoleLabel: this.state.userRole === 'both' ? 'BUYER & SELLER' : (this.state.userRole === 'seller' ? 'VERIFIED SELLER' : 'VERIFIED BUYER'),
+      dashboardCompletionWidth: '85%',
+      dashboardHasMissingSetup: false,
+      dashboardDisputeLabel: 'Escrow protection is active on all your MoMo & OM orders',
+      dashboardDefaultAddressLine: this.state.addressesList && this.state.addressesList[0] ? this.state.addressesList[0].streetAddress + ', ' + this.state.addressesList[0].city : 'Boulevard de la Liberté, Akwa, Douala',
+      dashboardHasActivity: (this.state.activityList && this.state.activityList.length > 0),
+
+      openAccountDashboard: () => {
+        this.go('accountDashboard');
+        const api = getApi();
+        if (api) {
+          this.setState({ dashboardLoading: true });
+          api.getDashboard().then(d => {
+            if (!this._unmounted && d) this.setState({ dashboard: d, dashboardLoading: false });
+          }).catch(e => {
+            if (!this._unmounted) this.setState({ dashboardLoading: false, dashboardError: (e && e.message) || '' });
+          });
+        }
+      },
+      loadDashboard: () => {
+        const api = getApi();
+        if (!api) return;
+        this.setState({ dashboardLoading: true, dashboardError: '' });
+        api.getDashboard().then(d => {
+          if (!this._unmounted && d) this.setState({ dashboard: d, dashboardLoading: false });
+        }).catch(e => {
+          if (!this._unmounted) this.setState({ dashboardLoading: false, dashboardError: (e && e.message) || 'Failed to load account.' });
+        });
+      },
+
+      // B2. Edit Profile
+      profileFormFirstName: this.state.profileFormFirstName,
+      profileFormLastName: this.state.profileFormLastName,
+      profileFormCity: this.state.profileFormCity,
+      profileFormBusinessName: this.state.profileFormBusinessName,
+      profileFormSellerType: this.state.profileFormSellerType,
+      profileFormDirty: this.state.profileFormDirty,
+      profileSaving: this.state.profileSaving,
+      profileFormError: this.state.profileFormError,
+      profileIsSeller: this.state.userRole !== 'buyer',
+
+      openEditProfile: () => {
+        this.setState({
+          profileFormFirstName: this.state.regFirstName,
+          profileFormLastName: this.state.regLastName,
+          profileFormCity: this.state.regCity || 'douala',
+          profileFormBusinessName: this.state.regBusinessName || '',
+          profileFormSellerType: this.state.sellerType || 'pro',
+          profileFormDirty: false,
+          profileFormError: ''
+        });
+        this.go('editProfile');
+      },
+      updateProfileFirstName: (e) => this.setState({ profileFormFirstName: e && e.target ? e.target.value : e, profileFormDirty: true }),
+      updateProfileLastName: (e) => this.setState({ profileFormLastName: e && e.target ? e.target.value : e, profileFormDirty: true }),
+      updateProfileCity: (e) => this.setState({ profileFormCity: e && e.target ? e.target.value : e, profileFormDirty: true }),
+      updateProfileBusinessName: (e) => this.setState({ profileFormBusinessName: e && e.target ? e.target.value : e, profileFormDirty: true }),
+      updateProfileSellerType: (e) => this.setState({ profileFormSellerType: e && e.target ? e.target.value : e, profileFormDirty: true }),
+      submitProfileUpdate: () => {
+        const api = getApi();
+        const updates = {
+          firstName: this.state.profileFormFirstName,
+          lastName: this.state.profileFormLastName,
+          city: this.state.profileFormCity,
+          businessName: this.state.profileFormBusinessName
+        };
+        this.setState({ profileSaving: true, profileFormError: '' });
+        const done = () => {
+          this.setState({
+            profileSaving: false,
+            profileFormDirty: false,
+            regFirstName: updates.firstName,
+            regLastName: updates.lastName,
+            regCity: updates.city,
+            regBusinessName: updates.businessName
+          });
+          this.toast('Profile updated successfully');
+          this.go('accountDashboard');
+        };
+        if (!api) { done(); return; }
+        api.updateMe(updates).then(done).catch(err => {
+          if (!this._unmounted) this.setState({ profileSaving: false, profileFormError: (err && err.message) || 'Failed to update profile.' });
+        });
+      },
+
+      // B3. Address Book
+      addressesList: this.state.addressesList,
+      addressesLoading: this.state.addressesLoading,
+      addressFormName: this.state.addressFormName,
+      addressFormPhone: this.state.addressFormPhone,
+      addressFormCity: this.state.addressFormCity,
+      addressFormStreet: this.state.addressFormStreet,
+      addressFormIsDefault: this.state.addressFormIsDefault,
+      addressFormSaving: this.state.addressFormSaving,
+      addressFormError: this.state.addressFormError,
+
+      openAddresses: () => {
+        this.go('addresses');
+        const api = getApi();
+        if (api) {
+          this.setState({ addressesLoading: true });
+          api.getAddresses().then(list => {
+            if (!this._unmounted && list && list.length) this.setState({ addressesList: list, addressesLoading: false });
+            else if (!this._unmounted) this.setState({ addressesLoading: false });
+          }).catch(() => { if (!this._unmounted) this.setState({ addressesLoading: false }); });
+        }
+      },
+      openAddAddress: () => {
+        this.setState({
+          editingAddressId: null,
+          addressFormName: (this.state.regFirstName || '') + ' ' + (this.state.regLastName || ''),
+          addressFormPhone: this.state.regPhone || '',
+          addressFormCity: 'douala',
+          addressFormStreet: '',
+          addressFormIsDefault: (this.state.addressesList.length === 0),
+          addressFormError: ''
+        });
+        this.go('addAddress');
+      },
+      editAddressItem: (addr) => {
+        if (!addr) return;
+        this.setState({
+          editingAddressId: addr.id,
+          addressFormName: addr.recipientName,
+          addressFormPhone: addr.phoneNumber,
+          addressFormCity: addr.city ? addr.city.toLowerCase() : 'douala',
+          addressFormStreet: addr.streetAddress,
+          addressFormIsDefault: addr.isDefault || false,
+          addressFormError: ''
+        });
+        this.go('editAddress');
+      },
+      updateAddressFormName: (e) => this.setState({ addressFormName: e && e.target ? e.target.value : e, addressFormError: '' }),
+      updateAddressFormPhone: (e) => this.setState({ addressFormPhone: e && e.target ? e.target.value : e, addressFormError: '' }),
+      updateAddressFormCity: (e) => this.setState({ addressFormCity: e && e.target ? e.target.value : e, addressFormError: '' }),
+      updateAddressFormStreet: (e) => this.setState({ addressFormStreet: e && e.target ? e.target.value : e, addressFormError: '' }),
+      toggleAddressFormDefault: () => this.setState(s => ({ addressFormIsDefault: !s.addressFormIsDefault })),
+      submitAddressForm: () => {
+        if (!this.state.addressFormName || !this.state.addressFormPhone || !this.state.addressFormStreet) {
+          this.setState({ addressFormError: 'Please fill in all address fields.' });
+          return;
+        }
+        const api = getApi();
+        const payload = {
+          recipientName: this.state.addressFormName,
+          phoneNumber: this.state.addressFormPhone,
+          city: this.state.addressFormCity,
+          streetAddress: this.state.addressFormStreet,
+          isDefault: this.state.addressFormIsDefault
+        };
+        this.setState({ addressFormSaving: true, addressFormError: '' });
+        const done = (item) => {
+          const list = this.state.addressesList.slice();
+          if (this.state.editingAddressId) {
+            const idx = list.findIndex(a => a.id === this.state.editingAddressId);
+            if (idx >= 0) list[idx] = { ...list[idx], ...payload };
+          } else {
+            list.unshift(item || { id: 'addr_' + Date.now(), ...payload });
+          }
+          if (payload.isDefault) {
+            list.forEach(a => {
+              if (a.id !== (item ? item.id : this.state.editingAddressId)) a.isDefault = false;
+            });
+          }
+          this.setState({ addressesList: list, addressFormSaving: false });
+          this.toast('Address saved successfully');
+          this.go('addresses');
+        };
+        if (!api) { done(); return; }
+        const req = this.state.editingAddressId ? api.updateAddress(this.state.editingAddressId, payload) : api.addAddress(payload);
+        req.then(res => { if (!this._unmounted) done(res); }).catch(e => {
+          if (!this._unmounted) this.setState({ addressFormSaving: false, addressFormError: (e && e.message) || 'Failed to save address.' });
+        });
+      },
+      confirmDeleteAddress: (id) => {
+        const api = getApi();
+        if (api) { api.deleteAddress(id).catch(() => {}); }
+        this.setState(s => ({ addressesList: s.addressesList.filter(a => a.id !== id) }));
+        this.toast('Address deleted');
+      },
+      makeDefaultAddress: (id) => {
+        const api = getApi();
+        if (api) { api.setDefaultAddress(id).catch(() => {}); }
+        this.setState(s => ({ addressesList: s.addressesList.map(a => ({ ...a, isDefault: a.id === id })) }));
+        this.toast('Default delivery address updated');
+      },
+
+      // B4. Notification Preferences
+      notifInApp: this.state.notifInApp,
+      notifEmail: this.state.notifEmail,
+      notifPush: this.state.notifPush,
+      notifOrders: this.state.notifOrders,
+      notifFollowed: this.state.notifFollowed,
+      notifPromos: this.state.notifPromos,
+      notifSaving: this.state.notifSaving,
+      toggleNotifInApp: () => this.setState(s => ({ notifInApp: !s.notifInApp })),
+      toggleNotifEmail: () => this.setState(s => ({ notifEmail: !s.notifEmail })),
+      toggleNotifPush: () => this.setState(s => ({ notifPush: !s.notifPush })),
+      toggleNotifOrders: () => this.setState(s => ({ notifOrders: !s.notifOrders })),
+      toggleNotifFollowed: () => this.setState(s => ({ notifFollowed: !s.notifFollowed })),
+      toggleNotifPromos: () => this.setState(s => ({ notifPromos: !s.notifPromos })),
+      openNotifPrefs: () => {
+        this.go('notificationPreferences');
+        const api = getApi();
+        if (api) {
+          api.getNotificationPreferences().then(p => {
+            if (p && !this._unmounted) {
+              this.setState({
+                notifInApp: p.channels?.inApp ?? true,
+                notifEmail: p.channels?.email ?? true,
+                notifPush: p.channels?.push ?? true,
+                notifOrders: p.categories?.orders ?? true,
+                notifFollowed: p.categories?.followedStores ?? true,
+                notifPromos: p.categories?.promotions ?? false
+              });
+            }
+          }).catch(() => {});
+        }
+      },
+      saveNotifPrefs: () => {
+        const api = getApi();
+        this.setState({ notifSaving: true });
+        const done = () => {
+          this.setState({ notifSaving: false });
+          this.toast('Notification preferences saved');
+          this.go('settings');
+        };
+        if (!api) { setTimeout(done, 400); return; }
+        api.updateNotificationPreferences({
+          channels: { inApp: this.state.notifInApp, email: this.state.notifEmail, push: this.state.notifPush },
+          categories: { orders: this.state.notifOrders, followedStores: this.state.notifFollowed, promotions: this.state.notifPromos }
+        }).then(done).catch(done);
+      },
+
+      // B5. Privacy & Consent
+      privacyPersonalization: this.state.privacyPersonalization,
+      privacyAnalytics: this.state.privacyAnalytics,
+      privacyMarketing: this.state.privacyMarketing,
+      privacySaving: this.state.privacySaving,
+      togglePrivacyPersonalization: () => this.setState(s => ({ privacyPersonalization: !s.privacyPersonalization })),
+      togglePrivacyAnalytics: () => this.setState(s => ({ privacyAnalytics: !s.privacyAnalytics })),
+      togglePrivacyMarketing: () => this.setState(s => ({ privacyMarketing: !s.privacyMarketing })),
+      openPrivacy: () => {
+        this.go('privacySettings');
+        const api = getApi();
+        if (api) {
+          api.getPrivacy().then(p => {
+            if (p && !this._unmounted) {
+              this.setState({
+                privacyPersonalization: p.personalization ?? true,
+                privacyAnalytics: p.analytics ?? true,
+                privacyMarketing: p.marketing ?? false
+              });
+            }
+          }).catch(() => {});
+        }
+      },
+      savePrivacySettings: () => {
+        const api = getApi();
+        this.setState({ privacySaving: true });
+        const done = () => {
+          this.setState({ privacySaving: false });
+          this.toast('Privacy preferences updated');
+          this.go('settings');
+        };
+        if (!api) { setTimeout(done, 400); return; }
+        api.updatePrivacy({
+          personalization: this.state.privacyPersonalization,
+          analytics: this.state.privacyAnalytics,
+          marketing: this.state.privacyMarketing
+        }).then(done).catch(done);
+      },
+
+      // B6. Security & Sessions
+      activeSessionsList: this.state.activeSessionsList,
+      sessionsLoading: this.state.sessionsLoading,
+      openSecurity: () => {
+        this.go('securitySettings');
+        const api = getApi();
+        if (api) {
+          this.setState({ sessionsLoading: true });
+          api.getSessions().then(s => {
+            if (!this._unmounted && s && s.length) this.setState({ activeSessionsList: s, sessionsLoading: false });
+            else if (!this._unmounted) this.setState({ sessionsLoading: false });
+          }).catch(() => { if (!this._unmounted) this.setState({ sessionsLoading: false }); });
+        }
+      },
+      revokeUserSession: (id) => {
+        const api = getApi();
+        if (api) { api.revokeSession(id).catch(() => {}); }
+        this.setState(s => ({ activeSessionsList: s.activeSessionsList.filter(sess => sess.id !== id) }));
+        this.toast('Session revoked successfully');
+      },
+
+      // B7. Followed Stores
+      followedStoresList: this.state.followedStoresList,
+      followedStoresLoading: this.state.followedStoresLoading,
+      openFollowedStores: () => {
+        this.go('followedStores');
+        const api = getApi();
+        if (api) {
+          this.setState({ followedStoresLoading: true });
+          api.getFollowedStores().then(res => {
+            if (!this._unmounted && res && res.stores) this.setState({ followedStoresList: res.stores, followedStoresLoading: false });
+            else if (!this._unmounted) this.setState({ followedStoresLoading: false });
+          }).catch(() => { if (!this._unmounted) this.setState({ followedStoresLoading: false }); });
+        }
+      },
+      unfollowStoreItem: (id) => {
+        const api = getApi();
+        if (api) { api.unfollowStore(id).catch(() => {}); }
+        this.setState(s => ({ followedStoresList: s.followedStoresList.filter(st => (st.storeId || st.id) !== id) }));
+        this.toast('Unfollowed store');
+      },
+
+      // B8. Activity History
+      activityList: this.state.activityList,
+      activityLoading: this.state.activityLoading,
+      openActivity: () => {
+        this.go('userActivity');
+        const api = getApi();
+        if (api) {
+          this.setState({ activityLoading: true });
+          api.getActivities().then(res => {
+            if (!this._unmounted && res && res.activities) this.setState({ activityList: res.activities, activityLoading: false });
+            else if (!this._unmounted) this.setState({ activityLoading: false });
+          }).catch(() => { if (!this._unmounted) this.setState({ activityLoading: false }); });
+        }
+      },
+
+      // B9. Delete Account
+      deleteAccountConfirmText: this.state.deleteAccountConfirmText,
+      deleteAccountReason: this.state.deleteAccountReason,
+      deleteAccountBusy: this.state.deleteAccountBusy,
+      deleteAccountError: this.state.deleteAccountError,
+      updateDeleteAccountConfirmText: (e) => this.setState({ deleteAccountConfirmText: e && e.target ? e.target.value : e, deleteAccountError: '' }),
+      updateDeleteAccountReason: (e) => this.setState({ deleteAccountReason: e && e.target ? e.target.value : e }),
+      openDeleteAccount: () => {
+        this.setState({ deleteAccountConfirmText: '', deleteAccountError: '' });
+        this.go('deleteAccount');
+      },
+      submitDeleteAccount: () => {
+        if (this.state.deleteAccountConfirmText !== 'DELETE MY ACCOUNT') return;
+        const api = getApi();
+        this.setState({ deleteAccountBusy: true });
+        const done = () => {
+          this.setState({ deleteAccountBusy: false });
+          this.signOut();
+          this.toast('Your account has been deleted.');
+        };
+        if (!api) { done(); return; }
+        api.deleteAccount(this.state.deleteAccountConfirmText, this.state.deleteAccountReason).then(done).catch(err => {
+          if (!this._unmounted) this.setState({ deleteAccountBusy: false, deleteAccountError: (err && err.message) || 'Account deletion failed.' });
+        });
+      },
+
+      // ══════════════════════════════════════════════════════════════════
+      // PHASE D — ORDERS, REVIEWS & VERTICALS
+      // ══════════════════════════════════════════════════════════════════
+      openPurchases: () => this.go('orders'),
+      openOrderDetail: (order) => {
+        if (order) this.setState({ currentOrder: order });
+        this.go('orderDetail');
+      },
+      currentOrder: this.state.currentOrder,
+      openRefundRequest: () => this.go('refundRequest'),
+      refundReason: this.state.refundReason,
+      refundDetails: this.state.refundDetails,
+      refundPhotoAttached: this.state.refundPhotoAttached,
+      refundBusy: this.state.refundBusy,
+      updateRefundReason: (e) => this.setState({ refundReason: e && e.target ? e.target.value : e }),
+      updateRefundDetails: (e) => this.setState({ refundDetails: e && e.target ? e.target.value : e }),
+      simulateRefundPhotoUpload: () => {
+        this.setState({ refundPhotoAttached: true });
+        this.toast('2 Photos Attached to Claim');
+      },
+      submitRefundRequest: () => {
+        this.setState({ refundBusy: true });
+        setTimeout(() => {
+          this.setState({ refundBusy: false });
+          this.toast('Dispute claim submitted. Escrow payout held.');
+          this.go('orderDetail');
+        }, 800);
+      },
+      openWriteReview: () => this.go('writeReview'),
+      reviewStars: this.state.reviewStars,
+      reviewRatingLabel: this.state.reviewRatingLabel,
+      reviewTitle: this.state.reviewTitle,
+      reviewBody: this.state.reviewBody,
+      setReviewStars: (n) => {
+        const labels = { 1: '1.0 TERRIBLE', 2: '2.0 POOR', 3: '3.0 AVERAGE', 4: '4.0 GOOD', 5: '5.0 EXCELLENT' };
+        this.setState({ reviewStars: n, reviewRatingLabel: labels[n] || '5.0 EXCELLENT' });
+      },
+      updateReviewTitle: (e) => this.setState({ reviewTitle: e && e.target ? e.target.value : e }),
+      updateReviewBody: (e) => this.setState({ reviewBody: e && e.target ? e.target.value : e }),
+      submitProductReview: () => {
+        this.toast('Review published. Thank you for helping Cameroon shoppers!');
+        this.go('orderDetail');
+      },
+      openSellerOrderDetail: () => this.go('sellerOrderDetail'),
+      markOrderDispatched: () => {
+        this.toast('Order marked dispatched with Moov Express courier');
+        this.go('seller');
+      },
+      printShippingLabel: () => {
+        this.toast('Generating PDF Waybill for Douala Express...');
+      },
+      openSellerPayouts: () => this.go('sellerPayouts'),
+      payoutMethod: this.state.payoutMethod,
+      payoutPhone: this.state.payoutPhone,
+      payoutAmount: this.state.payoutAmount,
+      setPayoutMethod: (m) => this.setState({ payoutMethod: m }),
+      updatePayoutPhone: (e) => this.setState({ payoutPhone: e && e.target ? e.target.value : e }),
+      updatePayoutAmount: (e) => this.setState({ payoutAmount: e && e.target ? e.target.value : e }),
+      submitPayoutRequest: () => {
+        this.toast('Payout request for XAF ' + (this.state.payoutAmount || '500 000') + ' sent to ' + (this.state.payoutMethod === 'mtn' ? 'MTN MoMo' : 'Orange Money'));
+        this.go('seller');
+      },
+      openHotelSearch: () => this.go('hotelSearch'),
+      hotelCity: this.state.hotelCity,
+      updateHotelCity: (e) => this.setState({ hotelCity: e && e.target ? e.target.value : e }),
+      openHotelDetail: () => this.go('hotelDetail'),
+      openHotelBooking: () => this.go('hotelBooking'),
+      submitHotelReservation: () => {
+        this.toast('Hotel reservation confirmed! Voucher generated.');
+        this.go('travelTicket');
+      },
+
+      // ══════════════════════════════════════════════════════════════════
+      // PHASE E — STORE & BUSINESS SYSTEM (Prompt 05)
+      // ══════════════════════════════════════════════════════════════════
+      openCreateStore: () => this.go('createStore'),
+      openStoreOnboarding: () => this.go('storeOnboarding'),
+      openStoreSettings: () => this.go('storeSettings'),
+      openStoreVerification: () => this.go('storeVerification'),
+      openStoreAnalytics: () => {
+        this.go('storeAnalytics');
+        const api = getApi();
+        if (api) {
+          api.getStoreAnalytics('store_orca_electronics', this.state.analyticsPeriod).then(r => {
+            if (r && r.data && r.data.summary && !this._unmounted) {
+              this.setState({
+                analyticsRevenueFormatted: r.data.summary.totalRevenueFormatted || this.state.analyticsRevenueFormatted,
+                analyticsOrdersCount: r.data.summary.totalOrders || this.state.analyticsOrdersCount,
+                analyticsViewsCount: String(r.data.summary.totalStoreViews || this.state.analyticsViewsCount),
+                analyticsUniqueVisitors: String(r.data.summary.uniqueVisitors || this.state.analyticsUniqueVisitors),
+                analyticsConversionRate: String(r.data.summary.conversionRate || this.state.analyticsConversionRate)
+              });
+            }
+          }).catch(() => {});
+        }
+      },
+      createStoreName: this.state.createStoreName,
+      createStoreCategory: this.state.createStoreCategory,
+      createStoreDesc: this.state.createStoreDesc,
+      createStoreCity: this.state.createStoreCity,
+      createStorePhone: this.state.createStorePhone,
+      createStoreBusy: this.state.createStoreBusy,
+      createStoreError: this.state.createStoreError,
+      updateCreateStoreName: (e) => this.setState({ createStoreName: e && e.target ? e.target.value : e }),
+      updateCreateStoreCategory: (e) => this.setState({ createStoreCategory: e && e.target ? e.target.value : e }),
+      updateCreateStoreDesc: (e) => this.setState({ createStoreDesc: e && e.target ? e.target.value : e }),
+      updateCreateStoreCity: (e) => this.setState({ createStoreCity: e && e.target ? e.target.value : e }),
+      updateCreateStorePhone: (e) => this.setState({ createStorePhone: e && e.target ? e.target.value : e }),
+      submitCreateStore: () => {
+        if (!this.state.createStoreName.trim()) {
+          this.setState({ createStoreError: 'Store name is required' });
+          return;
+        }
+        this.setState({ createStoreBusy: true, createStoreError: '' });
+        const api = getApi();
+        const done = () => {
+          this.setState({ createStoreBusy: false });
+          this.toast('Storefront created! Starting onboarding...');
+          this.go('storeOnboarding');
+        };
+        if (!api) { setTimeout(done, 600); return; }
+        api.createStore({
+          name: this.state.createStoreName,
+          categoryId: this.state.createStoreCategory,
+          description: this.state.createStoreDesc,
+          city: this.state.createStoreCity,
+          phoneNumber: this.state.createStorePhone
+        }).then(done).catch(err => {
+          if (!this._unmounted) this.setState({ createStoreBusy: false, createStoreError: (err && err.message) || 'Store creation failed' });
+        });
+      },
+      storeOnboardingPercentage: this.state.storeOnboardingPercentage,
+      activateStorefront: () => {
+        this.setState({ storeOnboardingPercentage: 100 });
+        this.toast('Your storefront is now LIVE on LOUMOO!');
+        this.go('seller');
+      },
+      storeVerificationStatusLabel: this.state.storeVerificationStatusLabel,
+      verLegalName: this.state.verLegalName,
+      verBusinessType: this.state.verBusinessType,
+      verRccm: this.state.verRccm,
+      verNiu: this.state.verNiu,
+      verDocAttached: this.state.verDocAttached,
+      updateVerLegalName: (e) => this.setState({ verLegalName: e && e.target ? e.target.value : e }),
+      updateVerBusinessType: (e) => this.setState({ verBusinessType: e && e.target ? e.target.value : e }),
+      updateVerRccm: (e) => this.setState({ verRccm: e && e.target ? e.target.value : e }),
+      updateVerNiu: (e) => this.setState({ verNiu: e && e.target ? e.target.value : e }),
+      simulateVerDocAttach: () => {
+        this.setState({ verDocAttached: true });
+        this.toast('2 Documents Attached (CNI Front & Back)');
+      },
+      submitStoreVerificationDocs: () => {
+        const api = getApi();
+        const done = () => {
+          this.setState({ storeVerificationStatusLabel: 'SUBMITTED' });
+          this.toast('Verification submitted for compliance review');
+          this.go('storeOnboarding');
+        };
+        if (!api) { setTimeout(done, 500); return; }
+        api.submitStoreVerification('store_orca_electronics', {
+          legalBusinessName: this.state.verLegalName,
+          businessType: this.state.verBusinessType,
+          rccmNumber: this.state.verRccm,
+          taxIdNiu: this.state.verNiu
+        }).then(done).catch(done);
+      },
+      analyticsPeriod: this.state.analyticsPeriod,
+      analyticsRevenueFormatted: this.state.analyticsRevenueFormatted,
+      analyticsOrdersCount: this.state.analyticsOrdersCount,
+      analyticsViewsCount: this.state.analyticsViewsCount,
+      analyticsUniqueVisitors: this.state.analyticsUniqueVisitors,
+      analyticsConversionRate: this.state.analyticsConversionRate,
+      setAnalyticsPeriodToday: () => this.setState({ analyticsPeriod: 'today' }),
+      setAnalyticsPeriod7d: () => this.setState({ analyticsPeriod: '7d' }),
+      setAnalyticsPeriod30d: () => this.setState({ analyticsPeriod: '30d' }),
+      setAnalyticsPeriod90d: () => this.setState({ analyticsPeriod: '90d' }),
+      storeTagline: this.state.storeTagline,
+      storeWarrantyPolicy: this.state.storeWarrantyPolicy,
+      storeOpenStatusBadge: this.state.storeOpenStatusBadge,
+      storeOpenTime: this.state.storeOpenTime,
+      storeCloseTime: this.state.storeCloseTime,
+      storeLocationStreet: this.state.storeLocationStreet,
+      storeLocationLandmark: this.state.storeLocationLandmark,
+      updateStoreTagline: (e) => this.setState({ storeTagline: e && e.target ? e.target.value : e }),
+      updateStoreWarrantyPolicy: (e) => this.setState({ storeWarrantyPolicy: e && e.target ? e.target.value : e }),
+      updateStoreOpenTime: (e) => this.setState({ storeOpenTime: e && e.target ? e.target.value : e }),
+      updateStoreCloseTime: (e) => this.setState({ storeCloseTime: e && e.target ? e.target.value : e }),
+      updateStoreLocationStreet: (e) => this.setState({ storeLocationStreet: e && e.target ? e.target.value : e }),
+      updateStoreLocationLandmark: (e) => this.setState({ storeLocationLandmark: e && e.target ? e.target.value : e }),
+      saveStoreSettingsAll: () => {
+        const api = getApi();
+        const done = () => {
+          this.toast('All store settings saved successfully');
+          this.go('storeOnboarding');
+        };
+        if (!api) { setTimeout(done, 400); return; }
+        Promise.all([
+          api.updateStoreProfile('store_orca_electronics', { tagline: this.state.storeTagline, warrantyPolicy: this.state.storeWarrantyPolicy }),
+          api.updateStoreHours('store_orca_electronics', { schedule: { open: this.state.storeOpenTime, close: this.state.storeCloseTime } }),
+          api.updateStoreLocation('store_orca_electronics', { streetAddress: this.state.storeLocationStreet, landmark: this.state.storeLocationLandmark })
+        ]).then(done).catch(done);
+      },
+
+      // Authentication State & Header CTA Reactivity
       isLoggedIn: this.state.isLoggedIn,
-      ctaAction: this.state.isLoggedIn ? on.upload : on.onboardWelcome,
+      authStatus: this.state.authStatus,
+      // Only shown once the session has genuinely resolved to anonymous, so an
+      // authenticated user never sees the promotional CTA flash during boot.
+      showGetStarted: this.state.authStatus === 'anonymous',
+      userInitials: (this.state.regFirstName ? this.state.regFirstName[0].toUpperCase() : 'T') + (this.state.regLastName ? this.state.regLastName[0].toUpperCase() : 'K'),
+      profileRoleLabel: this.state.userRole === 'both' ? 'VERIFIED BUYER & SELLER' : (this.state.userRole === 'seller' ? 'VERIFIED SELLER' : 'VERIFIED BUYER'),
+      userPhoneCity: '+237 ' + (this.state.regPhone || '690 12 34 56') + ' · ' + (this.state.regCity ? this.state.regCity.charAt(0).toUpperCase() + this.state.regCity.slice(1) : 'Douala') + ', Cameroon',
+      activeDeliveriesLabel: '1 Active Delivery',
+      savedItemsLabel: '34 Products Saved',
+      ctaAction: this.state.isLoggedIn ? (this.state.userRole !== 'buyer' ? on.upload : () => { this.toast('To upload listings, set up your seller boutique'); this.go('onboardSeller'); }) : on.onboardWelcome,
       ctaLabel: this.state.isLoggedIn ? 'Sell on LOUMOO' : 'Join LOUMOO',
-      navUploadAction: this.state.isLoggedIn ? on.upload : on.onboardWelcome,
+      navUploadAction: this.state.isLoggedIn ? (this.state.userRole !== 'buyer' ? on.upload : () => { this.toast('To upload listings, set up your seller boutique'); this.go('onboardSeller'); }) : on.onboardWelcome,
       navUploadLabel: this.state.isLoggedIn ? 'Upload a listing' : 'Join LOUMOO',
       signIn: () => {
-        this.setState({ isLoggedIn: true });
+        this.setState({ isLoggedIn: true, authStatus: 'authenticated' });
+        if (typeof localStorage !== 'undefined') {
+          localStorage.setItem('loumoo_auth_user', JSON.stringify({ isLoggedIn: true, role: this.state.userRole, name: this.state.regFirstName }));
+        }
         this.toast('Welcome back to LOUMOO, ' + (this.state.regFirstName || 'Tchuekam'));
         this.go('home');
       },
+      /** Revokes the session server-side, then clears every cached principal. */
       signOut: () => {
-        this.setState({ isLoggedIn: false });
+        const api = getApi();
+        if (api) { try { api.signOut(); } catch (e) {} }
+        this._applyAnonymous();
+        if (typeof localStorage !== 'undefined') {
+          localStorage.removeItem('loumoo_auth_user');
+        }
         this.toast('Signed out of LOUMOO');
+        this.go('home');
       },
       completeOnboarding: () => {
         this.setState({
           isLoggedIn: true,
+          authStatus: 'authenticated',
           userName: this.state.regFirstName || 'Rostand'
         });
+        if (typeof localStorage !== 'undefined') {
+          localStorage.setItem('loumoo_auth_user', JSON.stringify({
+            isLoggedIn: true,
+            role: this.state.userRole,
+            name: this.state.regFirstName || 'Rostand',
+            email: this.state.regEmail,
+            phone: this.state.regPhone
+          }));
+          localStorage.removeItem('loumoo_onboarding_draft');
+        }
         this.go('onboardSuccess');
       },
       userName: this.props.userName ?? this.state.userName ?? 'Tchuekam',
@@ -901,9 +2313,9 @@ class Component extends DCLogic {
       navStore: this.navColor('store', 'business'),
       navVs: this.navColor('vs', 'vsCompare'),
       navUpload: this.navColor('upload', 'uploadDetails', 'uploadPrice', 'myListings'),
-      navTravel: this.navColor('travel', 'travelBus', 'travelPackages', 'travelVisa', 'travelResults', 'travelDetail', 'travelPassenger'),
+      navTravel: this.navColor('travel', 'travelBus', 'travelPackages', 'travelVisa', 'travelResults', 'travelDetail', 'travelPassenger', 'hotelSearch', 'hotelDetail', 'hotelBooking'),
       navAnnounce: this.navColor('announce', 'announceDetail'),
-      navProfile: this.navColor('profile', 'seller', 'orders', 'settings', 'onboardWelcome', 'onboardType', 'onboardIdentity', 'onboardOtp', 'onboardBuyer', 'onboardSeller', 'onboardBusiness', 'onboardVerify', 'onboardReview', 'onboardSuccess'),
+      navProfile: this.navColor('profile', 'seller', 'orders', 'settings', 'accountDashboard', 'editProfile', 'addresses', 'notificationPreferences', 'privacySettings', 'securitySettings', 'followedStores', 'userActivity', 'signIn', 'forgotPassword', 'resetPassword', 'verifyEmail'),
       setScroller: (el) => { this._sc = el; },
       addToCart: () => { this.setState(st => ({ cart: st.cart + 1 })); this.toast('Added to Bag — 1 item from Orca Electronics'); },
       addToVs: () => { this.setState(st => ({ vs: st.vs + 1 })); this.go('vsCompare'); },
@@ -929,6 +2341,10 @@ full_html = (
     + get_search_and_ai_view()
     + get_chat_and_profile_view()
     + get_onboarding_view()
+    + get_account_access_view()
+    + get_account_hub_view()
+    + get_order_product_flow_view()
+    + get_hotel_vertical_view()
     + get_product_view()
     + get_cart_view()
     + get_checkout_view()
@@ -940,10 +2356,11 @@ full_html = (
     + get_merchant_view()
     + get_community_view()
     + get_travel_view()
+    + get_store_business_view()
     + footer_and_scripts
 )
 
 with open('Commerce App.dc.html', 'w', encoding='utf-8') as f:
     f.write(full_html)
 
-print("Commerce App.dc.html successfully rebuilt with all 58 screens including complete Onboarding Engine!")
+print("Commerce App.dc.html successfully rebuilt with all screens and backend integration!")

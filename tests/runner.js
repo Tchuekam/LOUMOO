@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * LOUMOO Phase 1 & 2 Automated Test Runner
- * Executes all unit and integration test suites and reports results
+ * LOUMOO Master Automated Test Runner (Phases 1, 2, and 4)
+ * Executes all 25 unit and integration test suites and reports results
  */
 
 const envTest = require('./unit/env.test');
@@ -24,6 +24,16 @@ const accountDeletionTest = require('./unit/account_deletion.test');
 const privacyControlsTest = require('./unit/privacy_controls.test');
 const authEndpointsIntegrationTest = require('./integration/auth_endpoints.test');
 
+// Prompt 04 User & Profile System Suites
+const savedItemsTest = require('./unit/saved_items.test');
+const followedStoresTest = require('./unit/followed_stores.test');
+const addressManagementTest = require('./unit/address_management.test');
+const userActivityTest = require('./unit/user_activity.test');
+const notificationPreferencesTest = require('./unit/notification_preferences.test');
+const purchaseHistoryTest = require('./unit/purchase_history.test');
+const accountDashboardTest = require('./unit/account_dashboard.test');
+const authenticatedUiTest = require('./unit/authenticated_ui.test');
+
 const suites = [
   // Foundation Suites
   { name: 'Environment & Config', test: envTest.run },
@@ -44,12 +54,22 @@ const suites = [
   { name: 'Account Security & Sessions (02.08, 02.12)', test: accountSecurityTest.run },
   { name: 'Account Deletion & Anonymization (02.13)', test: accountDeletionTest.run },
   { name: 'Privacy Preferences & Consent (02.14)', test: privacyControlsTest.run },
-  { name: 'Auth & Identity REST Endpoints Pipeline', test: authEndpointsIntegrationTest.run }
+  { name: 'Auth & Identity REST Endpoints Pipeline', test: authEndpointsIntegrationTest.run },
+
+  // Prompt 04 User & Profile System Suites
+  { name: 'Saved Items / Wishlist (04.04)', test: savedItemsTest.run },
+  { name: 'Followed Stores (04.05)', test: followedStoresTest.run },
+  { name: 'Address Management & Default Integrity (04.08)', test: addressManagementTest.run },
+  { name: 'User-Facing Activity History (04.07)', test: userActivityTest.run },
+  { name: 'Notification Preferences (04.09)', test: notificationPreferencesTest.run },
+  { name: 'Purchase History & Orders (04.06)', test: purchaseHistoryTest.run },
+  { name: 'Account Dashboard Read Model (04.02)', test: accountDashboardTest.run },
+  { name: 'Authenticated UI & Get Started State', test: authenticatedUiTest.run }
 ];
 
 async function main() {
   console.log('\n======================================================================');
-  console.log('  LOUMOO — ENTERPRISE AUTHENTICATION & IDENTITY TEST SUITE');
+  console.log('  LOUMOO — ENTERPRISE FULL TEST SUITE (PHASES 1, 2 & 4)');
   console.log('======================================================================\n');
 
   let passedSuites = 0;

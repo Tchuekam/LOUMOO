@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 LOUMOO WORLD-CLASS ACCOUNT REGISTRATION & ONBOARDING VIEWS
-Adaptive, progressive multi-step journey (Welcome, Intent, Identity, OTP Verification, Buyer/Seller Dynamic Branching, Seller Business & Legal Forms, Trust & CNI Verification, Review, and Celebration) with Lucide SVG iconography.
+Fully interactive, adaptive role-based onboarding journey (Welcome, Intent, Identity, OTP Verification, Buyer/Seller Dynamic Branching, Seller Business & Legal Forms, Trust & CNI Verification, Review, and Celebration) with Lucide SVG iconography.
 """
 
 def get_onboarding_view():
@@ -14,7 +14,7 @@ def get_onboarding_view():
   
   <!-- Top Navigation & Back -->
   <div style="display:flex;align-items:center;justify-content:space-between">
-    <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
+    <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
     </button>
     <span style="font:800 13px/1 var(--font-heading);letter-spacing:.08em;color:var(--color-accent)">LOUMOO ID</span>
@@ -61,7 +61,7 @@ def get_onboarding_view():
       <span>LET'S GET STARTED</span>
       <span>→</span>
     </button>
-    <button onClick="{{ on.profile }}" class="btn btn-secondary btn-block" style="height:44px;font-size:13px">
+    <button onClick="{{ on.signIn }}" class="btn btn-secondary btn-block" style="height:44px;font-size:13px;cursor:pointer">
       I ALREADY HAVE AN ACCOUNT · SIGN IN
     </button>
   </div>
@@ -78,7 +78,7 @@ def get_onboarding_view():
   <div>
     <!-- Progress Indicator (Step 1 of 6) -->
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
-      <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
+      <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
       </button>
       <div style="font:700 11.5px/1 var(--font-heading);color:var(--color-text-muted)">STEP 1 OF 6</div>
@@ -94,63 +94,73 @@ def get_onboarding_view():
       We'll personalize your experience. You can easily change this later in settings.
     </p>
 
-    <!-- Choice 1: Buy -->
-    <div style="display:flex;flex-direction:column;gap:14px">
-      <button onClick="{{ setRoleBuyer }}" class="card-premium" style="display:flex;align-items:flex-start;gap:16px;padding:20px;text-align:left;border:2px solid {{ userRole === 'buyer' ? 'var(--color-accent)' : 'var(--color-divider)' }};background:{{ userRole === 'buyer' ? 'var(--color-accent-100)' : 'var(--color-surface)' }};cursor:pointer">
-        <div style="width:44px;height:44px;border-radius:var(--radius-sm);background:{{ userRole === 'buyer' ? 'var(--color-accent)' : 'var(--color-neutral-200)' }};color:{{ userRole === 'buyer' ? '#fff' : 'var(--color-text)' }};display:flex;align-items:center;justify-content:center;flex-shrink:0">
+    <!-- Interactive Role Selection Cards -->
+    <div style="display:flex;flex-direction:column;gap:14px" role="radiogroup" aria-label="Account usage intent">
+      
+      <!-- Option 1: Buy -->
+      <button onClick="{{ setRoleBuyer }}" role="radio" aria-checked="{{ userRole === 'buyer' }}" tabindex="0" class="card-premium" style="display:flex;align-items:flex-start;gap:16px;padding:20px;text-align:left;border:{{ userRole === 'buyer' ? '2.5px solid var(--color-accent)' : '1.5px solid var(--color-divider)' }};background:{{ userRole === 'buyer' ? 'var(--color-accent-100)' : 'var(--color-surface)' }};cursor:pointer;border-radius:var(--radius-md);transition:all 0.2s ease;box-shadow:{{ userRole === 'buyer' ? '0 0 0 1px var(--color-accent)' : 'none' }}">
+        <div style="width:44px;height:44px;border-radius:var(--radius-sm);background:{{ userRole === 'buyer' ? 'var(--color-accent)' : 'var(--color-neutral-200)' }};color:{{ userRole === 'buyer' ? '#fff' : 'var(--color-text)' }};display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s ease">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
         </div>
         <div style="flex:1">
-          <div style="font:800 16px/1.2 var(--font-heading);color:var(--color-text)">I'm here to buy</div>
+          <div style="font:800 16px/1.2 var(--font-heading);color:var(--color-text);display:flex;align-items:center;gap:8px">
+            <span>🛍 I'm here to buy</span>
+            <sc-if value="{{ userRole === 'buyer' }}">
+              <span class="tag tag-accent" style="min-height:20px;padding:1px 6px;font-size:10px">SELECTED</span>
+            </sc-if>
+          </div>
           <div style="font:400 13px/1.4 var(--font-body);color:var(--color-text-secondary);margin-top:4px">
             Discover electronics, fashion, hotels, flights &amp; services with secure MoMo/OM escrow checkout.
           </div>
         </div>
-        <div style="width:22px;height:22px;border-radius:50%;border:2px solid {{ userRole === 'buyer' ? 'var(--color-accent)' : 'var(--color-divider)' }};background:{{ userRole === 'buyer' ? 'var(--color-accent)' : 'transparent' }};display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px">
+        <div style="width:24px;height:24px;border-radius:50%;border:2px solid {{ userRole === 'buyer' ? 'var(--color-accent)' : 'var(--color-divider)' }};background:{{ userRole === 'buyer' ? 'var(--color-accent)' : 'transparent' }};display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:800;flex-shrink:0;transition:all 0.2s ease">
           {{ userRole === 'buyer' ? '✓' : '' }}
         </div>
       </button>
 
-      <!-- Choice 2: Sell -->
-      <button onClick="{{ setRoleSeller }}" class="card-premium" style="display:flex;align-items:flex-start;gap:16px;padding:20px;text-align:left;border:2px solid {{ userRole === 'seller' ? 'var(--color-accent)' : 'var(--color-divider)' }};background:{{ userRole === 'seller' ? 'var(--color-accent-100)' : 'var(--color-surface)' }};cursor:pointer">
-        <div style="width:44px;height:44px;border-radius:var(--radius-sm);background:{{ userRole === 'seller' ? 'var(--color-accent)' : 'var(--color-neutral-200)' }};color:{{ userRole === 'seller' ? '#fff' : 'var(--color-text)' }};display:flex;align-items:center;justify-content:center;flex-shrink:0">
+      <!-- Option 2: Sell -->
+      <button onClick="{{ setRoleSeller }}" role="radio" aria-checked="{{ userRole === 'seller' }}" tabindex="0" class="card-premium" style="display:flex;align-items:flex-start;gap:16px;padding:20px;text-align:left;border:{{ userRole === 'seller' ? '2.5px solid var(--color-accent)' : '1.5px solid var(--color-divider)' }};background:{{ userRole === 'seller' ? 'var(--color-accent-100)' : 'var(--color-surface)' }};cursor:pointer;border-radius:var(--radius-md);transition:all 0.2s ease;box-shadow:{{ userRole === 'seller' ? '0 0 0 1px var(--color-accent)' : 'none' }}">
+        <div style="width:44px;height:44px;border-radius:var(--radius-sm);background:{{ userRole === 'seller' ? 'var(--color-accent)' : 'var(--color-neutral-200)' }};color:{{ userRole === 'seller' ? '#fff' : 'var(--color-text)' }};display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s ease">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 3h20l-2 10H4L2 3z"/><path d="M6 13v7a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-7"/></svg>
         </div>
         <div style="flex:1">
-          <div style="font:800 16px/1.2 var(--font-heading);color:var(--color-text)">I'm here to sell</div>
+          <div style="font:800 16px/1.2 var(--font-heading);color:var(--color-text);display:flex;align-items:center;gap:8px">
+            <span>🏪 I'm here to sell</span>
+            <sc-if value="{{ userRole === 'seller' }}">
+              <span class="tag tag-accent" style="min-height:20px;padding:1px 6px;font-size:10px">SELECTED</span>
+            </sc-if>
+          </div>
           <div style="font:400 13px/1.4 var(--font-body);color:var(--color-text-secondary);margin-top:4px">
             Create verified listings, manage orders, receive MoMo payouts, and grow your commercial brand.
           </div>
         </div>
-        <div style="width:22px;height:22px;border-radius:50%;border:2px solid {{ userRole === 'seller' ? 'var(--color-accent)' : 'var(--color-divider)' }};background:{{ userRole === 'seller' ? 'var(--color-accent)' : 'transparent' }};display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px">
+        <div style="width:24px;height:24px;border-radius:50%;border:2px solid {{ userRole === 'seller' ? 'var(--color-accent)' : 'var(--color-divider)' }};background:{{ userRole === 'seller' ? 'var(--color-accent)' : 'transparent' }};display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:800;flex-shrink:0;transition:all 0.2s ease">
           {{ userRole === 'seller' ? '✓' : '' }}
         </div>
       </button>
 
-      <!-- Choice 3: Both -->
-      <button onClick="{{ setRoleBoth }}" class="card-premium" style="display:flex;align-items:flex-start;gap:16px;padding:20px;text-align:left;border:2px solid {{ userRole === 'both' ? 'var(--color-accent)' : 'var(--color-divider)' }};background:{{ userRole === 'both' ? 'var(--color-accent-100)' : 'var(--color-surface)' }};cursor:pointer">
-        <div style="width:44px;height:44px;border-radius:var(--radius-sm);background:{{ userRole === 'both' ? 'var(--color-accent)' : 'var(--color-neutral-200)' }};color:{{ userRole === 'both' ? '#fff' : 'var(--color-text)' }};display:flex;align-items:center;justify-content:center;flex-shrink:0">
+      <!-- Option 3: Both -->
+      <button onClick="{{ setRoleBoth }}" role="radio" aria-checked="{{ userRole === 'both' }}" tabindex="0" class="card-premium" style="display:flex;align-items:flex-start;gap:16px;padding:20px;text-align:left;border:{{ userRole === 'both' ? '2.5px solid var(--color-accent)' : '1.5px solid var(--color-divider)' }};background:{{ userRole === 'both' ? 'var(--color-accent-100)' : 'var(--color-surface)' }};cursor:pointer;border-radius:var(--radius-md);transition:all 0.2s ease;box-shadow:{{ userRole === 'both' ? '0 0 0 1px var(--color-accent)' : 'none' }}">
+        <div style="width:44px;height:44px;border-radius:var(--radius-sm);background:{{ userRole === 'both' ? 'var(--color-accent)' : 'var(--color-neutral-200)' }};color:{{ userRole === 'both' ? '#fff' : 'var(--color-text)' }};display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s ease">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg>
         </div>
         <div style="flex:1">
-          <div style="font:800 16px/1.2 var(--font-heading);color:var(--color-text)">I want to do both</div>
+          <div style="font:800 16px/1.2 var(--font-heading);color:var(--color-text);display:flex;align-items:center;gap:8px">
+            <span>🔄 I want to do both</span>
+            <sc-if value="{{ userRole === 'both' }}">
+              <span class="tag tag-accent" style="min-height:20px;padding:1px 6px;font-size:10px">SELECTED</span>
+            </sc-if>
+          </div>
           <div style="font:400 13px/1.4 var(--font-body);color:var(--color-text-secondary);margin-top:4px">
             Shop across the marketplace while operating your store or offering professional services.
           </div>
         </div>
-        <div style="width:22px;height:22px;border-radius:50%;border:2px solid {{ userRole === 'both' ? 'var(--color-accent)' : 'var(--color-divider)' }};background:{{ userRole === 'both' ? 'var(--color-accent)' : 'transparent' }};display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px">
+        <div style="width:24px;height:24px;border-radius:50%;border:2px solid {{ userRole === 'both' ? 'var(--color-accent)' : 'var(--color-divider)' }};background:{{ userRole === 'both' ? 'var(--color-accent)' : 'transparent' }};display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:800;flex-shrink:0;transition:all 0.2s ease">
           {{ userRole === 'both' ? '✓' : '' }}
         </div>
       </button>
-    </div>
-  </div>
 
-  <!-- Continue CTA -->
-  <div style="margin-top:28px">
-    <button onClick="{{ on.onboardIdentity }}" class="btn btn-primary btn-block" style="height:50px;font-size:15px">
-      <span>CONTINUE TO YOUR DETAILS</span>
-      <span>→</span>
-    </button>
+    </div>
   </div>
 
 </div>
@@ -165,7 +175,7 @@ def get_onboarding_view():
   <div>
     <!-- Progress Indicator (Step 2 of 6) -->
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
-      <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
+      <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
       </button>
       <div style="font:700 11.5px/1 var(--font-heading);color:var(--color-text-muted)">STEP 2 OF 6</div>
@@ -178,7 +188,7 @@ def get_onboarding_view():
 
     <h2 style="font-size:24px;margin:0 0 6px">What's your name &amp; contact?</h2>
     <p style="font-size:14px;color:var(--color-text-secondary);margin:0 0 24px">
-      Used for order dispatches, escrow payment confirmations, and verified seller identity.
+      Used for order dispatches, escrow payment confirmations, and verified account security.
     </p>
 
     <div class="card-premium" style="display:flex;flex-direction:column;gap:16px">
@@ -187,11 +197,11 @@ def get_onboarding_view():
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
         <div>
           <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">FIRST NAME</label>
-          <input type="text" class="input" value="{{ regFirstName }}" placeholder="e.g. Rostand">
+          <input type="text" class="input" value="{{ regFirstName }}" placeholder="e.g. Rostand" onInput="{{ updateRegFirstName }}">
         </div>
         <div>
           <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">LAST NAME</label>
-          <input type="text" class="input" value="{{ regLastName }}" placeholder="e.g. Tchuekam">
+          <input type="text" class="input" value="{{ regLastName }}" placeholder="e.g. Tchuekam" onInput="{{ updateRegLastName }}">
         </div>
       </div>
 
@@ -202,26 +212,26 @@ def get_onboarding_view():
           <div style="width:84px;height:44px;background:var(--color-neutral-100);border:1.5px solid var(--color-divider);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font:700 13.5px/1 var(--font-heading)">
             🇨🇲 +237
           </div>
-          <input type="tel" class="input" value="{{ regPhone }}" placeholder="690 12 34 56" style="flex:1">
+          <input type="tel" class="input" value="{{ regPhone }}" placeholder="690 12 34 56" style="flex:1" onInput="{{ updateRegPhone }}">
         </div>
       </div>
 
       <!-- Email Address -->
       <div>
         <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">EMAIL ADDRESS</label>
-        <input type="email" class="input" value="{{ regEmail }}" placeholder="rostand@example.com">
+        <input type="email" class="input" value="{{ regEmail }}" placeholder="rostand@example.com" onInput="{{ updateRegEmail }}">
       </div>
 
       <!-- City / Region -->
       <div>
         <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">CITY / LOCATION</label>
-        <select class="input" style="cursor:pointer">
-          <option value="douala">Douala (Akwa, Bonanjo, Bonapriso, Bali)</option>
-          <option value="yaounde">Yaoundé (Bastos, Omnisports, Centre)</option>
+        <select class="input" style="cursor:pointer" value="{{ regCity }}" onChange="{{ updateRegCity }}">
+          <option value="douala">Douala (Akwa, Bonanjo, Bonapriso, Bali, Deido)</option>
+          <option value="yaounde">Yaoundé (Bastos, Omnisports, Centre, Mendong)</option>
           <option value="bafoussam">Bafoussam (Ouest)</option>
-          <option value="kribi">Kribi (Océan)</option>
+          <option value="kribi">Kribi (Océan / Tara)</option>
           <option value="limbe">Limbé / Buea (South West)</option>
-          <option value="garoua">Garoua / Maroua (Nord)</option>
+          <option value="garoua">Garoua / Maroua (Nord / Extrême-Nord)</option>
         </select>
       </div>
 
@@ -230,7 +240,7 @@ def get_onboarding_view():
 
   <!-- Continue CTA -->
   <div style="margin-top:28px">
-    <button onClick="{{ on.onboardOtp }}" class="btn btn-primary btn-block" style="height:50px;font-size:15px">
+    <button onClick="{{ continueFromIdentity }}" class="btn btn-primary btn-block" style="height:50px;font-size:15px;cursor:pointer">
       <span>SEND VERIFICATION CODE</span>
       <span>→</span>
     </button>
@@ -248,7 +258,7 @@ def get_onboarding_view():
   <div>
     <!-- Progress Indicator (Step 3 of 6) -->
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
-      <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
+      <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
       </button>
       <div style="font:700 11.5px/1 var(--font-heading);color:var(--color-text-muted)">STEP 3 OF 6</div>
@@ -265,7 +275,7 @@ def get_onboarding_view():
       </div>
       <h2 style="font-size:24px;margin:0 0 6px">Let's make sure it's you</h2>
       <p style="font-size:14px;color:var(--color-text-secondary);max-width:380px;margin:0 auto;line-height:1.45">
-        We sent a 6-digit verification code to <strong>+237 690 12 34 56</strong>
+        We sent a 6-digit verification code to <strong>+237 {{ regPhone }}</strong>
       </p>
     </div>
 
@@ -292,9 +302,9 @@ def get_onboarding_view():
     </div>
   </div>
 
-  <!-- Continue CTA (Dynamic branch to Buyer or Seller) -->
+  <!-- Continue CTA (Dynamic branch to Buyer, Seller, or Both) -->
   <div style="margin-top:28px">
-    <button onClick="{{ continueAfterOtp }}" class="btn btn-primary btn-block" style="height:50px;font-size:15px">
+    <button onClick="{{ continueAfterOtp }}" class="btn btn-primary btn-block" style="height:50px;font-size:15px;cursor:pointer">
       <span>VERIFY &amp; CONTINUE</span>
       <span>✓</span>
     </button>
@@ -312,11 +322,11 @@ def get_onboarding_view():
   <div>
     <!-- Progress Indicator (Step 4 of 6) -->
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
-      <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
+      <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
       </button>
       <div style="display:flex;align-items:center;gap:10px">
-        <button onClick="{{ on.onboardReview }}" style="border:none;background:transparent;font:700 12px/1 var(--font-heading);color:var(--color-text-muted);cursor:pointer">SKIP FOR NOW</button>
+        <button onClick="{{ continueAfterBuyer }}" style="border:none;background:transparent;font:700 12px/1 var(--font-heading);color:var(--color-text-muted);cursor:pointer">SKIP FOR NOW</button>
         <span style="font:700 11.5px/1 var(--font-heading);color:var(--color-text-muted)">STEP 4 OF 6</span>
       </div>
     </div>
@@ -328,34 +338,34 @@ def get_onboarding_view():
 
     <h2 style="font-size:24px;margin:0 0 6px">What are you into?</h2>
     <p style="font-size:14px;color:var(--color-text-secondary);margin:0 0 20px">
-      Select 3 or more categories to personalize your daily deals and feed.
+      Select categories to personalize your daily deals, flash drops, and discovery feed.
     </p>
 
     <!-- Visual Category Selection Chips -->
     <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(130px, 1fr));gap:10px;margin-bottom:24px">
       
-      <button onClick="{{ toggleInterestTech }}" class="card-premium" style="padding:14px;text-align:center;border:2px solid {{ interestTech ? 'var(--color-accent)' : 'var(--color-divider)' }};background:{{ interestTech ? 'var(--color-accent-100)' : 'var(--color-surface)' }};cursor:pointer">
+      <button onClick="{{ toggleInterestTech }}" class="card-premium" style="padding:14px;text-align:center;border:2px solid {{ interestTech ? 'var(--color-accent)' : 'var(--color-divider)' }};background:{{ interestTech ? 'var(--color-accent-100)' : 'var(--color-surface)' }};cursor:pointer;border-radius:var(--radius-md)">
         <div style="width:36px;height:36px;border-radius:50%;background:{{ interestTech ? 'var(--color-accent)' : 'var(--color-neutral-100)' }};color:{{ interestTech ? '#fff' : 'var(--color-text)' }};display:flex;align-items:center;justify-content:center;margin:0 auto 8px">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect width="18" height="12" x="3" y="4" rx="2"/><line x1="2" x2="22" y1="20" y2="20"/></svg>
         </div>
         <div style="font:700 12.5px/1.2 var(--font-heading);color:var(--color-text)">Tech &amp; Laptops</div>
       </button>
 
-      <button onClick="{{ toggleInterestFashion }}" class="card-premium" style="padding:14px;text-align:center;border:2px solid {{ interestFashion ? 'var(--color-accent)' : 'var(--color-divider)' }};background:{{ interestFashion ? 'var(--color-accent-100)' : 'var(--color-surface)' }};cursor:pointer">
+      <button onClick="{{ toggleInterestFashion }}" class="card-premium" style="padding:14px;text-align:center;border:2px solid {{ interestFashion ? 'var(--color-accent)' : 'var(--color-divider)' }};background:{{ interestFashion ? 'var(--color-accent-100)' : 'var(--color-surface)' }};cursor:pointer;border-radius:var(--radius-md)">
         <div style="width:36px;height:36px;border-radius:50%;background:{{ interestFashion ? 'var(--color-accent)' : 'var(--color-neutral-100)' }};color:{{ interestFashion ? '#fff' : 'var(--color-text)' }};display:flex;align-items:center;justify-content:center;margin:0 auto 8px">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/></svg>
         </div>
         <div style="font:700 12.5px/1.2 var(--font-heading);color:var(--color-text)">Fashion &amp; Shoes</div>
       </button>
 
-      <button onClick="{{ toggleInterestTravel }}" class="card-premium" style="padding:14px;text-align:center;border:2px solid {{ interestTravel ? 'var(--color-accent)' : 'var(--color-divider)' }};background:{{ interestTravel ? 'var(--color-accent-100)' : 'var(--color-surface)' }};cursor:pointer">
+      <button onClick="{{ toggleInterestTravel }}" class="card-premium" style="padding:14px;text-align:center;border:2px solid {{ interestTravel ? 'var(--color-accent)' : 'var(--color-divider)' }};background:{{ interestTravel ? 'var(--color-accent-100)' : 'var(--color-surface)' }};cursor:pointer;border-radius:var(--radius-md)">
         <div style="width:36px;height:36px;border-radius:50%;background:{{ interestTravel ? 'var(--color-accent)' : 'var(--color-neutral-100)' }};color:{{ interestTravel ? '#fff' : 'var(--color-text)' }};display:flex;align-items:center;justify-content:center;margin:0 auto 8px">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1z"/></svg>
         </div>
         <div style="font:700 12.5px/1.2 var(--font-heading);color:var(--color-text)">Flights &amp; Hotels</div>
       </button>
 
-      <button onClick="{{ toggleInterestServices }}" class="card-premium" style="padding:14px;text-align:center;border:2px solid {{ interestServices ? 'var(--color-accent)' : 'var(--color-divider)' }};background:{{ interestServices ? 'var(--color-accent-100)' : 'var(--color-surface)' }};cursor:pointer">
+      <button onClick="{{ toggleInterestServices }}" class="card-premium" style="padding:14px;text-align:center;border:2px solid {{ interestServices ? 'var(--color-accent)' : 'var(--color-divider)' }};background:{{ interestServices ? 'var(--color-accent-100)' : 'var(--color-surface)' }};cursor:pointer;border-radius:var(--radius-md)">
         <div style="width:36px;height:36px;border-radius:50%;background:{{ interestServices ? 'var(--color-accent)' : 'var(--color-neutral-100)' }};color:{{ interestServices ? '#fff' : 'var(--color-text)' }};display:flex;align-items:center;justify-content:center;margin:0 auto 8px">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
         </div>
@@ -365,13 +375,21 @@ def get_onboarding_view():
     </div>
 
     <!-- Shopping Priority Selector -->
-    <div class="card-premium">
-      <div style="font:700 12.5px/1 var(--font-heading);color:var(--color-text);margin-bottom:10px">WHAT MATTERS MOST TO YOU?</div>
-      <div class="hs" style="gap:8px">
-        <button class="tag tag-accent">✓ Verified Sellers</button>
-        <button class="tag tag-neutral">Best Prices</button>
-        <button class="tag tag-neutral">Fast Same-Day Delivery</button>
-        <button class="tag tag-neutral">Authentic Apple/Official Warranty</button>
+    <div class="card-premium" style="padding:16px 18px">
+      <div style="font:700 12.5px/1 var(--font-heading);color:var(--color-text);margin-bottom:12px">WHAT MATTERS MOST TO YOU?</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        <button onClick="{{ togglePriorityVerified }}" class="tag {{ priorityVerified ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">
+          {{ priorityVerified ? '✓ ' : '+ ' }}Verified Sellers
+        </button>
+        <button onClick="{{ togglePriorityPrice }}" class="tag {{ priorityPrice ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">
+          {{ priorityPrice ? '✓ ' : '+ ' }}Best Prices
+        </button>
+        <button onClick="{{ togglePrioritySpeed }}" class="tag {{ prioritySpeed ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">
+          {{ prioritySpeed ? '✓ ' : '+ ' }}Fast Same-Day Delivery
+        </button>
+        <button onClick="{{ togglePriorityWarranty }}" class="tag {{ priorityWarranty ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">
+          {{ priorityWarranty ? '✓ ' : '+ ' }}Official Apple / Brand Warranty
+        </button>
       </div>
     </div>
 
@@ -379,8 +397,8 @@ def get_onboarding_view():
 
   <!-- Continue CTA -->
   <div style="margin-top:28px">
-    <button onClick="{{ on.onboardReview }}" class="btn btn-primary btn-block" style="height:50px;font-size:15px">
-      <span>REVIEW MY PROFILE</span>
+    <button onClick="{{ continueAfterBuyer }}" class="btn btn-primary btn-block" style="height:50px;font-size:15px;cursor:pointer">
+      <span>{{ userRole === 'both' ? 'CONTINUE TO SELLER SETUP' : 'REVIEW MY PROFILE' }}</span>
       <span>→</span>
     </button>
   </div>
@@ -397,7 +415,7 @@ def get_onboarding_view():
   <div>
     <!-- Progress Indicator (Step 4 of 6) -->
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
-      <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
+      <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
       </button>
       <div style="font:700 11.5px/1 var(--font-heading);color:var(--color-text-muted)">STEP 4 OF 6</div>
@@ -410,13 +428,13 @@ def get_onboarding_view():
 
     <h2 style="font-size:24px;margin:0 0 6px">What type of seller are you?</h2>
     <p style="font-size:14px;color:var(--color-text-secondary);margin:0 0 20px">
-      Configures your storefront tools, invoicing options, and seller studio.
+      Configures your boutique tools, escrow payouts, and storefront profile.
     </p>
 
     <!-- Seller Type Grid -->
-    <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px">
+    <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px" role="radiogroup" aria-label="Seller classification">
       
-      <button onClick="{{ setSellerIndividual }}" class="card-premium" style="display:flex;align-items:center;gap:14px;padding:16px;text-align:left;border:2px solid {{ sellerType === 'individual' ? 'var(--color-accent)' : 'var(--color-divider)' }};background:{{ sellerType === 'individual' ? 'var(--color-accent-100)' : 'var(--color-surface)' }};cursor:pointer">
+      <button onClick="{{ setSellerIndividual }}" role="radio" aria-checked="{{ sellerType === 'individual' }}" class="card-premium" style="display:flex;align-items:center;gap:14px;padding:16px;text-align:left;border:{{ sellerType === 'individual' ? '2.5px solid var(--color-accent)' : '1.5px solid var(--color-divider)' }};background:{{ sellerType === 'individual' ? 'var(--color-accent-100)' : 'var(--color-surface)' }};cursor:pointer;border-radius:var(--radius-md)">
         <div style="width:40px;height:40px;border-radius:var(--radius-sm);background:{{ sellerType === 'individual' ? 'var(--color-accent)' : 'var(--color-neutral-200)' }};color:{{ sellerType === 'individual' ? '#fff' : 'var(--color-text)' }};display:flex;align-items:center;justify-content:center;flex-shrink:0">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg>
         </div>
@@ -424,9 +442,10 @@ def get_onboarding_view():
           <div style="font:800 15px/1.2 var(--font-heading);color:var(--color-text)">Individual / Private Seller</div>
           <div style="font:400 12px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Selling personal items, gadgets, or pre-owned goods.</div>
         </div>
+        <div style="font-size:14px;color:var(--color-accent);font-weight:800">{{ sellerType === 'individual' ? '✓' : '' }}</div>
       </button>
 
-      <button onClick="{{ setSellerPro }}" class="card-premium" style="display:flex;align-items:center;gap:14px;padding:16px;text-align:left;border:2px solid {{ sellerType === 'pro' ? 'var(--color-accent)' : 'var(--color-divider)' }};background:{{ sellerType === 'pro' ? 'var(--color-accent-100)' : 'var(--color-surface)' }};cursor:pointer">
+      <button onClick="{{ setSellerPro }}" role="radio" aria-checked="{{ sellerType === 'pro' }}" class="card-premium" style="display:flex;align-items:center;gap:14px;padding:16px;text-align:left;border:{{ sellerType === 'pro' ? '2.5px solid var(--color-accent)' : '1.5px solid var(--color-divider)' }};background:{{ sellerType === 'pro' ? 'var(--color-accent-100)' : 'var(--color-surface)' }};cursor:pointer;border-radius:var(--radius-md)">
         <div style="width:40px;height:40px;border-radius:var(--radius-sm);background:{{ sellerType === 'pro' ? 'var(--color-accent)' : 'var(--color-neutral-200)' }};color:{{ sellerType === 'pro' ? '#fff' : 'var(--color-text)' }};display:flex;align-items:center;justify-content:center;flex-shrink:0">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
         </div>
@@ -434,39 +453,33 @@ def get_onboarding_view():
           <div style="font:800 15px/1.2 var(--font-heading);color:var(--color-text)">Professional Merchant / Boutique</div>
           <div style="font:400 12px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Commercial store, boutique in Akwa/Bastos, official distributor.</div>
         </div>
+        <div style="font-size:14px;color:var(--color-accent);font-weight:800">{{ sellerType === 'pro' ? '✓' : '' }}</div>
       </button>
 
-      <button onClick="{{ setSellerService }}" class="card-premium" style="display:flex;align-items:center;gap:14px;padding:16px;text-align:left;border:2px solid {{ sellerType === 'service' ? 'var(--color-accent)' : 'var(--color-divider)' }};background:{{ sellerType === 'service' ? 'var(--color-accent-100)' : 'var(--color-surface)' }};cursor:pointer">
+      <button onClick="{{ setSellerCompany }}" role="radio" aria-checked="{{ sellerType === 'company' }}" class="card-premium" style="display:flex;align-items:center;gap:14px;padding:16px;text-align:left;border:{{ sellerType === 'company' ? '2.5px solid var(--color-accent)' : '1.5px solid var(--color-divider)' }};background:{{ sellerType === 'company' ? 'var(--color-accent-100)' : 'var(--color-surface)' }};cursor:pointer;border-radius:var(--radius-md)">
+        <div style="width:40px;height:40px;border-radius:var(--radius-sm);background:{{ sellerType === 'company' ? 'var(--color-accent)' : 'var(--color-neutral-200)' }};color:{{ sellerType === 'company' ? '#fff' : 'var(--color-text)' }};display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></svg>
+        </div>
+        <div style="flex:1">
+          <div style="font:800 15px/1.2 var(--font-heading);color:var(--color-text)">Company / Enterprise</div>
+          <div style="font:400 12px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Registered corporate entity with legal representative and Tax NIU.</div>
+        </div>
+        <div style="font-size:14px;color:var(--color-accent);font-weight:800">{{ sellerType === 'company' ? '✓' : '' }}</div>
+      </button>
+
+      <button onClick="{{ setSellerService }}" role="radio" aria-checked="{{ sellerType === 'service' }}" class="card-premium" style="display:flex;align-items:center;gap:14px;padding:16px;text-align:left;border:{{ sellerType === 'service' ? '2.5px solid var(--color-accent)' : '1.5px solid var(--color-divider)' }};background:{{ sellerType === 'service' ? 'var(--color-accent-100)' : 'var(--color-surface)' }};cursor:pointer;border-radius:var(--radius-md)">
         <div style="width:40px;height:40px;border-radius:var(--radius-sm);background:{{ sellerType === 'service' ? 'var(--color-accent)' : 'var(--color-neutral-200)' }};color:{{ sellerType === 'service' ? '#fff' : 'var(--color-text)' }};display:flex;align-items:center;justify-content:center;flex-shrink:0">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
         </div>
         <div style="flex:1">
           <div style="font:800 15px/1.2 var(--font-heading);color:var(--color-text)">Service Provider / Freelancer</div>
-          <div style="font:400 12px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Photographer, solar technician, developer, consulting.</div>
+          <div style="font:400 12px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Photographer, solar technician, developer, consulting &amp; bookings.</div>
         </div>
+        <div style="font-size:14px;color:var(--color-accent);font-weight:800">{{ sellerType === 'service' ? '✓' : '' }}</div>
       </button>
 
     </div>
 
-    <!-- Estimated Catalog Volume -->
-    <div class="card-premium">
-      <div style="font:700 12px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:8px">ESTIMATED CATALOG VOLUME</div>
-      <div class="hs" style="gap:8px">
-        <button class="tag tag-accent">1–10 items</button>
-        <button class="tag tag-neutral">11–50 items</button>
-        <button class="tag tag-neutral">51–200 items</button>
-        <button class="tag tag-neutral">200+ Enterprise</button>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- Continue CTA -->
-  <div style="margin-top:28px">
-    <button onClick="{{ on.onboardBusiness }}" class="btn btn-primary btn-block" style="height:50px;font-size:15px">
-      <span>CONTINUE TO BUSINESS DETAILS</span>
-      <span>→</span>
-    </button>
   </div>
 
 </div>
@@ -481,7 +494,7 @@ def get_onboarding_view():
   <div>
     <!-- Progress Indicator (Step 5 of 6) -->
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
-      <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
+      <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
       </button>
       <div style="font:700 11.5px/1 var(--font-heading);color:var(--color-text-muted)">STEP 5 OF 6</div>
@@ -494,7 +507,7 @@ def get_onboarding_view():
 
     <h2 style="font-size:24px;margin:0 0 6px">Store &amp; Business Information</h2>
     <p style="font-size:14px;color:var(--color-text-secondary);margin:0 0 20px">
-      This creates your public storefront brand visible across LOUMOO.
+      This creates your official public storefront brand visible across LOUMOO Cameroon.
     </p>
 
     <div class="card-premium" style="display:flex;flex-direction:column;gap:14px">
@@ -502,31 +515,31 @@ def get_onboarding_view():
       <!-- Store Display Name -->
       <div>
         <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">STORE / BRAND NAME</label>
-        <input type="text" class="input" value="{{ regBusinessName }}" placeholder="e.g. Orca Electronics Douala">
+        <input type="text" class="input" value="{{ regBusinessName }}" placeholder="e.g. Orca Electronics Douala" onInput="{{ updateRegBusinessName }}">
       </div>
 
       <!-- Legal Organization Form -->
       <div>
         <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">LEGAL ENTITY FORM</label>
-        <select class="input" style="cursor:pointer">
+        <select class="input" style="cursor:pointer" value="{{ legalForm }}" onChange="{{ updateLegalForm }}">
           <option value="sarl">SARL (Société à Responsabilité Limitée)</option>
-          <option value="sole">Ets / Sole Proprietorship</option>
+          <option value="sole">Ets / Sole Proprietorship (Établissement)</option>
           <option value="sa">SA (Société Anonyme)</option>
           <option value="coop">Cooperative / GIC</option>
-          <option value="individual">Individual Freelancer</option>
+          <option value="individual">Individual Registered Merchant</option>
         </select>
       </div>
 
       <!-- Business Address / Storefront Location -->
       <div>
         <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">PHYSICAL ADDRESS / QUARTER</label>
-        <input type="text" class="input" value="Boulevard de la Liberté, Akwa, Douala" placeholder="Store street address">
+        <input type="text" class="input" value="{{ regAddress }}" placeholder="e.g. Boulevard de la Liberté, Akwa, Douala" onInput="{{ updateRegAddress }}">
       </div>
 
       <!-- Tax ID / RCCM (Optional initially) -->
       <div>
-        <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">RCCM / TAX REGISTRATION (OPTIONAL FOR BADGE)</label>
-        <input type="text" class="input" placeholder="e.g. RC/DLA/2023/B/1842">
+        <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">RCCM / TAX REGISTRATION (OPTIONAL FOR VERIFIED BADGE)</label>
+        <input type="text" class="input" value="{{ regRccm }}" placeholder="e.g. RC/DLA/2023/B/1842" onInput="{{ updateRegRccm }}">
       </div>
 
     </div>
@@ -534,7 +547,7 @@ def get_onboarding_view():
 
   <!-- Continue CTA -->
   <div style="margin-top:28px">
-    <button onClick="{{ on.onboardVerify }}" class="btn btn-primary btn-block" style="height:50px;font-size:15px">
+    <button onClick="{{ on.onboardVerify }}" class="btn btn-primary btn-block" style="height:50px;font-size:15px;cursor:pointer">
       <span>CONTINUE TO TRUST VERIFICATION</span>
       <span>→</span>
     </button>
@@ -552,7 +565,7 @@ def get_onboarding_view():
   <div>
     <!-- Progress Indicator (Step 5 of 6) -->
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
-      <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
+      <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
       </button>
       <div style="display:flex;align-items:center;gap:10px">
@@ -570,14 +583,40 @@ def get_onboarding_view():
       <div style="width:56px;height:56px;border-radius:50%;background:var(--color-success-100);color:var(--color-success);display:flex;align-items:center;justify-content:center;margin:0 auto 12px">
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
       </div>
-      <h2 style="font-size:24px;margin:0 0 6px">Become a Verified Seller</h2>
+      <h2 style="font-size:24px;margin:0 0 6px">Can your identity or business be verified?</h2>
       <p style="font-size:13.5px;color:var(--color-text-secondary);max-width:440px;margin:0 auto;line-height:1.45">
-        Verified sellers receive the official blue badge, get 4x more orders, and unlock immediate MoMo escrow payouts.
+        Verified sellers receive the official blue checkmark, unlock instant escrow MoMo payouts, and get 4x more customer trust.
       </p>
     </div>
 
-    <!-- Document Upload Card -->
-    <div class="card-premium" style="text-align:center;border:2px dashed var(--color-accent-300);background:var(--color-surface-subtle);padding:28px 20px;margin-bottom:16px">
+    <!-- Verification Choice Selector -->
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:18px">
+      <button onClick="{{ setVerifyNow }}" class="card-premium" style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;text-align:left;border:{{ verificationChoice === 'now' ? '2.5px solid var(--color-accent)' : '1px solid var(--color-divider)' }};background:{{ verificationChoice === 'now' ? 'var(--color-accent-100)' : 'var(--color-surface)' }};cursor:pointer;border-radius:var(--radius-md)">
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="font-size:18px">🛡️</span>
+          <div>
+            <div style="font:800 14px/1.2 var(--font-heading);color:var(--color-text)">YES — Verify now (Recommended)</div>
+            <div style="font:400 11.5px/1.2 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Upload CNI, Passport, or RCCM document below.</div>
+          </div>
+        </div>
+        <div style="font-size:14px;color:var(--color-accent);font-weight:800">{{ verificationChoice === 'now' ? '✓' : '' }}</div>
+      </button>
+
+      <button onClick="{{ setVerifyLater }}" class="card-premium" style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;text-align:left;border:{{ verificationChoice === 'later' ? '2.5px solid var(--color-accent)' : '1px solid var(--color-divider)' }};background:{{ verificationChoice === 'later' ? 'var(--color-accent-100)' : 'var(--color-surface)' }};cursor:pointer;border-radius:var(--radius-md)">
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="font-size:18px">⏱️</span>
+          <div>
+            <div style="font:800 14px/1.2 var(--font-heading);color:var(--color-text)">YES — I'll verify later</div>
+            <div style="font:400 11.5px/1.2 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Start selling right away and submit ID documents later in settings.</div>
+          </div>
+        </div>
+        <div style="font-size:14px;color:var(--color-accent);font-weight:800">{{ verificationChoice === 'later' ? '✓' : '' }}</div>
+      </button>
+    </div>
+
+    <!-- Document Upload Card (Visible if Verify Now) -->
+    <sc-if value="{{ verificationChoice === 'now' }}">
+    <div class="card-premium" style="text-align:center;border:2px dashed var(--color-accent-300);background:var(--color-surface-subtle);padding:24px 20px;margin-bottom:16px;border-radius:var(--radius-md)">
       <div style="width:48px;height:48px;border-radius:50%;background:var(--color-accent-100);color:var(--color-accent);display:flex;align-items:center;justify-content:center;margin:0 auto 10px">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
       </div>
@@ -586,12 +625,13 @@ def get_onboarding_view():
         Take a clear photo of your CNI card, Passport, or Business Attestation.
       </div>
       <div style="display:flex;justify-content:center;gap:10px">
-        <button onClick="{{ simulateUploadDoc }}" class="btn btn-secondary" style="height:38px;font-size:12px">
+        <button onClick="{{ simulateUploadDoc }}" class="btn btn-secondary" style="height:38px;font-size:12px;cursor:pointer">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
-          <span>CHOOSE PHOTO</span>
+          <span>CHOOSE PHOTO / DOCUMENT</span>
         </button>
       </div>
     </div>
+    </sc-if>
 
     <!-- Upload Status Preview -->
     <sc-if value="{{ docUploaded }}">
@@ -615,14 +655,6 @@ def get_onboarding_view():
 
   </div>
 
-  <!-- Continue CTA -->
-  <div style="margin-top:28px">
-    <button onClick="{{ on.onboardReview }}" class="btn btn-primary btn-block" style="height:50px;font-size:15px">
-      <span>REVIEW &amp; CONFIRM</span>
-      <span>→</span>
-    </button>
-  </div>
-
 </div>
 </sc-if>
 
@@ -635,7 +667,7 @@ def get_onboarding_view():
   <div>
     <!-- Progress Indicator (Step 6 of 6) -->
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
-      <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
+      <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
       </button>
       <div style="font:700 11.5px/1 var(--font-heading);color:var(--color-text-muted)">FINAL STEP</div>
@@ -677,7 +709,20 @@ def get_onboarding_view():
         </div>
       </div>
 
-      <!-- Section 3: Seller Details (if Seller / Both) -->
+      <!-- Section 3: Buyer Preferences (if Buyer or Both) -->
+      <sc-if value="{{ userRole !== 'seller' }}">
+      <div class="card-premium" style="padding:16px 20px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <div style="font:700 11px/1 var(--font-heading);color:var(--color-text-muted);letter-spacing:.08em;text-transform:uppercase">SHOPPING PREFERENCES</div>
+          <button onClick="{{ on.onboardBuyer }}" style="border:none;background:transparent;color:var(--color-accent);font:700 11.5px/1 var(--font-heading);cursor:pointer">EDIT</button>
+        </div>
+        <div style="font:600 13.5px/1.3 var(--font-body);color:var(--color-text)">
+          Tech &amp; Laptops · Flights &amp; Hotels · Verified Sellers
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- Section 4: Seller Details (if Seller or Both) -->
       <sc-if value="{{ userRole !== 'buyer' }}">
       <div class="card-premium" style="padding:16px 20px">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
@@ -694,7 +739,7 @@ def get_onboarding_view():
 
   <!-- Final Creation CTA -->
   <div style="margin-top:28px">
-    <button onClick="{{ completeOnboarding }}" class="btn btn-primary btn-block" style="height:52px;font-size:15px;box-shadow:var(--shadow-glow-blue)">
+    <button onClick="{{ completeOnboarding }}" class="btn btn-primary btn-block" style="height:52px;font-size:15px;box-shadow:var(--shadow-glow-blue);cursor:pointer">
       <span>CREATE MY LOUMOO ACCOUNT</span>
       <span>✓</span>
     </button>
@@ -711,7 +756,7 @@ def get_onboarding_view():
   
   <div>
     <!-- Animated Celebration Check -->
-    <div class="success-check-badge" style="width:84px;height:84px;margin-bottom:20px">
+    <div class="success-check-badge" style="width:84px;height:84px;margin:0 auto 20px;background:var(--color-success-100);color:var(--color-success);border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-glow-green)">
       <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><polyline points="20 6 9 17 4 12"/></svg>
     </div>
 
@@ -724,10 +769,10 @@ def get_onboarding_view():
     <div class="card-premium" style="text-align:left;padding:20px;margin-bottom:20px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
         <span style="font:800 14px/1 var(--font-heading);color:var(--color-text)">Profile Setup</span>
-        <span style="font:800 14px/1 var(--font-heading);color:var(--color-success)">85% COMPLETE</span>
+        <span style="font:800 14px/1 var(--font-heading);color:var(--color-success)">{{ completionScore }}% COMPLETE</span>
       </div>
       <div style="height:6px;background:var(--color-neutral-200);border-radius:3px;overflow:hidden;margin-bottom:12px">
-        <div style="width:85%;height:100%;background:var(--color-success);border-radius:3px"></div>
+        <div style="width:{{ completionScore }}%;height:100%;background:var(--color-success);border-radius:3px"></div>
       </div>
       <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--color-text-secondary)">
         <div style="display:flex;align-items:center;gap:6px"><span style="color:var(--color-success);font-weight:800">✓</span> Phone &amp; Email verified</div>
@@ -740,15 +785,15 @@ def get_onboarding_view():
   <!-- Dynamic Next Action CTAs -->
   <div style="display:flex;flex-direction:column;gap:10px">
     <sc-if value="{{ userRole === 'buyer' }}">
-      <button onClick="{{ on.home }}" class="btn btn-primary btn-block" style="height:48px;font-size:14px">
+      <button onClick="{{ on.home }}" class="btn btn-primary btn-block" style="height:48px;font-size:14px;cursor:pointer">
         START EXPLORING MARKETPLACE <span>→</span>
       </button>
     </sc-if>
     <sc-if value="{{ userRole !== 'buyer' }}">
-      <button onClick="{{ on.upload }}" class="btn btn-primary btn-block" style="height:48px;font-size:14px">
+      <button onClick="{{ on.upload }}" class="btn btn-primary btn-block" style="height:48px;font-size:14px;cursor:pointer">
         CREATE YOUR FIRST LISTING <span>+</span>
       </button>
-      <button onClick="{{ on.seller }}" class="btn btn-secondary btn-block" style="height:44px;font-size:13px">
+      <button onClick="{{ on.seller }}" class="btn btn-secondary btn-block" style="height:44px;font-size:13px;cursor:pointer">
         OPEN SELLER STUDIO
       </button>
     </sc-if>

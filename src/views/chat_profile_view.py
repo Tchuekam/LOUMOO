@@ -251,7 +251,8 @@ def get_chat_and_profile_view():
 
   <div style="padding:16px;max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:16px">
     
-    <!-- Registration / Onboarding Entry Hero Banner -->
+    <!-- Registration / Onboarding Entry Hero Banner (Shown only when unauthenticated) -->
+    <sc-if value="{{ showGetStarted }}">
     <div class="card-premium" style="background:linear-gradient(135deg, #002b61 0%, #007aff 100%);color:#fff;border:none;padding:24px;box-shadow:var(--shadow-glow-blue)">
       <div style="display:flex;justify-content:space-between;align-items:flex-start">
         <div style="max-width:440px">
@@ -273,21 +274,22 @@ def get_chat_and_profile_view():
         </div>
       </div>
     </div>
+    </sc-if>
 
-    <!-- Active Profile Card with 85% Completion Score -->
+    <!-- Active Profile Card with Real Dynamic Completion Score -->
     <div class="card-premium" style="display:flex;align-items:center;gap:14px">
-      <div style="width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,var(--color-accent),#003d8a);color:#fff;display:flex;align-items:center;justify-content:center;font:800 20px/1 var(--font-heading);flex-shrink:0">TK</div>
+      <div style="width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,var(--color-accent),#003d8a);color:#fff;display:flex;align-items:center;justify-content:center;font:800 18px/1 var(--font-heading);flex-shrink:0">{{ userInitials }}</div>
       <div style="flex:1">
         <div style="display:flex;align-items:center;gap:8px">
           <span style="font:800 17px/1.2 var(--font-heading);color:var(--color-text)">{{ userName }}</span>
-          <span class="tag tag-accent" style="min-height:18px;padding:2px 6px;font-size:9.5px">VERIFIED BUYER &amp; SELLER</span>
+          <span class="tag tag-accent" style="min-height:18px;padding:2px 6px;font-size:9.5px">{{ profileRoleLabel }}</span>
         </div>
-        <div style="font:400 12px/1 var(--font-body);color:var(--color-text-secondary);margin-top:4px">+237 690 12 34 56 · Douala, Cameroon</div>
+        <div style="font:400 12px/1 var(--font-body);color:var(--color-text-secondary);margin-top:4px">{{ userPhoneCity }}</div>
         <div style="display:flex;align-items:center;gap:8px;margin-top:8px">
           <div style="flex:1;max-width:180px;height:5px;background:var(--color-neutral-200);border-radius:3px;overflow:hidden">
-            <div style="width:85%;height:100%;background:var(--color-success);border-radius:3px"></div>
+            <div style="width:{{ completionScore }}%;height:100%;background:var(--color-success);border-radius:3px"></div>
           </div>
-          <span style="font:700 10.5px/1 var(--font-heading);color:var(--color-success)">85% Profile Setup</span>
+          <span style="font:700 10.5px/1 var(--font-heading);color:var(--color-success)">{{ completionScore }}% Profile Setup</span>
         </div>
       </div>
     </div>
@@ -299,7 +301,7 @@ def get_chat_and_profile_view():
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
         </div>
         <div style="font:700 13.5px/1 var(--font-heading);color:var(--color-text)">My Orders</div>
-        <div style="font:400 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">1 Active Delivery</div>
+        <div style="font:400 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">{{ activeDeliveriesLabel }}</div>
       </button>
 
       <button onClick="{{ on.saved }}" aria-label="Go to Saved Items" class="card-premium" style="text-align:left;padding:14px;cursor:pointer">
@@ -307,7 +309,7 @@ def get_chat_and_profile_view():
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
         </div>
         <div style="font:700 13.5px/1 var(--font-heading);color:var(--color-text)">Saved Items</div>
-        <div style="font:400 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">34 Products Saved</div>
+        <div style="font:400 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">{{ savedItemsLabel }}</div>
       </button>
 
       <button onClick="{{ on.transactions }}" aria-label="Go to Escrow Ledger" class="card-premium" style="text-align:left;padding:14px;cursor:pointer">
@@ -343,38 +345,110 @@ def get_chat_and_profile_view():
     <h4 style="margin:0;font-size:16px">Saved Items</h4>
   </div>
 
-  <div style="padding:16px;max-width:800px;margin:0 auto">
+  <div style="padding:16px;max-width:800px;margin:0 auto;display:flex;flex-direction:column;gap:12px">
     <div class="card-premium" style="display:flex;align-items:center;gap:14px">
       <div class="ph" style="width:64px;height:64px;border-radius:var(--radius-sm)"></div>
       <div style="flex:1">
-        <div style="font:700 13.5px/1.2 var(--font-heading);color:var(--color-text)">Apple AirPods Pro 2</div>
+        <div style="font:700 13.5px/1.2 var(--font-heading);color:var(--color-text)">Apple AirPods Pro 2 (USB-C)</div>
         <div style="font:800 14px/1 var(--font-heading);color:var(--color-accent);margin-top:3px">XAF 185 000</div>
+        <div style="font:400 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:4px">Sold by Orca Electronics · Douala</div>
       </div>
-      <button onClick="{{ addToCart }}" class="btn btn-primary" style="height:36px;padding:0 14px;font-size:11.5px">ADD TO BAG</button>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <button onClick="{{ addToCart }}" class="btn btn-primary" style="height:34px;padding:0 12px;font-size:11px">ADD TO BAG</button>
+        <button onClick="{{ toggleSave }}" class="btn btn-secondary" style="height:28px;padding:0 8px;font-size:10px;color:var(--color-text-muted)">REMOVE</button>
+      </div>
     </div>
   </div>
 </div>
 </sc-if>
 
 <!-- ══════════════════════════════════════════════════════════════════════════
-     SETTINGS & PREFERENCES (is.settings)
+     SETTINGS & ACCOUNT CONTROL CENTER (is.settings) — PHASE C
      ══════════════════════════════════════════════════════════════════════ -->
 <sc-if value="{{ is.settings }}">
 <div style="padding-bottom:32px">
   <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
-    <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
+    <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;flex-shrink:0">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
     </button>
-    <h4 style="margin:0;font-size:16px">Settings &amp; Support</h4>
+    <h4 style="margin:0;font-size:16px;flex:1">Account Settings</h4>
   </div>
 
-  <div style="padding:16px;max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:14px">
-    
-    <div class="card-premium">
-      <div style="display:flex;justify-content:space-between;align-items:center">
+  <div style="padding:16px;max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:16px">
+
+    <!-- 1. PROFILE SECTION -->
+    <div class="card-premium" style="display:flex;flex-direction:column;padding:4px 16px">
+      <div style="font:700 11px/1 var(--font-heading);letter-spacing:.08em;color:var(--color-text-muted);text-transform:uppercase;padding:14px 0 6px">Profile &amp; Identity</div>
+      <button onClick="{{ openEditProfile }}" style="border:none;border-bottom:1px solid var(--color-divider);background:transparent;text-align:left;padding:12px 0;display:flex;align-items:center;justify-content:space-between;cursor:pointer">
         <div>
-          <div style="font:700 13.5px/1 var(--font-heading);color:var(--color-text)">Dark Mode (Obsidian Tech)</div>
-          <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">High contrast dark theme for OLED screens</div>
+          <div style="font:600 13.5px/1.2 var(--font-heading);color:var(--color-text)">Edit Personal Profile</div>
+          <div style="font:400 11.5px/1.2 var(--font-body);color:var(--color-text-secondary);margin-top:2px">{{ regFirstName }} {{ regLastName }} · {{ regCity }}</div>
+        </div>
+        <span style="color:var(--color-text-muted)">→</span>
+      </button>
+      <button onClick="{{ openAccountDashboard }}" style="border:none;background:transparent;text-align:left;padding:12px 0;display:flex;align-items:center;justify-content:space-between;cursor:pointer">
+        <div>
+          <div style="font:600 13.5px/1.2 var(--font-heading);color:var(--color-text)">Account Hub &amp; Verification</div>
+          <div style="font:400 11.5px/1.2 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Completion score, escrow status &amp; shortcuts</div>
+        </div>
+        <span style="color:var(--color-text-muted)">→</span>
+      </button>
+    </div>
+
+    <!-- 2. COMMERCE & ORDERS SECTION -->
+    <div class="card-premium" style="display:flex;flex-direction:column;padding:4px 16px">
+      <div style="font:700 11px/1 var(--font-heading);letter-spacing:.08em;color:var(--color-text-muted);text-transform:uppercase;padding:14px 0 6px">Commerce &amp; Activity</div>
+      <button onClick="{{ openAddresses }}" style="border:none;border-bottom:1px solid var(--color-divider);background:transparent;text-align:left;padding:12px 0;display:flex;align-items:center;justify-content:space-between;cursor:pointer">
+        <div>
+          <div style="font:600 13.5px/1.2 var(--font-heading);color:var(--color-text)">Saved Delivery Addresses</div>
+          <div style="font:400 11.5px/1.2 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Manage Douala, Yaoundé &amp; regional destinations</div>
+        </div>
+        <span style="color:var(--color-text-muted)">→</span>
+      </button>
+      <button onClick="{{ openPurchases }}" style="border:none;border-bottom:1px solid var(--color-divider);background:transparent;text-align:left;padding:12px 0;display:flex;align-items:center;justify-content:space-between;cursor:pointer">
+        <div>
+          <div style="font:600 13.5px/1.2 var(--font-heading);color:var(--color-text)">Purchase History &amp; Orders</div>
+          <div style="font:400 11.5px/1.2 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Active shipments, receipts &amp; escrow tracking</div>
+        </div>
+        <span style="color:var(--color-text-muted)">→</span>
+      </button>
+      <button onClick="{{ openFollowedStores }}" style="border:none;border-bottom:1px solid var(--color-divider);background:transparent;text-align:left;padding:12px 0;display:flex;align-items:center;justify-content:space-between;cursor:pointer">
+        <div>
+          <div style="font:600 13.5px/1.2 var(--font-heading);color:var(--color-text)">Followed Boutiques</div>
+          <div style="font:400 11.5px/1.2 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Verified sellers &amp; flash product alerts</div>
+        </div>
+        <span style="color:var(--color-text-muted)">→</span>
+      </button>
+      <button onClick="{{ openActivity }}" style="border:none;background:transparent;text-align:left;padding:12px 0;display:flex;align-items:center;justify-content:space-between;cursor:pointer">
+        <div>
+          <div style="font:600 13.5px/1.2 var(--font-heading);color:var(--color-text)">Activity Log</div>
+          <div style="font:400 11.5px/1.2 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Timeline of your account operations</div>
+        </div>
+        <span style="color:var(--color-text-muted)">→</span>
+      </button>
+    </div>
+
+    <!-- 3. PREFERENCES SECTION -->
+    <div class="card-premium" style="display:flex;flex-direction:column;padding:4px 16px">
+      <div style="font:700 11px/1 var(--font-heading);letter-spacing:.08em;color:var(--color-text-muted);text-transform:uppercase;padding:14px 0 6px">Preferences</div>
+      <button onClick="{{ openNotifPrefs }}" style="border:none;border-bottom:1px solid var(--color-divider);background:transparent;text-align:left;padding:12px 0;display:flex;align-items:center;justify-content:space-between;cursor:pointer">
+        <div>
+          <div style="font:600 13.5px/1.2 var(--font-heading);color:var(--color-text)">Notification Channels &amp; Events</div>
+          <div style="font:400 11.5px/1.2 var(--font-body);color:var(--color-text-secondary);margin-top:2px">In-app, SMS, email &amp; order updates</div>
+        </div>
+        <span style="color:var(--color-text-muted)">→</span>
+      </button>
+      <button onClick="{{ openPrivacy }}" style="border:none;border-bottom:1px solid var(--color-divider);background:transparent;text-align:left;padding:12px 0;display:flex;align-items:center;justify-content:space-between;cursor:pointer">
+        <div>
+          <div style="font:600 13.5px/1.2 var(--font-heading);color:var(--color-text)">Privacy &amp; Data Controls</div>
+          <div style="font:400 11.5px/1.2 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Personalization &amp; analytics consent</div>
+        </div>
+        <span style="color:var(--color-text-muted)">→</span>
+      </button>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0">
+        <div>
+          <div style="font:600 13.5px/1 var(--font-heading);color:var(--color-text)">Dark Mode (Obsidian Tech)</div>
+          <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">High contrast theme for OLED screens</div>
         </div>
         <button onClick="{{ toggleDark }}" aria-label="Toggle dark mode" style="border:none;background:transparent;padding:0;cursor:pointer">
           <div style="display:flex;align-items:center;background:var(--color-neutral-300);border-radius:14px;width:44px;height:24px;padding:2px;box-sizing:border-box">
@@ -384,21 +458,54 @@ def get_chat_and_profile_view():
       </div>
     </div>
 
-    <!-- Onboarding / Registration Shortcut -->
-    <div class="card-premium" style="display:flex;flex-direction:column;gap:10px">
-      <button onClick="{{ on.onboardWelcome }}" style="border:none;background:transparent;text-align:left;padding:8px 0;font:600 13px/1 var(--font-body);color:var(--color-accent);display:flex;justify-content:space-between;cursor:pointer">
-        <span>Complete / Revisit Registration Wizard</span>
-        <span>→</span>
+    <!-- 4. SECURITY SECTION -->
+    <div class="card-premium" style="display:flex;flex-direction:column;padding:4px 16px">
+      <div style="font:700 11px/1 var(--font-heading);letter-spacing:.08em;color:var(--color-text-muted);text-transform:uppercase;padding:14px 0 6px">Security &amp; Access</div>
+      <button onClick="{{ openSecurity }}" style="border:none;border-bottom:1px solid var(--color-divider);background:transparent;text-align:left;padding:12px 0;display:flex;align-items:center;justify-content:space-between;cursor:pointer">
+        <div>
+          <div style="font:600 13.5px/1.2 var(--font-heading);color:var(--color-text)">Active Sessions &amp; Devices</div>
+          <div style="font:400 11.5px/1.2 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Manage logged-in smartphones &amp; browsers</div>
+        </div>
+        <span style="color:var(--color-text-muted)">→</span>
       </button>
-      <button onClick="{{ on.threadAi }}" style="border:none;border-top:1px solid var(--color-divider);background:transparent;text-align:left;padding:8px 0;font:600 13px/1 var(--font-body);color:var(--color-text);display:flex;justify-content:space-between;cursor:pointer">
-        <span>Ask TchueKAM AI Support</span>
-        <span>→</span>
-      </button>
-      <button onClick="{{ on.chat }}" style="border:none;border-top:1px solid var(--color-divider);background:transparent;text-align:left;padding:8px 0;font:600 13px/1 var(--font-body);color:var(--color-text);display:flex;justify-content:space-between;cursor:pointer">
-        <span>WhatsApp Customer Care</span>
-        <span>→</span>
+      <button onClick="{{ on.forgotPassword }}" style="border:none;background:transparent;text-align:left;padding:12px 0;display:flex;align-items:center;justify-content:space-between;cursor:pointer">
+        <div>
+          <div style="font:600 13.5px/1.2 var(--font-heading);color:var(--color-text)">Password &amp; Security Keys</div>
+          <div style="font:400 11.5px/1.2 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Update your LOUMOO password</div>
+        </div>
+        <span style="color:var(--color-text-muted)">→</span>
       </button>
     </div>
+
+    <!-- 5. SUPPORT & HELP -->
+    <div class="card-premium" style="display:flex;flex-direction:column;padding:4px 16px">
+      <div style="font:700 11px/1 var(--font-heading);letter-spacing:.08em;color:var(--color-text-muted);text-transform:uppercase;padding:14px 0 6px">Support &amp; Assistance</div>
+      <button onClick="{{ on.threadAi }}" style="border:none;border-bottom:1px solid var(--color-divider);background:transparent;text-align:left;padding:12px 0;font:600 13px/1 var(--font-body);color:var(--color-text);display:flex;justify-content:space-between;cursor:pointer">
+        <span>Ask TchueKAM AI Support</span>
+        <span style="color:var(--color-text-muted)">→</span>
+      </button>
+      <button onClick="{{ on.chat }}" style="border:none;background:transparent;text-align:left;padding:12px 0;font:600 13px/1 var(--font-body);color:var(--color-text);display:flex;justify-content:space-between;cursor:pointer">
+        <span>WhatsApp Customer Care (Cameroon)</span>
+        <span style="color:var(--color-text-muted)">→</span>
+      </button>
+    </div>
+
+    <!-- 6. DANGER ZONE -->
+    <div class="card-premium" style="display:flex;flex-direction:column;padding:4px 16px;border-color:var(--color-accent-sale)">
+      <div style="font:700 11px/1 var(--font-heading);letter-spacing:.08em;color:var(--color-accent-sale);text-transform:uppercase;padding:14px 0 6px">Danger Zone</div>
+      <button onClick="{{ openDeleteAccount }}" style="border:none;background:transparent;text-align:left;padding:12px 0;display:flex;align-items:center;justify-content:space-between;cursor:pointer">
+        <div>
+          <div style="font:600 13.5px/1.2 var(--font-heading);color:var(--color-accent-sale)">Delete Account</div>
+          <div style="font:400 11.5px/1.2 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Permanently remove profile and credentials</div>
+        </div>
+        <span style="color:var(--color-accent-sale)">→</span>
+      </button>
+    </div>
+
+    <!-- 7. SESSION SIGN OUT -->
+    <button onClick="{{ signOut }}" class="btn btn-secondary btn-block" style="height:46px;color:var(--color-accent-sale);border-color:var(--color-accent-sale);cursor:pointer">
+      SIGN OUT OF LOUMOO
+    </button>
 
   </div>
 </div>

@@ -18,6 +18,7 @@ const IdempotencyService = require('./infrastructure/cache/IdempotencyService');
 const healthRoutes = require('./modules/system/routes/healthRoutes');
 const identityRoutes = require('./modules/identity/presentation/routes/identityRoutes');
 const catalogRoutes = require('./modules/catalog/routes/catalogRoutes');
+const storeRoutes = require('./modules/store/presentation/routes/storeRoutes');
 
 const app = express();
 
@@ -47,6 +48,7 @@ const v1Router = express.Router();
 v1Router.use('/', healthRoutes);
 v1Router.use('/', identityRoutes);
 v1Router.use('/', catalogRoutes);
+v1Router.use('/stores', storeRoutes);
 
 app.use('/api/v1', v1Router);
 
