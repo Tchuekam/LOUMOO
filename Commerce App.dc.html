@@ -141,6 +141,494 @@ button:active { transform: scale(0.98); }
 [data-theme="dark"] .sidebar-nav { background: #141518 !important; border-right-color: var(--color-divider) !important; }
 
 /* ══════════════════════════════════════════════════════════════════════════
+   WHATSAPP CHAT AESTHETIC SYSTEM
+   ══════════════════════════════════════════════════════════════════════ */
+.wa-chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 100%;
+  background-color: #efeae2;
+  background-image: radial-gradient(#d3cec6 1px, transparent 1px), radial-gradient(#d3cec6 1px, #efeae2 1px);
+  background-size: 24px 24px;
+  background-position: 0 0, 12px 12px;
+  position: relative;
+  overflow: hidden;
+}
+
+[data-theme="dark"] .wa-chat-container {
+  background-color: #0b141a;
+  background-image: radial-gradient(#1e2930 1px, transparent 1px), radial-gradient(#1e2930 1px, #0b141a 1px);
+}
+
+.wa-chat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 12px;
+  background: #f0f2f5;
+  border-bottom: 1px solid #d1d7db;
+  height: 54px;
+  flex: none;
+  z-index: 10;
+  box-sizing: border-box;
+}
+[data-theme="dark"] .wa-chat-header {
+  background: #202c33;
+  border-bottom-color: #2a3942;
+}
+
+.wa-chat-header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1;
+}
+
+.wa-chat-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #607d8b;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  flex-shrink: 0;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.wa-chat-contact-name {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: #111b21;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+[data-theme="dark"] .wa-chat-contact-name {
+  color: #e9edef;
+}
+
+.wa-chat-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.wa-btn-add-list {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 18px;
+  border: 1px solid #d1d7db;
+  background: #ffffff;
+  color: #111b21;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  transition: all 0.15s ease;
+}
+[data-theme="dark"] .wa-btn-add-list {
+  background: #111b21;
+  border-color: #2a3942;
+  color: #e9edef;
+}
+
+.wa-header-icon-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #54656f;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+[data-theme="dark"] .wa-header-icon-btn {
+  color: #aebac1;
+}
+.wa-header-icon-btn:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+/* Chat Messages Body */
+.wa-chat-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.wa-system-pill {
+  align-self: center;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 1px 2px rgba(11, 20, 26, 0.12);
+  border-radius: 7.5px;
+  padding: 6px 14px;
+  font-size: 11.5px;
+  color: #54656f;
+  text-align: center;
+  max-width: 90%;
+  line-height: 1.4;
+  margin: 4px 0 8px;
+}
+[data-theme="dark"] .wa-system-pill {
+  background: #182229;
+  color: #8696a0;
+}
+
+.wa-date-pill {
+  align-self: center;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 1px 1.5px rgba(11, 20, 26, 0.12);
+  border-radius: 7.5px;
+  padding: 4px 12px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #54656f;
+  margin: 6px 0;
+}
+[data-theme="dark"] .wa-date-pill {
+  background: #182229;
+  color: #8696a0;
+}
+
+.wa-msg-row-sent {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 2px;
+}
+
+.wa-msg-row-received {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 2px;
+}
+
+.wa-bubble-sent {
+  background: #d9fdd3;
+  color: #111b21;
+  border-radius: 8px 8px 0px 8px;
+  padding: 6px 9px 5px 10px;
+  box-shadow: 0 1px 0.5px rgba(11, 20, 26, 0.13);
+  max-width: min(420px, 80%);
+  font-size: 13.5px;
+  line-height: 1.35;
+  word-break: break-word;
+  position: relative;
+}
+[data-theme="dark"] .wa-bubble-sent {
+  background: #005c4b;
+  color: #e9edef;
+}
+
+.wa-bubble-received {
+  background: #ffffff;
+  color: #111b21;
+  border-radius: 8px 8px 8px 0px;
+  padding: 6px 9px 5px 10px;
+  box-shadow: 0 1px 0.5px rgba(11, 20, 26, 0.13);
+  max-width: min(420px, 80%);
+  font-size: 13.5px;
+  line-height: 1.35;
+  word-break: break-word;
+  position: relative;
+}
+[data-theme="dark"] .wa-bubble-received {
+  background: #202c33;
+  color: #e9edef;
+}
+
+.wa-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 10px;
+  color: #667781;
+  float: right;
+  margin-left: 8px;
+  margin-top: 4px;
+}
+[data-theme="dark"] .wa-meta {
+  color: #8696a0;
+}
+
+.wa-double-check {
+  color: #53bdeb;
+  display: inline-flex;
+}
+
+/* Contact Shared Card */
+.wa-contact-card {
+  background: #d9fdd3;
+  border-radius: 8px;
+  box-shadow: 0 1px 0.5px rgba(11, 20, 26, 0.13);
+  overflow: hidden;
+  max-width: min(320px, 80%);
+}
+[data-theme="dark"] .wa-contact-card {
+  background: #005c4b;
+}
+
+.wa-contact-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+}
+
+.wa-contact-avatar-img {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #111b21;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.wa-contact-details {
+  flex: 1;
+  min-width: 0;
+}
+.wa-contact-name-txt {
+  font-weight: 700;
+  font-size: 14px;
+  color: #111b21;
+  line-height: 1.2;
+}
+[data-theme="dark"] .wa-contact-name-txt {
+  color: #e9edef;
+}
+
+.wa-contact-btn-row {
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  background: rgba(255, 255, 255, 0.5);
+  padding: 8px;
+  text-align: center;
+}
+[data-theme="dark"] .wa-contact-btn-row {
+  background: rgba(0, 0, 0, 0.2);
+  border-top-color: rgba(255, 255, 255, 0.08);
+}
+.wa-contact-btn {
+  border: none;
+  background: transparent;
+  color: #00a884;
+  font-weight: 700;
+  font-size: 13.5px;
+  cursor: pointer;
+  width: 100%;
+}
+[data-theme="dark"] .wa-contact-btn {
+  color: #25d366;
+}
+
+.wa-forward-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #54656f;
+  margin-right: 8px;
+  cursor: pointer;
+}
+
+/* Audio Player Message */
+.wa-audio-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #ffffff;
+  border-radius: 8px 8px 8px 0px;
+  padding: 8px 10px;
+  box-shadow: 0 1px 0.5px rgba(11, 20, 26, 0.13);
+  width: min(310px, 80%);
+}
+[data-theme="dark"] .wa-audio-card {
+  background: #202c33;
+}
+
+.wa-audio-play {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #111b21;
+  cursor: pointer;
+}
+[data-theme="dark"] .wa-audio-play {
+  color: #e9edef;
+}
+
+.wa-audio-middle {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.wa-waveform-container {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 22px;
+  position: relative;
+}
+
+.wa-bar {
+  width: 2px;
+  background: #8696a0;
+  border-radius: 1px;
+}
+.wa-bar.played {
+  background: #53bdeb;
+}
+
+.wa-audio-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #53bdeb;
+  margin-right: 2px;
+}
+
+.wa-audio-time-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10.5px;
+  color: #667781;
+}
+[data-theme="dark"] .wa-audio-time-row {
+  color: #8696a0;
+}
+
+.wa-audio-avatar-badge {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+}
+
+.wa-audio-user-pic {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #607d8b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 700;
+  font-size: 12px;
+  overflow: hidden;
+}
+
+.wa-mic-badge-small {
+  position: absolute;
+  bottom: -2px;
+  left: -2px;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #00a884;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8.5px;
+}
+
+/* Chat Input Bar - WITHOUT upload and emoji button */
+.wa-input-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: #f0f2f5;
+  border-top: 1px solid #d1d7db;
+  flex: none;
+  z-index: 10;
+  box-sizing: border-box;
+}
+[data-theme="dark"] .wa-input-bar {
+  background: #202c33;
+  border-top-color: #2a3942;
+}
+
+.wa-input-box {
+  flex: 1;
+  height: 42px;
+  background: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 0 14px;
+  font-family: inherit;
+  font-size: 14px;
+  color: #111b21;
+  outline: none;
+  box-shadow: 0 1px 1px rgba(0,0,0,0.06);
+}
+[data-theme="dark"] .wa-input-box {
+  background: #2a3942;
+  color: #e9edef;
+}
+.wa-input-box::placeholder {
+  color: #667781;
+}
+
+.wa-voice-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #54656f;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+[data-theme="dark"] .wa-voice-btn {
+  color: #8696a0;
+}
+.wa-voice-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
    MOBILE VIEWPORT ARCHITECTURE (< 1024px)
    ══════════════════════════════════════════════════════════════════════ */
 .outer-wrap {
@@ -1107,148 +1595,381 @@ button:active { transform: scale(0.98); }
 </sc-if>
 
 <sc-if value="{{ is.chat }}">
-<div>
-  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:2px solid var(--color-text)">
+<div style="background:var(--color-surface);min-height:100%;display:flex;flex-direction:column">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--color-divider);background:var(--color-surface)">
     <div style="display:flex;align-items:center;gap:10px">
       <button onClick="{{ back }}" style="border:none;background:transparent;padding:0;font:800 17px/1 var(--font-heading);color:var(--color-text)">←</button>
-      <h5 style="margin:0;font-size:16px">Inbox</h5>
+      <h5 style="margin:0;font-size:18px;font-weight:700">Discussions</h5>
     </div>
-    <button onClick="{{ on.search }}" style="border:none;background:transparent;padding:0;color:var(--color-text)">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4 4"/></svg>
-    </button>
+    <div style="display:flex;align-items:center;gap:6px">
+      <button onClick="{{ on.search }}" class="wa-header-icon-btn" title="Search chats">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4 4"/></svg>
+      </button>
+      <button class="wa-header-icon-btn" title="Menu">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.75"/><circle cx="12" cy="12" r="1.75"/><circle cx="12" cy="19" r="1.75"/></svg>
+      </button>
+    </div>
   </div>
-  <div class="hs" style="gap:8px;padding:12px 16px;border-bottom:1px solid var(--color-divider)">
-    <button onClick="{{ pick.chatTab.all }}" class="tag" style="flex:none;font-size:11px;background:{{ st.chatTab.all.bg }};color:{{ st.chatTab.all.fg }};border:1px solid {{ st.chatTab.all.bd }}">All</button>
-    <button onClick="{{ pick.chatTab.buying }}" class="tag" style="flex:none;font-size:11px;background:{{ st.chatTab.buying.bg }};color:{{ st.chatTab.buying.fg }};border:1px solid {{ st.chatTab.buying.bd }}">Buying</button>
-    <button onClick="{{ pick.chatTab.selling }}" class="tag" style="flex:none;font-size:11px;background:{{ st.chatTab.selling.bg }};color:{{ st.chatTab.selling.fg }};border:1px solid {{ st.chatTab.selling.bd }}">Selling</button>
-    <button onClick="{{ pick.chatTab.orders }}" class="tag" style="flex:none;font-size:11px;background:{{ st.chatTab.orders.bg }};color:{{ st.chatTab.orders.fg }};border:1px solid {{ st.chatTab.orders.bd }}">Orders</button>
+  <div class="hs" style="gap:8px;padding:10px 16px;border-bottom:1px solid var(--color-divider);background:var(--color-surface-subtle)">
+    <button onClick="{{ pick.chatTab.all }}" class="tag" style="flex:none;font-size:11px;background:{{ st.chatTab.all.bg }};color:{{ st.chatTab.all.fg }};border:1px solid {{ st.chatTab.all.bd }}">Tous</button>
+    <button onClick="{{ pick.chatTab.buying }}" class="tag" style="flex:none;font-size:11px;background:{{ st.chatTab.buying.bg }};color:{{ st.chatTab.buying.fg }};border:1px solid {{ st.chatTab.buying.bd }}">Achats</button>
+    <button onClick="{{ pick.chatTab.selling }}" class="tag" style="flex:none;font-size:11px;background:{{ st.chatTab.selling.bg }};color:{{ st.chatTab.selling.fg }};border:1px solid {{ st.chatTab.selling.bd }}">Ventes</button>
+    <button onClick="{{ pick.chatTab.orders }}" class="tag" style="flex:none;font-size:11px;background:{{ st.chatTab.orders.bg }};color:{{ st.chatTab.orders.fg }};border:1px solid {{ st.chatTab.orders.bd }}">Commandes</button>
     <button onClick="{{ pick.chatTab.support }}" class="tag" style="flex:none;font-size:11px;background:{{ st.chatTab.support.bg }};color:{{ st.chatTab.support.fg }};border:1px solid {{ st.chatTab.support.bd }}">Support</button>
   </div>
-  <button onClick="{{ on.threadAi }}" style="width:100%;display:flex;gap:12px;border:none;border-bottom:1px solid var(--color-divider);background:transparent;padding:14px 16px;text-align:left;color:var(--color-text)">
-    <span style="width:44px;height:44px;background:var(--color-accent);color:#fff;display:flex;align-items:center;justify-content:center;font:800 13px/1 var(--font-heading);flex:none">AI</span>
-    <span style="flex:1;min-width:0">
-      <span style="display:flex;justify-content:space-between;align-items:baseline"><span style="font:800 13px/1 var(--font-heading)">TchueKAM AI</span><span style="font:400 9.5px/1 var(--font-body);color:var(--color-neutral-700)">now</span></span>
-      <span style="display:block;font:400 11.5px/1.35 var(--font-body);color:var(--color-neutral-800);margin-top:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">I found 3 laptops under 800 000 near you…</span>
-    </span>
-  </button>
-  <button onClick="{{ on.threadSeller }}" style="width:100%;display:flex;gap:12px;border:none;border-bottom:1px solid var(--color-divider);background:transparent;padding:14px 16px;text-align:left;color:var(--color-text)">
-    <span class="ph" style="width:44px;height:44px;flex:none"></span>
-    <span style="flex:1;min-width:0">
-      <span style="display:flex;justify-content:space-between;align-items:baseline"><span style="font:800 13px/1 var(--font-heading)">Orca Electronics</span><span style="font:400 9.5px/1 var(--font-body);color:var(--color-neutral-700)">4 min</span></span>
-      <span style="display:block;font:400 11.5px/1.35 var(--font-body);color:var(--color-neutral-800);margin-top:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Yes, it is in stock. We can deliver today.</span>
-      <span style="display:inline-block;font:600 8.5px/1 var(--font-body);letter-spacing:.1em;color:var(--color-accent-700);margin-top:6px">SELLER · UNREAD</span>
-    </span>
-    <span style="width:18px;height:18px;background:var(--color-accent);color:#fff;font:800 9px/18px var(--font-heading);text-align:center;flex:none">2</span>
-  </button>
-  <button onClick="{{ on.threadSeller }}" style="width:100%;display:flex;gap:12px;border:none;border-bottom:1px solid var(--color-divider);background:transparent;padding:14px 16px;text-align:left;color:var(--color-text)">
-    <span class="ph" style="width:44px;height:44px;flex:none"></span>
-    <span style="flex:1;min-width:0">
-      <span style="display:flex;justify-content:space-between;align-items:baseline"><span style="font:800 13px/1 var(--font-heading)">Marina K.</span><span style="font:400 9.5px/1 var(--font-body);color:var(--color-neutral-700)">2 h</span></span>
-      <span style="display:block;font:400 11.5px/1.35 var(--font-body);color:var(--color-neutral-800);margin-top:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Is the Canon still available? I can pass by…</span>
-      <span style="display:inline-block;font:600 8.5px/1 var(--font-body);letter-spacing:.1em;color:var(--color-neutral-700);margin-top:6px">BUYER · YOUR LISTING</span>
-    </span>
-  </button>
-  <button onClick="{{ on.orders }}" style="width:100%;display:flex;gap:12px;border:none;border-bottom:1px solid var(--color-divider);background:transparent;padding:14px 16px;text-align:left;color:var(--color-text)">
-    <span class="ph" style="width:44px;height:44px;flex:none"></span>
-    <span style="flex:1;min-width:0">
-      <span style="display:flex;justify-content:space-between;align-items:baseline"><span style="font:800 13px/1 var(--font-heading)">Order #KM-4471</span><span style="font:400 9.5px/1 var(--font-body);color:var(--color-neutral-700)">1 d</span></span>
-      <span style="display:block;font:400 11.5px/1.35 var(--font-body);color:var(--color-neutral-800);margin-top:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Courier assigned · arriving today 16:00</span>
-      <span style="display:inline-block;font:600 8.5px/1 var(--font-body);letter-spacing:.1em;color:var(--color-neutral-700);margin-top:6px">ORDER THREAD</span>
-    </span>
-  </button>
-  <button onClick="{{ on.settings }}" style="width:100%;display:flex;gap:12px;border:none;border-bottom:1px solid var(--color-divider);background:transparent;padding:14px 16px;text-align:left;color:var(--color-text)">
-    <span style="width:44px;height:44px;border:2px solid var(--color-text);display:flex;align-items:center;justify-content:center;font:800 11px/1 var(--font-heading);flex:none">SUP</span>
-    <span style="flex:1;min-width:0">
-      <span style="display:flex;justify-content:space-between;align-items:baseline"><span style="font:800 13px/1 var(--font-heading)">Platform Support</span><span style="font:400 9.5px/1 var(--font-body);color:var(--color-neutral-700)">3 d</span></span>
-      <span style="display:block;font:400 11.5px/1.35 var(--font-body);color:var(--color-neutral-800);margin-top:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Your refund for #KM-4390 was completed.</span>
-    </span>
-  </button>
+
+  <div style="flex:1;overflow-y:auto">
+    <!-- Row: Mr Toukam -->
+    <button onClick="{{ on.threadSeller }}" style="width:100%;display:flex;gap:12px;border:none;border-bottom:1px solid var(--color-divider);background:transparent;padding:12px 16px;text-align:left;color:var(--color-text);align-items:center;cursor:pointer">
+      <div style="width:46px;height:46px;border-radius:50%;background:#54656f;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex:none">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;justify-content:space-between;align-items:baseline">
+          <span style="font-weight:700;font-size:14px;color:var(--color-text)">Mr Toukam</span>
+          <span style="font-size:11px;color:#00a884;font-weight:600">11:46</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px">
+          <span style="font-size:12.5px;color:var(--color-text-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:80%">voici free</span>
+          <span style="min-width:18px;height:18px;background:#25d366;color:#fff;font-weight:700;font-size:10px;line-height:18px;text-align:center;border-radius:50%;padding:0 4px">2</span>
+        </div>
+      </div>
+    </button>
+
+    <!-- Row: TchueKAM AI -->
+    <button onClick="{{ on.threadAi }}" style="width:100%;display:flex;gap:12px;border:none;border-bottom:1px solid var(--color-divider);background:transparent;padding:12px 16px;text-align:left;color:var(--color-text);align-items:center;cursor:pointer">
+      <div style="width:46px;height:46px;border-radius:50%;background:var(--color-accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex:none">AI</div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;justify-content:space-between;align-items:baseline">
+          <span style="font-weight:700;font-size:14px;color:var(--color-text)">TchueKAM AI</span>
+          <span style="font-size:11px;color:var(--color-text-muted)">11:41</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px">
+          <span style="font-size:12.5px;color:var(--color-text-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Three options match your budget in Douala…</span>
+        </div>
+      </div>
+    </button>
+
+    <!-- Row: Orca Electronics -->
+    <button onClick="{{ on.threadSeller }}" style="width:100%;display:flex;gap:12px;border:none;border-bottom:1px solid var(--color-divider);background:transparent;padding:12px 16px;text-align:left;color:var(--color-text);align-items:center;cursor:pointer">
+      <div class="ph" style="width:46px;height:46px;border-radius:50%;flex:none"></div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;justify-content:space-between;align-items:baseline">
+          <span style="font-weight:700;font-size:14px;color:var(--color-text)">Orca Electronics ✓</span>
+          <span style="font-size:11px;color:var(--color-text-muted)">Hier</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px">
+          <span style="font-size:12.5px;color:var(--color-text-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Yes, it is in stock. We can deliver today.</span>
+        </div>
+      </div>
+    </button>
+
+    <!-- Row: Marina K. -->
+    <button onClick="{{ on.threadSeller }}" style="width:100%;display:flex;gap:12px;border:none;border-bottom:1px solid var(--color-divider);background:transparent;padding:12px 16px;text-align:left;color:var(--color-text);align-items:center;cursor:pointer">
+      <div class="ph" style="width:46px;height:46px;border-radius:50%;flex:none"></div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;justify-content:space-between;align-items:baseline">
+          <span style="font-weight:700;font-size:14px;color:var(--color-text)">Marina K.</span>
+          <span style="font-size:11px;color:var(--color-text-muted)">07/07</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px">
+          <span style="font-size:12.5px;color:var(--color-text-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Is the Canon still available? I can pass by…</span>
+        </div>
+      </div>
+    </button>
+  </div>
 </div>
 </sc-if>
 
 <sc-if value="{{ is.threadAi }}">
-<div style="min-height:100%;display:flex;flex-direction:column">
-  <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:2px solid var(--color-text);position:sticky;top:0;background:var(--color-bg);z-index:4">
-    <button onClick="{{ on.chat }}" style="border:none;background:transparent;padding:0;font:800 17px/1 var(--font-heading);color:var(--color-text)">←</button>
-    <span style="width:34px;height:34px;background:var(--color-accent);color:#fff;display:flex;align-items:center;justify-content:center;font:800 11px/1 var(--font-heading)">AI</span>
-    <div style="flex:1">
-      <div style="font:800 14px/1 var(--font-heading)">TchueKAM AI</div>
-      <div style="font:400 9.5px/1 var(--font-body);color:var(--color-neutral-700);margin-top:4px">Commerce assistant · always on</div>
-    </div>
-  </div>
-  <div style="flex:1;padding:16px;display:flex;flex-direction:column;gap:14px">
-    <div style="align-self:flex-end;max-width:78%;background:var(--color-text);color:var(--color-bg);padding:10px 12px;font:400 12.5px/1.45 var(--font-body)">I need a laptop for design work, under 800 000.</div>
-    <div style="max-width:88%;background:#fff;border:1px solid var(--color-divider);padding:10px 12px;font:400 12.5px/1.45 var(--font-body)">Three options match your budget in Douala. The MacBook Air M2 has the best resale value; the Yoga is the cheapest with 16GB RAM.</div>
-    <div style="display:flex;flex-direction:column;gap:0;border:2px solid var(--color-text);background:#fff">
-      <button onClick="{{ on.product }}" style="display:flex;gap:11px;align-items:center;border:none;border-bottom:1px solid var(--color-divider);background:transparent;padding:10px;text-align:left;color:var(--color-text)">
-        <span class="ph" style="width:52px;height:52px;flex:none"></span>
-        <span style="flex:1"><span style="display:block;font:600 12px/1.3 var(--font-body)">MacBook Air M2 13"</span><span style="display:block;font:800 12px/1 var(--font-heading);margin-top:5px">XAF 745 000</span></span>
-        <span style="font:800 14px/1 var(--font-heading)">→</span>
+<div class="wa-chat-container">
+
+  <!-- WhatsApp Top Header for AI Assistant -->
+  <div class="wa-chat-header">
+    <div class="wa-chat-header-left">
+      <button onClick="{{ on.chat }}" style="border:none;background:transparent;padding:4px 6px;color:#54656f;display:flex;align-items:center;cursor:pointer">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
       </button>
-      <button onClick="{{ on.product }}" style="display:flex;gap:11px;align-items:center;border:none;border-bottom:1px solid var(--color-divider);background:transparent;padding:10px;text-align:left;color:var(--color-text)">
-        <span class="ph" style="width:52px;height:52px;flex:none"></span>
-        <span style="flex:1"><span style="display:block;font:600 12px/1.3 var(--font-body)">Lenovo Yoga Slim 7</span><span style="display:block;font:800 12px/1 var(--font-heading);margin-top:5px">XAF 528 000</span></span>
-        <span style="font:800 14px/1 var(--font-heading)">→</span>
+      <div class="wa-chat-avatar" style="background:var(--color-accent);color:#fff">
+        <span style="font-weight:800;font-size:13px">AI</span>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div class="wa-chat-contact-name">TchueKAM AI Assistant</div>
+        <div style="font-size:11px;color:#00a884;line-height:1">en ligne</div>
+      </div>
+    </div>
+
+    <div class="wa-chat-header-actions">
+      <!-- Search -->
+      <button class="wa-header-icon-btn" title="Search in chat">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4 4"/></svg>
       </button>
-      <button onClick="{{ on.vsCompare }}" style="border:none;background:var(--color-accent-100);padding:10px;font:800 10.5px/1 var(--font-heading);letter-spacing:.1em;color:var(--color-accent-700);text-align:left">COMPARE ALL THREE IN VS →</button>
-    </div>
-    <div style="display:flex;flex-wrap:wrap;gap:8px">
-      <button onClick="{{ on.vsCompare }}" class="btn btn-secondary" style="font-size:11px">Which lasts longer?</button>
-      <button onClick="{{ on.sellers }}" class="btn btn-secondary" style="font-size:11px">Cheapest seller?</button>
-      <button onClick="{{ on.travel }}" class="btn btn-secondary" style="font-size:11px">Delivery time?</button>
+
+      <!-- More Options (3 vertical dots) -->
+      <button class="wa-header-icon-btn" title="More options">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.75"/><circle cx="12" cy="12" r="1.75"/><circle cx="12" cy="19" r="1.75"/></svg>
+      </button>
     </div>
   </div>
-  <div style="position:sticky;bottom:0;background:var(--color-bg);border-top:2px solid var(--color-text);padding:10px 12px;display:flex;gap:8px;align-items:center">
-    <button onClick="{{ on.visual }}" style="width:38px;height:38px;border:1px solid var(--color-divider);background:#fff;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3" y="6" width="18" height="14"/><circle cx="12" cy="13" r="3.4"/><path d="M8 6l1.6-2h4.8L16 6"/></svg>
-    </button>
-    <div style="flex:1;height:38px;border:1px solid var(--color-divider);background:#fff;display:flex;align-items:center;padding:0 10px;font:400 12px/1 var(--font-body);color:var(--color-neutral-600)">Ask TchueKAM AI…</div>
-    <button onClick="{{ on.voice }}" style="width:38px;height:38px;border:none;background:var(--color-accent);color:#fff;display:flex;align-items:center;justify-content:center">
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="2.5" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg>
+
+  <!-- Messages Scroll Area -->
+  <div class="wa-chat-body">
+
+    <div class="wa-system-pill">
+      🔒 Assistant IA propulsé par Gemini &amp; catalogue universel TchueKAM
+    </div>
+
+    <div class="wa-date-pill">Aujourd'hui</div>
+
+    <!-- Sent Message -->
+    <div class="wa-msg-row-sent">
+      <div class="wa-bubble-sent">
+        <span>I need a laptop for design work, under 800 000.</span>
+        <span class="wa-meta">
+          <span>11:40</span>
+          <span class="wa-double-check">
+            <svg width="15" height="11" viewBox="0 0 16 11" fill="none"><path d="M1.5 5.5l3.5 3.5 8-8" stroke="#53bdeb" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.5 5.5l3.5 3.5 6-6" stroke="#53bdeb" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Received AI Message -->
+    <div class="wa-msg-row-received">
+      <div class="wa-bubble-received" style="max-width:min(440px, 86%)">
+        <div>Three options match your budget in Douala. The MacBook Air M2 has the best resale value; the Yoga is the cheapest with 16GB RAM.</div>
+        
+        <div style="margin-top:8px;border-radius:8px;overflow:hidden;background:#f0f2f5;border:1px solid #d1d7db">
+          <button onClick="{{ on.product }}" style="display:flex;gap:10px;align-items:center;border:none;border-bottom:1px solid #d1d7db;background:#fff;padding:8px 10px;text-align:left;color:#111b21;width:100%">
+            <div class="ph" style="width:44px;height:44px;flex:none;border-radius:6px"></div>
+            <div style="flex:1;min-width:0">
+              <div style="font-weight:600;font-size:12px;line-height:1.2">MacBook Air M2 13"</div>
+              <div style="font-weight:800;font-size:12.5px;color:var(--color-accent);margin-top:2px">XAF 745 000</div>
+            </div>
+            <span style="font-weight:800;font-size:13px;color:#54656f">→</span>
+          </button>
+          <button onClick="{{ on.product }}" style="display:flex;gap:10px;align-items:center;border:none;background:#fff;padding:8px 10px;text-align:left;color:#111b21;width:100%">
+            <div class="ph" style="width:44px;height:44px;flex:none;border-radius:6px"></div>
+            <div style="flex:1;min-width:0">
+              <div style="font-weight:600;font-size:12px;line-height:1.2">Lenovo Yoga Slim 7</div>
+              <div style="font-weight:800;font-size:12.5px;color:var(--color-accent);margin-top:2px">XAF 528 000</div>
+            </div>
+            <span style="font-weight:800;font-size:13px;color:#54656f">→</span>
+          </button>
+          <button onClick="{{ on.vsCompare }}" style="width:100%;border:none;background:var(--color-accent-100);color:var(--color-accent);padding:8px 10px;font-weight:700;font-size:11.5px;text-align:center;cursor:pointer">
+            COMPARE IN VS MATRIX →
+          </button>
+        </div>
+
+        <span class="wa-meta">
+          <span>11:41</span>
+        </span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- WhatsApp Bottom Input Bar - WITHOUT upload and emoji button -->
+  <div class="wa-input-bar">
+    <input type="text" class="wa-input-box" placeholder="Entrez un message" />
+    <button class="wa-voice-btn" title="Voice message" onClick="{{ on.voice }}">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 19v3"/></svg>
     </button>
   </div>
+
 </div>
 </sc-if>
 
 <sc-if value="{{ is.threadSeller }}">
-<div style="min-height:100%;display:flex;flex-direction:column">
-  <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:2px solid var(--color-text);position:sticky;top:0;background:var(--color-bg);z-index:4">
-    <button onClick="{{ on.chat }}" style="border:none;background:transparent;padding:0;font:800 17px/1 var(--font-heading);color:var(--color-text)">←</button>
-    <span class="ph" style="width:34px;height:34px;flex:none"></span>
-    <div style="flex:1">
-      <div style="font:800 14px/1 var(--font-heading)">Orca Electronics</div>
-      <div style="font:400 9.5px/1 var(--font-body);color:var(--color-neutral-700);margin-top:4px">✓ Verified seller · replies in ~5 min</div>
-    </div>
-    <button onClick="{{ on.business }}" style="border:none;background:transparent;padding:0;font:800 10px/1 var(--font-heading);letter-spacing:.08em;color:var(--color-accent)">STORE</button>
-  </div>
-  <div style="flex:1;padding:16px;display:flex;flex-direction:column;gap:12px">
-    <button onClick="{{ on.product }}" style="display:flex;gap:11px;align-items:center;border:2px solid var(--color-text);background:#fff;padding:9px;text-align:left;color:var(--color-text)">
-      <span class="ph" style="width:48px;height:48px;flex:none"></span>
-      <span style="flex:1"><span style="display:block;font:600 8.5px/1 var(--font-body);letter-spacing:.12em;color:var(--color-neutral-700)">ABOUT THIS PRODUCT</span><span style="display:block;font:600 12px/1.3 var(--font-body);margin-top:5px">MacBook Air M2 13" 256GB</span></span>
-      <span style="font:800 12px/1 var(--font-heading)">XAF 745 000</span>
-    </button>
-    <div style="align-self:flex-end;max-width:78%;background:var(--color-text);color:var(--color-bg);padding:10px 12px;font:400 12.5px/1.45 var(--font-body)">Bonjour, is the space grey one available today?</div>
-    <div style="max-width:80%;background:#fff;border:1px solid var(--color-divider);padding:10px 12px;font:400 12.5px/1.45 var(--font-body)">Yes, it is in stock. We can deliver today in Douala before 18:00.</div>
-    <div style="max-width:80%;background:#fff;border:1px solid var(--color-divider);padding:10px 12px;font:400 12.5px/1.45 var(--font-body)">I can do XAF 730 000 if you pay through the platform.</div>
-    <div style="border:2px solid var(--color-accent);background:var(--color-accent-100);padding:12px">
-      <div style="font:600 8.5px/1 var(--font-body);letter-spacing:.14em;color:var(--color-accent-700)">OFFER FROM SELLER</div>
-      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:8px">
-        <span style="font:800 18px/1 var(--font-heading)">XAF 730 000</span>
-        <span style="font:400 10px/1 var(--font-body);color:var(--color-neutral-700);text-decoration:line-through">745 000</span>
+<div class="wa-chat-container">
+
+  <!-- WhatsApp Top Header -->
+  <div class="wa-chat-header">
+    <div class="wa-chat-header-left">
+      <button onClick="{{ on.chat }}" style="border:none;background:transparent;padding:4px 6px;color:#54656f;display:flex;align-items:center;cursor:pointer">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </button>
+      <div class="wa-chat-avatar" style="background:#54656f;color:#fff">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
       </div>
-      <div style="display:flex;gap:8px;margin-top:12px">
-        <button onClick="{{ addToCart }}" class="btn btn-primary" style="flex:1;justify-content:center;height:40px">ACCEPT &amp; ADD TO CART</button>
-        <button onClick="{{ on.vsCompare }}" class="btn btn-secondary" style="border-width:2px;height:40px">VS</button>
+      <div style="flex:1;min-width:0">
+        <div class="wa-chat-contact-name">Mr Toukam</div>
       </div>
     </div>
+
+    <div class="wa-chat-header-actions">
+      <!-- "Ajouter à la liste" button with dropdown arrow -->
+      <button class="wa-btn-add-list" onClick="{{ on.business }}">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 14l2 2 4-4"/></svg>
+        <span>Ajouter à la liste</span>
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+
+      <!-- Video Call -->
+      <button class="wa-header-icon-btn" title="Video call">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg>
+      </button>
+
+      <!-- Audio Call -->
+      <button class="wa-header-icon-btn" title="Phone call">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      </button>
+
+      <!-- Search -->
+      <button class="wa-header-icon-btn" title="Search in chat">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4 4"/></svg>
+      </button>
+
+      <!-- More Options (3 vertical dots) -->
+      <button class="wa-header-icon-btn" title="More options">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.75"/><circle cx="12" cy="12" r="1.75"/><circle cx="12" cy="19" r="1.75"/></svg>
+      </button>
+    </div>
   </div>
-  <div style="position:sticky;bottom:0;background:var(--color-bg);border-top:2px solid var(--color-text);padding:10px 12px;display:flex;gap:8px;align-items:center">
-    <button onClick="{{ on.upload }}" style="width:38px;height:38px;border:1px solid var(--color-divider);background:#fff;display:flex;align-items:center;justify-content:center;font:800 16px/1 var(--font-heading);color:var(--color-text)">+</button>
-    <div style="flex:1;height:38px;border:1px solid var(--color-divider);background:#fff;display:flex;align-items:center;padding:0 10px;font:400 12px/1 var(--font-body);color:var(--color-neutral-600)">Message…</div>
-    <button onClick="{{ on.voice }}" style="width:38px;height:38px;border:none;background:var(--color-text);color:var(--color-bg);display:flex;align-items:center;justify-content:center">
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="2.5" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg>
+
+  <!-- WhatsApp Messages Scroll Area -->
+  <div class="wa-chat-body">
+
+    <!-- Notice Pill -->
+    <div class="wa-system-pill">
+      Cliquez ici pour récupérer les anciens messages de votre téléphone.
+    </div>
+
+    <!-- Date Divider -->
+    <div class="wa-date-pill">07/07/2026</div>
+
+    <!-- Sent Message 1: "yo" -->
+    <div class="wa-msg-row-sent">
+      <div class="wa-bubble-sent">
+        <span>yo</span>
+        <span class="wa-meta">
+          <span>17:12</span>
+          <span class="wa-double-check">
+            <svg width="15" height="11" viewBox="0 0 16 11" fill="none"><path d="M1.5 5.5l3.5 3.5 8-8" stroke="#53bdeb" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.5 5.5l3.5 3.5 6-6" stroke="#53bdeb" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Sent Message 2: Shared Contact Card (Beckysmile) -->
+    <div class="wa-msg-row-sent">
+      <button class="wa-forward-btn" title="Forward">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 14 5-5-5-5"/><path d="M4 20v-7a4 4 0 0 1 4-4h12"/></svg>
+      </button>
+      <div class="wa-contact-card">
+        <div class="wa-contact-top">
+          <div class="wa-contact-avatar-img">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="#667781"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2" stroke="#fff" stroke-width="1.5"/></svg>
+          </div>
+          <div class="wa-contact-details">
+            <div class="wa-contact-name-txt">Beckysmile</div>
+          </div>
+          <span class="wa-meta" style="margin:0">
+            <span>17:12</span>
+            <span class="wa-double-check">
+              <svg width="15" height="11" viewBox="0 0 16 11" fill="none"><path d="M1.5 5.5l3.5 3.5 8-8" stroke="#53bdeb" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.5 5.5l3.5 3.5 6-6" stroke="#53bdeb" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </span>
+        </div>
+        <div class="wa-contact-btn-row">
+          <button class="wa-contact-btn" onClick="{{ on.chat }}">Message</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Date Divider 2: Aujourd'hui -->
+    <div class="wa-date-pill">Aujourd'hui</div>
+
+    <!-- Received Message 3: Audio Message Player -->
+    <div class="wa-msg-row-received">
+      <div class="wa-audio-card">
+        <button class="wa-audio-play" title="Play audio">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+        
+        <div class="wa-audio-middle">
+          <div class="wa-waveform-container">
+            <div class="wa-audio-dot"></div>
+            <!-- Waveform bars -->
+            <div class="wa-bar played" style="height:6px"></div>
+            <div class="wa-bar played" style="height:12px"></div>
+            <div class="wa-bar played" style="height:16px"></div>
+            <div class="wa-bar played" style="height:10px"></div>
+            <div class="wa-bar" style="height:18px"></div>
+            <div class="wa-bar" style="height:14px"></div>
+            <div class="wa-bar" style="height:8px"></div>
+            <div class="wa-bar" style="height:16px"></div>
+            <div class="wa-bar" style="height:20px"></div>
+            <div class="wa-bar" style="height:12px"></div>
+            <div class="wa-bar" style="height:6px"></div>
+            <div class="wa-bar" style="height:14px"></div>
+            <div class="wa-bar" style="height:18px"></div>
+            <div class="wa-bar" style="height:10px"></div>
+            <div class="wa-bar" style="height:8px"></div>
+            <div class="wa-bar" style="height:15px"></div>
+            <div class="wa-bar" style="height:12px"></div>
+            <div class="wa-bar" style="height:6px"></div>
+            <div class="wa-bar" style="height:10px"></div>
+            <div class="wa-bar" style="height:16px"></div>
+            <div class="wa-bar" style="height:14px"></div>
+            <div class="wa-bar" style="height:8px"></div>
+            <div class="wa-bar" style="height:18px"></div>
+            <div class="wa-bar" style="height:12px"></div>
+            <div class="wa-bar" style="height:6px"></div>
+          </div>
+          <div class="wa-audio-time-row">
+            <span>0:05</span>
+            <span>11:44</span>
+          </div>
+        </div>
+
+        <div class="wa-audio-avatar-badge">
+          <div class="wa-audio-user-pic">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+          </div>
+          <div class="wa-mic-badge-small">
+            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 19v3"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sent Message 4: Link (tchuekam.com/magida) -->
+    <div class="wa-msg-row-sent">
+      <div class="wa-bubble-sent">
+        <a href="javascript:void(0)" style="color:#025144;text-decoration:underline;font-weight:500">tchuekam.com/magida</a>
+        <span class="wa-meta">
+          <span>11:46</span>
+          <span class="wa-double-check">
+            <svg width="15" height="11" viewBox="0 0 16 11" fill="none"><path d="M1.5 5.5l3.5 3.5 8-8" stroke="#53bdeb" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.5 5.5l3.5 3.5 6-6" stroke="#53bdeb" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Sent Message 5: Text ("voici free") -->
+    <div class="wa-msg-row-sent">
+      <div class="wa-bubble-sent">
+        <span>voici free</span>
+        <span class="wa-meta">
+          <span>11:46</span>
+          <span class="wa-double-check">
+            <svg width="15" height="11" viewBox="0 0 16 11" fill="none"><path d="M1.5 5.5l3.5 3.5 8-8" stroke="#53bdeb" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.5 5.5l3.5 3.5 6-6" stroke="#53bdeb" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+        </span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- WhatsApp Bottom Input Bar - WITHOUT upload and emoji button -->
+  <div class="wa-input-bar">
+    <input type="text" class="wa-input-box" placeholder="Entrez un message" />
+    <button class="wa-voice-btn" title="Voice message" onClick="{{ on.voice }}">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 19v3"/></svg>
     </button>
   </div>
+
 </div>
 </sc-if>
 
