@@ -15,7 +15,7 @@
 <script src="_ds/modernist-dcebbf7e-2a15-4750-a4b9-db3ba3d0c312/_ds_bundle.js"></script>
 <style>
 /* ══════════════════════════════════════════════════════════════════════════
-   LOUMOO MASTER DESIGN SYSTEM — APPLE & INSTA360 LUXURY COMMERCE ENGINE
+   LOUMOO MASTER DESIGN SYSTEM — LUXURY COMMERCE & INTERACTIVE ONBOARDING
    ══════════════════════════════════════════════════════════════════════ */
 :root {
   --color-bg: #f5f7fa;
@@ -150,6 +150,40 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 .btn-om:hover { background: var(--color-om-hover); transform: translateY(-1.5px); }
 .btn-block { width: 100%; margin-top: var(--space-2); justify-content: center; }
 
+/* Interactive Choice Cards */
+.selection-card {
+  display: flex; align-items: flex-start; gap: 16px; padding: 18px 20px;
+  border-radius: var(--radius-lg); background: var(--color-surface);
+  border: 2px solid var(--color-divider); cursor: pointer; text-align: left;
+  transition: all 0.22s var(--ease-spring); user-select: none; width: 100%;
+}
+.selection-card:hover {
+  border-color: var(--color-neutral-400); background: var(--color-surface-hover);
+  transform: translateY(-2px); box-shadow: var(--shadow-sm);
+}
+.selection-card:active { transform: scale(0.98); }
+.selection-card.selected {
+  border-color: var(--color-accent) !important; background: var(--color-accent-100) !important;
+  box-shadow: 0 4px 18px rgba(0, 122, 255, 0.15) !important;
+}
+
+/* Button Loading & Success States */
+.btn-loading { opacity: 0.85; pointer-events: none; position: relative; }
+.btn-loading::after {
+  content: ''; width: 16px; height: 16px; border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite;
+  display: inline-block; margin-left: 8px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Resume Interrupted Setup Banner */
+.resume-banner {
+  background: linear-gradient(135deg, #111214 0%, #1e2330 100%);
+  color: #fff; padding: 16px 18px; border-radius: var(--radius-lg);
+  display: flex; align-items: center; justify-content: space-between;
+  box-shadow: var(--shadow-md); margin-bottom: 20px;
+}
+
 /* Studio Photography Containers */
 .ph {
   background: var(--color-neutral-100);
@@ -224,7 +258,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 /* Editorial & Storytelling Cards */
 .card-premium {
   background: var(--color-surface); border: 1px solid var(--color-divider);
-  border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow-sm);
+  border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow-sm);
   transition: all 0.25s var(--ease-spring);
 }
 .card-premium:hover { box-shadow: var(--shadow-md); border-color: var(--color-neutral-300); }
@@ -503,20 +537,23 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
       <span style="margin-left:auto;font:800 8.5px/1 var(--font-heading);background:var(--color-accent-100);color:var(--color-accent);padding:2px 6px;border-radius:var(--radius-pill)">AI</span>
     </button>
 
+    <!-- Dynamic CTA: "Join LOUMOO" (Guest) vs "Upload +" (Authenticated) -->
     <div style="margin-top:16px;padding:0 4px">
-      <button onClick="{{ on.onboardWelcome }}" class="sidebar-cta-btn">
+      <button onClick="{{ navUploadAction }}" class="sidebar-cta-btn">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        <span>Join LOUMOO</span>
+        <span>{{ navCtaLabel }}</span>
       </button>
     </div>
   </div>
 
   <div class="sidebar-footer">
-    <button onClick="{{ on.profile }}" class="nav-item {{ (is.profile || is.settings || is.orders || is.seller) ? 'active' : '' }}" style="padding:6px 8px">
-      <div style="width:30px;height:30px;border-radius:50%;background:var(--color-accent);color:#fff;display:flex;align-items:center;justify-content:center;font:800 11px/1 var(--font-heading);flex:none">TK</div>
+    <button onClick="{{ on.profile }}" class="nav-item {{ (is.profile || is.profileEdit || is.settings || is.orders || is.seller) ? 'active' : '' }}" style="padding:6px 8px">
+      <div style="width:30px;height:30px;border-radius:50%;background:var(--color-accent);color:#fff;display:flex;align-items:center;justify-content:center;font:800 11px/1 var(--font-heading);flex:none">
+        {{ isLoggedIn ? (regFirstName ? regFirstName.slice(0,1) : 'U') : 'G' }}
+      </div>
       <div style="flex:1;min-width:0">
         <div style="font-weight:700;font-size:12.5px;color:var(--color-text);line-height:1.1">{{ userName }}</div>
-        <div style="font-size:10px;color:var(--color-text-secondary);margin-top:2px">Verified Account</div>
+        <div style="font-size:10px;color:var(--color-text-secondary);margin-top:2px">{{ isLoggedIn ? 'Verified Account' : 'Guest Mode' }}</div>
       </div>
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--color-text-muted)"><polyline points="9 18 15 12 9 6"/></svg>
     </button>
@@ -1163,7 +1200,6 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 
   <!-- Messages Body -->
   <div class="wa-chat-body">
-    
     <div style="align-self:center;background:rgba(255,255,255,0.9);box-shadow:0 1px 2px rgba(0,0,0,0.08);border-radius:6px;padding:4px 12px;font-size:11px;color:#54656f">
       TODAY
     </div>
@@ -1213,7 +1249,6 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
         <div style="font-size:9.5px;color:#667781;float:right;margin-left:8px;margin-top:4px">11:45</div>
       </div>
     </div>
-
   </div>
 
   <!-- WhatsApp Bottom Input Bar -->
@@ -1244,29 +1279,25 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   </div>
 
   <div style="padding:16px;max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:14px">
-    
     <div class="card-premium">
-      <div style="display:gap;align-items:flex-start">
-        <div style="display:flex;gap:12px;align-items:flex-start">
-          <div style="width:36px;height:36px;border-radius:50%;background:var(--color-accent);color:#fff;display:flex;align-items:center;justify-content:center;font:800 12px/1 var(--font-heading);flex-shrink:0">AI</div>
-          <div style="flex:1">
-            <div style="font:700 13.5px/1.2 var(--font-heading);color:var(--color-text)">AI Shopping Recommendation</div>
-            <p style="font-size:13px;color:var(--color-text-secondary);margin:6px 0 12px;line-height:1.45">
-              Based on your interest in creator hardware and your Douala location, here is the best verified deal with escrow protection:
-            </p>
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <div style="width:36px;height:36px;border-radius:50%;background:var(--color-accent);color:#fff;display:flex;align-items:center;justify-content:center;font:800 12px/1 var(--font-heading);flex-shrink:0">AI</div>
+        <div style="flex:1">
+          <div style="font:700 13.5px/1.2 var(--font-heading);color:var(--color-text)">AI Shopping Recommendation</div>
+          <p style="font-size:13px;color:var(--color-text-secondary);margin:6px 0 12px;line-height:1.45">
+            Based on your interest in creator hardware and your Douala location, here is the best verified deal with escrow protection:
+          </p>
 
-            <div style="background:var(--color-neutral-100);border:1px solid var(--color-divider);border-radius:var(--radius-sm);padding:12px;display:flex;justify-content:space-between;align-items:center">
-              <div>
-                <div style="font:700 13px/1.2 var(--font-heading)">Apple MacBook Air 13” (M2)</div>
-                <div style="font:800 14px/1 var(--font-heading);color:var(--color-accent);margin-top:2px">XAF 745 000 · Orca Electronics</div>
-              </div>
-              <button onClick="{{ on.product }}" class="btn btn-primary" style="height:34px;padding:0 14px;font-size:11.5px">VIEW</button>
+          <div style="background:var(--color-neutral-100);border:1px solid var(--color-divider);border-radius:var(--radius-sm);padding:12px;display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div style="font:700 13px/1.2 var(--font-heading)">Apple MacBook Air 13” (M2)</div>
+              <div style="font:800 14px/1 var(--font-heading);color:var(--color-accent);margin-top:2px">XAF 745 000 · Orca Electronics</div>
             </div>
+            <button onClick="{{ on.product }}" class="btn btn-primary" style="height:34px;padding:0 14px;font-size:11.5px">VIEW</button>
           </div>
         </div>
       </div>
     </div>
-
   </div>
 </div>
 </sc-if>
@@ -1300,7 +1331,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 </sc-if>
 
 <!-- ══════════════════════════════════════════════════════════════════════════
-     UPGRADED USER PROFILE PORTAL (is.profile)
+     ADAPTIVE MY ACCOUNT PORTAL (is.profile)
      ══════════════════════════════════════════════════════════════════════ -->
 <sc-if value="{{ is.profile }}">
 <div style="padding-bottom:32px">
@@ -1318,48 +1349,73 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 
   <div style="padding:16px;max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:16px">
     
-    <!-- Registration / Onboarding Entry Hero Banner -->
+    <!-- ── STATE A: GUEST / UNREGISTERED USER ── -->
+    <sc-if value="{{ !isLoggedIn }}">
     <div class="card-premium" style="background:linear-gradient(135deg, #002b61 0%, #007aff 100%);color:#fff;border:none;padding:24px;box-shadow:var(--shadow-glow-blue)">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <div style="max-width:440px">
-          <span style="font:800 10.5px/1 var(--font-heading);letter-spacing:.12em;background:rgba(255,255,255,0.2);padding:4px 8px;border-radius:var(--radius-pill);display:inline-block;margin-bottom:10px">
-            LOUMOO ONBOARDING
-          </span>
-          <h2 style="color:#fff;margin:0 0 6px;font-size:22px">Create your LOUMOO account</h2>
-          <p style="color:rgba(255,255,255,0.88);font-size:13px;line-height:1.45;margin:0 0 16px">
-            Unlock fast escrow checkout, open your verified storefront, track parcels in real-time, and get personalized deals across Cameroon.
-          </p>
-          <div style="display:flex;gap:10px;flex-wrap:wrap">
-            <button onClick="{{ on.onboardWelcome }}" class="btn btn-dark" style="background:#fff;color:var(--color-text);height:42px;padding:0 20px;font-size:13px">
-              <span>GET STARTED →</span>
-            </button>
-            <button onClick="{{ on.onboardWelcome }}" class="btn btn-secondary" style="background:rgba(255,255,255,0.15);color:#fff;border-color:rgba(255,255,255,0.3);height:42px;padding:0 16px;font-size:12.5px">
-              SIGN IN
-            </button>
-          </div>
+      <div style="max-width:480px">
+        <span style="font:800 10.5px/1 var(--font-heading);letter-spacing:.12em;background:rgba(255,255,255,0.2);padding:4px 8px;border-radius:var(--radius-pill);display:inline-block;margin-bottom:10px">
+          JOIN LOUMOO
+        </span>
+        <h2 style="color:#fff;margin:0 0 6px;font-size:22px">Create your LOUMOO account</h2>
+        <p style="color:rgba(255,255,255,0.88);font-size:13px;line-height:1.45;margin:0 0 18px">
+          Unlock instant escrow checkout, open your storefront, track orders, and connect with verified merchants across Cameroon.
+        </p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button onClick="{{ on.onboardWelcome }}" class="btn btn-dark" style="background:#fff;color:var(--color-text);height:42px;padding:0 20px;font-size:13px">
+            <span>GET STARTED →</span>
+          </button>
+          <button onClick="{{ on.onboardWelcome }}" class="btn btn-secondary" style="background:rgba(255,255,255,0.15);color:#fff;border-color:rgba(255,255,255,0.3);height:42px;padding:0 16px;font-size:12.5px">
+            SIGN IN
+          </button>
         </div>
       </div>
     </div>
+    </sc-if>
 
-    <!-- Active Profile Card with 85% Completion Score -->
+    <!-- ── STATE B: AUTHENTICATED USER ── -->
+    <sc-if value="{{ isLoggedIn }}">
+    
+    <!-- User Profile Header -->
     <div class="card-premium" style="display:flex;align-items:center;gap:14px">
-      <div style="width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,var(--color-accent),#003d8a);color:#fff;display:flex;align-items:center;justify-content:center;font:800 20px/1 var(--font-heading);flex-shrink:0">TK</div>
+      <div style="width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,var(--color-accent),#003d8a);color:#fff;display:flex;align-items:center;justify-content:center;font:800 20px/1 var(--font-heading);flex-shrink:0">
+        {{ regFirstName ? regFirstName.slice(0,1) : 'U' }}{{ regLastName ? regLastName.slice(0,1) : '' }}
+      </div>
       <div style="flex:1">
         <div style="display:flex;align-items:center;gap:8px">
-          <span style="font:800 17px/1.2 var(--font-heading);color:var(--color-text)">{{ userName }}</span>
-          <span class="tag tag-accent" style="min-height:18px;padding:2px 6px;font-size:9.5px">VERIFIED BUYER &amp; SELLER</span>
+          <span style="font:800 17px/1.2 var(--font-heading);color:var(--color-text)">{{ regFirstName }} {{ regLastName }}</span>
+          <span class="tag tag-accent" style="min-height:18px;padding:2px 6px;font-size:9.5px;text-transform:uppercase">
+            {{ userRole === 'both' ? 'BUYER & SELLER' : userRole }}
+          </span>
         </div>
-        <div style="font:400 12px/1 var(--font-body);color:var(--color-text-secondary);margin-top:4px">+237 690 12 34 56 · Douala, Cameroon</div>
+        <div style="font:400 12px/1 var(--font-body);color:var(--color-text-secondary);margin-top:4px">+237 {{ regPhone }} · {{ regEmail }}</div>
+        
+        <!-- Setup Progress Gauge -->
         <div style="display:flex;align-items:center;gap:8px;margin-top:8px">
           <div style="flex:1;max-width:180px;height:5px;background:var(--color-neutral-200);border-radius:3px;overflow:hidden">
-            <div style="width:85%;height:100%;background:var(--color-success);border-radius:3px"></div>
+            <div style="width:{{ completionPct }}%;height:100%;background:var(--color-success);border-radius:3px"></div>
           </div>
-          <span style="font:700 10.5px/1 var(--font-heading);color:var(--color-success)">85% Profile Setup</span>
+          <span style="font:700 10.5px/1 var(--font-heading);color:var(--color-success)">{{ completionPct }}% Profile Setup</span>
         </div>
       </div>
+      <button onClick="{{ on.profileEdit }}" class="btn btn-secondary" style="height:32px;padding:0 10px;font-size:11px">
+        EDIT
+      </button>
     </div>
 
-    <!-- Quick Navigation Tiles (Lucide Icons) -->
+    <!-- Upgrade to Seller Banner (If Buyer Only) -->
+    <sc-if value="{{ userRole === 'buyer' }}">
+    <div style="background:linear-gradient(135deg, #111214 0%, #1e2330 100%);color:#fff;border-radius:var(--radius-md);padding:14px 18px;display:flex;align-items:center;justify-content:space-between">
+      <div>
+        <div style="font:800 13.5px/1.2 var(--font-heading);color:var(--color-accent-energy)">Start Selling on LOUMOO</div>
+        <div style="font:400 11px/1.3 var(--font-body);color:rgba(255,255,255,0.75);margin-top:2px">Activate your storefront to list products &amp; receive MoMo payouts.</div>
+      </div>
+      <button onClick="{{ on.onboardUpgradeSeller }}" class="btn btn-primary" style="background:var(--color-accent-energy);color:#111214;font-weight:800;height:34px;padding:0 12px;font-size:11px">
+        UPGRADE <span>+</span>
+      </button>
+    </div>
+    </sc-if>
+
+    <!-- Quick Navigation Tiles -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
       <button onClick="{{ on.orders }}" aria-label="Go to My Orders" class="card-premium" style="text-align:left;padding:14px;cursor:pointer">
         <div style="width:36px;height:36px;border-radius:var(--radius-sm);background:var(--color-accent-100);color:var(--color-accent);display:flex;align-items:center;justify-content:center;margin-bottom:8px">
@@ -1394,6 +1450,58 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
       </button>
     </div>
 
+    <!-- Logout Action -->
+    <div style="margin-top:8px">
+      <button onClick="{{ logoutAction }}" class="btn btn-secondary btn-block" style="height:44px;color:var(--color-accent-sale);border-color:var(--color-accent-sale-100)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        <span>LOG OUT OF LOUMOO</span>
+      </button>
+    </div>
+
+    </sc-if>
+
+  </div>
+</div>
+</sc-if>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     PROFILE EDIT MODAL / SHEET (is.profileEdit)
+     ══════════════════════════════════════════════════════════════════════ -->
+<sc-if value="{{ is.profileEdit }}">
+<div style="padding-bottom:32px">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+    <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <h4 style="margin:0;font-size:16px">Edit Profile</h4>
+    <div style="width:36px"></div>
+  </div>
+
+  <div style="padding:16px;max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:14px">
+    <div class="card-premium" style="display:flex;flex-direction:column;gap:14px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div>
+          <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">FIRST NAME</label>
+          <input type="text" class="input" value="{{ regFirstName }}">
+        </div>
+        <div>
+          <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">LAST NAME</label>
+          <input type="text" class="input" value="{{ regLastName }}">
+        </div>
+      </div>
+      <div>
+        <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">EMAIL ADDRESS</label>
+        <input type="email" class="input" value="{{ regEmail }}">
+      </div>
+      <div>
+        <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">PHONE NUMBER</label>
+        <input type="tel" class="input" value="{{ regPhone }}">
+      </div>
+    </div>
+
+    <button onClick="{{ saveProfile }}" class="btn btn-primary btn-block" style="height:48px;font-size:14px">
+      SAVE CHANGES <span>✓</span>
+    </button>
   </div>
 </div>
 </sc-if>
@@ -1454,7 +1562,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
     <!-- Onboarding / Registration Shortcut -->
     <div class="card-premium" style="display:flex;flex-direction:column;gap:10px">
       <button onClick="{{ on.onboardWelcome }}" style="border:none;background:transparent;text-align:left;padding:8px 0;font:600 13px/1 var(--font-body);color:var(--color-accent);display:flex;justify-content:space-between;cursor:pointer">
-        <span>Complete / Revisit Registration Wizard</span>
+        <span>Revisit Registration Wizard</span>
         <span>→</span>
       </button>
       <button onClick="{{ on.threadAi }}" style="border:none;border-top:1px solid var(--color-divider);background:transparent;text-align:left;padding:8px 0;font:600 13px/1 var(--font-body);color:var(--color-text);display:flex;justify-content:space-between;cursor:pointer">
@@ -1501,7 +1609,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 </sc-if>
 
 <!-- ══════════════════════════════════════════════════════════════════════════
-     ONBOARDING STEP 0: WELCOME & VALUE PROPOSITION (is.onboardWelcome)
+     ONBOARDING STEP 0: WELCOME & RESUME (is.onboardWelcome)
      ══════════════════════════════════════════════════════════════════════ -->
 <sc-if value="{{ is.onboardWelcome }}">
 <div style="min-height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:24px 20px 32px;max-width:580px;margin:0 auto;box-sizing:border-box">
@@ -1515,25 +1623,39 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   </div>
 
   <!-- Hero Message & Graphic -->
-  <div style="text-align:center;padding:32px 0">
-    <div style="width:84px;height:84px;border-radius:28px;background:linear-gradient(135deg,var(--color-accent) 0%,#003d8a 100%);color:#fff;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;box-shadow:var(--shadow-glow-blue)">
+  <div style="text-align:center;padding:24px 0 16px">
+    
+    <!-- Resume Interrupted Setup Banner (Conditional) -->
+    <sc-if value="{{ hasSavedDraft }}">
+    <div class="resume-banner">
+      <div style="text-align:left">
+        <div style="font:800 13.5px/1.2 var(--font-heading);color:#fff">Welcome back, {{ regFirstName }}!</div>
+        <div style="font:400 11.5px/1 var(--font-body);color:rgba(255,255,255,0.75);margin-top:3px">You were {{ completionPct }}% done with your setup.</div>
+      </div>
+      <button onClick="{{ resumeSavedDraft }}" class="btn btn-primary" style="background:var(--color-accent);color:#fff;height:36px;padding:0 14px;font-size:12px">
+        RESUME →
+      </button>
+    </div>
+    </sc-if>
+
+    <div style="width:84px;height:84px;border-radius:28px;background:linear-gradient(135deg,var(--color-accent) 0%,#003d8a 100%);color:#fff;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;box-shadow:var(--shadow-glow-blue)">
       <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8.5" r="3.7"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></svg>
     </div>
 
-    <h1 style="font-size:28px;margin:0 0 10px;line-height:1.2">Welcome to LOUMOO</h1>
-    <p style="font-size:15px;color:var(--color-text-secondary);max-width:420px;margin:0 auto;line-height:1.5">
+    <h1 style="font-size:28px;margin:0 0 8px;line-height:1.2">Welcome to LOUMOO</h1>
+    <p style="font-size:14.5px;color:var(--color-text-secondary);max-width:420px;margin:0 auto;line-height:1.5">
       One unified account to discover, buy, sell, and travel across Cameroon with escrow protection.
     </p>
 
     <!-- 3 Value Highlights -->
-    <div style="display:flex;flex-direction:column;gap:12px;margin-top:32px;text-align:left">
+    <div style="display:flex;flex-direction:column;gap:10px;margin-top:24px;text-align:left">
       <div style="display:flex;align-items:center;gap:14px;background:var(--color-surface);padding:14px 16px;border-radius:var(--radius-md);border:1px solid var(--color-divider)">
         <div style="width:36px;height:36px;border-radius:50%;background:var(--color-accent-100);color:var(--color-accent);display:flex;align-items:center;justify-content:center;flex-shrink:0">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         </div>
         <div>
           <div style="font:700 13.5px/1.2 var(--font-heading);color:var(--color-text)">Escrow-Secured Payments</div>
-          <div style="font:400 11.5px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Sellers are paid only when you confirm delivery</div>
+          <div style="font:400 11.5px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Sellers are paid via MoMo/OM only upon your delivery confirmation</div>
         </div>
       </div>
 
@@ -1542,15 +1664,15 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h20l-2 10H4L2 3z"/><path d="M6 13v7a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-7"/></svg>
         </div>
         <div>
-          <div style="font:700 13.5px/1.2 var(--font-heading);color:var(--color-text)">Open Your Verified Storefront</div>
-          <div style="font:400 11.5px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Post listings in 2 minutes and reach 50,000+ shoppers</div>
+          <div style="font:700 13.5px/1.2 var(--font-heading);color:var(--color-text)">Verified Storefront &amp; Studio</div>
+          <div style="font:400 11.5px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">List products in 2 minutes and reach 50,000+ shoppers</div>
         </div>
       </div>
     </div>
   </div>
 
   <!-- Bottom CTAs -->
-  <div style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;flex-direction:column;gap:10px">
     <button onClick="{{ on.onboardType }}" class="btn btn-primary btn-block" style="height:50px;font-size:15px">
       <span>LET'S GET STARTED</span>
       <span>→</span>
@@ -1584,55 +1706,55 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
     </div>
 
     <h2 style="font-size:24px;margin:0 0 6px">How will you use LOUMOO?</h2>
-    <p style="font-size:14px;color:var(--color-text-secondary);margin:0 0 24px">
-      We'll personalize your experience. You can easily change this later in settings.
+    <p style="font-size:14px;color:var(--color-text-secondary);margin:0 0 22px">
+      Tap your primary purpose. We'll tailor every screen to you.
     </p>
 
     <!-- Choice 1: Buy -->
-    <div style="display:flex;flex-direction:column;gap:14px">
-      <button onClick="{{ setRoleBuyer }}" class="card-premium" style="display:flex;align-items:flex-start;gap:16px;padding:20px;text-align:left;border:2px solid {{ userRole === 'buyer' ? 'var(--color-accent)' : 'var(--color-divider)' }};background:{{ userRole === 'buyer' ? 'var(--color-accent-100)' : 'var(--color-surface)' }};cursor:pointer">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <button onClick="{{ setRoleBuyer }}" class="selection-card {{ userRole === 'buyer' ? 'selected' : '' }}">
         <div style="width:44px;height:44px;border-radius:var(--radius-sm);background:{{ userRole === 'buyer' ? 'var(--color-accent)' : 'var(--color-neutral-200)' }};color:{{ userRole === 'buyer' ? '#fff' : 'var(--color-text)' }};display:flex;align-items:center;justify-content:center;flex-shrink:0">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
         </div>
         <div style="flex:1">
-          <div style="font:800 16px/1.2 var(--font-heading);color:var(--color-text)">I'm here to buy</div>
-          <div style="font:400 13px/1.4 var(--font-body);color:var(--color-text-secondary);margin-top:4px">
+          <div style="font:800 15.5px/1.2 var(--font-heading);color:var(--color-text)">I'm here to buy</div>
+          <div style="font:400 12.5px/1.4 var(--font-body);color:var(--color-text-secondary);margin-top:3px">
             Discover electronics, fashion, hotels, flights &amp; services with secure MoMo/OM escrow checkout.
           </div>
         </div>
-        <div style="width:22px;height:22px;border-radius:50%;border:2px solid {{ userRole === 'buyer' ? 'var(--color-accent)' : 'var(--color-divider)' }};background:{{ userRole === 'buyer' ? 'var(--color-accent)' : 'transparent' }};display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px">
+        <div style="width:22px;height:22px;border-radius:50%;border:2px solid {{ userRole === 'buyer' ? 'var(--color-accent)' : 'var(--color-divider)' }};background:{{ userRole === 'buyer' ? 'var(--color-accent)' : 'transparent' }};display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;flex-shrink:0">
           {{ userRole === 'buyer' ? '✓' : '' }}
         </div>
       </button>
 
       <!-- Choice 2: Sell -->
-      <button onClick="{{ setRoleSeller }}" class="card-premium" style="display:flex;align-items:flex-start;gap:16px;padding:20px;text-align:left;border:2px solid {{ userRole === 'seller' ? 'var(--color-accent)' : 'var(--color-divider)' }};background:{{ userRole === 'seller' ? 'var(--color-accent-100)' : 'var(--color-surface)' }};cursor:pointer">
+      <button onClick="{{ setRoleSeller }}" class="selection-card {{ userRole === 'seller' ? 'selected' : '' }}">
         <div style="width:44px;height:44px;border-radius:var(--radius-sm);background:{{ userRole === 'seller' ? 'var(--color-accent)' : 'var(--color-neutral-200)' }};color:{{ userRole === 'seller' ? '#fff' : 'var(--color-text)' }};display:flex;align-items:center;justify-content:center;flex-shrink:0">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 3h20l-2 10H4L2 3z"/><path d="M6 13v7a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-7"/></svg>
         </div>
         <div style="flex:1">
-          <div style="font:800 16px/1.2 var(--font-heading);color:var(--color-text)">I'm here to sell</div>
-          <div style="font:400 13px/1.4 var(--font-body);color:var(--color-text-secondary);margin-top:4px">
+          <div style="font:800 15.5px/1.2 var(--font-heading);color:var(--color-text)">I'm here to sell</div>
+          <div style="font:400 12.5px/1.4 var(--font-body);color:var(--color-text-secondary);margin-top:3px">
             Create verified listings, manage orders, receive MoMo payouts, and grow your commercial brand.
           </div>
         </div>
-        <div style="width:22px;height:22px;border-radius:50%;border:2px solid {{ userRole === 'seller' ? 'var(--color-accent)' : 'var(--color-divider)' }};background:{{ userRole === 'seller' ? 'var(--color-accent)' : 'transparent' }};display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px">
+        <div style="width:22px;height:22px;border-radius:50%;border:2px solid {{ userRole === 'seller' ? 'var(--color-accent)' : 'var(--color-divider)' }};background:{{ userRole === 'seller' ? 'var(--color-accent)' : 'transparent' }};display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;flex-shrink:0">
           {{ userRole === 'seller' ? '✓' : '' }}
         </div>
       </button>
 
       <!-- Choice 3: Both -->
-      <button onClick="{{ setRoleBoth }}" class="card-premium" style="display:flex;align-items:flex-start;gap:16px;padding:20px;text-align:left;border:2px solid {{ userRole === 'both' ? 'var(--color-accent)' : 'var(--color-divider)' }};background:{{ userRole === 'both' ? 'var(--color-accent-100)' : 'var(--color-surface)' }};cursor:pointer">
+      <button onClick="{{ setRoleBoth }}" class="selection-card {{ userRole === 'both' ? 'selected' : '' }}">
         <div style="width:44px;height:44px;border-radius:var(--radius-sm);background:{{ userRole === 'both' ? 'var(--color-accent)' : 'var(--color-neutral-200)' }};color:{{ userRole === 'both' ? '#fff' : 'var(--color-text)' }};display:flex;align-items:center;justify-content:center;flex-shrink:0">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg>
         </div>
         <div style="flex:1">
-          <div style="font:800 16px/1.2 var(--font-heading);color:var(--color-text)">I want to do both</div>
-          <div style="font:400 13px/1.4 var(--font-body);color:var(--color-text-secondary);margin-top:4px">
+          <div style="font:800 15.5px/1.2 var(--font-heading);color:var(--color-text)">I want to do both</div>
+          <div style="font:400 12.5px/1.4 var(--font-body);color:var(--color-text-secondary);margin-top:3px">
             Shop across the marketplace while operating your store or offering professional services.
           </div>
         </div>
-        <div style="width:22px;height:22px;border-radius:50%;border:2px solid {{ userRole === 'both' ? 'var(--color-accent)' : 'var(--color-divider)' }};background:{{ userRole === 'both' ? 'var(--color-accent)' : 'transparent' }};display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px">
+        <div style="width:22px;height:22px;border-radius:50%;border:2px solid {{ userRole === 'both' ? 'var(--color-accent)' : 'var(--color-divider)' }};background:{{ userRole === 'both' ? 'var(--color-accent)' : 'transparent' }};display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;flex-shrink:0">
           {{ userRole === 'both' ? '✓' : '' }}
         </div>
       </button>
@@ -1640,7 +1762,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   </div>
 
   <!-- Continue CTA -->
-  <div style="margin-top:28px">
+  <div style="margin-top:24px">
     <button onClick="{{ on.onboardIdentity }}" class="btn btn-primary btn-block" style="height:50px;font-size:15px">
       <span>CONTINUE TO YOUR DETAILS</span>
       <span>→</span>
@@ -1671,8 +1793,8 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
     </div>
 
     <h2 style="font-size:24px;margin:0 0 6px">What's your name &amp; contact?</h2>
-    <p style="font-size:14px;color:var(--color-text-secondary);margin:0 0 24px">
-      Used for order dispatches, escrow payment confirmations, and verified seller identity.
+    <p style="font-size:14px;color:var(--color-text-secondary);margin:0 0 22px">
+      Used for order dispatches, escrow payment confirmations, and verified identity.
     </p>
 
     <div class="card-premium" style="display:flex;flex-direction:column;gap:16px">
@@ -1693,7 +1815,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
       <div>
         <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">PHONE NUMBER (MOMO / OM VERIFIED)</label>
         <div style="display:flex;gap:8px">
-          <div style="width:84px;height:44px;background:var(--color-neutral-100);border:1.5px solid var(--color-divider);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font:700 13.5px/1 var(--font-heading)">
+          <div style="width:84px;height:44px;background:var(--color-neutral-100);border:1.5px solid var(--color-divider);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font:700 13px/1 var(--font-heading)">
             🇨🇲 +237
           </div>
           <input type="tel" class="input" value="{{ regPhone }}" placeholder="690 12 34 56" style="flex:1">
@@ -1723,7 +1845,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   </div>
 
   <!-- Continue CTA -->
-  <div style="margin-top:28px">
+  <div style="margin-top:24px">
     <button onClick="{{ on.onboardOtp }}" class="btn btn-primary btn-block" style="height:50px;font-size:15px">
       <span>SEND VERIFICATION CODE</span>
       <span>→</span>
@@ -1759,7 +1881,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
       </div>
       <h2 style="font-size:24px;margin:0 0 6px">Let's make sure it's you</h2>
       <p style="font-size:14px;color:var(--color-text-secondary);max-width:380px;margin:0 auto;line-height:1.45">
-        We sent a 6-digit verification code to <strong>+237 690 12 34 56</strong>
+        We sent a 6-digit verification code to <strong>+237 {{ regPhone }}</strong>
       </p>
     </div>
 
@@ -1787,7 +1909,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   </div>
 
   <!-- Continue CTA (Dynamic branch to Buyer or Seller) -->
-  <div style="margin-top:28px">
+  <div style="margin-top:24px">
     <button onClick="{{ continueAfterOtp }}" class="btn btn-primary btn-block" style="height:50px;font-size:15px">
       <span>VERIFY &amp; CONTINUE</span>
       <span>✓</span>
@@ -1798,7 +1920,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 </sc-if>
 
 <!-- ══════════════════════════════════════════════════════════════════════════
-     ONBOARDING STEP 4A: BUYER PREFERENCES & INTERESTS (is.onboardBuyer)
+     ONBOARDING STEP 4A: BUYER PREFERENCES (is.onboardBuyer)
      ══════════════════════════════════════════════════════════════════════ -->
 <sc-if value="{{ is.onboardBuyer }}">
 <div style="min-height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:24px 20px 32px;max-width:640px;margin:0 auto;box-sizing:border-box">
@@ -1822,38 +1944,38 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 
     <h2 style="font-size:24px;margin:0 0 6px">What are you into?</h2>
     <p style="font-size:14px;color:var(--color-text-secondary);margin:0 0 20px">
-      Select 3 or more categories to personalize your daily deals and feed.
+      Tap categories to personalize your daily deals and feed recommendations.
     </p>
 
     <!-- Visual Category Selection Chips -->
     <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(130px, 1fr));gap:10px;margin-bottom:24px">
       
-      <button onClick="{{ toggleInterestTech }}" class="card-premium" style="padding:14px;text-align:center;border:2px solid {{ interestTech ? 'var(--color-accent)' : 'var(--color-divider)' }};background:{{ interestTech ? 'var(--color-accent-100)' : 'var(--color-surface)' }};cursor:pointer">
-        <div style="width:36px;height:36px;border-radius:50%;background:{{ interestTech ? 'var(--color-accent)' : 'var(--color-neutral-100)' }};color:{{ interestTech ? '#fff' : 'var(--color-text)' }};display:flex;align-items:center;justify-content:center;margin:0 auto 8px">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect width="18" height="12" x="3" y="4" rx="2"/><line x1="2" x2="22" y1="20" y2="20"/></svg>
+      <button onClick="{{ toggleInterestTech }}" class="selection-card {{ interestTech ? 'selected' : '' }}" style="padding:14px;flex-direction:column;align-items:center;text-align:center">
+        <div style="width:40px;height:40px;border-radius:50%;background:{{ interestTech ? 'var(--color-accent)' : 'var(--color-neutral-100)' }};color:{{ interestTech ? '#fff' : 'var(--color-text)' }};display:flex;align-items:center;justify-content:center;margin-bottom:8px">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect width="18" height="12" x="3" y="4" rx="2"/><line x1="2" x2="22" y1="20" y2="20"/></svg>
         </div>
-        <div style="font:700 12.5px/1.2 var(--font-heading);color:var(--color-text)">Tech &amp; Laptops</div>
+        <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Tech &amp; Laptops</div>
       </button>
 
-      <button onClick="{{ toggleInterestFashion }}" class="card-premium" style="padding:14px;text-align:center;border:2px solid {{ interestFashion ? 'var(--color-accent)' : 'var(--color-divider)' }};background:{{ interestFashion ? 'var(--color-accent-100)' : 'var(--color-surface)' }};cursor:pointer">
-        <div style="width:36px;height:36px;border-radius:50%;background:{{ interestFashion ? 'var(--color-accent)' : 'var(--color-neutral-100)' }};color:{{ interestFashion ? '#fff' : 'var(--color-text)' }};display:flex;align-items:center;justify-content:center;margin:0 auto 8px">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/></svg>
+      <button onClick="{{ toggleInterestFashion }}" class="selection-card {{ interestFashion ? 'selected' : '' }}" style="padding:14px;flex-direction:column;align-items:center;text-align:center">
+        <div style="width:40px;height:40px;border-radius:50%;background:{{ interestFashion ? 'var(--color-accent)' : 'var(--color-neutral-100)' }};color:{{ interestFashion ? '#fff' : 'var(--color-text)' }};display:flex;align-items:center;justify-content:center;margin-bottom:8px">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/></svg>
         </div>
-        <div style="font:700 12.5px/1.2 var(--font-heading);color:var(--color-text)">Fashion &amp; Shoes</div>
+        <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Fashion &amp; Shoes</div>
       </button>
 
-      <button onClick="{{ toggleInterestTravel }}" class="card-premium" style="padding:14px;text-align:center;border:2px solid {{ interestTravel ? 'var(--color-accent)' : 'var(--color-divider)' }};background:{{ interestTravel ? 'var(--color-accent-100)' : 'var(--color-surface)' }};cursor:pointer">
-        <div style="width:36px;height:36px;border-radius:50%;background:{{ interestTravel ? 'var(--color-accent)' : 'var(--color-neutral-100)' }};color:{{ interestTravel ? '#fff' : 'var(--color-text)' }};display:flex;align-items:center;justify-content:center;margin:0 auto 8px">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1z"/></svg>
+      <button onClick="{{ toggleInterestTravel }}" class="selection-card {{ interestTravel ? 'selected' : '' }}" style="padding:14px;flex-direction:column;align-items:center;text-align:center">
+        <div style="width:40px;height:40px;border-radius:50%;background:{{ interestTravel ? 'var(--color-accent)' : 'var(--color-neutral-100)' }};color:{{ interestTravel ? '#fff' : 'var(--color-text)' }};display:flex;align-items:center;justify-content:center;margin-bottom:8px">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1z"/></svg>
         </div>
-        <div style="font:700 12.5px/1.2 var(--font-heading);color:var(--color-text)">Flights &amp; Hotels</div>
+        <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Flights &amp; Hotels</div>
       </button>
 
-      <button onClick="{{ toggleInterestServices }}" class="card-premium" style="padding:14px;text-align:center;border:2px solid {{ interestServices ? 'var(--color-accent)' : 'var(--color-divider)' }};background:{{ interestServices ? 'var(--color-accent-100)' : 'var(--color-surface)' }};cursor:pointer">
-        <div style="width:36px;height:36px;border-radius:50%;background:{{ interestServices ? 'var(--color-accent)' : 'var(--color-neutral-100)' }};color:{{ interestServices ? '#fff' : 'var(--color-text)' }};display:flex;align-items:center;justify-content:center;margin:0 auto 8px">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+      <button onClick="{{ toggleInterestServices }}" class="selection-card {{ interestServices ? 'selected' : '' }}" style="padding:14px;flex-direction:column;align-items:center;text-align:center">
+        <div style="width:40px;height:40px;border-radius:50%;background:{{ interestServices ? 'var(--color-accent)' : 'var(--color-neutral-100)' }};color:{{ interestServices ? '#fff' : 'var(--color-text)' }};display:flex;align-items:center;justify-content:center;margin-bottom:8px">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
         </div>
-        <div style="font:700 12.5px/1.2 var(--font-heading);color:var(--color-text)">Services &amp; Jobs</div>
+        <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Services &amp; Jobs</div>
       </button>
 
     </div>
@@ -1865,14 +1987,14 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
         <button class="tag tag-accent">✓ Verified Sellers</button>
         <button class="tag tag-neutral">Best Prices</button>
         <button class="tag tag-neutral">Fast Same-Day Delivery</button>
-        <button class="tag tag-neutral">Authentic Apple/Official Warranty</button>
+        <button class="tag tag-neutral">Official Warranty</button>
       </div>
     </div>
 
   </div>
 
   <!-- Continue CTA -->
-  <div style="margin-top:28px">
+  <div style="margin-top:24px">
     <button onClick="{{ on.onboardReview }}" class="btn btn-primary btn-block" style="height:50px;font-size:15px">
       <span>REVIEW MY PROFILE</span>
       <span>→</span>
@@ -1883,7 +2005,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 </sc-if>
 
 <!-- ══════════════════════════════════════════════════════════════════════════
-     ONBOARDING STEP 4B: SELLER CLASSIFICATION & PRODUCTS (is.onboardSeller)
+     ONBOARDING STEP 4B: SELLER CLASSIFICATION (is.onboardSeller)
      ══════════════════════════════════════════════════════════════════════ -->
 <sc-if value="{{ is.onboardSeller }}">
 <div style="min-height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:24px 20px 32px;max-width:640px;margin:0 auto;box-sizing:border-box">
@@ -1904,33 +2026,33 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 
     <h2 style="font-size:24px;margin:0 0 6px">What type of seller are you?</h2>
     <p style="font-size:14px;color:var(--color-text-secondary);margin:0 0 20px">
-      Configures your storefront tools, invoicing options, and seller studio.
+      Configures your storefront tools, invoicing options, and studio layout.
     </p>
 
     <!-- Seller Type Grid -->
     <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px">
       
-      <button onClick="{{ setSellerIndividual }}" class="card-premium" style="display:flex;align-items:center;gap:14px;padding:16px;text-align:left;border:2px solid {{ sellerType === 'individual' ? 'var(--color-accent)' : 'var(--color-divider)' }};background:{{ sellerType === 'individual' ? 'var(--color-accent-100)' : 'var(--color-surface)' }};cursor:pointer">
+      <button onClick="{{ setSellerIndividual }}" class="selection-card {{ sellerType === 'individual' ? 'selected' : '' }}">
         <div style="width:40px;height:40px;border-radius:var(--radius-sm);background:{{ sellerType === 'individual' ? 'var(--color-accent)' : 'var(--color-neutral-200)' }};color:{{ sellerType === 'individual' ? '#fff' : 'var(--color-text)' }};display:flex;align-items:center;justify-content:center;flex-shrink:0">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg>
         </div>
         <div style="flex:1">
           <div style="font:800 15px/1.2 var(--font-heading);color:var(--color-text)">Individual / Private Seller</div>
-          <div style="font:400 12px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Selling personal items, gadgets, or pre-owned goods.</div>
+          <div style="font:400 12px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Selling personal items, gadgets, or pre-owned goods (Fast &amp; simple).</div>
         </div>
       </button>
 
-      <button onClick="{{ setSellerPro }}" class="card-premium" style="display:flex;align-items:center;gap:14px;padding:16px;text-align:left;border:2px solid {{ sellerType === 'pro' ? 'var(--color-accent)' : 'var(--color-divider)' }};background:{{ sellerType === 'pro' ? 'var(--color-accent-100)' : 'var(--color-surface)' }};cursor:pointer">
+      <button onClick="{{ setSellerPro }}" class="selection-card {{ sellerType === 'pro' ? 'selected' : '' }}">
         <div style="width:40px;height:40px;border-radius:var(--radius-sm);background:{{ sellerType === 'pro' ? 'var(--color-accent)' : 'var(--color-neutral-200)' }};color:{{ sellerType === 'pro' ? '#fff' : 'var(--color-text)' }};display:flex;align-items:center;justify-content:center;flex-shrink:0">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
         </div>
         <div style="flex:1">
-          <div style="font:800 15px/1.2 var(--font-heading);color:var(--color-text)">Professional Merchant / Boutique</div>
-          <div style="font:400 12px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Commercial store, boutique in Akwa/Bastos, official distributor.</div>
+          <div style="font:800 15px/1.2 var(--font-heading);color:var(--color-text)">Professional Merchant / Store</div>
+          <div style="font:400 12px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Commercial store, boutique in Akwa/Bastos, official brand distributor.</div>
         </div>
       </button>
 
-      <button onClick="{{ setSellerService }}" class="card-premium" style="display:flex;align-items:center;gap:14px;padding:16px;text-align:left;border:2px solid {{ sellerType === 'service' ? 'var(--color-accent)' : 'var(--color-divider)' }};background:{{ sellerType === 'service' ? 'var(--color-accent-100)' : 'var(--color-surface)' }};cursor:pointer">
+      <button onClick="{{ setSellerService }}" class="selection-card {{ sellerType === 'service' ? 'selected' : '' }}">
         <div style="width:40px;height:40px;border-radius:var(--radius-sm);background:{{ sellerType === 'service' ? 'var(--color-accent)' : 'var(--color-neutral-200)' }};color:{{ sellerType === 'service' ? '#fff' : 'var(--color-text)' }};display:flex;align-items:center;justify-content:center;flex-shrink:0">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
         </div>
@@ -1955,10 +2077,10 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 
   </div>
 
-  <!-- Continue CTA -->
-  <div style="margin-top:28px">
-    <button onClick="{{ on.onboardBusiness }}" class="btn btn-primary btn-block" style="height:50px;font-size:15px">
-      <span>CONTINUE TO BUSINESS DETAILS</span>
+  <!-- Adaptive Continue CTA (Skips business form for individual sellers) -->
+  <div style="margin-top:24px">
+    <button onClick="{{ continueSellerFlow }}" class="btn btn-primary btn-block" style="height:50px;font-size:15px">
+      <span>CONTINUE TO NEXT STEP</span>
       <span>→</span>
     </button>
   </div>
@@ -2027,7 +2149,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   </div>
 
   <!-- Continue CTA -->
-  <div style="margin-top:28px">
+  <div style="margin-top:24px">
     <button onClick="{{ on.onboardVerify }}" class="btn btn-primary btn-block" style="height:50px;font-size:15px">
       <span>CONTINUE TO TRUST VERIFICATION</span>
       <span>→</span>
@@ -2110,7 +2232,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   </div>
 
   <!-- Continue CTA -->
-  <div style="margin-top:28px">
+  <div style="margin-top:24px">
     <button onClick="{{ on.onboardReview }}" class="btn btn-primary btn-block" style="height:50px;font-size:15px">
       <span>REVIEW &amp; CONFIRM</span>
       <span>→</span>
@@ -2187,10 +2309,9 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   </div>
 
   <!-- Final Creation CTA -->
-  <div style="margin-top:28px">
-    <button onClick="{{ completeOnboarding }}" class="btn btn-primary btn-block" style="height:52px;font-size:15px;box-shadow:var(--shadow-glow-blue)">
-      <span>CREATE MY LOUMOO ACCOUNT</span>
-      <span>✓</span>
+  <div style="margin-top:24px">
+    <button onClick="{{ completeOnboarding }}" class="btn btn-primary btn-block {{ isSaving ? 'btn-loading' : '' }}" style="height:52px;font-size:15px;box-shadow:var(--shadow-glow-blue)">
+      <span>{{ isSaving ? 'SAVING ACCOUNT...' : 'CREATE MY LOUMOO ACCOUNT ✓' }}</span>
     </button>
   </div>
 
@@ -2211,17 +2332,17 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 
     <h1 style="font-size:28px;margin:0 0 8px">Welcome to LOUMOO, {{ regFirstName }}!</h1>
     <p style="font-size:15px;color:var(--color-text-secondary);line-height:1.5;max-width:420px;margin:0 auto 24px">
-      Your unified account is ready. You now have full access to marketplace deals, seller tools, and escrow payments.
+      Your account is active. You now have full access to marketplace deals, seller studio, and escrow payments.
     </p>
 
     <!-- Profile Completion Scorecard -->
     <div class="card-premium" style="text-align:left;padding:20px;margin-bottom:20px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
         <span style="font:800 14px/1 var(--font-heading);color:var(--color-text)">Profile Setup</span>
-        <span style="font:800 14px/1 var(--font-heading);color:var(--color-success)">85% COMPLETE</span>
+        <span style="font:800 14px/1 var(--font-heading);color:var(--color-success)">{{ completionPct }}% COMPLETE</span>
       </div>
       <div style="height:6px;background:var(--color-neutral-200);border-radius:3px;overflow:hidden;margin-bottom:12px">
-        <div style="width:85%;height:100%;background:var(--color-success);border-radius:3px"></div>
+        <div style="width:{{ completionPct }}%;height:100%;background:var(--color-success);border-radius:3px"></div>
       </div>
       <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--color-text-secondary)">
         <div style="display:flex;align-items:center;gap:6px"><span style="color:var(--color-success);font-weight:800">✓</span> Phone &amp; Email verified</div>
@@ -2248,6 +2369,59 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
     </sc-if>
     <button onClick="{{ on.profile }}" style="border:none;background:transparent;padding:10px;font:700 12px/1 var(--font-heading);color:var(--color-text-secondary);cursor:pointer">
       View My Account Dashboard
+    </button>
+  </div>
+
+</div>
+</sc-if>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     SMART UPGRADE SHEET: BUYER TO SELLER (is.onboardUpgradeSeller)
+     ══════════════════════════════════════════════════════════════════════ -->
+<sc-if value="{{ is.onboardUpgradeSeller }}">
+<div style="min-height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:24px 20px 32px;max-width:580px;margin:0 auto;box-sizing:border-box">
+  
+  <div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+      <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+      <span style="font:800 12px/1 var(--font-heading);color:var(--color-accent);letter-spacing:.08em">SELLER ACTIVATION</span>
+    </div>
+
+    <div style="text-align:center;padding:16px 0">
+      <div style="width:64px;height:64px;border-radius:22px;background:var(--color-accent-100);color:var(--color-accent);display:flex;align-items:center;justify-content:center;margin:0 auto 16px">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 3h20l-2 10H4L2 3z"/><path d="M6 13v7a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-7"/></svg>
+      </div>
+      <h2 style="font-size:24px;margin:0 0 8px">Activate Your Storefront</h2>
+      <p style="font-size:14px;color:var(--color-text-secondary);max-width:400px;margin:0 auto;line-height:1.45">
+        You currently have a Buyer account. Upgrade to Seller in 1 minute to post listings, receive MoMo payouts, and reach thousands of buyers.
+      </p>
+    </div>
+
+    <div class="card-premium" style="display:flex;flex-direction:column;gap:12px;margin:16px 0">
+      <div>
+        <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">STORE OR BRAND NAME</label>
+        <input type="text" class="input" value="{{ regBusinessName }}" placeholder="e.g. Kamer Tech Hub">
+      </div>
+      <div>
+        <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">PRIMARY CATEGORY</label>
+        <select class="input">
+          <option value="tech">Electronics &amp; Gadgets</option>
+          <option value="fashion">Fashion &amp; Shoes</option>
+          <option value="services">Professional Services</option>
+          <option value="hospitality">Hotels &amp; Rentals</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:10px">
+    <button onClick="{{ upgradeToSeller }}" class="btn btn-primary btn-block" style="height:48px;font-size:14px">
+      ACTIVATE STORE &amp; POST LISTING <span>→</span>
+    </button>
+    <button onClick="{{ back }}" style="border:none;background:transparent;padding:8px;font:700 12px/1 var(--font-heading);color:var(--color-text-muted);cursor:pointer">
+      Cancel
     </button>
   </div>
 
@@ -4364,11 +4538,11 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
     <span style="font:800 13px/1 var(--font-heading);height:18px;display:flex;align-items:center">VS</span>
     <span>COMPARE</span>
   </button>
-  <button onClick="{{ on.upload }}" aria-label="Upload a listing" class="nav-upload-btn">
+  <button onClick="{{ navUploadAction }}" aria-label="{{ navUploadLabel }}" class="nav-upload-btn">
     <span>
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>
     </span>
-    <span style="color:{{ navUpload }}">UPLOAD</span>
+    <span style="color:{{ navUpload }}">{{ navUploadLabel }}</span>
   </button>
   <button onClick="{{ on.travel }}" aria-label="Go to Travel" style="color:{{ navTravel }}">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 13.5 21 5l-6 16-3.2-6.3L3 13.5Z"/></svg>
@@ -4402,8 +4576,8 @@ const SCREENS = [
   'product','sellers','cart','checkout','paying','success','orders','store','business','vs','vsCompare','visual',
   'visualScan','visualResults','upload','uploadDetails','uploadPrice','uploadSuccess','myListings','travel','travelBus',
   'travelPackages','travelVisa','travelResults','travelDetail','travelPassenger','travelTicket','announce','announceDetail',
-  'profile','seller','settings','payFailed','networkError','saved','transactions','loading',
-  'onboardWelcome','onboardType','onboardIdentity','onboardOtp','onboardBuyer','onboardSeller','onboardBusiness','onboardVerify','onboardReview','onboardSuccess'
+  'profile','profileEdit','seller','settings','payFailed','networkError','saved','transactions','loading',
+  'onboardWelcome','onboardType','onboardIdentity','onboardOtp','onboardBuyer','onboardSeller','onboardBusiness','onboardVerify','onboardReview','onboardSuccess','onboardUpgradeSeller'
 ];
 const GROUPS = {
   searchTab: ['all','products','stores','services','travel'],
@@ -4430,14 +4604,22 @@ const GROUPS = {
 const NO_NAV = [
   'visual','visualScan','visualResults','threadAi','threadSeller','checkout','paying','success','travelTicket','uploadSuccess',
   'voice','filters','payFailed','networkError','loading',
-  'onboardWelcome','onboardType','onboardIdentity','onboardOtp','onboardBuyer','onboardSeller','onboardBusiness','onboardVerify','onboardReview','onboardSuccess'
+  'onboardWelcome','onboardType','onboardIdentity','onboardOtp','onboardBuyer','onboardSeller','onboardBusiness','onboardVerify','onboardReview','onboardSuccess','onboardUpgradeSeller','profileEdit'
 ];
 
 class Component extends DCLogic {
   state = {
     screen: 'home', stack: [], cart: 2, vs: 1, toast: '', following: false, saved: false,
-    qty: 1, freeday: false, darkMode: false,
-    userRole: 'buyer',
+    qty: 1, freeday: false, darkMode: false, isSaving: false,
+    
+    // Auth & Persistent Identity
+    isLoggedIn: false,
+    onboardState: 'NOT_STARTED', // 'NOT_STARTED' | 'IN_PROGRESS' | 'COMPLETED'
+    hasSavedDraft: false,
+    lastSavedScreen: 'onboardType',
+    completionPct: 85,
+    userRole: 'buyer', // 'guest' | 'buyer' | 'seller' | 'both'
+    userName: 'Tchuekam',
     regFirstName: 'Rostand',
     regLastName: 'Tchuekam',
     regPhone: '690 12 34 56',
@@ -4449,6 +4631,7 @@ class Component extends DCLogic {
     interestServices: false,
     sellerType: 'pro',
     docUploaded: false,
+    
     ship: { home: true, pickup: true, nation: false },
     sel: {
       searchTab: 'all', chatTab: 'all', sellerSort: 'value', ordersTab: 'active',
@@ -4459,12 +4642,75 @@ class Component extends DCLogic {
     }
   };
 
-  go = (s) => this.setState(st => ({ screen: s, stack: [...st.stack, st.screen], toast: '' }));
+  componentDidMount() {
+    this.restoreSession();
+  }
+
+  restoreSession() {
+    try {
+      if (typeof localStorage !== 'undefined') {
+        const stored = localStorage.getItem('loumoo_user_session');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          this.setState({
+            isLoggedIn: parsed.isLoggedIn ?? true,
+            onboardState: parsed.onboardState ?? 'COMPLETED',
+            userRole: parsed.userRole ?? 'buyer',
+            userName: parsed.regFirstName || parsed.userName || 'Tchuekam',
+            regFirstName: parsed.regFirstName || 'Rostand',
+            regLastName: parsed.regLastName || 'Tchuekam',
+            regPhone: parsed.regPhone || '690 12 34 56',
+            regEmail: parsed.regEmail || 'rostand@loumoo.cm',
+            regBusinessName: parsed.regBusinessName || 'Orca Electronics Douala',
+            sellerType: parsed.sellerType || 'pro',
+            docUploaded: parsed.docUploaded || false,
+            hasSavedDraft: parsed.onboardState === 'IN_PROGRESS',
+            lastSavedScreen: parsed.lastSavedScreen || 'onboardType'
+          });
+        }
+      }
+    } catch (e) {
+      // Storage unavailable or disabled
+    }
+  }
+
+  saveSession(overrides = {}) {
+    try {
+      if (typeof localStorage !== 'undefined') {
+        const s = { ...this.state, ...overrides };
+        const sessionPayload = {
+          isLoggedIn: s.isLoggedIn,
+          onboardState: s.onboardState,
+          userRole: s.userRole,
+          userName: s.regFirstName || s.userName,
+          regFirstName: s.regFirstName,
+          regLastName: s.regLastName,
+          regPhone: s.regPhone,
+          regEmail: s.regEmail,
+          regBusinessName: s.regBusinessName,
+          sellerType: s.sellerType,
+          docUploaded: s.docUploaded,
+          lastSavedScreen: s.screen
+        };
+        localStorage.setItem('loumoo_user_session', JSON.stringify(sessionPayload));
+      }
+    } catch (e) {}
+  }
+
+  go = (s) => {
+    if (s.startsWith('onboard') && s !== 'onboardSuccess') {
+      this.setState({ onboardState: 'IN_PROGRESS', lastSavedScreen: s, hasSavedDraft: true });
+      this.saveSession({ onboardState: 'IN_PROGRESS', lastSavedScreen: s });
+    }
+    this.setState(st => ({ screen: s, stack: [...st.stack, st.screen], toast: '' }));
+  };
+
   back = () => this.setState(st => {
     const stack = st.stack.slice();
     const prev = stack.pop() || 'home';
     return { screen: prev, stack, toast: '' };
   });
+
   toast = (t) => {
     this.setState({ toast: t });
     clearTimeout(this._t);
@@ -4519,6 +4765,22 @@ class Component extends DCLogic {
     const sh = this.state.ship;
     const fdOn = this.state.freeday;
 
+    const isLoggedIn = this.state.isLoggedIn;
+    const userRole = this.state.userRole;
+
+    // Dynamic Navigation Routing: JOIN vs UPLOAD
+    const navUploadLabel = isLoggedIn ? 'UPLOAD' : 'JOIN';
+    const navCtaLabel = isLoggedIn ? 'Post Listing +' : 'Join LOUMOO';
+    const navUploadAction = () => {
+      if (!isLoggedIn) {
+        this.go('onboardWelcome');
+      } else if (userRole === 'buyer') {
+        this.go('onboardUpgradeSeller');
+      } else {
+        this.go('upload');
+      }
+    };
+
     return {
       is, on, st, pick,
       photoLabel: 'PRODUCT PHOTO ' + this.state.sel.photo.slice(1) + ' / 6',
@@ -4527,7 +4789,9 @@ class Component extends DCLogic {
       toggleDark: () => {
         const next = !this.state.darkMode;
         this.setState({ darkMode: next });
-        document.documentElement.setAttribute('data-theme', next ? 'dark' : 'light');
+        if (typeof document !== 'undefined') {
+          document.documentElement.setAttribute('data-theme', next ? 'dark' : 'light');
+        }
       },
       incQty: () => this.setState(s => ({ qty: Math.min(9, s.qty + 1) })),
       decQty: () => this.setState(s => ({ qty: Math.max(1, s.qty - 1) })),
@@ -4564,8 +4828,12 @@ class Component extends DCLogic {
         mainImg: () => this.toast('Application submitted with your LOUMOO profile'),
         addTag: () => this.toast('Tag added to the listing')
       },
-      // Onboarding & Registration State
-      userRole: this.state.userRole,
+      
+      // Authentication & Persistent Profile State
+      isLoggedIn,
+      userRole,
+      hasSavedDraft: this.state.hasSavedDraft,
+      completionPct: this.state.completionPct,
       regFirstName: this.state.regFirstName,
       regLastName: this.state.regLastName,
       regPhone: this.state.regPhone,
@@ -4577,29 +4845,110 @@ class Component extends DCLogic {
       interestServices: this.state.interestServices,
       sellerType: this.state.sellerType,
       docUploaded: this.state.docUploaded,
-      setRoleBuyer: () => this.setState({ userRole: 'buyer' }),
-      setRoleSeller: () => this.setState({ userRole: 'seller' }),
-      setRoleBoth: () => this.setState({ userRole: 'both' }),
-      continueAfterOtp: () => {
-        this.go(this.state.userRole === 'buyer' ? 'onboardBuyer' : 'onboardSeller');
+      isSaving: this.state.isSaving,
+      
+      // Dynamic Actions
+      navUploadLabel,
+      navCtaLabel,
+      navUploadAction,
+      
+      setRoleBuyer: () => {
+        this.setState({ userRole: 'buyer' });
+        this.saveSession({ userRole: 'buyer' });
       },
-      resendOtp: () => this.toast('New 6-digit verification code sent to +237 690 12 34 56'),
+      setRoleSeller: () => {
+        this.setState({ userRole: 'seller' });
+        this.saveSession({ userRole: 'seller' });
+      },
+      setRoleBoth: () => {
+        this.setState({ userRole: 'both' });
+        this.saveSession({ userRole: 'both' });
+      },
+      continueAfterOtp: () => {
+        const nextScreen = this.state.userRole === 'buyer' ? 'onboardBuyer' : 'onboardSeller';
+        this.go(nextScreen);
+      },
+      continueSellerFlow: () => {
+        if (this.state.sellerType === 'individual') {
+          this.go('onboardVerify');
+        } else {
+          this.go('onboardBusiness');
+        }
+      },
+      resendOtp: () => this.toast('New 6-digit code sent to +237 ' + this.state.regPhone),
       simulateUploadDoc: () => {
-        this.setState({ docUploaded: true });
+        this.setState({ docUploaded: true, completionPct: 85 });
+        this.saveSession({ docUploaded: true });
         this.toast('CNI Photo Uploaded Successfully (2.4 MB)');
       },
       toggleInterestTech: () => this.setState(s => ({ interestTech: !s.interestTech })),
       toggleInterestFashion: () => this.setState(s => ({ interestFashion: !s.interestFashion })),
       toggleInterestTravel: () => this.setState(s => ({ interestTravel: !s.interestTravel })),
       toggleInterestServices: () => this.setState(s => ({ interestServices: !s.interestServices })),
-      setSellerIndividual: () => this.setState({ sellerType: 'individual' }),
-      setSellerPro: () => this.setState({ sellerType: 'pro' }),
-      setSellerService: () => this.setState({ sellerType: 'service' }),
-      completeOnboarding: () => {
-        this.setState({ userName: this.state.regFirstName });
-        this.go('onboardSuccess');
+      setSellerIndividual: () => {
+        this.setState({ sellerType: 'individual' });
+        this.saveSession({ sellerType: 'individual' });
       },
-      userName: this.props.userName ?? this.state.userName ?? 'Tchuekam',
+      setSellerPro: () => {
+        this.setState({ sellerType: 'pro' });
+        this.saveSession({ sellerType: 'pro' });
+      },
+      setSellerService: () => {
+        this.setState({ sellerType: 'service' });
+        this.saveSession({ sellerType: 'service' });
+      },
+      completeOnboarding: () => {
+        this.setState({ isSaving: true });
+        setTimeout(() => {
+          this.setState({
+            isLoggedIn: true,
+            onboardState: 'COMPLETED',
+            hasSavedDraft: false,
+            completionPct: 85,
+            isSaving: false,
+            userName: this.state.regFirstName
+          });
+          this.saveSession({
+            isLoggedIn: true,
+            onboardState: 'COMPLETED',
+            hasSavedDraft: false,
+            userName: this.state.regFirstName
+          });
+          this.go('onboardSuccess');
+        }, 400);
+      },
+      resumeSavedDraft: () => {
+        this.go(this.state.lastSavedScreen || 'onboardType');
+      },
+      upgradeToSeller: () => {
+        this.setState({ userRole: 'both', onboardState: 'COMPLETED' });
+        this.saveSession({ userRole: 'both' });
+        this.toast('Storefront activated! You can now post listings.');
+        this.go('upload');
+      },
+      saveProfile: () => {
+        this.saveSession();
+        this.toast('Profile updated successfully');
+        this.go('profile');
+      },
+      logoutAction: () => {
+        try {
+          if (typeof localStorage !== 'undefined') {
+            localStorage.removeItem('loumoo_user_session');
+          }
+        } catch (e) {}
+        this.setState({
+          isLoggedIn: false,
+          onboardState: 'NOT_STARTED',
+          userRole: 'guest',
+          userName: 'Guest',
+          hasSavedDraft: false
+        });
+        this.toast('You have been logged out of LOUMOO');
+        this.go('home');
+      },
+
+      userName: this.state.isLoggedIn ? (this.state.regFirstName || 'Tchuekam') : 'Guest',
       showAds: this.props.showAds ?? true,
       cartCount: this.state.cart,
       cartLabel: (this.state.qty + 1) + ' items · 2 sellers',
@@ -4611,10 +4960,10 @@ class Component extends DCLogic {
       navHome: this.navColor('home', 'category', 'bestpicks', 'freeday', 'notifications', 'search', 'product', 'cart', 'chat'),
       navStore: this.navColor('store', 'business'),
       navVs: this.navColor('vs', 'vsCompare'),
-      navUpload: this.navColor('upload', 'uploadDetails', 'uploadPrice', 'myListings'),
+      navUpload: this.navColor('upload', 'uploadDetails', 'uploadPrice', 'myListings', 'onboardWelcome', 'onboardType', 'onboardUpgradeSeller'),
       navTravel: this.navColor('travel', 'travelBus', 'travelPackages', 'travelVisa', 'travelResults', 'travelDetail', 'travelPassenger'),
       navAnnounce: this.navColor('announce', 'announceDetail'),
-      navProfile: this.navColor('profile', 'seller', 'orders', 'settings', 'onboardWelcome', 'onboardType', 'onboardIdentity', 'onboardOtp', 'onboardBuyer', 'onboardSeller', 'onboardBusiness', 'onboardVerify', 'onboardReview', 'onboardSuccess'),
+      navProfile: this.navColor('profile', 'profileEdit', 'seller', 'orders', 'settings'),
       setScroller: (el) => { this._sc = el; },
       addToCart: () => { this.setState(st => ({ cart: st.cart + 1 })); this.toast('Added to Bag — 1 item from Orca Electronics'); },
       addToVs: () => { this.setState(st => ({ vs: st.vs + 1 })); this.go('vsCompare'); },

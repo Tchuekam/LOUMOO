@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-LOUMOO MESSAGING, PROFILE & SYSTEM VIEWS
-WhatsApp messaging engine, voice note waveform player, TchueKAM AI assistant, notifications, upgraded user profile with onboarding entry point, saved items, settings, and skeleton states with Lucide SVG icons.
+LOUMOO MESSAGING, PROFILE & AUTHENTICATED SYSTEM VIEWS
+WhatsApp messaging engine, voice note waveform player, TchueKAM AI assistant, notifications, adaptive guest/authenticated profile portal with edit sheet and logout action.
 """
 
 def get_chat_and_profile_view():
@@ -96,7 +96,6 @@ def get_chat_and_profile_view():
 
   <!-- Messages Body -->
   <div class="wa-chat-body">
-    
     <div style="align-self:center;background:rgba(255,255,255,0.9);box-shadow:0 1px 2px rgba(0,0,0,0.08);border-radius:6px;padding:4px 12px;font-size:11px;color:#54656f">
       TODAY
     </div>
@@ -146,7 +145,6 @@ def get_chat_and_profile_view():
         <div style="font-size:9.5px;color:#667781;float:right;margin-left:8px;margin-top:4px">11:45</div>
       </div>
     </div>
-
   </div>
 
   <!-- WhatsApp Bottom Input Bar -->
@@ -177,29 +175,25 @@ def get_chat_and_profile_view():
   </div>
 
   <div style="padding:16px;max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:14px">
-    
     <div class="card-premium">
-      <div style="display:gap;align-items:flex-start">
-        <div style="display:flex;gap:12px;align-items:flex-start">
-          <div style="width:36px;height:36px;border-radius:50%;background:var(--color-accent);color:#fff;display:flex;align-items:center;justify-content:center;font:800 12px/1 var(--font-heading);flex-shrink:0">AI</div>
-          <div style="flex:1">
-            <div style="font:700 13.5px/1.2 var(--font-heading);color:var(--color-text)">AI Shopping Recommendation</div>
-            <p style="font-size:13px;color:var(--color-text-secondary);margin:6px 0 12px;line-height:1.45">
-              Based on your interest in creator hardware and your Douala location, here is the best verified deal with escrow protection:
-            </p>
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <div style="width:36px;height:36px;border-radius:50%;background:var(--color-accent);color:#fff;display:flex;align-items:center;justify-content:center;font:800 12px/1 var(--font-heading);flex-shrink:0">AI</div>
+        <div style="flex:1">
+          <div style="font:700 13.5px/1.2 var(--font-heading);color:var(--color-text)">AI Shopping Recommendation</div>
+          <p style="font-size:13px;color:var(--color-text-secondary);margin:6px 0 12px;line-height:1.45">
+            Based on your interest in creator hardware and your Douala location, here is the best verified deal with escrow protection:
+          </p>
 
-            <div style="background:var(--color-neutral-100);border:1px solid var(--color-divider);border-radius:var(--radius-sm);padding:12px;display:flex;justify-content:space-between;align-items:center">
-              <div>
-                <div style="font:700 13px/1.2 var(--font-heading)">Apple MacBook Air 13” (M2)</div>
-                <div style="font:800 14px/1 var(--font-heading);color:var(--color-accent);margin-top:2px">XAF 745 000 · Orca Electronics</div>
-              </div>
-              <button onClick="{{ on.product }}" class="btn btn-primary" style="height:34px;padding:0 14px;font-size:11.5px">VIEW</button>
+          <div style="background:var(--color-neutral-100);border:1px solid var(--color-divider);border-radius:var(--radius-sm);padding:12px;display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div style="font:700 13px/1.2 var(--font-heading)">Apple MacBook Air 13” (M2)</div>
+              <div style="font:800 14px/1 var(--font-heading);color:var(--color-accent);margin-top:2px">XAF 745 000 · Orca Electronics</div>
             </div>
+            <button onClick="{{ on.product }}" class="btn btn-primary" style="height:34px;padding:0 14px;font-size:11.5px">VIEW</button>
           </div>
         </div>
       </div>
     </div>
-
   </div>
 </div>
 </sc-if>
@@ -233,7 +227,7 @@ def get_chat_and_profile_view():
 </sc-if>
 
 <!-- ══════════════════════════════════════════════════════════════════════════
-     UPGRADED USER PROFILE PORTAL (is.profile)
+     ADAPTIVE MY ACCOUNT PORTAL (is.profile)
      ══════════════════════════════════════════════════════════════════════ -->
 <sc-if value="{{ is.profile }}">
 <div style="padding-bottom:32px">
@@ -251,48 +245,73 @@ def get_chat_and_profile_view():
 
   <div style="padding:16px;max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:16px">
     
-    <!-- Registration / Onboarding Entry Hero Banner -->
+    <!-- ── STATE A: GUEST / UNREGISTERED USER ── -->
+    <sc-if value="{{ !isLoggedIn }}">
     <div class="card-premium" style="background:linear-gradient(135deg, #002b61 0%, #007aff 100%);color:#fff;border:none;padding:24px;box-shadow:var(--shadow-glow-blue)">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <div style="max-width:440px">
-          <span style="font:800 10.5px/1 var(--font-heading);letter-spacing:.12em;background:rgba(255,255,255,0.2);padding:4px 8px;border-radius:var(--radius-pill);display:inline-block;margin-bottom:10px">
-            LOUMOO ONBOARDING
-          </span>
-          <h2 style="color:#fff;margin:0 0 6px;font-size:22px">Create your LOUMOO account</h2>
-          <p style="color:rgba(255,255,255,0.88);font-size:13px;line-height:1.45;margin:0 0 16px">
-            Unlock fast escrow checkout, open your verified storefront, track parcels in real-time, and get personalized deals across Cameroon.
-          </p>
-          <div style="display:flex;gap:10px;flex-wrap:wrap">
-            <button onClick="{{ on.onboardWelcome }}" class="btn btn-dark" style="background:#fff;color:var(--color-text);height:42px;padding:0 20px;font-size:13px">
-              <span>GET STARTED →</span>
-            </button>
-            <button onClick="{{ on.onboardWelcome }}" class="btn btn-secondary" style="background:rgba(255,255,255,0.15);color:#fff;border-color:rgba(255,255,255,0.3);height:42px;padding:0 16px;font-size:12.5px">
-              SIGN IN
-            </button>
-          </div>
+      <div style="max-width:480px">
+        <span style="font:800 10.5px/1 var(--font-heading);letter-spacing:.12em;background:rgba(255,255,255,0.2);padding:4px 8px;border-radius:var(--radius-pill);display:inline-block;margin-bottom:10px">
+          JOIN LOUMOO
+        </span>
+        <h2 style="color:#fff;margin:0 0 6px;font-size:22px">Create your LOUMOO account</h2>
+        <p style="color:rgba(255,255,255,0.88);font-size:13px;line-height:1.45;margin:0 0 18px">
+          Unlock instant escrow checkout, open your storefront, track orders, and connect with verified merchants across Cameroon.
+        </p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button onClick="{{ on.onboardWelcome }}" class="btn btn-dark" style="background:#fff;color:var(--color-text);height:42px;padding:0 20px;font-size:13px">
+            <span>GET STARTED →</span>
+          </button>
+          <button onClick="{{ on.onboardWelcome }}" class="btn btn-secondary" style="background:rgba(255,255,255,0.15);color:#fff;border-color:rgba(255,255,255,0.3);height:42px;padding:0 16px;font-size:12.5px">
+            SIGN IN
+          </button>
         </div>
       </div>
     </div>
+    </sc-if>
 
-    <!-- Active Profile Card with 85% Completion Score -->
+    <!-- ── STATE B: AUTHENTICATED USER ── -->
+    <sc-if value="{{ isLoggedIn }}">
+    
+    <!-- User Profile Header -->
     <div class="card-premium" style="display:flex;align-items:center;gap:14px">
-      <div style="width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,var(--color-accent),#003d8a);color:#fff;display:flex;align-items:center;justify-content:center;font:800 20px/1 var(--font-heading);flex-shrink:0">TK</div>
+      <div style="width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,var(--color-accent),#003d8a);color:#fff;display:flex;align-items:center;justify-content:center;font:800 20px/1 var(--font-heading);flex-shrink:0">
+        {{ regFirstName ? regFirstName.slice(0,1) : 'U' }}{{ regLastName ? regLastName.slice(0,1) : '' }}
+      </div>
       <div style="flex:1">
         <div style="display:flex;align-items:center;gap:8px">
-          <span style="font:800 17px/1.2 var(--font-heading);color:var(--color-text)">{{ userName }}</span>
-          <span class="tag tag-accent" style="min-height:18px;padding:2px 6px;font-size:9.5px">VERIFIED BUYER &amp; SELLER</span>
+          <span style="font:800 17px/1.2 var(--font-heading);color:var(--color-text)">{{ regFirstName }} {{ regLastName }}</span>
+          <span class="tag tag-accent" style="min-height:18px;padding:2px 6px;font-size:9.5px;text-transform:uppercase">
+            {{ userRole === 'both' ? 'BUYER & SELLER' : userRole }}
+          </span>
         </div>
-        <div style="font:400 12px/1 var(--font-body);color:var(--color-text-secondary);margin-top:4px">+237 690 12 34 56 · Douala, Cameroon</div>
+        <div style="font:400 12px/1 var(--font-body);color:var(--color-text-secondary);margin-top:4px">+237 {{ regPhone }} · {{ regEmail }}</div>
+        
+        <!-- Setup Progress Gauge -->
         <div style="display:flex;align-items:center;gap:8px;margin-top:8px">
           <div style="flex:1;max-width:180px;height:5px;background:var(--color-neutral-200);border-radius:3px;overflow:hidden">
-            <div style="width:85%;height:100%;background:var(--color-success);border-radius:3px"></div>
+            <div style="width:{{ completionPct }}%;height:100%;background:var(--color-success);border-radius:3px"></div>
           </div>
-          <span style="font:700 10.5px/1 var(--font-heading);color:var(--color-success)">85% Profile Setup</span>
+          <span style="font:700 10.5px/1 var(--font-heading);color:var(--color-success)">{{ completionPct }}% Profile Setup</span>
         </div>
       </div>
+      <button onClick="{{ on.profileEdit }}" class="btn btn-secondary" style="height:32px;padding:0 10px;font-size:11px">
+        EDIT
+      </button>
     </div>
 
-    <!-- Quick Navigation Tiles (Lucide Icons) -->
+    <!-- Upgrade to Seller Banner (If Buyer Only) -->
+    <sc-if value="{{ userRole === 'buyer' }}">
+    <div style="background:linear-gradient(135deg, #111214 0%, #1e2330 100%);color:#fff;border-radius:var(--radius-md);padding:14px 18px;display:flex;align-items:center;justify-content:space-between">
+      <div>
+        <div style="font:800 13.5px/1.2 var(--font-heading);color:var(--color-accent-energy)">Start Selling on LOUMOO</div>
+        <div style="font:400 11px/1.3 var(--font-body);color:rgba(255,255,255,0.75);margin-top:2px">Activate your storefront to list products &amp; receive MoMo payouts.</div>
+      </div>
+      <button onClick="{{ on.onboardUpgradeSeller }}" class="btn btn-primary" style="background:var(--color-accent-energy);color:#111214;font-weight:800;height:34px;padding:0 12px;font-size:11px">
+        UPGRADE <span>+</span>
+      </button>
+    </div>
+    </sc-if>
+
+    <!-- Quick Navigation Tiles -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
       <button onClick="{{ on.orders }}" aria-label="Go to My Orders" class="card-premium" style="text-align:left;padding:14px;cursor:pointer">
         <div style="width:36px;height:36px;border-radius:var(--radius-sm);background:var(--color-accent-100);color:var(--color-accent);display:flex;align-items:center;justify-content:center;margin-bottom:8px">
@@ -327,6 +346,58 @@ def get_chat_and_profile_view():
       </button>
     </div>
 
+    <!-- Logout Action -->
+    <div style="margin-top:8px">
+      <button onClick="{{ logoutAction }}" class="btn btn-secondary btn-block" style="height:44px;color:var(--color-accent-sale);border-color:var(--color-accent-sale-100)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        <span>LOG OUT OF LOUMOO</span>
+      </button>
+    </div>
+
+    </sc-if>
+
+  </div>
+</div>
+</sc-if>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     PROFILE EDIT MODAL / SHEET (is.profileEdit)
+     ══════════════════════════════════════════════════════════════════════ -->
+<sc-if value="{{ is.profileEdit }}">
+<div style="padding-bottom:32px">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+    <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <h4 style="margin:0;font-size:16px">Edit Profile</h4>
+    <div style="width:36px"></div>
+  </div>
+
+  <div style="padding:16px;max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:14px">
+    <div class="card-premium" style="display:flex;flex-direction:column;gap:14px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div>
+          <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">FIRST NAME</label>
+          <input type="text" class="input" value="{{ regFirstName }}">
+        </div>
+        <div>
+          <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">LAST NAME</label>
+          <input type="text" class="input" value="{{ regLastName }}">
+        </div>
+      </div>
+      <div>
+        <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">EMAIL ADDRESS</label>
+        <input type="email" class="input" value="{{ regEmail }}">
+      </div>
+      <div>
+        <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">PHONE NUMBER</label>
+        <input type="tel" class="input" value="{{ regPhone }}">
+      </div>
+    </div>
+
+    <button onClick="{{ saveProfile }}" class="btn btn-primary btn-block" style="height:48px;font-size:14px">
+      SAVE CHANGES <span>✓</span>
+    </button>
   </div>
 </div>
 </sc-if>
@@ -387,7 +458,7 @@ def get_chat_and_profile_view():
     <!-- Onboarding / Registration Shortcut -->
     <div class="card-premium" style="display:flex;flex-direction:column;gap:10px">
       <button onClick="{{ on.onboardWelcome }}" style="border:none;background:transparent;text-align:left;padding:8px 0;font:600 13px/1 var(--font-body);color:var(--color-accent);display:flex;justify-content:space-between;cursor:pointer">
-        <span>Complete / Revisit Registration Wizard</span>
+        <span>Revisit Registration Wizard</span>
         <span>→</span>
       </button>
       <button onClick="{{ on.threadAi }}" style="border:none;border-top:1px solid var(--color-divider);background:transparent;text-align:left;padding:8px 0;font:600 13px/1 var(--font-body);color:var(--color-text);display:flex;justify-content:space-between;cursor:pointer">
