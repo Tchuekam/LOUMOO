@@ -131,6 +131,14 @@ header_and_styles = """<!DOCTYPE html>
   --shadow-glow-green: 0 4px 20px rgba(0, 200, 83, 0.28);
   --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --z-base: 1;
+  --z-sticky: 20;
+  --z-nav-mobile: 50;
+  --z-floating-action: 60;
+  --z-drawer: 100;
+  --z-modal-backdrop: 200;
+  --z-modal: 210;
+  --z-toast: 1000;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -310,7 +318,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   background: rgba(17, 18, 20, 0.95); color: #ffffff; padding: 10px 20px;
   border-radius: var(--radius-pill); box-shadow: var(--shadow-lg);
   font: 600 13px/1.3 var(--font-body); display: flex; align-items: center; gap: 12px;
-  z-index: 100; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  z-index: var(--z-toast); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.12); animation: slideUp 0.3s var(--ease-spring);
 }
 @keyframes slideUp { from { opacity: 0; transform: translate(-50%, 12px); } to { opacity: 1; transform: translate(-50%, 0); } }
@@ -588,14 +596,22 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   </div>
 
   <div class="sidebar-footer">
-    <button onClick="{{ on.profile }}" class="nav-item {{ (is.profile || is.settings || is.orders || is.seller) ? 'active' : '' }}" style="padding:6px 8px">
-      <div style="width:30px;height:30px;border-radius:50%;background:var(--color-accent);color:#fff;display:flex;align-items:center;justify-content:center;font:800 11px/1 var(--font-heading);flex:none">TK</div>
-      <div style="flex:1;min-width:0">
-        <div style="font-weight:700;font-size:12.5px;color:var(--color-text);line-height:1.1">{{ userName }}</div>
-        <div style="font-size:10px;color:var(--color-text-secondary);margin-top:2px">Verified Account</div>
-      </div>
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--color-text-muted)"><polyline points="9 18 15 12 9 6"/></svg>
-    </button>
+    <sc-if value="{{ isLoggedIn }}">
+      <button onClick="{{ on.profile }}" class="nav-item {{ (is.profile || is.settings || is.orders || is.seller) ? 'active' : '' }}" style="padding:6px 8px">
+        <div style="width:30px;height:30px;border-radius:50%;background:var(--color-accent);color:#fff;display:flex;align-items:center;justify-content:center;font:800 11px/1 var(--font-heading);flex:none">{{ userInitials }}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:700;font-size:12.5px;color:var(--color-text);line-height:1.1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ userName }}</div>
+          <div style="font-size:10px;color:var(--color-text-secondary);margin-top:2px">{{ profileRoleLabel }}</div>
+        </div>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--color-text-muted)"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </sc-if>
+    <sc-if value="{{ !isLoggedIn }}">
+      <button onClick="{{ on.signIn }}" class="nav-item" style="padding:8px 12px;background:var(--color-accent-100);color:var(--color-accent);border-radius:var(--radius-sm);justify-content:center;font-weight:700">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+        <span>Sign In to LOUMOO</span>
+      </button>
+    </sc-if>
   </div>
 </nav>
 
@@ -626,10 +642,15 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
     <button onClick="{{ toggleDark }}" aria-label="Toggle dark and light mode" title="Toggle Dark/Light Mode" style="border:1px solid var(--color-divider);background:var(--color-surface);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--color-text)">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
     </button>
-    <button onClick="{{ on.notifications }}" aria-label="Notifications" title="Notifications" style="border:1px solid var(--color-divider);background:var(--color-surface);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--color-text);position:relative">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-      <span style="position:absolute;top:7px;right:7px;width:7px;height:7px;border-radius:50%;background:var(--color-accent-sale)"></span>
-    </button>
+    <sc-if value="{{ isLoggedIn }}">
+      <button onClick="{{ on.notifications }}" aria-label="Notifications" title="Notifications" style="border:1px solid var(--color-divider);background:var(--color-surface);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--color-text);position:relative">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span style="position:absolute;top:7px;right:7px;width:7px;height:7px;border-radius:50%;background:var(--color-accent-sale)"></span>
+      </button>
+    </sc-if>
+    <sc-if value="{{ !isLoggedIn }}">
+      <button onClick="{{ on.signIn }}" class="btn btn-secondary" style="height:38px;padding:0 14px;font-size:12px;font-weight:700">SIGN IN</button>
+    </sc-if>
     <button onClick="{{ on.cart }}" aria-label="View bag" style="display:flex;align-items:center;gap:8px;background:var(--color-accent);color:#fff;border:none;border-radius:var(--radius-pill);padding:0 18px;height:40px;font:700 13px/1 var(--font-heading);cursor:pointer;box-shadow:var(--shadow-glow-blue)">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
       <span>Bag ({{ cartCount }})</span>
@@ -942,6 +963,11 @@ class Component extends DCLogic {
     storeLocationStreet: 'Boulevard de la Liberté, Akwa Commercial Zone',
     storeLocationLandmark: 'Next to Total Akwa Roundabout',
 
+    // ── Search & Filter State ──
+    searchQuery: 'MacBook Air M2',
+    searchResults: null,
+    searchBusy: false,
+
     // ── Phase F: Universal Listing Engine State ──
     newListingType: 'PHYSICAL_PRODUCT',
     newListingCategory: 'smartphones',
@@ -976,13 +1002,38 @@ class Component extends DCLogic {
   componentDidMount() {
     this._restoreOnboardingDraft();
     this._resolveSession();
+    this._handleKeyDown = (e) => {
+      if (e && e.key === 'Escape') {
+        if (this.state.toast) { this.setState({ toast: '' }); return; }
+        if (this.state.stack.length > 0 && !NO_NAV.includes(this.state.screen)) {
+          this.back();
+        }
+      }
+    };
+    if (typeof window !== 'undefined') {
+      window.addEventListener('keydown', this._handleKeyDown);
+    }
   }
 
   componentWillUnmount() {
     clearTimeout(this._t);
+    clearTimeout(this._searchTimer);
     clearInterval(this._resetTimer);
     clearInterval(this._emailTimer);
+    if (typeof window !== 'undefined' && this._handleKeyDown) {
+      window.removeEventListener('keydown', this._handleKeyDown);
+    }
+    this._stopCameraStream();
     this._unmounted = true;
+  }
+
+  _stopCameraStream() {
+    try {
+      if (this._cameraStream) {
+        this._cameraStream.getTracks().forEach(track => track.stop());
+        this._cameraStream = null;
+      }
+    } catch (e) {}
   }
 
   /** Onboarding drafts are UI convenience only — never an auth signal. */
@@ -1069,13 +1120,25 @@ class Component extends DCLogic {
       isLoggedIn: false,
       authStatus: 'anonymous',
       sessionUser: null,
+      userRole: 'buyer',
+      regFirstName: '',
+      regLastName: '',
+      regPhone: '',
+      regEmail: '',
+      regCity: 'douala',
+      regAddress: '',
+      regBusinessName: '',
+      regRccm: '',
       dashboard: null,
-      addresses: null,
-      sessions: null,
-      followedStores: null,
-      activities: null,
+      addressesList: [],
+      activeSessionsList: [],
+      followedStoresList: [],
+      activityList: [],
       notifPrefs: null,
-      privacyPrefs: null
+      privacyPrefs: null,
+      cart: 0,
+      saved: false,
+      following: false
     });
   }
 
@@ -2316,6 +2379,32 @@ class Component extends DCLogic {
             color: this.state.attrColor
           }
         }).then(done).catch(done);
+      },
+
+      // ══════════════════════════════════════════════════════════════════
+      // SEARCH & FILTER INTERACTIONS
+      // ══════════════════════════════════════════════════════════════════
+      searchQuery: this.state.searchQuery,
+      searchBusy: this.state.searchBusy,
+      handleSearchInput: (e) => {
+        const query = e && e.target ? e.target.value : (e || '');
+        this.setState({ searchQuery: query });
+        clearTimeout(this._searchTimer);
+        this._searchSeq = (this._searchSeq || 0) + 1;
+        const seq = this._searchSeq;
+        this._searchTimer = setTimeout(() => {
+          if (this._unmounted || seq !== this._searchSeq) return;
+          const api = getApi();
+          if (api && query.trim().length >= 2) {
+            this.setState({ searchBusy: true });
+            api.searchProducts(query).then(res => {
+              if (this._unmounted || seq !== this._searchSeq) return;
+              this.setState({ searchResults: res.products || [], searchBusy: false });
+            }).catch(() => {
+              if (!this._unmounted) this.setState({ searchBusy: false });
+            });
+          }
+        }, 220);
       },
 
       // Authentication State & Header CTA Reactivity

@@ -620,6 +620,13 @@
     return this.request('/api/v1/categories');
   };
 
+  LoumooApiClient.prototype.searchProducts = function (query, params) {
+    var p = Object.assign({ q: query }, params || {});
+    return this.request('/api/v1/products' + qs(p)).catch(function () {
+      return { products: [] };
+    });
+  };
+
   LoumooApiClient.prototype.getHealth = function () {
     return this.request('/api/v1/health').catch(function (e) {
       return { status: 'offline', error: e.message };

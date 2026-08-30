@@ -4,7 +4,7 @@
  */
 
 const { SupabaseClient } = require('../../../infrastructure/database/SupabaseClient');
-const { UnauthorizedError, ForbiddenError, NotFoundError } = require('../../../shared/errors/AppError');
+const { AuthenticationError, AuthorizationError, NotFoundError } = require('../../../shared/errors/AppError');
 const Store = require('../domain/Store');
 const logger = require('../../../shared/logging/logger');
 
@@ -25,7 +25,7 @@ function requireStoreAccess(requiredPermission = 'store.view') {
   return async function (req, res, next) {
     try {
       if (!req.userProfile || !req.userProfile.id) {
-        throw new UnauthorizedError('Authentication required to manage store');
+        throw new AuthenticationError('Authentication required to manage store');
       }
 
       const storeId = req.params.storeId || req.body.storeId || req.query.storeId;
@@ -109,14 +109,14 @@ function requireStoreAccess(requiredPermission = 'store.view') {
 
       if (!memberRole) {
         logger.warn(`[StoreGuard] Access denied for user ${userId} on store ${store.id}`);
-        throw new ForbiddenError(`You do not have permission to manage this store.`);
+        throw new AuthorizationError(`You do not have permission to manage this store.`);
       }
 
       // 3. Verify Specific Permission
       if (requiredPermission && requiredPermission !== 'store.view') {
         const hasPerm = memberPermissions.includes('*') || memberPermissions.includes(requiredPermission);
         if (!hasPerm) {
-          throw new ForbiddenError(`Missing required permission: ${requiredPermission}`);
+          throw new AuthorizationError(`Missing required permission: ${requiredPermission}`);
         }
       }
 

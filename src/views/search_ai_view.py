@@ -18,7 +18,7 @@ def get_search_and_ai_view():
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
     </button>
     <div style="flex:1;position:relative">
-      <input type="text" class="input" value="MacBook Air M2" placeholder="Search products, stores, hotels, flights…" style="padding-left:38px;padding-right:74px;border-radius:var(--radius-pill);height:42px">
+      <input type="text" class="input" value="{{ searchQuery }}" placeholder="Search products, stores, hotels, flights…" style="padding-left:38px;padding-right:74px;border-radius:var(--radius-pill);height:42px" onInput="{{ handleSearchInput }}">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position:absolute;left:14px;top:13px;color:var(--color-text-muted)"><circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4 4"/></svg>
       <div style="position:absolute;right:8px;top:6px;display:flex;gap:4px">
         <button onClick="{{ on.voice }}" aria-label="Voice search" style="border:none;background:transparent;padding:6px;color:var(--color-text-secondary);cursor:pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg></button>

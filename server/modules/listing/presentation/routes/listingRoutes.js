@@ -24,7 +24,6 @@ const PublicListingUseCase = require('../../application/PublicListingUseCase');
 
 // Helper to resolve listing and verify ownership
 const Listing = require('../../domain/Listing');
-const { NotFoundError, ForbiddenError } = require('../../../shared/errors/AppError');
 
 async function resolveListing(req, res, next) {
   try {

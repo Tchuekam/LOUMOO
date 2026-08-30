@@ -14,11 +14,21 @@ def get_home_view():
 
   <!-- Mobile Top Header Bar -->
   <div style="display:flex;align-items:center;gap:12px;padding:0 16px 14px">
-    <button onClick="{{ on.profile }}" aria-label="Open profile" style="width:44px;height:44px;border:2px solid var(--color-text);border-radius:var(--radius-sm);background:var(--color-surface);display:flex;align-items:center;justify-content:center;font:800 15px/1 var(--font-heading);letter-spacing:-.02em;padding:0;color:var(--color-text);box-shadow:var(--shadow-xs);cursor:pointer">TK</button>
-    <div style="flex:1;min-width:0">
-      <div style="font:700 9.5px/1 var(--font-heading);letter-spacing:.14em;color:var(--color-text-muted);text-transform:uppercase">WELCOME BACK</div>
-      <div style="font:800 20px/1.1 var(--font-heading);letter-spacing:-.025em;margin-top:3px;color:var(--color-text)">{{ userName }}</div>
-    </div>
+    <sc-if value="{{ isLoggedIn }}">
+      <button onClick="{{ on.profile }}" aria-label="Open profile" style="width:44px;height:44px;border:2px solid var(--color-text);border-radius:var(--radius-sm);background:var(--color-surface);display:flex;align-items:center;justify-content:center;font:800 15px/1 var(--font-heading);letter-spacing:-.02em;padding:0;color:var(--color-text);box-shadow:var(--shadow-xs);cursor:pointer">{{ userInitials }}</button>
+      <div style="flex:1;min-width:0">
+        <div style="font:700 9.5px/1 var(--font-heading);letter-spacing:.14em;color:var(--color-text-muted);text-transform:uppercase">WELCOME BACK</div>
+        <div style="font:800 20px/1.1 var(--font-heading);letter-spacing:-.025em;margin-top:3px;color:var(--color-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ userName }}</div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ !isLoggedIn }}">
+      <div style="width:44px;height:44px;border-radius:var(--radius-sm);background:linear-gradient(135deg,var(--color-accent),#003d8a);color:#fff;display:flex;align-items:center;justify-content:center;font:800 15px/1 var(--font-heading);letter-spacing:-.02em;flex-shrink:0">LM</div>
+      <div style="flex:1;min-width:0">
+        <div style="font:700 9.5px/1 var(--font-heading);letter-spacing:.14em;color:var(--color-accent);text-transform:uppercase">LOUMOO COMMERCE</div>
+        <div style="font:800 18px/1.1 var(--font-heading);letter-spacing:-.025em;margin-top:3px;color:var(--color-text)">Discover Cameroon</div>
+      </div>
+      <button onClick="{{ on.signIn }}" class="btn btn-secondary" style="height:34px;padding:0 12px;font-size:11.5px;font-weight:800;border-radius:var(--radius-pill);cursor:pointer">SIGN IN</button>
+    </sc-if>
     <button onClick="{{ on.cart }}" aria-label="Open bag" style="width:40px;height:40px;border:none;background:transparent;display:flex;align-items:center;justify-content:center;position:relative;color:var(--color-text);cursor:pointer">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
       <span style="position:absolute;top:2px;right:2px;min-width:16px;height:16px;border-radius:8px;background:var(--color-accent);color:#fff;font:800 9.5px/16px var(--font-heading);text-align:center;padding:0 3px">{{ cartCount }}</span>
