@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 LOUMOO CURATED COLLECTIONS VIEWS
-Category discovery, Best Picks editorial magazine, and Black FreeDay high-energy flash sale.
+Category discovery, Best Picks editorial magazine, and Black FreeDay high-energy flash sale with Lucide SVG icons.
 """
 
 def get_collections_view():
@@ -12,17 +12,17 @@ def get_collections_view():
 <sc-if value="{{ is.category }}">
 <div style="padding-bottom:32px">
   
-  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider)">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
     <div style="display:flex;align-items:center;gap:12px">
-      <button onClick="{{ back }}" style="border:1px solid var(--color-divider);background:var(--color-surface);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
       </button>
       <div>
         <h4 style="margin:0;font-size:16px">Electronics &amp; Tech Hub</h4>
         <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary)">410 Verified Listings · Douala &amp; Yaoundé</div>
       </div>
     </div>
-    <button onClick="{{ on.filters }}" style="border:1px solid var(--color-divider);background:var(--color-surface);padding:0 12px;height:36px;border-radius:var(--radius-pill);display:flex;align-items:center;gap:6px;font:700 11.5px/1 var(--font-heading);color:var(--color-text)">
+    <button onClick="{{ on.filters }}" aria-label="Filter category" style="border:1px solid var(--color-divider);background:var(--color-surface);padding:0 12px;height:36px;border-radius:var(--radius-pill);display:flex;align-items:center;gap:6px;font:700 11.5px/1 var(--font-heading);color:var(--color-text);cursor:pointer">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/></svg>
       <span>Filter</span>
     </button>
@@ -33,16 +33,28 @@ def get_collections_view():
     <!-- Subcategory Filter Pills -->
     <div class="hs" style="gap:8px;margin-bottom:18px">
       <button class="tag tag-accent">All Tech (410)</button>
-      <button class="tag tag-neutral">Laptops (84)</button>
-      <button class="tag tag-neutral">Audio &amp; Headphones (96)</button>
-      <button class="tag tag-neutral">Smartphones (142)</button>
-      <button class="tag tag-neutral">Power &amp; Batteries (88)</button>
+      <button class="tag tag-neutral">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect width="18" height="12" x="3" y="4" rx="2"/><line x1="2" x2="22" y1="20" y2="20"/></svg>
+        <span>Laptops (84)</span>
+      </button>
+      <button class="tag tag-neutral">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"/></svg>
+        <span>Audio (96)</span>
+      </button>
+      <button class="tag tag-neutral">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><line x1="12" x2="12.01" y1="18" y2="18"/></svg>
+        <span>Smartphones (142)</span>
+      </button>
+      <button class="tag tag-neutral">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect width="16" height="10" x="2" y="7" rx="2" ry="2"/><line x1="22" x2="22" y1="11" y2="13"/><line x1="6" x2="6" y1="11" y2="13"/><line x1="10" x2="10" y1="11" y2="13"/></svg>
+        <span>Power &amp; Batteries (88)</span>
+      </button>
     </div>
 
     <!-- Product Grid -->
     <div class="home-grid">
       <!-- Product 1 -->
-      <button onClick="{{ on.product }}">
+      <button onClick="{{ on.product }}" aria-label="View MacBook Air M2">
         <div class="ph" style="aspect-ratio:4/3">
           <span class="badge-floating badge-sale">-10%</span>
         </div>
@@ -57,7 +69,7 @@ def get_collections_view():
       </button>
 
       <!-- Product 2 -->
-      <button onClick="{{ on.product }}">
+      <button onClick="{{ on.product }}" aria-label="View Sony WH-1000XM5">
         <div class="ph" style="aspect-ratio:4/3">
           <span class="badge-floating badge-new">NEW</span>
         </div>
@@ -72,7 +84,7 @@ def get_collections_view():
       </button>
 
       <!-- Product 3 -->
-      <button onClick="{{ on.product }}">
+      <button onClick="{{ on.product }}" aria-label="View Samsung Galaxy A55">
         <div class="ph" style="aspect-ratio:4/3"></div>
         <div style="padding:10px 4px 4px">
           <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Samsung Galaxy A55 5G</div>
@@ -85,7 +97,7 @@ def get_collections_view():
       </button>
 
       <!-- Product 4 -->
-      <button onClick="{{ on.product }}">
+      <button onClick="{{ on.product }}" aria-label="View Anker 737 Power Bank">
         <div class="ph" style="aspect-ratio:4/3"></div>
         <div style="padding:10px 4px 4px">
           <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Anker 737 Power Bank 24k</div>
@@ -108,9 +120,9 @@ def get_collections_view():
 <sc-if value="{{ is.bestpicks }}">
 <div style="padding-bottom:32px">
   
-  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider)">
-    <button onClick="{{ back }}" style="border:1px solid var(--color-divider);background:var(--color-surface);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+    <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
     </button>
     <div>
       <h4 style="margin:0;font-size:16px">Editor's Best Picks 2026</h4>
@@ -166,19 +178,20 @@ def get_collections_view():
 <sc-if value="{{ is.freeday }}">
 <div style="padding-bottom:32px">
   
-  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#111214;color:#fff;border-bottom:1px solid #23252a">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#111214;color:#fff;border-bottom:1px solid #23252a;position:sticky;top:0;z-index:20">
     <div style="display:flex;align-items:center;gap:12px">
-      <button onClick="{{ back }}" style="border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.1);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.1);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
       </button>
       <div>
-        <h4 style="margin:0;font-size:16px;color:#fff">⚡ Black FreeDay Flash Deals</h4>
+        <h4 style="margin:0;font-size:16px;color:#fff">Black FreeDay Flash Deals</h4>
         <div style="font:400 11.5px/1 var(--font-body);color:rgba(255,255,255,0.7)">Up to 50% Off · Verified Escrow Orders</div>
       </div>
     </div>
     
-    <!-- Countdown Timer -->
-    <div style="display:flex;gap:4px;font:800 12px/1 var(--font-mono);background:rgba(255,59,48,0.2);color:var(--color-accent-sale);padding:6px 10px;border-radius:var(--radius-pill)">
+    <!-- Countdown Timer (Lucide Clock) -->
+    <div style="display:flex;align-items:center;gap:6px;font:800 12px/1 var(--font-mono);background:rgba(255,59,48,0.2);color:var(--color-accent-sale);padding:6px 10px;border-radius:var(--radius-pill)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
       <span>08h</span>:<span>24m</span>:<span>15s</span>
     </div>
   </div>
@@ -199,7 +212,7 @@ def get_collections_view():
         <!-- Stock Claimed Bar -->
         <div style="max-width:320px;margin-bottom:16px">
           <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px">
-            <span>🔥 84% Claimed</span>
+            <span>84% Claimed</span>
             <span>Only 3 units left</span>
           </div>
           <div style="height:6px;background:rgba(255,255,255,0.3);border-radius:3px;overflow:hidden">
@@ -219,7 +232,7 @@ def get_collections_view():
         <div style="font:700 13.5px/1 var(--font-heading);color:var(--color-text)">Merchant Flash Participation</div>
         <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Feature your listings on the next Black FreeDay banner</div>
       </div>
-      <button onClick="{{ toggleFreeday }}" style="border:none;background:transparent;padding:0;cursor:pointer">
+      <button onClick="{{ toggleFreeday }}" aria-label="Toggle FreeDay participation" style="border:none;background:transparent;padding:0;cursor:pointer">
         <div style="display:flex;align-items:center;background:{{ fd.bg }};border-radius:14px;width:44px;height:24px;padding:2px;box-sizing:border-box;justify-content:{{ fd.pos }}">
           <div style="width:20px;height:20px;background:{{ fd.knob }};border-radius:50%;box-shadow:var(--shadow-sm)"></div>
         </div>

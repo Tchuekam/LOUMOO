@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 LOUMOO E-COMMERCE PREMIUM REDESIGN MASTER ASSEMBLER
-Combines all modular views, preserves is.home, and generates the pristine Commerce App.dc.html.
+Combines all modular views and generates the pristine, production-grade Commerce App.dc.html.
 """
 
 import os
@@ -9,7 +9,8 @@ import sys
 
 # Import all view modules
 sys.path.append(os.path.abspath('.'))
-from src.views.pdp_view import get_product_view, get_sellers_view
+from src.views.home_view import get_home_view
+from src.views.pdp_view import get_product_view
 from src.views.cart_checkout_view import (
     get_cart_view, get_checkout_view, get_paying_view,
     get_success_view, get_payfailed_view, get_orders_and_transactions_view
@@ -21,22 +22,7 @@ from src.views.merchant_view import get_merchant_view
 from src.views.community_view import get_community_view
 from src.views.chat_profile_view import get_chat_and_profile_view
 
-# 1. Read existing Commerce App.dc.html to extract is.home
-with open('Commerce App.dc.html', 'r', encoding='utf-8') as f:
-    lines = f.readlines()
-
-home_start = -1
-home_end = -1
-for i, line in enumerate(lines):
-    if '<sc-if value="{{ is.home }}"' in line:
-        home_start = i
-    if '<sc-if value="{{ is.search }}"' in line:
-        home_end = i
-
-home_content = "".join(lines[home_start:home_end])
-print(f"Extracted is.home: {len(home_content.splitlines())} lines.")
-
-# 2. Define Master Header & Styles
+# Define Master Header & Styles
 header_and_styles = """<!DOCTYPE html>
 <html>
 <head>
@@ -62,12 +48,14 @@ header_and_styles = """<!DOCTYPE html>
   --color-surface-subtle: #f8f9fc;
   --color-surface-hover: #f1f3f7;
   --color-surface-elevated: #ffffff;
+  --color-surface-glass: rgba(255, 255, 255, 0.88);
   --color-text: #111214;
-  --color-text-secondary: #5e626d;
-  --color-text-muted: #8e94a0;
-  --color-text-tertiary: #b0b5c1;
+  --color-text-secondary: #525763;
+  --color-text-muted: #838a98;
+  --color-text-tertiary: #aab0bd;
   --color-accent: #007aff;
   --color-accent-hover: #0570e6;
+  --color-accent-active: #005ec4;
   --color-accent-600: #0062cc;
   --color-accent-700: #004fb3;
   --color-accent-800: #003d8a;
@@ -80,6 +68,7 @@ header_and_styles = """<!DOCTYPE html>
   --color-accent-energy: #ffd100;
   --color-accent-energy-hover: #f2c600;
   --color-accent-energy-100: #fffbe6;
+  --color-accent-energy-text: #7a5e00;
   --color-accent-sale: #ff3b30;
   --color-accent-sale-hover: #e03228;
   --color-accent-sale-100: #ffebeb;
@@ -87,8 +76,11 @@ header_and_styles = """<!DOCTYPE html>
   --color-success-hover: #00b34a;
   --color-success-100: #e6f9ed;
   --color-momo-yellow: #ffcc00;
+  --color-momo-hover: #f0c000;
   --color-om-orange: #ff6600;
+  --color-om-hover: #e65c00;
   --color-wa-green: #25d366;
+  --color-wa-teal: #00a884;
   --color-divider: #eceef2;
   --color-border-subtle: #f0f2f5;
   --color-border-focus: #007aff;
@@ -126,9 +118,9 @@ header_and_styles = """<!DOCTYPE html>
   --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.08);
   --shadow-xl: 0 24px 54px rgba(0, 0, 0, 0.11);
   --shadow-hover: 0 12px 32px rgba(0, 0, 0, 0.09);
-  --shadow-glow-blue: 0 4px 18px rgba(0, 122, 255, 0.28);
-  --shadow-glow-yellow: 0 4px 18px rgba(255, 209, 0, 0.35);
-  --shadow-glow-green: 0 4px 18px rgba(0, 200, 83, 0.28);
+  --shadow-glow-blue: 0 4px 20px rgba(0, 122, 255, 0.28);
+  --shadow-glow-yellow: 0 4px 20px rgba(255, 209, 0, 0.35);
+  --shadow-glow-green: 0 4px 20px rgba(0, 200, 83, 0.28);
   --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -139,12 +131,14 @@ html, body {
   background: var(--color-bg); font-family: var(--font-body);
   font-size: 14px; line-height: 1.5; color: var(--color-text);
   -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden; transition: background .2s ease;
+  overflow-x: hidden; transition: background .25s ease, color .25s ease;
 }
 a { color: var(--color-accent); text-decoration: none; transition: color 0.15s ease; }
 a:hover { color: var(--color-accent-hover); }
 button { font-family: var(--font-body); cursor: pointer; border-radius: var(--radius-sm); transition: all 0.2s var(--ease-spring); }
 button:active { transform: scale(0.97); }
+
+:focus-visible { outline: 2px solid var(--color-accent) !important; outline-offset: 2px !important; }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading); font-weight: var(--font-heading-weight);
@@ -170,21 +164,21 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 .btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none !important; }
 .btn-primary { background: var(--color-accent); color: #ffffff; box-shadow: var(--shadow-glow-blue); border: none; }
 .btn-primary:hover { background: var(--color-accent-hover); box-shadow: 0 6px 24px rgba(0, 122, 255, 0.4); transform: translateY(-1.5px); }
-.btn-primary:active { background: var(--color-accent-600); transform: translateY(0) scale(0.98); }
+.btn-primary:active { background: var(--color-accent-active); transform: translateY(0) scale(0.97); }
 .btn-secondary { background: var(--color-surface); border: 1px solid var(--color-divider); color: var(--color-text); box-shadow: var(--shadow-xs); }
 .btn-secondary:hover { background: var(--color-surface-hover); border-color: var(--color-neutral-400); transform: translateY(-1.5px); }
-.btn-dark { background: var(--color-text); color: #ffffff; box-shadow: var(--shadow-sm); }
+.btn-dark { background: var(--color-text); color: var(--color-bg); box-shadow: var(--shadow-sm); }
 .btn-dark:hover { background: #23252a; transform: translateY(-1.5px); box-shadow: var(--shadow-md); }
-.btn-momo { background: #ffcc00; color: #111214; font-weight: 800; box-shadow: 0 4px 16px rgba(255, 204, 0, 0.35); }
-.btn-momo:hover { background: #f5c400; transform: translateY(-1.5px); }
-.btn-om { background: #ff6600; color: #ffffff; font-weight: 800; box-shadow: 0 4px 16px rgba(255, 102, 0, 0.35); }
-.btn-om:hover { background: #e65c00; transform: translateY(-1.5px); }
+.btn-momo { background: var(--color-momo-yellow); color: #111214; font-weight: 800; box-shadow: 0 4px 16px rgba(255, 204, 0, 0.35); }
+.btn-momo:hover { background: var(--color-momo-hover); transform: translateY(-1.5px); }
+.btn-om { background: var(--color-om-orange); color: #ffffff; font-weight: 800; box-shadow: 0 4px 16px rgba(255, 102, 0, 0.35); }
+.btn-om:hover { background: var(--color-om-hover); transform: translateY(-1.5px); }
 .btn-block { width: 100%; margin-top: var(--space-2); justify-content: center; }
 
 /* Studio Photography Containers */
 .ph {
   background: var(--color-neutral-100);
-  background-image: radial-gradient(circle at 50% 40%, rgba(255,255,255,0.85) 0%, rgba(241,243,247,0.5) 100%);
+  background-image: radial-gradient(circle at 50% 40%, rgba(255,255,255,0.9) 0%, rgba(241,243,247,0.6) 100%);
   display: flex; align-items: center; justify-content: center; padding: 8px;
   max-width: 100%; border-radius: var(--radius-md); position: relative; overflow: hidden;
   border: 1px solid var(--color-border-subtle);
@@ -203,13 +197,13 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 /* Badges & Tags */
 .tag {
   min-height: 32px; padding: 6px 14px; border-radius: var(--radius-pill);
-  display: inline-flex; align-items: center; font-family: var(--font-heading);
+  display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-heading);
   font-weight: 600; font-size: 12px; cursor: pointer; transition: all 0.15s ease;
   border: 1px solid transparent; user-select: none;
 }
 .tag:hover { transform: translateY(-1px); }
 .tag-accent { background: var(--color-accent-100); color: var(--color-accent); border-color: var(--color-accent-200); font-weight: 700; }
-.tag-energy { background: var(--color-accent-energy-100); color: #8f7200; font-weight: 700; }
+.tag-energy { background: var(--color-accent-energy-100); color: var(--color-accent-energy-text); font-weight: 700; }
 .tag-sale { background: var(--color-accent-sale-100); color: var(--color-accent-sale); font-weight: 700; }
 .tag-neutral { background: var(--color-surface); color: var(--color-text-secondary); border-color: var(--color-divider); }
 .tag-neutral:hover { background: var(--color-surface-hover); color: var(--color-text); border-color: var(--color-neutral-400); }
@@ -217,7 +211,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 .badge-floating {
   position: absolute; top: 10px; left: 10px; font: 800 9px/1 var(--font-heading);
   letter-spacing: .05em; padding: 4px 9px; border-radius: var(--radius-pill);
-  z-index: 2; box-shadow: var(--shadow-xs);
+  z-index: 2; box-shadow: var(--shadow-xs); display: inline-flex; align-items: center; gap: 4px;
 }
 .badge-new { background: #111214; color: #ffffff; }
 .badge-sale { background: var(--color-accent-sale); color: #ffffff; }
@@ -232,21 +226,21 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   border: 1px solid var(--color-divider) !important; border-radius: var(--radius-md) !important;
   box-shadow: var(--shadow-sm) !important; padding: 12px !important; text-align: left !important;
   color: var(--color-text) !important; transition: all 0.25s var(--ease-spring) !important;
-  overflow: hidden !important;
+  overflow: hidden !important; cursor: pointer;
 }
 .product-card:hover, .home-grid > button:hover, .home-grid-3 > button:hover {
   transform: translateY(-3px) !important; box-shadow: var(--shadow-hover) !important;
   border-color: var(--color-neutral-300) !important;
 }
 
-/* Inputs */
+/* Form Inputs */
 .input {
   width: 100%; min-height: 44px; padding: 10px 16px; font: inherit; font-size: 14px;
   color: var(--color-text); background: var(--color-surface);
   border: 1.5px solid var(--color-divider); border-radius: var(--radius-sm);
   transition: all 0.2s ease; box-sizing: border-box;
 }
-.input:focus-visible, .input:focus {
+.input:focus {
   outline: none; background: #ffffff; border-color: var(--color-accent);
   box-shadow: 0 0 0 3.5px var(--color-accent-100);
 }
@@ -258,7 +252,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow-sm);
   transition: all 0.25s var(--ease-spring);
 }
-.card-premium:hover { box-shadow: var(--shadow-md); }
+.card-premium:hover { box-shadow: var(--shadow-md); border-color: var(--color-neutral-300); }
 
 .stepper-btn {
   width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--color-divider);
@@ -278,6 +272,17 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 .skel-text { height: 16px; margin-bottom: 8px; border-radius: 4px; }
 .skel-block { height: 40px; }
 .skel-card { height: 220px; border-radius: var(--radius-md); }
+
+/* Toast Notification Banner */
+.toast-banner {
+  position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+  background: rgba(17, 18, 20, 0.95); color: #ffffff; padding: 10px 20px;
+  border-radius: var(--radius-pill); box-shadow: var(--shadow-lg);
+  font: 600 13px/1.3 var(--font-body); display: flex; align-items: center; gap: 12px;
+  z-index: 100; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12); animation: slideUp 0.3s var(--ease-spring);
+}
+@keyframes slideUp { from { opacity: 0; transform: translate(-50%, 12px); } to { opacity: 1; transform: translate(-50%, 0); } }
 
 /* Responsive Layout Viewports */
 .outer-wrap {
@@ -311,7 +316,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 @media (min-width: 1024px) {
   .outer-wrap { flex-direction: row !important; height: 100vh !important; overflow: hidden !important; }
   .sidebar-nav {
-    display: flex !important; flex-direction: column; width: 250px; height: 100vh;
+    display: flex !important; flex-direction: column; width: 260px; height: 100vh;
     background: var(--color-surface); border-right: 1px solid var(--color-divider);
     flex: none; padding: 20px 14px 16px; box-sizing: border-box; overflow-y: auto; z-index: 10;
   }
@@ -319,7 +324,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   .status-bar, .bottom-nav-mobile { display: none !important; }
   .desktop-topbar {
     display: flex !important; align-items: center; justify-content: space-between;
-    height: 60px; padding: 0 28px; background: var(--color-surface);
+    height: 62px; padding: 0 28px; background: var(--color-surface);
     border-bottom: 1px solid var(--color-divider); flex: none; gap: 16px; z-index: 10;
     box-sizing: border-box; box-shadow: var(--shadow-xs);
   }
@@ -371,21 +376,21 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 
 /* ── Dark Mode Obsidian Tech ── */
 [data-theme="dark"] {
-  --color-bg: #0f1012; --color-surface: #181a1f; --color-surface-subtle: #131418; --color-surface-hover: #22252c;
+  --color-bg: #090a0f; --color-surface: #141720; --color-surface-subtle: #0f1118; --color-surface-hover: #1c202c;
   --color-text: #f5f7fa; --color-text-secondary: #a0a6b5; --color-text-muted: #6b7280;
-  --color-divider: #262930; --color-border-subtle: #1e2026;
-  --color-neutral-100: #141518; --color-neutral-200: #1e2026; --color-neutral-300: #2d313a;
+  --color-divider: #222632; --color-border-subtle: #191c26;
+  --color-neutral-100: #0f1118; --color-neutral-200: #1a1e28; --color-neutral-300: #272d3c;
   --color-neutral-400: #4b5262; --color-neutral-500: #6e7687; --color-neutral-600: #9da4b2;
   --color-neutral-700: #cbd1db; --color-neutral-800: #e4e7ec; --color-neutral-900: #ffffff;
 }
-[data-theme="dark"] body, [data-theme="dark"] .device-frame { background: #0f1012; }
+[data-theme="dark"] body, [data-theme="dark"] .device-frame { background: #090a0f; }
 [data-theme="dark"] .product-card { background: var(--color-surface); border-color: var(--color-divider); }
 [data-theme="dark"] .ph { background: var(--color-surface-subtle); background-image: radial-gradient(circle at 50% 40%, rgba(255,255,255,0.06) 0%, transparent 80%); }
 [data-theme="dark"] input.input { background: var(--color-surface); color: var(--color-text); border-color: var(--color-divider); }
 [data-theme="dark"] [style*="background:#fff"] { background: var(--color-surface) !important; }
 [data-theme="dark"] [style*="background: #fff"] { background: var(--color-surface) !important; }
-[data-theme="dark"] .bottom-nav-mobile { background: rgba(24, 25, 28, 0.95) !important; border-top-color: var(--color-divider) !important; }
-[data-theme="dark"] .desktop-topbar, [data-theme="dark"] .sidebar-nav { background: #141518 !important; border-color: var(--color-divider) !important; }
+[data-theme="dark"] .bottom-nav-mobile { background: rgba(20, 23, 32, 0.95) !important; border-top-color: var(--color-divider) !important; }
+[data-theme="dark"] .desktop-topbar, [data-theme="dark"] .sidebar-nav { background: #0f1118 !important; border-color: var(--color-divider) !important; }
 
 /* ── WhatsApp Themed Chat ── */
 .wa-chat-container {
@@ -433,6 +438,42 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   padding: 0 14px; font-family: inherit; font-size: 14px; color: #111b21; outline: none;
 }
 [data-theme="dark"] .wa-input-box { background: #2a3942; color: #e9edef; }
+
+/* ── Checkout Pay Methods ── */
+.checkout-pay-method {
+  display: flex; align-items: center; justify-content: space-between; padding: 14px 18px;
+  border: 1.5px solid var(--color-divider); border-radius: var(--radius-md);
+  background: var(--color-surface); cursor: pointer; transition: all 0.2s ease; width: 100%;
+}
+.checkout-pay-method:hover { border-color: var(--color-neutral-400); background: var(--color-surface-hover); }
+.checkout-pay-method.active { border-color: var(--color-accent); background: var(--color-accent-100); }
+.pay-method-badge { width: 42px; height: 42px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font: 800 13px/1 var(--font-heading); flex-shrink: 0; }
+.pay-radio-dot { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--color-divider); background: #fff; transition: all 0.15s ease; }
+.pay-radio-dot.selected { border-color: var(--color-accent); background: var(--color-accent); box-shadow: inset 0 0 0 3px #fff; }
+
+/* ── Paying Animation & Success Check ── */
+.paying-radar-wrap { position: relative; width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; margin-bottom: 24px; }
+.radar-pulse { position: absolute; width: 100%; height: 100%; border-radius: 50%; background: rgba(0, 122, 255, 0.2); animation: radarPing 2s cubic-bezier(0, 0, 0.2, 1) infinite; }
+@keyframes radarPing { 0% { transform: scale(0.6); opacity: 1; } 100% { transform: scale(1.8); opacity: 0; } }
+.radar-center-icon { width: 64px; height: 64px; border-radius: 50%; background: var(--color-accent); color: #fff; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-glow-blue); position: relative; z-index: 2; }
+.success-check-badge { width: 72px; height: 72px; border-radius: 50%; background: var(--color-success); color: #fff; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; box-shadow: var(--shadow-glow-green); }
+
+/* ── Travel Concierge Styles ── */
+.travel-search-widget { background: var(--color-surface); border: 1px solid var(--color-divider); border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 14px; }
+.flight-route-row { display: grid; grid-template-columns: 1fr auto 1fr; gap: 8px; align-items: center; }
+.route-swap-btn { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--color-divider); background: var(--color-surface); display: flex; align-items: center; justify-content: center; color: var(--color-text); cursor: pointer; }
+.flight-card { background: var(--color-surface); border: 1px solid var(--color-divider); border-radius: var(--radius-md); padding: 18px; box-shadow: var(--shadow-xs); display: flex; flex-direction: column; gap: 14px; cursor: pointer; transition: all 0.2s ease; }
+.flight-card:hover { border-color: var(--color-neutral-300); box-shadow: var(--shadow-sm); }
+.flight-timeline { display: flex; justify-content: space-between; align-items: center; }
+.flight-line-wrap { flex: 1; margin: 0 16px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.flight-line { width: 100%; height: 2px; background: var(--color-divider); position: relative; }
+.flight-line::after { content: ''; position: absolute; right: 0; top: -3px; width: 8px; height: 8px; border-radius: 50%; background: var(--color-accent); }
+
+/* ── Apple Wallet Boarding Pass ── */
+.boarding-pass { background: var(--color-surface); border: 1px solid var(--color-divider); border-radius: var(--radius-xl); box-shadow: var(--shadow-lg); overflow: hidden; }
+.pass-header { background: linear-gradient(135deg, #002b61 0%, #007aff 100%); color: #fff; padding: 24px 20px; }
+.pass-body { padding: 20px; background: var(--color-surface); border-bottom: 1px dashed var(--color-divider); }
+.pass-qr-wrap { padding: 24px 20px; text-align: center; background: var(--color-surface-subtle); }
 </style>
 </helmet>
 
@@ -450,39 +491,39 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   <div style="display:flex;flex-direction:column;gap:2px;flex:1">
     <div class="sidebar-section-title">Discovery &amp; Marketplace</div>
     <button onClick="{{ on.home }}" class="nav-item {{ is.home ? 'active' : '' }}">
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
       <span>Marketplace Hub</span>
     </button>
     <button onClick="{{ on.category }}" class="nav-item {{ is.category ? 'active' : '' }}">
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
       <span>All Categories</span>
     </button>
     <button onClick="{{ on.store }}" class="nav-item {{ (is.store || is.business) ? 'active' : '' }}">
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h20l-2 10H4L2 3z"/><path d="M6 13v7a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-7"/></svg>
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 3h20l-2 10H4L2 3z"/><path d="M6 13v7a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-7"/></svg>
       <span>Stores &amp; Brands</span>
     </button>
     <button onClick="{{ on.travel }}" class="nav-item {{ (is.travel || is.travelResults || is.travelDetail || is.travelBus || is.travelPackages || is.travelVisa) ? 'active' : '' }}">
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1z"/></svg>
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1z"/></svg>
       <span>Travel &amp; Flights</span>
     </button>
     <button onClick="{{ on.announce }}" class="nav-item {{ (is.announce || is.announceDetail) ? 'active' : '' }}">
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
       <span>Announcements &amp; Jobs</span>
     </button>
 
     <div class="sidebar-section-title" style="margin-top:12px">Tools &amp; Comparison</div>
     <button onClick="{{ on.vs }}" class="nav-item {{ (is.vs || is.vsCompare) ? 'active' : '' }}">
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="18" rx="1"/><rect x="14" y="3" width="7" height="18" rx="1"/></svg>
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="18" rx="1"/><rect x="14" y="3" width="7" height="18" rx="1"/></svg>
       <span>VS Comparison</span>
       <span class="sidebar-badge">{{ vsCount }}</span>
     </button>
     <button onClick="{{ on.chat }}" class="nav-item {{ (is.chat || is.threadSeller) ? 'active' : '' }}">
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
       <span>Discussions</span>
-      <span class="sidebar-badge" style="background:#25d366;color:#fff">2</span>
+      <span class="sidebar-badge" style="background:var(--color-wa-green);color:#fff">2</span>
     </button>
     <button onClick="{{ on.threadAi }}" class="nav-item {{ is.threadAi ? 'active' : '' }}">
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
       <span>TchueKAM AI</span>
       <span style="margin-left:auto;font:800 8.5px/1 var(--font-heading);background:var(--color-accent-100);color:var(--color-accent);padding:2px 6px;border-radius:var(--radius-pill)">AI</span>
     </button>
@@ -512,8 +553,8 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 <!-- Desktop Topbar (≥1024px) -->
 <div class="desktop-topbar">
   <div style="display:flex;align-items:center;gap:12px">
-    <button onClick="{{ back }}" title="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--color-text)">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    <button onClick="{{ back }}" aria-label="Go back" title="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--color-text)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
     </button>
   </div>
 
@@ -521,24 +562,24 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
     <div onClick="{{ on.search }}" style="display:flex;align-items:center;gap:10px;height:42px;padding:0 16px;border-radius:var(--radius-pill);background:var(--color-neutral-100);border:1.5px solid var(--color-divider);cursor:pointer;transition:border-color .15s ease">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--color-text-muted)"><circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4 4"/></svg>
       <span style="font:400 13px/1 var(--font-body);color:var(--color-text-muted);flex:1">Search products, stores, hotels, flights, services across Cameroon…</span>
-      <button onClick="{{ on.voice }}" title="Voice search" style="border:none;background:transparent;padding:4px;color:var(--color-text-secondary);cursor:pointer">
+      <button onClick="{{ on.voice }}" aria-label="Voice search" title="Voice search" style="border:none;background:transparent;padding:4px;color:var(--color-text-secondary);cursor:pointer">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="2.5" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg>
       </button>
-      <button onClick="{{ on.visual }}" title="Visual camera search" style="border:none;background:transparent;padding:4px;color:var(--color-text-secondary);cursor:pointer">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3 8V4h4M17 4h4v4M21 16v4h-4M7 20H3v-4"/><circle cx="12" cy="12" r="3.2"/></svg>
+      <button onClick="{{ on.visual }}" aria-label="Camera visual search" title="Visual camera search" style="border:none;background:transparent;padding:4px;color:var(--color-text-secondary);cursor:pointer">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
       </button>
     </div>
   </div>
 
   <div style="display:flex;align-items:center;gap:10px">
-    <button onClick="{{ toggleDark }}" title="Toggle Dark/Light Mode" style="border:1px solid var(--color-divider);background:var(--color-surface);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--color-text)">
+    <button onClick="{{ toggleDark }}" aria-label="Toggle dark and light mode" title="Toggle Dark/Light Mode" style="border:1px solid var(--color-divider);background:var(--color-surface);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--color-text)">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
     </button>
-    <button onClick="{{ on.notifications }}" title="Notifications" style="border:1px solid var(--color-divider);background:var(--color-surface);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--color-text);position:relative">
+    <button onClick="{{ on.notifications }}" aria-label="Notifications" title="Notifications" style="border:1px solid var(--color-divider);background:var(--color-surface);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--color-text);position:relative">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
       <span style="position:absolute;top:7px;right:7px;width:7px;height:7px;border-radius:50%;background:var(--color-accent-sale)"></span>
     </button>
-    <button onClick="{{ on.cart }}" style="display:flex;align-items:center;gap:8px;background:var(--color-accent);color:#fff;border:none;border-radius:var(--radius-pill);padding:0 18px;height:40px;font:700 13px/1 var(--font-heading);cursor:pointer;box-shadow:var(--shadow-glow-blue)">
+    <button onClick="{{ on.cart }}" aria-label="View bag" style="display:flex;align-items:center;gap:8px;background:var(--color-accent);color:#fff;border:none;border-radius:var(--radius-pill);padding:0 18px;height:40px;font:700 13px/1 var(--font-heading);cursor:pointer;box-shadow:var(--shadow-glow-blue)">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
       <span>Bag ({{ cartCount }})</span>
     </button>
@@ -558,39 +599,39 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 <div class="scr" ref="{{ setScroller }}">
 """
 
-# 3. Define Master Footer, Navigation & Script Logic
+# Define Master Footer, Navigation & Script Logic
 footer_and_scripts = """
 </div>
 
 <sc-if value="{{ showNav }}" hint-placeholder-val="{{ true }}">
 <div class="bottom-nav-mobile">
-  <button onClick="{{ on.home }}" style="color:{{ navHome }}">
+  <button onClick="{{ on.home }}" aria-label="Go to Home" style="color:{{ navHome }}">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10.6 12 3.4l9 7.2V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-9.4Z"/></svg>
     <span>HOME</span>
   </button>
-  <button onClick="{{ on.store }}" style="color:{{ navStore }}">
+  <button onClick="{{ on.store }}" aria-label="Go to Stores" style="color:{{ navStore }}">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3.5 9h17l-1.3-4.5H4.8L3.5 9Z"/><path d="M5 9v11h14V9"/></svg>
     <span>STORE</span>
   </button>
-  <button onClick="{{ on.vs }}" style="color:{{ navVs }}">
+  <button onClick="{{ on.vs }}" aria-label="Go to VS Comparison" style="color:{{ navVs }}">
     <span style="font:800 13px/1 var(--font-heading);height:18px;display:flex;align-items:center">VS</span>
     <span>COMPARE</span>
   </button>
-  <button onClick="{{ on.upload }}" class="nav-upload-btn">
+  <button onClick="{{ on.upload }}" aria-label="Upload a listing" class="nav-upload-btn">
     <span>
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>
     </span>
     <span style="color:{{ navUpload }}">UPLOAD</span>
   </button>
-  <button onClick="{{ on.travel }}" style="color:{{ navTravel }}">
+  <button onClick="{{ on.travel }}" aria-label="Go to Travel" style="color:{{ navTravel }}">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 13.5 21 5l-6 16-3.2-6.3L3 13.5Z"/></svg>
     <span>TRAVEL</span>
   </button>
-  <button onClick="{{ on.announce }}" style="color:{{ navAnnounce }}">
+  <button onClick="{{ on.announce }}" aria-label="Go to Announcements" style="color:{{ navAnnounce }}">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 10v4h3.5L15 18.5v-13L7.5 10H4Z"/><path d="M18.5 9.2a4 4 0 0 1 0 5.6"/></svg>
     <span>ANNOUNCE</span>
   </button>
-  <button onClick="{{ on.profile }}" style="color:{{ navProfile }}">
+  <button onClick="{{ on.profile }}" aria-label="Go to Profile" style="color:{{ navProfile }}">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8.5" r="3.7"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></svg>
     <span>PROFILE</span>
   </button>
@@ -600,7 +641,7 @@ footer_and_scripts = """
 <sc-if value="{{ toast }}">
 <div class="toast-banner">
   <span>{{ toast }}</span>
-  <button onClick="{{ clearToast }}" style="border:none;background:transparent;color:var(--color-accent-400);font:800 11px/1 var(--font-heading);letter-spacing:.08em;padding:0;cursor:pointer">OK</button>
+  <button onClick="{{ clearToast }}" aria-label="Dismiss notification" style="border:none;background:transparent;color:var(--color-accent-400);font:800 11px/1 var(--font-heading);letter-spacing:.08em;padding:0;cursor:pointer">OK</button>
 </div>
 </sc-if>
 
@@ -790,11 +831,10 @@ class Component extends DCLogic {
 # Assemble all screens
 full_html = (
     header_and_styles
-    + home_content
+    + get_home_view()
     + get_search_and_ai_view()
     + get_chat_and_profile_view()
     + get_product_view()
-    + get_sellers_view()
     + get_cart_view()
     + get_checkout_view()
     + get_paying_view()
@@ -811,4 +851,4 @@ full_html = (
 with open('Commerce App.dc.html', 'w', encoding='utf-8') as f:
     f.write(full_html)
 
-print("Commerce App.dc.html successfully rebuilt with all 48 screens!")
+print("Commerce App.dc.html successfully rebuilt with all 48 screens & polished Home view!")

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 LOUMOO MESSAGING, PROFILE & SYSTEM VIEWS
-WhatsApp messaging engine, voice note waveform player, TchueKAM AI assistant, notifications, user profile, saved items, settings, and skeleton states.
+WhatsApp messaging engine, voice note waveform player, TchueKAM AI assistant, notifications, user profile, saved items, settings, and skeleton states with Lucide SVG icons.
 """
 
 def get_chat_and_profile_view():
@@ -12,10 +12,10 @@ def get_chat_and_profile_view():
 <sc-if value="{{ is.chat }}">
 <div style="padding-bottom:32px">
   
-  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider)">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
     <div style="display:flex;align-items:center;gap:12px">
-      <button onClick="{{ back }}" style="border:1px solid var(--color-divider);background:var(--color-surface);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
       </button>
       <div>
         <h4 style="margin:0;font-size:16px">Discussions</h4>
@@ -38,22 +38,23 @@ def get_chat_and_profile_view():
     <div style="display:flex;flex-direction:column;gap:8px">
       
       <!-- Thread 1: Mr Toukam / Orca Electronics -->
-      <button onClick="{{ on.threadSeller }}" class="card-premium" style="display:flex;align-items:center;gap:14px;padding:14px 16px;text-align:left">
-        <div style="width:46px;height:46px;border-radius:50%;background:#00a884;color:#fff;display:flex;align-items:center;justify-content:center;font:800 16px/1 var(--font-heading);flex-shrink:0">T</div>
+      <button onClick="{{ on.threadSeller }}" aria-label="Open conversation with Mr Toukam" class="card-premium" style="display:flex;align-items:center;gap:14px;padding:14px 16px;text-align:left;cursor:pointer">
+        <div style="width:46px;height:46px;border-radius:50%;background:var(--color-wa-teal);color:#fff;display:flex;align-items:center;justify-content:center;font:800 16px/1 var(--font-heading);flex-shrink:0">T</div>
         <div style="flex:1;min-width:0">
           <div style="display:flex;justify-content:space-between;align-items:center">
             <span style="font:800 14.5px/1.2 var(--font-heading);color:var(--color-text)">Mr Toukam (Orca Electronics)</span>
             <span style="font:500 11px/1 var(--font-body);color:var(--color-accent)">11:46</span>
           </div>
-          <div style="font:400 12.5px/1.4 var(--font-body);color:var(--color-text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:4px">
-            🎙️ Voice message (0:05) · "The unit is ready for delivery..."
+          <div style="font:400 12.5px/1.4 var(--font-body);color:var(--color-text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:4px;display:flex;align-items:center;gap:4px">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
+            <span>Voice message (0:05) · "The unit is ready for delivery..."</span>
           </div>
         </div>
-        <span style="width:18px;height:18px;border-radius:50%;background:#25d366;color:#fff;display:flex;align-items:center;justify-content:center;font:800 10px/1 var(--font-heading);flex-shrink:0">2</span>
+        <span style="width:18px;height:18px;border-radius:50%;background:var(--color-wa-green);color:#fff;display:flex;align-items:center;justify-content:center;font:800 10px/1 var(--font-heading);flex-shrink:0">2</span>
       </button>
 
       <!-- Thread 2: TchueKAM AI Assistant -->
-      <button onClick="{{ on.threadAi }}" class="card-premium" style="display:flex;align-items:center;gap:14px;padding:14px 16px;text-align:left">
+      <button onClick="{{ on.threadAi }}" aria-label="Open conversation with TchueKAM AI" class="card-premium" style="display:flex;align-items:center;gap:14px;padding:14px 16px;text-align:left;cursor:pointer">
         <div style="width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--color-accent),#003d8a);color:#fff;display:flex;align-items:center;justify-content:center;font:800 14px/1 var(--font-heading);flex-shrink:0">AI</div>
         <div style="flex:1;min-width:0">
           <div style="display:flex;justify-content:space-between;align-items:center">
@@ -81,13 +82,13 @@ def get_chat_and_profile_view():
   <!-- WhatsApp Top Header -->
   <div class="wa-chat-header">
     <div style="display:flex;align-items:center;gap:10px">
-      <button onClick="{{ on.chat }}" style="border:none;background:transparent;padding:4px;color:var(--color-text);cursor:pointer">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      <button onClick="{{ on.chat }}" aria-label="Return to chat list" style="border:none;background:transparent;padding:4px;color:var(--color-text);cursor:pointer">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
       </button>
       <div style="width:38px;height:38px;border-radius:50%;background:#607d8b;color:#fff;display:flex;align-items:center;justify-content:center;font:800 14px/1 var(--font-heading)">T</div>
       <div>
         <div style="font:700 14px/1.1 var(--font-heading);color:var(--color-text)">Mr Toukam · Orca</div>
-        <div style="font:400 10.5px/1 var(--font-body);color:#00a884;margin-top:2px">en ligne</div>
+        <div style="font:400 10.5px/1 var(--font-body);color:var(--color-wa-teal);margin-top:2px">online</div>
       </div>
     </div>
     <button onClick="{{ on.product }}" class="btn btn-secondary" style="height:32px;padding:0 12px;font-size:11px;border-radius:var(--radius-pill)">VIEW PRODUCT</button>
@@ -111,8 +112,8 @@ def get_chat_and_profile_view():
     <!-- Message 2 (Seller Voice Note) -->
     <div style="display:flex;justify-content:flex-start">
       <div class="wa-audio-card">
-        <button style="border:none;background:transparent;padding:0;color:var(--color-text);cursor:pointer">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        <button aria-label="Play voice note" style="border:none;background:transparent;padding:0;color:var(--color-text);cursor:pointer">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
         </button>
         <div style="flex:1">
           <div class="wa-waveform-container">
@@ -151,8 +152,8 @@ def get_chat_and_profile_view():
   <!-- WhatsApp Bottom Input Bar -->
   <div class="wa-input-bar">
     <input type="text" class="wa-input-box" placeholder="Type a message or question…">
-    <button style="width:38px;height:38px;border-radius:50%;border:none;background:#00a884;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    <button aria-label="Send message" style="width:38px;height:38px;border-radius:50%;border:none;background:var(--color-wa-teal);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
     </button>
   </div>
 
@@ -165,9 +166,9 @@ def get_chat_and_profile_view():
 <sc-if value="{{ is.threadAi }}">
 <div style="padding-bottom:32px">
   
-  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider)">
-    <button onClick="{{ back }}" style="border:1px solid var(--color-divider);background:var(--color-surface);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+    <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
     </button>
     <div>
       <h4 style="margin:0;font-size:16px">TchueKAM AI Assistant</h4>
@@ -206,22 +207,22 @@ def get_chat_and_profile_view():
      ══════════════════════════════════════════════════════════════════════ -->
 <sc-if value="{{ is.notifications }}">
 <div style="padding-bottom:32px">
-  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider)">
-    <button onClick="{{ back }}" style="border:1px solid var(--color-divider);background:var(--color-surface);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+    <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
     </button>
     <h4 style="margin:0;font-size:16px">Notifications</h4>
   </div>
 
   <div style="padding:16px;max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:10px">
     <div class="card-premium" style="padding:14px 16px">
-      <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-accent)">📦 Order #KM-884920 Dispatched</div>
+      <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-accent)">Order #KM-884920 Dispatched</div>
       <div style="font:400 12px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:4px">Orca Electronics has handed your package to the Douala Express courier.</div>
       <div style="font:500 10px/1 var(--font-body);color:var(--color-text-muted);margin-top:6px">10 min ago</div>
     </div>
 
     <div class="card-premium" style="padding:14px 16px">
-      <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-success)">⚡ Black FreeDay Deal Alert</div>
+      <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-success)">Black FreeDay Deal Alert</div>
       <div style="font:400 12px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:4px">Sony WH-1000XM5 is now 28% off for the next 8 hours.</div>
       <div style="font:500 10px/1 var(--font-body);color:var(--color-text-muted);margin-top:6px">1 hour ago</div>
     </div>
@@ -235,12 +236,12 @@ def get_chat_and_profile_view():
 <sc-if value="{{ is.profile }}">
 <div style="padding-bottom:32px">
   
-  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider)">
-    <button onClick="{{ back }}" style="border:1px solid var(--color-divider);background:var(--color-surface);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+    <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
     </button>
     <h4 style="margin:0;font-size:16px">My Account</h4>
-    <button onClick="{{ on.settings }}" style="border:none;background:transparent;color:var(--color-text);cursor:pointer">
+    <button onClick="{{ on.settings }}" aria-label="Open settings" style="border:none;background:transparent;color:var(--color-text);cursor:pointer">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
     </button>
   </div>
@@ -259,28 +260,36 @@ def get_chat_and_profile_view():
       </div>
     </div>
 
-    <!-- Quick Navigation Tiles -->
+    <!-- Quick Navigation Tiles (Lucide Icons) -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <button onClick="{{ on.orders }}" class="card-premium" style="text-align:left;padding:14px">
-        <div style="font-size:20px;margin-bottom:4px">📦</div>
+      <button onClick="{{ on.orders }}" aria-label="Go to My Orders" class="card-premium" style="text-align:left;padding:14px;cursor:pointer">
+        <div style="width:36px;height:36px;border-radius:var(--radius-sm);background:var(--color-accent-100);color:var(--color-accent);display:flex;align-items:center;justify-content:center;margin-bottom:8px">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+        </div>
         <div style="font:700 13.5px/1 var(--font-heading);color:var(--color-text)">My Orders</div>
         <div style="font:400 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">1 Active Delivery</div>
       </button>
 
-      <button onClick="{{ on.saved }}" class="card-premium" style="text-align:left;padding:14px">
-        <div style="font-size:20px;margin-bottom:4px">🔖</div>
+      <button onClick="{{ on.saved }}" aria-label="Go to Saved Items" class="card-premium" style="text-align:left;padding:14px;cursor:pointer">
+        <div style="width:36px;height:36px;border-radius:var(--radius-sm);background:var(--color-neutral-200);color:var(--color-text);display:flex;align-items:center;justify-content:center;margin-bottom:8px">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+        </div>
         <div style="font:700 13.5px/1 var(--font-heading);color:var(--color-text)">Saved Items</div>
         <div style="font:400 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">34 Products Saved</div>
       </button>
 
-      <button onClick="{{ on.transactions }}" class="card-premium" style="text-align:left;padding:14px">
-        <div style="font-size:20px;margin-bottom:4px">💳</div>
+      <button onClick="{{ on.transactions }}" aria-label="Go to Escrow Ledger" class="card-premium" style="text-align:left;padding:14px;cursor:pointer">
+        <div style="width:36px;height:36px;border-radius:var(--radius-sm);background:var(--color-neutral-200);color:var(--color-text);display:flex;align-items:center;justify-content:center;margin-bottom:8px">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+        </div>
         <div style="font:700 13.5px/1 var(--font-heading);color:var(--color-text)">Escrow Ledger</div>
         <div style="font:400 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Payments &amp; Payouts</div>
       </button>
 
-      <button onClick="{{ on.seller }}" class="card-premium" style="text-align:left;padding:14px">
-        <div style="font-size:20px;margin-bottom:4px">📊</div>
+      <button onClick="{{ on.seller }}" aria-label="Go to Seller Studio" class="card-premium" style="text-align:left;padding:14px;cursor:pointer">
+        <div style="width:36px;height:36px;border-radius:var(--radius-sm);background:var(--color-neutral-200);color:var(--color-text);display:flex;align-items:center;justify-content:center;margin-bottom:8px">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg>
+        </div>
         <div style="font:700 13.5px/1 var(--font-heading);color:var(--color-text)">Seller Studio</div>
         <div style="font:400 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Merchant Workspace</div>
       </button>
@@ -295,9 +304,9 @@ def get_chat_and_profile_view():
      ══════════════════════════════════════════════════════════════════════ -->
 <sc-if value="{{ is.saved }}">
 <div style="padding-bottom:32px">
-  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider)">
-    <button onClick="{{ back }}" style="border:1px solid var(--color-divider);background:var(--color-surface);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+    <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
     </button>
     <h4 style="margin:0;font-size:16px">Saved Items</h4>
   </div>
@@ -320,9 +329,9 @@ def get_chat_and_profile_view():
      ══════════════════════════════════════════════════════════════════════ -->
 <sc-if value="{{ is.settings }}">
 <div style="padding-bottom:32px">
-  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider)">
-    <button onClick="{{ back }}" style="border:1px solid var(--color-divider);background:var(--color-surface);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+    <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
     </button>
     <h4 style="margin:0;font-size:16px">Settings &amp; Support</h4>
   </div>
@@ -335,7 +344,7 @@ def get_chat_and_profile_view():
           <div style="font:700 13.5px/1 var(--font-heading);color:var(--color-text)">Dark Mode (Obsidian Tech)</div>
           <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">High contrast dark theme for OLED screens</div>
         </div>
-        <button onClick="{{ toggleDark }}" style="border:none;background:transparent;padding:0;cursor:pointer">
+        <button onClick="{{ toggleDark }}" aria-label="Toggle dark mode" style="border:none;background:transparent;padding:0;cursor:pointer">
           <div style="display:flex;align-items:center;background:var(--color-neutral-300);border-radius:14px;width:44px;height:24px;padding:2px;box-sizing:border-box">
             <div style="width:20px;height:20px;background:var(--color-bg);border-radius:50%;box-shadow:var(--shadow-sm);transform:translateX({{ darkMode ? '20px' : '0' }});transition:transform 0.2s"></div>
           </div>
@@ -344,11 +353,11 @@ def get_chat_and_profile_view():
     </div>
 
     <div class="card-premium" style="display:flex;flex-direction:column;gap:10px">
-      <button onClick="{{ on.threadAi }}" style="border:none;background:transparent;text-align:left;padding:8px 0;font:600 13px/1 var(--font-body);color:var(--color-text);display:flex;justify-content:space-between">
+      <button onClick="{{ on.threadAi }}" style="border:none;background:transparent;text-align:left;padding:8px 0;font:600 13px/1 var(--font-body);color:var(--color-text);display:flex;justify-content:space-between;cursor:pointer">
         <span>Ask TchueKAM AI Support</span>
         <span>→</span>
       </button>
-      <button onClick="{{ on.chat }}" style="border:none;border-top:1px solid var(--color-divider);background:transparent;text-align:left;padding:8px 0;font:600 13px/1 var(--font-body);color:var(--color-text);display:flex;justify-content:space-between">
+      <button onClick="{{ on.chat }}" style="border:none;border-top:1px solid var(--color-divider);background:transparent;text-align:left;padding:8px 0;font:600 13px/1 var(--font-body);color:var(--color-text);display:flex;justify-content:space-between;cursor:pointer">
         <span>WhatsApp Customer Care</span>
         <span>→</span>
       </button>

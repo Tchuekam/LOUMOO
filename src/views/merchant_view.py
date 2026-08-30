@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 LOUMOO STORE & MERCHANT STUDIO VIEWS
-Verified store directory, flagship brand storefront, seller analytics studio, 3-step listing creation wizard, and inventory management.
+Verified store directory, flagship brand storefront, seller analytics studio, 3-step listing creation wizard, and inventory management with Lucide SVG icons.
 """
 
 def get_merchant_view():
@@ -12,10 +12,10 @@ def get_merchant_view():
 <sc-if value="{{ is.store }}">
 <div style="padding-bottom:32px">
   
-  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider)">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
     <div style="display:flex;align-items:center;gap:12px">
-      <button onClick="{{ back }}" style="border:1px solid var(--color-divider);background:var(--color-surface);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
       </button>
       <div>
         <h4 style="margin:0;font-size:16px">Verified Stores &amp; Brands</h4>
@@ -46,12 +46,12 @@ def get_merchant_view():
 
       <!-- Top Products Preview -->
       <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(140px, 1fr));gap:10px;border-top:1px solid var(--color-divider);padding-top:12px">
-        <button onClick="{{ on.product }}" style="text-align:left;background:transparent;border:none;padding:0">
+        <button onClick="{{ on.product }}" aria-label="View MacBook Air M2" style="text-align:left;background:transparent;border:none;padding:0;cursor:pointer">
           <div class="ph" style="aspect-ratio:4/3;margin-bottom:6px"></div>
           <div style="font:700 12px/1.2 var(--font-heading);color:var(--color-text)">MacBook Air M2</div>
           <div style="font:800 12.5px/1 var(--font-heading);color:var(--color-accent);margin-top:2px">XAF 745 000</div>
         </button>
-        <button onClick="{{ on.product }}" style="text-align:left;background:transparent;border:none;padding:0">
+        <button onClick="{{ on.product }}" aria-label="View Anker 737 Power Bank" style="text-align:left;background:transparent;border:none;padding:0;cursor:pointer">
           <div class="ph" style="aspect-ratio:4/3;margin-bottom:6px"></div>
           <div style="font:700 12px/1.2 var(--font-heading);color:var(--color-text)">Anker 737 Bank</div>
           <div style="font:800 12.5px/1 var(--font-heading);color:var(--color-accent);margin-top:2px">XAF 62 000</div>
@@ -89,11 +89,11 @@ def get_merchant_view():
 <sc-if value="{{ is.business }}">
 <div style="padding-bottom:32px">
   
-  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider)">
-    <button onClick="{{ back }}" style="border:1px solid var(--color-divider);background:var(--color-surface);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+    <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
     </button>
-    <button onClick="{{ on.threadSeller }}" class="btn btn-secondary" style="height:34px;font-size:11.5px;color:#00a884">
+    <button onClick="{{ on.threadSeller }}" class="btn btn-secondary" style="height:34px;font-size:11.5px;color:var(--color-wa-teal)">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
       <span>MESSAGE STORE</span>
     </button>
@@ -107,9 +107,9 @@ def get_merchant_view():
     <div style="display:flex;justify-content:center;gap:16px;margin-top:14px;font-size:12px">
       <span>★ <strong>4.9</strong> (1.2k Ratings)</span>
       <span>•</span>
-      <span>📦 <strong>318</strong> Products</span>
+      <span><strong>318</strong> Products</span>
       <span>•</span>
-      <span>⚡ <strong>5 min</strong> Response</span>
+      <span><strong>5 min</strong> Response</span>
     </div>
   </div>
 
@@ -126,14 +126,14 @@ def get_merchant_view():
 
     <!-- Products Grid -->
     <div class="home-grid">
-      <button onClick="{{ on.product }}">
+      <button onClick="{{ on.product }}" aria-label="View MacBook Air M2">
         <div class="ph" style="aspect-ratio:4/3"></div>
         <div style="padding:10px 4px 4px">
           <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">MacBook Air M2 13”</div>
           <div style="font:800 14px/1 var(--font-heading);color:var(--color-accent);margin-top:4px">XAF 745 000</div>
         </div>
       </button>
-      <button onClick="{{ on.product }}">
+      <button onClick="{{ on.product }}" aria-label="View Anker 737 Power Bank">
         <div class="ph" style="aspect-ratio:4/3"></div>
         <div style="padding:10px 4px 4px">
           <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Anker 737 Bank</div>
@@ -152,10 +152,10 @@ def get_merchant_view():
 <sc-if value="{{ is.seller }}">
 <div style="padding-bottom:32px">
   
-  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider)">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
     <div style="display:flex;align-items:center;gap:12px">
-      <button onClick="{{ back }}" style="border:1px solid var(--color-divider);background:var(--color-surface);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
       </button>
       <div>
         <h4 style="margin:0;font-size:16px">Seller Studio</h4>
@@ -192,7 +192,7 @@ def get_merchant_view():
     <div class="card-premium">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
         <h4 style="margin:0;font-size:15px">Inventory &amp; Listings</h4>
-        <button onClick="{{ on.myListings }}" style="border:none;background:transparent;font:700 12px/1 var(--font-heading);color:var(--color-accent)">View all listings →</button>
+        <button onClick="{{ on.myListings }}" style="border:none;background:transparent;font:700 12px/1 var(--font-heading);color:var(--color-accent);cursor:pointer">View all listings →</button>
       </div>
       <div style="display:flex;flex-direction:column;gap:10px">
         <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--color-divider);font-size:12.5px">
@@ -215,9 +215,9 @@ def get_merchant_view():
      ══════════════════════════════════════════════════════════════════════ -->
 <sc-if value="{{ is.upload }}">
 <div style="padding-bottom:32px">
-  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider)">
-    <button onClick="{{ back }}" style="border:1px solid var(--color-divider);background:var(--color-surface);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+    <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
     </button>
     <div>
       <h4 style="margin:0;font-size:16px">Post a Listing · Step 1 of 3</h4>
@@ -227,8 +227,10 @@ def get_merchant_view():
 
   <div style="padding:16px;max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:12px">
     
-    <button onClick="{{ on.uploadDetails }}" class="card-premium" style="display:flex;align-items:center;gap:14px;padding:16px;text-align:left">
-      <div style="font-size:26px">💻</div>
+    <button onClick="{{ on.uploadDetails }}" class="card-premium" style="display:flex;align-items:center;gap:14px;padding:16px;text-align:left;cursor:pointer">
+      <div style="width:44px;height:44px;border-radius:var(--radius-sm);background:var(--color-accent-100);color:var(--color-accent);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect width="18" height="12" x="3" y="4" rx="2"/><line x1="2" x2="22" y1="20" y2="20"/></svg>
+      </div>
       <div style="flex:1">
         <div style="font:800 15px/1.2 var(--font-heading);color:var(--color-text)">Electronics &amp; Physical Products</div>
         <div style="font:400 12px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Laptops, smartphones, fashion, appliances, hardware</div>
@@ -236,8 +238,10 @@ def get_merchant_view():
       <span style="color:var(--color-accent);font-weight:800">→</span>
     </button>
 
-    <button onClick="{{ on.uploadDetails }}" class="card-premium" style="display:flex;align-items:center;gap:14px;padding:16px;text-align:left">
-      <div style="font-size:26px">🛠️</div>
+    <button onClick="{{ on.uploadDetails }}" class="card-premium" style="display:flex;align-items:center;gap:14px;padding:16px;text-align:left;cursor:pointer">
+      <div style="width:44px;height:44px;border-radius:var(--radius-sm);background:var(--color-neutral-200);color:var(--color-text);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+      </div>
       <div style="flex:1">
         <div style="font:800 15px/1.2 var(--font-heading);color:var(--color-text)">Professional Services</div>
         <div style="font:400 12px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Photography, solar technicians, tutoring, legal</div>
@@ -245,8 +249,10 @@ def get_merchant_view():
       <span style="color:var(--color-accent);font-weight:800">→</span>
     </button>
 
-    <button onClick="{{ on.uploadDetails }}" class="card-premium" style="display:flex;align-items:center;gap:14px;padding:16px;text-align:left">
-      <div style="font-size:26px">🏨</div>
+    <button onClick="{{ on.uploadDetails }}" class="card-premium" style="display:flex;align-items:center;gap:14px;padding:16px;text-align:left;cursor:pointer">
+      <div style="width:44px;height:44px;border-radius:var(--radius-sm);background:var(--color-neutral-200);color:var(--color-text);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 22v-6.57"/><path d="M12 11h.01"/><path d="M12 7h.01"/><path d="M14 15.43V22"/><path d="M15 11h.01"/><path d="M15 7h.01"/><path d="M16 16h2a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/><path d="M18 22v-4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v4"/><path d="M8 22v-6.57"/><path d="M9 11h.01"/><path d="M9 7h.01"/></svg>
+      </div>
       <div style="flex:1">
         <div style="font:800 15px/1.2 var(--font-heading);color:var(--color-text)">Hospitality &amp; Rentals</div>
         <div style="font:400 12px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Hotel rooms, guest houses, vehicle rentals</div>
@@ -263,9 +269,9 @@ def get_merchant_view():
      ══════════════════════════════════════════════════════════════════════ -->
 <sc-if value="{{ is.uploadDetails }}">
 <div style="padding-bottom:32px">
-  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider)">
-    <button onClick="{{ back }}" style="border:1px solid var(--color-divider);background:var(--color-surface);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+    <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
     </button>
     <div>
       <h4 style="margin:0;font-size:16px">Listing Details · Step 2 of 3</h4>
@@ -277,7 +283,9 @@ def get_merchant_view():
     
     <!-- Photo Upload Area -->
     <div class="card-premium" style="text-align:center;border:2px dashed var(--color-accent-300);background:var(--color-surface-subtle);padding:24px">
-      <div style="font-size:32px;margin-bottom:6px">📸</div>
+      <div style="width:48px;height:48px;border-radius:50%;background:var(--color-accent-100);color:var(--color-accent);display:flex;align-items:center;justify-content:center;margin:0 auto 10px">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+      </div>
       <div style="font:800 14px/1 var(--font-heading);color:var(--color-text)">Add Studio Photos</div>
       <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:4px">Upload up to 6 high-resolution photos with plain background</div>
       <button onClick="{{ say.mainImg }}" class="btn btn-secondary" style="margin-top:12px;height:36px;font-size:12px">+ CHOOSE FILES</button>
@@ -307,9 +315,9 @@ def get_merchant_view():
      ══════════════════════════════════════════════════════════════════════ -->
 <sc-if value="{{ is.uploadPrice }}">
 <div style="padding-bottom:32px">
-  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider)">
-    <button onClick="{{ back }}" style="border:1px solid var(--color-divider);background:var(--color-surface);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+    <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
     </button>
     <div>
       <h4 style="margin:0;font-size:16px">Price &amp; Shipping · Step 3 of 3</h4>
@@ -331,7 +339,10 @@ def get_merchant_view():
 
     <!-- Escrow Toggle -->
     <div class="card-premium">
-      <div style="font:800 13px/1 var(--font-heading);color:var(--color-text);margin-bottom:6px">🔒 Enable LOUMOO Escrow Protection</div>
+      <div style="display:flex;align-items:center;gap:8px;font:800 13px/1 var(--font-heading);color:var(--color-text);margin-bottom:6px">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <span>Enable LOUMOO Escrow Protection</span>
+      </div>
       <div style="font:400 12px/1.4 var(--font-body);color:var(--color-text-secondary)">
         Buyers are 4x more likely to order when protected by escrow. Funds are transferred to your MoMo account immediately upon delivery.
       </div>
@@ -371,10 +382,10 @@ def get_merchant_view():
      ══════════════════════════════════════════════════════════════════════ -->
 <sc-if value="{{ is.myListings }}">
 <div style="padding-bottom:32px">
-  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider)">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
     <div style="display:flex;align-items:center;gap:12px">
-      <button onClick="{{ back }}" style="border:1px solid var(--color-divider);background:var(--color-surface);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
       </button>
       <div>
         <h4 style="margin:0;font-size:16px">My Inventory</h4>

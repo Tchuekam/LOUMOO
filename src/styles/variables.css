@@ -1,23 +1,27 @@
 /* ══════════════════════════════════════════════════════════════════════════
-   LOUMOO DESIGN TOKENS — PREMIUM APPLE & INSTA360 DESIGN ENGINE
+   LOUMOO MASTER DESIGN SYSTEM — LUXURY DESIGN TOKENS
    ══════════════════════════════════════════════════════════════════════ */
+
 :root {
-  /* Surface & Backgrounds */
+  /* ── Light Palette: Architectural Modernist Foundation ── */
   --color-bg: #f5f7fa;
   --color-surface: #ffffff;
   --color-surface-subtle: #f8f9fc;
   --color-surface-hover: #f1f3f7;
   --color-surface-elevated: #ffffff;
-  
-  /* Text & Typography Colors (High Contrast) */
+  --color-surface-glass: rgba(255, 255, 255, 0.88);
+  --color-surface-glass-border: rgba(255, 255, 255, 0.6);
+
   --color-text: #111214;
-  --color-text-secondary: #5e626d;
-  --color-text-muted: #8e94a0;
-  --color-text-tertiary: #b0b5c1;
-  
-  /* Primary Brand: Electric Blue (Apple / Tech Premium) */
+  --color-text-secondary: #525763;
+  --color-text-muted: #838a98;
+  --color-text-tertiary: #aab0bd;
+  --color-text-inverse: #ffffff;
+
+  /* ── Brand Primary Accent: Electric Cobalt (Apple/Linear precision) ── */
   --color-accent: #007aff;
   --color-accent-hover: #0570e6;
+  --color-accent-active: #005ec4;
   --color-accent-600: #0062cc;
   --color-accent-700: #004fb3;
   --color-accent-800: #003d8a;
@@ -28,32 +32,37 @@
   --color-accent-400: #6ebbff;
   --color-accent-500: #007aff;
 
-  /* Energy Yellow Highlight */
+  /* ── Energy & Flash Accent: Warm Saffron Amber ── */
   --color-accent-energy: #ffd100;
   --color-accent-energy-hover: #f2c600;
   --color-accent-energy-100: #fffbe6;
+  --color-accent-energy-text: #7a5e00;
 
-  /* Urgent / Sale Coral Red */
+  /* ── Sale & Alert Accent: Crimson Coral ── */
   --color-accent-sale: #ff3b30;
   --color-accent-sale-hover: #e03228;
   --color-accent-sale-100: #ffebeb;
-  
-  /* Success / Escrow Emerald */
+
+  /* ── Success & Escrow Verified Accent: Emerald Mint ── */
   --color-success: #00c853;
   --color-success-hover: #00b34a;
   --color-success-100: #e6f9ed;
-  
-  /* Telecom Brand Accents (Cameroon / Central Africa) */
+  --color-success-text: #007a33;
+
+  /* ── Telecom & Ecosystem Colors ── */
   --color-momo-yellow: #ffcc00;
+  --color-momo-hover: #f0c000;
   --color-om-orange: #ff6600;
+  --color-om-hover: #e65c00;
   --color-wa-green: #25d366;
-  
-  /* Dividers & Borders */
+  --color-wa-teal: #00a884;
+
+  /* ── Borders & Dividers ── */
   --color-divider: #eceef2;
   --color-border-subtle: #f0f2f5;
   --color-border-focus: #007aff;
 
-  /* Neutral Scale */
+  /* ── Neutral Scale ── */
   --color-neutral-100: #f8f9fb;
   --color-neutral-200: #f1f3f7;
   --color-neutral-300: #e4e7ec;
@@ -64,13 +73,13 @@
   --color-neutral-800: #292e38;
   --color-neutral-900: #111214;
 
-  /* Typography Font Families */
+  /* ── Typography Tokens ── */
   --font-heading: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-heading-weight: 700;
   --font-body: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-  /* Spacing Scale (4px / 8px Grid) */
+  /* ── Spacing Scale (Strict 4px/8px Grid) ── */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -81,8 +90,9 @@
   --space-10: 40px;
   --space-12: 48px;
   --space-16: 64px;
+  --space-20: 80px;
 
-  /* Geometry & Border Radius (Squircle Harmony) */
+  /* ── Squircle Radii ── */
   --radius-xs: 6px;
   --radius-sm: 10px;
   --radius-md: 16px;
@@ -90,21 +100,29 @@
   --radius-xl: 30px;
   --radius-pill: 9999px;
 
-  /* Multi-Tiered Ambient Diffusion Shadows */
+  /* ── Ambient Light Diffusion Shadows ── */
   --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
   --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.06);
   --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.08);
   --shadow-xl: 0 24px 54px rgba(0, 0, 0, 0.11);
   --shadow-hover: 0 12px 32px rgba(0, 0, 0, 0.09);
-  --shadow-glow-blue: 0 4px 18px rgba(0, 122, 255, 0.28);
-  --shadow-glow-yellow: 0 4px 18px rgba(255, 209, 0, 0.35);
-  --shadow-glow-green: 0 4px 18px rgba(0, 200, 83, 0.28);
   
-  /* Transitions */
+  --shadow-glow-blue: 0 4px 20px rgba(0, 122, 255, 0.28);
+  --shadow-glow-yellow: 0 4px 20px rgba(255, 209, 0, 0.35);
+  --shadow-glow-green: 0 4px 20px rgba(0, 200, 83, 0.28);
+  --shadow-glow-sale: 0 4px 20px rgba(255, 59, 48, 0.28);
+
+  /* ── Motion & Transition Timing ── */
   --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-fast: 0.15s var(--ease-smooth);
+  --transition-fast: 0.15s var(--ease-spring);
   --transition-normal: 0.25s var(--ease-spring);
-  --transition-slow: 0.4s var(--ease-spring);
+  --transition-slow: 0.4s var(--ease-smooth);
+
+  /* ── Container Layouts ── */
+  --container-max-width: 1400px;
+  --container-compact-width: 960px;
+  --container-form-width: 680px;
+  --sidebar-width: 260px;
 }

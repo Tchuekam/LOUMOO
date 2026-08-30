@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 LOUMOO COMMUNITY & COMPARISON VIEWS
-Classifieds & job postings, announcement details, and VS side-by-side product comparison matrix.
+Classifieds & job postings, announcement details, and VS side-by-side product comparison matrix with Lucide SVG icons.
 """
 
 def get_community_view():
@@ -12,10 +12,10 @@ def get_community_view():
 <sc-if value="{{ is.announce }}">
 <div style="padding-bottom:32px">
   
-  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider)">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
     <div style="display:flex;align-items:center;gap:12px">
-      <button onClick="{{ back }}" style="border:1px solid var(--color-divider);background:var(--color-surface);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
       </button>
       <div>
         <h4 style="margin:0;font-size:16px">Announcements, Jobs &amp; Tenders</h4>
@@ -27,13 +27,25 @@ def get_community_view():
 
   <div style="padding:16px;max-width:1100px;margin:0 auto">
     
-    <!-- Filter Chips -->
+    <!-- Filter Chips (Lucide Icons) -->
     <div class="hs" style="gap:8px;margin-bottom:18px">
       <button class="tag tag-accent">All (142)</button>
-      <button class="tag tag-neutral">Tech &amp; IT Jobs (48)</button>
-      <button class="tag tag-neutral">Public Tenders (18)</button>
-      <button class="tag tag-neutral">Real Estate &amp; Leases (54)</button>
-      <button class="tag tag-neutral">Freelance Services (22)</button>
+      <button class="tag tag-neutral">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+        <span>Tech &amp; IT Jobs (48)</span>
+      </button>
+      <button class="tag tag-neutral">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        <span>Public Tenders (18)</span>
+      </button>
+      <button class="tag tag-neutral">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span>Real Estate (54)</span>
+      </button>
+      <button class="tag tag-neutral">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/></svg>
+        <span>Freelance (22)</span>
+      </button>
     </div>
 
     <!-- Opportunity Cards Grid -->
@@ -90,11 +102,11 @@ def get_community_view():
      ══════════════════════════════════════════════════════════════════════ -->
 <sc-if value="{{ is.announceDetail }}">
 <div style="padding-bottom:32px">
-  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider)">
-    <button onClick="{{ back }}" style="border:1px solid var(--color-divider);background:var(--color-surface);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+    <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
     </button>
-    <button onClick="{{ on.threadSeller }}" class="btn btn-secondary" style="height:34px;font-size:11.5px;color:#00a884">
+    <button onClick="{{ on.threadSeller }}" class="btn btn-secondary" style="height:34px;font-size:11.5px;color:var(--color-wa-teal)">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
       <span>WHATSAPP RECRUITER</span>
     </button>
@@ -108,9 +120,9 @@ def get_community_view():
       <div style="font:600 13px/1 var(--font-body);color:var(--color-accent)">KamerPay Fintech Sarl · Bonapriso, Douala</div>
       
       <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(130px, 1fr));gap:10px;margin:16px 0;background:var(--color-neutral-100);padding:12px;border-radius:var(--radius-sm);font-size:12px">
-        <div>💰 <strong>XAF 650k - 900k/mo</strong></div>
-        <div>📍 <strong>Douala / Hybrid</strong></div>
-        <div>⏳ <strong>3+ Years Experience</strong></div>
+        <div><strong>XAF 650k - 900k/mo</strong></div>
+        <div><strong>Douala / Hybrid</strong></div>
+        <div><strong>3+ Years Experience</strong></div>
       </div>
 
       <h4 style="margin:16px 0 8px;font-size:15px">Job Description</h4>
@@ -132,9 +144,9 @@ def get_community_view():
      ══════════════════════════════════════════════════════════════════════ -->
 <sc-if value="{{ is.vs }}">
 <div style="padding-bottom:32px">
-  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider)">
-    <button onClick="{{ back }}" style="border:1px solid var(--color-divider);background:var(--color-surface);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+    <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
     </button>
     <div>
       <h4 style="margin:0;font-size:16px">Side-by-Side Comparison (VS)</h4>
@@ -152,9 +164,11 @@ def get_community_view():
         <div style="font:800 15px/1 var(--font-heading);color:var(--color-accent);margin-top:6px">XAF 745 000</div>
       </div>
 
-      <!-- Item 2 Placeholder -->
+      <!-- Item 2 -->
       <div class="card-premium" style="text-align:center;border:2px dashed var(--color-divider);display:flex;flex-direction:column;align-items:center;justify-content:center">
-        <div style="font-size:28px;margin-bottom:6px">💻</div>
+        <div style="width:40px;height:40px;border-radius:50%;background:var(--color-neutral-100);display:flex;align-items:center;justify-content:center;margin-bottom:6px">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect width="18" height="12" x="3" y="4" rx="2"/><line x1="2" x2="22" y1="20" y2="20"/></svg>
+        </div>
         <div style="font:700 13px/1 var(--font-heading);color:var(--color-text-secondary)">MacBook Pro 14” M3</div>
         <div style="font:800 14px/1 var(--font-heading);color:var(--color-text);margin-top:4px">XAF 1 250 000</div>
       </div>
@@ -173,9 +187,9 @@ def get_community_view():
      ══════════════════════════════════════════════════════════════════════ -->
 <sc-if value="{{ is.vsCompare }}">
 <div style="padding-bottom:32px">
-  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider)">
-    <button onClick="{{ back }}" style="border:1px solid var(--color-divider);background:var(--color-surface);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+    <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
     </button>
     <h4 style="margin:0;font-size:16px">MacBook Air M2 vs MacBook Pro M3</h4>
   </div>
