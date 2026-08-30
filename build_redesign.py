@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 LOUMOO E-COMMERCE PREMIUM REDESIGN MASTER ASSEMBLER
-Combines all modular views including the new Persistent Auth & Adaptive Onboarding Engine, and generates the pristine Commerce App.dc.html.
+Combines all modular views including the new World-Class Onboarding Engine, and generates the pristine, production-grade Commerce App.dc.html.
 """
 
 import os
@@ -41,7 +41,7 @@ header_and_styles = """<!DOCTYPE html>
 <script src="_ds/modernist-dcebbf7e-2a15-4750-a4b9-db3ba3d0c312/_ds_bundle.js"></script>
 <style>
 /* ══════════════════════════════════════════════════════════════════════════
-   LOUMOO MASTER DESIGN SYSTEM — LUXURY COMMERCE & INTERACTIVE ONBOARDING
+   LOUMOO MASTER DESIGN SYSTEM — APPLE & INSTA360 LUXURY COMMERCE ENGINE
    ══════════════════════════════════════════════════════════════════════ */
 :root {
   --color-bg: #f5f7fa;
@@ -176,40 +176,6 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 .btn-om:hover { background: var(--color-om-hover); transform: translateY(-1.5px); }
 .btn-block { width: 100%; margin-top: var(--space-2); justify-content: center; }
 
-/* Interactive Choice Cards */
-.selection-card {
-  display: flex; align-items: flex-start; gap: 16px; padding: 18px 20px;
-  border-radius: var(--radius-lg); background: var(--color-surface);
-  border: 2px solid var(--color-divider); cursor: pointer; text-align: left;
-  transition: all 0.22s var(--ease-spring); user-select: none; width: 100%;
-}
-.selection-card:hover {
-  border-color: var(--color-neutral-400); background: var(--color-surface-hover);
-  transform: translateY(-2px); box-shadow: var(--shadow-sm);
-}
-.selection-card:active { transform: scale(0.98); }
-.selection-card.selected {
-  border-color: var(--color-accent) !important; background: var(--color-accent-100) !important;
-  box-shadow: 0 4px 18px rgba(0, 122, 255, 0.15) !important;
-}
-
-/* Button Loading & Success States */
-.btn-loading { opacity: 0.85; pointer-events: none; position: relative; }
-.btn-loading::after {
-  content: ''; width: 16px; height: 16px; border: 2px solid rgba(255, 255, 255, 0.4);
-  border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite;
-  display: inline-block; margin-left: 8px;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* Resume Interrupted Setup Banner */
-.resume-banner {
-  background: linear-gradient(135deg, #111214 0%, #1e2330 100%);
-  color: #fff; padding: 16px 18px; border-radius: var(--radius-lg);
-  display: flex; align-items: center; justify-content: space-between;
-  box-shadow: var(--shadow-md); margin-bottom: 20px;
-}
-
 /* Studio Photography Containers */
 .ph {
   background: var(--color-neutral-100);
@@ -284,7 +250,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 /* Editorial & Storytelling Cards */
 .card-premium {
   background: var(--color-surface); border: 1px solid var(--color-divider);
-  border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow-sm);
+  border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow-sm);
   transition: all 0.25s var(--ease-spring);
 }
 .card-premium:hover { box-shadow: var(--shadow-md); border-color: var(--color-neutral-300); }
@@ -381,13 +347,33 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   color: var(--color-text-secondary); font: 700 8.5px/1 var(--font-heading);
   letter-spacing: .04em; transition: color 0.15s ease;
 }
-.bottom-nav-mobile button.active { color: var(--color-accent); }
-.nav-upload-btn { position: relative; top: -12px; }
-.nav-upload-btn span:first-child {
-  width: 44px; height: 44px; border-radius: 50%;
-  background: linear-gradient(135deg, var(--color-accent) 0%, #0056b3 100%);
-  color: #fff; display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 4px 14px rgba(0, 122, 255, 0.4); margin-bottom: 2px;
+/* Single Elevated Floating Action Upload Button */
+.nav-upload-btn {
+  width: 48px !important;
+  height: 48px !important;
+  min-width: 48px !important;
+  max-width: 48px !important;
+  border-radius: 50% !important;
+  background: linear-gradient(135deg, var(--color-accent) 0%, #0056b3 100%) !important;
+  color: #ffffff !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 4px 16px rgba(0, 122, 255, 0.45) !important;
+  position: relative;
+  top: -14px;
+  flex: none !important;
+  padding: 0 !important;
+  border: 3px solid var(--color-surface) !important;
+  transition: all 0.2s var(--ease-spring) !important;
+  cursor: pointer;
+}
+.nav-upload-btn:hover {
+  transform: translateY(-2px) scale(1.06) !important;
+  box-shadow: 0 6px 20px rgba(0, 122, 255, 0.55) !important;
+}
+.nav-upload-btn:active {
+  transform: translateY(0) scale(0.94) !important;
 }
 
 /* Sidebar Nav */
@@ -563,23 +549,20 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
       <span style="margin-left:auto;font:800 8.5px/1 var(--font-heading);background:var(--color-accent-100);color:var(--color-accent);padding:2px 6px;border-radius:var(--radius-pill)">AI</span>
     </button>
 
-    <!-- Dynamic CTA: "Join LOUMOO" (Guest) vs "Upload +" (Authenticated) -->
     <div style="margin-top:16px;padding:0 4px">
-      <button onClick="{{ navUploadAction }}" class="sidebar-cta-btn">
+      <button onClick="{{ on.onboardWelcome }}" class="sidebar-cta-btn">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        <span>{{ navCtaLabel }}</span>
+        <span>Join LOUMOO</span>
       </button>
     </div>
   </div>
 
   <div class="sidebar-footer">
-    <button onClick="{{ on.profile }}" class="nav-item {{ (is.profile || is.profileEdit || is.settings || is.orders || is.seller) ? 'active' : '' }}" style="padding:6px 8px">
-      <div style="width:30px;height:30px;border-radius:50%;background:var(--color-accent);color:#fff;display:flex;align-items:center;justify-content:center;font:800 11px/1 var(--font-heading);flex:none">
-        {{ isLoggedIn ? (regFirstName ? regFirstName.slice(0,1) : 'U') : 'G' }}
-      </div>
+    <button onClick="{{ on.profile }}" class="nav-item {{ (is.profile || is.settings || is.orders || is.seller) ? 'active' : '' }}" style="padding:6px 8px">
+      <div style="width:30px;height:30px;border-radius:50%;background:var(--color-accent);color:#fff;display:flex;align-items:center;justify-content:center;font:800 11px/1 var(--font-heading);flex:none">TK</div>
       <div style="flex:1;min-width:0">
         <div style="font-weight:700;font-size:12.5px;color:var(--color-text);line-height:1.1">{{ userName }}</div>
-        <div style="font-size:10px;color:var(--color-text-secondary);margin-top:2px">{{ isLoggedIn ? 'Verified Account' : 'Guest Mode' }}</div>
+        <div style="font-size:10px;color:var(--color-text-secondary);margin-top:2px">Verified Account</div>
       </div>
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--color-text-muted)"><polyline points="9 18 15 12 9 6"/></svg>
     </button>
@@ -655,11 +638,8 @@ footer_and_scripts = """
     <span style="font:800 13px/1 var(--font-heading);height:18px;display:flex;align-items:center">VS</span>
     <span>COMPARE</span>
   </button>
-  <button onClick="{{ navUploadAction }}" aria-label="{{ navUploadLabel }}" class="nav-upload-btn">
-    <span>
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>
-    </span>
-    <span style="color:{{ navUpload }}">{{ navUploadLabel }}</span>
+  <button onClick="{{ on.upload }}" aria-label="Upload a listing" class="nav-upload-btn">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M12 5v14M5 12h14"/></svg>
   </button>
   <button onClick="{{ on.travel }}" aria-label="Go to Travel" style="color:{{ navTravel }}">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 13.5 21 5l-6 16-3.2-6.3L3 13.5Z"/></svg>
@@ -693,8 +673,8 @@ const SCREENS = [
   'product','sellers','cart','checkout','paying','success','orders','store','business','vs','vsCompare','visual',
   'visualScan','visualResults','upload','uploadDetails','uploadPrice','uploadSuccess','myListings','travel','travelBus',
   'travelPackages','travelVisa','travelResults','travelDetail','travelPassenger','travelTicket','announce','announceDetail',
-  'profile','profileEdit','seller','settings','payFailed','networkError','saved','transactions','loading',
-  'onboardWelcome','onboardType','onboardIdentity','onboardOtp','onboardBuyer','onboardSeller','onboardBusiness','onboardVerify','onboardReview','onboardSuccess','onboardUpgradeSeller'
+  'profile','seller','settings','payFailed','networkError','saved','transactions','loading',
+  'onboardWelcome','onboardType','onboardIdentity','onboardOtp','onboardBuyer','onboardSeller','onboardBusiness','onboardVerify','onboardReview','onboardSuccess'
 ];
 const GROUPS = {
   searchTab: ['all','products','stores','services','travel'],
@@ -721,22 +701,14 @@ const GROUPS = {
 const NO_NAV = [
   'visual','visualScan','visualResults','threadAi','threadSeller','checkout','paying','success','travelTicket','uploadSuccess',
   'voice','filters','payFailed','networkError','loading',
-  'onboardWelcome','onboardType','onboardIdentity','onboardOtp','onboardBuyer','onboardSeller','onboardBusiness','onboardVerify','onboardReview','onboardSuccess','onboardUpgradeSeller','profileEdit'
+  'onboardWelcome','onboardType','onboardIdentity','onboardOtp','onboardBuyer','onboardSeller','onboardBusiness','onboardVerify','onboardReview','onboardSuccess'
 ];
 
 class Component extends DCLogic {
   state = {
     screen: 'home', stack: [], cart: 2, vs: 1, toast: '', following: false, saved: false,
-    qty: 1, freeday: false, darkMode: false, isSaving: false,
-    
-    // Auth & Persistent Identity
-    isLoggedIn: false,
-    onboardState: 'NOT_STARTED', // 'NOT_STARTED' | 'IN_PROGRESS' | 'COMPLETED'
-    hasSavedDraft: false,
-    lastSavedScreen: 'onboardType',
-    completionPct: 85,
-    userRole: 'buyer', // 'guest' | 'buyer' | 'seller' | 'both'
-    userName: 'Tchuekam',
+    qty: 1, freeday: false, darkMode: false,
+    userRole: 'buyer',
     regFirstName: 'Rostand',
     regLastName: 'Tchuekam',
     regPhone: '690 12 34 56',
@@ -748,7 +720,6 @@ class Component extends DCLogic {
     interestServices: false,
     sellerType: 'pro',
     docUploaded: false,
-    
     ship: { home: true, pickup: true, nation: false },
     sel: {
       searchTab: 'all', chatTab: 'all', sellerSort: 'value', ordersTab: 'active',
@@ -759,75 +730,12 @@ class Component extends DCLogic {
     }
   };
 
-  componentDidMount() {
-    this.restoreSession();
-  }
-
-  restoreSession() {
-    try {
-      if (typeof localStorage !== 'undefined') {
-        const stored = localStorage.getItem('loumoo_user_session');
-        if (stored) {
-          const parsed = JSON.parse(stored);
-          this.setState({
-            isLoggedIn: parsed.isLoggedIn ?? true,
-            onboardState: parsed.onboardState ?? 'COMPLETED',
-            userRole: parsed.userRole ?? 'buyer',
-            userName: parsed.regFirstName || parsed.userName || 'Tchuekam',
-            regFirstName: parsed.regFirstName || 'Rostand',
-            regLastName: parsed.regLastName || 'Tchuekam',
-            regPhone: parsed.regPhone || '690 12 34 56',
-            regEmail: parsed.regEmail || 'rostand@loumoo.cm',
-            regBusinessName: parsed.regBusinessName || 'Orca Electronics Douala',
-            sellerType: parsed.sellerType || 'pro',
-            docUploaded: parsed.docUploaded || false,
-            hasSavedDraft: parsed.onboardState === 'IN_PROGRESS',
-            lastSavedScreen: parsed.lastSavedScreen || 'onboardType'
-          });
-        }
-      }
-    } catch (e) {
-      // Storage unavailable or disabled
-    }
-  }
-
-  saveSession(overrides = {}) {
-    try {
-      if (typeof localStorage !== 'undefined') {
-        const s = { ...this.state, ...overrides };
-        const sessionPayload = {
-          isLoggedIn: s.isLoggedIn,
-          onboardState: s.onboardState,
-          userRole: s.userRole,
-          userName: s.regFirstName || s.userName,
-          regFirstName: s.regFirstName,
-          regLastName: s.regLastName,
-          regPhone: s.regPhone,
-          regEmail: s.regEmail,
-          regBusinessName: s.regBusinessName,
-          sellerType: s.sellerType,
-          docUploaded: s.docUploaded,
-          lastSavedScreen: s.screen
-        };
-        localStorage.setItem('loumoo_user_session', JSON.stringify(sessionPayload));
-      }
-    } catch (e) {}
-  }
-
-  go = (s) => {
-    if (s.startsWith('onboard') && s !== 'onboardSuccess') {
-      this.setState({ onboardState: 'IN_PROGRESS', lastSavedScreen: s, hasSavedDraft: true });
-      this.saveSession({ onboardState: 'IN_PROGRESS', lastSavedScreen: s });
-    }
-    this.setState(st => ({ screen: s, stack: [...st.stack, st.screen], toast: '' }));
-  };
-
+  go = (s) => this.setState(st => ({ screen: s, stack: [...st.stack, st.screen], toast: '' }));
   back = () => this.setState(st => {
     const stack = st.stack.slice();
     const prev = stack.pop() || 'home';
     return { screen: prev, stack, toast: '' };
   });
-
   toast = (t) => {
     this.setState({ toast: t });
     clearTimeout(this._t);
@@ -882,22 +790,6 @@ class Component extends DCLogic {
     const sh = this.state.ship;
     const fdOn = this.state.freeday;
 
-    const isLoggedIn = this.state.isLoggedIn;
-    const userRole = this.state.userRole;
-
-    // Dynamic Navigation Routing: JOIN vs UPLOAD
-    const navUploadLabel = isLoggedIn ? 'UPLOAD' : 'JOIN';
-    const navCtaLabel = isLoggedIn ? 'Post Listing +' : 'Join LOUMOO';
-    const navUploadAction = () => {
-      if (!isLoggedIn) {
-        this.go('onboardWelcome');
-      } else if (userRole === 'buyer') {
-        this.go('onboardUpgradeSeller');
-      } else {
-        this.go('upload');
-      }
-    };
-
     return {
       is, on, st, pick,
       photoLabel: 'PRODUCT PHOTO ' + this.state.sel.photo.slice(1) + ' / 6',
@@ -906,9 +798,7 @@ class Component extends DCLogic {
       toggleDark: () => {
         const next = !this.state.darkMode;
         this.setState({ darkMode: next });
-        if (typeof document !== 'undefined') {
-          document.documentElement.setAttribute('data-theme', next ? 'dark' : 'light');
-        }
+        document.documentElement.setAttribute('data-theme', next ? 'dark' : 'light');
       },
       incQty: () => this.setState(s => ({ qty: Math.min(9, s.qty + 1) })),
       decQty: () => this.setState(s => ({ qty: Math.max(1, s.qty - 1) })),
@@ -945,12 +835,8 @@ class Component extends DCLogic {
         mainImg: () => this.toast('Application submitted with your LOUMOO profile'),
         addTag: () => this.toast('Tag added to the listing')
       },
-      
-      // Authentication & Persistent Profile State
-      isLoggedIn,
-      userRole,
-      hasSavedDraft: this.state.hasSavedDraft,
-      completionPct: this.state.completionPct,
+      // Onboarding & Registration State
+      userRole: this.state.userRole,
       regFirstName: this.state.regFirstName,
       regLastName: this.state.regLastName,
       regPhone: this.state.regPhone,
@@ -962,110 +848,29 @@ class Component extends DCLogic {
       interestServices: this.state.interestServices,
       sellerType: this.state.sellerType,
       docUploaded: this.state.docUploaded,
-      isSaving: this.state.isSaving,
-      
-      // Dynamic Actions
-      navUploadLabel,
-      navCtaLabel,
-      navUploadAction,
-      
-      setRoleBuyer: () => {
-        this.setState({ userRole: 'buyer' });
-        this.saveSession({ userRole: 'buyer' });
-      },
-      setRoleSeller: () => {
-        this.setState({ userRole: 'seller' });
-        this.saveSession({ userRole: 'seller' });
-      },
-      setRoleBoth: () => {
-        this.setState({ userRole: 'both' });
-        this.saveSession({ userRole: 'both' });
-      },
+      setRoleBuyer: () => this.setState({ userRole: 'buyer' }),
+      setRoleSeller: () => this.setState({ userRole: 'seller' }),
+      setRoleBoth: () => this.setState({ userRole: 'both' }),
       continueAfterOtp: () => {
-        const nextScreen = this.state.userRole === 'buyer' ? 'onboardBuyer' : 'onboardSeller';
-        this.go(nextScreen);
+        this.go(this.state.userRole === 'buyer' ? 'onboardBuyer' : 'onboardSeller');
       },
-      continueSellerFlow: () => {
-        if (this.state.sellerType === 'individual') {
-          this.go('onboardVerify');
-        } else {
-          this.go('onboardBusiness');
-        }
-      },
-      resendOtp: () => this.toast('New 6-digit code sent to +237 ' + this.state.regPhone),
+      resendOtp: () => this.toast('New 6-digit verification code sent to +237 690 12 34 56'),
       simulateUploadDoc: () => {
-        this.setState({ docUploaded: true, completionPct: 85 });
-        this.saveSession({ docUploaded: true });
+        this.setState({ docUploaded: true });
         this.toast('CNI Photo Uploaded Successfully (2.4 MB)');
       },
       toggleInterestTech: () => this.setState(s => ({ interestTech: !s.interestTech })),
       toggleInterestFashion: () => this.setState(s => ({ interestFashion: !s.interestFashion })),
       toggleInterestTravel: () => this.setState(s => ({ interestTravel: !s.interestTravel })),
       toggleInterestServices: () => this.setState(s => ({ interestServices: !s.interestServices })),
-      setSellerIndividual: () => {
-        this.setState({ sellerType: 'individual' });
-        this.saveSession({ sellerType: 'individual' });
-      },
-      setSellerPro: () => {
-        this.setState({ sellerType: 'pro' });
-        this.saveSession({ sellerType: 'pro' });
-      },
-      setSellerService: () => {
-        this.setState({ sellerType: 'service' });
-        this.saveSession({ sellerType: 'service' });
-      },
+      setSellerIndividual: () => this.setState({ sellerType: 'individual' }),
+      setSellerPro: () => this.setState({ sellerType: 'pro' }),
+      setSellerService: () => this.setState({ sellerType: 'service' }),
       completeOnboarding: () => {
-        this.setState({ isSaving: true });
-        setTimeout(() => {
-          this.setState({
-            isLoggedIn: true,
-            onboardState: 'COMPLETED',
-            hasSavedDraft: false,
-            completionPct: 85,
-            isSaving: false,
-            userName: this.state.regFirstName
-          });
-          this.saveSession({
-            isLoggedIn: true,
-            onboardState: 'COMPLETED',
-            hasSavedDraft: false,
-            userName: this.state.regFirstName
-          });
-          this.go('onboardSuccess');
-        }, 400);
+        this.setState({ userName: this.state.regFirstName });
+        this.go('onboardSuccess');
       },
-      resumeSavedDraft: () => {
-        this.go(this.state.lastSavedScreen || 'onboardType');
-      },
-      upgradeToSeller: () => {
-        this.setState({ userRole: 'both', onboardState: 'COMPLETED' });
-        this.saveSession({ userRole: 'both' });
-        this.toast('Storefront activated! You can now post listings.');
-        this.go('upload');
-      },
-      saveProfile: () => {
-        this.saveSession();
-        this.toast('Profile updated successfully');
-        this.go('profile');
-      },
-      logoutAction: () => {
-        try {
-          if (typeof localStorage !== 'undefined') {
-            localStorage.removeItem('loumoo_user_session');
-          }
-        } catch (e) {}
-        this.setState({
-          isLoggedIn: false,
-          onboardState: 'NOT_STARTED',
-          userRole: 'guest',
-          userName: 'Guest',
-          hasSavedDraft: false
-        });
-        this.toast('You have been logged out of LOUMOO');
-        this.go('home');
-      },
-
-      userName: this.state.isLoggedIn ? (this.state.regFirstName || 'Tchuekam') : 'Guest',
+      userName: this.props.userName ?? this.state.userName ?? 'Tchuekam',
       showAds: this.props.showAds ?? true,
       cartCount: this.state.cart,
       cartLabel: (this.state.qty + 1) + ' items · 2 sellers',
@@ -1077,10 +882,10 @@ class Component extends DCLogic {
       navHome: this.navColor('home', 'category', 'bestpicks', 'freeday', 'notifications', 'search', 'product', 'cart', 'chat'),
       navStore: this.navColor('store', 'business'),
       navVs: this.navColor('vs', 'vsCompare'),
-      navUpload: this.navColor('upload', 'uploadDetails', 'uploadPrice', 'myListings', 'onboardWelcome', 'onboardType', 'onboardUpgradeSeller'),
+      navUpload: this.navColor('upload', 'uploadDetails', 'uploadPrice', 'myListings'),
       navTravel: this.navColor('travel', 'travelBus', 'travelPackages', 'travelVisa', 'travelResults', 'travelDetail', 'travelPassenger'),
       navAnnounce: this.navColor('announce', 'announceDetail'),
-      navProfile: this.navColor('profile', 'profileEdit', 'seller', 'orders', 'settings'),
+      navProfile: this.navColor('profile', 'seller', 'orders', 'settings', 'onboardWelcome', 'onboardType', 'onboardIdentity', 'onboardOtp', 'onboardBuyer', 'onboardSeller', 'onboardBusiness', 'onboardVerify', 'onboardReview', 'onboardSuccess'),
       setScroller: (el) => { this._sc = el; },
       addToCart: () => { this.setState(st => ({ cart: st.cart + 1 })); this.toast('Added to Bag — 1 item from Orca Electronics'); },
       addToVs: () => { this.setState(st => ({ vs: st.vs + 1 })); this.go('vsCompare'); },
@@ -1123,4 +928,4 @@ full_html = (
 with open('Commerce App.dc.html', 'w', encoding='utf-8') as f:
     f.write(full_html)
 
-print("Commerce App.dc.html successfully rebuilt with all 60 screens including persistent auth & adaptive onboarding!")
+print("Commerce App.dc.html successfully rebuilt with all 58 screens including complete Onboarding Engine!")

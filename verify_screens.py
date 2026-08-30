@@ -15,10 +15,9 @@ defined_screens = [
     'uploadDetails','uploadPrice','uploadSuccess','myListings','travel',
     'travelBus','travelPackages','travelVisa','travelResults','travelDetail',
     'travelPassenger','travelTicket','announce','announceDetail','profile',
-    'profileEdit','seller','settings','payFailed','networkError','saved','transactions','loading',
+    'seller','settings','payFailed','networkError','saved','transactions','loading',
     'onboardWelcome','onboardType','onboardIdentity','onboardOtp','onboardBuyer',
-    'onboardSeller','onboardBusiness','onboardVerify','onboardReview','onboardSuccess',
-    'onboardUpgradeSeller'
+    'onboardSeller','onboardBusiness','onboardVerify','onboardReview','onboardSuccess'
 ]
 
 missing = [s for s in defined_screens if s not in screens]
