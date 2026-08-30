@@ -703,65 +703,154 @@ button:active { transform: scale(0.98); }
   width: 100%;
 }
 
-/* Sticky Mobile Bottom Navigation (Insta360 iOS Frosted Style) */
+/* ══════════════════════════════════════════════════════════════════════════
+   PINTEREST-GRADE FLOATING PILL NAVIGATION BAR (< 1024px)
+   ══════════════════════════════════════════════════════════════════════ */
 .bottom-nav-mobile {
   position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  width: 100%;
-  height: 60px;
-  height: calc(60px + env(safe-area-inset-bottom, 0px));
-  padding-bottom: env(safe-area-inset-bottom, 0px);
-  background: rgba(255, 255, 255, 0.94);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-top: 1px solid var(--color-divider);
-  display: grid !important;
-  grid-template-columns: repeat(7, 1fr);
+  bottom: 16px;
+  left: 12px;
+  right: 12px;
+  margin: 0 auto;
+  max-width: 480px;
+  height: 64px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.04);
+  display: flex !important;
   align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
   z-index: 999;
-  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.04);
+  box-sizing: border-box;
+  gap: 2px;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.bottom-nav-mobile button {
+[data-theme="dark"] .bottom-nav-mobile {
+  background: rgba(18, 19, 23, 0.94);
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.08);
+}
+
+/* Left Elevated Brand Mark Button */
+.nav-brand-pill {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e60023 0%, #ad081b 100%);
+  color: #ffffff;
   border: none;
-  background: transparent;
-  padding: 4px 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: 800 15px/1 var(--font-heading);
+  letter-spacing: -0.03em;
+  box-shadow: 0 4px 14px rgba(230, 0, 35, 0.35);
+  flex-shrink: 0;
+  cursor: pointer;
+  margin-right: 2px;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.nav-brand-pill:hover {
+  transform: scale(1.06);
+}
+[data-theme="dark"] .nav-brand-pill {
+  background: linear-gradient(135deg, #1f2128 0%, #121316 100%);
+  color: #e60023;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.15), 0 4px 12px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(230, 0, 35, 0.3);
+}
+
+/* Navigation Tab Item */
+.nav-tab-item {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 3px;
-  min-height: 48px;
+  background: transparent;
+  border: none;
+  border-radius: 20px;
+  padding: 6px 8px;
+  min-width: 48px;
+  flex: 1;
+  position: relative;
   cursor: pointer;
-  touch-action: manipulation;
-  transition: color 0.15s ease;
+  color: #4a5160;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+[data-theme="dark"] .nav-tab-item {
+  color: #9da4b2;
 }
 
-.bottom-nav-mobile button span {
-  font: 700 8px/1 var(--font-heading);
-  letter-spacing: 0.02em;
-  white-space: nowrap;
+.nav-tab-item:hover {
+  color: #111214;
+}
+[data-theme="dark"] .nav-tab-item:hover {
+  color: #ffffff;
 }
 
-.nav-upload-btn {
-  margin-top: -16px;
+.nav-tab-item.active {
+  background: #e60023;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(230, 0, 35, 0.3);
+  padding: 6px 10px;
 }
-.nav-upload-btn > span:first-child {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #007aff 0%, #0056b3 100%);
-  color: #fff;
+[data-theme="dark"] .nav-tab-item.active {
+  background: #1f2128;
+  color: #ffffff !important;
+  border: 1px solid rgba(230, 0, 35, 0.5);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+}
+
+.nav-tab-icon-wrap {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 16px rgba(0, 122, 255, 0.4);
-  transition: transform 0.15s ease;
+  width: 22px;
+  height: 22px;
 }
-.nav-upload-btn:hover > span:first-child {
-  transform: scale(1.06);
+
+.nav-tab-label {
+  font-family: var(--font-heading);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  margin-top: 2px;
+  line-height: 1;
+}
+
+/* Active bottom indicator pip dot */
+.nav-tab-pip {
+  width: 3.5px;
+  height: 3.5px;
+  border-radius: 50%;
+  background: #ffffff;
+  margin-top: 3px;
+}
+[data-theme="dark"] .nav-tab-item.active .nav-tab-pip {
+  background: #e60023;
+  box-shadow: 0 0 6px #e60023;
+}
+
+/* Notification dot badge */
+.nav-badge-dot {
+  position: absolute;
+  top: -2px;
+  right: -3px;
+  width: 6.5px;
+  height: 6.5px;
+  border-radius: 50%;
+  background: #e60023;
+  box-shadow: 0 1px 3px rgba(230, 0, 35, 0.5);
+}
+.nav-tab-item.active .nav-badge-dot {
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -835,35 +924,50 @@ button:active { transform: scale(0.98); }
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 10px 12px;
+    padding: 10px 14px;
     border: none;
-    border-radius: var(--radius-sm);
+    border-radius: var(--radius-pill);
     background: transparent;
-    font: 600 13px/1 var(--font-body);
+    font: 600 13.5px/1 var(--font-body);
     text-align: left;
     width: 100%;
     color: var(--color-text-secondary);
-    transition: all 0.15s ease;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     cursor: pointer;
     box-sizing: border-box;
-    margin-bottom: 2px;
+    margin-bottom: 3px;
+    position: relative;
   }
   .nav-item:hover {
     background: var(--color-neutral-100);
     color: var(--color-text);
+    transform: translateX(2px);
   }
   .nav-item.active {
-    background: var(--color-accent-100);
-    color: var(--color-accent) !important;
+    background: #e60023;
+    color: #ffffff !important;
     font-weight: 700;
+    box-shadow: 0 4px 14px rgba(230, 0, 35, 0.3);
+  }
+  [data-theme="dark"] .nav-item.active {
+    background: #1f2128;
+    color: #ffffff !important;
+    border: 1px solid rgba(230, 0, 35, 0.5);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.15);
   }
   .sidebar-badge {
     margin-left: auto;
-    background: var(--color-neutral-200);
-    color: var(--color-text);
+    background: #e60023;
+    color: #ffffff;
     font: 700 10px/1 var(--font-heading);
-    padding: 2px 7px;
+    padding: 3px 8px;
     border-radius: var(--radius-pill);
+    box-shadow: 0 2px 6px rgba(230, 0, 35, 0.4);
+  }
+  .nav-item.active .sidebar-badge {
+    background: #ffffff;
+    color: #e60023;
+    box-shadow: none;
   }
   .sidebar-cta-btn {
     width: 100%;
@@ -988,55 +1092,55 @@ button:active { transform: scale(0.98); }
   </div>
 
   <div class="sidebar-section-title">EXPLORE</div>
-  <button onClick="{{ on.home }}" class="nav-item" style="color:{{ navHome }}">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3 10.6 12 3.4l9 7.2V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-9.4Z"/></svg>
+  <button onClick="{{ on.home }}" class="nav-item {{ clsNavHome }}">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.6 12 3.4l9 7.2V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-9.4Z"/></svg>
     <span>Home</span>
   </button>
-  <button onClick="{{ on.store }}" class="nav-item" style="color:{{ navStore }}">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3.5 9h17l-1.3-4.5H4.8L3.5 9Z"/><path d="M5 9v11h14V9"/></svg>
-    <span>Store Directory</span>
+  <button onClick="{{ on.store }}" class="nav-item {{ clsNavSearch }}">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4.5 4.5"/></svg>
+    <span>Store &amp; Search</span>
   </button>
-  <button onClick="{{ on.vs }}" class="nav-item" style="color:{{ navVs }}">
+  <button onClick="{{ on.vs }}" class="nav-item">
     <span style="font:800 13px/1 var(--font-heading);width:18px;text-align:center">VS</span>
     <span>Compare Matrix</span>
   </button>
-  <button onClick="{{ on.travel }}" class="nav-item" style="color:{{ navTravel }}">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3 13.5 21 5l-6 16-3.2-6.3L3 13.5Z"/></svg>
+  <button onClick="{{ on.travel }}" class="nav-item">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13.5 21 5l-6 16-3.2-6.3L3 13.5Z"/></svg>
     <span>Travel &amp; Booking</span>
   </button>
-  <button onClick="{{ on.announce }}" class="nav-item" style="color:{{ navAnnounce }}">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 10v4h3.5L15 18.5v-13L7.5 10H4Z"/><path d="M18.5 9.2a4 4 0 0 1 0 5.6"/></svg>
+  <button onClick="{{ on.announce }}" class="nav-item">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10v4h3.5L15 18.5v-13L7.5 10H4Z"/><path d="M18.5 9.2a4 4 0 0 1 0 5.6"/></svg>
     <span>Announcements</span>
   </button>
 
   <div style="padding:12px 0 8px">
     <button onClick="{{ on.upload }}" class="sidebar-cta-btn">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
       <span>CREATE LISTING</span>
     </button>
   </div>
 
   <div class="sidebar-section-title">MY COMMERCE</div>
-  <button onClick="{{ on.chat }}" class="nav-item" style="color:var(--color-text)">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 4h16v12H7l-3 4V4Z"/></svg>
+  <button onClick="{{ on.chat }}" class="nav-item {{ clsNavInbox }}">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>
     <span>Messages</span>
-    <span class="sidebar-badge">7</span>
+    <span class="sidebar-badge">2</span>
   </button>
-  <button onClick="{{ on.cart }}" class="nav-item" style="color:var(--color-text)">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+  <button onClick="{{ on.cart }}" class="nav-item">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
     <span>Cart</span>
-    <span class="sidebar-badge" style="background:var(--color-accent);color:#fff">{{ cartCount }}</span>
+    <span class="sidebar-badge">{{ cartCount }}</span>
   </button>
-  <button onClick="{{ on.saved }}" class="nav-item" style="color:var(--color-text)">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
+  <button onClick="{{ on.saved }}" class="nav-item {{ clsNavSaved }}">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
     <span>Saved Items</span>
   </button>
-  <button onClick="{{ on.orders }}" class="nav-item" style="color:var(--color-text)">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+  <button onClick="{{ on.orders }}" class="nav-item">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
     <span>Orders</span>
   </button>
-  <button onClick="{{ on.seller }}" class="nav-item" style="color:var(--color-text)">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+  <button onClick="{{ on.seller }}" class="nav-item">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
     <span>Seller Studio</span>
   </button>
 
@@ -3540,35 +3644,78 @@ button:active { transform: scale(0.98); }
 
 <sc-if value="{{ showNav }}" hint-placeholder-val="{{ true }}">
 <div class="bottom-nav-mobile">
-  <button onClick="{{ on.home }}" style="color:{{ navHome }}">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3 10.6 12 3.4l9 7.2V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-9.4Z"/></svg>
-    <span>HOME</span>
+  <!-- Brand Circle Pill -->
+  <button onClick="{{ on.home }}" class="nav-brand-pill" title="TchueKAM Commerce">
+    <span>TK</span>
   </button>
-  <button onClick="{{ on.store }}" style="color:{{ navStore }}">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3.5 9h17l-1.3-4.5H4.8L3.5 9Z"/><path d="M5 9v11h14V9"/></svg>
-    <span>STORE</span>
+
+  <!-- Tab 1: Home -->
+  <button onClick="{{ on.home }}" class="nav-tab-item {{ clsNavHome }}" title="Home">
+    <div class="nav-tab-icon-wrap">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="{{ isNavHome ? 'currentColor' : 'none' }}" stroke="currentColor" stroke-width="{{ isNavHome ? '0' : '1.9' }}" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 10.6 12 3.4l9 7.2V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-9.4Z"/>
+      </svg>
+    </div>
+    <span class="nav-tab-label">Home</span>
+    <sc-if value="{{ isNavHome }}"><div class="nav-tab-pip"></div></sc-if>
   </button>
-  <button onClick="{{ on.vs }}" style="color:{{ navVs }}">
-    <span style="font:800 13px/1 var(--font-heading);height:18px;display:flex;align-items:center">VS</span>
-    <span>COMPARE</span>
+
+  <!-- Tab 2: Search -->
+  <button onClick="{{ on.search }}" class="nav-tab-item {{ clsNavSearch }}" title="Search">
+    <div class="nav-tab-icon-wrap">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="{{ isNavSearch ? '2.4' : '1.9' }}" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="7"/>
+        <path d="m16.5 16.5 4.5 4.5"/>
+      </svg>
+    </div>
+    <span class="nav-tab-label">Search</span>
+    <sc-if value="{{ isNavSearch }}"><div class="nav-tab-pip"></div></sc-if>
   </button>
-  <button onClick="{{ on.upload }}" class="nav-upload-btn">
-    <span>
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>
-    </span>
-    <span style="color:{{ navUpload }}">UPLOAD</span>
+
+  <!-- Tab 3: Create / Upload -->
+  <button onClick="{{ on.upload }}" class="nav-tab-item {{ clsNavUpload }}" title="Create">
+    <div class="nav-tab-icon-wrap">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="{{ isNavUpload ? '2.6' : '2.0' }}" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 5v14M5 12h14"/>
+      </svg>
+    </div>
+    <span class="nav-tab-label">Create</span>
+    <sc-if value="{{ isNavUpload }}"><div class="nav-tab-pip"></div></sc-if>
   </button>
-  <button onClick="{{ on.travel }}" style="color:{{ navTravel }}">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3 13.5 21 5l-6 16-3.2-6.3L3 13.5Z"/></svg>
-    <span>TRAVEL</span>
+
+  <!-- Tab 4: Inbox (Chat) with Red Notification Dot -->
+  <button onClick="{{ on.chat }}" class="nav-tab-item {{ clsNavInbox }}" title="Inbox">
+    <div class="nav-tab-icon-wrap">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="{{ isNavInbox ? 'currentColor' : 'none' }}" stroke="currentColor" stroke-width="{{ isNavInbox ? '0' : '1.9' }}" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>
+      </svg>
+      <div class="nav-badge-dot"></div>
+    </div>
+    <span class="nav-tab-label">Inbox</span>
+    <sc-if value="{{ isNavInbox }}"><div class="nav-tab-pip"></div></sc-if>
   </button>
-  <button onClick="{{ on.announce }}" style="color:{{ navAnnounce }}">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 10v4h3.5L15 18.5v-13L7.5 10H4Z"/><path d="M18.5 9.2a4 4 0 0 1 0 5.6"/></svg>
-    <span>ANNOUNCE</span>
+
+  <!-- Tab 5: Saved -->
+  <button onClick="{{ on.saved }}" class="nav-tab-item {{ clsNavSaved }}" title="Saved">
+    <div class="nav-tab-icon-wrap">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="{{ isNavSaved ? 'currentColor' : 'none' }}" stroke="currentColor" stroke-width="{{ isNavSaved ? '0' : '1.9' }}" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+      </svg>
+    </div>
+    <span class="nav-tab-label">Saved</span>
+    <sc-if value="{{ isNavSaved }}"><div class="nav-tab-pip"></div></sc-if>
   </button>
-  <button onClick="{{ on.profile }}" style="color:{{ navProfile }}">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="8.5" r="3.7"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></svg>
-    <span>PROFILE</span>
+
+  <!-- Tab 6: Profile -->
+  <button onClick="{{ on.profile }}" class="nav-tab-item {{ clsNavProfile }}" title="Profile">
+    <div class="nav-tab-icon-wrap">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="{{ isNavProfile ? 'currentColor' : 'none' }}" stroke="currentColor" stroke-width="{{ isNavProfile ? '0' : '1.9' }}" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="8" r="4"/>
+        <path d="M5.5 21a6.5 6.5 0 0 1 13 0"/>
+      </svg>
+    </div>
+    <span class="nav-tab-label">Profile</span>
+    <sc-if value="{{ isNavProfile }}"><div class="nav-tab-pip"></div></sc-if>
   </button>
 </div>
 </sc-if>
@@ -3737,6 +3884,21 @@ class Component extends DCLogic {
       clearToast: () => this.setState({ toast: '' }),
       back: this.back,
       showNav: !NO_NAV.includes(s),
+      isNavHome: ['home', 'category', 'bestpicks', 'freeday'].includes(s),
+      isNavSearch: ['search', 'filters', 'voice', 'visual', 'visualScan', 'visualResults'].includes(s),
+      isNavUpload: ['upload', 'uploadDetails', 'uploadPrice', 'uploadSuccess', 'myListings'].includes(s),
+      isNavInbox: ['chat', 'threadAi', 'threadSeller', 'notifications'].includes(s),
+      isNavSaved: ['saved'].includes(s),
+      isNavProfile: ['profile', 'seller', 'orders', 'settings', 'transactions'].includes(s),
+      isNavStore: ['store', 'business'].includes(s),
+      isNavVs: ['vs', 'vsCompare'].includes(s),
+      isNavTravel: ['travel', 'travelBus', 'travelPackages', 'travelVisa', 'travelResults', 'travelDetail', 'travelPassenger'].includes(s),
+      clsNavHome: ['home', 'category', 'bestpicks', 'freeday'].includes(s) ? 'active' : '',
+      clsNavSearch: ['search', 'filters', 'voice', 'visual', 'visualScan', 'visualResults'].includes(s) ? 'active' : '',
+      clsNavUpload: ['upload', 'uploadDetails', 'uploadPrice', 'uploadSuccess', 'myListings'].includes(s) ? 'active' : '',
+      clsNavInbox: ['chat', 'threadAi', 'threadSeller', 'notifications'].includes(s) ? 'active' : '',
+      clsNavSaved: ['saved'].includes(s) ? 'active' : '',
+      clsNavProfile: ['profile', 'seller', 'orders', 'settings', 'transactions'].includes(s) ? 'active' : '',
       navHome: this.navColor('home', 'category', 'bestpicks', 'freeday', 'notifications', 'search', 'product', 'cart', 'chat'),
       navStore: this.navColor('store', 'business'),
       navVs: this.navColor('vs', 'vsCompare'),
