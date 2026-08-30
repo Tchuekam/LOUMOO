@@ -11,112 +11,225 @@
 <link rel="stylesheet" href="_ds/modernist-dcebbf7e-2a15-4750-a4b9-db3ba3d0c312/styles.css">
 <script src="_ds/modernist-dcebbf7e-2a15-4750-a4b9-db3ba3d0c312/_ds_bundle.js"></script>
 <style>
-body{margin:0;background:#cfcdcb;font-family:var(--font-body);transition:background .2s}
-a{color:var(--color-accent);text-decoration:none}
-a:hover{color:var(--color-accent-700)}
-button{font-family:var(--font-body);cursor:pointer;border-radius:0}
-.ph{background:var(--color-neutral-300);background-image:repeating-linear-gradient(135deg,rgba(32,30,29,.06) 0 6px,transparent 6px 13px);display:flex;align-items:flex-end;padding:6px}
-.ph span{font:600 8px/1 var(--font-body);letter-spacing:.12em;color:var(--color-neutral-700)}
-.scr::-webkit-scrollbar{width:6px;height:6px}
-.scr::-webkit-scrollbar-thumb{background:var(--color-neutral-400)}
-.hs{display:flex;overflow-x:auto;scrollbar-width:none}
-.hs::-webkit-scrollbar{height:0}
-.tag{min-height:32px;padding-block:7px;display:inline-flex;align-items:center}
-button:hover{box-shadow:inset 0 0 0 99px color-mix(in srgb,var(--color-text) 6%,transparent)}
-button:active{box-shadow:inset 0 0 0 99px color-mix(in srgb,var(--color-text) 13%,transparent)}
-@keyframes spin{to{transform:rotate(360deg)}}
-@keyframes pulse{0%,100%{opacity:.35}50%{opacity:1}}
-
-/* ── Dark mode overrides ── */
-[data-theme="dark"] body{background:#111}
-[data-theme="dark"] .device-frame{border-color:var(--color-neutral-400)}
-[data-theme="dark"] .ph{background:var(--color-neutral-300);background-image:repeating-linear-gradient(135deg,rgba(240,238,236,.06) 0 6px,transparent 6px 13px)}
-[data-theme="dark"] input.input{background:var(--color-surface);color:var(--color-text)}
-[data-theme="dark"] [style*="background:#fff"]{background:var(--color-surface) !important}
-[data-theme="dark"] [style*="background: #fff"]{background:var(--color-surface) !important}
-[data-theme="dark"] [style*="background:var(--color-text)"] span,
-[data-theme="dark"] [style*="background:var(--color-text)"] div{color:var(--color-bg)}
-
-/* ── Base Responsive Architecture ── */
-.outer-wrap {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  background: #cfcdcb;
+/* ══════════════════════════════════════════════════════════════════════════
+   LOUMOO RESPONSIVE DESIGN SYSTEM (MOBILE-FIRST + DESKTOP ADAPTIVE)
+   ══════════════════════════════════════════════════════════════════════ */
+*, *::before, *::after {
   box-sizing: border-box;
 }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--color-bg);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  transition: background .2s;
+}
+
+a { color: var(--color-accent); text-decoration: none; }
+a:hover { color: var(--color-accent-700); }
+button { font-family: var(--font-body); cursor: pointer; border-radius: 0; }
+button:hover { box-shadow: inset 0 0 0 99px color-mix(in srgb, var(--color-text) 6%, transparent); }
+button:active { box-shadow: inset 0 0 0 99px color-mix(in srgb, var(--color-text) 13%, transparent); }
+
+/* Placeholder pattern */
+.ph {
+  background: var(--color-neutral-300);
+  background-image: repeating-linear-gradient(135deg, rgba(32,30,29,.06) 0 6px, transparent 6px 13px);
+  display: flex;
+  align-items: flex-end;
+  padding: 6px;
+  max-width: 100%;
+}
+.ph span { font: 600 8px/1 var(--font-body); letter-spacing: .12em; color: var(--color-neutral-700); }
+
+/* Horizontal scrolling carousels */
+.hs {
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x proximity;
+  gap: 12px;
+  margin-inline: -16px;
+  padding-inline: 16px;
+}
+.hs::-webkit-scrollbar { height: 0; display: none; }
+.hs > * { flex-shrink: 0; scroll-snap-align: start; }
+
+.tag { min-height: 32px; padding-block: 7px; display: inline-flex; align-items: center; }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes pulse { 0%, 100% { opacity: .35; } 50% { opacity: 1; } }
+
+/* ── Dark mode overrides ── */
+[data-theme="dark"] body { background: #111; }
+[data-theme="dark"] .device-frame { border-color: var(--color-neutral-400); }
+[data-theme="dark"] .ph { background: var(--color-neutral-300); background-image: repeating-linear-gradient(135deg, rgba(240,238,236,.06) 0 6px, transparent 6px 13px); }
+[data-theme="dark"] input.input { background: var(--color-surface); color: var(--color-text); }
+[data-theme="dark"] [style*="background:#fff"] { background: var(--color-surface) !important; }
+[data-theme="dark"] [style*="background: #fff"] { background: var(--color-surface) !important; }
+[data-theme="dark"] [style*="background:var(--color-text)"] span,
+[data-theme="dark"] [style*="background:var(--color-text)"] div { color: var(--color-bg); }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   MOBILE VIEWPORT ARCHITECTURE (< 1024px)
+   ══════════════════════════════════════════════════════════════════════ */
+.outer-wrap {
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg);
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  position: relative;
+}
+
 .sidebar-nav {
   display: none !important;
 }
+
 .desktop-topbar {
   display: none !important;
 }
+
 .device-frame {
-  width: 100vw;
-  height: 100vh;
-  background: var(--color-bg);
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
   border: none;
-  position: relative;
-  overflow: hidden;
+  box-shadow: none;
   display: flex;
   flex-direction: column;
-  box-sizing: border-box;
+  background: var(--color-bg);
+  overflow: hidden;
+  flex: 1;
+  position: relative;
 }
+
 .status-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 16px 2px;
-  font: 600 11px/1 var(--font-body);
-  letter-spacing: .04em;
-  flex: none;
-  background: var(--color-bg);
-  width: 100%;
-  box-sizing: border-box;
+  display: none !important;
 }
-.bottom-nav-mobile {
-  display: grid !important;
-  flex: none;
-  border-top: 2px solid var(--color-text);
-  background: var(--color-bg);
-  grid-template-columns: repeat(7, 1fr);
-  height: 62px;
+
+/* Mobile Main Scroll Area */
+.scr {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
   width: 100%;
-  box-sizing: border-box;
-  z-index: 20;
+  padding-bottom: 74px; /* clearance for sticky bottom nav */
 }
+
+.scr::-webkit-scrollbar { width: 4px; }
+.scr::-webkit-scrollbar-thumb { background: var(--color-neutral-400); }
+
+.scr > sc-if {
+  width: 100%;
+  display: block;
+}
+
+/* Responsive Fluid Product Grids */
 .home-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  width: 100%;
 }
 .home-grid-3 {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
+  width: 100%;
 }
 
-/* Tablet & Emulator frame mode (500px - 1023px) */
-@media(min-width: 500px) and (max-width: 1023px) {
-  .outer-wrap {
-    padding: 24px;
-    background: #cfcdcb;
+/* Sticky Mobile Bottom Navigation */
+.bottom-nav-mobile {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 60px;
+  height: calc(60px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  background: var(--color-bg);
+  border-top: 2px solid var(--color-text);
+  display: grid !important;
+  grid-template-columns: repeat(7, 1fr);
+  align-items: center;
+  z-index: 999;
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.06);
+}
+
+.bottom-nav-mobile button {
+  border: none;
+  background: transparent;
+  padding: 4px 1px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  min-height: 48px;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.bottom-nav-mobile button span {
+  font: 800 7px/1 var(--font-heading);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.nav-upload-btn {
+  margin-top: -14px;
+}
+.nav-upload-btn > span:first-child {
+  width: 38px;
+  height: 38px;
+  background: var(--color-accent);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px color-mix(in srgb, var(--color-accent) 40%, transparent);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   TABLET ADAPTIVE MODE (768px – 1023px)
+   ══════════════════════════════════════════════════════════════════════ */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .scr > sc-if > div {
+    max-width: 760px;
+    margin: 0 auto;
   }
-  .device-frame {
-    width: 390px;
-    height: 844px;
-    max-height: 96vh;
-    border: 2px solid var(--color-text);
-    box-shadow: var(--shadow-lg);
+  .home-grid, .home-grid-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+  }
+  .bottom-nav-mobile {
+    max-width: 760px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 2px solid var(--color-text);
+    border-right: 2px solid var(--color-text);
   }
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
-   Desktop Interface Mode (>= 1024px)
+   DESKTOP INTERFACE MODE (>= 1024px) — STRICTLY PRESERVED
    ══════════════════════════════════════════════════════════════════════ */
-@media(min-width:1024px) {
+@media (min-width: 1024px) {
   body {
     background: var(--color-bg);
     overflow: hidden;
@@ -261,6 +374,7 @@ button:active{box-shadow:inset 0 0 0 99px color-mix(in srgb,var(--color-text) 13
     flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
+    padding-bottom: 40px;
   }
   .scr > sc-if > div {
     max-width: 1300px;
@@ -271,11 +385,11 @@ button:active{box-shadow:inset 0 0 0 99px color-mix(in srgb,var(--color-text) 13
   /* Expand grids on Desktop */
   .home-grid {
     grid-template-columns: repeat(4, 1fr) !important;
-    gap: 14px !important;
+    gap: 16px !important;
   }
   .home-grid-3 {
     grid-template-columns: repeat(4, 1fr) !important;
-    gap: 14px !important;
+    gap: 16px !important;
   }
 }
 
@@ -510,7 +624,7 @@ button:active{box-shadow:inset 0 0 0 99px color-mix(in srgb,var(--color-text) 13
     <span style="font:600 9px/1 var(--font-body);letter-spacing:.1em;color:var(--color-neutral-600)">1 / 3</span>
   </div>
   <div class="hs" style="gap:12px;padding:0 16px">
-    <button onClick="{{ on.business }}" style="flex:none;width:300px;border:2px solid var(--color-text);background:#fff;padding:0;text-align:left;color:var(--color-text)">
+    <button onClick="{{ on.business }}" style="flex:none;width:min(300px, 82vw);border:2px solid var(--color-text);background:#fff;padding:0;text-align:left;color:var(--color-text)">
       <div class="ph" style="height:132px"><span>CAMPAIGN VISUAL</span></div>
       <div style="padding:11px 12px 12px;border-top:2px solid var(--color-text)">
         <div style="display:flex;justify-content:space-between;align-items:center">
@@ -520,7 +634,7 @@ button:active{box-shadow:inset 0 0 0 99px color-mix(in srgb,var(--color-text) 13
         <div style="font:800 16px/1.15 var(--font-heading);letter-spacing:-.02em;margin-top:6px">Rentrée tech: up to 40% off laptops</div>
       </div>
     </button>
-    <button onClick="{{ on.business }}" style="flex:none;width:300px;border:2px solid var(--color-text);background:#fff;padding:0;text-align:left;color:var(--color-text)">
+    <button onClick="{{ on.business }}" style="flex:none;width:min(300px, 82vw);border:2px solid var(--color-text);background:#fff;padding:0;text-align:left;color:var(--color-text)">
       <div class="ph" style="height:132px"><span>CAMPAIGN VISUAL</span></div>
       <div style="padding:11px 12px 12px;border-top:2px solid var(--color-text)">
         <div style="display:flex;justify-content:space-between;align-items:center">
@@ -560,7 +674,7 @@ button:active{box-shadow:inset 0 0 0 99px color-mix(in srgb,var(--color-text) 13
     <h6 style="margin:0;font-size:11px;letter-spacing:.14em">HOTELS</h6>
     <button onClick="{{ on.category }}" style="border:none;background:transparent;padding:0;font:800 10px/1 var(--font-heading);letter-spacing:.1em;color:var(--color-accent)">SEE ALL →</button>
   </div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 16px">
+  <div class="home-grid" style="padding:0 16px">
     <button onClick="{{ on.product }}" style="border:1px solid var(--color-divider);background:#fff;padding:0;text-align:left;color:var(--color-text)">
       <div class="ph" style="aspect-ratio:4/3"></div>
       <div style="padding:9px 10px 10px">
@@ -611,7 +725,7 @@ button:active{box-shadow:inset 0 0 0 99px color-mix(in srgb,var(--color-text) 13
     <h6 style="margin:0;font-size:11px;letter-spacing:.14em">ELECTRONICS</h6>
     <button onClick="{{ on.category }}" style="border:none;background:transparent;padding:0;font:800 10px/1 var(--font-heading);letter-spacing:.1em;color:var(--color-accent)">SEE ALL →</button>
   </div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 16px">
+  <div class="home-grid" style="padding:0 16px">
     <button onClick="{{ on.product }}" style="border:1px solid var(--color-divider);background:#fff;padding:0;text-align:left;color:var(--color-text)">
       <div class="ph" style="aspect-ratio:4/3"></div>
       <div style="padding:9px 10px 10px">
@@ -662,7 +776,7 @@ button:active{box-shadow:inset 0 0 0 99px color-mix(in srgb,var(--color-text) 13
     <h6 style="margin:0;font-size:11px;letter-spacing:.14em">UNIVERSITIES &amp; SCHOOLS</h6>
     <button onClick="{{ on.category }}" style="border:none;background:transparent;padding:0;font:800 10px/1 var(--font-heading);letter-spacing:.1em;color:var(--color-accent)">SEE ALL →</button>
   </div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 16px">
+  <div class="home-grid" style="padding:0 16px">
     <button onClick="{{ on.business }}" style="border:1px solid var(--color-divider);background:#fff;padding:0;text-align:left;color:var(--color-text)">
       <div class="ph" style="aspect-ratio:4/3"></div>
       <div style="padding:9px 10px 10px">
@@ -713,7 +827,7 @@ button:active{box-shadow:inset 0 0 0 99px color-mix(in srgb,var(--color-text) 13
     <h6 style="margin:0;font-size:11px;letter-spacing:.14em">SERVICES &amp; FREELANCERS</h6>
     <button onClick="{{ on.announce }}" style="border:none;background:transparent;padding:0;font:800 10px/1 var(--font-heading);letter-spacing:.1em;color:var(--color-accent)">SEE ALL →</button>
   </div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 16px">
+  <div class="home-grid" style="padding:0 16px">
     <button onClick="{{ on.announceDetail }}" style="border:1px solid var(--color-divider);background:#fff;padding:0;text-align:left;color:var(--color-text)">
       <div class="ph" style="aspect-ratio:4/3"></div>
       <div style="padding:9px 10px 10px">
@@ -1379,7 +1493,7 @@ button:active{box-shadow:inset 0 0 0 99px color-mix(in srgb,var(--color-text) 13
     <button onClick="{{ pick.catChip.under }}" class="tag" style="flex:none;font-size:11px;background:{{ st.catChip.under.bg }};color:{{ st.catChip.under.fg }};border:1px solid {{ st.catChip.under.bd }}">Under 50k</button>
     <button onClick="{{ pick.catChip.rated }}" class="tag" style="flex:none;font-size:11px;background:{{ st.catChip.rated.bg }};color:{{ st.catChip.rated.fg }};border:1px solid {{ st.catChip.rated.bd }}">★ 4.5+</button>
   </div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:4px 16px 24px">
+  <div class="home-grid" style="padding:4px 16px 24px">
     <button onClick="{{ on.product }}" style="border:1px solid var(--color-divider);background:#fff;padding:0;text-align:left;color:var(--color-text)"><div class="ph" style="aspect-ratio:4/3"></div><div style="padding:9px 10px 10px"><div style="font:600 12.5px/1.25 var(--font-body)">Sawa Luxury Hotel</div><div style="font:800 12px/1 var(--font-heading);margin-top:7px">XAF 65 000</div></div></button>
     <button onClick="{{ on.product }}" style="border:1px solid var(--color-divider);background:#fff;padding:0;text-align:left;color:var(--color-text)"><div class="ph" style="aspect-ratio:4/3"></div><div style="padding:9px 10px 10px"><div style="font:600 12.5px/1.25 var(--font-body)">Résidence Akwa Palm</div><div style="font:800 12px/1 var(--font-heading);margin-top:7px">XAF 38 500</div></div></button>
     <button onClick="{{ on.product }}" style="border:1px solid var(--color-divider);background:#fff;padding:0;text-align:left;color:var(--color-text)"><div class="ph" style="aspect-ratio:4/3"></div><div style="padding:9px 10px 10px"><div style="font:600 12.5px/1.25 var(--font-body)">Mont Fébé Lodge</div><div style="font:800 12px/1 var(--font-heading);margin-top:7px">XAF 52 000</div></div></button>
@@ -1595,7 +1709,7 @@ button:active{box-shadow:inset 0 0 0 99px color-mix(in srgb,var(--color-text) 13
       <span style="font:800 15px/1 var(--font-heading)">→</span>
     </button>
   </div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 16px 24px">
+  <div class="home-grid" style="padding:0 16px 24px">
     <button onClick="{{ on.product }}" style="border:1px solid var(--color-divider);background:#fff;padding:0;text-align:left;color:var(--color-text)"><div class="ph" style="aspect-ratio:1/1"></div><div style="padding:9px 10px 10px"><div style="font:600 12px/1.25 var(--font-body)">MacBook Air M2</div><div style="font:800 12px/1 var(--font-heading);margin-top:6px">XAF 745 000</div></div></button>
     <button onClick="{{ on.product }}" style="border:1px solid var(--color-divider);background:#fff;padding:0;text-align:left;color:var(--color-text)"><div class="ph" style="aspect-ratio:1/1"></div><div style="padding:9px 10px 10px"><div style="font:600 12px/1.25 var(--font-body)">Anker 737 Power Bank</div><div style="font:800 12px/1 var(--font-heading);margin-top:6px">XAF 62 000</div></div></button>
     <button onClick="{{ on.product }}" style="border:1px solid var(--color-divider);background:#fff;padding:0;text-align:left;color:var(--color-text)"><div class="ph" style="aspect-ratio:1/1"></div><div style="padding:9px 10px 10px"><div style="font:600 12px/1.25 var(--font-body)">iPhone 15 128GB</div><div style="font:800 12px/1 var(--font-heading);margin-top:6px">XAF 585 000</div></div></button>
@@ -2615,36 +2729,36 @@ button:active{box-shadow:inset 0 0 0 99px color-mix(in srgb,var(--color-text) 13
 </div>
 
 <sc-if value="{{ showNav }}" hint-placeholder-val="{{ true }}">
-<div class="bottom-nav-mobile" style="flex:none;border-top:2px solid var(--color-text);background:var(--color-bg);display:grid;grid-template-columns:repeat(7,1fr);height:62px;padding-bottom:0">
-  <button onClick="{{ on.home }}" style="border:none;background:transparent;padding:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:{{ navHome }}">
-    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3 10.6 12 3.4l9 7.2V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-9.4Z"/></svg>
-    <span style="font:600 7.5px/1 var(--font-body);letter-spacing:.06em">HOME</span>
+<div class="bottom-nav-mobile">
+  <button onClick="{{ on.home }}" style="color:{{ navHome }}">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3 10.6 12 3.4l9 7.2V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-9.4Z"/></svg>
+    <span>HOME</span>
   </button>
-  <button onClick="{{ on.store }}" style="border:none;background:transparent;padding:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:{{ navStore }}">
-    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3.5 9h17l-1.3-4.5H4.8L3.5 9Z"/><path d="M5 9v11h14V9"/></svg>
-    <span style="font:600 7.5px/1 var(--font-body);letter-spacing:.06em">STORE</span>
+  <button onClick="{{ on.store }}" style="color:{{ navStore }}">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3.5 9h17l-1.3-4.5H4.8L3.5 9Z"/><path d="M5 9v11h14V9"/></svg>
+    <span>STORE</span>
   </button>
-  <button onClick="{{ on.vs }}" style="border:none;background:transparent;padding:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:{{ navVs }}">
-    <span style="font:800 15px/1 var(--font-heading);letter-spacing:-.02em;height:19px;display:flex;align-items:center">VS</span>
-    <span style="font:600 7.5px/1 var(--font-body);letter-spacing:.06em">COMPARE</span>
+  <button onClick="{{ on.vs }}" style="color:{{ navVs }}">
+    <span style="font:800 13px/1 var(--font-heading);height:18px;display:flex;align-items:center">VS</span>
+    <span>COMPARE</span>
   </button>
-  <button onClick="{{ on.upload }}" style="border:none;background:transparent;padding:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px">
-    <span style="width:38px;height:38px;background:var(--color-accent);color:#fff;display:flex;align-items:center;justify-content:center;margin-top:-14px;box-shadow:var(--shadow-md)">
+  <button onClick="{{ on.upload }}" class="nav-upload-btn">
+    <span>
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>
     </span>
-    <span style="font:600 7.5px/1 var(--font-body);letter-spacing:.06em;margin-top:-8px;color:{{ navUpload }}">UPLOAD</span>
+    <span style="color:{{ navUpload }}">UPLOAD</span>
   </button>
-  <button onClick="{{ on.travel }}" style="border:none;background:transparent;padding:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:{{ navTravel }}">
-    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3 13.5 21 5l-6 16-3.2-6.3L3 13.5Z"/></svg>
-    <span style="font:600 7.5px/1 var(--font-body);letter-spacing:.06em">TRAVEL</span>
+  <button onClick="{{ on.travel }}" style="color:{{ navTravel }}">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3 13.5 21 5l-6 16-3.2-6.3L3 13.5Z"/></svg>
+    <span>TRAVEL</span>
   </button>
-  <button onClick="{{ on.announce }}" style="border:none;background:transparent;padding:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:{{ navAnnounce }}">
-    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 10v4h3.5L15 18.5v-13L7.5 10H4Z"/><path d="M18.5 9.2a4 4 0 0 1 0 5.6"/></svg>
-    <span style="font:600 7.5px/1 var(--font-body);letter-spacing:.06em">ANNOUNCE</span>
+  <button onClick="{{ on.announce }}" style="color:{{ navAnnounce }}">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 10v4h3.5L15 18.5v-13L7.5 10H4Z"/><path d="M18.5 9.2a4 4 0 0 1 0 5.6"/></svg>
+    <span>ANNOUNCE</span>
   </button>
-  <button onClick="{{ on.profile }}" style="border:none;background:transparent;padding:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:{{ navProfile }}">
-    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="8.5" r="3.7"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></svg>
-    <span style="font:600 7.5px/1 var(--font-body);letter-spacing:.06em">PROFILE</span>
+  <button onClick="{{ on.profile }}" style="color:{{ navProfile }}">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="8.5" r="3.7"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></svg>
+    <span>PROFILE</span>
   </button>
 </div>
 </sc-if>
