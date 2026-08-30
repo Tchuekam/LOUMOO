@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 LOUMOO MESSAGING, PROFILE & SYSTEM VIEWS
-WhatsApp messaging engine, voice note waveform player, TchueKAM AI assistant, notifications, user profile, saved items, settings, and skeleton states with Lucide SVG icons.
+WhatsApp messaging engine, voice note waveform player, TchueKAM AI assistant, notifications, upgraded user profile with onboarding entry point, saved items, settings, and skeleton states with Lucide SVG icons.
 """
 
 def get_chat_and_profile_view():
@@ -179,20 +179,22 @@ def get_chat_and_profile_view():
   <div style="padding:16px;max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:14px">
     
     <div class="card-premium">
-      <div style="display:flex;gap:12px;align-items:flex-start">
-        <div style="width:36px;height:36px;border-radius:50%;background:var(--color-accent);color:#fff;display:flex;align-items:center;justify-content:center;font:800 12px/1 var(--font-heading);flex-shrink:0">AI</div>
-        <div style="flex:1">
-          <div style="font:700 13.5px/1.2 var(--font-heading);color:var(--color-text)">AI Shopping Recommendation</div>
-          <p style="font-size:13px;color:var(--color-text-secondary);margin:6px 0 12px;line-height:1.45">
-            Based on your interest in creator hardware and your Douala location, here is the best verified deal with escrow protection:
-          </p>
+      <div style="display:gap;align-items:flex-start">
+        <div style="display:flex;gap:12px;align-items:flex-start">
+          <div style="width:36px;height:36px;border-radius:50%;background:var(--color-accent);color:#fff;display:flex;align-items:center;justify-content:center;font:800 12px/1 var(--font-heading);flex-shrink:0">AI</div>
+          <div style="flex:1">
+            <div style="font:700 13.5px/1.2 var(--font-heading);color:var(--color-text)">AI Shopping Recommendation</div>
+            <p style="font-size:13px;color:var(--color-text-secondary);margin:6px 0 12px;line-height:1.45">
+              Based on your interest in creator hardware and your Douala location, here is the best verified deal with escrow protection:
+            </p>
 
-          <div style="background:var(--color-neutral-100);border:1px solid var(--color-divider);border-radius:var(--radius-sm);padding:12px;display:flex;justify-content:space-between;align-items:center">
-            <div>
-              <div style="font:700 13px/1.2 var(--font-heading)">Apple MacBook Air 13” (M2)</div>
-              <div style="font:800 14px/1 var(--font-heading);color:var(--color-accent);margin-top:2px">XAF 745 000 · Orca Electronics</div>
+            <div style="background:var(--color-neutral-100);border:1px solid var(--color-divider);border-radius:var(--radius-sm);padding:12px;display:flex;justify-content:space-between;align-items:center">
+              <div>
+                <div style="font:700 13px/1.2 var(--font-heading)">Apple MacBook Air 13” (M2)</div>
+                <div style="font:800 14px/1 var(--font-heading);color:var(--color-accent);margin-top:2px">XAF 745 000 · Orca Electronics</div>
+              </div>
+              <button onClick="{{ on.product }}" class="btn btn-primary" style="height:34px;padding:0 14px;font-size:11.5px">VIEW</button>
             </div>
-            <button onClick="{{ on.product }}" class="btn btn-primary" style="height:34px;padding:0 14px;font-size:11.5px">VIEW</button>
           </div>
         </div>
       </div>
@@ -231,11 +233,12 @@ def get_chat_and_profile_view():
 </sc-if>
 
 <!-- ══════════════════════════════════════════════════════════════════════════
-     USER PROFILE PORTAL (is.profile)
+     UPGRADED USER PROFILE PORTAL (is.profile)
      ══════════════════════════════════════════════════════════════════════ -->
 <sc-if value="{{ is.profile }}">
 <div style="padding-bottom:32px">
   
+  <!-- Header -->
   <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
     <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
@@ -246,17 +249,46 @@ def get_chat_and_profile_view():
     </button>
   </div>
 
-  <div style="padding:16px;max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:14px">
+  <div style="padding:16px;max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:16px">
     
-    <!-- User Card -->
+    <!-- Registration / Onboarding Entry Hero Banner -->
+    <div class="card-premium" style="background:linear-gradient(135deg, #002b61 0%, #007aff 100%);color:#fff;border:none;padding:24px;box-shadow:var(--shadow-glow-blue)">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div style="max-width:440px">
+          <span style="font:800 10.5px/1 var(--font-heading);letter-spacing:.12em;background:rgba(255,255,255,0.2);padding:4px 8px;border-radius:var(--radius-pill);display:inline-block;margin-bottom:10px">
+            LOUMOO ONBOARDING
+          </span>
+          <h2 style="color:#fff;margin:0 0 6px;font-size:22px">Create your LOUMOO account</h2>
+          <p style="color:rgba(255,255,255,0.88);font-size:13px;line-height:1.45;margin:0 0 16px">
+            Unlock fast escrow checkout, open your verified storefront, track parcels in real-time, and get personalized deals across Cameroon.
+          </p>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button onClick="{{ on.onboardWelcome }}" class="btn btn-dark" style="background:#fff;color:var(--color-text);height:42px;padding:0 20px;font-size:13px">
+              <span>GET STARTED →</span>
+            </button>
+            <button onClick="{{ on.onboardWelcome }}" class="btn btn-secondary" style="background:rgba(255,255,255,0.15);color:#fff;border-color:rgba(255,255,255,0.3);height:42px;padding:0 16px;font-size:12.5px">
+              SIGN IN
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Active Profile Card with 85% Completion Score -->
     <div class="card-premium" style="display:flex;align-items:center;gap:14px">
-      <div style="width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,var(--color-accent),#003d8a);color:#fff;display:flex;align-items:center;justify-content:center;font:800 20px/1 var(--font-heading)">TK</div>
+      <div style="width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,var(--color-accent),#003d8a);color:#fff;display:flex;align-items:center;justify-content:center;font:800 20px/1 var(--font-heading);flex-shrink:0">TK</div>
       <div style="flex:1">
         <div style="display:flex;align-items:center;gap:8px">
           <span style="font:800 17px/1.2 var(--font-heading);color:var(--color-text)">{{ userName }}</span>
           <span class="tag tag-accent" style="min-height:18px;padding:2px 6px;font-size:9.5px">VERIFIED BUYER &amp; SELLER</span>
         </div>
         <div style="font:400 12px/1 var(--font-body);color:var(--color-text-secondary);margin-top:4px">+237 690 12 34 56 · Douala, Cameroon</div>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:8px">
+          <div style="flex:1;max-width:180px;height:5px;background:var(--color-neutral-200);border-radius:3px;overflow:hidden">
+            <div style="width:85%;height:100%;background:var(--color-success);border-radius:3px"></div>
+          </div>
+          <span style="font:700 10.5px/1 var(--font-heading);color:var(--color-success)">85% Profile Setup</span>
+        </div>
       </div>
     </div>
 
@@ -352,8 +384,13 @@ def get_chat_and_profile_view():
       </div>
     </div>
 
+    <!-- Onboarding / Registration Shortcut -->
     <div class="card-premium" style="display:flex;flex-direction:column;gap:10px">
-      <button onClick="{{ on.threadAi }}" style="border:none;background:transparent;text-align:left;padding:8px 0;font:600 13px/1 var(--font-body);color:var(--color-text);display:flex;justify-content:space-between;cursor:pointer">
+      <button onClick="{{ on.onboardWelcome }}" style="border:none;background:transparent;text-align:left;padding:8px 0;font:600 13px/1 var(--font-body);color:var(--color-accent);display:flex;justify-content:space-between;cursor:pointer">
+        <span>Complete / Revisit Registration Wizard</span>
+        <span>→</span>
+      </button>
+      <button onClick="{{ on.threadAi }}" style="border:none;border-top:1px solid var(--color-divider);background:transparent;text-align:left;padding:8px 0;font:600 13px/1 var(--font-body);color:var(--color-text);display:flex;justify-content:space-between;cursor:pointer">
         <span>Ask TchueKAM AI Support</span>
         <span>→</span>
       </button>

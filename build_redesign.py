@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 LOUMOO E-COMMERCE PREMIUM REDESIGN MASTER ASSEMBLER
-Combines all modular views and generates the pristine, production-grade Commerce App.dc.html.
+Combines all modular views including the new World-Class Onboarding Engine, and generates the pristine, production-grade Commerce App.dc.html.
 """
 
 import os
@@ -21,6 +21,7 @@ from src.views.travel_view import get_travel_view
 from src.views.merchant_view import get_merchant_view
 from src.views.community_view import get_community_view
 from src.views.chat_profile_view import get_chat_and_profile_view
+from src.views.onboarding_view import get_onboarding_view
 
 # Define Master Header & Styles
 header_and_styles = """<!DOCTYPE html>
@@ -386,7 +387,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 [data-theme="dark"] body, [data-theme="dark"] .device-frame { background: #090a0f; }
 [data-theme="dark"] .product-card { background: var(--color-surface); border-color: var(--color-divider); }
 [data-theme="dark"] .ph { background: var(--color-surface-subtle); background-image: radial-gradient(circle at 50% 40%, rgba(255,255,255,0.06) 0%, transparent 80%); }
-[data-theme="dark"] input.input { background: var(--color-surface); color: var(--color-text); border-color: var(--color-divider); }
+[data-theme="dark"] input.input, [data-theme="dark"] select.input { background: var(--color-surface); color: var(--color-text); border-color: var(--color-divider); }
 [data-theme="dark"] [style*="background:#fff"] { background: var(--color-surface) !important; }
 [data-theme="dark"] [style*="background: #fff"] { background: var(--color-surface) !important; }
 [data-theme="dark"] .bottom-nav-mobile { background: rgba(20, 23, 32, 0.95) !important; border-top-color: var(--color-divider) !important; }
@@ -529,9 +530,9 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
     </button>
 
     <div style="margin-top:16px;padding:0 4px">
-      <button onClick="{{ on.upload }}" class="sidebar-cta-btn">
+      <button onClick="{{ on.onboardWelcome }}" class="sidebar-cta-btn">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        <span>Sell on LOUMOO</span>
+        <span>Join LOUMOO</span>
       </button>
     </div>
   </div>
@@ -650,7 +651,14 @@ footer_and_scripts = """
 </x-dc>
 
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:446,&quot;height&quot;:900},&quot;userName&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Tchuekam&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;showAds&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Home&quot;}}">
-const SCREENS = ['home','search','filters','voice','category','bestpicks','freeday','notifications','chat','threadAi','threadSeller','product','sellers','cart','checkout','paying','success','orders','store','business','vs','vsCompare','visual','visualScan','visualResults','upload','uploadDetails','uploadPrice','uploadSuccess','myListings','travel','travelBus','travelPackages','travelVisa','travelResults','travelDetail','travelPassenger','travelTicket','announce','announceDetail','profile','seller','settings','payFailed','networkError','saved','transactions','loading'];
+const SCREENS = [
+  'home','search','filters','voice','category','bestpicks','freeday','notifications','chat','threadAi','threadSeller',
+  'product','sellers','cart','checkout','paying','success','orders','store','business','vs','vsCompare','visual',
+  'visualScan','visualResults','upload','uploadDetails','uploadPrice','uploadSuccess','myListings','travel','travelBus',
+  'travelPackages','travelVisa','travelResults','travelDetail','travelPassenger','travelTicket','announce','announceDetail',
+  'profile','seller','settings','payFailed','networkError','saved','transactions','loading',
+  'onboardWelcome','onboardType','onboardIdentity','onboardOtp','onboardBuyer','onboardSeller','onboardBusiness','onboardVerify','onboardReview','onboardSuccess'
+];
 const GROUPS = {
   searchTab: ['all','products','stores','services','travel'],
   chatTab: ['all','buying','selling','orders','support'],
@@ -673,12 +681,28 @@ const GROUPS = {
   deliv: ['home','pickup'],
   uqty: ['one','multi','order']
 };
-const NO_NAV = ['visual','visualScan','visualResults','threadAi','threadSeller','checkout','paying','success','travelTicket','uploadSuccess','voice','filters','payFailed','networkError','loading'];
+const NO_NAV = [
+  'visual','visualScan','visualResults','threadAi','threadSeller','checkout','paying','success','travelTicket','uploadSuccess',
+  'voice','filters','payFailed','networkError','loading',
+  'onboardWelcome','onboardType','onboardIdentity','onboardOtp','onboardBuyer','onboardSeller','onboardBusiness','onboardVerify','onboardReview','onboardSuccess'
+];
 
 class Component extends DCLogic {
   state = {
     screen: 'home', stack: [], cart: 2, vs: 1, toast: '', following: false, saved: false,
     qty: 1, freeday: false, darkMode: false,
+    userRole: 'buyer',
+    regFirstName: 'Rostand',
+    regLastName: 'Tchuekam',
+    regPhone: '690 12 34 56',
+    regEmail: 'rostand@loumoo.cm',
+    regBusinessName: 'Orca Electronics Douala',
+    interestTech: true,
+    interestFashion: false,
+    interestTravel: true,
+    interestServices: false,
+    sellerType: 'pro',
+    docUploaded: false,
     ship: { home: true, pickup: true, nation: false },
     sel: {
       searchTab: 'all', chatTab: 'all', sellerSort: 'value', ordersTab: 'active',
@@ -794,7 +818,42 @@ class Component extends DCLogic {
         mainImg: () => this.toast('Application submitted with your LOUMOO profile'),
         addTag: () => this.toast('Tag added to the listing')
       },
-      userName: this.props.userName ?? 'Tchuekam',
+      // Onboarding & Registration State
+      userRole: this.state.userRole,
+      regFirstName: this.state.regFirstName,
+      regLastName: this.state.regLastName,
+      regPhone: this.state.regPhone,
+      regEmail: this.state.regEmail,
+      regBusinessName: this.state.regBusinessName,
+      interestTech: this.state.interestTech,
+      interestFashion: this.state.interestFashion,
+      interestTravel: this.state.interestTravel,
+      interestServices: this.state.interestServices,
+      sellerType: this.state.sellerType,
+      docUploaded: this.state.docUploaded,
+      setRoleBuyer: () => this.setState({ userRole: 'buyer' }),
+      setRoleSeller: () => this.setState({ userRole: 'seller' }),
+      setRoleBoth: () => this.setState({ userRole: 'both' }),
+      continueAfterOtp: () => {
+        this.go(this.state.userRole === 'buyer' ? 'onboardBuyer' : 'onboardSeller');
+      },
+      resendOtp: () => this.toast('New 6-digit verification code sent to +237 690 12 34 56'),
+      simulateUploadDoc: () => {
+        this.setState({ docUploaded: true });
+        this.toast('CNI Photo Uploaded Successfully (2.4 MB)');
+      },
+      toggleInterestTech: () => this.setState(s => ({ interestTech: !s.interestTech })),
+      toggleInterestFashion: () => this.setState(s => ({ interestFashion: !s.interestFashion })),
+      toggleInterestTravel: () => this.setState(s => ({ interestTravel: !s.interestTravel })),
+      toggleInterestServices: () => this.setState(s => ({ interestServices: !s.interestServices })),
+      setSellerIndividual: () => this.setState({ sellerType: 'individual' }),
+      setSellerPro: () => this.setState({ sellerType: 'pro' }),
+      setSellerService: () => this.setState({ sellerType: 'service' }),
+      completeOnboarding: () => {
+        this.setState({ userName: this.state.regFirstName });
+        this.go('onboardSuccess');
+      },
+      userName: this.props.userName ?? this.state.userName ?? 'Tchuekam',
       showAds: this.props.showAds ?? true,
       cartCount: this.state.cart,
       cartLabel: (this.state.qty + 1) + ' items · 2 sellers',
@@ -809,7 +868,7 @@ class Component extends DCLogic {
       navUpload: this.navColor('upload', 'uploadDetails', 'uploadPrice', 'myListings'),
       navTravel: this.navColor('travel', 'travelBus', 'travelPackages', 'travelVisa', 'travelResults', 'travelDetail', 'travelPassenger'),
       navAnnounce: this.navColor('announce', 'announceDetail'),
-      navProfile: this.navColor('profile', 'seller', 'orders', 'settings'),
+      navProfile: this.navColor('profile', 'seller', 'orders', 'settings', 'onboardWelcome', 'onboardType', 'onboardIdentity', 'onboardOtp', 'onboardBuyer', 'onboardSeller', 'onboardBusiness', 'onboardVerify', 'onboardReview', 'onboardSuccess'),
       setScroller: (el) => { this._sc = el; },
       addToCart: () => { this.setState(st => ({ cart: st.cart + 1 })); this.toast('Added to Bag — 1 item from Orca Electronics'); },
       addToVs: () => { this.setState(st => ({ vs: st.vs + 1 })); this.go('vsCompare'); },
@@ -834,6 +893,7 @@ full_html = (
     + get_home_view()
     + get_search_and_ai_view()
     + get_chat_and_profile_view()
+    + get_onboarding_view()
     + get_product_view()
     + get_cart_view()
     + get_checkout_view()
@@ -851,4 +911,4 @@ full_html = (
 with open('Commerce App.dc.html', 'w', encoding='utf-8') as f:
     f.write(full_html)
 
-print("Commerce App.dc.html successfully rebuilt with all 48 screens & polished Home view!")
+print("Commerce App.dc.html successfully rebuilt with all 58 screens including complete Onboarding Engine!")
