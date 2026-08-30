@@ -43,7 +43,7 @@ button:active{box-shadow:inset 0 0 0 99px color-mix(in srgb,var(--color-text) 13
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
+  padding: 0;
   background: #cfcdcb;
   box-sizing: border-box;
 }
@@ -54,16 +54,14 @@ button:active{box-shadow:inset 0 0 0 99px color-mix(in srgb,var(--color-text) 13
   display: none !important;
 }
 .device-frame {
-  width: 390px;
-  height: 844px;
-  max-height: 96vh;
+  width: 100vw;
+  height: 100vh;
   background: var(--color-bg);
-  border: 2px solid var(--color-text);
+  border: none;
   position: relative;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  box-shadow: var(--shadow-lg);
   box-sizing: border-box;
 }
 .status-bar {
@@ -75,9 +73,19 @@ button:active{box-shadow:inset 0 0 0 99px color-mix(in srgb,var(--color-text) 13
   letter-spacing: .04em;
   flex: none;
   background: var(--color-bg);
+  width: 100%;
+  box-sizing: border-box;
 }
 .bottom-nav-mobile {
   display: grid !important;
+  flex: none;
+  border-top: 2px solid var(--color-text);
+  background: var(--color-bg);
+  grid-template-columns: repeat(7, 1fr);
+  height: 62px;
+  width: 100%;
+  box-sizing: border-box;
+  z-index: 20;
 }
 .home-grid {
   display: grid;
@@ -90,11 +98,19 @@ button:active{box-shadow:inset 0 0 0 99px color-mix(in srgb,var(--color-text) 13
   gap: 10px;
 }
 
-/* Tablet adjustments (768px - 1023px) */
-@media(min-width:768px) and (max-width:1023px) {
-  .outer-wrap { padding: 20px; }
-  .device-frame { width: 440px; height: 880px; }
-  .home-grid-3 { grid-template-columns: repeat(2, 1fr); }
+/* Tablet & Emulator frame mode (500px - 1023px) */
+@media(min-width: 500px) and (max-width: 1023px) {
+  .outer-wrap {
+    padding: 24px;
+    background: #cfcdcb;
+  }
+  .device-frame {
+    width: 390px;
+    height: 844px;
+    max-height: 96vh;
+    border: 2px solid var(--color-text);
+    box-shadow: var(--shadow-lg);
+  }
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -1237,7 +1253,6 @@ button:active{box-shadow:inset 0 0 0 99px color-mix(in srgb,var(--color-text) 13
   <div style="padding:18px 16px 24px">
     <button onClick="{{ on.checkout }}" class="btn btn-primary btn-block" style="height:50px;justify-content:space-between">CHECKOUT <span>→</span></button>
     <button onClick="{{ on.home }}" class="btn btn-secondary btn-block" style="height:46px;border-width:2px;border-color:var(--color-text);justify-content:space-between">CONTINUE SHOPPING <span>→</span></button>
-  </div>
   </div>
 </div>
 </sc-if>
@@ -2819,6 +2834,5 @@ class Component extends DCLogic {
   }
 }
 </script>
-</div>
 </body>
 </html>
