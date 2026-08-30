@@ -1,0 +1,180 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   LOUMOO CHECKOUT & PAYMENT STYLES — ZERO-FRICTION CONVERSION ENGINE
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* Step Indicator */
+.checkout-steps {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-divider);
+}
+
+.step-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font: 700 12px/1 var(--font-heading);
+  color: var(--color-text-muted);
+}
+.step-item.active { color: var(--color-accent); }
+.step-item.completed { color: var(--color-success); }
+
+.step-num {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--color-neutral-200);
+  color: var(--color-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+}
+.step-item.active .step-num {
+  background: var(--color-accent);
+  color: #ffffff;
+}
+.step-item.completed .step-num {
+  background: var(--color-success);
+  color: #ffffff;
+}
+
+/* Payment Method Cards */
+.payment-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.pay-card {
+  border: 2px solid var(--color-divider);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  background: var(--color-surface);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+.pay-card:hover {
+  border-color: var(--color-neutral-400);
+  transform: translateY(-2px);
+}
+.pay-card.active {
+  border-color: var(--color-accent);
+  background: var(--color-accent-100);
+  box-shadow: 0 4px 16px rgba(0, 122, 255, 0.15);
+}
+
+/* Order Summary Box */
+.order-summary-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13.5px;
+  color: var(--color-text-secondary);
+}
+.summary-row.total {
+  border-top: 2px solid var(--color-divider);
+  padding-top: 14px;
+  font-family: var(--font-heading);
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--color-text);
+}
+
+/* Processing Telecom Pulse Animation */
+.paying-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 480px;
+  padding: 32px;
+  text-align: center;
+}
+
+.radar-pulse-wrap {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 28px;
+}
+
+.radar-core {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-glow-blue);
+  z-index: 2;
+}
+
+.radar-wave {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid var(--color-accent);
+  opacity: 0.8;
+  animation: radarWave 2s infinite cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.radar-wave:nth-child(2) {
+  animation-delay: 0.6s;
+}
+.radar-wave:nth-child(3) {
+  animation-delay: 1.2s;
+}
+
+@keyframes radarWave {
+  0% { transform: scale(0.6); opacity: 0.9; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+/* Success Confirmation Card */
+.success-check-badge {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #00c853 0%, #009624 100%);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(0, 200, 83, 0.35);
+  margin: 0 auto 20px;
+  animation: bounceIn 0.5s var(--ease-spring);
+}
+
+@keyframes bounceIn {
+  0% { transform: scale(0.4); opacity: 0; }
+  70% { transform: scale(1.15); }
+  100% { transform: scale(1); opacity: 1; }
+}

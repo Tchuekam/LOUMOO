@@ -1,0 +1,90 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   LOUMOO DARK MODE PALETTE — OBSIDIAN TECH
+   ══════════════════════════════════════════════════════════════════════ */
+[data-theme="dark"] {
+  --color-bg: #0f1012;
+  --color-surface: #181a1f;
+  --color-surface-subtle: #131418;
+  --color-surface-hover: #22252c;
+  
+  --color-text: #f5f7fa;
+  --color-text-secondary: #a0a6b5;
+  --color-text-muted: #6b7280;
+  
+  --color-divider: #262930;
+  --color-border-subtle: #1e2026;
+  
+  --color-neutral-100: #141518;
+  --color-neutral-200: #1e2026;
+  --color-neutral-300: #2d313a;
+  --color-neutral-400: #4b5262;
+  --color-neutral-500: #6e7687;
+  --color-neutral-600: #9da4b2;
+  --color-neutral-700: #cbd1db;
+  --color-neutral-800: #e4e7ec;
+  --color-neutral-900: #ffffff;
+}
+
+[data-theme="dark"] body { background: #0f1012; }
+[data-theme="dark"] .device-frame { background: #0f1012; }
+[data-theme="dark"] .product-card { background: var(--color-surface); border-color: var(--color-divider); }
+[data-theme="dark"] .ph { background: var(--color-surface-subtle); background-image: radial-gradient(circle at 50% 40%, rgba(255,255,255,0.06) 0%, transparent 80%); }
+[data-theme="dark"] input.input { background: var(--color-surface); color: var(--color-text); border-color: var(--color-divider); }
+[data-theme="dark"] [style*="background:#fff"] { background: var(--color-surface) !important; }
+[data-theme="dark"] [style*="background: #fff"] { background: var(--color-surface) !important; }
+[data-theme="dark"] .bottom-nav-mobile { background: rgba(24, 25, 28, 0.95) !important; border-top-color: var(--color-divider) !important; }
+[data-theme="dark"] .desktop-topbar { background: #141518 !important; border-bottom-color: var(--color-divider) !important; }
+[data-theme="dark"] .sidebar-nav { background: #141518 !important; border-right-color: var(--color-divider) !important; }
+
+/* Dark mode WhatsApp overrides */
+[data-theme="dark"] .wa-chat-container {
+  background-color: #0b141a;
+  background-image: radial-gradient(#1e2930 1px, transparent 1px), radial-gradient(#1e2930 1px, #0b141a 1px);
+}
+[data-theme="dark"] .wa-chat-header {
+  background: #202c33;
+  border-bottom-color: #2a3942;
+}
+[data-theme="dark"] .wa-chat-contact-name { color: #e9edef; }
+[data-theme="dark"] .wa-btn-add-list {
+  background: #111b21;
+  border-color: #2a3942;
+  color: #e9edef;
+}
+[data-theme="dark"] .wa-header-icon-btn { color: #aebac1; }
+[data-theme="dark"] .wa-system-pill {
+  background: #182229;
+  color: #8696a0;
+}
+[data-theme="dark"] .wa-date-pill {
+  background: #182229;
+  color: #8696a0;
+}
+[data-theme="dark"] .wa-bubble-sent {
+  background: #005c4b;
+  color: #e9edef;
+}
+[data-theme="dark"] .wa-bubble-received {
+  background: #202c33;
+  color: #e9edef;
+}
+[data-theme="dark"] .wa-meta { color: #8696a0; }
+[data-theme="dark"] .wa-contact-card { background: #005c4b; }
+[data-theme="dark"] .wa-contact-name-txt { color: #e9edef; }
+[data-theme="dark"] .wa-contact-btn-row {
+  background: rgba(0, 0, 0, 0.2);
+  border-top-color: rgba(255, 255, 255, 0.08);
+}
+[data-theme="dark"] .wa-contact-btn { color: #25d366; }
+[data-theme="dark"] .wa-audio-card { background: #202c33; }
+[data-theme="dark"] .wa-audio-play { color: #e9edef; }
+[data-theme="dark"] .wa-audio-time-row { color: #8696a0; }
+[data-theme="dark"] .wa-input-bar {
+  background: #202c33;
+  border-top-color: #2a3942;
+}
+[data-theme="dark"] .wa-input-box {
+  background: #2a3942;
+  color: #e9edef;
+}
+[data-theme="dark"] .wa-voice-btn { color: #8696a0; }

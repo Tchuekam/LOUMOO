@@ -1,0 +1,321 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   LOUMOO UI COMPONENTS — APPLE & INSTA360 CRAFTSMANSHIP
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* — Buttons (Tactile Springs & Pill Shapes) — */
+button {
+  font-family: var(--font-body);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+button:active { transform: scale(0.97); }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 13.5px;
+  line-height: 1.2;
+  color: var(--color-text);
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 10px 22px;
+  min-height: 44px;
+  border-radius: var(--radius-pill);
+  touch-action: manipulation;
+  user-select: none;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none !important; }
+
+.btn-primary {
+  background: var(--color-accent);
+  color: #ffffff;
+  box-shadow: var(--shadow-glow-blue);
+  border: none;
+}
+.btn-primary:hover {
+  background: var(--color-accent-hover);
+  box-shadow: 0 6px 24px rgba(0, 122, 255, 0.4);
+  transform: translateY(-1.5px);
+}
+.btn-primary:active {
+  background: var(--color-accent-600);
+  transform: translateY(0) scale(0.98);
+}
+
+.btn-secondary {
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider);
+  color: var(--color-text);
+  box-shadow: var(--shadow-xs);
+}
+.btn-secondary:hover {
+  background: var(--color-surface-hover);
+  border-color: var(--color-neutral-400);
+  transform: translateY(-1.5px);
+}
+.btn-secondary:active {
+  background: var(--color-neutral-200);
+  transform: translateY(0);
+}
+
+.btn-dark {
+  background: var(--color-text);
+  color: #ffffff;
+  box-shadow: var(--shadow-sm);
+}
+.btn-dark:hover {
+  background: #23252a;
+  transform: translateY(-1.5px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-momo {
+  background: #ffcc00;
+  color: #111214;
+  font-weight: 800;
+  box-shadow: 0 4px 16px rgba(255, 204, 0, 0.35);
+}
+.btn-momo:hover {
+  background: #f5c400;
+  transform: translateY(-1.5px);
+}
+
+.btn-om {
+  background: #ff6600;
+  color: #ffffff;
+  font-weight: 800;
+  box-shadow: 0 4px 16px rgba(255, 102, 0, 0.35);
+}
+.btn-om:hover {
+  background: #e65c00;
+  transform: translateY(-1.5px);
+}
+
+.btn-block {
+  width: 100%;
+  margin-top: var(--space-2);
+  justify-content: center;
+}
+
+/* — Studio Product Image Placeholder — */
+.ph {
+  background: var(--color-neutral-100);
+  background-image: radial-gradient(circle at 50% 40%, rgba(255,255,255,0.85) 0%, rgba(241,243,247,0.5) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  max-width: 100%;
+  border-radius: var(--radius-md);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--color-border-subtle);
+}
+.ph span {
+  font: 700 9px/1 var(--font-heading);
+  letter-spacing: .08em;
+  color: var(--color-text-muted);
+}
+
+/* — Product Cards (Insta360 Store Style) — */
+.product-card,
+.home-grid > button,
+.home-grid-3 > button {
+  position: relative;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  background: var(--color-surface) !important;
+  border: 1px solid var(--color-divider) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-sm) !important;
+  padding: 12px !important;
+  text-align: left !important;
+  color: var(--color-text) !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  overflow: hidden !important;
+}
+.product-card:hover,
+.home-grid > button:hover,
+.home-grid-3 > button:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: var(--shadow-hover) !important;
+  border-color: var(--color-neutral-300) !important;
+}
+
+/* Floating Badges */
+.badge-floating {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font: 800 9px/1 var(--font-heading);
+  letter-spacing: .05em;
+  padding: 4px 9px;
+  border-radius: var(--radius-pill);
+  z-index: 2;
+  box-shadow: var(--shadow-xs);
+}
+.badge-new { background: #111214; color: #ffffff; }
+.badge-sale { background: var(--color-accent-sale); color: #ffffff; }
+.badge-hot { background: var(--color-accent-energy); color: #111214; }
+.badge-blue { background: var(--color-accent); color: #ffffff; }
+.badge-success { background: var(--color-success); color: #ffffff; }
+
+/* — Tags & Filter Chips — */
+.tag {
+  min-height: 32px;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: 1px solid transparent;
+  user-select: none;
+}
+.tag:hover {
+  transform: translateY(-1px);
+}
+.tag-accent {
+  background: var(--color-accent-100);
+  color: var(--color-accent);
+  border-color: var(--color-accent-200);
+  font-weight: 700;
+}
+.tag-energy {
+  background: var(--color-accent-energy-100);
+  color: #8f7200;
+  font-weight: 700;
+}
+.tag-sale {
+  background: var(--color-accent-sale-100);
+  color: var(--color-accent-sale);
+  font-weight: 700;
+}
+.tag-neutral {
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  border-color: var(--color-divider);
+}
+.tag-neutral:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-text);
+  border-color: var(--color-neutral-400);
+}
+
+/* — Inputs & Form Controls — */
+.input {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 16px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-divider);
+  border-radius: var(--radius-sm);
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+.input:focus-visible,
+.input:focus {
+  outline: none;
+  background: #ffffff;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3.5px var(--color-accent-100);
+}
+.input::placeholder {
+  color: var(--color-text-muted);
+}
+
+/* — Surface Cards (Apple Editorial) — */
+.card-premium {
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.25s var(--ease-spring);
+}
+.card-premium:hover {
+  box-shadow: var(--shadow-md);
+}
+
+/* — Stepper / Counter — */
+.stepper-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--color-divider);
+  background: var(--color-surface);
+  color: var(--color-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.stepper-btn:hover {
+  background: var(--color-neutral-200);
+  border-color: var(--color-neutral-400);
+}
+.stepper-btn:active {
+  transform: scale(0.92);
+}
+
+/* — Skeleton Shimmer Loaders — */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.skel {
+  background: linear-gradient(90deg, var(--color-neutral-200) 25%, var(--color-neutral-100) 50%, var(--color-neutral-200) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s infinite ease-in-out;
+  border-radius: var(--radius-sm);
+}
+.skel-text { height: 16px; margin-bottom: 8px; border-radius: 4px; }
+.skel-block { height: 40px; }
+.skel-card { height: 220px; border-radius: var(--radius-md); }
+
+/* — Toast Notifications — */
+.toast-banner {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 480px;
+  width: calc(100% - 32px);
+  background: rgba(17, 18, 20, 0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  color: #ffffff;
+  padding: 12px 18px;
+  border-radius: var(--radius-md);
+  font: 600 13px/1.35 var(--font-body);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  box-shadow: var(--shadow-xl);
+  z-index: 999;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  animation: toastSlideUp 0.3s var(--ease-spring);
+}
+@keyframes toastSlideUp {
+  from { opacity: 0; transform: translate(-50%, 12px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}

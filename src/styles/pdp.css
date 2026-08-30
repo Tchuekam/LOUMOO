@@ -1,0 +1,188 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   LOUMOO PDP STYLES — APPLE & INSTA360 PRODUCT STORYTELLING ENGINE
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* Hero Gallery */
+.pdp-hero-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  border: 1px solid var(--color-divider);
+  box-shadow: var(--shadow-sm);
+}
+@media (min-width: 1024px) {
+  .pdp-grid-layout {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: 36px;
+    align-items: start;
+  }
+}
+
+.pdp-main-photo-frame {
+  width: 100%;
+  aspect-ratio: 4/3;
+  background: radial-gradient(circle at 50% 45%, #ffffff 0%, #f0f2f7 100%);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--color-border-subtle);
+}
+
+.pdp-thumbs-row {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 4px 2px;
+}
+.pdp-thumbs-row::-webkit-scrollbar { display: none; }
+
+.pdp-thumb {
+  width: 60px;
+  height: 60px;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--color-divider);
+  background: var(--color-surface);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+.pdp-thumb:hover {
+  border-color: var(--color-neutral-400);
+}
+.pdp-thumb.active {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 2px var(--color-accent-100);
+}
+
+/* Buy Box & Selection Controls */
+.pdp-buybox {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.pdp-price-hero {
+  font-family: var(--font-heading);
+  font-size: clamp(26px, 3.5vw, 36px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--color-text);
+  line-height: 1;
+}
+
+.pdp-swatch-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--color-divider);
+  background: var(--color-surface);
+  cursor: pointer;
+  font: 600 13px/1 var(--font-heading);
+  color: var(--color-text);
+  transition: all 0.15s ease;
+}
+.pdp-swatch-btn.active {
+  border-color: var(--color-accent);
+  background: var(--color-accent-100);
+  color: var(--color-accent);
+  font-weight: 700;
+}
+
+.pdp-dot-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid rgba(0,0,0,0.15);
+}
+
+/* Escrow Trust Guarantee Box */
+.pdp-escrow-box {
+  background: linear-gradient(135deg, #f0fdf4 0%, #e6f9ed 100%);
+  border: 1px solid #bbf7d0;
+  border-radius: var(--radius-md);
+  padding: 16px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+/* Editorial Storytelling Sections */
+.pdp-story-banner {
+  background: linear-gradient(180deg, #111214 0%, #1e2026 100%);
+  color: #ffffff;
+  border-radius: var(--radius-xl);
+  padding: 48px 32px;
+  margin: 32px 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.pdp-features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin: 24px 0;
+}
+
+.pdp-feature-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-md);
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+.pdp-feature-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Bundle Builder (Insta360 Model) */
+.pdp-bundle-card {
+  background: var(--color-surface);
+  border: 2px solid var(--color-accent-200);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Sticky Mobile Purchase Bar */
+.pdp-sticky-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid var(--color-divider);
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  z-index: 100;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06);
+}
+@media (min-width: 1024px) {
+  .pdp-sticky-bar { display: none !important; }
+}

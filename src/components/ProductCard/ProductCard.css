@@ -1,0 +1,95 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   PRODUCT CARD COMPONENT STYLES
+   ══════════════════════════════════════════════════════════════════════ */
+.loumoo-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: 10px;
+  text-align: left;
+  color: var(--color-text);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+  cursor: pointer;
+  width: 100%;
+}
+
+.loumoo-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-neutral-300);
+}
+
+.loumoo-card-media {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 10px;
+  background: var(--color-neutral-100);
+  background-image: radial-gradient(circle at 50% 40%, rgba(255,255,255,0.9) 0%, rgba(241,243,247,0.4) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.loumoo-card-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  font: 800 9px/1 var(--font-heading);
+  letter-spacing: .04em;
+  padding: 3px 8px;
+  border-radius: var(--radius-pill);
+  z-index: 2;
+  box-shadow: var(--shadow-xs);
+}
+
+.loumoo-card-body {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.loumoo-card-title {
+  font: 700 13px/1.25 var(--font-heading);
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.loumoo-card-merchant {
+  font: 400 11px/1.2 var(--font-body);
+  color: var(--color-text-secondary);
+  margin-top: 3px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.loumoo-card-footer {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-top: 8px;
+}
+
+.loumoo-card-price {
+  font: 800 14px/1 var(--font-heading);
+  color: var(--color-accent);
+}
+
+.loumoo-card-rating {
+  font: 700 10.5px/1 var(--font-body);
+  color: #ff9500;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
