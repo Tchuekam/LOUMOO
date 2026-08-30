@@ -266,7 +266,7 @@ def get_chat_and_profile_view():
             <button onClick="{{ on.onboardWelcome }}" class="btn btn-dark" style="background:#fff;color:var(--color-text);height:42px;padding:0 20px;font-size:13px">
               <span>GET STARTED →</span>
             </button>
-            <button onClick="{{ on.onboardWelcome }}" class="btn btn-secondary" style="background:rgba(255,255,255,0.15);color:#fff;border-color:rgba(255,255,255,0.3);height:42px;padding:0 16px;font-size:12.5px">
+            <button onClick="{{ signIn }}" class="btn btn-secondary" style="background:rgba(255,255,255,0.15);color:#fff;border-color:rgba(255,255,255,0.3);height:42px;padding:0 16px;font-size:12.5px">
               SIGN IN
             </button>
           </div>

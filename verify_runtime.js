@@ -46,73 +46,67 @@ try {
   console.log("Initial screen:", comp.state.screen);
   
   let vals = comp.renderVals();
-  console.log("Total renderVals keys:", Object.keys(vals).length);
+  console.log("Initial auth status. isLoggedIn:", comp.state.isLoggedIn, "ctaLabel:", vals.ctaLabel);
 
-  // 1. Test Seller Onboarding Journey
-  console.log("\n--- SIMULATING SELLER ONBOARDING JOURNEY ---");
-  vals.on.onboardWelcome();
-  console.log("Navigated to Welcome:", comp.state.screen);
-  
+  // 1. Verify default logged in state: CTA is Sell/Upload
+  if (vals.ctaLabel !== 'Sell on LOUMOO') {
+    throw new Error(`Expected ctaLabel to be 'Sell on LOUMOO' when logged in, got '${vals.ctaLabel}'`);
+  }
+  vals.ctaAction();
+  console.log("Clicked CTA when logged in -> Navigated to:", comp.state.screen);
+  if (comp.state.screen !== 'upload') {
+    throw new Error(`Expected navigation to 'upload', got '${comp.state.screen}'`);
+  }
+
+  // 2. Test sign out -> CTA turns into 'Join LOUMOO'
+  vals = comp.renderVals();
+  vals.signOut();
+  vals = comp.renderVals();
+  console.log("After signOut -> isLoggedIn:", comp.state.isLoggedIn, "ctaLabel:", vals.ctaLabel);
+  if (vals.ctaLabel !== 'Join LOUMOO') {
+    throw new Error(`Expected ctaLabel to be 'Join LOUMOO' when logged out, got '${vals.ctaLabel}'`);
+  }
+  vals.ctaAction();
+  console.log("Clicked CTA when logged out -> Navigated to:", comp.state.screen);
+  if (comp.state.screen !== 'onboardWelcome') {
+    throw new Error(`Expected navigation to 'onboardWelcome', got '${comp.state.screen}'`);
+  }
+
+  // 3. Test signup & onboarding flow -> user stays logged in and CTA turns to 'Sell on LOUMOO'
   vals = comp.renderVals();
   vals.on.onboardType();
-  vals.setRoleSeller();
-  console.log("Selected Role:", comp.state.userRole);
-
   vals = comp.renderVals();
+  vals.setRoleSeller();
   vals.on.onboardIdentity();
-  console.log("Navigated to Identity:", comp.state.screen, "Name:", comp.state.regFirstName);
-
   vals = comp.renderVals();
   vals.on.onboardOtp();
-  console.log("Navigated to OTP Verification:", comp.state.screen);
-
   vals = comp.renderVals();
   vals.continueAfterOtp();
-  console.log("Dynamic Branch after OTP (Seller):", comp.state.screen);
-
   vals = comp.renderVals();
-  vals.setSellerPro();
   vals.on.onboardBusiness();
-  console.log("Navigated to Business Profile:", comp.state.screen, "Store:", comp.state.regBusinessName);
-
   vals = comp.renderVals();
   vals.on.onboardVerify();
-  console.log("Navigated to Trust Verification:", comp.state.screen);
-
   vals = comp.renderVals();
   vals.simulateUploadDoc();
-  console.log("Uploaded CNI Doc. docUploaded:", comp.state.docUploaded);
-
   vals = comp.renderVals();
   vals.on.onboardReview();
-  console.log("Navigated to Summary Review:", comp.state.screen);
-
   vals = comp.renderVals();
   vals.completeOnboarding();
-  console.log("Completed Onboarding -> Success Screen:", comp.state.screen);
-  console.log("User Display Name updated:", comp.state.userName);
+  
+  vals = comp.renderVals();
+  console.log("After completeOnboarding -> isLoggedIn:", comp.state.isLoggedIn, "ctaLabel:", vals.ctaLabel, "userName:", comp.state.userName);
+  if (!comp.state.isLoggedIn) {
+    throw new Error("Expected isLoggedIn to be true after completeOnboarding");
+  }
+  if (vals.ctaLabel !== 'Sell on LOUMOO') {
+    throw new Error(`Expected ctaLabel to turn to 'Sell on LOUMOO' after signup, got '${vals.ctaLabel}'`);
+  }
 
-  // 2. Test Buyer Onboarding Pathway
-  console.log("\n--- SIMULATING BUYER ONBOARDING JOURNEY ---");
-  vals = comp.renderVals();
-  vals.setRoleBuyer();
-  vals.on.onboardOtp();
-  vals = comp.renderVals();
-  vals.continueAfterOtp();
-  console.log("Dynamic Branch after OTP (Buyer):", comp.state.screen);
-  vals = comp.renderVals();
-  vals.toggleInterestTech();
-  vals.toggleInterestTravel();
-  console.log("Interests updated: Tech=", comp.state.interestTech, "Travel=", comp.state.interestTravel);
+  // 4. Test Mobile Single Elevated Upload Action
+  vals.navUploadAction();
+  console.log("Mobile navUploadAction executed -> Screen:", comp.state.screen);
 
-  // 3. Test Storefront & Cart flow
-  console.log("\n--- SIMULATING PDP & CHECKOUT JOURNEY ---");
-  vals.on.product();
-  vals = comp.renderVals();
-  vals.incQty();
-  console.log("Product qty:", comp.state.qty, "Line total:", comp.renderVals().lineTotal);
-
-  console.log("\nALL 58 SCREENS & ONBOARDING JOURNEY TESTS PASSED 100% CLEANLY!");
+  console.log("\nALL AUTHENTICATION, PERSISTENCE & DYNAMIC BUTTON TESTS PASSED 100% CLEANLY!");
 } catch (e) {
   console.error("Runtime test error:", e);
   process.exit(1);

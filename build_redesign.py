@@ -550,9 +550,9 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
     </button>
 
     <div style="margin-top:16px;padding:0 4px">
-      <button onClick="{{ on.onboardWelcome }}" class="sidebar-cta-btn">
+      <button onClick="{{ ctaAction }}" class="sidebar-cta-btn">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        <span>Join LOUMOO</span>
+        <span>{{ ctaLabel }}</span>
       </button>
     </div>
   </div>
@@ -638,7 +638,7 @@ footer_and_scripts = """
     <span style="font:800 13px/1 var(--font-heading);height:18px;display:flex;align-items:center">VS</span>
     <span>COMPARE</span>
   </button>
-  <button onClick="{{ on.upload }}" aria-label="Upload a listing" class="nav-upload-btn">
+  <button onClick="{{ navUploadAction }}" aria-label="{{ navUploadLabel }}" class="nav-upload-btn">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M12 5v14M5 12h14"/></svg>
   </button>
   <button onClick="{{ on.travel }}" aria-label="Go to Travel" style="color:{{ navTravel }}">
@@ -708,6 +708,7 @@ class Component extends DCLogic {
   state = {
     screen: 'home', stack: [], cart: 2, vs: 1, toast: '', following: false, saved: false,
     qty: 1, freeday: false, darkMode: false,
+    isLoggedIn: true,
     userRole: 'buyer',
     regFirstName: 'Rostand',
     regLastName: 'Tchuekam',
@@ -866,8 +867,25 @@ class Component extends DCLogic {
       setSellerIndividual: () => this.setState({ sellerType: 'individual' }),
       setSellerPro: () => this.setState({ sellerType: 'pro' }),
       setSellerService: () => this.setState({ sellerType: 'service' }),
+      isLoggedIn: this.state.isLoggedIn,
+      ctaAction: this.state.isLoggedIn ? on.upload : on.onboardWelcome,
+      ctaLabel: this.state.isLoggedIn ? 'Sell on LOUMOO' : 'Join LOUMOO',
+      navUploadAction: this.state.isLoggedIn ? on.upload : on.onboardWelcome,
+      navUploadLabel: this.state.isLoggedIn ? 'Upload a listing' : 'Join LOUMOO',
+      signIn: () => {
+        this.setState({ isLoggedIn: true });
+        this.toast('Welcome back to LOUMOO, ' + (this.state.regFirstName || 'Tchuekam'));
+        this.go('home');
+      },
+      signOut: () => {
+        this.setState({ isLoggedIn: false });
+        this.toast('Signed out of LOUMOO');
+      },
       completeOnboarding: () => {
-        this.setState({ userName: this.state.regFirstName });
+        this.setState({
+          isLoggedIn: true,
+          userName: this.state.regFirstName || 'Rostand'
+        });
         this.go('onboardSuccess');
       },
       userName: this.props.userName ?? this.state.userName ?? 'Tchuekam',
