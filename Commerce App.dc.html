@@ -2225,62 +2225,106 @@ button:active { transform: scale(0.98); }
 </sc-if>
 
 <sc-if value="{{ is.cart }}">
-<sc-if value="{{ cartCount === 0 }}">
+<sc-if value="{{ cartEmpty }}">
 <div class="empty-state">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-  <h4>Your cart is empty</h4>
-  <p>Start shopping to add items to your cart.</p>
-  <button onClick="{{ on.home }}" class="btn btn-primary btn-block" style="margin-top:24px;justify-content:center">START SHOPPING</button>
+  <div style="width:72px;height:72px;border-radius:50%;background:var(--color-surface-subtle);display:flex;align-items:center;justify-content:center;margin-bottom:8px;box-shadow:var(--shadow-sm)">
+    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color:var(--color-neutral-400)"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+  </div>
+  <h4>Votre panier est vide</h4>
+  <p>Découvrez nos offres exceptionnelles et ajoutez des articles à votre panier.</p>
+  <button onClick="{{ on.home }}" class="btn btn-primary" style="margin-top:20px;padding:12px 28px;border-radius:var(--radius-pill)">EXPLORER LE CATALOGUE</button>
 </div>
 </sc-if>
-<sc-if value="{{ cartCount > 0 }}">
-<div>
-  <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:2px solid var(--color-text)">
-    <button onClick="{{ back }}" style="border:none;background:transparent;padding:0;font:800 17px/1 var(--font-heading);color:var(--color-text)">←</button>
-    <h5 style="margin:0;font-size:16px">Cart</h5>
-    <span style="margin-left:auto;font:400 11px/1 var(--font-body);color:var(--color-neutral-700)">{{ cartLabel }}</span>
+<sc-if value="{{ hasCartItems }}">
+<div style="background:var(--color-surface);min-height:100%">
+  <!-- Cart Header -->
+  <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--color-divider);background:var(--color-surface);position:sticky;top:0;z-index:4">
+    <button onClick="{{ back }}" style="border:none;background:transparent;padding:4px;font:800 18px/1 var(--font-heading);color:var(--color-text);cursor:pointer">←</button>
+    <div>
+      <h5 style="margin:0;font-size:18px;font-weight:700">Mon Panier</h5>
+      <span style="font:500 11px/1 var(--font-body);color:var(--color-text-muted)">{{ cartLabel }}</span>
+    </div>
+    <button onClick="{{ clearCart }}" style="margin-left:auto;border:none;background:transparent;font-size:11.5px;font-weight:600;color:var(--color-accent-sale);cursor:pointer">Vider</button>
   </div>
 
-  <div style="padding:14px 16px 0">
-    <div style="font:600 9px/1 var(--font-body);letter-spacing:.14em;color:var(--color-neutral-700);margin-bottom:10px">ORCA ELECTRONICS · DELIVERY TODAY</div>
-    <div style="display:flex;gap:12px;border:1px solid var(--color-divider);background:#fff;padding:10px;margin-bottom:10px">
-      <div class="ph" style="width:72px;height:72px;flex:none"></div>
-      <div style="flex:1;min-width:0">
-        <div style="font:600 12.5px/1.3 var(--font-body)">MacBook Air M2 13" 256GB</div>
-        <div style="font:800 13px/1 var(--font-heading);margin-top:7px">{{ lineTotal }}</div>
-        <div style="display:flex;align-items:center;gap:10px;margin-top:9px">
-          <div style="display:flex;border:1px solid var(--color-divider)">
-            <button onClick="{{ decQty }}" style="width:26px;height:26px;border:none;background:transparent;font:600 13px/1 var(--font-body);color:var(--color-text)">−</button>
-            <span style="width:28px;height:26px;display:flex;align-items:center;justify-content:center;font:600 12px/1 var(--font-body);border-left:1px solid var(--color-divider);border-right:1px solid var(--color-divider)">{{ qty }}</span>
-            <button onClick="{{ incQty }}" style="width:26px;height:26px;border:none;background:transparent;font:600 13px/1 var(--font-body);color:var(--color-text)">+</button>
+  <div style="padding:16px">
+    <!-- Item 1: Orca Electronics -->
+    <div style="background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);box-shadow:var(--shadow-xs);margin-bottom:14px;overflow:hidden">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--color-surface-subtle);border-bottom:1px solid var(--color-divider);font-size:11px;font-weight:700;letter-spacing:0.04em;color:var(--color-text)">
+        <span>🏪 ORCA ELECTRONICS · LIVRAISON AUJOURD'HUI</span>
+        <span style="color:#00a884">✓ VÉRIFIÉ</span>
+      </div>
+      <div style="display:flex;gap:14px;padding:14px">
+        <div class="ph" style="width:78px;height:78px;border-radius:var(--radius-sm);flex:none"></div>
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:700;font-size:13.5px;line-height:1.3">MacBook Air M2 13" 256GB</div>
+          <div style="font-weight:800;font-size:14px;color:var(--color-accent);margin-top:6px">{{ lineTotal }}</div>
+          
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px">
+            <!-- Quantity Stepper -->
+            <div style="display:inline-flex;align-items:center;border:1px solid var(--color-divider);border-radius:var(--radius-pill);background:var(--color-surface-subtle);overflow:hidden">
+              <button onClick="{{ decQty }}" style="width:28px;height:28px;border:none;background:transparent;font-weight:700;font-size:14px;color:var(--color-text);cursor:pointer">−</button>
+              <span style="width:30px;height:28px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px">{{ qty }}</span>
+              <button onClick="{{ incQty }}" style="width:28px;height:28px;border:none;background:transparent;font-weight:700;font-size:14px;color:var(--color-text);cursor:pointer">+</button>
+            </div>
+
+            <!-- Item Action Buttons -->
+            <div style="display:flex;align-items:center;gap:10px">
+              <button onClick="{{ toggleSave }}" style="border:none;background:transparent;font-size:11px;font-weight:600;color:var(--color-text-secondary);cursor:pointer">Sauvegarder</button>
+              <button onClick="{{ removeCartItem }}" title="Supprimer" style="border:none;background:transparent;color:var(--color-accent-sale);cursor:pointer;padding:2px;display:flex;align-items:center">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              </button>
+            </div>
           </div>
-          <button onClick="{{ toggleSave }}" style="border:none;background:transparent;padding:0;font:600 10px/1 var(--font-body);color:var(--color-neutral-700)">Save for later</button>
         </div>
       </div>
     </div>
-    <div style="font:600 9px/1 var(--font-body);letter-spacing:.14em;color:var(--color-neutral-700);margin:18px 0 10px">SAWA LUXURY HOTEL · BOOKING</div>
-    <div style="display:flex;gap:12px;border:1px solid var(--color-divider);background:#fff;padding:10px">
-      <div class="ph" style="width:72px;height:72px;flex:none"></div>
-      <div style="flex:1;min-width:0">
-        <div style="font:600 12.5px/1.3 var(--font-body)">Deluxe room · 2 nights</div>
-        <div style="font:400 10px/1 var(--font-body);color:var(--color-neutral-700);margin-top:5px">12–14 Sept · 2 guests</div>
-        <div style="font:800 13px/1 var(--font-heading);margin-top:7px">XAF 130 000</div>
+
+    <!-- Item 2: Sawa Luxury Hotel -->
+    <div style="background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);box-shadow:var(--shadow-xs);margin-bottom:16px;overflow:hidden">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--color-surface-subtle);border-bottom:1px solid var(--color-divider);font-size:11px;font-weight:700;letter-spacing:0.04em;color:var(--color-text)">
+        <span>🏨 SAWA LUXURY HOTEL · RÉSERVATION</span>
+        <span style="color:#00a884">✓ CONFIRMÉ</span>
+      </div>
+      <div style="display:flex;gap:14px;padding:14px">
+        <div class="ph" style="width:78px;height:78px;border-radius:var(--radius-sm);flex:none"></div>
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:700;font-size:13.5px;line-height:1.3">Chambre Deluxe · 2 nuits</div>
+          <div style="font-size:11px;color:var(--color-text-muted);margin-top:3px">12–14 Sept · 2 personnes</div>
+          <div style="font-weight:800;font-size:14px;color:var(--color-accent);margin-top:6px">XAF 130 000</div>
+          
+          <div style="display:flex;justify-content:flex-end;margin-top:8px">
+            <button onClick="{{ removeCartItem }}" title="Supprimer" style="border:none;background:transparent;color:var(--color-accent-sale);cursor:pointer;padding:2px;display:flex;align-items:center;font-size:11px;gap:4px">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Supprimer
+            </button>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div style="padding:20px 16px 0">
-    <div style="border-top:2px solid var(--color-text);padding-top:12px">
-      <div style="display:flex;justify-content:space-between;font:400 12px/1 var(--font-body);padding:5px 0"><span>Subtotal</span><span>{{ cartItems }}</span></div>
-      <div style="display:flex;justify-content:space-between;font:400 12px/1 var(--font-body);padding:5px 0"><span>Delivery</span><span>XAF 3 000</span></div>
-      <div style="display:flex;justify-content:space-between;font:400 12px/1 var(--font-body);padding:5px 0;color:var(--color-accent-700)"><span>Black FreeDay gift</span><span>−XAF 0</span></div>
-      <div style="display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid var(--color-divider);margin-top:8px;padding-top:10px"><span style="font:800 13px/1 var(--font-heading)">TOTAL</span><span style="font:800 20px/1 var(--font-heading)">{{ cartTotal }}</span></div>
+    <!-- Order Summary Card -->
+    <div style="background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);box-shadow:var(--shadow-sm);padding:16px;margin-bottom:20px">
+      <div style="font-weight:700;font-size:14px;margin-bottom:12px;color:var(--color-text)">Résumé de la commande</div>
+      <div style="display:flex;justify-content:space-between;font-size:12.5px;color:var(--color-text-secondary);padding:4px 0"><span>Sous-total articles</span><span style="font-weight:600;color:var(--color-text)">{{ cartItems }}</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:12.5px;color:var(--color-text-secondary);padding:4px 0"><span>Frais de livraison</span><span style="font-weight:600;color:var(--color-text)">XAF 3 000</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:12.5px;color:var(--color-success);padding:4px 0"><span>Remise FreeDay</span><span style="font-weight:600">−XAF 0</span></div>
+      <div style="height:1px;background:var(--color-divider);margin:10px 0"></div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline">
+        <span style="font-weight:800;font-size:14px;color:var(--color-text)">TOTAL</span>
+        <span style="font-weight:800;font-size:20px;color:var(--color-accent)">{{ cartTotal }}</span>
+      </div>
     </div>
-  </div>
 
-  <div style="padding:18px 16px 24px">
-    <button onClick="{{ on.checkout }}" class="btn btn-primary btn-block" style="height:50px;justify-content:space-between">CHECKOUT <span>→</span></button>
-    <button onClick="{{ on.home }}" class="btn btn-secondary btn-block" style="height:46px;border-width:2px;border-color:var(--color-text);justify-content:space-between">CONTINUE SHOPPING <span>→</span></button>
+    <!-- CTA Buttons -->
+    <div style="display:flex;flex-direction:column;gap:10px;padding-bottom:32px">
+      <button onClick="{{ on.checkout }}" class="btn btn-primary btn-block" style="height:48px;border-radius:var(--radius-pill);justify-content:space-between;padding:0 20px;font-size:13px">
+        <span>PASSER LA COMMANDE</span>
+        <span>→</span>
+      </button>
+      <button onClick="{{ on.home }}" class="btn btn-secondary btn-block" style="height:44px;border-radius:var(--radius-pill);justify-content:center;font-size:12.5px">
+        CONTINUER MES ACHATS
+      </button>
+    </div>
   </div>
 </div>
 </sc-if>
@@ -3878,7 +3922,9 @@ class Component extends DCLogic {
       userName: this.props.userName ?? 'Tchuekam',
       showAds: this.props.showAds ?? true,
       cartCount: this.state.cart,
-      cartLabel: (this.state.qty + 1) + ' items · 2 sellers',
+      cartEmpty: this.state.cart === 0,
+      hasCartItems: this.state.cart > 0,
+      cartLabel: this.state.cart > 0 ? (this.state.qty + (this.state.cart > 1 ? 1 : 0)) + ' items · 2 sellers' : '0 items',
       vsCount: this.state.vs,
       toast: this.state.toast,
       clearToast: () => this.setState({ toast: '' }),
@@ -3908,6 +3954,8 @@ class Component extends DCLogic {
       navProfile: this.navColor('profile', 'seller', 'orders', 'settings'),
       setScroller: (el) => { this._sc = el; },
       addToCart: () => { this.setState(st => ({ cart: st.cart + 1 })); this.toast('Added to cart — 1 item from Orca Electronics'); },
+      removeCartItem: () => { this.setState(st => ({ cart: Math.max(0, st.cart - 1) })); this.toast('Item removed from cart'); },
+      clearCart: () => { this.setState({ cart: 0 }); this.toast('Cart cleared'); },
       addToVs: () => { this.setState(st => ({ vs: st.vs + 1 })); this.go('vsCompare'); },
       claimGift: () => this.toast('Gift claimed. The seller will message you shortly.'),
       toggleFollow: () => { this.setState(st => ({ following: !st.following })); },
