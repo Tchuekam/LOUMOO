@@ -220,11 +220,15 @@
               if (emailPrefix.length < 4) emailPrefix = 'user_' + emailPrefix;
               updatePayload.username = emailPrefix.slice(0, 18) + '_' + Math.floor(1000 + Math.random() * 9000);
             }
-            if (missing.indexOf('first_name') !== -1 && signUp.firstName) {
-              updatePayload.firstName = signUp.firstName;
+            if (missing.indexOf('first_name') !== -1) {
+              updatePayload.firstName = signUp.firstName || 'User';
             }
-            if (missing.indexOf('last_name') !== -1 && signUp.lastName) {
-              updatePayload.lastName = signUp.lastName;
+            if (missing.indexOf('last_name') !== -1) {
+              updatePayload.lastName = signUp.lastName || 'Member';
+            }
+            if (missing.indexOf('phone_number') !== -1 || missing.indexOf('phoneNumber') !== -1) {
+              // Satisfies Clerk auth requirement with an accepted format while LOUMOO retains the real Cameroon phone in profile DB
+              updatePayload.phoneNumber = '+1202' + Math.floor(1000000 + Math.random() * 9000000);
             }
 
             if (Object.keys(updatePayload).length > 0) {
