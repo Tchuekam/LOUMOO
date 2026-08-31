@@ -93,7 +93,7 @@ class AccountStateService {
     // entirely in LOUMOO's own database.
     const isTestPrincipal = opts.source === 'test-harness';
 
-    if (!isTestPrincipal && !opts.skipClerk && ClerkIdentityProvider.isConfigured) {
+    if (!isTestPrincipal && !opts.skipClerk && opts.source !== 'supabase' && ClerkIdentityProvider.isConfigured) {
       const clerkUser = await ClerkIdentityProvider.getUser(clerkUserId);
       if (!clerkUser) {
         // The session verified, but the identity is gone from Clerk (deleted

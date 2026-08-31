@@ -217,7 +217,7 @@ router.post('/verify-otp', async (req, res, next) => {
     );
 
     // Provision or update profile in database
-    const profile = await ProfileRepository.getOrCreateForClerkUser({
+    const { profile } = await ProfileRepository.getOrCreateForClerkUser({
       clerkUserId: userId,
       email: cleanEmail,
       firstName: cached.firstName,
@@ -225,6 +225,12 @@ router.post('/verify-otp', async (req, res, next) => {
       phoneNumber: cached.phone,
       city: cached.city
     });
+
+    const now = new Date().toISOString();
+    await ProfileRepository.update(profile.id, {
+      email_verified_at: now,
+      phone_number: cached.phone || profile.phone_number
+    }, userId);
 
     await ProfileRepository.recordLogin(profile.id, userId);
     const { accountState } = await AccountStateService.resolve(userId, { source: 'supabase' });

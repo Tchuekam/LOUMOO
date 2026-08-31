@@ -98,6 +98,15 @@ class ProfileRepository {
 
     const existing = await this.findByClerkUserId(identity.clerkUserId, { useCache: false });
     if (existing) {
+      if (existing.deleted_at || existing.clerk_deleted_at || existing.account_status === 'anonymized') {
+        await this.db.from('profiles').update({
+          clerk_deleted_at: null,
+          deleted_at: null,
+          status: 'active',
+          account_status: 'active'
+        }).eq('id', existing.id);
+        await this.invalidate(identity.clerkUserId, existing.id);
+      }
       return { profile: existing, created: false };
     }
 
@@ -235,10 +244,15 @@ class ProfileRepository {
 
   static async recordLogin(userId, clerkUserId) {
     try {
-      await this.db.from('profiles').update({ last_login_at: nowIso() }).eq('id', userId);
+      await this.db.from('profiles').update({
+        last_login_at: nowIso(),
+        clerk_deleted_at: null,
+        deleted_at: null,
+        status: 'active',
+        account_status: 'active'
+      }).eq('id', userId);
       await this.invalidate(clerkUserId, userId);
     } catch (err) {
-      // A login timestamp is telemetry, never a reason to fail the request.
       logger.warn(`[ProfileRepository] Could not record login for ${userId}: ${err.message}`);
     }
   }
