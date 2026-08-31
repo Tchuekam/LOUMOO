@@ -20,6 +20,7 @@ const ListingRepository = require('../infrastructure/ListingRepository');
 const ListingValidationService = require('./ListingValidationService');
 const MediaStorageService = require('../../../infrastructure/storage/MediaStorageService');
 const AnalyticsService = require('../../../infrastructure/analytics/AnalyticsService');
+const BehavioralSignalService = require('../../adaptive/application/BehavioralSignalService');
 const Listing = require('../domain/Listing');
 const logger = require('../../../shared/logging/logger');
 const {
@@ -151,6 +152,14 @@ class CreateListingUseCase {
       await MediaStorageService.discard(staged.map(u => u.id), 'listing insert failed');
       throw err;
     }
+
+    // Progressive personalization: what a seller lists is the strongest
+    // signal about their catalog. Fire-and-forget — never blocks the listing.
+    BehavioralSignalService.record(principal.id, {
+      kind: 'listing',
+      category: value.categoryId,
+      resourceId: row.id
+    }).catch(() => null);
 
     // ── 6. ATTACH ATTRIBUTES AND MEDIA ─────────────────────────────────────
     // From here the listing row exists; any failure must undo it rather than

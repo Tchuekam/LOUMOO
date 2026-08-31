@@ -33,6 +33,7 @@ const PROFILE_COLUMNS = [
   'buyer_interests', 'shopping_priorities', 'seller_type', 'business_name',
   'tax_niu_number', 'rccm_number', 'business_address', 'kyc_doc_type',
   'kyc_doc_status', 'completion_percentage', 'account_status',
+  'adaptive_status', 'adaptive_started_at', 'adaptive_completed_at',
   'deletion_requested_at', 'last_login_at', 'created_at', 'updated_at', 'deleted_at'
 ].join(', ');
 

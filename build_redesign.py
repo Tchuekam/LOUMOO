@@ -727,7 +727,7 @@ const SCREENS = [
   'visualScan','visualResults','upload','uploadDetails','uploadPrice','uploadSuccess','myListings','travel','travelBus',
   'travelPackages','travelVisa','travelResults','travelDetail','travelPassenger','travelTicket','announce','announceDetail',
   'profile','seller','settings','payFailed','networkError','saved','transactions','loading',
-  'onboardWelcome','onboardType','onboardIdentity','onboardOtp','onboardBuyer','onboardSeller','onboardBusiness','onboardVerify','onboardReview','onboardSuccess',
+  'onboardWelcome','onboardType','onboardIdentity','onboardOtp','onboardAdaptive','onboardBuyer','onboardSeller','onboardBusiness','onboardVerify','onboardReview','onboardSuccess',
   // Phase A — Account access (returning users)
   'signIn','forgotPassword','resetPassword','verifyEmail',
   // Phase B — User Account Hub
@@ -764,7 +764,7 @@ const GROUPS = {
 const NO_NAV = [
   'visual','visualScan','visualResults','threadAi','threadSeller','checkout','paying','success','travelTicket','uploadSuccess',
   'voice','filters','payFailed','networkError','loading',
-  'onboardWelcome','onboardType','onboardIdentity','onboardOtp','onboardBuyer','onboardSeller','onboardBusiness','onboardVerify','onboardReview','onboardSuccess',
+  'onboardWelcome','onboardType','onboardIdentity','onboardOtp','onboardAdaptive','onboardBuyer','onboardSeller','onboardBusiness','onboardVerify','onboardReview','onboardSuccess',
   'signIn','forgotPassword','resetPassword','verifyEmail',
   'editProfile','addAddress','editAddress','deleteAccount','refundRequest','writeReview','sellerOrderDetail','hotelBooking',
   'createStore','storeOnboarding','storeSettings','storeVerification','storeAnalytics',
@@ -1295,7 +1295,13 @@ class Component extends DCLogic {
       privacyPrefs: null,
       cart: 0,
       saved: false,
-      following: false
+      following: false,
+      // Adaptive onboarding conversation state (server-driven).
+      adConversation: null,
+      adBusy: false,
+      adError: '',
+      adText: '',
+      adChipsSel: []
     });
 
     this._restoreOnboardingDraft();
@@ -1439,6 +1445,83 @@ class Component extends DCLogic {
     };
 
     return step(0).then(() => this._syncAccountState(true));
+  }
+
+  /* ══════════════════════════════════════════════════════════════════════
+     ADAPTIVE CONVERSATIONAL ONBOARDING
+     The server owns the sequence: every interaction fetches the conversation
+     state and renders the `nextQuestion` spec it returns. The UI never
+     hard-codes question text or order.
+     ══════════════════════════════════════════════════════════════════════ */
+
+  /** Loads (or reloads) the conversation and applies it to UI state. */
+  _adaptiveLoad() {
+    const api = getApi();
+    if (!api) {
+      this.setState({ adError: 'The LOUMOO service is unavailable right now.' });
+      return;
+    }
+    this.setState({ adBusy: true, adError: '' });
+    api.getAdaptiveConversation()
+      .then(c => {
+        if (this._unmounted) return;
+        this._adaptiveApply(c);
+        // Already understood — there is nothing left to ask.
+        if (!c || c.status === 'COMPLETED' || !c.nextQuestion) this._adaptiveFinish();
+      })
+      .catch(err => {
+        if (this._unmounted) return;
+        this.setState({
+          adBusy: false,
+          adError: (err && err.message) || 'Could not start your personalization. Please try again.'
+        });
+      });
+  }
+
+  /** Applies a conversation snapshot from the server to render state. */
+  _adaptiveApply(c) {
+    const q = (c && c.nextQuestion) || null;
+    const preselect = (q && q.preselect) || [];
+    this.setState({
+      adConversation: c,
+      adBusy: false,
+      adError: '',
+      adText: '',
+      adChipsSel: preselect.slice()
+    });
+  }
+
+  /** Submits one answer payload and applies the server's reply. */
+  _adaptiveSubmit(payload) {
+    const api = getApi();
+    if (!api) {
+      this.setState({ adError: 'The LOUMOO service is unavailable right now.' });
+      return;
+    }
+    this.setState({ adBusy: true, adError: '' });
+    api.submitAdaptiveAnswer(payload)
+      .then(c => {
+        if (this._unmounted) return;
+        this._adaptiveApply(c);
+        if (!c || c.status === 'COMPLETED' || !c.nextQuestion) this._adaptiveFinish();
+      })
+      .catch(err => {
+        if (this._unmounted) return;
+        this.setState({
+          adBusy: false,
+          adError: (err && err.message) || 'That answer could not be saved. Please try again.'
+        });
+      });
+  }
+
+  /** Routes past the adaptive phase into the rest of the existing flow. */
+  _adaptiveFinish() {
+    const next = (this.state.userRole === 'seller' || this.state.userRole === 'both')
+      ? 'onboardSeller'
+      : 'onboardReview';
+    return this._submitRemainingOnboardingSteps().then(() => {
+      if (!this._unmounted) this.go(next);
+    });
   }
 
   /* ══════════════════════════════════════════════════════════════════════
@@ -1933,7 +2016,133 @@ class Component extends DCLogic {
       prodRentals: this.state.prodRentals ?? false,
       verificationChoice: this.state.verificationChoice || 'now',
       docUploaded: this.state.docUploaded,
+
+      // ────────────────────────────────────────────────────────────────────
+      // Adaptive conversational onboarding (server-driven question spec)
+      // ────────────────────────────────────────────────────────────────────
+      adBusy: this.state.adBusy,
+      adError: this.state.adError,
+      adText: this.state.adText,
+      adChipsSel: this.state.adChipsSel || [],
+      adIntent: (this.state.adConversation && this.state.adConversation.intent) || null,
+      adQuestion: (this.state.adConversation && this.state.adConversation.nextQuestion) || null,
+      adPrompt: (this.state.adConversation && this.state.adConversation.nextQuestion && this.state.adConversation.nextQuestion.prompt) || null,
+      adSubtitle: (this.state.adConversation && this.state.adConversation.nextQuestion && this.state.adConversation.nextQuestion.subtitle) || null,
+      adAck: (this.state.adConversation && this.state.adConversation.nextQuestion && this.state.adConversation.nextQuestion.acknowledge) || null,
+      adKind: (this.state.adConversation && this.state.adConversation.nextQuestion && this.state.adConversation.nextQuestion.kind) || 'mixed',
+      adEssential: !!(this.state.adConversation && this.state.adConversation.nextQuestion && this.state.adConversation.nextQuestion.essential),
+      adCanSkip: !!(this.state.adConversation && this.state.adConversation.nextQuestion && !this.state.adConversation.nextQuestion.essential),
+      adChips: (() => {
+        const q = this.state.adConversation && this.state.adConversation.nextQuestion;
+        if (!q || !q.chips || !q.chips.length) return [];
+        const sel = new Set(this.state.adChipsSel || []);
+        return q.chips.map(c => ({ ...c, sel: sel.has(c.id) }));
+      })(),
+      adFreeText: (this.state.adConversation && this.state.adConversation.nextQuestion && this.state.adConversation.nextQuestion.freeText) || null,
+      adProgressPercent: (this.state.adConversation && this.state.adConversation.nextQuestion && this.state.adConversation.nextQuestion.progress)
+        ? this.state.adConversation.nextQuestion.progress.percent
+        : 0,
+      adMission: (this.state.adConversation && this.state.adConversation.mission) || null,
+      adMissionPreview: (() => {
+        const c = this.state.adConversation;
+        if (!c || !c.nextQuestion || c.nextQuestion.key !== 'MISSION_CONFIRM' || !c.mission || !c.mission.preview) return null;
+        return c.mission.preview;
+      })(),
+      adUnderstanding: (this.state.adConversation && this.state.adConversation.understanding) || null,
+
+      // Handlers — every action posts to the server and renders its reply.
+      adaptiveLoad: () => this._adaptiveLoad(),
+      adaptiveReload: () => this._adaptiveLoad(),
+      adaptiveBack: () => this.go('onboardOtp'),
+      adaptiveSkipAll: () => {
+        // "Skip for now": fall back to the classic preference screens.
+        const next = (this.state.userRole === 'seller' || this.state.userRole === 'both') ? 'onboardSeller' : 'onboardBuyer';
+        this._submitRemainingOnboardingSteps().then(() => { if (!this._unmounted) this.go(next); });
+      },
+      adaptiveStartOver: () => {
+        const api = getApi();
+        if (!api || this.state.adBusy) return;
+        this.setState({ adBusy: true, adError: '' });
+        api.restartAdaptiveOnboarding()
+          .then(c => { if (!this._unmounted) this._adaptiveApply(c); })
+          .catch(err => {
+            if (this._unmounted) return;
+            this.setState({ adBusy: false, adError: (err && err.message) || 'Could not restart. Please try again.' });
+          });
+      },
+      adaptivePickChip: (chip) => {
+        if (this.state.adBusy) return;
+        const q = this.state.adConversation && this.state.adConversation.nextQuestion;
+        if (!q) return;
+        const kind = q.kind;
+        if (kind === 'multi_choice') {
+          // Toggle locally; submit happens on the continue button.
+          const sel = new Set(this.state.adChipsSel || []);
+          if (sel.has(chip.id)) sel.delete(chip.id); else sel.add(chip.id);
+          this.setState({ adChipsSel: Array.from(sel) });
+          return;
+        }
+        // single_choice / mixed: tapping the chip answers immediately.
+        const payload = { questionKey: q.key, chip: chip.id };
+        if (kind === 'mixed' && (this.state.adText || '').trim()) payload.text = this.state.adText.trim();
+        this._adaptiveSubmit(payload);
+      },
+      adaptiveSubmitText: () => {
+        if (this.state.adBusy) return;
+        const q = this.state.adConversation && this.state.adConversation.nextQuestion;
+        if (!q) return;
+        const text = (this.state.adText || '').trim();
+        const sel = this.state.adChipsSel || [];
+        if (q.kind === 'multi_choice') {
+          if (!sel.length) {
+            this.setState({ adError: 'Pick at least one option to continue.' });
+            return;
+          }
+          this._adaptiveSubmit({ questionKey: q.key, chips: sel });
+          return;
+        }
+        const chip = sel[0] || null;
+        if (!text && !chip) {
+          this.setState({ adError: 'Say a little more — a few words is all it takes.' });
+          return;
+        }
+        this._adaptiveSubmit({ questionKey: q.key, text: text || null, chip: chip || null });
+      },
+      adaptiveSkip: () => {
+        if (this.state.adBusy) return;
+        const q = this.state.adConversation && this.state.adConversation.nextQuestion;
+        if (!q || q.essential) return;
+        this._adaptiveSubmit({ questionKey: q.key, skip: true });
+      },
+      adaptiveConfirmMission: () => {
+        if (this.state.adBusy) return;
+        const q = this.state.adConversation && this.state.adConversation.nextQuestion;
+        if (!q || q.key !== 'MISSION_CONFIRM') return;
+        const text = (this.state.adText || '').trim();
+        const api = getApi();
+        if (!api) return;
+        this.setState({ adBusy: true, adError: '' });
+        // Answer the confirm question, then seal onboarding with the mission.
+        api.submitAdaptiveAnswer({ questionKey: q.key, chip: 'confirm' })
+          .then(() => api.completeAdaptiveOnboarding(text ? { missionTitle: text } : {}))
+          .then(c => {
+            if (this._unmounted) return;
+            this._adaptiveApply(c);
+            this._adaptiveFinish();
+          })
+          .catch(err => {
+            if (this._unmounted) return;
+            this.setState({ adBusy: false, adError: (err && err.message) || 'Could not finish. Please try again.' });
+          });
+      },
+      adaptiveEditMission: () => {
+        // "Let me adjust it": restart the conversation so the user can re-shape
+        // their goal — supported first-class by the server ("change my goal").
+        this.adaptiveStartOver();
+      },
+      updateAdText: (e) => this.setState({ adText: e && e.target ? e.target.value : e, adError: '' }),
       completionScore,
+
 
       // Role Selection — the intent is held locally until there is an account
       // to attach it to, then recorded on the server by _startServerOnboarding.
@@ -2074,11 +2283,11 @@ class Component extends DCLogic {
       continueAfterOtp: () => {
         const api = getApi();
         const clerk = getClerk();
-        const nextScreen = this.state.userRole === 'seller' ? 'onboardSeller' : 'onboardBuyer';
+        const nextScreen = 'onboardAdaptive';
 
         // Already verified and signed in — just move on.
         if (this.state.emailVerifyState === 'verified' && this.state.authStatus === 'authenticated') {
-          this._startServerOnboarding().then(() => this.go(nextScreen));
+          this._startServerOnboarding().then(() => { this.go(nextScreen); this._adaptiveLoad(); });
           return;
         }
 
@@ -2115,7 +2324,7 @@ class Component extends DCLogic {
               return null;
             }
             this.setState({ emailVerifyState: 'verified', emailVerifyError: '' });
-            return this._startServerOnboarding().then(() => this.go(nextScreen));
+            return this._startServerOnboarding().then(() => { this.go(nextScreen); this._adaptiveLoad(); });
           })
           .catch(err => {
             if (this._unmounted) return;

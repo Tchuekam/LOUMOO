@@ -375,6 +375,159 @@ def get_onboarding_view():
 </sc-if>
 
 <!-- ══════════════════════════════════════════════════════════════════════════
+     ONBOARDING STEP 3B: ADAPTIVE CONVERSATION (is.onboardAdaptive)
+     The server owns the sequence: this screen renders the `nextQuestion`
+     spec returned by GET /api/v1/me/adaptive and posts every answer back.
+     ══════════════════════════════════════════════════════════════════════ -->
+<sc-if value="{{ is.onboardAdaptive }}">
+<div style="min-height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:24px 20px 32px;max-width:580px;margin:0 auto;box-sizing:border-box">
+
+  <div>
+    <!-- Top Navigation -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+      <button onClick="{{ adaptiveBack }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+      <span style="font:800 13px/1 var(--font-heading);letter-spacing:.08em;color:var(--color-accent)">LOUMOO ID</span>
+      <button onClick="{{ adaptiveStartOver }}" style="border:none;background:transparent;font:700 11.5px/1 var(--font-heading);color:var(--color-text-muted);cursor:pointer">
+        START OVER
+      </button>
+    </div>
+
+    <!-- Progress -->
+    <div style="height:4px;background:var(--color-divider);border-radius:2px;margin-bottom:10px;overflow:hidden">
+      <div style="width:{{ adProgressPercent }}%;height:100%;background:linear-gradient(90deg,var(--color-accent),#4da3ff);border-radius:2px;transition:width .45s ease"></div>
+    </div>
+    <div style="font:700 11px/1 var(--font-heading);color:var(--color-text-muted);letter-spacing:.06em;margin-bottom:24px">MAKING LOUMOO YOURS</div>
+
+    <!-- Loading state -->
+    <sc-if value="{{ !adQuestion && !adError }}">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:16px;padding:64px 0">
+        <div style="width:46px;height:46px;border:3px solid var(--color-divider);border-top-color:var(--color-accent);border-radius:50%;animation:spin 0.8s linear infinite"></div>
+        <span style="font:600 13px/1.4 var(--font-body);color:var(--color-text-secondary)">Understanding you…</span>
+      </div>
+    </sc-if>
+
+    <!-- Error state -->
+    <sc-if value="{{ adError }}">
+      <div role="alert" style="display:flex;align-items:flex-start;gap:10px;background:var(--color-accent-sale-100);border:1px solid var(--color-accent-sale);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:16px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-sale)" stroke-width="2" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+        <span style="font:600 12.5px/1.45 var(--font-body);color:var(--color-accent-sale)">{{ adError }}</span>
+      </div>
+      <button onClick="{{ adaptiveReload }}" class="btn btn-secondary btn-block" style="height:44px;font-size:13px">TRY AGAIN</button>
+    </sc-if>
+
+    <sc-if value="{{ adQuestion }}">
+
+      <!-- Conversational acknowledgment -->
+      <sc-if value="{{ adAck }}">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="2" style="flex-shrink:0"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+          <span style="font:600 13.5px/1.4 var(--font-body);color:var(--color-text-secondary)">{{ adAck }}</span>
+        </div>
+      </sc-if>
+
+      <h2 style="font-size:26px;margin:0 0 8px;line-height:1.2">{{ adPrompt }}</h2>
+      <p style="font-size:14px;color:var(--color-text-secondary);margin:0 0 22px;line-height:1.5">{{ adSubtitle }}</p>
+
+      <!-- MISSION CONFIRM — show the synthesized mission, not a survey -->
+      <sc-if value="{{ adQuestion.key === 'MISSION_CONFIRM' && adMissionPreview }}">
+        <div class="card-premium" style="padding:20px;border:1.5px solid var(--color-accent);box-shadow:0 0 0 1px var(--color-accent),var(--shadow-glow-blue);margin-bottom:20px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+            <div style="width:38px;height:38px;border-radius:50%;background:var(--color-accent-100);color:var(--color-accent);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+            </div>
+            <div>
+              <div style="font:700 10.5px/1 var(--font-heading);color:var(--color-text-muted);letter-spacing:.08em">YOUR MISSION</div>
+              <div style="font:800 16.5px/1.25 var(--font-heading);color:var(--color-text)">{{ adMissionPreview.title }}</div>
+            </div>
+          </div>
+          <p style="font:400 13px/1.5 var(--font-body);color:var(--color-text-secondary);margin:0 0 14px">{{ adMissionPreview.description }}</p>
+          <div style="display:flex;flex-wrap:wrap;gap:8px">
+            <sc-for list="{{ adMissionPreview.suggested_actions }}" as="act">
+              <span class="tag tag-neutral" style="font-size:11px;padding:6px 10px">{{ act.label }}</span>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px">
+          <button onClick="{{ adaptiveConfirmMission }}" disabled="{{ adBusy }}" class="btn btn-primary btn-block" style="height:50px;font-size:15px;cursor:{{ adBusy ? 'default' : 'pointer' }};opacity:{{ adBusy ? '0.65' : '1' }}">
+            <span>{{ adBusy ? 'BUILDING YOUR MISSION…' : 'YES, THAT’S IT' }}</span>
+            <span>{{ adBusy ? '' : '✓' }}</span>
+          </button>
+          <button onClick="{{ adaptiveEditMission }}" disabled="{{ adBusy }}" class="btn btn-secondary btn-block" style="height:44px;font-size:13px;cursor:pointer">
+            LET ME ADJUST IT
+          </button>
+        </div>
+
+        <!-- Optional mission rewrite -->
+        <input type="text" class="input" value="{{ adText }}" placeholder="Rewrite the mission in your own words… (optional)" style="height:48px;margin-bottom:8px" onInput="{{ updateAdText }}">
+      </sc-if>
+
+      <!-- Standard question: chips + free text -->
+      <sc-if value="{{ !(adQuestion.key === 'MISSION_CONFIRM' && adMissionPreview) }}">
+
+        <!-- Choice chips (server-rendered) -->
+        <sc-if value="{{ adChips && adChips.length > 0 }}">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(150px, 1fr));gap:10px;margin-bottom:18px">
+            <sc-for list="{{ adChips }}" as="chip">
+              <button onClick="{{ () => adaptivePickChip(chip) }}" disabled="{{ adBusy }}" class="card-premium" style="display:flex;align-items:center;gap:10px;padding:13px 14px;text-align:left;border:{{ chip.sel ? '2px solid var(--color-accent)' : '1.5px solid var(--color-divider)' }};background:{{ chip.sel ? 'var(--color-accent-100)' : 'var(--color-surface)' }};cursor:pointer;border-radius:var(--radius-md);transition:all .18s ease">
+                <span style="font-size:20px;line-height:1">{{ chip.icon }}</span>
+                <span style="font:700 13px/1.25 var(--font-heading);color:var(--color-text);flex:1">{{ chip.label }}</span>
+                <sc-if value="{{ chip.sel }}">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="2.6" style="flex-shrink:0"><path d="M20 6 9 17l-5-5"/></svg>
+                </sc-if>
+              </button>
+            </sc-for>
+          </div>
+          <sc-if value="{{ adKind === 'multi_choice' }}">
+            <button onClick="{{ adaptiveSubmitText }}" disabled="{{ adBusy || adChipsSel.length === 0 }}" class="btn btn-primary btn-block" style="height:48px;font-size:14px;margin-bottom:14px;cursor:pointer;opacity:{{ adBusy || adChipsSel.length === 0 ? '0.6' : '1' }}">
+              CONTINUE →
+            </button>
+          </sc-if>
+        </sc-if>
+
+        <!-- Free-text answer -->
+        <sc-if value="{{ adFreeText }}">
+          <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px">
+            <input type="text" class="input" value="{{ adText }}" placeholder="{{ adFreeText.placeholder }}" maxlength="{{ adFreeText.maxLength }}" style="height:50px;font-size:15px" onInput="{{ updateAdText }}">
+            <sc-if value="{{ adKind !== 'mixed' || !adChips || adChips.length === 0 }}">
+              <button onClick="{{ adaptiveSubmitText }}" disabled="{{ adBusy || (!adText || adText.trim().length === 0) }}" class="btn btn-primary btn-block" style="height:48px;font-size:14px;cursor:pointer;opacity:{{ adBusy || (!adText || adText.trim().length === 0) ? '0.6' : '1' }}">
+                <span>{{ adBusy ? 'GOT IT…' : 'CONTINUE' }}</span>
+                <span>{{ adBusy ? '' : '→' }}</span>
+              </button>
+            </sc-if>
+            <sc-if value="{{ adKind === 'mixed' && adChips && adChips.length > 0 }}">
+              <button onClick="{{ adaptiveSubmitText }}" disabled="{{ adBusy }}" class="btn btn-primary btn-block" style="height:48px;font-size:14px;cursor:pointer;opacity:{{ adBusy ? '0.65' : '1' }}">
+                <span>{{ adBusy ? 'GOT IT…' : 'CONTINUE' }}</span>
+                <span>{{ adBusy ? '' : '→' }}</span>
+              </button>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <!-- Skip (non-essential questions only) -->
+        <sc-if value="{{ adCanSkip }}">
+          <button onClick="{{ adaptiveSkip }}" disabled="{{ adBusy }}" style="border:none;background:transparent;font:600 12.5px/1 var(--font-body);color:var(--color-text-muted);cursor:pointer;padding:4px 0">
+            Skip this question →
+          </button>
+        </sc-if>
+      </sc-if>
+
+    </sc-if>
+  </div>
+
+  <!-- Fallback: skip the smart flow and use the classic screens -->
+  <div style="margin-top:28px;padding-top:16px;border-top:1px solid var(--color-divider)">
+    <button onClick="{{ adaptiveSkipAll }}" style="border:none;background:transparent;font:600 12px/1 var(--font-body);color:var(--color-text-muted);cursor:pointer">
+      Skip personalization for now →
+    </button>
+  </div>
+
+</div>
+</sc-if>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
      ONBOARDING STEP 4A: BUYER PREFERENCES & INTERESTS (is.onboardBuyer)
      ══════════════════════════════════════════════════════════════════════ -->
 <sc-if value="{{ is.onboardBuyer }}">

@@ -25,6 +25,7 @@ const catalogRoutes = require('./modules/catalog/routes/catalogRoutes');
 const storeRoutes = require('./modules/store/presentation/routes/storeRoutes');
 const listingRoutes = require('./modules/listing/presentation/routes/listingRoutes');
 const uploadRoutes = require('./modules/listing/presentation/routes/uploadRoutes');
+const adaptiveRoutes = require('./modules/adaptive/presentation/routes/adaptiveRoutes');
 
 // Fail fast rather than boot a production server that cannot enforce its own
 // security model. In development the same problems are logged as warnings.
@@ -92,6 +93,7 @@ const v1Router = express.Router();
 v1Router.use('/', healthRoutes);
 v1Router.use('/', identityRoutes);
 v1Router.use('/', catalogRoutes);
+v1Router.use('/', adaptiveRoutes);
 v1Router.use('/stores', storeRoutes);
 v1Router.use('/listings', listingRoutes);
 v1Router.use('/uploads', uploadRoutes);

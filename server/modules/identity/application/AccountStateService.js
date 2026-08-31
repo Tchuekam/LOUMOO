@@ -54,6 +54,14 @@ function projectProfile(row, completedSteps = []) {
     businessName: row.business_name,
     primaryStoreId: row.primary_store_id,
 
+    // Long-term interests & priorities (declared through any onboarding path).
+    buyerInterests: row.buyer_interests || [],
+    shoppingPriorities: row.shopping_priorities || [],
+
+    // Adaptive (intent-aware) onboarding lifecycle.
+    adaptiveStatus: row.adaptive_status || 'NOT_STARTED',
+    adaptiveCompletedAt: row.adaptive_completed_at,
+
     status: row.status,
     accountStatus: row.account_status,
     deletedAt: row.deleted_at,

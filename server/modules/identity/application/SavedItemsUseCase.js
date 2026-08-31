@@ -7,6 +7,7 @@
 const { z } = require('zod');
 const { SupabaseClient, handleDatabaseFailure } = require('../../../infrastructure/database/SupabaseClient.js');
 const CacheService = require('../../../infrastructure/cache/CacheService');
+const BehavioralSignalService = require('../../adaptive/application/BehavioralSignalService');
 const { ValidationError, NotFoundError, ConflictError } = require('../../../shared/errors/AppError');
 const logger = require('../../../shared/logging/logger');
 
@@ -137,6 +138,15 @@ class SavedItemsUseCase {
 
     // Invalidate Redis caches
     await this._invalidateCache(userId);
+
+    // Progressive personalization: repeated saves in a category become a
+    // long-term interest signal. Fire-and-forget — never blocks the save.
+    BehavioralSignalService.record(userId, {
+      kind: 'save',
+      category: data.category,
+      resourceId: data.productId
+    }).catch(() => null);
+
     logger.info(`[SavedItems] Saved product ${data.productId} for user ${userId}`);
     return savedItem;
   }

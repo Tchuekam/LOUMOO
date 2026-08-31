@@ -329,6 +329,34 @@
     return this.request('/api/v1/me/selling/start', { method: 'POST' });
   };
 
+  /* --------------------------- Adaptive onboarding ------------------------ */
+
+  /** GET /api/v1/me/adaptive — conversation state + next question spec. */
+  LoumooApiClient.prototype.getAdaptiveConversation = function () {
+    return this.request('/api/v1/me/adaptive');
+  };
+
+  /** POST /api/v1/me/adaptive/answers — one answer: { questionKey, text?, chip?, chips?, skip? } */
+  LoumooApiClient.prototype.submitAdaptiveAnswer = function (payload) {
+    return this.request('/api/v1/me/adaptive/answers', {
+      method: 'POST',
+      body: payload || {}
+    });
+  };
+
+  /** POST /api/v1/me/adaptive/complete — seal onboarding, install the mission. */
+  LoumooApiClient.prototype.completeAdaptiveOnboarding = function (payload) {
+    return this.request('/api/v1/me/adaptive/complete', {
+      method: 'POST',
+      body: payload || {}
+    });
+  };
+
+  /** POST /api/v1/me/adaptive/restart — "change my goal": fresh conversation. */
+  LoumooApiClient.prototype.restartAdaptiveOnboarding = function () {
+    return this.request('/api/v1/me/adaptive/restart', { method: 'POST', body: {} });
+  };
+
   /* ------------------------------- Uploads ------------------------------- */
 
   /**
