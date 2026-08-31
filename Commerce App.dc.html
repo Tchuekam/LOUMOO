@@ -8822,15 +8822,6 @@ class Component extends DCLogic {
           : clerk.verifyEmailCode(code);
 
         Promise.resolve(attempt)
-          .catch(err => {
-            const clerkErr = err && err.errors && err.errors[0];
-            const errCode = clerkErr ? clerkErr.code : (err && err.code);
-            const msg = (err && err.message) || '';
-            if (errCode === 'verification_already_verified' || errCode === 'form_identifier_exists' || msg.toLowerCase().includes('already verified')) {
-              return { alreadyVerified: true };
-            }
-            throw err;
-          })
           .then(() => this._establishSession())
           .then(accountState => {
             // Confirm the authenticated session with the server
@@ -8850,9 +8841,18 @@ class Component extends DCLogic {
             const errCode = clerkErr ? clerkErr.code : (err && err.code);
             const status = (clerkErr && clerkErr.status) || (err && err.status);
             const isRateLimit = errCode === 'too_many_attempts' || status === 429 || String(err && err.message).toLowerCase().includes('too many');
-            const msg = isRateLimit
-              ? 'Too many attempts on this code. Please click "Resend code" below to receive a fresh code.'
-              : (clerk.describeError(err) || (err && err.message) || 'Verification failed. Please try again.');
+
+            let msg = 'Verification failed. Please try again.';
+            if (isRateLimit) {
+              msg = 'Too many attempts on this code. Click "Resend code" below to receive a fresh code.';
+            } else if (errCode === 'form_code_incorrect' || errCode === 'verification_failed') {
+              msg = 'That code is incorrect. Check your email or click "Resend code" below.';
+            } else if (errCode === 'verification_expired') {
+              msg = 'That code has expired. Click "Resend code" below to receive a fresh code.';
+            } else {
+              msg = clerk.describeError(err) || (err && err.message) || msg;
+            }
+
             this.setState({
               emailVerifyState: 'pending',
               emailVerifyError: msg
