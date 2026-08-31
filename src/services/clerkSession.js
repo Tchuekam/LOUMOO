@@ -170,30 +170,13 @@
      */
     signUp: function (params) {
       requireReady();
-      var phone = params.phone || params.phoneNumber;
-      if (phone) {
-        var rawP = String(phone).trim();
-        state.lastPhone = rawP.startsWith('+') ? rawP.replace(/[\s-]/g, '') : ('+237' + rawP.replace(/[^0-9]/g, ''));
-      }
       var createPayload = {
         emailAddress: params.email,
         password: params.password,
         firstName: params.firstName,
         lastName: params.lastName
       };
-      if (state.lastPhone) {
-        createPayload.phoneNumber = state.lastPhone;
-      }
       return state.clerk.client.signUp.create(createPayload)
-        .catch(function (err) {
-          // If phoneNumber is rejected on create, try without it
-          var clerkErr = err && err.errors && err.errors[0];
-          if (clerkErr && (clerkErr.code === 'form_param_unknown' || clerkErr.meta?.paramName === 'phone_number' || clerkErr.meta?.paramName === 'phoneNumber')) {
-            delete createPayload.phoneNumber;
-            return state.clerk.client.signUp.create(createPayload);
-          }
-          throw err;
-        })
         .then(function (signUp) {
           if (signUp.status === 'complete' && signUp.createdSessionId) {
             return state.clerk.setActive({ session: signUp.createdSessionId })
@@ -237,15 +220,11 @@
               if (emailPrefix.length < 4) emailPrefix = 'user_' + emailPrefix;
               updatePayload.username = emailPrefix.slice(0, 18) + '_' + Math.floor(1000 + Math.random() * 9000);
             }
-            if (missing.indexOf('first_name') !== -1 && (signUp.firstName || state.lastFirstName)) {
-              updatePayload.firstName = signUp.firstName || state.lastFirstName;
+            if (missing.indexOf('first_name') !== -1 && signUp.firstName) {
+              updatePayload.firstName = signUp.firstName;
             }
-            if (missing.indexOf('last_name') !== -1 && (signUp.lastName || state.lastLastName)) {
-              updatePayload.lastName = signUp.lastName || state.lastLastName;
-            }
-            if (missing.indexOf('phone_number') !== -1 || missing.indexOf('phoneNumber') !== -1) {
-              var phoneToUse = state.lastPhone || '+237690123456';
-              updatePayload.phoneNumber = phoneToUse.startsWith('+') ? phoneToUse.replace(/[\s-]/g, '') : ('+237' + phoneToUse.replace(/[^0-9]/g, ''));
+            if (missing.indexOf('last_name') !== -1 && signUp.lastName) {
+              updatePayload.lastName = signUp.lastName;
             }
 
             if (Object.keys(updatePayload).length > 0) {
@@ -254,10 +233,6 @@
                   return state.clerk.setActive({ session: updatedSignUp.createdSessionId });
                 }
                 if (updatedSignUp.status === 'complete') {
-                  return state.clerk.setActive({ session: updatedSignUp.createdSessionId });
-                }
-                // If only phone is unverified but email is verified, complete if session exists
-                if (updatedSignUp.createdSessionId) {
                   return state.clerk.setActive({ session: updatedSignUp.createdSessionId });
                 }
                 var err = new Error('Verification completed, but account requires: ' + (updatedSignUp.missingFields || []).join(', '));
