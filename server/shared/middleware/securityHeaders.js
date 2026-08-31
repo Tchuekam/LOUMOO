@@ -9,7 +9,7 @@
 
 const DEFAULT_CSP = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-eval' https://unpkg.com https://*.clerk.accounts.dev https://clerk.loumoo.cm https://challenges.cloudflare.com",
+  "script-src 'self' 'unsafe-eval' https://unpkg.com https://cdn.jsdelivr.net https://*.supabase.co https://*.clerk.accounts.dev https://clerk.loumoo.cm https://challenges.cloudflare.com",
   "worker-src 'self' blob:",
   "frame-src 'self' https://challenges.cloudflare.com https://*.clerk.accounts.dev",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",

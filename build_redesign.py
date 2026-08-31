@@ -35,7 +35,7 @@ header_and_styles = """<!DOCTYPE html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./src/services/supabase.js"></script>
 <script src="./support.js"></script>
 <script src="./src/services/loumooApi.js"></script>
 <script src="./src/services/clerkSession.js"></script>

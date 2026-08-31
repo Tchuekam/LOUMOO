@@ -47,8 +47,10 @@
     var url = (state.config && state.config.supabaseUrl) || DEFAULT_SUPABASE_URL;
     var key = (state.config && (state.config.anonKey || state.config.publishableKey)) || DEFAULT_ANON_KEY;
 
-    if (typeof window !== 'undefined' && window.supabase && typeof window.supabase.createClient === 'function') {
-      state.client = window.supabase.createClient(url, key, {
+    var sbGlobal = (typeof window !== 'undefined' && (window.supabase || window.supabaseJs)) || null;
+
+    if (sbGlobal && typeof sbGlobal.createClient === 'function') {
+      state.client = sbGlobal.createClient(url, key, {
         auth: {
           persistSession: true,
           autoRefreshToken: true,
@@ -58,6 +60,32 @@
       state.supabase = state.client;
       state.status = 'ready';
       return Promise.resolve(state.client);
+    }
+
+    if (typeof window !== 'undefined') {
+      return new Promise(function (resolve) {
+        var tries = 0;
+        var interval = setInterval(function () {
+          tries++;
+          var g = window.supabase || window.supabaseJs;
+          if (g && typeof g.createClient === 'function') {
+            clearInterval(interval);
+            state.client = g.createClient(url, key, {
+              auth: {
+                persistSession: true,
+                autoRefreshToken: true,
+                detectSessionInUrl: true
+              }
+            });
+            state.supabase = state.client;
+            state.status = 'ready';
+            resolve(state.client);
+          } else if (tries > 20) {
+            clearInterval(interval);
+            resolve(null);
+          }
+        }, 50);
+      });
     }
 
     if (typeof require === 'function') {
