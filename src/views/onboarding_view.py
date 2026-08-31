@@ -365,9 +365,9 @@ def get_onboarding_view():
 
   <!-- Continue CTA (Dynamic branch to Buyer, Seller, or Both) -->
   <div style="margin-top:28px">
-    <button onClick="{{ continueAfterOtp }}" disabled="{{ emailVerifyState === 'verifying' }}" class="btn btn-primary btn-block" style="height:50px;font-size:15px;cursor:{{ emailVerifyState === 'verifying' ? 'default' : 'pointer' }};opacity:{{ emailVerifyState === 'verifying' ? '0.65' : '1' }}">
-      <span>{{ emailVerifyState === 'verifying' ? 'CONFIRMING…' : (emailVerifyState === 'verified' ? 'CONTINUE' : 'VERIFY &amp; CONTINUE') }}</span>
-      <span>{{ emailVerifyState === 'verifying' ? '' : '✓' }}</span>
+    <button onClick="{{ continueAfterOtp }}" disabled="{{ otpBtnDisabled }}" class="btn btn-primary btn-block" style="height:50px;font-size:15px;cursor:{{ otpBtnCursor }};opacity:{{ otpBtnOpacity }}">
+      <span>{{ otpBtnLabel }}</span>
+      <span>{{ otpBtnArrow }}</span>
     </button>
   </div>
 

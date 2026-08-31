@@ -2292,7 +2292,7 @@ class Component extends DCLogic {
         }
 
         const code = (this.state.emailVerifyCode || '').trim();
-        if (code.length !== 6) {
+        if (code.length !== 6 && this.state.emailVerifyState !== 'verified') {
           this.setState({ emailVerifyError: 'Enter the 6-digit code from your email.' });
           return;
         }
@@ -2311,6 +2311,15 @@ class Component extends DCLogic {
           : clerk.verifyEmailCode(code);
 
         Promise.resolve(attempt)
+          .catch(err => {
+            const clerkErr = err && err.errors && err.errors[0];
+            const errCode = clerkErr ? clerkErr.code : (err && err.code);
+            const msg = (err && err.message) || '';
+            if (errCode === 'verification_already_verified' || errCode === 'form_identifier_exists' || msg.toLowerCase().includes('already verified')) {
+              return { alreadyVerified: true };
+            }
+            throw err;
+          })
           .then(() => this._establishSession())
           .then(() => api.refreshVerification())
           .then(result => {
@@ -2559,7 +2568,7 @@ class Component extends DCLogic {
         const pwd = this.state.resetNewPassword || '';
         const confirm = this.state.resetConfirmPassword || '';
 
-        if (code.length !== 6) {
+        if (code.length !== 6 && this.state.emailVerifyState !== 'verified') {
           this.setState({ resetError: 'Enter the 6-digit recovery code.' });
           return;
         }
@@ -2600,6 +2609,11 @@ class Component extends DCLogic {
       emailVerifyCode: this.state.emailVerifyCode,
       emailVerifyError: this.state.emailVerifyError,
       emailVerifyCooldown: this.state.emailVerifyCooldown,
+      otpBtnDisabled: this.state.emailVerifyState === 'verifying',
+      otpBtnCursor: this.state.emailVerifyState === 'verifying' ? 'default' : 'pointer',
+      otpBtnOpacity: this.state.emailVerifyState === 'verifying' ? '0.65' : '1',
+      otpBtnLabel: this.state.emailVerifyState === 'verifying' ? 'CONFIRMING…' : (this.state.emailVerifyState === 'verified' ? 'CONTINUE' : 'VERIFY & CONTINUE'),
+      otpBtnArrow: this.state.emailVerifyState === 'verifying' ? '' : '✓',
       verifyEmailAddress: this.state.regEmail || 'your email address',
       // Shown so the screen can say what is being verified and why.
       verifyEmailWhy: 'LOUMOO verifies your email so buyers and sellers can trust who they are dealing with, and so we can reach you about your orders.',
@@ -2620,7 +2634,7 @@ class Component extends DCLogic {
        */
       submitEmailVerification: () => {
         const code = (this.state.emailVerifyCode || '').trim();
-        if (code.length !== 6) {
+        if (code.length !== 6 && this.state.emailVerifyState !== 'verified') {
           this.setState({ emailVerifyError: 'Enter the 6-digit code from your email.' });
           return;
         }
@@ -2645,6 +2659,15 @@ class Component extends DCLogic {
           : clerk.verifyEmailCode(code);           // finishing a registration
 
         Promise.resolve(attempt)
+          .catch(err => {
+            const clerkErr = err && err.errors && err.errors[0];
+            const errCode = clerkErr ? clerkErr.code : (err && err.code);
+            const msg = (err && err.message) || '';
+            if (errCode === 'verification_already_verified' || errCode === 'form_identifier_exists' || msg.toLowerCase().includes('already verified')) {
+              return { alreadyVerified: true };
+            }
+            throw err;
+          })
           .then(() => api.refreshVerification())
           .then(result => {
             if (this._unmounted) return;
