@@ -3,15 +3,15 @@
  * Exposes public storefront projections and allows authorized sellers to customize policies and branding.
  */
 
-const { SupabaseClient } = require('../../../infrastructure/database/SupabaseClient');
 const CacheService = require('../../../infrastructure/cache/CacheService');
+const { SupabaseClient, handleDatabaseFailure } = require('../../../infrastructure/database/SupabaseClient.js');
 const StoreProfile = require('../domain/StoreProfile');
 const StoreHours = require('../domain/StoreHours');
 const StoreLocation = require('../domain/StoreLocation');
 const Store = require('../domain/Store');
 const { NotFoundError } = require('../../../shared/errors/AppError');
 const logger = require('../../../shared/logging/logger');
-const { getStoreRepository } = require('../guards/storeAuthGuard');
+const StoreRepository = require('../infrastructure/StoreRepository');
 
 class StoreProfileUseCase {
   static async getPublicProfile(identifier) {
@@ -19,43 +19,12 @@ class StoreProfileUseCase {
     const cached = await CacheService.get(cacheKey);
     if (cached) return cached;
 
-    const supabase = SupabaseClient.admin;
-    let storeData = null;
+    const supabase = SupabaseClient.getAdmin();
 
-    try {
-      const { data, error } = await supabase
-        .from('iam.stores')
-        .select('*')
-        .or(`id.eq.${identifier},slug.eq.${identifier}`)
-        .single();
-
-      if (data && !error) storeData = data;
-    } catch (err) {
-      logger.warn(`[StoreProfile] Public profile store query fallback: ${err.message}`);
-    }
-
-    if (!storeData) {
-      const { mockStores } = getStoreRepository();
-      if (mockStores.has(identifier)) {
-        storeData = mockStores.get(identifier);
-      } else if (identifier === 'store_orca_electronics' || identifier === 'orca-electronics-douala') {
-        storeData = {
-          id: 'store_orca_electronics',
-          name: 'Orca Electronics Official',
-          slug: 'orca-electronics-douala',
-          description: 'Akwa Commercial Boulevard, Douala · Certified Apple & Tech Distributor',
-          category_id: 'electronics',
-          is_verified: true,
-          verification_tier: 'official_brand',
-          rating: 4.9,
-          rating_count: 1240,
-          follower_count: 1240,
-          product_count: 318,
-          status: 'ACTIVE',
-          visibility: 'PUBLIC'
-        };
-      }
-    }
+    // Resolved from the database only. The previous revision fabricated an
+    // "Orca Electronics" storefront for a hardcoded id, so a request for a
+    // store that had never existed returned a convincing 200.
+    const storeData = await StoreRepository.findByIdOrSlug(identifier);
 
     if (!storeData) {
       throw new NotFoundError('Store', identifier);
@@ -70,9 +39,9 @@ class StoreProfileUseCase {
 
     try {
       const [pRes, lRes, hRes] = await Promise.all([
-        supabase.from('iam.store_profiles').select('*').eq('store_id', store.id).single(),
-        supabase.from('iam.store_locations').select('*').eq('store_id', store.id).single(),
-        supabase.from('iam.store_hours').select('*').eq('store_id', store.id).single()
+        supabase.from('store_profiles').select('*').eq('store_id', store.id).single(),
+        supabase.from('store_locations').select('*').eq('store_id', store.id).single(),
+        supabase.from('store_hours').select('*').eq('store_id', store.id).single()
       ]);
       profileData = pRes.data || {};
       locationData = lRes.data || {};
@@ -105,7 +74,7 @@ class StoreProfileUseCase {
   }
 
   static async updateStoreProfile(store, updates = {}) {
-    const supabase = SupabaseClient.admin;
+    const supabase = SupabaseClient.getAdmin();
     const dbUpdates = {
       tagline: updates.tagline,
       bio: updates.bio,
@@ -123,10 +92,10 @@ class StoreProfileUseCase {
 
     try {
       await supabase
-        .from('iam.store_profiles')
+        .from('store_profiles')
         .upsert({ store_id: store.id, ...dbUpdates }, { onConflict: 'store_id' });
     } catch (err) {
-      logger.warn(`[StoreProfile] Update profile fallback: ${err.message}`);
+      handleDatabaseFailure(err, 'Update profile');
     }
 
     await CacheService.del(`store:public:${store.id}`);

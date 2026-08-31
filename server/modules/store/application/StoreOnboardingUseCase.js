@@ -3,11 +3,12 @@
  * Provides persistent, resumable multi-step onboarding with server-side validation.
  */
 
-const { SupabaseClient } = require('../../../infrastructure/database/SupabaseClient');
-const { ValidationError, ForbiddenError } = require('../../../shared/errors/AppError');
+const { ValidationError, InfrastructureError } = require('../../../shared/errors/AppError');
+const { SupabaseDatabase } = require('../../../infrastructure/database/SupabaseClient.js');
 const AnalyticsService = require('../../../infrastructure/analytics/AnalyticsService');
+const ProfileRepository = require('../../identity/infrastructure/ProfileRepository');
+const { SELLER_STATUS } = require('../../identity/domain/AccountState');
 const logger = require('../../../shared/logging/logger');
-const { getStoreRepository } = require('../guards/storeAuthGuard');
 
 const ONBOARDING_STEPS = [
   'NOT_STARTED',
@@ -21,29 +22,31 @@ const ONBOARDING_STEPS = [
 
 class StoreOnboardingUseCase {
   static async getOnboardingStatus(store) {
-    const supabase = SupabaseClient.admin;
-    let location = null;
-    let hours = null;
-    let verification = null;
+    const supabase = SupabaseDatabase.getAdmin();
 
-    try {
-      const [locRes, hrsRes, verRes] = await Promise.all([
-        supabase.from('iam.store_locations').select('*').eq('store_id', store.id).single(),
-        supabase.from('iam.store_hours').select('*').eq('store_id', store.id).single(),
-        supabase.from('iam.store_verifications').select('*').eq('store_id', store.id).single()
-      ]);
-      location = locRes.data;
-      hours = hrsRes.data;
-      verification = verRes.data;
-    } catch (err) {
-      logger.warn(`[StoreOnboarding] Status query fallback: ${err.message}`);
+    const [locRes, hrsRes, verRes] = await Promise.all([
+      supabase.from('store_locations').select('*').eq('store_id', store.id).maybeSingle(),
+      supabase.from('store_hours').select('*').eq('store_id', store.id).maybeSingle(),
+      supabase.from('store_verifications').select('*').eq('store_id', store.id).maybeSingle()
+    ]);
+
+    for (const res of [locRes, hrsRes, verRes]) {
+      if (res.error) {
+        throw new InfrastructureError('Supabase', `store onboarding status read failed: ${res.error.message}`, res.error);
+      }
     }
 
+    const location = locRes.data;
+    const hours = hrsRes.data;
+    const verification = verRes.data;
+
+    // Each requirement is a real check against real rows. `hours` used to be
+    // `!!hours || true` — permanently satisfied, i.e. not a requirement at all.
     const completedRequirements = {
-      profile: !!store.name && !!store.categoryId,
-      businessInfo: !!store.description && !!store.phoneNumber,
-      location: !!location || !!store.city,
-      hours: !!hours || true,
+      profile: Boolean(store.name) && Boolean(store.categoryId),
+      businessInfo: Boolean(store.description) && Boolean(store.phoneNumber),
+      location: Boolean(location && location.city),
+      hours: Boolean(hours),
       verificationSubmitted: verification ? verification.verification_status !== 'DRAFT' : false
     };
 
@@ -62,12 +65,14 @@ class StoreOnboardingUseCase {
     };
   }
 
-  static async updateOnboardingStep(store, userProfile, stepName, payload = {}) {
+  static async updateOnboardingStep(store, principal, stepName, payload = {}) {
     if (!ONBOARDING_STEPS.includes(stepName)) {
-      throw new ValidationError(`Invalid onboarding step: ${stepName}`);
+      throw new ValidationError(`Invalid onboarding step: ${stepName}`, {
+        allowedSteps: ONBOARDING_STEPS
+      });
     }
 
-    const supabase = SupabaseClient.admin;
+    const supabase = SupabaseDatabase.getAdmin();
     const updates = {
       onboarding_step: stepName,
       updated_at: new Date().toISOString()
@@ -83,24 +88,28 @@ class StoreOnboardingUseCase {
       updates.onboarding_completed = true;
     }
 
-    try {
-      await supabase.from('iam.stores').update(updates).eq('id', store.id);
-    } catch (err) {
-      logger.warn(`[StoreOnboarding] Update fallback: ${err.message}`);
-    }
-
-    // Update in-memory fallback
-    const { mockStores } = getStoreRepository();
-    if (mockStores.has(store.id)) {
-      const current = mockStores.get(store.id);
-      Object.assign(current, updates);
+    const { error } = await supabase.from('stores').update(updates).eq('id', store.id);
+    if (error) {
+      throw new InfrastructureError('Supabase', `store onboarding update failed: ${error.message}`, error);
     }
 
     store.onboardingStep = stepName;
     if (updates.status) store.status = updates.status;
     if (updates.onboarding_completed) store.onboardingCompleted = true;
 
-    AnalyticsService.track(userProfile.id, 'store_onboarding_step_updated', {
+    // Activating the storefront is what promotes the ACCOUNT to SELLER_READY.
+    // This is the single transition that unlocks listing creation, and it can
+    // only happen after the server has verified every activation requirement.
+    if (stepName === 'ACTIVE' && principal) {
+      await ProfileRepository.update(principal.id, {
+        seller_status: SELLER_STATUS.READY,
+        primary_store_id: store.id,
+        primary_role: principal.primaryRole === 'customer' ? 'seller' : principal.primaryRole
+      }, principal.clerkUserId);
+      logger.info(`[StoreOnboarding] user=${principal.id} promoted to SELLER_READY via store=${store.id}`);
+    }
+
+    AnalyticsService.track(principal ? principal.id : 'system', 'store_onboarding_step_updated', {
       storeId: store.id,
       step: stepName
     });

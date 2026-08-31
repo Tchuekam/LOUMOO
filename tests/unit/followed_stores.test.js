@@ -2,20 +2,27 @@
  * Unit Test: Followed Stores (04.05)
  */
 
+require('../setup');
 const assert = require('assert');
 const FollowedStoresUseCase = require('../../server/modules/identity/application/FollowedStoresUseCase');
 const { ConflictError } = require('../../server/shared/errors/AppError');
+const harness = require('../helpers/harness');
 
 async function run() {
   console.log('  Testing Followed Stores Service...');
 
-  const userId = `usr_follow_test_${Date.now()}`;
-  const storeId = 'store_orca_electronics';
+  // `iam.followed_stores.user_id` is a real foreign key into `iam.profiles`.
+  // Provisioning a real profile (rather than inventing an id) is what makes
+  // this exercise the persistence path instead of an in-memory fallback.
+  const user = await harness.createUser({ stage: 'ready' });
+  const store = await harness.createStore(user);
+  const userId = user.id;
+  const storeId = store.id;
 
   // 1. Follow a store
   const followed = await FollowedStoresUseCase.followStore(userId, {
     storeId,
-    storeName: 'Orca Electronics Douala',
+    storeName: store.name,
     storeAvatar: 'https://images.unsplash.com/photo-1555421689-491a97ff2040?w=100',
     city: 'Douala',
     isVerified: true
@@ -23,7 +30,7 @@ async function run() {
 
   assert.ok(followed.id, 'Followed store must have an ID');
   assert.strictEqual(followed.storeId, storeId);
-  assert.strictEqual(followed.storeName, 'Orca Electronics Douala');
+  assert.strictEqual(followed.storeName, store.name);
 
   // 2. Duplicate follow prevention
   let duplicateBlocked = false;

@@ -5,7 +5,7 @@
  */
 
 const { z } = require('zod');
-const { SupabaseClient } = require('../../../infrastructure/database/SupabaseClient');
+const { SupabaseClient, handleDatabaseFailure } = require('../../../infrastructure/database/SupabaseClient.js');
 const CacheService = require('../../../infrastructure/cache/CacheService');
 const { ValidationError, NotFoundError, ConflictError } = require('../../../shared/errors/AppError');
 const logger = require('../../../shared/logging/logger');
@@ -40,20 +40,30 @@ class SavedItemsUseCase {
     try {
       const supabase = SupabaseClient.getAdmin();
       const { data, count, error } = await supabase
-        .from('iam.saved_items')
+        .from('saved_items')
         .select('*', { count: 'exact' })
         .eq('user_id', userId)
         .order('created_at', { ascending: false })
         .range(offset, offset + limit - 1);
 
+      if (error) { handleDatabaseFailure(error, 'SavedItems'); }
       if (!error && data) {
         items = data.map(this._mapRow);
         total = count || items.length;
       } else {
         throw error || new Error('No data');
       }
+      // If the DB has no rows (or insert previously fell back to memory in dev),
+      // surface the local in-memory store so state stays consistent.
+      if (items.length === 0) {
+        const userItems = this._memoryStore.get(userId) || [];
+        if (userItems.length > 0) {
+          items = userItems.slice(offset, offset + limit);
+          total = userItems.length;
+        }
+      }
     } catch (err) {
-      logger.warn(`[SavedItems] Supabase query fallback: ${err.message}`);
+      handleDatabaseFailure(err, 'Supabase query');
       const userItems = this._memoryStore.get(userId) || [];
       total = userItems.length;
       items = userItems.slice(offset, offset + limit);
@@ -82,7 +92,7 @@ class SavedItemsUseCase {
     try {
       const supabase = SupabaseClient.getAdmin();
       const { data: row, error } = await supabase
-        .from('iam.saved_items')
+        .from('saved_items')
         .insert({
           user_id: userId,
           product_id: data.productId,
@@ -104,7 +114,7 @@ class SavedItemsUseCase {
       savedItem = this._mapRow(row);
     } catch (err) {
       if (err instanceof ConflictError) throw err;
-      logger.warn(`[SavedItems] Supabase insert fallback: ${err.message}`);
+      handleDatabaseFailure(err, 'Supabase insert');
       
       const userItems = this._memoryStore.get(userId) || [];
       if (userItems.some(i => i.productId === data.productId)) {
@@ -140,14 +150,14 @@ class SavedItemsUseCase {
     try {
       const supabase = SupabaseClient.getAdmin();
       const { error } = await supabase
-        .from('iam.saved_items')
+        .from('saved_items')
         .delete()
         .eq('user_id', userId)
         .eq('product_id', productId);
 
       if (error) throw error;
     } catch (err) {
-      logger.warn(`[SavedItems] Supabase delete fallback: ${err.message}`);
+      handleDatabaseFailure(err, 'Supabase delete');
     }
 
     // Always clean memory store regardless of DB outcome
@@ -174,7 +184,7 @@ class SavedItemsUseCase {
     try {
       const supabase = SupabaseClient.getAdmin();
       const { data, error } = await supabase
-        .from('iam.saved_items')
+        .from('saved_items')
         .select('id')
         .eq('user_id', userId)
         .eq('product_id', productId)
@@ -182,6 +192,10 @@ class SavedItemsUseCase {
 
       if (error) throw error;
       if (data && data.length > 0) isSaved = true;
+      if (!isSaved) {
+        const userItems = this._memoryStore.get(userId) || [];
+        if (userItems.some(i => i.productId === productId)) isSaved = true;
+      }
     } catch (err) {
       const userItems = this._memoryStore.get(userId) || [];
       isSaved = userItems.some(i => i.productId === productId);

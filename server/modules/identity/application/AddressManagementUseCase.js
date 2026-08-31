@@ -5,7 +5,7 @@
  */
 
 const { z } = require('zod');
-const { SupabaseClient } = require('../../../infrastructure/database/SupabaseClient');
+const { SupabaseClient, handleDatabaseFailure } = require('../../../infrastructure/database/SupabaseClient.js');
 const CacheService = require('../../../infrastructure/cache/CacheService');
 const { ValidationError, NotFoundError, AuthorizationError } = require('../../../shared/errors/AppError');
 const logger = require('../../../shared/logging/logger');
@@ -45,20 +45,21 @@ class AddressManagementUseCase {
     try {
       const supabase = SupabaseClient.getAdmin();
       const { data, error } = await supabase
-        .from('iam.addresses')
+        .from('addresses')
         .select('*')
         .eq('user_id', userId)
         .is('deleted_at', null)
         .order('is_default', { ascending: false })
         .order('created_at', { ascending: false });
 
+      if (error) { handleDatabaseFailure(error, 'AddressManagement'); }
       if (!error && data) {
         addresses = data.map(this._mapRow);
       } else {
         throw error || new Error('No data');
       }
     } catch (err) {
-      logger.warn(`[AddressManagement] Supabase query fallback: ${err.message}`);
+      handleDatabaseFailure(err, 'Supabase query');
       addresses = (this._memoryStore.get(userId) || []).filter(a => !a.deletedAt);
     }
 
@@ -87,14 +88,14 @@ class AddressManagementUseCase {
       // If marked default, unset other defaults in same category
       if (data.isDefault) {
         await supabase
-          .from('iam.addresses')
+          .from('addresses')
           .update({ is_default: false })
           .eq('user_id', userId)
           .eq('category', data.category);
       }
 
       const { data: row, error } = await supabase
-        .from('iam.addresses')
+        .from('addresses')
         .insert({
           user_id: userId,
           recipient_name: data.recipientName,
@@ -115,7 +116,7 @@ class AddressManagementUseCase {
       if (error) throw error;
       address = this._mapRow(row);
     } catch (err) {
-      logger.warn(`[AddressManagement] Supabase insert fallback: ${err.message}`);
+      handleDatabaseFailure(err, 'Supabase insert');
       
       const userAddresses = this._memoryStore.get(userId) || [];
       if (data.isDefault || userAddresses.length === 0) {
@@ -169,7 +170,7 @@ class AddressManagementUseCase {
 
       if (data.isDefault) {
         await supabase
-          .from('iam.addresses')
+          .from('addresses')
           .update({ is_default: false })
           .eq('user_id', userId)
           .eq('category', data.category || 'shipping');
@@ -190,7 +191,7 @@ class AddressManagementUseCase {
       dbUpdates.updated_at = new Date().toISOString();
 
       const { data: row, error } = await supabase
-        .from('iam.addresses')
+        .from('addresses')
         .update(dbUpdates)
         .eq('id', addressId)
         .eq('user_id', userId)
@@ -202,7 +203,7 @@ class AddressManagementUseCase {
       updated = this._mapRow(row);
     } catch (err) {
       if (err instanceof NotFoundError) throw err;
-      logger.warn(`[AddressManagement] Supabase update fallback: ${err.message}`);
+      handleDatabaseFailure(err, 'Supabase update');
 
       const userAddresses = this._memoryStore.get(userId) || [];
       const index = userAddresses.findIndex(a => a.id === addressId && !a.deletedAt);
@@ -235,14 +236,14 @@ class AddressManagementUseCase {
     try {
       const supabase = SupabaseClient.getAdmin();
       const { error } = await supabase
-        .from('iam.addresses')
+        .from('addresses')
         .update({ deleted_at: new Date().toISOString(), is_default: false })
         .eq('id', addressId)
         .eq('user_id', userId);
 
       if (error) throw error;
     } catch (err) {
-      logger.warn(`[AddressManagement] Supabase delete fallback: ${err.message}`);
+      handleDatabaseFailure(err, 'Supabase delete');
     }
 
     // Always soft-delete in memory store regardless of DB outcome

@@ -8,8 +8,8 @@
 const express = require('express');
 const router = express.Router();
 
-const { requireAuth } = require('../../../identity/presentation/guards/authGuard');
-const { requireStoreAccess } = require('../../guards/storeAuthGuard');
+const { requireAuth, optionalAuth, requireCapability } = require('../../../identity/presentation/guards/authGuard');
+const { requireStoreAccess, resolveStore } = require('../../guards/storeAuthGuard');
 
 const CreateStoreUseCase = require('../../application/CreateStoreUseCase');
 const StoreOnboardingUseCase = require('../../application/StoreOnboardingUseCase');
@@ -48,9 +48,9 @@ router.get('/discovery', async (req, res, next) => {
 
 // ── 05.01 CREATE A STORE ──
 // POST /api/v1/stores
-router.post('/', requireAuth, async (req, res, next) => {
+router.post('/', requireAuth, requireCapability('canStartSelling'), async (req, res, next) => {
   try {
-    const store = await CreateStoreUseCase.execute(req.userProfile, req.body);
+    const store = await CreateStoreUseCase.execute(req.principal, req.accountState, req.body);
     res.status(201).json({ status: 'success', data: store });
   } catch (err) {
     next(err);
@@ -70,9 +70,9 @@ router.get('/:storeId/profile', async (req, res, next) => {
 
 // ── 05.08 FOLLOW STORES ──
 // POST /api/v1/stores/:storeId/follow
-router.post('/:storeId/follow', requireAuth, requireStoreAccess('store.view'), async (req, res, next) => {
+router.post('/:storeId/follow', requireAuth, resolveStore(), async (req, res, next) => {
   try {
-    const result = await StoreFollowService.followStore(req.userProfile, req.store);
+    const result = await StoreFollowService.followStore(req.principal, req.store);
     res.json({ status: 'success', data: result });
   } catch (err) {
     next(err);
@@ -80,9 +80,9 @@ router.post('/:storeId/follow', requireAuth, requireStoreAccess('store.view'), a
 });
 
 // DELETE /api/v1/stores/:storeId/follow
-router.delete('/:storeId/follow', requireAuth, requireStoreAccess('store.view'), async (req, res, next) => {
+router.delete('/:storeId/follow', requireAuth, resolveStore(), async (req, res, next) => {
   try {
-    const result = await StoreFollowService.unfollowStore(req.userProfile, req.store);
+    const result = await StoreFollowService.unfollowStore(req.principal, req.store);
     res.json({ status: 'success', data: result });
   } catch (err) {
     next(err);
@@ -92,7 +92,7 @@ router.delete('/:storeId/follow', requireAuth, requireStoreAccess('store.view'),
 // GET /api/v1/stores/:storeId/follow-status
 router.get('/:storeId/follow-status', requireAuth, async (req, res, next) => {
   try {
-    const status = await StoreFollowService.getFollowStatus(req.userProfile.id, req.params.storeId);
+    const status = await StoreFollowService.getFollowStatus(req.principal.id, req.params.storeId);
     res.json({ status: 'success', data: status });
   } catch (err) {
     next(err);
@@ -145,7 +145,7 @@ router.get('/:storeId/onboarding', requireAuth, requireStoreAccess('store.view')
 // PATCH /api/v1/stores/:storeId/onboarding
 router.patch('/:storeId/onboarding', requireAuth, requireStoreAccess('store.manage_settings'), async (req, res, next) => {
   try {
-    const status = await StoreOnboardingUseCase.updateOnboardingStep(req.store, req.userProfile, req.body.step, req.body);
+    const status = await StoreOnboardingUseCase.updateOnboardingStep(req.store, req.principal, req.body.step, req.body);
     res.json({ status: 'success', data: status });
   } catch (err) {
     next(err);
@@ -166,7 +166,7 @@ router.get('/:storeId/verification', requireAuth, requireStoreAccess('store.view
 // POST /api/v1/stores/:storeId/verification
 router.post('/:storeId/verification', requireAuth, requireStoreAccess('store.manage_settings'), async (req, res, next) => {
   try {
-    const result = await StoreVerificationUseCase.submitVerification(req.store, req.userProfile, req.body);
+    const result = await StoreVerificationUseCase.submitVerification(req.store, req.principal, req.body);
     res.json({ status: 'success', data: result });
   } catch (err) {
     next(err);
@@ -207,9 +207,9 @@ router.patch('/:storeId/settings', requireAuth, requireStoreAccess('store.manage
 
 // ── 05.11 BUSINESS OPENING INFORMATION ──
 // GET /api/v1/stores/:storeId/hours
-router.get('/:storeId/hours', async (req, res, next) => {
+router.get('/:storeId/hours', resolveStore(), async (req, res, next) => {
   try {
-    const hours = await StoreHoursUseCase.getHours(req.store || { id: req.params.storeId });
+    const hours = await StoreHoursUseCase.getHours(req.store);
     res.json({ status: 'success', data: hours });
   } catch (err) {
     next(err);
@@ -228,10 +228,11 @@ router.patch('/:storeId/hours', requireAuth, requireStoreAccess('store.manage_se
 
 // ── 05.12 BUSINESS LOCATION ──
 // GET /api/v1/stores/:storeId/location
-router.get('/:storeId/location', async (req, res, next) => {
+router.get('/:storeId/location', optionalAuth, resolveStore(), async (req, res, next) => {
   try {
-    const isOwner = !!(req.userProfile && req.store && req.store.ownerId === req.userProfile.id);
-    const location = await StoreLocationUseCase.getLocation(req.store || { id: req.params.storeId }, isOwner);
+    // Precise street addresses are owner-only; the public view is coarse.
+    const isOwner = Boolean(req.principal && req.store && req.store.ownerId === req.principal.id);
+    const location = await StoreLocationUseCase.getLocation(req.store, isOwner);
     res.json({ status: 'success', data: location });
   } catch (err) {
     next(err);

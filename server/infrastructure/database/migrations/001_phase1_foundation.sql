@@ -12,7 +12,7 @@ CREATE SCHEMA IF NOT EXISTS system;
 
 -- ── 2. IAM Profiles (Clerk Identity Mapping) ──
 CREATE TABLE IF NOT EXISTS iam.profiles (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id VARCHAR(64) PRIMARY KEY DEFAULT gen_random_uuid()::text,
     clerk_user_id VARCHAR(128) NOT NULL UNIQUE,
     phone_number VARCHAR(30),
     email VARCHAR(255),
@@ -52,17 +52,17 @@ INSERT INTO iam.roles (id, description, permissions) VALUES
 ON CONFLICT (id) DO NOTHING;
 
 CREATE TABLE IF NOT EXISTS iam.user_roles (
-    user_id UUID NOT NULL REFERENCES iam.profiles(id) ON DELETE CASCADE,
+    user_id VARCHAR(64) NOT NULL REFERENCES iam.profiles(id) ON DELETE CASCADE,
     role_id VARCHAR(30) NOT NULL REFERENCES iam.roles(id) ON DELETE CASCADE,
     granted_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    granted_by UUID REFERENCES iam.profiles(id),
+    granted_by VARCHAR(64) REFERENCES iam.profiles(id),
     PRIMARY KEY (user_id, role_id)
 );
 
 -- ── 4. System Audit Logs ──
 CREATE TABLE IF NOT EXISTS system.audit_logs (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    actor_id UUID REFERENCES iam.profiles(id),
+    id VARCHAR(64) PRIMARY KEY DEFAULT gen_random_uuid()::text,
+    actor_id VARCHAR(64) REFERENCES iam.profiles(id),
     action VARCHAR(100) NOT NULL,
     resource_type VARCHAR(100) NOT NULL,
     resource_id VARCHAR(100),
@@ -78,7 +78,7 @@ CREATE INDEX IF NOT EXISTS idx_audit_resource ON system.audit_logs(resource_type
 
 -- ── 5. Transactional Outbox Events ──
 CREATE TABLE IF NOT EXISTS system.outbox_events (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id VARCHAR(64) PRIMARY KEY DEFAULT gen_random_uuid()::text,
     aggregate_type VARCHAR(100) NOT NULL,
     aggregate_id VARCHAR(100) NOT NULL,
     event_type VARCHAR(100) NOT NULL,
@@ -95,7 +95,7 @@ CREATE INDEX IF NOT EXISTS idx_outbox_pending ON system.outbox_events(status, cr
 -- ── 6. Idempotency Keys ──
 CREATE TABLE IF NOT EXISTS system.idempotency_keys (
     key VARCHAR(255) PRIMARY KEY,
-    user_id UUID REFERENCES iam.profiles(id),
+    user_id VARCHAR(64) REFERENCES iam.profiles(id),
     route VARCHAR(255) NOT NULL,
     request_hash VARCHAR(64) NOT NULL,
     response_status INT,
@@ -109,7 +109,7 @@ CREATE INDEX IF NOT EXISTS idx_idempotency_expiry ON system.idempotency_keys(exp
 
 -- ── 7. Webhook Events Ledger ──
 CREATE TABLE IF NOT EXISTS system.webhook_events (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id VARCHAR(64) PRIMARY KEY DEFAULT gen_random_uuid()::text,
     source VARCHAR(50) NOT NULL, -- 'clerk', 'resend', 'momo', 'orange_money'
     event_id VARCHAR(255) NOT NULL UNIQUE,
     event_type VARCHAR(100) NOT NULL,

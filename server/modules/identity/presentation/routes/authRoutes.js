@@ -1,127 +1,174 @@
 /**
- * Identity & Authentication API Routes (02.01 - 02.07)
+ * LOUMOO — Authentication & Verification Routes
+ * ---------------------------------------------------------------------------
+ * Clerk is the identity provider. Credentials are exchanged between the
+ * browser and Clerk directly; this API never sees a password and never mints a
+ * session of its own.
+ *
+ * The previous revision accepted any identifier with no password and returned
+ * a token — an unauthenticated stranger could sign in as anyone. Those
+ * endpoints now answer 501 with a pointer to the real flow rather than
+ * silently continuing to work.
  */
 
 const express = require('express');
 const router = express.Router();
-const SignUpUseCase = require('../../application/SignUpUseCase');
-const SignInUseCase = require('../../application/SignInUseCase');
-const OtpService = require('../../application/OtpService');
+
 const { requireAuth } = require('../guards/authGuard');
+const AccountStateService = require('../../application/AccountStateService');
+const ContactVerificationService = require('../../application/ContactVerificationService');
+const ProfileRepository = require('../../infrastructure/ProfileRepository');
+const ClerkIdentityProvider = require('../../infrastructure/ClerkIdentityProvider');
+const AnalyticsService = require('../../../../infrastructure/analytics/AnalyticsService');
+const config = require('../../../../config/env');
 const logger = require('../../../../shared/logging/logger');
+const { AppError } = require('../../../../shared/errors/AppError');
 
-// POST /api/v1/auth/signup (02.02)
-router.post('/signup', async (req, res, next) => {
-  try {
-    const result = await SignUpUseCase.execute(req.body, {
-      ip: req.ip,
-      userAgent: req.get('user-agent'),
-      requestId: req.requestId
-    });
-    res.status(201).json({
-      status: 'success',
-      data: result
-    });
-  } catch (err) {
-    next(err);
+/** 501 for the credential endpoints that used to fabricate sessions. */
+class MovedToClerkError extends AppError {
+  constructor(what) {
+    super(
+      `${what} is handled by Clerk in the browser, not by this API. ` +
+      'Use the Clerk sign-in component, then call POST /api/v1/auth/session with the resulting session token.',
+      {
+        code: 'USE_CLERK_AUTHENTICATION',
+        statusCode: 501,
+        details: {
+          publishableKey: config.clerk.publishableKey || null,
+          completeWith: 'POST /api/v1/auth/session'
+        }
+      }
+    );
   }
+}
+
+/* ── Public bootstrap: what the browser needs to start Clerk ─────────────── */
+// GET /api/v1/auth/config
+router.get('/config', (req, res) => {
+  const phone = ClerkIdentityProvider.phoneVerificationCapability();
+  res.json({
+    status: 'success',
+    data: {
+      provider: 'clerk',
+      // Publishable key only. The secret key never leaves the server.
+      publishableKey: config.clerk.publishableKey || null,
+      configured: ClerkIdentityProvider.isConfigured,
+      emailVerification: { enabled: true, provider: 'clerk' },
+      phoneVerification: {
+        enabled: phone.available,
+        provider: phone.provider,
+        configurationRequirement: phone.requirement
+      }
+    }
+  });
 });
 
-// POST /api/v1/auth/signin (02.03)
-router.post('/signin', async (req, res, next) => {
+/* ── Session establishment ───────────────────────────────────────────────── */
+/**
+ * POST /api/v1/auth/session
+ * Called once, right after Clerk authenticates the browser.
+ * Verifies the presented session token, provisions the LOUMOO profile if this
+ * is a first sign-in, and returns the authoritative account state.
+ *
+ * There is no request body: the ONLY input is the verified bearer token, so
+ * there is nothing a client could supply to influence which account it gets.
+ */
+router.post('/session', requireAuth, async (req, res, next) => {
   try {
-    const result = await SignInUseCase.execute(req.body, {
-      ip: req.ip,
-      userAgent: req.get('user-agent'),
-      requestId: req.requestId
+    await ProfileRepository.recordLogin(req.principal.id, req.principal.clerkUserId);
+
+    AnalyticsService.identify(req.principal.id, {
+      email: req.principal.email,
+      name: `${req.principal.firstName} ${req.principal.lastName}`.trim(),
+      role: req.principal.primaryRole
     });
+    AnalyticsService.track(req.principal.id, 'auth_session_established', {
+      provider: req.auth.source,
+      accountState: req.accountState.state
+    });
+
+    logger.info(`[Auth] session established user=${req.principal.id} state=${req.accountState.state}`);
+
     res.json({
       status: 'success',
-      data: result
+      data: AccountStateService.toClientState(req.principal, req.accountState)
     });
-  } catch (err) {
-    next(err);
-  }
+  } catch (err) { next(err); }
 });
 
-// POST /api/v1/auth/logout (02.04)
-router.post('/logout', async (req, res, next) => {
-  try {
-    res.json({
-      status: 'success',
-      message: 'Successfully logged out'
-    });
-  } catch (err) {
-    next(err);
-  }
+// POST /api/v1/auth/logout — Clerk owns session revocation in the browser.
+router.post('/logout', (req, res) => {
+  res.json({
+    status: 'success',
+    message: 'Signed out. Clear the Clerk session in the browser to complete sign-out.'
+  });
 });
 
-// POST /api/v1/auth/otp/send (02.07)
-router.post('/otp/send', async (req, res, next) => {
+/* ── Verification ────────────────────────────────────────────────────────── */
+
+// GET /api/v1/auth/verification
+router.get('/verification', requireAuth, async (req, res, next) => {
   try {
-    const { phoneNumber } = req.body;
-    const userId = req.userProfile?.id || null;
-    const result = await OtpService.sendOtp(phoneNumber, userId);
-    res.json({
-      status: 'success',
-      data: result
-    });
-  } catch (err) {
-    next(err);
-  }
+    res.json({ status: 'success', data: await ContactVerificationService.getStatus(req.principal) });
+  } catch (err) { next(err); }
 });
 
-// POST /api/v1/auth/otp/verify (02.07)
-router.post('/otp/verify', async (req, res, next) => {
+/**
+ * POST /api/v1/auth/verification/refresh
+ * Re-reads Clerk and mirrors the result. This is the endpoint the client polls
+ * after the user completes a code — and the one that makes "verified in
+ * another tab" propagate correctly.
+ */
+router.post('/verification/refresh', requireAuth, async (req, res, next) => {
   try {
-    const { phoneNumber, code } = req.body;
-    const userId = req.userProfile?.id || null;
-    const result = await OtpService.verifyOtp(phoneNumber, code, userId);
-    res.json({
-      status: 'success',
-      data: result
-    });
-  } catch (err) {
-    next(err);
-  }
+    res.json({ status: 'success', data: await ContactVerificationService.refresh(req.principal) });
+  } catch (err) { next(err); }
 });
 
-// POST /api/v1/auth/password-reset/request (02.05)
-router.post('/password-reset/request', async (req, res, next) => {
+// POST /api/v1/auth/verification/email
+router.post('/verification/email', requireAuth, async (req, res, next) => {
   try {
-    const { email } = req.body;
-    // Uniform response to minimize user enumeration
-    res.json({
-      status: 'success',
-      message: `If an account exists for ${email || 'your email'}, a secure recovery link has been sent.`
-    });
-  } catch (err) {
-    next(err);
-  }
+    res.json({ status: 'success', data: await ContactVerificationService.requestEmailVerification(req.principal) });
+  } catch (err) { next(err); }
 });
 
-// POST /api/v1/auth/password-reset/confirm (02.05)
-router.post('/password-reset/confirm', async (req, res, next) => {
+// POST /api/v1/auth/verification/phone — 503 + requirement when unconfigured.
+router.post('/verification/phone', requireAuth, async (req, res, next) => {
   try {
-    res.json({
-      status: 'success',
-      message: 'Password reset confirmed. Please sign in with your new password.'
-    });
-  } catch (err) {
-    next(err);
-  }
+    const result = await ContactVerificationService.requestPhoneVerification(req.principal, req.body.phoneNumber);
+    res.json({ status: 'success', data: result });
+  } catch (err) { next(err); }
 });
 
-// POST /api/v1/auth/email/verify (02.06)
-router.post('/email/verify', async (req, res, next) => {
+/* ── Retired credential endpoints ────────────────────────────────────────── */
+
+router.post('/signup', (req, res, next) => next(new MovedToClerkError('Registration')));
+router.post('/signin', (req, res, next) => next(new MovedToClerkError('Sign in')));
+router.post('/password-reset/request', (req, res, next) => next(new MovedToClerkError('Password reset')));
+router.post('/password-reset/confirm', (req, res, next) => next(new MovedToClerkError('Password reset')));
+
+// The old `POST /email/verify` returned 200 "verified successfully" for anyone,
+// authenticated or not, without touching any state. It now reports the truth.
+router.post('/email/verify', requireAuth, async (req, res, next) => {
   try {
-    res.json({
-      status: 'success',
-      message: 'Email address verified successfully'
-    });
-  } catch (err) {
-    next(err);
-  }
+    res.json({ status: 'success', data: await ContactVerificationService.refresh(req.principal) });
+  } catch (err) { next(err); }
+});
+
+// Legacy OTP paths kept addressable so old clients get an explicit answer
+// instead of a 404 that looks like a routing bug.
+router.post('/otp/send', requireAuth, async (req, res, next) => {
+  try {
+    const result = await ContactVerificationService.requestPhoneVerification(req.principal, req.body.phoneNumber);
+    res.json({ status: 'success', data: result });
+  } catch (err) { next(err); }
+});
+
+router.post('/otp/verify', requireAuth, async (req, res, next) => {
+  try {
+    res.json({ status: 'success', data: await ContactVerificationService.refresh(req.principal) });
+  } catch (err) { next(err); }
 });
 
 module.exports = router;
+module.exports.MovedToClerkError = MovedToClerkError;

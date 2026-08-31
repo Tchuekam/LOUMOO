@@ -7,12 +7,23 @@ const { AppError } = require('../errors/AppError');
 const logger = require('../logging/logger');
 const { Sentry } = require('../../clients/sentry');
 
+/**
+ * Some >=500 responses are the CORRECT, expected answer to a well-formed
+ * request rather than a server fault: a retired endpoint pointing the client
+ * at Clerk, or a capability the deployment has not been configured for. They
+ * are logged at WARN without a stack so real 500s stay visible.
+ */
+const EXPECTED_5XX_CODES = new Set([
+  'USE_CLERK_AUTHENTICATION',
+  'PHONE_VERIFICATION_NOT_CONFIGURED'
+]);
+
 function errorHandler(err, req, res, next) {
   const requestId = req.requestId || 'req_unknown';
 
   // 1. Operational Domain Errors (AppError instances)
   if (err instanceof AppError) {
-    if (err.statusCode >= 500) {
+    if (err.statusCode >= 500 && !EXPECTED_5XX_CODES.has(err.code)) {
       logger.error(`[AppError ${err.statusCode}] ${err.message}`, err, {
         requestId,
         path: req.originalUrl,

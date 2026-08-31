@@ -7,7 +7,7 @@ CREATE SCHEMA IF NOT EXISTS iam;
 
 -- 1. LISTING CATEGORIES & TAXONOMY
 CREATE TABLE IF NOT EXISTS iam.listing_categories (
-  id VARCHAR(64) PRIMARY KEY,
+  id VARCHAR(64) PRIMARY KEY DEFAULT gen_random_uuid()::text,
   parent_id VARCHAR(64) REFERENCES iam.listing_categories(id) ON DELETE SET NULL,
   vertical VARCHAR(64) NOT NULL, -- electronics, fashion, home, services, hotels, travel, food, automotive, digital
   name VARCHAR(128) NOT NULL,
@@ -28,7 +28,7 @@ CREATE INDEX IF NOT EXISTS idx_listing_categories_slug ON iam.listing_categories
 
 -- 2. DYNAMIC CATEGORY ATTRIBUTE DEFINITIONS
 CREATE TABLE IF NOT EXISTS iam.category_attributes (
-  id VARCHAR(64) PRIMARY KEY,
+  id VARCHAR(64) PRIMARY KEY DEFAULT gen_random_uuid()::text,
   category_id VARCHAR(64) NOT NULL REFERENCES iam.listing_categories(id) ON DELETE CASCADE,
   name VARCHAR(128) NOT NULL,
   slug VARCHAR(128) NOT NULL,
@@ -50,9 +50,9 @@ CREATE INDEX IF NOT EXISTS idx_category_attributes_cat ON iam.category_attribute
 
 -- 3. MASTER UNIVERSAL LISTINGS TABLE
 CREATE TABLE IF NOT EXISTS iam.listings (
-  id VARCHAR(64) PRIMARY KEY,
+  id VARCHAR(64) PRIMARY KEY DEFAULT gen_random_uuid()::text,
   store_id VARCHAR(64) NOT NULL REFERENCES iam.stores(id) ON DELETE CASCADE,
-  seller_id VARCHAR(64) NOT NULL REFERENCES iam.users(id) ON DELETE CASCADE,
+  seller_id VARCHAR(64) NOT NULL REFERENCES iam.profiles(id) ON DELETE CASCADE,
   listing_type VARCHAR(32) NOT NULL DEFAULT 'PHYSICAL_PRODUCT', -- PHYSICAL_PRODUCT, DIGITAL_PRODUCT, SERVICE, BOOKING, RENTAL, SUBSCRIPTION, BUNDLE
   category_id VARCHAR(64) NOT NULL REFERENCES iam.listing_categories(id),
   title VARCHAR(255) NOT NULL,
@@ -96,7 +96,7 @@ CREATE INDEX IF NOT EXISTS idx_listings_created_at ON iam.listings(created_at DE
 
 -- 4. DYNAMIC ATTRIBUTE VALUES (EAV)
 CREATE TABLE IF NOT EXISTS iam.listing_attribute_values (
-  id VARCHAR(64) PRIMARY KEY,
+  id VARCHAR(64) PRIMARY KEY DEFAULT gen_random_uuid()::text,
   listing_id VARCHAR(64) NOT NULL REFERENCES iam.listings(id) ON DELETE CASCADE,
   attribute_id VARCHAR(64) NOT NULL REFERENCES iam.category_attributes(id) ON DELETE CASCADE,
   attribute_slug VARCHAR(128) NOT NULL,
@@ -114,7 +114,7 @@ CREATE INDEX IF NOT EXISTS idx_listing_attr_val_slug ON iam.listing_attribute_va
 
 -- 5. LISTING MEDIA ASSETS
 CREATE TABLE IF NOT EXISTS iam.listing_media (
-  id VARCHAR(64) PRIMARY KEY,
+  id VARCHAR(64) PRIMARY KEY DEFAULT gen_random_uuid()::text,
   listing_id VARCHAR(64) NOT NULL REFERENCES iam.listings(id) ON DELETE CASCADE,
   media_type VARCHAR(16) NOT NULL DEFAULT 'IMAGE', -- IMAGE, VIDEO, DOCUMENT
   url TEXT NOT NULL,
@@ -133,7 +133,7 @@ CREATE INDEX IF NOT EXISTS idx_listing_media_listing ON iam.listing_media(listin
 
 -- 6. PRODUCT VARIANTS
 CREATE TABLE IF NOT EXISTS iam.listing_variants (
-  id VARCHAR(64) PRIMARY KEY,
+  id VARCHAR(64) PRIMARY KEY DEFAULT gen_random_uuid()::text,
   listing_id VARCHAR(64) NOT NULL REFERENCES iam.listings(id) ON DELETE CASCADE,
   sku VARCHAR(128),
   barcode VARCHAR(128),
@@ -156,7 +156,7 @@ CREATE INDEX IF NOT EXISTS idx_listing_variants_sku ON iam.listing_variants(sku)
 
 -- 7. CONCURRENCY-SAFE INVENTORY ITEMS
 CREATE TABLE IF NOT EXISTS iam.listing_inventory (
-  id VARCHAR(64) PRIMARY KEY,
+  id VARCHAR(64) PRIMARY KEY DEFAULT gen_random_uuid()::text,
   listing_id VARCHAR(64) NOT NULL REFERENCES iam.listings(id) ON DELETE CASCADE,
   variant_id VARCHAR(64) REFERENCES iam.listing_variants(id) ON DELETE CASCADE,
   on_hand INT NOT NULL DEFAULT 0 CHECK (on_hand >= 0),
@@ -172,7 +172,7 @@ CREATE INDEX IF NOT EXISTS idx_listing_inventory_listing ON iam.listing_inventor
 
 -- 8. SERVICE, BOOKING & RENTAL AVAILABILITY
 CREATE TABLE IF NOT EXISTS iam.listing_availability (
-  id VARCHAR(64) PRIMARY KEY,
+  id VARCHAR(64) PRIMARY KEY DEFAULT gen_random_uuid()::text,
   listing_id VARCHAR(64) NOT NULL REFERENCES iam.listings(id) ON DELETE CASCADE,
   availability_strategy VARCHAR(32) NOT NULL DEFAULT 'STOCK', -- STOCK, TIME_SLOT, DATE_RANGE, CAPACITY, UNLIMITED
   timezone VARCHAR(64) NOT NULL DEFAULT 'Africa/Douala',
@@ -191,9 +191,9 @@ CREATE INDEX IF NOT EXISTS idx_listing_availability_listing ON iam.listing_avail
 
 -- 9. LISTING AUTOSAVE DRAFTS (Temporary state storage)
 CREATE TABLE IF NOT EXISTS iam.listing_drafts (
-  id VARCHAR(64) PRIMARY KEY,
+  id VARCHAR(64) PRIMARY KEY DEFAULT gen_random_uuid()::text,
   store_id VARCHAR(64) NOT NULL REFERENCES iam.stores(id) ON DELETE CASCADE,
-  seller_id VARCHAR(64) NOT NULL REFERENCES iam.users(id) ON DELETE CASCADE,
+  seller_id VARCHAR(64) NOT NULL REFERENCES iam.profiles(id) ON DELETE CASCADE,
   step_identifier VARCHAR(64) NOT NULL DEFAULT 'step1',
   draft_payload JSONB NOT NULL DEFAULT '{}'::jsonb,
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -233,17 +233,17 @@ CREATE POLICY "Store owners manage own listings" ON iam.listings
     EXISTS (
       SELECT 1 FROM iam.store_members sm
       WHERE sm.store_id = listings.store_id
-      AND sm.user_id = auth.uid()::text
+      AND sm.user_id = auth.uid()::text::text
       AND sm.role IN ('owner', 'admin', 'manager', 'staff')
     )
   );
 
 CREATE POLICY "Store owners manage own listing drafts" ON iam.listing_drafts
   FOR ALL USING (
-    seller_id = auth.uid()::text OR
+    seller_id = auth.uid()::text::text OR
     EXISTS (
       SELECT 1 FROM iam.store_members sm
       WHERE sm.store_id = listing_drafts.store_id
-      AND sm.user_id = auth.uid()::text
+      AND sm.user_id = auth.uid()::text::text
     )
   );

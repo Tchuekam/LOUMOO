@@ -1,88 +1,132 @@
 /**
- * UpdateListingUseCase (06.02 & Section 09 Draft Autosave & 06.11 Edit Listing)
- * Handles debounced autosave, field updates, dynamic attribute validation, and cache invalidation.
+ * LOUMOO — Update Listing Use Case (edit + wizard autosave)
+ * ---------------------------------------------------------------------------
+ * Applies a partial update to a listing the caller has already been proven to
+ * own (see `requireListingOwnership`).
+ *
+ * A published listing keeps working while it is edited: the update is applied
+ * to the stored row, and only fields the client actually sent are touched, so
+ * an autosave of step 2 cannot blank out what step 4 already captured.
  */
 
-const { SupabaseClient } = require('../../../infrastructure/database/SupabaseClient');
+const ListingRepository = require('../infrastructure/ListingRepository');
+const ListingValidationService = require('./ListingValidationService');
+const CreateListingUseCase = require('./CreateListingUseCase');
+const AnalyticsService = require('../../../infrastructure/analytics/AnalyticsService');
 const CacheService = require('../../../infrastructure/cache/CacheService');
-const ListingTaxonomyUseCase = require('./ListingTaxonomyUseCase');
-const { ValidationError } = require('../../../shared/errors/AppError');
 const logger = require('../../../shared/logging/logger');
+const { ValidationError, ConflictError } = require('../../../shared/errors/AppError');
+
+/** Columns the client may influence, mapped to their database names. */
+const FIELD_MAP = Object.freeze({
+  title: 'title',
+  shortDescription: 'short_description',
+  description: 'description',
+  brand: 'brand',
+  model: 'model',
+  sku: 'sku',
+  condition: 'condition',
+  currency: 'currency',
+  basePriceMinor: 'base_price_minor',
+  salePriceMinor: 'sale_price_minor',
+  compareAtPriceMinor: 'compare_at_price_minor',
+  fulfillmentModel: 'fulfillment_model',
+  visibility: 'visibility',
+  tags: 'tags',
+  listingType: 'listing_type',
+  categoryId: 'category_id'
+});
 
 class UpdateListingUseCase {
-  static async execute(listing, updates = {}) {
-    // 1. Validate category attributes if supplied
-    if (updates.attributes && typeof updates.attributes === 'object') {
-      try {
-        await ListingTaxonomyUseCase.validateAttributesForCategory(
-          updates.categoryId || listing.categoryId,
-          updates.attributes
-        );
-      } catch (err) {
-        throw new ValidationError(`Attribute validation failed: ${err.message}`);
-      }
+  /**
+   * @param {object} ctx
+   * @param {object} ctx.listingRow  The row loaded by the ownership guard.
+   * @param {object} ctx.principal
+   * @param {object} ctx.input       Untrusted partial body.
+   */
+  static async execute({ listingRow, principal, input = {} }) {
+    if (listingRow.status === 'ARCHIVED') {
+      throw new ConflictError('Archived listings cannot be edited. Duplicate it into a new draft instead.');
     }
 
-    // 2. Apply updates to domain model
-    if (updates.title) listing.title = updates.title.trim();
-    if (updates.shortDescription !== undefined) listing.shortDescription = updates.shortDescription;
-    if (updates.description !== undefined) listing.description = updates.description;
-    if (updates.brand !== undefined) listing.brand = updates.brand;
-    if (updates.model !== undefined) listing.model = updates.model;
-    if (updates.condition !== undefined) listing.condition = updates.condition;
-    if (updates.categoryId) listing.categoryId = updates.categoryId;
-    if (updates.tags && Array.isArray(updates.tags)) listing.tags = updates.tags;
-    if (updates.fulfillmentModel) listing.fulfillmentModel = updates.fulfillmentModel;
-    if (updates.attributes) listing.attributes = { ...listing.attributes, ...updates.attributes };
+    // Merge the submitted patch over the stored state, then validate the WHOLE
+    // resulting listing. Validating only the patch would let a listing drift
+    // into an invalid combination one field at a time.
+    const existingAttributes = await ListingRepository.listAttributes(listingRow.id);
+    const media = await ListingRepository.listMedia(listingRow.id);
 
-    // Update pricing
-    if (updates.basePriceMinor !== undefined) listing.pricing.basePriceMinor = Number(updates.basePriceMinor);
-    if (updates.salePriceMinor !== undefined) listing.pricing.salePriceMinor = updates.salePriceMinor !== null ? Number(updates.salePriceMinor) : null;
-    if (updates.compareAtPriceMinor !== undefined) listing.pricing.compareAtPriceMinor = updates.compareAtPriceMinor !== null ? Number(updates.compareAtPriceMinor) : null;
-    if (updates.currency) listing.pricing.currency = updates.currency.toUpperCase();
+    const merged = {
+      listingType: listingRow.listing_type,
+      categoryId: listingRow.category_id,
+      title: listingRow.title,
+      shortDescription: listingRow.short_description,
+      description: listingRow.description,
+      brand: listingRow.brand,
+      model: listingRow.model,
+      sku: listingRow.sku,
+      condition: listingRow.condition,
+      currency: listingRow.currency,
+      basePriceMinor: listingRow.base_price_minor,
+      salePriceMinor: listingRow.sale_price_minor,
+      compareAtPriceMinor: listingRow.compare_at_price_minor,
+      fulfillmentModel: listingRow.fulfillment_model,
+      visibility: listingRow.visibility,
+      tags: listingRow.tags || [],
+      attributes: existingAttributes,
+      city: (listingRow.metadata && listingRow.metadata.city) || null,
+      neighbourhood: (listingRow.metadata && listingRow.metadata.neighbourhood) || null,
+      contactPhone: (listingRow.metadata && listingRow.metadata.contactPhone) || null,
+      uploadIds: [],
+      ...stripUndefined(input)
+    };
 
-    // Update inventory
-    if (updates.onHand !== undefined) listing.inventory.onHand = Number(updates.onHand);
-    if (updates.lowStockThreshold !== undefined) listing.inventory.lowStockThreshold = Number(updates.lowStockThreshold);
-    if (updates.trackInventory !== undefined) listing.inventory.trackInventory = Boolean(updates.trackInventory);
+    // A published listing must stay valid for publication after every edit.
+    const forPublish = listingRow.status === 'PUBLISHED';
 
-    // Update availability
-    if (updates.availability) {
-      listing.availability = Object.assign(listing.availability, updates.availability);
+    const { value } = await ListingValidationService.validate(merged, {
+      forPublish,
+      mediaCount: media.length
+    });
+
+    const patch = {};
+    for (const [clientField, column] of Object.entries(FIELD_MAP)) {
+      if (value[clientField] !== undefined) patch[column] = value[clientField];
     }
 
-    listing.updatedAt = new Date().toISOString();
+    patch.metadata = {
+      ...(listingRow.metadata || {}),
+      city: value.city ?? (listingRow.metadata || {}).city ?? null,
+      neighbourhood: value.neighbourhood ?? (listingRow.metadata || {}).neighbourhood ?? null,
+      contactPhone: value.contactPhone ?? (listingRow.metadata || {}).contactPhone ?? null,
+      lastEditedAt: new Date().toISOString()
+    };
 
-    // 3. Persist to DB
-    const supabase = SupabaseClient.admin;
-    try {
-      await supabase.from('iam.listings').update({
-        title: listing.title,
-        short_description: listing.shortDescription,
-        description: listing.description,
-        brand: listing.brand,
-        model: listing.model,
-        condition: listing.condition,
-        category_id: listing.categoryId,
-        base_price_minor: listing.pricing.basePriceMinor,
-        sale_price_minor: listing.pricing.salePriceMinor,
-        compare_at_price_minor: listing.pricing.compareAtPriceMinor,
-        currency: listing.pricing.currency,
-        fulfillment_model: listing.fulfillmentModel,
-        tags: listing.tags,
-        updated_at: listing.updatedAt
-      }).eq('id', listing.id);
-    } catch (err) {
-      logger.warn(`[UpdateListing] Supabase update fallback: ${err.message}`);
+    const updated = await ListingRepository.update(listingRow.id, patch);
+
+    if (input.attributes !== undefined) {
+      await ListingRepository.replaceAttributes(updated.id, value.categoryId, value.attributes);
     }
 
-    // 4. Invalidate caches
-    await CacheService.del(`listing:${listing.id}`);
-    await CacheService.del(`listing:${listing.slug}`);
-    await CacheService.del(`listings:store:${listing.storeId}`);
+    await CacheService.delete(`listing:${updated.id}`, 'catalog').catch(() => null);
 
-    return listing.toOwnerJSON();
+    AnalyticsService.track(principal.id, 'listing_updated', {
+      listingId: updated.id,
+      storeId: updated.store_id,
+      fields: Object.keys(stripUndefined(input))
+    });
+
+    logger.info(`[UpdateListing] user=${principal.id} listing=${updated.id} updated`);
+    return CreateListingUseCase.hydrate(updated);
   }
 }
 
+function stripUndefined(obj) {
+  const out = {};
+  for (const [k, v] of Object.entries(obj || {})) {
+    if (v !== undefined) out[k] = v;
+  }
+  return out;
+}
+
 module.exports = UpdateListingUseCase;
+module.exports.FIELD_MAP = FIELD_MAP;

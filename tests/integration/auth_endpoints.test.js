@@ -1,101 +1,115 @@
 /**
- * Integration Test: Authentication & Identity HTTP Pipeline (Prompt 02)
+ * LOUMOO — Authentication & Identity HTTP Pipeline
+ * ---------------------------------------------------------------------------
+ * Exercises the identity endpoints over real HTTP.
+ *
+ * This suite previously asserted that `POST /api/v1/auth/signup` returned 201
+ * and that `POST /api/v1/auth/signin` returned a session token for any
+ * identifier, with no password. Both endpoints have been retired — Clerk
+ * performs authentication — so the expectations here describe the real
+ * pipeline instead.
  */
 
+require('../setup');
 const assert = require('assert');
-const http = require('http');
-const app = require('../../server/index');
-
-function makeRequest(server, path, options = {}, body = null) {
-  return new Promise((resolve, reject) => {
-    const port = server.address().port;
-    const reqOptions = {
-      hostname: '127.0.0.1',
-      port,
-      path,
-      method: options.method || 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(options.headers || {})
-      }
-    };
-
-    const req = http.request(reqOptions, (res) => {
-      let rawData = '';
-      res.on('data', chunk => rawData += chunk);
-      res.on('end', () => {
-        try {
-          const parsed = rawData ? JSON.parse(rawData) : {};
-          resolve({ status: res.statusCode, headers: res.headers, data: parsed });
-        } catch (e) {
-          resolve({ status: res.statusCode, headers: res.headers, data: rawData });
-        }
-      });
-    });
-
-    req.on('error', reject);
-    if (body) {
-      req.write(typeof body === 'string' ? body : JSON.stringify(body));
-    }
-    req.end();
-  });
-}
+const harness = require('../helpers/harness');
 
 async function run() {
-  console.log('  Testing Auth & Identity API Endpoints Pipeline...');
+  console.log('  Testing auth & identity HTTP pipeline...');
 
-  const server = http.createServer(app);
-  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+  await harness.start();
 
-  try {
-    // 1. POST /api/v1/auth/signup (Buyer)
-    const signupRes = await makeRequest(server, '/api/v1/auth/signup', { method: 'POST' }, {
-      email: `api_user_${Date.now()}@example.com`,
-      firstName: 'Alain',
-      lastName: 'Foka',
-      city: 'Douala',
-      intent: 'buyer'
-    });
-    assert.strictEqual(signupRes.status, 201, 'Signup should return 201 Created');
-    assert.ok(signupRes.data.data.user, 'Signup should return user profile');
+  /* ── Public surface ───────────────────────────────────────────────────── */
 
-    // 2. POST /api/v1/auth/signin
-    const signinRes = await makeRequest(server, '/api/v1/auth/signin', { method: 'POST' }, {
-      identifier: 'alain.foka@example.com',
-      token: 'mock_token_integration_test'
-    });
-    assert.strictEqual(signinRes.status, 200, 'Signin should return 200 OK');
-    assert.ok(signinRes.data.data.token, 'Signin should return token');
+  const health = await harness.request('GET', '/api/v1/health');
+  assert.strictEqual(health.status, 200);
 
-    // 3. POST /api/v1/auth/otp/send
-    const phone = `+23769${Math.floor(1000000 + Math.random() * 9000000)}`;
-    const otpRes = await makeRequest(server, '/api/v1/auth/otp/send', { method: 'POST' }, {
-      phoneNumber: phone
-    });
-    assert.strictEqual(otpRes.status, 200, 'OTP send should return 200 OK');
+  const authConfig = await harness.request('GET', '/api/v1/auth/config');
+  assert.strictEqual(authConfig.status, 200);
+  assert.strictEqual(authConfig.body.data.provider, 'clerk');
+  assert.ok('phoneVerification' in authConfig.body.data,
+    'The client must be told up front whether phone verification is available');
 
-    // 4. POST /api/v1/auth/password-reset/request
-    const pwRes = await makeRequest(server, '/api/v1/auth/password-reset/request', { method: 'POST' }, {
-      email: 'user@example.com'
-    });
-    assert.strictEqual(pwRes.status, 200, 'Password reset request should return 200');
+  /* ── Retired credential endpoints ─────────────────────────────────────── */
 
-    // 5. GET /api/v1/users/orca-merchant/public
-    const publicCardRes = await makeRequest(server, '/api/v1/users/orca-merchant/public');
-    assert.strictEqual(publicCardRes.status, 200, 'Public merchant card should return 200');
-    assert.ok(publicCardRes.data.data.user.fullName, 'Public merchant card should have a name');
+  const signup = await harness.request('POST', '/api/v1/auth/signup', {
+    body: { email: 'someone@loumoo.cm', password: 'hunter2hunter2', firstName: 'A', lastName: 'B' }
+  });
+  assert.strictEqual(signup.status, 501,
+    'Server-side registration is retired; Clerk performs it in the browser');
+  assert.strictEqual(signup.body.error.code, 'USE_CLERK_AUTHENTICATION');
 
-    console.log('    ✓ All Auth & Identity REST endpoints passed integration tests.');
-  } finally {
-    await new Promise(resolve => server.close(resolve));
+  const signin = await harness.request('POST', '/api/v1/auth/signin', {
+    body: { identifier: 'someone@loumoo.cm' }
+  });
+  assert.strictEqual(signin.status, 501);
+  assert.ok(!JSON.stringify(signin.body).includes('"token"'),
+    'A retired endpoint must never hand out a session token');
+
+  /* ── Protected endpoints reject anonymous callers ─────────────────────── */
+
+  const protectedRoutes = [
+    ['GET', '/api/v1/me'],
+    ['GET', '/api/v1/me/state'],
+    ['GET', '/api/v1/me/onboarding'],
+    ['GET', '/api/v1/users/me'],
+    ['GET', '/api/v1/auth/verification'],
+    ['POST', '/api/v1/auth/session'],
+    ['POST', '/api/v1/me/onboarding/start']
+  ];
+
+  for (const [method, route] of protectedRoutes) {
+    const res = await harness.request(method, route, { body: {} });
+    assert.strictEqual(res.status, 401,
+      `${method} ${route} must require authentication, got ${res.status}`);
+    assert.strictEqual(res.body.error.code, 'UNAUTHENTICATED');
+    assert.ok(res.body.error.requestId, 'Every error must carry a request id for tracing');
   }
+
+  /* ── An authenticated principal gets a complete state envelope ────────── */
+
+  const user = await harness.createUser({ stage: 'ready' });
+
+  const session = await harness.request('POST', '/api/v1/auth/session', { token: user.token });
+  assert.strictEqual(session.status, 200);
+  assert.strictEqual(session.body.data.state, 'ACCOUNT_READY');
+  assert.strictEqual(session.body.data.user.id, user.id);
+
+  const me = await harness.request('GET', '/api/v1/me', { token: user.token });
+  assert.strictEqual(me.status, 200);
+  assert.strictEqual(me.body.data.profile.id, user.id);
+  assert.strictEqual(me.body.data.profile.isEmailVerified, true);
+  assert.strictEqual(me.body.data.accountState.state, 'ACCOUNT_READY');
+
+  const state = await harness.request('GET', '/api/v1/me/state', { token: user.token });
+  assert.strictEqual(state.status, 200);
+  for (const key of ['state', 'capabilities', 'contact', 'onboarding', 'seller', 'destination']) {
+    assert.ok(key in state.body.data, `The state envelope must include "${key}"`);
+  }
+
+  /* ── Capability resolution tells the client where to go ───────────────── */
+
+  const resolve = await harness.request(
+    'GET', '/api/v1/me/state/resolve?capability=canCreateListing', { token: user.token }
+  );
+  assert.strictEqual(resolve.status, 200);
+  assert.strictEqual(resolve.body.data.allowed, false);
+  assert.ok(resolve.body.data.resolveScreen,
+    'A denied capability must name the screen that resolves it');
+
+  /* ── Rate limit headers are present and honest ────────────────────────── */
+
+  assert.ok(state.headers['x-ratelimit-limit'], 'Rate limit headers must be exposed');
+  assert.ok(state.headers['x-request-id'], 'Every response must be traceable');
+
+  console.log('  ✓ Auth & identity HTTP pipeline behaves as specified');
 }
 
 module.exports = { run };
 
 if (require.main === module) {
-  run().catch(err => {
-    console.error(err);
-    process.exit(1);
-  });
+  run()
+    .then(() => harness.cleanup())
+    .then(() => process.exit(0))
+    .catch(async e => { console.error(e); await harness.cleanup().catch(() => null); process.exit(1); });
 }

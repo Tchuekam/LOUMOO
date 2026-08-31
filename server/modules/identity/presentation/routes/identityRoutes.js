@@ -1,51 +1,49 @@
 /**
- * Identity Module — API Routes
+ * Identity Module — Route Composition
  */
 
 const express = require('express');
 const router = express.Router();
+
 const { requireAuth } = require('../guards/authGuard');
 const { handleClerkWebhook } = require('../webhooks/clerkWebhookHandler');
-const { SyncClerkUserUseCase } = require('../../application/SyncClerkUserUseCase');
+const AccountStateService = require('../../application/AccountStateService');
 
 const authRoutes = require('./authRoutes');
 const userRoutes = require('./userRoutes');
+const accountStateRoutes = require('./accountStateRoutes');
 
-// Subrouters
 router.use('/auth', authRoutes);
 router.use('/users', userRoutes);
+router.use('/me', accountStateRoutes);
 
-// Ingest Clerk Webhooks
-router.post('/webhooks/clerk', handleClerkWebhook);
+/**
+ * Clerk webhooks.
+ *
+ * `express.raw` is mounted here specifically: Svix signs the exact request
+ * bytes, so the signature must be checked against those bytes rather than
+ * against a re-serialised copy of the parsed JSON.
+ */
+router.post('/webhooks/clerk',
+  express.raw({ type: '*/*', limit: '1mb' }),
+  handleClerkWebhook);
 
-// Get Authenticated User Profile (Legacy & v1 alias)
+/**
+ * GET /api/v1/me — the profile in the shape the existing screens expect,
+ * alongside the canonical account state.
+ */
 router.get('/me', requireAuth, (req, res) => {
   res.json({
-    success: true,
+    status: 'success',
     data: {
       profile: req.userProfile ? req.userProfile.toPublicJSON() : null,
-      auth: req.auth
+      accountState: AccountStateService.toClientState(req.principal, req.accountState),
+      auth: {
+        clerkUserId: req.auth.clerkUserId,
+        sessionId: req.auth.sessionId
+      }
     }
   });
-});
-
-// Client-Triggered Identity Sync (upon frontend Clerk sign-in / registration)
-router.post('/me/sync', requireAuth, async (req, res, next) => {
-  try {
-    const clerkUserData = {
-      id: req.auth.userId,
-      first_name: req.body.firstName || req.userProfile?.firstName || '',
-      last_name: req.body.lastName || req.userProfile?.lastName || '',
-      email_addresses: req.body.email ? [{ email_address: req.body.email }] : [],
-      phone_numbers: req.body.phoneNumber ? [{ phone_number: req.body.phoneNumber }] : [],
-      public_metadata: req.body.metadata || {}
-    };
-
-    const result = await SyncClerkUserUseCase.execute(clerkUserData, 'user.updated');
-    res.json({ success: true, data: result });
-  } catch (err) {
-    next(err);
-  }
 });
 
 module.exports = router;

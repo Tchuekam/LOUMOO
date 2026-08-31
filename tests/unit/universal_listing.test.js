@@ -219,39 +219,51 @@ function testListingAIService() {
 
 function testListingPublishUseCase() {
   const ListingPublishUseCase = require('../../server/modules/listing/application/ListingPublishUseCase');
-  const Listing = require('../../server/modules/listing/domain/Listing');
+  const { ALLOWED_TRANSITIONS } = ListingPublishUseCase;
 
-  // Incomplete listing without photos -> rejects publish
-  const incompleteListing = new Listing({
-    title: 'Short',
-    category_id: 'smartphones',
-    base_price_minor: 0,
-    media: []
-  });
+  // Publishing is no longer a method on an in-memory object: it re-reads the
+  // listing, re-checks seller eligibility and re-validates against the strict
+  // publish schema. The full path is covered end-to-end in
+  // tests/integration/seller_journey.test.js. What is unit-tested here is the
+  // transition table itself — the part that must never allow an illegal move.
 
-  assert.rejects(() => ListingPublishUseCase.publish(incompleteListing, { id: 'usr_1' }));
+  const legal = [
+    ['DRAFT', 'PUBLISHED'],
+    ['DRAFT', 'ARCHIVED'],
+    ['READY', 'PUBLISHED'],
+    ['PUBLISHED', 'PAUSED'],
+    ['PUBLISHED', 'ARCHIVED'],
+    ['PAUSED', 'PUBLISHED'],
+    ['REJECTED', 'DRAFT']
+  ];
 
-  // Valid listing -> publishes
-  const validListing = new Listing({
-    title: 'Apple MacBook Air 13” M2',
-    category_id: 'smartphones',
-    base_price_minor: 745000,
-    media: [{ url: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8', is_cover: true }],
-    attributes: { brand: 'Apple', model: 'M2', storage: '256GB', color: 'Space Grey' }
-  });
+  for (const [from, to] of legal) {
+    ListingPublishUseCase.assertTransition(from, to);   // must not throw
+  }
 
-  return ListingPublishUseCase.publish(validListing, { id: 'usr_1' }).then(res => {
-    assert.strictEqual(res.status, 'PUBLISHED');
-    assert.ok(res.publishedAt);
-    return ListingPublishUseCase.pause(validListing);
-  }).then(res => {
-    assert.strictEqual(res.status, 'PAUSED');
-    return ListingPublishUseCase.archive(validListing);
-  }).then(res => {
-    assert.strictEqual(res.status, 'ARCHIVED');
-    assert.ok(res.deletedAt);
-    console.log('  ✓ ListingPublishUseCase: DRAFT -> PUBLISHED -> PAUSED -> ARCHIVED state machine');
-  });
+  const illegal = [
+    ['PUBLISHED', 'PUBLISHED'],   // double-publish is a state conflict
+    ['ARCHIVED', 'PUBLISHED'],    // archived is terminal
+    ['ARCHIVED', 'DRAFT'],
+    ['DRAFT', 'PAUSED'],          // cannot pause something never published
+    ['PAUSED', 'PAUSED']
+  ];
+
+  for (const [from, to] of illegal) {
+    let threw = false;
+    try {
+      ListingPublishUseCase.assertTransition(from, to);
+    } catch (err) {
+      threw = true;
+      assert.strictEqual(err.statusCode, 409, `${from} -> ${to} must be a 409 state conflict`);
+    }
+    assert.ok(threw, `Transition ${from} -> ${to} must be rejected`);
+  }
+
+  assert.deepStrictEqual(ALLOWED_TRANSITIONS.ARCHIVED, [],
+    'ARCHIVED must be terminal: nothing may follow it');
+
+  console.log('  ✓ ListingPublishUseCase: publication state machine rejects every illegal transition');
 }
 
 // ── 9. Frontend API Client SDK Tests ──

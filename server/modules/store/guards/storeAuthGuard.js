@@ -1,130 +1,177 @@
 /**
- * Store Authorization Guard (05.03, Section 3 Store Ownership)
- * Server-side enforcement of store ownership, staff membership, and granular permissions.
+ * LOUMOO — Store Authorization Guard
+ * ---------------------------------------------------------------------------
+ * Multi-tenant isolation for storefronts: seller A must never be able to touch
+ * seller B's store, products or orders, no matter what ids they put in the URL.
+ *
+ * Store identity is resolved from the database and matched against the
+ * authenticated principal. Nothing is inferred from the id's format, and no
+ * store is ever created as a side effect of asking about one.
  */
 
-const { SupabaseClient } = require('../../../infrastructure/database/SupabaseClient');
-const { AuthenticationError, AuthorizationError, NotFoundError } = require('../../../shared/errors/AppError');
+const StoreRepository = require('../infrastructure/StoreRepository');
 const Store = require('../domain/Store');
+const {
+  AuthenticationError,
+  AuthorizationError,
+  NotFoundError,
+  ValidationError
+} = require('../../../shared/errors/AppError');
 const logger = require('../../../shared/logging/logger');
 
 /**
- * In-memory fallback repository for store membership during local/test runtime
+ * Where a store identifier may come from. Deliberately excludes the request
+ * BODY for path-scoped routes: `:storeId` in the URL is the resource being
+ * addressed, and letting a body field override it is how IDOR bugs happen.
  */
-const mockStores = new Map();
-const mockMembers = new Map();
-
-function getStoreRepository() {
-  return { mockStores, mockMembers };
+function extractStoreIdentifier(req) {
+  return (req.params && (req.params.storeId || req.params.id))
+    || (req.query && req.query.storeId)
+    || null;
 }
 
 /**
- * Middleware factory requiring user to have specific permissions on the requested store
+ * Reads `storeId` from the body when there is one. Guarded because the media
+ * upload route runs these guards BEFORE its raw body parser — authorization
+ * must be settled before a single byte is buffered — so `req.body` is
+ * legitimately undefined at that point.
+ */
+function bodyStoreId(req) {
+  return (req.body && typeof req.body === 'object' && !Buffer.isBuffer(req.body))
+    ? req.body.storeId || null
+    : null;
+}
+
+/**
+ * Resolves the addressed store WITHOUT any authorization check.
+ * For public reads (a storefront page, follow/unfollow) where existence is all
+ * that matters.
+ */
+function resolveStore({ optional = false } = {}) {
+  return async function (req, res, next) {
+    try {
+      const identifier = extractStoreIdentifier(req);
+      if (!identifier) {
+        if (optional) return next();
+        throw new ValidationError('A store identifier is required for this request.');
+      }
+
+      const storeRow = await StoreRepository.findByIdOrSlug(identifier);
+      if (!storeRow) {
+        throw new NotFoundError('Store', identifier);
+      }
+
+      req.store = new Store(storeRow);
+      req.storeRow = storeRow;
+      next();
+    } catch (err) {
+      next(err);
+    }
+  };
+}
+
+/**
+ * Requires the authenticated principal to hold `requiredPermission` on the
+ * addressed store.
+ *
+ * @param {string} requiredPermission e.g. 'listing.create', 'store.manage'
  */
 function requireStoreAccess(requiredPermission = 'store.view') {
   return async function (req, res, next) {
     try {
-      if (!req.userProfile || !req.userProfile.id) {
-        throw new AuthenticationError('Authentication required to manage store');
+      if (!req.principal || !req.principal.id) {
+        throw new AuthenticationError('Authentication required to manage a store.');
       }
 
-      const storeId = req.params.storeId || req.body.storeId || req.query.storeId;
-      if (!storeId) {
-        throw new NotFoundError('Store', 'undefined');
+      // The store may come from the URL, or — for collection routes such as
+      // `POST /listings` — from the body, since there is no path segment for it.
+      const identifier = extractStoreIdentifier(req) || bodyStoreId(req);
+      if (!identifier) {
+        throw new ValidationError('A storeId is required for this request.');
       }
 
-      const userId = req.userProfile.id;
-      const supabase = SupabaseClient.admin;
+      const storeRow = req.storeRow && req.storeRow.id === identifier
+        ? req.storeRow
+        : await StoreRepository.findByIdOrSlug(identifier);
 
-      let storeData = null;
-      let memberRole = null;
-      let memberPermissions = [];
-
-      // 1. Fetch Store from Supabase or In-Memory Cache
-      try {
-        const { data, error } = await supabase
-          .from('iam.stores')
-          .select('*')
-          .or(`id.eq.${storeId},slug.eq.${storeId}`)
-          .single();
-
-        if (data && !error) {
-          storeData = data;
-        }
-      } catch (err) {
-        logger.warn(`[StoreGuard] Supabase query fallback for store: ${err.message}`);
+      if (!storeRow) {
+        // 404 rather than 403: a non-member must not be able to probe which
+        // store ids exist by comparing error codes.
+        throw new NotFoundError('Store', identifier);
       }
 
-      if (!storeData && mockStores.has(storeId)) {
-        storeData = mockStores.get(storeId);
+      const membership = await StoreRepository.resolveMembership(storeRow, req.principal.id);
+
+      const isPlatformAdmin = ['admin', 'super_admin'].includes(req.principal.primaryRole);
+
+      if (!membership && !isPlatformAdmin) {
+        logger.warn('[StoreGuard] Store access denied', {
+          requestId: req.requestId,
+          userId: req.principal.id,
+          storeId: storeRow.id,
+          requiredPermission,
+          path: req.originalUrl
+        });
+        throw new AuthorizationError('You do not have permission to manage this store.');
       }
 
-      if (!storeData) {
-        // Create a mock store if in test mode and user matches
-        if (storeId === 'store_orca_electronics' || storeId.startsWith('store_')) {
-          storeData = {
-            id: storeId,
-            owner_id: userId,
-            name: 'Orca Electronics Douala',
-            slug: 'orca-electronics-douala',
-            status: 'ACTIVE',
-            visibility: 'PUBLIC',
-            is_verified: true
-          };
-          mockStores.set(storeId, storeData);
-        } else {
-          throw new NotFoundError('Store', storeId);
-        }
+      const permissions = isPlatformAdmin && !membership ? ['*'] : membership.permissions;
+      const role = isPlatformAdmin && !membership ? 'platform_admin' : membership.role;
+
+      const hasPermission = permissions.includes('*') || permissions.includes(requiredPermission);
+      if (!hasPermission) {
+        logger.warn('[StoreGuard] Missing store permission', {
+          requestId: req.requestId,
+          userId: req.principal.id,
+          storeId: storeRow.id,
+          role,
+          requiredPermission
+        });
+        throw new AuthorizationError(`Your role on this store does not allow '${requiredPermission}'.`);
       }
 
-      const store = new Store(storeData);
+      req.store = new Store(storeRow);
+      req.storeRow = storeRow;
+      req.storeRole = role;
+      req.storePermissions = permissions;
 
-      // 2. Check Ownership or Membership
-      if (store.ownerId === userId) {
-        memberRole = 'owner';
-        memberPermissions = ['*'];
-      } else {
-        try {
-          const { data: member, error } = await supabase
-            .from('iam.store_members')
-            .select('*')
-            .eq('store_id', store.id)
-            .eq('user_id', userId)
-            .single();
+      next();
+    } catch (err) {
+      next(err);
+    }
+  };
+}
 
-          if (member && !error) {
-            memberRole = member.role;
-            memberPermissions = member.permissions || [];
-          }
-        } catch (err) {
-          // check fallback member map
-          const memberKey = `${store.id}:${userId}`;
-          if (mockMembers.has(memberKey)) {
-            const mem = mockMembers.get(memberKey);
-            memberRole = mem.role;
-            memberPermissions = mem.permissions;
-          }
-        }
+/**
+ * Resolves the principal's OWN store when no id is supplied.
+ * Used by seller routes such as "create a listing" where the store is implied
+ * by who is asking — the safest possible source, since it can't be forged.
+ */
+function resolveOwnStore({ required = true } = {}) {
+  return async function (req, res, next) {
+    try {
+      if (!req.principal) throw new AuthenticationError('Authentication required.');
+
+      const explicit = extractStoreIdentifier(req) || bodyStoreId(req);
+      if (explicit) {
+        return requireStoreAccess(req._requiredStorePermission || 'store.view')(req, res, next);
       }
 
-      if (!memberRole) {
-        logger.warn(`[StoreGuard] Access denied for user ${userId} on store ${store.id}`);
-        throw new AuthorizationError(`You do not have permission to manage this store.`);
+      const owned = await StoreRepository.findOwnedBy(req.principal.id);
+      const store = owned.find(s => s.status === 'ACTIVE') || owned[0] || null;
+
+      if (!store) {
+        if (!required) return next();
+        throw new AuthorizationError(
+          'You need a LOUMOO boutique before you can do this. Set one up to start selling.',
+          { resolveAt: '/seller/onboarding', resolveScreen: 'createStore' }
+        );
       }
 
-      // 3. Verify Specific Permission
-      if (requiredPermission && requiredPermission !== 'store.view') {
-        const hasPerm = memberPermissions.includes('*') || memberPermissions.includes(requiredPermission);
-        if (!hasPerm) {
-          throw new AuthorizationError(`Missing required permission: ${requiredPermission}`);
-        }
-      }
-
-      // Attach resolved store and authorization metadata to request
-      req.store = store;
-      req.storeRole = memberRole;
-      req.storePermissions = memberPermissions;
-
+      req.store = new Store(store);
+      req.storeRow = store;
+      req.storeRole = 'owner';
+      req.storePermissions = ['*'];
       next();
     } catch (err) {
       next(err);
@@ -134,5 +181,6 @@ function requireStoreAccess(requiredPermission = 'store.view') {
 
 module.exports = {
   requireStoreAccess,
-  getStoreRepository
+  resolveStore,
+  resolveOwnStore
 };

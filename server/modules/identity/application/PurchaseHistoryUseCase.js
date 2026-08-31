@@ -5,7 +5,7 @@
  */
 
 const { z } = require('zod');
-const { SupabaseClient } = require('../../../infrastructure/database/SupabaseClient');
+const { SupabaseClient, handleDatabaseFailure } = require('../../../infrastructure/database/SupabaseClient.js');
 const CacheService = require('../../../infrastructure/cache/CacheService');
 const { ValidationError, NotFoundError, AuthorizationError } = require('../../../shared/errors/AppError');
 const logger = require('../../../shared/logging/logger');
@@ -102,7 +102,7 @@ class PurchaseHistoryUseCase {
     try {
       const supabase = SupabaseClient.getAdmin();
       let query = supabase
-        .from('iam.orders')
+        .from('orders')
         .select('*', { count: 'exact' })
         .eq('buyer_id', userId);
 
@@ -114,6 +114,7 @@ class PurchaseHistoryUseCase {
         .order('created_at', { ascending: false })
         .range(offset, offset + limit - 1);
 
+      if (error) { handleDatabaseFailure(error, 'PurchaseHistoryUseCase'); }
       if (!error && data && data.length > 0) {
         orders = data.map(this._mapRow);
         total = count || orders.length;
@@ -121,7 +122,7 @@ class PurchaseHistoryUseCase {
         throw error || new Error('No orders found');
       }
     } catch (err) {
-      logger.warn(`[PurchaseHistory] Supabase query fallback: ${err.message}`);
+      handleDatabaseFailure(err, 'Supabase query');
       this._ensureDemoOrders(userId);
       let userOrders = this._memoryOrders.get(userId) || [];
       if (status && status !== 'all') {
@@ -146,11 +147,12 @@ class PurchaseHistoryUseCase {
     try {
       const supabase = SupabaseClient.getAdmin();
       const { data, error } = await supabase
-        .from('iam.orders')
+        .from('orders')
         .select('*')
         .eq('id', orderId)
         .single();
 
+      if (error) { handleDatabaseFailure(error, 'PurchaseHistoryUseCase'); }
       if (!error && data) {
         if (data.buyer_id !== userId) {
           throw new AuthorizationError('You are not authorized to view this order');
@@ -159,7 +161,7 @@ class PurchaseHistoryUseCase {
       }
     } catch (err) {
       if (err instanceof AuthorizationError) throw err;
-      logger.warn(`[PurchaseHistory] Supabase getOrderDetails fallback: ${err.message}`);
+      handleDatabaseFailure(err, 'Supabase getOrderDetails');
     }
 
     if (!order) {

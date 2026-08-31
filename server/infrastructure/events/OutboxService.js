@@ -3,8 +3,8 @@
  * Ensures critical state mutations and domain events are persisted reliably before external dispatch
  */
 
-const { adminClient } = require('../database/SupabaseClient');
 const logger = require('../../shared/logging/logger');
+const { tryGetAdmin, handleDatabaseFailure } = require('../database/SupabaseClient.js');
 
 class OutboxService {
   constructor() {
@@ -41,9 +41,10 @@ class OutboxService {
     };
 
     try {
-      if (adminClient) {
-        const { data, error } = await adminClient
-          .from('outbox_events')
+      const adminDb = tryGetAdmin('OutboxService');
+if (adminDb) {
+        const { data, error } = await adminDb
+          .schema('system').from('outbox_events')
           .insert(record)
           .select('id')
           .single();
@@ -56,7 +57,7 @@ class OutboxService {
         }
       }
     } catch (err) {
-      logger.warn(`[OutboxService] Supabase outbox write failed, queuing in memory: ${err.message}`);
+      handleDatabaseFailure(err, 'Supabase outbox write failed, queuing in memory');
     }
 
     this.inMemoryOutbox.push({ ...record, id: `mem_${Date.now()}_${Math.random()}` });

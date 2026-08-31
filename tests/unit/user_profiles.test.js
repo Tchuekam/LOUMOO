@@ -27,11 +27,20 @@ async function run() {
     firstName: 'Mr',
     lastName: 'Toukam',
     city: 'Douala (Akwa)',
-    isPhoneVerified: true,
+    // Verification is one canonical timestamp per channel — there is no
+    // settable boolean, so a profile cannot claim to be verified without a
+    // time at which it was verified.
+    emailVerifiedAt: '2026-08-01T10:00:00.000Z',
+    phoneVerifiedAt: '2026-08-01T10:05:00.000Z',
+    onboardingStatus: 'COMPLETED',
     sellerType: 'pro',
     businessName: 'Orca Electronics',
     kycDocStatus: 'verified'
   });
+
+  assert.strictEqual(richProfile.isEmailVerified, true,
+    'isEmailVerified is derived from the verification timestamp');
+  assert.strictEqual(richProfile.isPhoneVerified, true);
   assert.strictEqual(richProfile.completionPercentage >= 85, true, 'Rich merchant profile should reach 85%+ completion');
 
   // 2. Public card sanitization (No PII leaked)

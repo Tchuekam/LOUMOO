@@ -3,6 +3,7 @@
  * Validates: Use Cases, Domain Entities, Routes, API Client Integration
  */
 
+require('../setup');
 const assert = require('assert');
 
 const PATH_PREFIX = '../../server/modules/store';
@@ -161,35 +162,53 @@ function testStoreCategoryUseCase() {
   });
 }
 
-function testStoreDiscoveryUseCase() {
+async function testStoreDiscoveryUseCase() {
   const StoreDiscoveryUseCase = require('../../server/modules/store/application/StoreDiscoveryUseCase');
+  const harness = require('../helpers/harness');
 
-  return StoreDiscoveryUseCase.discoverStores({}).then(result => {
-    assert.ok(result.stores, 'Should return stores array');
-    assert.ok(result.total > 0, 'Should have at least 1 store');
-    assert.ok(typeof result.page === 'number', 'Should have page number');
-    assert.ok(typeof result.hasMore === 'boolean', 'Should have hasMore flag');
-    console.log('  ✓ StoreDiscoveryUseCase: unfiltered discovery');
-    return StoreDiscoveryUseCase.discoverStores({ category: 'electronics' });
-  }).then(result => {
-    assert.ok(result.stores.length > 0, 'Electronics filter should return stores');
-    result.stores.forEach(s => {
-      assert.strictEqual(s.category_id, 'electronics', 'All results should be electronics');
-    });
-    console.log('  ✓ StoreDiscoveryUseCase: category filter');
-    return StoreDiscoveryUseCase.discoverStores({ city: 'Kribi' });
-  }).then(result => {
-    result.stores.forEach(s => {
-      assert.strictEqual(s.city.toLowerCase(), 'kribi', 'All should be Kribi');
-    });
-    console.log('  ✓ StoreDiscoveryUseCase: city filter');
-    return StoreDiscoveryUseCase.discoverStores({ verifiedOnly: true });
-  }).then(result => {
-    result.stores.forEach(s => {
-      assert.ok(s.is_verified || s.isVerified, 'All should be verified');
-    });
-    console.log('  ✓ StoreDiscoveryUseCase: verified-only filter');
+  // Discovery returns real, active, public stores only — it no longer merges a
+  // curated list of fictional boutiques, which used to lead shoppers to store
+  // pages that did not exist. So the test provisions a real one.
+  const owner = await harness.createUser({ stage: 'seller_ready', suffix: 'disc' });
+  const store = await harness.createStore(owner);
+  await harness.db().from('store_locations').insert({
+    store_id: store.id, city: 'Kribi', region: 'Sud', street_address: 'Route des Chutes'
   });
+  await harness.db().from('stores').update({ is_verified: true }).eq('id', store.id);
+
+  const all = await StoreDiscoveryUseCase.discoverStores({});
+  assert.ok(Array.isArray(all.stores), 'Should return a stores array');
+  assert.ok(all.total > 0, 'A provisioned active store must be discoverable');
+  assert.strictEqual(typeof all.page, 'number');
+  assert.strictEqual(typeof all.hasMore, 'boolean');
+  console.log('  ✓ StoreDiscoveryUseCase: unfiltered discovery');
+
+  const electronics = await StoreDiscoveryUseCase.discoverStores({ category: 'electronics' });
+  assert.ok(electronics.stores.length > 0, 'Electronics filter should return stores');
+  electronics.stores.forEach(s => {
+    assert.strictEqual(s.category_id, 'electronics', 'All results should be electronics');
+  });
+  console.log('  ✓ StoreDiscoveryUseCase: category filter');
+
+  const kribi = await StoreDiscoveryUseCase.discoverStores({ city: 'Kribi' });
+  assert.ok(kribi.stores.length > 0, 'The Kribi store must be found by its real location');
+  kribi.stores.forEach(s => {
+    assert.strictEqual((s.city || '').toLowerCase(), 'kribi', 'All should be Kribi');
+  });
+  console.log('  ✓ StoreDiscoveryUseCase: city filter');
+
+  const verified = await StoreDiscoveryUseCase.discoverStores({ verifiedOnly: true });
+  verified.stores.forEach(s => {
+    assert.ok(s.is_verified || s.isVerified, 'All should be verified');
+  });
+  console.log('  ✓ StoreDiscoveryUseCase: verified-only filter');
+
+  // A store that does not exist is absent from discovery, not invented.
+  const ghost = await StoreDiscoveryUseCase.discoverStores({ query: 'orca electronics douala' });
+  assert.strictEqual(
+    ghost.stores.filter(s => s.slug === 'orca-electronics-douala').length, 0,
+    'Discovery must not surface a storefront that was never created'
+  );
 }
 
 function testStoreAnalyticsUseCase() {

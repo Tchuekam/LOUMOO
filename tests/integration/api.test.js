@@ -2,6 +2,7 @@
  * Integration Test: API Gateway Endpoints Pipeline
  */
 
+require('../setup');
 const assert = require('assert');
 const app = require('../../server/index');
 
@@ -56,14 +57,19 @@ async function run() {
     const unauthData = await unauthRes.json();
     assert.strictEqual(unauthData.error.code, 'UNAUTHENTICATED');
 
-    // 7. GET /api/v1/me (With Bearer Token)
-    const authRes = await fetch(`${baseUrl}/api/v1/me`, {
+    // 7. GET /api/v1/me with an ARBITRARY bearer token.
+    //    The guard used to trust any token whose text began with "user_" and
+    //    to fall back to a demo identity for anything else, so this request
+    //    returned a profile. It must now be rejected: a token that does not
+    //    verify yields no identity at all.
+    const forgedRes = await fetch(`${baseUrl}/api/v1/me`, {
       headers: { 'Authorization': 'Bearer user_test_session_token' }
     });
-    assert.strictEqual(authRes.status, 200);
-    const authData = await authRes.json();
-    assert.strictEqual(authData.success, true);
-    assert.ok(authData.data.profile);
+    assert.strictEqual(forgedRes.status, 401,
+      'An unverifiable bearer token must never resolve to a user');
+    const forgedData = await forgedRes.json();
+    assert.strictEqual(forgedData.error.code, 'UNAUTHENTICATED');
+    assert.ok(!forgedData.data, 'A rejected request must carry no profile payload');
 
     // 8. Headers Verification (Request ID & RateLimit headers)
     assert.ok(healthRes.headers.get('x-request-id'), 'X-Request-Id header should be set');

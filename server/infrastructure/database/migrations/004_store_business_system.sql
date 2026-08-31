@@ -7,8 +7,8 @@
 
 -- 1. Stores Master Entity Table
 CREATE TABLE IF NOT EXISTS iam.stores (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    owner_id UUID NOT NULL REFERENCES iam.profiles(id) ON DELETE RESTRICT,
+    id VARCHAR(64) PRIMARY KEY DEFAULT gen_random_uuid()::text,
+    owner_id VARCHAR(64) NOT NULL REFERENCES iam.profiles(id) ON DELETE RESTRICT,
     name VARCHAR(255) NOT NULL,
     slug VARCHAR(255) NOT NULL UNIQUE,
     description TEXT,
@@ -42,9 +42,9 @@ CREATE INDEX IF NOT EXISTS idx_stores_discovery ON iam.stores(status, visibility
 
 -- 2. Store Members & Role-Based Permissions (Multi-User Store Staff)
 CREATE TABLE IF NOT EXISTS iam.store_members (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    store_id UUID NOT NULL REFERENCES iam.stores(id) ON DELETE CASCADE,
-    user_id UUID NOT NULL REFERENCES iam.profiles(id) ON DELETE CASCADE,
+    id VARCHAR(64) PRIMARY KEY DEFAULT gen_random_uuid()::text,
+    store_id VARCHAR(64) NOT NULL REFERENCES iam.stores(id) ON DELETE CASCADE,
+    user_id VARCHAR(64) NOT NULL REFERENCES iam.profiles(id) ON DELETE CASCADE,
     role VARCHAR(32) NOT NULL DEFAULT 'staff' CHECK (role IN ('owner', 'admin', 'manager', 'staff')),
     permissions JSONB NOT NULL DEFAULT '["store.view", "store.manage_products", "store.manage_orders"]'::jsonb,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -57,8 +57,8 @@ CREATE INDEX IF NOT EXISTS idx_store_members_store ON iam.store_members(store_id
 
 -- 3. Store Extended Public Profile
 CREATE TABLE IF NOT EXISTS iam.store_profiles (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    store_id UUID NOT NULL REFERENCES iam.stores(id) ON DELETE CASCADE UNIQUE,
+    id VARCHAR(64) PRIMARY KEY DEFAULT gen_random_uuid()::text,
+    store_id VARCHAR(64) NOT NULL REFERENCES iam.stores(id) ON DELETE CASCADE UNIQUE,
     tagline VARCHAR(255),
     bio TEXT,
     return_policy TEXT,
@@ -74,8 +74,8 @@ CREATE INDEX IF NOT EXISTS idx_store_profiles_store ON iam.store_profiles(store_
 
 -- 4. Store Verification & Legal Compliance (Strictly Private)
 CREATE TABLE IF NOT EXISTS iam.store_verifications (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    store_id UUID NOT NULL REFERENCES iam.stores(id) ON DELETE CASCADE UNIQUE,
+    id VARCHAR(64) PRIMARY KEY DEFAULT gen_random_uuid()::text,
+    store_id VARCHAR(64) NOT NULL REFERENCES iam.stores(id) ON DELETE CASCADE UNIQUE,
     legal_business_name VARCHAR(255) NOT NULL,
     business_type VARCHAR(64) NOT NULL DEFAULT 'individual' CHECK (business_type IN ('individual', 'pro', 'sarl', 'sa', 'cooperative')),
     rccm_number VARCHAR(128),
@@ -91,7 +91,7 @@ CREATE TABLE IF NOT EXISTS iam.store_verifications (
     rejection_reason TEXT,
     submitted_at TIMESTAMPTZ,
     reviewed_at TIMESTAMPTZ,
-    reviewed_by UUID REFERENCES iam.profiles(id),
+    reviewed_by VARCHAR(64) REFERENCES iam.profiles(id),
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -101,8 +101,8 @@ CREATE INDEX IF NOT EXISTS idx_store_verifications_status ON iam.store_verificat
 
 -- 5. Store Opening Hours & Operational Schedule
 CREATE TABLE IF NOT EXISTS iam.store_hours (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    store_id UUID NOT NULL REFERENCES iam.stores(id) ON DELETE CASCADE UNIQUE,
+    id VARCHAR(64) PRIMARY KEY DEFAULT gen_random_uuid()::text,
+    store_id VARCHAR(64) NOT NULL REFERENCES iam.stores(id) ON DELETE CASCADE UNIQUE,
     timezone VARCHAR(64) NOT NULL DEFAULT 'Africa/Douala',
     is_always_open BOOLEAN NOT NULL DEFAULT FALSE,
     is_temporarily_closed BOOLEAN NOT NULL DEFAULT FALSE,
@@ -124,8 +124,8 @@ CREATE INDEX IF NOT EXISTS idx_store_hours_store ON iam.store_hours(store_id);
 
 -- 6. Store Physical & Commercial Location
 CREATE TABLE IF NOT EXISTS iam.store_locations (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    store_id UUID NOT NULL REFERENCES iam.stores(id) ON DELETE CASCADE UNIQUE,
+    id VARCHAR(64) PRIMARY KEY DEFAULT gen_random_uuid()::text,
+    store_id VARCHAR(64) NOT NULL REFERENCES iam.stores(id) ON DELETE CASCADE UNIQUE,
     country VARCHAR(64) NOT NULL DEFAULT 'Cameroon',
     region VARCHAR(64) NOT NULL DEFAULT 'Littoral',
     city VARCHAR(64) NOT NULL DEFAULT 'Douala',
@@ -146,8 +146,8 @@ CREATE INDEX IF NOT EXISTS idx_store_locations_geo ON iam.store_locations(city, 
 
 -- 7. Store Operational Settings & Merchant Preferences
 CREATE TABLE IF NOT EXISTS iam.store_settings (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    store_id UUID NOT NULL REFERENCES iam.stores(id) ON DELETE CASCADE UNIQUE,
+    id VARCHAR(64) PRIMARY KEY DEFAULT gen_random_uuid()::text,
+    store_id VARCHAR(64) NOT NULL REFERENCES iam.stores(id) ON DELETE CASCADE UNIQUE,
     currency VARCHAR(8) NOT NULL DEFAULT 'XAF',
     accepts_escrow BOOLEAN NOT NULL DEFAULT TRUE,
     accepts_momo BOOLEAN NOT NULL DEFAULT TRUE,
@@ -167,8 +167,8 @@ CREATE INDEX IF NOT EXISTS idx_store_settings_store ON iam.store_settings(store_
 
 -- 8. Store Daily Analytics & Performance Aggregates
 CREATE TABLE IF NOT EXISTS iam.store_analytics (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    store_id UUID NOT NULL REFERENCES iam.stores(id) ON DELETE CASCADE,
+    id VARCHAR(64) PRIMARY KEY DEFAULT gen_random_uuid()::text,
+    store_id VARCHAR(64) NOT NULL REFERENCES iam.stores(id) ON DELETE CASCADE,
     date DATE NOT NULL DEFAULT CURRENT_DATE,
     views_count INT NOT NULL DEFAULT 0,
     unique_visitors INT NOT NULL DEFAULT 0,
@@ -202,7 +202,7 @@ CREATE POLICY p_store_verifications_owner ON iam.store_verifications
     FOR ALL USING (
         store_id IN (
             SELECT store_id FROM iam.store_members 
-            WHERE user_id = auth.uid() AND role IN ('owner', 'admin')
+            WHERE user_id = auth.uid()::text AND role IN ('owner', 'admin')
         )
     );
 
@@ -211,7 +211,7 @@ CREATE POLICY p_store_settings_owner ON iam.store_settings
     FOR ALL USING (
         store_id IN (
             SELECT store_id FROM iam.store_members 
-            WHERE user_id = auth.uid() AND role IN ('owner', 'admin')
+            WHERE user_id = auth.uid()::text AND role IN ('owner', 'admin')
         )
     );
 
@@ -220,6 +220,6 @@ CREATE POLICY p_store_analytics_members ON iam.store_analytics
     FOR SELECT USING (
         store_id IN (
             SELECT store_id FROM iam.store_members 
-            WHERE user_id = auth.uid()
+            WHERE user_id = auth.uid()::text
         )
     );

@@ -5,7 +5,7 @@
  */
 
 const { z } = require('zod');
-const { SupabaseClient } = require('../../../infrastructure/database/SupabaseClient');
+const { SupabaseClient, handleDatabaseFailure } = require('../../../infrastructure/database/SupabaseClient.js');
 const CacheService = require('../../../infrastructure/cache/CacheService');
 const { ValidationError, NotFoundError, ConflictError } = require('../../../shared/errors/AppError');
 const logger = require('../../../shared/logging/logger');
@@ -39,12 +39,13 @@ class FollowedStoresUseCase {
     try {
       const supabase = SupabaseClient.getAdmin();
       const { data, count, error } = await supabase
-        .from('iam.followed_stores')
+        .from('followed_stores')
         .select('*', { count: 'exact' })
         .eq('user_id', userId)
         .order('created_at', { ascending: false })
         .range(offset, offset + limit - 1);
 
+      if (error) { handleDatabaseFailure(error, 'FollowedStores'); }
       if (!error && data) {
         stores = data.map(this._mapRow);
         total = count || stores.length;
@@ -52,7 +53,7 @@ class FollowedStoresUseCase {
         throw error || new Error('No data');
       }
     } catch (err) {
-      logger.warn(`[FollowedStores] Supabase query fallback: ${err.message}`);
+      handleDatabaseFailure(err, 'Supabase query');
       const userStores = this._memoryStore.get(userId) || [];
       total = userStores.length;
       stores = userStores.slice(offset, offset + limit);
@@ -81,7 +82,7 @@ class FollowedStoresUseCase {
     try {
       const supabase = SupabaseClient.getAdmin();
       const { data: row, error } = await supabase
-        .from('iam.followed_stores')
+        .from('followed_stores')
         .insert({
           user_id: userId,
           store_id: data.storeId,
@@ -102,7 +103,7 @@ class FollowedStoresUseCase {
       followed = this._mapRow(row);
     } catch (err) {
       if (err instanceof ConflictError) throw err;
-      logger.warn(`[FollowedStores] Supabase insert fallback: ${err.message}`);
+      handleDatabaseFailure(err, 'Supabase insert');
       
       const userStores = this._memoryStore.get(userId) || [];
       if (userStores.some(s => s.storeId === data.storeId)) {
@@ -137,7 +138,7 @@ class FollowedStoresUseCase {
     try {
       const supabase = SupabaseClient.getAdmin();
       const { error } = await supabase
-        .from('iam.followed_stores')
+        .from('followed_stores')
         .delete()
         .eq('user_id', userId)
         .eq('store_id', storeId);
@@ -145,7 +146,7 @@ class FollowedStoresUseCase {
       if (error) throw error;
       deletedFromDb = true;
     } catch (err) {
-      logger.warn(`[FollowedStores] Supabase delete fallback: ${err.message}`);
+      handleDatabaseFailure(err, 'Supabase delete');
     }
 
     // Always clean the memory store regardless of DB outcome
@@ -172,7 +173,7 @@ class FollowedStoresUseCase {
     try {
       const supabase = SupabaseClient.getAdmin();
       const { data, error } = await supabase
-        .from('iam.followed_stores')
+        .from('followed_stores')
         .select('id')
         .eq('user_id', userId)
         .eq('store_id', storeId)

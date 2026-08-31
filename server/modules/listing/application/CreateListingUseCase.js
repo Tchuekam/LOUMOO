@@ -1,89 +1,282 @@
 /**
- * CreateListingUseCase (06.02 & Section 08 Create Listing)
- * Initializes a new universal listing draft bound to the merchant's store.
+ * LOUMOO — Create Listing Use Case
+ * ---------------------------------------------------------------------------
+ * The single entry point for bringing a listing into existence.
+ *
+ * Order of operations is the whole point of this file:
+ *
+ *     authorize  ->  validate  ->  insert listing  ->  attach staged media
+ *                                        |                    |
+ *                                        +-- on failure ------+--> roll back
+ *
+ * Authorization and validation both complete BEFORE anything is written and
+ * long before any storage object is claimed. Media is uploaded separately and
+ * only *attached* here, so an ineligible seller never gets as far as spending
+ * bandwidth, and a failed insert never strands a file in the bucket.
  */
 
-const { SupabaseClient } = require('../../../infrastructure/database/SupabaseClient');
-const { ValidationError } = require('../../../shared/errors/AppError');
-const Listing = require('../domain/Listing');
-const ListingType = require('../domain/ListingType');
-const ListingTaxonomyUseCase = require('./ListingTaxonomyUseCase');
+const crypto = require('crypto');
+const ListingRepository = require('../infrastructure/ListingRepository');
+const ListingValidationService = require('./ListingValidationService');
+const MediaStorageService = require('../../../infrastructure/storage/MediaStorageService');
 const AnalyticsService = require('../../../infrastructure/analytics/AnalyticsService');
+const Listing = require('../domain/Listing');
 const logger = require('../../../shared/logging/logger');
+const {
+  AuthorizationError,
+  ConflictError,
+  ValidationError
+} = require('../../../shared/errors/AppError');
 
 class CreateListingUseCase {
-  static async execute(store, userProfile, input = {}) {
-    const listingType = input.listingType || ListingType.TYPES.PHYSICAL_PRODUCT;
-    if (!ListingType.isValid(listingType)) {
-      throw new ValidationError(`Invalid listing type: ${listingType}`);
+  /**
+   * @param {object} ctx
+   * @param {object} ctx.principal     Authenticated principal.
+   * @param {object} ctx.accountState  Derived account state.
+   * @param {object} ctx.store         The seller's resolved store.
+   * @param {object} ctx.input         Untrusted request body.
+   * @param {string} [ctx.idempotencyKey]
+   */
+  static async execute({ principal, accountState, store, input = {}, idempotencyKey = null }) {
+    // ── 1. AUTHORIZE (before any work at all) ──────────────────────────────
+    if (!accountState.capabilities.canCreateListing) {
+      throw new AuthorizationError(
+        'Your seller account is not ready to publish listings yet.',
+        {
+          currentState: accountState.state,
+          requiredCapability: 'canCreateListing',
+          resolveAt: accountState.destination,
+          resolveScreen: accountState.screen
+        }
+      );
     }
 
-    const categoryId = input.categoryId || 'smartphones';
-    const category = await ListingTaxonomyUseCase.findCategoryById(categoryId);
-    if (!category) {
-      throw new ValidationError(`Category "${categoryId}" is not recognized in the marketplace taxonomy.`);
+    if (store.status === 'SUSPENDED' || store.status === 'CLOSED') {
+      throw new AuthorizationError(`This boutique is ${store.status.toLowerCase()} and cannot publish new listings.`);
     }
 
-    const title = (input.title || 'Untitled Draft Listing').trim();
-    const listing = new Listing({
-      store_id: store.id,
-      seller_id: userProfile.id,
-      listing_type: listingType,
-      category_id: category.id,
-      title: title,
-      short_description: input.shortDescription || '',
-      description: input.description || '',
-      brand: input.brand || null,
-      model: input.model || null,
-      condition: input.condition || 'new',
-      status: 'DRAFT',
-      visibility: 'PUBLIC',
-      currency: input.currency || 'XAF',
-      base_price_minor: Number(input.basePriceMinor ?? 0),
-      sale_price_minor: input.salePriceMinor ? Number(input.salePriceMinor) : null,
-      fulfillment_model: input.fulfillmentModel || 'DELIVERY_OR_PICKUP',
-      attributes: input.attributes || {},
-      metadata: { createdVia: 'web_listing_wizard', ...input.metadata }
+    // ── 2. DUPLICATE SUBMISSION DEFENCE ────────────────────────────────────
+    // A double-clicked "Create listing" produces two identical requests within
+    // milliseconds. The fingerprint makes the second one return the first
+    // one's listing instead of creating a twin.
+    const fingerprint = buildFingerprint(store.id, principal.id, input, idempotencyKey);
+    const existing = await ListingRepository.findByFingerprint(store.id, fingerprint);
+    if (existing) {
+      logger.info(`[CreateListing] Duplicate submission collapsed onto listing ${existing.id}`);
+      return { listing: await this.hydrate(existing), duplicate: true };
+    }
+
+    // ── 3. VALIDATE ────────────────────────────────────────────────────────
+    const { value } = await ListingValidationService.validate(input, {
+      forPublish: false,
+      mediaCount: 0
     });
 
-    const supabase = SupabaseClient.admin;
+    // ── 4. RESOLVE STAGED MEDIA (ownership-checked, not yet attached) ──────
+    const staged = value.uploadIds.length
+      ? await MediaStorageService.loadOwnedStaged(value.uploadIds, principal.id)
+      : [];
+
+    for (const upload of staged) {
+      if (upload.store_id && upload.store_id !== store.id) {
+        throw new AuthorizationError('One of those images was uploaded for a different boutique.');
+      }
+    }
+
+    // ── 5. INSERT THE LISTING ──────────────────────────────────────────────
+    const listing = new Listing({
+      store_id: store.id,
+      seller_id: principal.id,
+      listing_type: value.listingType,
+      category_id: value.categoryId,
+      title: value.title || 'Untitled draft listing',
+      short_description: value.shortDescription || '',
+      description: value.description || '',
+      brand: value.brand || null,
+      model: value.model || null,
+      sku: value.sku || null,
+      condition: value.condition,
+      status: 'DRAFT',
+      visibility: value.visibility,
+      tags: value.tags,
+      currency: value.currency,
+      base_price_minor: value.basePriceMinor,
+      sale_price_minor: value.salePriceMinor ?? null,
+      compare_at_price_minor: value.compareAtPriceMinor ?? null,
+      fulfillment_model: value.fulfillmentModel
+    });
+
+    let row;
     try {
-      await supabase.from('iam.listings').insert({
+      row = await ListingRepository.insert({
         id: listing.id,
-        store_id: listing.storeId,
-        seller_id: listing.sellerId,
-        listing_type: listing.listingType,
-        category_id: listing.categoryId,
+        store_id: store.id,
+        seller_id: principal.id,
+        listing_type: value.listingType,
+        category_id: value.categoryId,
         title: listing.title,
         slug: listing.slug,
         short_description: listing.shortDescription,
         description: listing.description,
+        sku: listing.sku,
         brand: listing.brand,
         model: listing.model,
         condition: listing.condition,
-        status: listing.status,
-        visibility: listing.visibility,
-        currency: listing.pricing.currency,
-        base_price_minor: listing.pricing.basePriceMinor,
-        sale_price_minor: listing.pricing.salePriceMinor,
-        fulfillment_model: listing.fulfillmentModel,
-        metadata: listing.metadata,
-        created_at: listing.createdAt,
-        updated_at: listing.updatedAt
+        status: 'DRAFT',
+        visibility: value.visibility,
+        tags: value.tags,
+        currency: value.currency,
+        base_price_minor: value.basePriceMinor,
+        sale_price_minor: value.salePriceMinor ?? null,
+        compare_at_price_minor: value.compareAtPriceMinor ?? null,
+        fulfillment_model: value.fulfillmentModel,
+        creation_fingerprint: fingerprint,
+        metadata: {
+          createdVia: 'web_listing_wizard',
+          city: value.city || null,
+          neighbourhood: value.neighbourhood || null,
+          contactPhone: value.contactPhone || null
+        }
       });
     } catch (err) {
-      logger.warn(`[CreateListing] Supabase insert fallback: ${err.message}`);
+      // 23505 on the fingerprint index = the concurrent twin won the race.
+      if (err.pgCode === '23505') {
+        const winner = await ListingRepository.findByFingerprint(store.id, fingerprint);
+        if (winner) {
+          return { listing: await this.hydrate(winner), duplicate: true };
+        }
+      }
+      // Nothing was persisted, so release the staged images rather than
+      // leaving the seller's storage quota consumed by a listing that failed.
+      await MediaStorageService.discard(staged.map(u => u.id), 'listing insert failed');
+      throw err;
     }
 
-    AnalyticsService.track(userProfile.id, 'listing_draft_created', {
-      listingId: listing.id,
+    // ── 6. ATTACH ATTRIBUTES AND MEDIA ─────────────────────────────────────
+    // From here the listing row exists; any failure must undo it rather than
+    // leave a half-created listing the seller cannot see or fix.
+    try {
+      if (Object.keys(value.attributes).length > 0) {
+        await ListingRepository.replaceAttributes(row.id, value.categoryId, value.attributes);
+      }
+
+      if (staged.length > 0) {
+        await this._attachMedia(row.id, staged, principal.id);
+      }
+    } catch (err) {
+      logger.error(`[CreateListing] Rolling back listing ${row.id}: ${err.message}`);
+      await ListingRepository.hardDelete(row.id).catch(() => null);
+      await MediaStorageService.discard(staged.map(u => u.id), 'listing finalisation failed');
+      throw err;
+    }
+
+    AnalyticsService.track(principal.id, 'listing_draft_created', {
+      listingId: row.id,
       storeId: store.id,
-      listingType: listing.listingType,
-      categoryId: listing.categoryId
+      listingType: value.listingType,
+      categoryId: value.categoryId,
+      imageCount: staged.length
     });
 
-    return listing.toOwnerJSON();
+    logger.info(`[CreateListing] user=${principal.id} store=${store.id} listing=${row.id} created with ${staged.length} image(s)`);
+    return { listing: await this.hydrate(row), duplicate: false };
+  }
+
+  /** Writes media rows and flips the staged uploads to ATTACHED atomically-enough. */
+  static async _attachMedia(listingId, staged, uploadedBy) {
+    const existing = await ListingRepository.listMedia(listingId);
+    let order = existing.length;
+
+    const rows = [];
+    for (const upload of staged) {
+      const signedUrl = await MediaStorageService.createSignedUrl(upload.storage_path);
+      rows.push({
+        listing_id: listingId,
+        media_type: 'IMAGE',
+        url: signedUrl || upload.public_url || upload.storage_path,
+        thumbnail_url: signedUrl || upload.public_url || upload.storage_path,
+        display_order: order,
+        is_cover: order === 0,
+        width: upload.width,
+        height: upload.height,
+        file_size_bytes: upload.file_size_bytes,
+        mime_type: upload.mime_type,
+        storage_bucket: upload.bucket,
+        storage_path: upload.storage_path,
+        upload_session_id: upload.id,
+        checksum_sha256: upload.checksum_sha256,
+        uploaded_by: uploadedBy
+      });
+      order++;
+    }
+
+    const inserted = await ListingRepository.insertMedia(rows);
+    await MediaStorageService.markAttached(staged.map(u => u.id), listingId);
+    return inserted;
+  }
+
+  /** Returns the owner-facing view with its media and attributes resolved. */
+  static async hydrate(row) {
+    const [media, attributes] = await Promise.all([
+      ListingRepository.listMedia(row.id),
+      ListingRepository.listAttributes(row.id)
+    ]);
+
+    const listing = new Listing(row);
+    const json = listing.toOwnerJSON();
+    return {
+      ...json,
+      attributes,
+      media: media.map(m => ({
+        id: m.id,
+        url: m.url,
+        thumbnailUrl: m.thumbnail_url,
+        isCover: m.is_cover,
+        displayOrder: m.display_order,
+        width: m.width,
+        height: m.height,
+        mimeType: m.mime_type
+      })),
+      imageCount: media.length
+    };
   }
 }
 
+/** Accidental double-submits arrive within seconds; 10 minutes is generous. */
+const DEDUPE_WINDOW_MS = 10 * 60 * 1000;
+
+/**
+ * A stable hash of the semantically meaningful listing fields.
+ *
+ * When the client supplies an `Idempotency-Key` header that is used instead —
+ * stricter, and it lets a client safely retry a request whose response was
+ * lost to a network failure.
+ *
+ * Without such a header the hash includes a coarse time bucket, so a
+ * double-clicked button collapses onto one listing while a seller who
+ * genuinely wants to relist the same item tomorrow is not blocked forever.
+ */
+function buildFingerprint(storeId, sellerId, input, idempotencyKey, now = Date.now()) {
+  if (idempotencyKey) {
+    return crypto.createHash('sha256')
+      .update(`${storeId}:${sellerId}:${idempotencyKey}`)
+      .digest('hex')
+      .slice(0, 64);
+  }
+
+  const material = JSON.stringify({
+    storeId,
+    sellerId,
+    window: Math.floor(now / DEDUPE_WINDOW_MS),
+    title: (input.title || '').trim().toLowerCase(),
+    categoryId: input.categoryId,
+    listingType: input.listingType,
+    price: input.basePriceMinor,
+    description: (input.description || '').trim().slice(0, 500)
+  });
+
+  return crypto.createHash('sha256').update(material).digest('hex').slice(0, 64);
+}
+
 module.exports = CreateListingUseCase;
+module.exports.buildFingerprint = buildFingerprint;

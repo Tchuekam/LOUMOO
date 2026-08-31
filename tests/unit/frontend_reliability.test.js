@@ -105,14 +105,24 @@ function testSessionLifecycleAndPrivacyIsolation() {
   const { Component } = extractComponentClass();
   const instance = new Component();
 
-  // Test session user application
-  instance._applySessionUser({
-    firstName: 'Amina',
-    lastName: 'Ndongo',
-    email: 'amina@example.cm',
-    phoneNumber: '670112233',
-    city: 'Yaounde',
-    primaryRole: 'seller'
+  // The session is applied from the SERVER's account-state envelope. There is
+  // no longer any path by which the browser can declare itself signed in.
+  instance._applyAccountState({
+    state: 'SELLER_READY',
+    isAuthenticated: true,
+    capabilities: { canPurchase: true, canCreateListing: true, canPublishListing: true },
+    contact: { emailVerified: true, phoneVerified: false, phoneVerificationAvailable: false },
+    onboarding: { status: 'COMPLETED', percentage: 100, nextStep: null, steps: [] },
+    seller: { status: 'READY', storeId: 'store_1' },
+    user: {
+      id: 'usr_1',
+      firstName: 'Amina',
+      lastName: 'Ndongo',
+      email: 'amina@example.cm',
+      phoneNumber: '670112233',
+      city: 'Yaounde',
+      primaryRole: 'seller'
+    }
   });
 
   assert.strictEqual(instance.state.isLoggedIn, true);
@@ -120,6 +130,7 @@ function testSessionLifecycleAndPrivacyIsolation() {
   assert.strictEqual(instance.state.regFirstName, 'Amina');
   assert.strictEqual(instance.state.regEmail, 'amina@example.cm');
   assert.strictEqual(instance.state.userRole, 'seller');
+  assert.strictEqual(instance.state.accountState, 'SELLER_READY');
 
   // Test complete anonymous session teardown (privacy isolation)
   instance._applyAnonymous();
@@ -133,6 +144,9 @@ function testSessionLifecycleAndPrivacyIsolation() {
   assert.strictEqual(instance.state.addressesList.length, 0, 'Private addresses must be cleared upon sign-out');
   assert.strictEqual(instance.state.followedStoresList.length, 0, 'Private followed stores must be cleared');
   assert.strictEqual(instance.state.activityList.length, 0, 'Private activity log must be cleared');
+  assert.strictEqual(instance.state.accountState, null, 'The cached account state must be dropped');
+  assert.strictEqual(Object.keys(instance.state.capabilities).length, 0,
+    'No capability may survive a sign-out');
 
   // Verify renderVals reactivity for anonymous user
   const vals = instance.renderVals();
@@ -149,16 +163,28 @@ function testDoubleSubmissionAndValidationGuards() {
   const instance = new Component();
 
   // 1. Sign in empty identifier validation
-  instance.setState({ signInIdentifier: '   ', signInBusy: false });
+  instance.setState({ signInIdentifier: '   ', signInPassword: 'x', signInBusy: false });
   let vals = instance.renderVals();
   vals.submitSignIn();
   assert.ok(instance.state.signInError.includes('Enter the email'), 'Must reject whitespace-only sign-in identifier');
 
-  // 2. Sign in double click protection
-  instance.setState({ signInIdentifier: 'test@example.cm', signInBusy: true });
+  // 2. A missing password is caught before any provider call
+  instance.setState({ signInIdentifier: 'test@example.cm', signInPassword: '', signInError: '' });
+  vals = instance.renderVals();
+  vals.submitSignIn();
+  assert.ok(instance.state.signInError.includes('password'), 'Must require a password');
+
+  // 3. Sign in double click protection
+  instance.setState({ signInIdentifier: 'test@example.cm', signInPassword: 'secret123', signInBusy: true });
   vals = instance.renderVals();
   vals.submitSignIn();
   assert.strictEqual(instance.state.signInBusy, true, 'Must ignore submit while busy');
+
+  // 4. Publishing a listing is guarded against double submission
+  instance.setState({ publishBusy: true });
+  instance.publishListing();
+  assert.strictEqual(instance.state.publishBusy, true,
+    'A second publish click while one is in flight must be ignored');
 
   // 3. Address form validation
   instance.setState({ addressFormName: '', addressFormPhone: '', addressFormStreet: '' });

@@ -6,7 +6,7 @@
  */
 
 const { z } = require('zod');
-const { SupabaseClient } = require('../../../infrastructure/database/SupabaseClient');
+const { SupabaseClient, handleDatabaseFailure } = require('../../../infrastructure/database/SupabaseClient.js');
 const CacheService = require('../../../infrastructure/cache/CacheService');
 const { ValidationError } = require('../../../shared/errors/AppError');
 const logger = require('../../../shared/logging/logger');
@@ -41,7 +41,7 @@ class UserActivityUseCase {
     try {
       const supabase = SupabaseClient.getAdmin();
       const { data: row, error } = await supabase
-        .from('iam.user_activities')
+        .from('user_activities')
         .insert({
           user_id: userId,
           action_type: data.actionType,
@@ -57,7 +57,7 @@ class UserActivityUseCase {
       if (row) activity = this._mapRow(row);
       else throw new Error('No row returned');
     } catch (err) {
-      logger.warn(`[UserActivity] Supabase insert fallback: ${err.message}`);
+      handleDatabaseFailure(err, 'Supabase insert');
       const userActs = this._memoryStore.get(userId) || [];
       activity = {
         id: `act_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
@@ -94,12 +94,13 @@ class UserActivityUseCase {
     try {
       const supabase = SupabaseClient.getAdmin();
       const { data, count, error } = await supabase
-        .from('iam.user_activities')
+        .from('user_activities')
         .select('*', { count: 'exact' })
         .eq('user_id', userId)
         .order('created_at', { ascending: false })
         .range(offset, offset + limit - 1);
 
+      if (error) { handleDatabaseFailure(error, 'UserActivity'); }
       if (!error && data) {
         activities = data.map(this._mapRow);
         total = count || activities.length;
@@ -107,7 +108,7 @@ class UserActivityUseCase {
         throw error || new Error('No data');
       }
     } catch (err) {
-      logger.warn(`[UserActivity] Supabase query fallback: ${err.message}`);
+      handleDatabaseFailure(err, 'Supabase query');
       const userActs = this._memoryStore.get(userId) || [];
       total = userActs.length;
       activities = userActs.slice(offset, offset + limit);

@@ -7,11 +7,18 @@
   "scripts": {
     "dev": "node server/index.js",
     "start": "node server/index.js",
-    "test": "node tests/runner.js",
+    "test": "node tests/run_all.js",
     "test:services": "node scripts/verify_backend_services.js",
     "verify:screens": "python verify_screens.py",
     "verify:runtime": "node verify_runtime.js",
-    "build:frontend": "python build_redesign.py"
+    "build:frontend": "python build_redesign.py",
+    "test:unit": "node tests/run_all.js",
+    "test:security": "node tests/integration/api_security.test.js",
+    "test:journey": "node tests/integration/seller_journey.test.js",
+    "test:uploads": "node tests/integration/upload_transactions.test.js",
+    "db:migrate": "node scripts/apply_migration.js --all",
+    "db:seed": "node scripts/seed_taxonomy.js",
+    "db:purge-test-data": "node scripts/purge_test_data.js"
   },
   "keywords": [
     "loumoo",

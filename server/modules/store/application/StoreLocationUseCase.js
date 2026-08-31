@@ -3,26 +3,26 @@
  * Handles physical and commercial store addressing with privacy safeguards.
  */
 
-const { SupabaseClient } = require('../../../infrastructure/database/SupabaseClient');
 const CacheService = require('../../../infrastructure/cache/CacheService');
+const { SupabaseClient, handleDatabaseFailure } = require('../../../infrastructure/database/SupabaseClient.js');
 const StoreLocation = require('../domain/StoreLocation');
 const logger = require('../../../shared/logging/logger');
 
 class StoreLocationUseCase {
   static async getLocation(store, isOwnerOrStaff = false) {
-    const supabase = SupabaseClient.admin;
+    const supabase = SupabaseClient.getAdmin();
     let data = null;
 
     try {
       const { data: res, error } = await supabase
-        .from('iam.store_locations')
+        .from('store_locations')
         .select('*')
         .eq('store_id', store.id)
         .single();
 
       if (res && !error) data = res;
     } catch (err) {
-      logger.warn(`[StoreLocation] Query fallback: ${err.message}`);
+      handleDatabaseFailure(err, 'Query');
     }
 
     const location = new StoreLocation(data || {
@@ -36,7 +36,7 @@ class StoreLocationUseCase {
   }
 
   static async updateLocation(store, updates = {}) {
-    const supabase = SupabaseClient.admin;
+    const supabase = SupabaseClient.getAdmin();
     const dbUpdates = {
       country: updates.country,
       region: updates.region,
@@ -58,10 +58,10 @@ class StoreLocationUseCase {
 
     try {
       await supabase
-        .from('iam.store_locations')
+        .from('store_locations')
         .upsert({ store_id: store.id, ...dbUpdates }, { onConflict: 'store_id' });
     } catch (err) {
-      logger.warn(`[StoreLocation] Update fallback: ${err.message}`);
+      handleDatabaseFailure(err, 'Update');
     }
 
     await CacheService.del(`store:public:${store.id}`);

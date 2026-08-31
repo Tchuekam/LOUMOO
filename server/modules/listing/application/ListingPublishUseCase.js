@@ -1,113 +1,153 @@
 /**
- * ListingPublishUseCase (06.14 Publish Listing & Section 30 Publishing State Machine)
- * Validates pre-conditions and transitions listing state between DRAFT, PUBLISHED, PAUSED, and ARCHIVED.
+ * LOUMOO — Listing Publication State Machine
+ * ---------------------------------------------------------------------------
+ * Publishing is a server decision, not a screen the user reaches.
+ *
+ * Before a listing goes live the server re-checks EVERYTHING: the seller is
+ * still eligible, the store is still active, the listing still satisfies the
+ * strict publish schema, its category attributes are complete, and it has at
+ * least one real image. A listing that was valid when the draft was saved but
+ * has since been emptied out cannot slip through.
  */
 
-const { SupabaseClient } = require('../../../infrastructure/database/SupabaseClient');
-const CacheService = require('../../../infrastructure/cache/CacheService');
-const ListingTaxonomyUseCase = require('./ListingTaxonomyUseCase');
-const { ValidationError } = require('../../../shared/errors/AppError');
+const ListingRepository = require('../infrastructure/ListingRepository');
+const ListingValidationService = require('./ListingValidationService');
+const CreateListingUseCase = require('./CreateListingUseCase');
 const AnalyticsService = require('../../../infrastructure/analytics/AnalyticsService');
+const OutboxService = require('../../../infrastructure/events/OutboxService');
+const CacheService = require('../../../infrastructure/cache/CacheService');
 const logger = require('../../../shared/logging/logger');
+const {
+  AuthorizationError,
+  ConflictError,
+  ValidationError
+} = require('../../../shared/errors/AppError');
+
+/** Which transitions the state machine permits. Anything else is a 409. */
+const ALLOWED_TRANSITIONS = Object.freeze({
+  DRAFT: ['PUBLISHED', 'ARCHIVED'],
+  PREVIEW: ['PUBLISHED', 'ARCHIVED'],
+  READY: ['PUBLISHED', 'ARCHIVED'],
+  PENDING_REVIEW: ['PUBLISHED', 'REJECTED', 'ARCHIVED'],
+  PUBLISHED: ['PAUSED', 'ARCHIVED'],
+  PAUSED: ['PUBLISHED', 'ARCHIVED'],
+  REJECTED: ['DRAFT', 'ARCHIVED'],
+  ARCHIVED: []
+});
 
 class ListingPublishUseCase {
-  static async validateForPublishing(listing) {
-    if (!listing.title || listing.title.trim().length < 3) {
-      throw new ValidationError('Listing title must be at least 3 characters long.');
+  static assertTransition(from, to) {
+    const allowed = ALLOWED_TRANSITIONS[from] || [];
+    if (!allowed.includes(to)) {
+      throw new ConflictError(
+        `A ${from.toLowerCase()} listing cannot become ${to.toLowerCase()}.`,
+        { from, to, allowed }
+      );
     }
-
-    if (!listing.categoryId) {
-      throw new ValidationError('A valid commercial category is required.');
-    }
-
-    if (listing.pricing.basePriceMinor <= 0 && !listing.hasVariants) {
-      throw new ValidationError('Base price must be greater than zero.');
-    }
-
-    // Require at least one photo for physical products
-    if (listing.listingType === 'PHYSICAL_PRODUCT' && (!listing.media || listing.media.length === 0)) {
-      throw new ValidationError('At least one product photograph is required to publish.');
-    }
-
-    // Validate dynamic category required attributes
-    await ListingTaxonomyUseCase.validateAttributesForCategory(listing.categoryId, listing.attributes);
-
-    return true;
   }
 
-  static async publish(listing, userProfile) {
-    await this.validateForPublishing(listing);
-
-    listing.status = 'PUBLISHED';
-    listing.publishedAt = listing.publishedAt || new Date().toISOString();
-    listing.updatedAt = new Date().toISOString();
-
-    const supabase = SupabaseClient.admin;
-    try {
-      await supabase.from('iam.listings').update({
-        status: 'PUBLISHED',
-        published_at: listing.publishedAt,
-        updated_at: listing.updatedAt
-      }).eq('id', listing.id);
-    } catch (err) {
-      logger.warn(`[ListingPublish] Supabase update fallback: ${err.message}`);
+  /**
+   * @param {object} ctx
+   * @param {object} ctx.listingRow
+   * @param {object} ctx.principal
+   * @param {object} ctx.accountState
+   * @param {object} ctx.store
+   */
+  static async publish({ listingRow, principal, accountState, store }) {
+    // 1. Re-check eligibility at the moment of publication, not at draft time.
+    if (!accountState.capabilities.canPublishListing) {
+      throw new AuthorizationError(
+        'Your seller account cannot publish listings right now.',
+        {
+          currentState: accountState.state,
+          resolveAt: accountState.destination,
+          resolveScreen: accountState.screen
+        }
+      );
+    }
+    if (store && store.status !== 'ACTIVE') {
+      throw new ConflictError(
+        'Activate your boutique before publishing listings.',
+        { storeStatus: store.status, resolveScreen: 'storeOnboarding' }
+      );
     }
 
-    await CacheService.del(`listing:${listing.id}`);
-    await CacheService.del(`listing:${listing.slug}`);
-    await CacheService.del(`listings:store:${listing.storeId}`);
-    await CacheService.del('listings:public:all');
+    this.assertTransition(listingRow.status, 'PUBLISHED');
 
-    AnalyticsService.track(userProfile.id, 'listing_published', {
-      listingId: listing.id,
-      storeId: listing.storeId,
-      listingType: listing.listingType,
-      price: listing.pricing.basePriceMinor
+    // 2. Re-validate the complete listing against the strict publish rules.
+    const [attributes, media] = await Promise.all([
+      ListingRepository.listAttributes(listingRow.id),
+      ListingRepository.listMedia(listingRow.id)
+    ]);
+
+    await ListingValidationService.validate({
+      listingType: listingRow.listing_type,
+      categoryId: listingRow.category_id,
+      title: listingRow.title,
+      shortDescription: listingRow.short_description,
+      description: listingRow.description,
+      brand: listingRow.brand,
+      model: listingRow.model,
+      sku: listingRow.sku,
+      condition: listingRow.condition,
+      currency: listingRow.currency,
+      basePriceMinor: listingRow.base_price_minor,
+      salePriceMinor: listingRow.sale_price_minor,
+      compareAtPriceMinor: listingRow.compare_at_price_minor,
+      fulfillmentModel: listingRow.fulfillment_model,
+      visibility: listingRow.visibility,
+      tags: listingRow.tags || [],
+      attributes,
+      city: (listingRow.metadata || {}).city || null,
+      neighbourhood: (listingRow.metadata || {}).neighbourhood || null,
+      contactPhone: (listingRow.metadata || {}).contactPhone || null,
+      uploadIds: []
+    }, { forPublish: true, mediaCount: media.length });
+
+    const updated = await ListingRepository.update(listingRow.id, {
+      status: 'PUBLISHED',
+      published_at: listingRow.published_at || new Date().toISOString(),
+      rejection_reason: null
     });
 
-    return listing.toOwnerJSON();
+    await CacheService.delete(`listing:${updated.id}`, 'catalog').catch(() => null);
+
+    await OutboxService.enqueue({
+      eventType: 'listing.published',
+      aggregateType: 'listing',
+      aggregateId: updated.id,
+      payload: { listingId: updated.id, storeId: updated.store_id, sellerId: updated.seller_id }
+    }).catch(err => logger.warn(`[Publish] Outbox enqueue skipped: ${err.message}`));
+
+    AnalyticsService.track(principal.id, 'listing_published', {
+      listingId: updated.id,
+      storeId: updated.store_id,
+      categoryId: updated.category_id,
+      imageCount: media.length
+    });
+
+    logger.info(`[Publish] user=${principal.id} listing=${updated.id} PUBLISHED`);
+    return CreateListingUseCase.hydrate(updated);
   }
 
-  static async pause(listing) {
-    listing.status = 'PAUSED';
-    listing.updatedAt = new Date().toISOString();
-
-    const supabase = SupabaseClient.admin;
-    try {
-      await supabase.from('iam.listings').update({
-        status: 'PAUSED',
-        updated_at: listing.updatedAt
-      }).eq('id', listing.id);
-    } catch (err) {
-      logger.warn(`[ListingPublish] Pause fallback: ${err.message}`);
-    }
-
-    await CacheService.del(`listing:${listing.id}`);
-    await CacheService.del(`listing:${listing.slug}`);
-    return listing.toOwnerJSON();
+  static async pause({ listingRow, principal }) {
+    this.assertTransition(listingRow.status, 'PAUSED');
+    const updated = await ListingRepository.update(listingRow.id, { status: 'PAUSED' });
+    await CacheService.delete(`listing:${updated.id}`, 'catalog').catch(() => null);
+    AnalyticsService.track(principal.id, 'listing_paused', { listingId: updated.id });
+    logger.info(`[Publish] user=${principal.id} listing=${updated.id} PAUSED`);
+    return CreateListingUseCase.hydrate(updated);
   }
 
-  static async archive(listing) {
-    listing.status = 'ARCHIVED';
-    listing.deletedAt = new Date().toISOString();
-    listing.updatedAt = new Date().toISOString();
-
-    const supabase = SupabaseClient.admin;
-    try {
-      await supabase.from('iam.listings').update({
-        status: 'ARCHIVED',
-        deleted_at: listing.deletedAt,
-        updated_at: listing.updatedAt
-      }).eq('id', listing.id);
-    } catch (err) {
-      logger.warn(`[ListingPublish] Archive fallback: ${err.message}`);
-    }
-
-    await CacheService.del(`listing:${listing.id}`);
-    await CacheService.del(`listing:${listing.slug}`);
-    await CacheService.del(`listings:store:${listing.storeId}`);
-    return listing.toOwnerJSON();
+  static async archive({ listingRow, principal }) {
+    this.assertTransition(listingRow.status, 'ARCHIVED');
+    const updated = await ListingRepository.softDelete(listingRow.id);
+    await CacheService.delete(`listing:${updated.id}`, 'catalog').catch(() => null);
+    AnalyticsService.track(principal.id, 'listing_archived', { listingId: updated.id });
+    logger.info(`[Publish] user=${principal.id} listing=${updated.id} ARCHIVED`);
+    return { id: updated.id, status: updated.status, archivedAt: updated.deleted_at };
   }
 }
 
 module.exports = ListingPublishUseCase;
+module.exports.ALLOWED_TRANSITIONS = ALLOWED_TRANSITIONS;

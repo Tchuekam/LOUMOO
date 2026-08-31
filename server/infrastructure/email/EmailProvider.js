@@ -29,8 +29,13 @@ class EmailProvider {
     }
 
     if (!config.resend.apiKey) {
-      logger.info(`[EmailProvider (Simulated)] Email to ${to}: ${subject}`);
-      return { id: `sim_${Date.now()}`, simulated: true };
+      // In production a missing key is a failure, not a quiet no-op: an order
+      // confirmation that was never sent must not report itself as sent.
+      if (config.isProduction) {
+        throw new ExternalServiceError('Resend', 'RESEND_API_KEY is not configured', { subject });
+      }
+      logger.warn(`[EmailProvider] RESEND_API_KEY not set — email to ${to} was NOT sent: ${subject}`);
+      return { id: null, sent: false, reason: 'RESEND_API_KEY not configured' };
     }
 
     try {

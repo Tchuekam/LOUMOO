@@ -2,13 +2,18 @@
  * Unit Test: Address Management (04.08)
  */
 
+require('../setup');
 const assert = require('assert');
 const AddressManagementUseCase = require('../../server/modules/identity/application/AddressManagementUseCase');
+const harness = require('../helpers/harness');
 
 async function run() {
   console.log('  Testing Address Management Service...');
 
-  const userId = `usr_addr_test_${Date.now()}`;
+  // `iam.addresses.user_id` is a real foreign key into `iam.profiles`, so the
+  // address book is exercised against a real account rather than a made-up id.
+  const user = await harness.createUser({ stage: 'ready' });
+  const userId = user.id;
 
   // 1. Add first shipping address (should default to isDefault: true)
   const addr1 = await AddressManagementUseCase.addAddress(userId, {

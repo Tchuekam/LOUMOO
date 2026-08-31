@@ -19,6 +19,10 @@ const AccountSecurityService = require('../../application/AccountSecurityService
 const DeleteAccountUseCase = require('../../application/DeleteAccountUseCase');
 const PrivacyPreferencesUseCase = require('../../application/PrivacyPreferencesUseCase');
 const { requireAuth } = require('../guards/authGuard');
+const ProfileRepository = require('../../infrastructure/ProfileRepository');
+const AccountStateService = require('../../application/AccountStateService');
+const UserProfile = require('../../entities/UserProfile');
+const { NotFoundError } = require('../../../../shared/errors/AppError');
 const CacheService = require('../../../../infrastructure/cache/CacheService');
 const logger = require('../../../../shared/logging/logger');
 
@@ -34,29 +38,31 @@ router.get('/me', requireAuth, async (req, res) => {
 });
 
 // GET /api/v1/users/:userId/public (Public Merchant / User Card)
+//
+// Returns the real profile, projected through toSafeMerchantPublicCard() so no
+// email, phone number or verification timestamp reaches a stranger. The
+// previous revision invented an "Orca Electronics Douala" card for any id
+// containing "orca" and a "LOUMOO Merchant" card for everything else, so this
+// endpoint answered 200 for users who did not exist.
 router.get('/:userId/public', async (req, res, next) => {
   try {
     const { userId } = req.params;
     const cacheKey = `identity:public:${userId}`;
-    let cached = await CacheService.get(cacheKey);
-    if (!cached) {
-      cached = {
-        id: userId,
-        fullName: userId.includes('orca') ? 'Orca Electronics Douala' : 'LOUMOO Merchant',
-        city: 'Douala',
-        sellerType: 'pro',
-        isVerified: true,
-        completionPercentage: 100,
-        badge: 'Verified Pro Merchant'
-      };
-      await CacheService.set(cacheKey, cached, 300);
-    }
-    res.json({
-      status: 'success',
-      data: {
-        user: cached
+
+    let card = await CacheService.get(cacheKey);
+
+    if (!card) {
+      const row = await ProfileRepository.findById(userId);
+      if (!row || row.deleted_at || row.account_status === 'anonymized') {
+        throw new NotFoundError('User', userId);
       }
-    });
+
+      const profile = UserProfile.fromPrincipal(AccountStateService.project(row));
+      card = profile.toSafeMerchantPublicCard();
+      await CacheService.set(cacheKey, card, 300);
+    }
+
+    res.json({ status: 'success', data: { user: card } });
   } catch (err) {
     next(err);
   }
@@ -389,7 +395,10 @@ router.patch('/me/notifications/preferences', requireAuth, async (req, res, next
 // GET /api/v1/users/me/sessions
 router.get('/me/sessions', requireAuth, async (req, res, next) => {
   try {
-    const sessions = await AccountSecurityService.getActiveSessions(req.userProfile.clerkUserId);
+    const sessions = await AccountSecurityService.getActiveSessions(
+      req.principal.clerkUserId,
+      req.auth.sessionId
+    );
     res.json({
       status: 'success',
       data: { sessions }
@@ -402,7 +411,11 @@ router.get('/me/sessions', requireAuth, async (req, res, next) => {
 // DELETE /api/v1/users/me/sessions/:sessionId
 router.delete('/me/sessions/:sessionId', requireAuth, async (req, res, next) => {
   try {
-    const result = await AccountSecurityService.revokeSession(req.userProfile.clerkUserId, req.params.sessionId);
+    const result = await AccountSecurityService.revokeSession(
+      req.principal.clerkUserId,
+      req.params.sessionId,
+      { currentSessionId: req.auth.sessionId }
+    );
     res.json({
       status: 'success',
       data: result

@@ -3,11 +3,10 @@
  * Operational overview aggregating products, orders, verification, and performance.
  */
 
-const { SupabaseClient } = require('../../../infrastructure/database/SupabaseClient');
 const CacheService = require('../../../infrastructure/cache/CacheService');
+const { SupabaseClient, handleDatabaseFailure } = require('../../../infrastructure/database/SupabaseClient.js');
 const { ValidationError } = require('../../../shared/errors/AppError');
 const logger = require('../../../shared/logging/logger');
-const { getStoreRepository } = require('../guards/storeAuthGuard');
 
 class StoreManagementUseCase {
   static async getStoreDashboard(store) {
@@ -15,7 +14,7 @@ class StoreManagementUseCase {
     const cached = await CacheService.get(cacheKey);
     if (cached) return cached;
 
-    const supabase = SupabaseClient.admin;
+    const supabase = SupabaseClient.getAdmin();
     let location = null;
     let hours = null;
     let verification = null;
@@ -23,17 +22,17 @@ class StoreManagementUseCase {
 
     try {
       const [locRes, hrsRes, verRes, setRes] = await Promise.all([
-        supabase.from('iam.store_locations').select('*').eq('store_id', store.id).single(),
-        supabase.from('iam.store_hours').select('*').eq('store_id', store.id).single(),
-        supabase.from('iam.store_verifications').select('*').eq('store_id', store.id).single(),
-        supabase.from('iam.store_settings').select('*').eq('store_id', store.id).single()
+        supabase.from('store_locations').select('*').eq('store_id', store.id).single(),
+        supabase.from('store_hours').select('*').eq('store_id', store.id).single(),
+        supabase.from('store_verifications').select('*').eq('store_id', store.id).single(),
+        supabase.from('store_settings').select('*').eq('store_id', store.id).single()
       ]);
       location = locRes.data;
       hours = hrsRes.data;
       verification = verRes.data;
       settings = setRes.data;
     } catch (err) {
-      logger.warn(`[StoreManagement] Aggregation query fallback: ${err.message}`);
+      handleDatabaseFailure(err, 'Aggregation query');
     }
 
     const dashboard = {
@@ -65,7 +64,7 @@ class StoreManagementUseCase {
   }
 
   static async updateStore(store, updates = {}) {
-    const supabase = SupabaseClient.admin;
+    const supabase = SupabaseClient.getAdmin();
     const allowedFields = ['name', 'description', 'categoryId', 'logoUrl', 'coverUrl', 'phoneNumber', 'email', 'websiteUrl', 'visibility'];
     const dbUpdates = { updated_at: new Date().toISOString() };
 
@@ -98,16 +97,9 @@ class StoreManagementUseCase {
       store.visibility = updates.visibility;
     }
 
-    try {
-      await supabase.from('iam.stores').update(dbUpdates).eq('id', store.id);
-    } catch (err) {
-      logger.warn(`[StoreManagement] Update store fallback: ${err.message}`);
-    }
-
-    // In-memory fallback
-    const { mockStores } = getStoreRepository();
-    if (mockStores.has(store.id)) {
-      Object.assign(mockStores.get(store.id), dbUpdates);
+    const { error } = await supabase.from('stores').update(dbUpdates).eq('id', store.id);
+    if (error) {
+      handleDatabaseFailure(error, 'Update store');
     }
 
     await CacheService.del(`store:management:${store.id}`);

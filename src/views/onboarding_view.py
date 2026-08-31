@@ -219,8 +219,31 @@ def get_onboarding_view():
       <!-- Email Address -->
       <div>
         <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">EMAIL ADDRESS</label>
-        <input type="email" class="input" value="{{ regEmail }}" placeholder="rostand@example.com" onInput="{{ updateRegEmail }}">
+        <input type="email" class="input" value="{{ regEmail }}" placeholder="rostand@example.com" autocomplete="email" onInput="{{ updateRegEmail }}">
       </div>
+
+      <!-- Password — creates the real account with the identity provider -->
+      <div>
+        <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">CHOOSE A PASSWORD</label>
+        <div style="position:relative">
+          <input type="{{ regShowPassword ? 'text' : 'password' }}" class="input" value="{{ regPassword }}" placeholder="At least 8 characters" autocomplete="new-password" style="padding-right:64px" onInput="{{ updateRegPassword }}">
+          <button onClick="{{ toggleRegPassword }}" type="button" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);border:none;background:transparent;font:700 11px/1 var(--font-heading);color:var(--color-accent);cursor:pointer">
+            {{ regShowPassword ? 'HIDE' : 'SHOW' }}
+          </button>
+        </div>
+        <div style="height:4px;background:var(--color-divider);border-radius:2px;margin-top:8px;overflow:hidden">
+          <div style="width:{{ regPasswordStrengthPct }}%;height:100%;background:{{ regPasswordStrengthColor }};border-radius:2px;transition:width .25s ease"></div>
+        </div>
+        <div style="font:600 11px/1 var(--font-body);color:var(--color-text-muted);margin-top:6px">{{ regPasswordStrengthLabel }}</div>
+      </div>
+
+      <!-- Server-reported failures, shown where the user is looking -->
+      <sc-if value="{{ regError }}">
+        <div role="alert" style="display:flex;align-items:flex-start;gap:10px;background:var(--color-accent-sale-100);border:1px solid var(--color-accent-sale);border-radius:var(--radius-sm);padding:12px 14px">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-sale)" stroke-width="2" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+          <span style="font:600 12.5px/1.45 var(--font-body);color:var(--color-accent-sale)">{{ regError }}</span>
+        </div>
+      </sc-if>
 
       <!-- City / Region -->
       <div>
@@ -240,9 +263,9 @@ def get_onboarding_view():
 
   <!-- Continue CTA -->
   <div style="margin-top:28px">
-    <button onClick="{{ continueFromIdentity }}" class="btn btn-primary btn-block" style="height:50px;font-size:15px;cursor:pointer">
-      <span>SEND VERIFICATION CODE</span>
-      <span>→</span>
+    <button onClick="{{ continueFromIdentity }}" disabled="{{ regBusy }}" class="btn btn-primary btn-block" style="height:50px;font-size:15px;cursor:{{ regBusy ? 'default' : 'pointer' }};opacity:{{ regBusy ? '0.65' : '1' }}">
+      <span>{{ regBusy ? 'CREATING YOUR ACCOUNT…' : 'SEND VERIFICATION CODE' }}</span>
+      <span>{{ regBusy ? '' : '→' }}</span>
     </button>
   </div>
 
@@ -271,42 +294,80 @@ def get_onboarding_view():
 
     <div style="text-align:center;margin-bottom:24px">
       <div style="width:56px;height:56px;border-radius:50%;background:var(--color-accent-100);color:var(--color-accent);display:flex;align-items:center;justify-content:center;margin:0 auto 16px">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
       </div>
       <h2 style="font-size:24px;margin:0 0 6px">Let's make sure it's you</h2>
-      <p style="font-size:14px;color:var(--color-text-secondary);max-width:380px;margin:0 auto;line-height:1.45">
-        We sent a 6-digit verification code to <strong>+237 {{ regPhone }}</strong>
+      <p style="font-size:14px;color:var(--color-text-secondary);max-width:400px;margin:0 auto;line-height:1.45">
+        We sent a 6-digit verification code to <strong>{{ regEmail }}</strong>
+      </p>
+      <p style="font-size:12.5px;color:var(--color-text-muted);max-width:420px;margin:12px auto 0;line-height:1.5">
+        Verifying your email is what lets you buy, save items and sell on LOUMOO. It takes a few seconds.
       </p>
     </div>
 
-    <!-- 6-Digit OTP Code Inputs -->
+    <!-- Real 6-digit code entry -->
     <div class="card-premium" style="text-align:center;padding:28px 20px">
-      <div style="display:flex;justify-content:center;gap:8px;margin-bottom:20px">
-        <div style="width:44px;height:52px;border:2px solid var(--color-accent);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font:800 22px/1 var(--font-heading);background:var(--color-surface);color:var(--color-text)">8</div>
-        <div style="width:44px;height:52px;border:2px solid var(--color-accent);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font:800 22px/1 var(--font-heading);background:var(--color-surface);color:var(--color-text)">4</div>
-        <div style="width:44px;height:52px;border:2px solid var(--color-accent);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font:800 22px/1 var(--font-heading);background:var(--color-surface);color:var(--color-text)">9</div>
-        <div style="width:44px;height:52px;border:2px solid var(--color-accent);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font:800 22px/1 var(--font-heading);background:var(--color-surface);color:var(--color-text)">2</div>
-        <div style="width:44px;height:52px;border:2px solid var(--color-divider);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font:800 22px/1 var(--font-heading);background:var(--color-neutral-100);color:var(--color-text)">·</div>
-        <div style="width:44px;height:52px;border:2px solid var(--color-divider);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font:800 22px/1 var(--font-heading);background:var(--color-neutral-100);color:var(--color-text)">·</div>
-      </div>
+      <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:10px;display:block">VERIFICATION CODE</label>
+      <input type="text" class="input" value="{{ emailVerifyCode }}" placeholder="000000" inputmode="numeric" maxlength="6" autocomplete="one-time-code" style="letter-spacing:.42em;font-weight:800;text-align:center;font-size:22px;height:56px" onInput="{{ updateEmailVerifyCode }}">
 
-      <div style="display:flex;justify-content:center;gap:18px;font-size:12.5px">
-        <button onClick="{{ resendOtp }}" style="border:none;background:transparent;color:var(--color-accent);font-weight:700;cursor:pointer">
-          Resend code (0:48)
+      <sc-if value="{{ emailVerifyError }}">
+        <div role="alert" style="display:flex;align-items:flex-start;gap:10px;background:var(--color-accent-sale-100);border:1px solid var(--color-accent-sale);border-radius:var(--radius-sm);padding:12px 14px;margin-top:14px;text-align:left">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-sale)" stroke-width="2" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+          <span style="font:600 12.5px/1.45 var(--font-body);color:var(--color-accent-sale)">{{ emailVerifyError }}</span>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ emailVerifyState === 'verified' }}">
+        <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:14px;background:var(--color-success-100);border-radius:var(--radius-pill);padding:9px 16px;width:fit-content;margin-left:auto;margin-right:auto">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--color-success)" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg>
+          <span style="font:700 11.5px/1 var(--font-heading);color:var(--color-success)">EMAIL VERIFIED</span>
+        </div>
+      </sc-if>
+
+      <div style="display:flex;justify-content:center;flex-wrap:wrap;gap:16px;font-size:12.5px;margin-top:18px">
+        <button onClick="{{ resendEmailVerification }}" disabled="{{ emailVerifyCooldown > 0 }}" style="border:none;background:transparent;color:{{ emailVerifyCooldown > 0 ? 'var(--color-text-muted)' : 'var(--color-accent)' }};font-weight:700;cursor:{{ emailVerifyCooldown > 0 ? 'default' : 'pointer' }}">
+          {{ emailVerifyCooldown > 0 ? 'Resend code (0:' + emailVerifyCooldown + ')' : 'Resend code' }}
         </button>
         <span>•</span>
-        <button onClick="{{ on.onboardIdentity }}" style="border:none;background:transparent;color:var(--color-text-secondary);cursor:pointer">
-          Change phone number
+        <button onClick="{{ changeVerifyEmail }}" style="border:none;background:transparent;color:var(--color-text-secondary);cursor:pointer">
+          Change email address
         </button>
       </div>
+
+      <p style="font:400 11.5px/1.5 var(--font-body);color:var(--color-text-muted);margin:14px 0 0">
+        No code yet? Check your spam folder, then resend. Codes expire after a short window for your security.
+      </p>
     </div>
+
+    <!-- Phone verification: offered when the platform can genuinely perform it -->
+    <sc-if value="{{ phoneVerificationAvailable }}">
+      <div class="card-premium" style="margin-top:16px;display:flex;flex-direction:column;gap:10px">
+        <div style="font:700 12px/1 var(--font-heading);color:var(--color-text)">ALSO VERIFY YOUR PHONE</div>
+        <p style="font:400 12.5px/1.5 var(--font-body);color:var(--color-text-secondary);margin:0">
+          Verified numbers get faster Mobile Money checkout and higher buyer trust.
+        </p>
+        <button onClick="{{ startPhoneVerification }}" style="border:none;background:transparent;padding:0;text-align:left;font:700 12px/1 var(--font-heading);color:var(--color-accent);cursor:pointer">
+          SEND A CODE TO +237 {{ regPhone }}
+        </button>
+      </div>
+    </sc-if>
+
+    <!-- ...and honestly explained when it cannot -->
+    <sc-if value="{{ !phoneVerificationAvailable }}">
+      <div style="margin-top:16px;display:flex;align-items:flex-start;gap:10px;background:var(--color-neutral-100);border:1px solid var(--color-divider);border-radius:var(--radius-sm);padding:12px 14px">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-muted)" stroke-width="1.9" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        <span style="font:400 12px/1.5 var(--font-body);color:var(--color-text-secondary)">
+          Phone verification is not switched on for LOUMOO yet, so your number is saved for delivery and Mobile Money but is not verified. Your email verification is what secures the account.
+        </span>
+      </div>
+    </sc-if>
   </div>
 
   <!-- Continue CTA (Dynamic branch to Buyer, Seller, or Both) -->
   <div style="margin-top:28px">
-    <button onClick="{{ continueAfterOtp }}" class="btn btn-primary btn-block" style="height:50px;font-size:15px;cursor:pointer">
-      <span>VERIFY &amp; CONTINUE</span>
-      <span>✓</span>
+    <button onClick="{{ continueAfterOtp }}" disabled="{{ emailVerifyState === 'verifying' }}" class="btn btn-primary btn-block" style="height:50px;font-size:15px;cursor:{{ emailVerifyState === 'verifying' ? 'default' : 'pointer' }};opacity:{{ emailVerifyState === 'verifying' ? '0.65' : '1' }}">
+      <span>{{ emailVerifyState === 'verifying' ? 'CONFIRMING…' : (emailVerifyState === 'verified' ? 'CONTINUE' : 'VERIFY &amp; CONTINUE') }}</span>
+      <span>{{ emailVerifyState === 'verifying' ? '' : '✓' }}</span>
     </button>
   </div>
 

@@ -4,6 +4,10 @@
  * Executes all 25 unit and integration test suites and reports results
  */
 
+// Must come first: it sets NODE_ENV and the test-auth secret BEFORE any
+// module loads the configuration, which reads them once at import time.
+require('./setup');
+
 const envTest = require('./unit/env.test');
 const errorsTest = require('./unit/errors.test');
 const cacheTest = require('./unit/cache.test');

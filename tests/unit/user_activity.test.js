@@ -2,13 +2,18 @@
  * Unit Test: User-Facing Activity History (04.07)
  */
 
+require('../setup');
 const assert = require('assert');
 const UserActivityUseCase = require('../../server/modules/identity/application/UserActivityUseCase');
+const harness = require('../helpers/harness');
 
 async function run() {
   console.log('  Testing User-Facing Activity History Service...');
 
-  const userId = `usr_act_test_${Date.now()}`;
+  // The activity log has a real foreign key into `iam.profiles`, so this runs
+  // against a real account rather than an invented id.
+  const user = await harness.createUser({ stage: 'ready' });
+  const userId = user.id;
 
   // 1. Record activity
   const act1 = await UserActivityUseCase.recordActivity(userId, {

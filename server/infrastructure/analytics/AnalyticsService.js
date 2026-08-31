@@ -9,7 +9,20 @@ const logger = require('../../shared/logging/logger');
 
 let posthogClient = null;
 
-if (config.posthog.apiKey) {
+/**
+ * PostHog ingestion requires a PROJECT API key (`phc_...`). A personal API key
+ * (`phx_...`) is for the management API and is rejected by the capture
+ * endpoint with a 401 on every single event. Detecting it here means one clear
+ * warning at boot instead of an error per tracked action.
+ */
+const isProjectKey = key => typeof key === 'string' && key.startsWith('phc_');
+
+if (config.posthog.apiKey && !isProjectKey(config.posthog.apiKey)) {
+  logger.warn(
+    '[Analytics] POSTHOG_API_KEY does not look like a project key (expected a "phc_" prefix). ' +
+    'Product analytics are disabled. Copy the Project API Key from PostHog → Settings → Project.'
+  );
+} else if (config.posthog.apiKey) {
   try {
     posthogClient = new PostHog(config.posthog.apiKey, {
       host: config.posthog.host,

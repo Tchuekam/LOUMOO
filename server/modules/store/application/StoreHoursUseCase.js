@@ -3,26 +3,26 @@
  * Manages operational schedules, 24/7 status, and temporary closures.
  */
 
-const { SupabaseClient } = require('../../../infrastructure/database/SupabaseClient');
 const CacheService = require('../../../infrastructure/cache/CacheService');
+const { SupabaseClient, handleDatabaseFailure } = require('../../../infrastructure/database/SupabaseClient.js');
 const StoreHours = require('../domain/StoreHours');
 const logger = require('../../../shared/logging/logger');
 
 class StoreHoursUseCase {
   static async getHours(store) {
-    const supabase = SupabaseClient.admin;
+    const supabase = SupabaseClient.getAdmin();
     let data = null;
 
     try {
       const { data: res, error } = await supabase
-        .from('iam.store_hours')
+        .from('store_hours')
         .select('*')
         .eq('store_id', store.id)
         .single();
 
       if (res && !error) data = res;
     } catch (err) {
-      logger.warn(`[StoreHours] Query fallback: ${err.message}`);
+      handleDatabaseFailure(err, 'Query');
     }
 
     const hours = new StoreHours(data || { store_id: store.id });
@@ -30,7 +30,7 @@ class StoreHoursUseCase {
   }
 
   static async updateHours(store, updates = {}) {
-    const supabase = SupabaseClient.admin;
+    const supabase = SupabaseClient.getAdmin();
     const dbUpdates = {
       timezone: updates.timezone,
       is_always_open: updates.isAlwaysOpen,
@@ -46,10 +46,10 @@ class StoreHoursUseCase {
 
     try {
       await supabase
-        .from('iam.store_hours')
+        .from('store_hours')
         .upsert({ store_id: store.id, ...dbUpdates }, { onConflict: 'store_id' });
     } catch (err) {
-      logger.warn(`[StoreHours] Update fallback: ${err.message}`);
+      handleDatabaseFailure(err, 'Update');
     }
 
     await CacheService.del(`store:public:${store.id}`);

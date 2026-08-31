@@ -31,8 +31,8 @@ CREATE INDEX IF NOT EXISTS idx_profiles_status ON iam.profiles (account_status);
 
 -- 2. Create system.privacy_preferences table
 CREATE TABLE IF NOT EXISTS system.privacy_preferences (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID NOT NULL REFERENCES iam.profiles(id) ON DELETE CASCADE UNIQUE,
+  id VARCHAR(64) PRIMARY KEY DEFAULT gen_random_uuid()::text,
+  user_id VARCHAR(64) NOT NULL REFERENCES iam.profiles(id) ON DELETE CASCADE UNIQUE,
   analytics_consent BOOLEAN DEFAULT TRUE,
   marketing_emails BOOLEAN DEFAULT TRUE,
   personalized_recommendations BOOLEAN DEFAULT TRUE,
@@ -45,8 +45,8 @@ CREATE INDEX IF NOT EXISTS idx_privacy_user_id ON system.privacy_preferences (us
 
 -- 3. Create system.account_security_events table
 CREATE TABLE IF NOT EXISTS system.account_security_events (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID REFERENCES iam.profiles(id) ON DELETE SET NULL,
+  id VARCHAR(64) PRIMARY KEY DEFAULT gen_random_uuid()::text,
+  user_id VARCHAR(64) REFERENCES iam.profiles(id) ON DELETE SET NULL,
   event_type VARCHAR(64) NOT NULL, -- 'signup', 'signin', 'otp_requested', 'otp_verified', 'password_reset_requested', 'session_revoked', 'deletion_requested', 'account_anonymized'
   ip_address VARCHAR(45),
   user_agent TEXT,
@@ -67,14 +67,14 @@ ALTER TABLE system.account_security_events ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can manage own privacy preferences"
   ON system.privacy_preferences
   FOR ALL
-  USING (user_id = auth.uid())
-  WITH CHECK (user_id = auth.uid());
+  USING (user_id = auth.uid()::text)
+  WITH CHECK (user_id = auth.uid()::text);
 
 -- Users can view their own security audit events
 CREATE POLICY "Users can view own security events"
   ON system.account_security_events
   FOR SELECT
-  USING (user_id = auth.uid());
+  USING (user_id = auth.uid()::text);
 
 -- Service role has full access
 CREATE POLICY "Service role full access to privacy preferences"

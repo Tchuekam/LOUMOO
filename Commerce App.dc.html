@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="./support.js"></script>
 <script src="./src/services/loumooApi.js"></script>
+<script src="./src/services/clerkSession.js"></script>
+<script src="./src/services/accountGuard.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600;1,700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -1895,8 +1897,31 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
       <!-- Email Address -->
       <div>
         <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">EMAIL ADDRESS</label>
-        <input type="email" class="input" value="{{ regEmail }}" placeholder="rostand@example.com" onInput="{{ updateRegEmail }}">
+        <input type="email" class="input" value="{{ regEmail }}" placeholder="rostand@example.com" autocomplete="email" onInput="{{ updateRegEmail }}">
       </div>
+
+      <!-- Password — creates the real account with the identity provider -->
+      <div>
+        <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">CHOOSE A PASSWORD</label>
+        <div style="position:relative">
+          <input type="{{ regShowPassword ? 'text' : 'password' }}" class="input" value="{{ regPassword }}" placeholder="At least 8 characters" autocomplete="new-password" style="padding-right:64px" onInput="{{ updateRegPassword }}">
+          <button onClick="{{ toggleRegPassword }}" type="button" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);border:none;background:transparent;font:700 11px/1 var(--font-heading);color:var(--color-accent);cursor:pointer">
+            {{ regShowPassword ? 'HIDE' : 'SHOW' }}
+          </button>
+        </div>
+        <div style="height:4px;background:var(--color-divider);border-radius:2px;margin-top:8px;overflow:hidden">
+          <div style="width:{{ regPasswordStrengthPct }}%;height:100%;background:{{ regPasswordStrengthColor }};border-radius:2px;transition:width .25s ease"></div>
+        </div>
+        <div style="font:600 11px/1 var(--font-body);color:var(--color-text-muted);margin-top:6px">{{ regPasswordStrengthLabel }}</div>
+      </div>
+
+      <!-- Server-reported failures, shown where the user is looking -->
+      <sc-if value="{{ regError }}">
+        <div role="alert" style="display:flex;align-items:flex-start;gap:10px;background:var(--color-accent-sale-100);border:1px solid var(--color-accent-sale);border-radius:var(--radius-sm);padding:12px 14px">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-sale)" stroke-width="2" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+          <span style="font:600 12.5px/1.45 var(--font-body);color:var(--color-accent-sale)">{{ regError }}</span>
+        </div>
+      </sc-if>
 
       <!-- City / Region -->
       <div>
@@ -1916,9 +1941,9 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 
   <!-- Continue CTA -->
   <div style="margin-top:28px">
-    <button onClick="{{ continueFromIdentity }}" class="btn btn-primary btn-block" style="height:50px;font-size:15px;cursor:pointer">
-      <span>SEND VERIFICATION CODE</span>
-      <span>→</span>
+    <button onClick="{{ continueFromIdentity }}" disabled="{{ regBusy }}" class="btn btn-primary btn-block" style="height:50px;font-size:15px;cursor:{{ regBusy ? 'default' : 'pointer' }};opacity:{{ regBusy ? '0.65' : '1' }}">
+      <span>{{ regBusy ? 'CREATING YOUR ACCOUNT…' : 'SEND VERIFICATION CODE' }}</span>
+      <span>{{ regBusy ? '' : '→' }}</span>
     </button>
   </div>
 
@@ -1947,42 +1972,80 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 
     <div style="text-align:center;margin-bottom:24px">
       <div style="width:56px;height:56px;border-radius:50%;background:var(--color-accent-100);color:var(--color-accent);display:flex;align-items:center;justify-content:center;margin:0 auto 16px">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
       </div>
       <h2 style="font-size:24px;margin:0 0 6px">Let's make sure it's you</h2>
-      <p style="font-size:14px;color:var(--color-text-secondary);max-width:380px;margin:0 auto;line-height:1.45">
-        We sent a 6-digit verification code to <strong>+237 {{ regPhone }}</strong>
+      <p style="font-size:14px;color:var(--color-text-secondary);max-width:400px;margin:0 auto;line-height:1.45">
+        We sent a 6-digit verification code to <strong>{{ regEmail }}</strong>
+      </p>
+      <p style="font-size:12.5px;color:var(--color-text-muted);max-width:420px;margin:12px auto 0;line-height:1.5">
+        Verifying your email is what lets you buy, save items and sell on LOUMOO. It takes a few seconds.
       </p>
     </div>
 
-    <!-- 6-Digit OTP Code Inputs -->
+    <!-- Real 6-digit code entry -->
     <div class="card-premium" style="text-align:center;padding:28px 20px">
-      <div style="display:flex;justify-content:center;gap:8px;margin-bottom:20px">
-        <div style="width:44px;height:52px;border:2px solid var(--color-accent);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font:800 22px/1 var(--font-heading);background:var(--color-surface);color:var(--color-text)">8</div>
-        <div style="width:44px;height:52px;border:2px solid var(--color-accent);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font:800 22px/1 var(--font-heading);background:var(--color-surface);color:var(--color-text)">4</div>
-        <div style="width:44px;height:52px;border:2px solid var(--color-accent);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font:800 22px/1 var(--font-heading);background:var(--color-surface);color:var(--color-text)">9</div>
-        <div style="width:44px;height:52px;border:2px solid var(--color-accent);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font:800 22px/1 var(--font-heading);background:var(--color-surface);color:var(--color-text)">2</div>
-        <div style="width:44px;height:52px;border:2px solid var(--color-divider);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font:800 22px/1 var(--font-heading);background:var(--color-neutral-100);color:var(--color-text)">·</div>
-        <div style="width:44px;height:52px;border:2px solid var(--color-divider);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font:800 22px/1 var(--font-heading);background:var(--color-neutral-100);color:var(--color-text)">·</div>
-      </div>
+      <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:10px;display:block">VERIFICATION CODE</label>
+      <input type="text" class="input" value="{{ emailVerifyCode }}" placeholder="000000" inputmode="numeric" maxlength="6" autocomplete="one-time-code" style="letter-spacing:.42em;font-weight:800;text-align:center;font-size:22px;height:56px" onInput="{{ updateEmailVerifyCode }}">
 
-      <div style="display:flex;justify-content:center;gap:18px;font-size:12.5px">
-        <button onClick="{{ resendOtp }}" style="border:none;background:transparent;color:var(--color-accent);font-weight:700;cursor:pointer">
-          Resend code (0:48)
+      <sc-if value="{{ emailVerifyError }}">
+        <div role="alert" style="display:flex;align-items:flex-start;gap:10px;background:var(--color-accent-sale-100);border:1px solid var(--color-accent-sale);border-radius:var(--radius-sm);padding:12px 14px;margin-top:14px;text-align:left">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-sale)" stroke-width="2" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+          <span style="font:600 12.5px/1.45 var(--font-body);color:var(--color-accent-sale)">{{ emailVerifyError }}</span>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ emailVerifyState === 'verified' }}">
+        <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:14px;background:var(--color-success-100);border-radius:var(--radius-pill);padding:9px 16px;width:fit-content;margin-left:auto;margin-right:auto">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--color-success)" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg>
+          <span style="font:700 11.5px/1 var(--font-heading);color:var(--color-success)">EMAIL VERIFIED</span>
+        </div>
+      </sc-if>
+
+      <div style="display:flex;justify-content:center;flex-wrap:wrap;gap:16px;font-size:12.5px;margin-top:18px">
+        <button onClick="{{ resendEmailVerification }}" disabled="{{ emailVerifyCooldown > 0 }}" style="border:none;background:transparent;color:{{ emailVerifyCooldown > 0 ? 'var(--color-text-muted)' : 'var(--color-accent)' }};font-weight:700;cursor:{{ emailVerifyCooldown > 0 ? 'default' : 'pointer' }}">
+          {{ emailVerifyCooldown > 0 ? 'Resend code (0:' + emailVerifyCooldown + ')' : 'Resend code' }}
         </button>
         <span>•</span>
-        <button onClick="{{ on.onboardIdentity }}" style="border:none;background:transparent;color:var(--color-text-secondary);cursor:pointer">
-          Change phone number
+        <button onClick="{{ changeVerifyEmail }}" style="border:none;background:transparent;color:var(--color-text-secondary);cursor:pointer">
+          Change email address
         </button>
       </div>
+
+      <p style="font:400 11.5px/1.5 var(--font-body);color:var(--color-text-muted);margin:14px 0 0">
+        No code yet? Check your spam folder, then resend. Codes expire after a short window for your security.
+      </p>
     </div>
+
+    <!-- Phone verification: offered when the platform can genuinely perform it -->
+    <sc-if value="{{ phoneVerificationAvailable }}">
+      <div class="card-premium" style="margin-top:16px;display:flex;flex-direction:column;gap:10px">
+        <div style="font:700 12px/1 var(--font-heading);color:var(--color-text)">ALSO VERIFY YOUR PHONE</div>
+        <p style="font:400 12.5px/1.5 var(--font-body);color:var(--color-text-secondary);margin:0">
+          Verified numbers get faster Mobile Money checkout and higher buyer trust.
+        </p>
+        <button onClick="{{ startPhoneVerification }}" style="border:none;background:transparent;padding:0;text-align:left;font:700 12px/1 var(--font-heading);color:var(--color-accent);cursor:pointer">
+          SEND A CODE TO +237 {{ regPhone }}
+        </button>
+      </div>
+    </sc-if>
+
+    <!-- ...and honestly explained when it cannot -->
+    <sc-if value="{{ !phoneVerificationAvailable }}">
+      <div style="margin-top:16px;display:flex;align-items:flex-start;gap:10px;background:var(--color-neutral-100);border:1px solid var(--color-divider);border-radius:var(--radius-sm);padding:12px 14px">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-muted)" stroke-width="1.9" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        <span style="font:400 12px/1.5 var(--font-body);color:var(--color-text-secondary)">
+          Phone verification is not switched on for LOUMOO yet, so your number is saved for delivery and Mobile Money but is not verified. Your email verification is what secures the account.
+        </span>
+      </div>
+    </sc-if>
   </div>
 
   <!-- Continue CTA (Dynamic branch to Buyer, Seller, or Both) -->
   <div style="margin-top:28px">
-    <button onClick="{{ continueAfterOtp }}" class="btn btn-primary btn-block" style="height:50px;font-size:15px;cursor:pointer">
-      <span>VERIFY &amp; CONTINUE</span>
-      <span>✓</span>
+    <button onClick="{{ continueAfterOtp }}" disabled="{{ emailVerifyState === 'verifying' }}" class="btn btn-primary btn-block" style="height:50px;font-size:15px;cursor:{{ emailVerifyState === 'verifying' ? 'default' : 'pointer' }};opacity:{{ emailVerifyState === 'verifying' ? '0.65' : '1' }}">
+      <span>{{ emailVerifyState === 'verifying' ? 'CONFIRMING…' : (emailVerifyState === 'verified' ? 'CONTINUE' : 'VERIFY &amp; CONTINUE') }}</span>
+      <span>{{ emailVerifyState === 'verifying' ? '' : '✓' }}</span>
     </button>
   </div>
 
@@ -2758,7 +2821,10 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
         </div>
         <h1 style="font-size:25px;margin:0 0 8px;line-height:1.2">Verify your email</h1>
         <p style="font-size:14px;color:var(--color-text-secondary);max-width:420px;margin:0 auto;line-height:1.5">
-          We sent a 6-digit confirmation code to <strong style="color:var(--color-text)">{{ verifyEmailAddress }}</strong>. Enter it below to secure your account.
+          We sent a 6-digit confirmation code to <strong style="color:var(--color-text)">{{ verifyEmailAddress }}</strong>. Enter it below to continue.
+        </p>
+        <p style="font-size:12.5px;color:var(--color-text-muted);max-width:440px;margin:12px auto 0;line-height:1.55">
+          {{ verifyEmailWhy }}
         </p>
       </div>
 
@@ -2780,6 +2846,20 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
           <button onClick="{{ resendEmailVerification }}" disabled="{{ emailVerifyCooldown > 0 }}" style="border:none;background:transparent;padding:0;font:700 12px/1 var(--font-heading);color:{{ emailVerifyCooldown > 0 ? 'var(--color-text-muted)' : 'var(--color-accent)' }};cursor:{{ emailVerifyCooldown > 0 ? 'default' : 'pointer' }}">
             {{ emailVerifyCooldown > 0 ? 'RESEND IN ' + emailVerifyCooldown + 'S' : 'RESEND CODE' }}
           </button>
+        </div>
+
+        <div style="border-top:1px solid var(--color-border);padding-top:14px;display:flex;flex-direction:column;gap:10px">
+          <p style="font:400 12px/1.5 var(--font-body);color:var(--color-text-muted);margin:0">
+            {{ verifyEmailNoCodeHelp }}
+          </p>
+          <div style="display:flex;flex-wrap:wrap;gap:14px">
+            <button onClick="{{ recheckEmailVerification }}" style="border:none;background:transparent;padding:0;font:700 12px/1 var(--font-heading);color:var(--color-accent);cursor:pointer">
+              I ALREADY VERIFIED — CHECK AGAIN
+            </button>
+            <button onClick="{{ changeVerifyEmail }}" style="border:none;background:transparent;padding:0;font:700 12px/1 var(--font-heading);color:var(--color-text-secondary);cursor:pointer">
+              USE A DIFFERENT EMAIL
+            </button>
+          </div>
         </div>
       </div>
     </sc-if>
@@ -2804,6 +2884,9 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
         <h1 style="font-size:25px;margin:0 0 8px;line-height:1.2">Email verified</h1>
         <p style="font-size:14px;color:var(--color-text-secondary);max-width:400px;margin:0 auto;line-height:1.5">
           <strong style="color:var(--color-text)">{{ verifyEmailAddress }}</strong> is now confirmed on your LOUMOO account.
+        </p>
+        <p style="font-size:12.5px;color:var(--color-text-muted);max-width:400px;margin:10px auto 0;line-height:1.55">
+          {{ verifyEmailNext }}
         </p>
 
         <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:20px;background:var(--color-success-100);border-radius:var(--radius-pill);padding:9px 16px;width:fit-content;margin-left:auto;margin-right:auto">
@@ -2850,9 +2933,15 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
       </button>
     </sc-if>
 
-    <sc-if value="{{ emailVerifyState !== 'verifying' }}">
-      <button onClick="{{ skipEmailVerification }}" class="btn btn-secondary btn-block" style="height:44px;font-size:13px;cursor:pointer">
-        I'LL DO THIS LATER
+    <sc-if value="{{ emailVerifyState === 'pending' }}">
+      <button onClick="{{ recheckEmailVerification }}" class="btn btn-secondary btn-block" style="height:44px;font-size:13px;cursor:pointer">
+        I VERIFIED ON ANOTHER DEVICE
+      </button>
+    </sc-if>
+
+    <sc-if value="{{ emailVerifyState === 'expired' }}">
+      <button onClick="{{ changeVerifyEmail }}" class="btn btn-secondary btn-block" style="height:44px;font-size:13px;cursor:pointer">
+        USE A DIFFERENT EMAIL ADDRESS
       </button>
     </sc-if>
   </div>
@@ -7035,16 +7124,78 @@ function getApi() {
   return null;
 }
 
+/**
+ * The client account guard (src/services/accountGuard.js). It caches the
+ * server's answer from GET /api/v1/me/state; it never decides anything itself.
+ */
+function getGuard() {
+  try {
+    if (typeof window !== 'undefined' && window && window.LoumooGuard) return window.LoumooGuard;
+    if (typeof globalThis !== 'undefined' && globalThis && globalThis.LoumooGuard) return globalThis.LoumooGuard;
+  } catch (e) { /* sandboxed */ }
+  return null;
+}
+
+const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+
+/**
+ * Password strength meter. Presentation only: it guides the user towards a
+ * good password, it does not decide whether one is acceptable — Clerk does
+ * that, including checking against known breach corpora.
+ */
+function passwordStrength(pw) {
+  if (!pw) return { pct: '0%', label: '', color: 'var(--color-text-muted)' };
+  let score = 0;
+  if (pw.length >= 8) score++;
+  if (pw.length >= 12) score++;
+  if (/[A-Z]/.test(pw) && /[a-z]/.test(pw)) score++;
+  if (/[0-9]/.test(pw)) score++;
+  if (/[^A-Za-z0-9]/.test(pw)) score++;
+  if (score <= 2) return { pct: '33%', label: 'WEAK', color: 'var(--color-accent-sale)' };
+  if (score <= 4) return { pct: '66%', label: 'GOOD', color: 'var(--color-accent-energy-text)' };
+  return { pct: '100%', label: 'STRONG', color: 'var(--color-success)' };
+}
+
+/** The Clerk browser bridge (src/services/clerkSession.js). */
+function getClerk() {
+  try {
+    if (typeof window !== 'undefined' && window && window.LoumooClerk) return window.LoumooClerk;
+    if (typeof globalThis !== 'undefined' && globalThis && globalThis.LoumooClerk) return globalThis.LoumooClerk;
+  } catch (e) { /* sandboxed */ }
+  return null;
+}
+
 class Component extends DCLogic {
   state = {
     screen: 'home', stack: [], cart: 2, vs: 1, toast: '', following: false, saved: false,
     qty: 1, freeday: false, darkMode: false,
-    isLoggedIn: true,
-    // Authoritative session state resolved from GET /api/v1/users/me.
+    isLoggedIn: false,
+    // Authoritative session state resolved from GET /api/v1/me/state.
     // 'unknown' during boot so the Get Started CTA never flashes for a
     // signed-in user; resolves to 'authenticated' | 'anonymous'.
     authStatus: 'unknown',
     sessionUser: null,
+
+    // The server's account-state envelope. This is a PROJECTION of the
+    // server's decision — the UI renders it, and never writes to it to grant
+    // itself a permission.
+    accountState: null,        // 'ACCOUNT_READY', 'SELLER_READY', ...
+    capabilities: {},          // { canCreateListing: bool, ... }
+    serverOnboarding: null,    // { nextStep, steps, percentage, draft }
+    authProviderStatus: 'loading',  // loading | ready | unavailable
+    authProviderError: '',
+    onboardingBusy: false,
+    onboardingError: '',
+    onboardingFieldErrors: {},
+
+    // Registration (real Clerk account creation)
+    regPassword: '',
+    regShowPassword: false,
+    regBusy: false,
+    regError: '',
+
+    // Reported by the server: whether a phone verification provider exists.
+    phoneVerificationAvailable: false,
 
     // ── Phase A: Sign In ──
     signInIdentifier: '',
@@ -7221,6 +7372,18 @@ class Component extends DCLogic {
     searchBusy: false,
 
     // ── Phase F: Universal Listing Engine State ──
+    // ── Listing wizard (server-backed) ──
+    // The draft listing id returned by POST /api/v1/listings. Everything the
+    // wizard does afterwards is scoped to this real, owned resource.
+    draftListingId: null,
+    draftListingBusy: false,
+    draftListingError: '',
+    listingFieldErrors: [],
+    // Staged image uploads: { uploadId, url, width, height, status }.
+    listingUploads: [],
+    listingUploadBusy: false,
+    listingUploadError: '',
+    newListingDescription: '',
     newListingType: 'PHYSICAL_PRODUCT',
     newListingCategory: 'smartphones',
     newListingCategoryName: 'Smartphones & Electronics',
@@ -7230,6 +7393,7 @@ class Component extends DCLogic {
     attrStorage: '256GB',
     attrRam: '8GB',
     attrColor: 'Space Grey',
+    attrModel: '',
     listingFulfillmentModel: 'DELIVERY_OR_PICKUP',
     previewListingTitle: 'Apple MacBook Air 13” M2 (Space Grey) — 8GB / 256GB SSD',
     previewListingPriceFormatted: '745 000 XAF',
@@ -7253,7 +7417,7 @@ class Component extends DCLogic {
 
   componentDidMount() {
     this._restoreOnboardingDraft();
-    this._resolveSession();
+    this._bootAuth();
     this._handleKeyDown = (e) => {
       if (e && e.key === 'Escape') {
         if (this.state.toast) { this.setState({ toast: '' }); return; }
@@ -7274,6 +7438,10 @@ class Component extends DCLogic {
     clearInterval(this._emailTimer);
     if (typeof window !== 'undefined' && this._handleKeyDown) {
       window.removeEventListener('keydown', this._handleKeyDown);
+    }
+    if (this._clerkUnsubscribe) { try { this._clerkUnsubscribe(); } catch (e) {} }
+    if (typeof window !== 'undefined' && this._onWindowFocus) {
+      window.removeEventListener('focus', this._onWindowFocus);
     }
     this._stopCameraStream();
     this._unmounted = true;
@@ -7301,77 +7469,153 @@ class Component extends DCLogic {
   }
 
   /**
-   * Resolves the real session. GET /api/v1/users/me is authoritative:
-   * localStorage is only ever a pre-paint hint, never proof of authentication.
-   * A rejected or absent session collapses to 'anonymous' and wipes any
-   * cached principal so one user's data can't survive into another's session.
+   * Boots authentication.
+   *
+   *   Clerk (browser)  ->  session token  ->  GET /api/v1/me/state  ->  UI
+   *
+   * The server's answer is the ONLY thing that decides what the user can do.
+   * localStorage holds nothing but half-typed form values.
    */
-  _resolveSession() {
-    const api = getApi();
+  _bootAuth() {
+    const clerk = getClerk();
 
-    if (!api) {
-      // Sandbox / offline prototype: fall back to the local hint so the
-      // static prototype and the Node test harness keep working unchanged.
-      if (typeof localStorage === 'undefined') return;
-      try {
-        const auth = localStorage.getItem('loumoo_auth_user');
-        if (auth) {
-          const parsed = JSON.parse(auth);
-          if (parsed && parsed.isLoggedIn) {
-            this.setState({
-              isLoggedIn: true,
-              authStatus: 'authenticated',
-              userRole: parsed.role || this.state.userRole,
-              regFirstName: parsed.name || this.state.regFirstName,
-              regEmail: parsed.email || this.state.regEmail,
-              regPhone: parsed.phone || this.state.regPhone
-            });
-          }
-        }
-      } catch (e) {}
+    if (!clerk) {
+      // Static prototype / test sandbox with no Clerk bundle: resolve whatever
+      // session the API client can prove, and present an honest anonymous
+      // state if it cannot prove one.
+      this.setState({ authProviderStatus: 'unavailable' });
+      this._syncAccountState();
       return;
     }
 
-    if (!api.getAuthToken()) {
-      this._applyAnonymous();
-      return;
+    // Verification completed on another device shows up when the tab regains
+    // focus, without the user having to reload.
+    if (typeof window !== 'undefined') {
+      this._onWindowFocus = () => {
+        if (this.state.authStatus === 'authenticated') this._syncAccountState(true);
+      };
+      window.addEventListener('focus', this._onWindowFocus);
     }
 
-    api.getMe().then(user => {
+    // Clerk broadcasts across tabs: signing in or out anywhere reaches here.
+    this._clerkUnsubscribe = clerk.subscribe(evt => {
       if (this._unmounted) return;
-      if (user) this._applySessionUser(user);
-      else this._applyAnonymous();
+      if (evt.type === 'session') this._syncAccountState(true);
+      if (evt.type === 'error') {
+        this.setState({
+          authProviderStatus: 'unavailable',
+          authProviderError: clerk.describeError(evt.error)
+        });
+      }
+    });
+
+    clerk.init().then(() => {
+      if (this._unmounted) return;
+      this.setState({
+        authProviderStatus: clerk.isReady ? 'ready' : 'unavailable',
+        authProviderError: clerk.isReady ? '' : clerk.describeError(clerk.lastError)
+      });
+      return this._syncAccountState(true);
     }).catch(() => {
       if (this._unmounted) return;
-      // Network failure is NOT proof of sign-out. Keep the token and stay in
-      // 'unknown' rather than falsely presenting the user as signed out.
-      this.setState({ authStatus: 'unknown' });
+      this.setState({ authProviderStatus: 'unavailable' });
+      this._applyAnonymous();
     });
   }
 
-  /** Projects a backend UserProfile onto the view state. */
-  _applySessionUser(user) {
-    const role = user.primaryRole || user.role || 'buyer';
+  /**
+   * Pulls the authoritative account state and projects it onto the view.
+   * Called on boot, after every state-changing action, and whenever Clerk
+   * reports the session changed.
+   */
+  _syncAccountState(force) {
+    const guard = getGuard();
+    const api = getApi();
+
+    if (!guard || !api) {
+      this._applyAnonymous();
+      return Promise.resolve(null);
+    }
+
+    return guard.load(force !== false).then(state => {
+      if (this._unmounted) return null;
+      if (state && state.isAuthenticated) {
+        this._applyAccountState(state);
+      } else {
+        this._applyAnonymous();
+      }
+      return state;
+    }).catch(() => {
+      if (this._unmounted) return null;
+      // A network failure is NOT proof of sign-out. Stay in 'unknown' rather
+      // than falsely presenting the user as signed out and wiping their view.
+      this.setState({ authStatus: 'unknown' });
+      return null;
+    });
+  }
+
+  /**
+   * Establishes the LOUMOO session immediately after Clerk authenticates.
+   * Provisions the profile on first sign-in and returns the account state.
+   */
+  _establishSession() {
+    const api = getApi();
+    const guard = getGuard();
+    if (!api) return Promise.resolve(null);
+
+    return api.establishSession().then(state => {
+      if (guard) guard.adopt(state);
+      if (this._unmounted) return state;
+      if (state && state.isAuthenticated) this._applyAccountState(state);
+      return state;
+    });
+  }
+
+  /** Projects the server's account-state envelope onto the view. */
+  _applyAccountState(state) {
+    const user = state.user || {};
+    const role = state.state === 'SELLER_READY' || state.state === 'SELLER_VERIFICATION_REQUIRED'
+      ? 'seller'
+      : 'buyer';
+
     this.setState({
       isLoggedIn: true,
       authStatus: 'authenticated',
       sessionUser: user,
-      userRole: role === 'customer' ? 'buyer' : role,
+      accountState: state.state,
+      capabilities: state.capabilities || {},
+      serverOnboarding: state.onboarding || null,
+      phoneVerificationAvailable: Boolean(state.contact && state.contact.phoneVerificationAvailable),
+      userRole: role,
       regFirstName: user.firstName || this.state.regFirstName,
       regLastName: user.lastName || this.state.regLastName,
       regEmail: user.email || this.state.regEmail,
-      regPhone: user.phoneNumber || user.phone || this.state.regPhone,
+      regPhone: user.phoneNumber || this.state.regPhone,
       regCity: (user.city || this.state.regCity || '').toLowerCase(),
-      regBusinessName: user.businessName || this.state.regBusinessName
+      regBusinessName: user.businessName || this.state.regBusinessName,
+      emailVerifyState: state.contact && state.contact.emailVerified ? 'verified' : this.state.emailVerifyState
     });
   }
 
-  /** Collapses to a signed-out session and drops every cached principal. */
+  /**
+   * Collapses to a signed-out session and drops every cached principal.
+   *
+   * The onboarding form draft is restored afterwards: it contains only
+   * half-typed answers, never an auth signal, so someone who abandoned the
+   * wizard and came back does not have to retype everything just because
+   * their session had not been established yet.
+   */
   _applyAnonymous() {
+    const guard = getGuard();
+    if (guard) guard.invalidate();
+
     this.setState({
       isLoggedIn: false,
       authStatus: 'anonymous',
       sessionUser: null,
+      accountState: null,
+      capabilities: {},
+      serverOnboarding: null,
       userRole: 'buyer',
       regFirstName: '',
       regLastName: '',
@@ -7392,6 +7636,8 @@ class Component extends DCLogic {
       saved: false,
       following: false
     });
+
+    this._restoreOnboardingDraft();
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -7433,54 +7679,443 @@ class Component extends DCLogic {
     }
   }
 
+  /* ══════════════════════════════════════════════════════════════════════
+     SERVER-BACKED ONBOARDING
+     ══════════════════════════════════════════════════════════════════════ */
+
+  /** Tells the server the user has begun, and whether they intend to sell. */
+  _startServerOnboarding() {
+    const api = getApi();
+    const guard = getGuard();
+    if (!api) return Promise.resolve(null);
+
+    const intent = this.state.userRole === 'both'
+      ? 'both'
+      : (this.state.userRole === 'seller' ? 'seller' : 'buyer');
+
+    return api.startOnboarding(intent).then(state => {
+      if (guard) guard.adopt(state);
+      if (!this._unmounted && state) this._applyAccountState(state);
+      return state;
+    }).catch(err => {
+      if (!this._unmounted) {
+        this.setState({ onboardingError: (err && err.message) || 'Could not start onboarding.' });
+      }
+      return null;
+    });
+  }
+
+  /**
+   * Submits whichever onboarding steps are still outstanding, in the order the
+   * server requires, from the answers the wizard collected.
+   *
+   * Resumable by construction: it asks the server what is still missing rather
+   * than assuming the user started at the beginning, so someone returning on a
+   * different device submits only what they have not already done.
+   */
+  _submitRemainingOnboardingSteps() {
+    const api = getApi();
+    const guard = getGuard();
+    if (!api) return Promise.resolve(null);
+
+    const answers = {
+      PERSONAL_INFO: () => ({
+        firstName: (this.state.regFirstName || '').trim(),
+        lastName: (this.state.regLastName || '').trim(),
+        phoneNumber: this.state.regPhone
+          ? '+237' + String(this.state.regPhone).replace(/[^0-9]/g, '')
+          : null
+      }),
+      LOCATION: () => ({
+        city: (this.state.regCity || 'douala').toLowerCase(),
+        address: this.state.regAddress || null
+      }),
+      MARKETPLACE_PREFERENCES: () => {
+        const interests = [];
+        if (this.state.interestTech) interests.push('electronics');
+        if (this.state.interestFashion) interests.push('fashion');
+        if (this.state.interestTravel) interests.push('travel');
+        if (this.state.interestServices) interests.push('services');
+
+        const priorities = [];
+        if (this.state.priorityVerified ?? true) priorities.push('verified_sellers');
+        if (this.state.priorityPrice) priorities.push('best_price');
+        if (this.state.prioritySpeed) priorities.push('fast_delivery');
+        if (this.state.priorityWarranty) priorities.push('warranty');
+
+        return { interests: interests, priorities: priorities };
+      },
+      SELLER_SETUP: () => ({
+        sellerType: this.state.sellerType === 'company' ? 'pro' : (this.state.sellerType || 'individual'),
+        businessName: this.state.regBusinessName || null,
+        rccmNumber: this.state.regRccm || null,
+        taxNiuNumber: this.state.regNiu || null
+      }),
+      COMPLETION: () => ({ acceptedTerms: true })
+    };
+
+    // Walk the server's own "what is next" pointer. Each submission returns
+    // the new state, so the loop cannot desynchronise from the server.
+    const step = (guardAgainstLoop) => {
+      if (guardAgainstLoop > 12) return Promise.resolve(null);
+
+      return api.getOnboarding().then(onboarding => {
+        const next = onboarding && onboarding.nextStep;
+        if (!next) return this._syncAccountState(true).then(() => onboarding);
+
+        const build = answers[next];
+        if (!build) {
+          // A derived step the client cannot submit; ask the server again.
+          return this._syncAccountState(true).then(() => onboarding);
+        }
+
+        return api.submitOnboardingStep(next, build()).then(state => {
+          if (guard) guard.adopt(state);
+          if (!this._unmounted && state) this._applyAccountState(state);
+          return step(guardAgainstLoop + 1);
+        });
+      });
+    };
+
+    return step(0).then(() => this._syncAccountState(true));
+  }
+
+  /* ══════════════════════════════════════════════════════════════════════
+     LISTING WIZARD — real drafts, real uploads, real publication
+     ══════════════════════════════════════════════════════════════════════ */
+
+  /** The listing payload assembled from the wizard's current answers. */
+  _listingPayload() {
+    const priceMinor = parseInt(String(this.state.newListingPrice || '0').replace(/[^0-9]/g, ''), 10) || 0;
+
+    const attributes = {};
+    if (this.state.attrBrand) attributes.brand = this.state.attrBrand;
+    if (this.state.attrStorage) attributes.storage = this.state.attrStorage;
+    if (this.state.attrRam) attributes.ram = this.state.attrRam;
+    if (this.state.attrColor) attributes.color = this.state.attrColor;
+    if (this.state.attrModel) attributes.model = this.state.attrModel;
+
+    const payload = {
+      listingType: this.state.newListingType || 'PHYSICAL_PRODUCT',
+      categoryId: this.state.newListingCategory || 'smartphones',
+      title: (this.state.newListingTitle || '').trim(),
+      description: (this.state.newListingDescription || '').trim(),
+      condition: this.state.newListingCondition || 'new',
+      currency: 'XAF',
+      basePriceMinor: priceMinor,
+      fulfillmentModel: this.state.listingFulfillmentModel || 'DELIVERY_OR_PICKUP',
+      city: (this.state.regCity || 'douala').toLowerCase(),
+      attributes: attributes
+    };
+
+    Object.keys(payload).forEach(k => {
+      if (payload[k] === undefined || payload[k] === '') delete payload[k];
+    });
+
+    return payload;
+  }
+
+  /**
+   * Ensures a real draft listing exists before anything is uploaded to it.
+   * Authorization happens here, at the cheapest possible moment — long before
+   * any image is transferred.
+   */
+  _ensureDraftListing() {
+    if (this.state.draftListingId) return Promise.resolve(this.state.draftListingId);
+
+    const api = getApi();
+    if (!api) return Promise.reject(new Error('LOUMOO is unreachable. Check your connection.'));
+
+    return api.createListing(this._listingPayload()).then(listing => {
+      if (!this._unmounted) this.setState({ draftListingId: listing.id, draftListingError: '' });
+      return listing.id;
+    });
+  }
+
+  /**
+   * Uploads chosen images.
+   *
+   * Client-side checks first so obvious mistakes are caught instantly, then
+   * the server validates the actual BYTES — the client checks are a courtesy,
+   * never the gate.
+   */
+  uploadListingImages(files) {
+    const api = getApi();
+    if (!api) return Promise.resolve();
+
+    const MAX_BYTES = 8 * 1024 * 1024;
+    const MAX_IMAGES = 12;
+    const ACCEPTED = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+
+    const room = MAX_IMAGES - this.state.listingUploads.length;
+    if (room <= 0) {
+      this.setState({ listingUploadError: 'A listing can have at most ' + MAX_IMAGES + ' images.' });
+      return Promise.resolve();
+    }
+
+    const accepted = [];
+    const rejected = [];
+
+    files.slice(0, room).forEach(file => {
+      if (file.size > MAX_BYTES) {
+        rejected.push(file.name + ' is larger than 8 MB.');
+      } else if (file.type && ACCEPTED.indexOf(file.type) === -1) {
+        rejected.push(file.name + ' is not a JPEG, PNG, WebP or GIF.');
+      } else {
+        accepted.push(file);
+      }
+    });
+
+    if (!accepted.length) {
+      this.setState({ listingUploadError: rejected.join(' ') || 'No usable images were selected.' });
+      return Promise.resolve();
+    }
+
+    this.setState({ listingUploadBusy: true, listingUploadError: rejected.join(' ') });
+
+    return this._ensureDraftListing()
+      .then(listingId => {
+        // Sequential, so a partial failure leaves an unambiguous state and the
+        // server's per-seller upload throttle is respected.
+        return accepted.reduce((chain, file) => chain.then(() => {
+          return api.uploadListingImage(file, listingId).then(upload => {
+            if (this._unmounted) return;
+            this.setState(st => ({
+              listingUploads: st.listingUploads.concat([{
+                uploadId: upload.uploadId,
+                url: upload.url,
+                width: upload.width,
+                height: upload.height,
+                status: 'ready'
+              }])
+            }));
+          }).catch(err => {
+            if (this._unmounted) return;
+            // Report which file failed and why — a generic failure leaves the
+            // seller guessing which of six photos was the problem.
+            const detail = err && err.message ? err.message : 'could not be uploaded';
+            this.setState(st => ({
+              listingUploadError: (st.listingUploadError ? st.listingUploadError + ' ' : '')
+                + file.name + ': ' + detail
+            }));
+          });
+        }), Promise.resolve());
+      })
+      .then(() => {
+        if (!this._unmounted) this.setState({ listingUploadBusy: false });
+      })
+      .catch(err => {
+        if (this._unmounted) return;
+        this.setState({
+          listingUploadBusy: false,
+          listingUploadError: (err && err.message) || 'Could not upload those images.'
+        });
+      });
+  }
+
+  /** Discards a staged image, releasing its storage rather than orphaning it. */
+  discardListingImage(uploadId) {
+    const api = getApi();
+    this.setState(st => ({
+      listingUploads: st.listingUploads.filter(u => u.uploadId !== uploadId)
+    }));
+    if (api) api.discardUpload(uploadId).catch(() => {});
+  }
+
+  /**
+   * Creates (or updates) the draft, attaches the images, then publishes.
+   *
+   * Every failure is surfaced with the server's own per-field messages, and
+   * the wizard stays where it is so the seller can fix and retry. A double
+   * click cannot create two listings: the server collapses identical
+   * submissions, and `publishBusy` prevents a second in-flight request.
+   */
+  publishListing() {
+    if (this.state.publishBusy) return Promise.resolve();
+
+    const api = getApi();
+    const guard = getGuard();
+
+    if (!api) {
+      this.setState({ draftListingError: 'LOUMOO is unreachable. Check your connection and try again.' });
+      return Promise.resolve();
+    }
+
+    this.setState({ publishBusy: true, draftListingError: '', listingFieldErrors: [] });
+
+    const pendingUploads = this.state.listingUploads.map(u => u.uploadId);
+
+    return this._ensureDraftListing()
+      .then(listingId => {
+        const payload = this._listingPayload();
+        return api.updateListing(listingId, payload).then(() => listingId);
+      })
+      .then(listingId => {
+        if (!pendingUploads.length) return listingId;
+        // Attaching is idempotent per upload: an already-attached id is
+        // rejected, so a retry after a partial failure cannot duplicate media.
+        return api.addListingMedia(listingId, pendingUploads)
+          .then(() => listingId)
+          .catch(err => {
+            // Already attached from a previous attempt — carry on to publish.
+            if (err && err.status === 400 && /already attached/i.test(err.message || '')) return listingId;
+            throw err;
+          });
+      })
+      .then(listingId => api.publishListing(listingId))
+      .then(listing => {
+        if (this._unmounted) return;
+        if (guard) guard.invalidate();
+        this.setState({
+          publishBusy: false,
+          listingUploads: [],
+          draftListingId: null,
+          draftListingError: '',
+          listingFieldErrors: []
+        });
+        this.toast('Your listing is now live across Cameroon');
+        this.go('uploadSuccess');
+        return listing;
+      })
+      .catch(err => {
+        if (this._unmounted) return;
+
+        const fields = (err && err.details && err.details.fields) || [];
+        const images = (err && err.details && err.details.images) || [];
+
+        this.setState({
+          publishBusy: false,
+          listingFieldErrors: fields,
+          draftListingError: fields.length
+            ? fields.map(f => f.message).join(' ')
+            : (images.length
+              ? images.map(i => i.message).join(' ')
+              : ((err && err.message) || 'We could not publish that listing. Please try again.'))
+        });
+
+        // The server may have decided this account is no longer eligible
+        // (session expired, boutique suspended). Send them where they can fix it.
+        if (err && (err.status === 401 || err.status === 403)) {
+          const resolveScreen = err.details && err.details.resolveScreen;
+          this._syncAccountState(true).then(() => {
+            if (resolveScreen && SCREENS.includes(resolveScreen)) this.go(resolveScreen);
+          });
+        }
+      });
+  }
+
   navColor(...keys) {
     return keys.includes(this.state.screen) ? 'var(--color-accent)' : 'var(--color-neutral-700)';
   }
 
   /**
-   * Guards an authenticated destination. If the session is not established the
-   * user is routed to Sign In and the intended screen is remembered.
-   * The target is validated against SCREENS, so it can never become an open
-   * redirect to an arbitrary destination.
+   * Guards a destination that merely needs a session.
+   * Equivalent to requireCapability(screen, null).
    */
   requireAuth(screen) {
+    return this.requireCapability(screen, null);
+  }
+
+  /**
+   * THE routing guard. Every protected navigation goes through here.
+   *
+   * It asks the server (via the account guard) whether this account holds the
+   * capability the destination needs. When it does not, the server also says
+   * WHERE the user must go to make progress — so the redirect is always
+   * forwards, never into a screen that would block them again.
+   *
+   * The requested destination is remembered, so finishing the requirement
+   * resumes the original intent: a user who tapped "Sell" and was sent through
+   * onboarding lands back on the listing wizard, not on the home screen.
+   */
+  requireCapability(screen, capability) {
     if (!SCREENS.includes(screen)) return;
-    if (this.state.authStatus === 'authenticated' || this.state.isLoggedIn) {
+
+    const guard = getGuard();
+
+    if (!guard) {
+      // No guard available (static prototype). Let the navigation through —
+      // the server is the real gate and will refuse anything it should.
       this.go(screen);
       return;
     }
-    this.setState({ postAuthRedirect: screen });
-    this.toast('Please sign in to continue');
-    this.go('signIn');
+
+    guard.resolve(capability, screen).then(decision => {
+      if (this._unmounted) return;
+
+      if (decision.allowed) {
+        this.go(screen);
+        return;
+      }
+
+      const cached = guard.peek();
+      if (cached) this._applyAccountState(cached);
+
+      if (decision.reason) this.toast(decision.reason);
+
+      const target = SCREENS.includes(decision.screen) ? decision.screen : 'signIn';
+      this.setState({ postAuthRedirect: screen });
+      this.go(target);
+    }).catch(() => {
+      if (!this._unmounted) this.go(screen);
+    });
   }
 
-  /** Sends the user to their remembered destination, or a safe default. */
+  /**
+   * Sends the user to the destination they originally asked for.
+   * Validated against SCREENS so a tampered value can never become an open
+   * redirect to an arbitrary URL.
+   */
   _afterAuthRedirect(fallback) {
-    const target = this.state.postAuthRedirect;
+    const guard = getGuard();
+    const remembered = guard ? guard.takeIntent(SCREENS) : null;
+
+    const target = (remembered && remembered.screen)
+      || this.state.postAuthRedirect
+      || null;
+
     const safe = target && SCREENS.includes(target) ? target : (fallback || 'home');
     this.setState({ postAuthRedirect: '' });
     this.go(safe);
   }
 
-  /** Shared completion path for both the real and offline sign-in flows. */
-  _completeSignIn(user, identifier) {
-    if (user) {
-      this._applySessionUser(user);
-    } else {
-      this.setState({ isLoggedIn: true, authStatus: 'authenticated' });
+  /**
+   * Completes sign-in once Clerk has proven the identity.
+   *
+   * Nothing about the session is stored locally: the account state comes from
+   * the server, and the session token comes live from Clerk. A "logged in"
+   * marker in localStorage would be a claim the browser makes about itself.
+   */
+  _completeSignIn() {
+    return this._establishSession().then(state => {
+      if (this._unmounted) return;
+
+      this.setState({ signInIdentifier: '', signInPassword: '', signInError: '', signInBusy: false });
+
+      const firstName = (state && state.user && state.user.firstName) || '';
+      this.toast('Welcome back to LOUMOO' + (firstName ? ', ' + firstName : ''));
+
+      // The server says where this account belongs right now. A half-onboarded
+      // user resumes onboarding; a finished one goes where they were heading.
+      this._routeByAccountState(state);
+    });
+  }
+
+  /**
+   * Sends the user wherever their account state says they belong.
+   * Fully eligible users resume their original intent; everyone else is taken
+   * to the single screen that lets them progress.
+   */
+  _routeByAccountState(state) {
+    if (!state) { this._afterAuthRedirect('home'); return; }
+
+    const blocked = state.state !== 'ACCOUNT_READY' && state.state !== 'SELLER_READY';
+
+    if (blocked && SCREENS.includes(state.screen)) {
+      this.go(state.screen);
+      return;
     }
-    if (typeof localStorage !== 'undefined') {
-      try {
-        localStorage.setItem('loumoo_auth_user', JSON.stringify({
-          isLoggedIn: true,
-          role: (user && (user.primaryRole || user.role)) || this.state.userRole,
-          name: (user && user.firstName) || this.state.regFirstName,
-          email: (user && user.email) || identifier
-        }));
-      } catch (e) {}
-    }
-    this.setState({ signInIdentifier: '', signInPassword: '', signInError: '' });
-    this.toast('Welcome back to LOUMOO, ' + ((user && user.firstName) || this.state.regFirstName || 'there'));
+
     this._afterAuthRedirect('home');
   }
 
@@ -7561,22 +8196,10 @@ class Component extends DCLogic {
     if (this.state.docUploaded || this.state.verificationChoice === 'later') score += 15;
     const completionScore = Math.min(100, score);
 
-    // Client-side password strength meter (UX affordance only — the backend
-    // remains the authority on what it will accept).
-    const pw = this.state.resetNewPassword || '';
-    let pwScore = 0;
-    if (pw.length >= 8) pwScore++;
-    if (pw.length >= 12) pwScore++;
-    if (/[A-Z]/.test(pw) && /[a-z]/.test(pw)) pwScore++;
-    if (/[0-9]/.test(pw)) pwScore++;
-    if (/[^A-Za-z0-9]/.test(pw)) pwScore++;
-    const strength = !pw
-      ? { pct: '0%', label: '', color: 'var(--color-text-muted)' }
-      : pwScore <= 2
-        ? { pct: '33%', label: 'WEAK', color: 'var(--color-accent-sale)' }
-        : pwScore === 3 || pwScore === 4
-          ? { pct: '66%', label: 'GOOD', color: 'var(--color-accent-energy-text)' }
-          : { pct: '100%', label: 'STRONG', color: 'var(--color-success)' };
+    // Client-side password strength meter (UX affordance only — Clerk remains
+    // the authority on what it will accept, including breach checks).
+    const strength = passwordStrength(this.state.resetNewPassword || '');
+    const regStrength = passwordStrength(this.state.regPassword || '');
 
     return {
       is, on, st, pick,
@@ -7651,7 +8274,8 @@ class Component extends DCLogic {
       docUploaded: this.state.docUploaded,
       completionScore,
 
-      // Role Selection Handlers (Instant smart progression)
+      // Role Selection — the intent is held locally until there is an account
+      // to attach it to, then recorded on the server by _startServerOnboarding.
       setRoleBuyer: () => {
         this.setState({ userRole: 'buyer' });
         this.go('onboardIdentity');
@@ -7665,6 +8289,48 @@ class Component extends DCLogic {
         this.go('onboardIdentity');
       },
 
+      // Registration fields (real Clerk account creation)
+      regPassword: this.state.regPassword,
+      regShowPassword: this.state.regShowPassword,
+      regBusy: this.state.regBusy,
+      regError: this.state.regError,
+      regPasswordStrengthPct: regStrength.pct,
+      regPasswordStrengthLabel: regStrength.label,
+      regPasswordStrengthColor: regStrength.color,
+      updateRegPassword: (e) => this.setState({
+        regPassword: e && e.target ? e.target.value : e, regError: ''
+      }),
+      toggleRegPassword: () => this.setState(s => ({ regShowPassword: !s.regShowPassword })),
+
+      // Whether this deployment can genuinely verify a phone number. Reported
+      // by the server, so the UI never offers a verification nothing can do.
+      phoneVerificationAvailable: Boolean(this.state.phoneVerificationAvailable),
+
+      /** Real phone verification, available only when a provider is configured. */
+      startPhoneVerification: () => {
+        const api = getApi();
+        const clerk = getClerk();
+        if (!api || !clerk || !clerk.isReady) return;
+
+        const phone = '+237' + String(this.state.regPhone || '').replace(/[^0-9]/g, '');
+
+        api.requestPhoneVerification(phone).then(() => {
+          return clerk.preparePhoneVerification(phone);
+        }).then(() => {
+          if (this._unmounted) return;
+          this.toast('A code is on its way to ' + phone);
+        }).catch(err => {
+          if (this._unmounted) return;
+          // A 503 here means the deployment has no SMS provider. Say so
+          // plainly rather than leaving the user waiting for a code that will
+          // never arrive.
+          const requirement = err && err.status === 503
+            ? 'Phone verification is not switched on for LOUMOO yet.'
+            : ((err && err.message) || 'Could not send that code.');
+          this.toast(requirement);
+        });
+      },
+
       // Dynamic Flow Navigation
       continueFromType: () => {
         if (!this.state.userRole) {
@@ -7673,19 +8339,130 @@ class Component extends DCLogic {
         }
         this.go('onboardIdentity');
       },
+      /**
+       * Creates the real account with Clerk and asks it to send a real code.
+       * Nothing local is marked "registered": the next screen only advances
+       * once the code the user actually received has been accepted.
+       */
       continueFromIdentity: () => {
-        if (!this.state.regFirstName || !this.state.regPhone) {
-          this.toast('Please enter your name and phone number');
+        const first = (this.state.regFirstName || '').trim();
+        const last = (this.state.regLastName || '').trim();
+        const email = (this.state.regEmail || '').trim();
+        const password = this.state.regPassword || '';
+
+        if (!first || !last) {
+          this.setState({ regError: 'Enter your first and last name.' });
           return;
         }
-        this.go('onboardOtp');
-      },
-      continueAfterOtp: () => {
-        if (this.state.userRole === 'seller') {
-          this.go('onboardSeller');
-        } else {
-          this.go('onboardBuyer');
+        if (!EMAIL_RE.test(email)) {
+          this.setState({ regError: 'Enter a valid email address — this is where your code goes.' });
+          return;
         }
+        if (this.state.regBusy) return;
+
+        // Already signed in (resuming onboarding): registration is done.
+        if (this.state.authStatus === 'authenticated') {
+          this.go('onboardOtp');
+          return;
+        }
+
+        if (password.length < 8) {
+          this.setState({ regError: 'Choose a password with at least 8 characters.' });
+          return;
+        }
+
+        const clerk = getClerk();
+        if (!clerk || !clerk.isReady) {
+          this.setState({
+            regError: this.state.authProviderError
+              || 'Account creation is still loading. Give it a moment and try again.'
+          });
+          return;
+        }
+
+        this.setState({ regBusy: true, regError: '' });
+
+        clerk.signUp({ email: email, password: password, firstName: first, lastName: last })
+          .then(result => {
+            if (this._unmounted) return null;
+            this.setState({
+              regBusy: false,
+              regPassword: '',
+              emailVerifyCode: '',
+              emailVerifyError: '',
+              emailVerifyState: result.needsEmailCode ? 'pending' : 'verified'
+            });
+            this._startEmailCooldown();
+            this.go('onboardOtp');
+
+            // Some Clerk instances complete sign-up without a code; establish
+            // the LOUMOO session immediately in that case.
+            if (!result.needsEmailCode) return this._establishSession();
+            return null;
+          })
+          .catch(err => {
+            if (this._unmounted) return;
+            this.setState({ regBusy: false, regError: clerk.describeError(err) });
+          });
+      },
+
+      /**
+       * Verifies the emailed code, establishes the LOUMOO session, records the
+       * buyer/seller intent on the server, then continues the wizard.
+       */
+      continueAfterOtp: () => {
+        const api = getApi();
+        const clerk = getClerk();
+        const nextScreen = this.state.userRole === 'seller' ? 'onboardSeller' : 'onboardBuyer';
+
+        // Already verified and signed in — just move on.
+        if (this.state.emailVerifyState === 'verified' && this.state.authStatus === 'authenticated') {
+          this._startServerOnboarding().then(() => this.go(nextScreen));
+          return;
+        }
+
+        const code = (this.state.emailVerifyCode || '').trim();
+        if (code.length !== 6) {
+          this.setState({ emailVerifyError: 'Enter the 6-digit code from your email.' });
+          return;
+        }
+        if (!clerk || !clerk.isReady || !api) {
+          this.setState({
+            emailVerifyError: this.state.authProviderError || 'Verification is unavailable right now.'
+          });
+          return;
+        }
+        if (this.state.emailVerifyState === 'verifying') return;
+
+        this.setState({ emailVerifyState: 'verifying', emailVerifyError: '' });
+
+        const attempt = clerk.isSignedIn()
+          ? clerk.attemptEmailVerification(code)
+          : clerk.verifyEmailCode(code);
+
+        Promise.resolve(attempt)
+          .then(() => this._establishSession())
+          .then(() => api.refreshVerification())
+          .then(result => {
+            if (this._unmounted) return null;
+            const verified = result && result.status && result.status.email.verified;
+            if (!verified) {
+              this.setState({
+                emailVerifyState: 'pending',
+                emailVerifyError: 'We could not confirm that. Request a new code and try again.'
+              });
+              return null;
+            }
+            this.setState({ emailVerifyState: 'verified', emailVerifyError: '' });
+            return this._startServerOnboarding().then(() => this.go(nextScreen));
+          })
+          .catch(err => {
+            if (this._unmounted) return;
+            this.setState({
+              emailVerifyState: 'pending',
+              emailVerifyError: clerk.describeError(err)
+            });
+          });
       },
       continueAfterBuyer: () => {
         if (this.state.userRole === 'both') {
@@ -7788,39 +8565,42 @@ class Component extends DCLogic {
        * The backend accepts an identifier with an optional password; it returns
        * a session token which the API client persists for later calls.
        */
+      /** Real sign-in through Clerk; LOUMOO never sees the password. */
       submitSignIn: () => {
         const identifier = (this.state.signInIdentifier || '').trim();
+        const password = this.state.signInPassword || '';
+
         if (!identifier) {
-          this.setState({ signInError: 'Enter the email address or phone number on your account.' });
+          this.setState({ signInError: 'Enter the email address on your account.' });
+          return;
+        }
+        if (!password) {
+          this.setState({ signInError: 'Enter your password.' });
           return;
         }
         if (this.state.signInBusy) return;
 
-        const api = getApi();
-        if (!api) {
-          // Static prototype without a running gateway: keep the existing
-          // demo behaviour rather than blocking the user.
-          this._completeSignIn({ firstName: this.state.regFirstName }, identifier);
+        const clerk = getClerk();
+        if (!clerk || !clerk.isReady) {
+          this.setState({
+            signInError: this.state.authProviderError
+              || 'Sign-in is still loading. Give it a moment and try again.'
+          });
           return;
         }
 
         this.setState({ signInBusy: true, signInError: '' });
-        api.signIn({
-          identifier: identifier,
-          password: this.state.signInPassword || undefined
-        }).then(data => {
-          if (this._unmounted) return;
-          this.setState({ signInBusy: false, signInPassword: '' });
-          this._completeSignIn((data && data.user) || null, identifier);
-        }).catch(err => {
-          if (this._unmounted) return;
-          this.setState({
-            signInBusy: false,
-            signInError: err && err.message
-              ? err.message
-              : 'We could not sign you in. Check your details and try again.'
+
+        clerk.signIn(identifier, password)
+          .then(() => this._completeSignIn())
+          .catch(err => {
+            if (this._unmounted) return;
+            this.setState({
+              signInBusy: false,
+              signInPassword: '',
+              signInError: clerk.describeError(err)
+            });
           });
-        });
       },
 
       // ── Password reset ──
@@ -7853,7 +8633,7 @@ class Component extends DCLogic {
       }),
       toggleResetPassword: () => this.setState(s => ({ resetShowPassword: !s.resetShowPassword })),
 
-      /** POST /api/v1/auth/password-reset/request */
+      /** Real password reset: Clerk sends the code and checks it. */
       submitResetRequest: () => {
         const email = (this.state.resetEmail || '').trim();
         if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
@@ -7862,38 +8642,48 @@ class Component extends DCLogic {
         }
         if (this.state.resetBusy || this.state.resetCooldown > 0) return;
 
-        const api = getApi();
-        if (!api) {
+        const clerk = getClerk();
+        if (!clerk || !clerk.isReady) {
           this.setState({
-            resetRequestSent: true,
-            resetServerMessage: 'If an account exists for ' + email + ', recovery instructions have been sent.'
+            resetError: this.state.authProviderError || 'Password reset is unavailable right now.'
           });
-          this._startResetCooldown();
           return;
         }
 
         this.setState({ resetBusy: true, resetError: '' });
-        api.requestPasswordReset(email).then(res => {
+
+        clerk.requestPasswordReset(email).then(() => {
           if (this._unmounted) return;
-          // Surface the server's own uniform message. It deliberately does not
-          // reveal whether the address exists, so we must not embellish it.
           this.setState({
             resetBusy: false,
             resetRequestSent: true,
-            resetServerMessage: (res && res.message)
-              || 'If an account exists for that address, recovery instructions have been sent.'
+            // Deliberately uniform: it must not reveal whether the address is
+            // registered, so the wording is the same either way.
+            resetServerMessage: 'If an account exists for ' + email
+              + ', a recovery code has been sent to it.'
           });
           this._startResetCooldown();
         }).catch(err => {
           if (this._unmounted) return;
-          this.setState({
-            resetBusy: false,
-            resetError: (err && err.message) || 'Could not send recovery instructions. Try again.'
-          });
+          // A "not found" is also answered uniformly, for the same reason.
+          const notFound = err && err.errors
+            && err.errors.some(e => e.code === 'form_identifier_not_found');
+
+          if (notFound) {
+            this.setState({
+              resetBusy: false,
+              resetRequestSent: true,
+              resetServerMessage: 'If an account exists for ' + email
+                + ', a recovery code has been sent to it.'
+            });
+            this._startResetCooldown();
+            return;
+          }
+
+          this.setState({ resetBusy: false, resetError: clerk.describeError(err) });
         });
       },
 
-      /** POST /api/v1/auth/password-reset/confirm */
       submitResetConfirm: () => {
         const code = (this.state.resetCode || '').trim();
         const pwd = this.state.resetNewPassword || '';
@@ -7913,91 +8703,194 @@ class Component extends DCLogic {
         }
         if (this.state.resetBusy) return;
 
-        const api = getApi();
-        const done = () => {
+        const clerk = getClerk();
+        if (!clerk || !clerk.isReady) {
+          this.setState({ resetError: 'Password reset is unavailable right now.' });
+          return;
+        }
+
+        this.setState({ resetBusy: true, resetError: '' });
+
+        clerk.confirmPasswordReset(code, pwd).then(() => {
+          if (this._unmounted) return;
           this.setState({
             resetBusy: false, resetCode: '', resetNewPassword: '',
             resetConfirmPassword: '', resetError: '', resetRequestSent: false
           });
-          this.toast('Password updated. Please sign in with your new password.');
-          this.go('signIn');
-        };
-
-        if (!api) { done(); return; }
-
-        this.setState({ resetBusy: true, resetError: '' });
-        api.confirmPasswordReset({
-          email: (this.state.resetEmail || '').trim(),
-          code: code,
-          password: pwd
-        }).then(() => {
-          if (this._unmounted) return;
-          done();
+          this.toast('Password updated. You are now signed in.');
+          return this._completeSignIn();
         }).catch(err => {
           if (this._unmounted) return;
-          this.setState({
-            resetBusy: false,
-            resetError: (err && err.message) || 'That recovery code is not valid or has expired.'
-          });
+          this.setState({ resetBusy: false, resetError: clerk.describeError(err) });
         });
       },
 
-      // ── Email verification ──
+      // ── Email verification (Clerk sends the code; the server confirms) ──
       emailVerifyState: this.state.emailVerifyState,
       emailVerifyCode: this.state.emailVerifyCode,
       emailVerifyError: this.state.emailVerifyError,
       emailVerifyCooldown: this.state.emailVerifyCooldown,
       verifyEmailAddress: this.state.regEmail || 'your email address',
+      // Shown so the screen can say what is being verified and why.
+      verifyEmailWhy: 'LOUMOO verifies your email so buyers and sellers can trust who they are dealing with, and so we can reach you about your orders.',
+      verifyEmailNext: 'Once verified you can finish setting up your account and start using LOUMOO.',
+      verifyEmailNoCodeHelp: 'Check your spam folder, or resend the code. You can also change the address on your account and try again.',
+      canChangeVerifyEmail: this.state.authStatus === 'authenticated',
 
       updateEmailVerifyCode: (e) => this.setState({
         emailVerifyCode: (e && e.target ? e.target.value : e || '').replace(/[^0-9]/g, '').slice(0, 6),
         emailVerifyError: ''
       }),
 
-      /** POST /api/v1/auth/email/verify */
+      /**
+       * Submits the code the user actually received from Clerk, then asks the
+       * SERVER to confirm the outcome. The screen only shows "verified" after
+       * the server has re-read Clerk and mirrored the result — clicking a
+       * button never marks anything verified.
+       */
       submitEmailVerification: () => {
         const code = (this.state.emailVerifyCode || '').trim();
         if (code.length !== 6) {
           this.setState({ emailVerifyError: 'Enter the 6-digit code from your email.' });
           return;
         }
+        if (this.state.emailVerifyState === 'verifying') return;
 
+        const clerk = getClerk();
         const api = getApi();
-        this.setState({ emailVerifyState: 'verifying', emailVerifyError: '' });
 
-        if (!api) {
-          setTimeout(() => this.setState({ emailVerifyState: 'verified' }), 700);
+        if (!clerk || !clerk.isReady || !api) {
+          this.setState({
+            emailVerifyState: 'pending',
+            emailVerifyError: this.state.authProviderError
+              || 'Verification is unavailable right now. Please try again shortly.'
+          });
           return;
         }
 
-        api.verifyEmail({ email: this.state.regEmail, code: code }).then(() => {
+        this.setState({ emailVerifyState: 'verifying', emailVerifyError: '' });
+
+        const attempt = clerk.isSignedIn()
+          ? clerk.attemptEmailVerification(code)   // already signed in
+          : clerk.verifyEmailCode(code);           // finishing a registration
+
+        Promise.resolve(attempt)
+          .then(() => api.refreshVerification())
+          .then(result => {
+            if (this._unmounted) return;
+
+            const verified = result && result.status && result.status.email.verified;
+            if (!verified) {
+              this.setState({
+                emailVerifyState: 'pending',
+                emailVerifyError: 'We could not confirm that verification. Request a new code and try again.'
+              });
+              return;
+            }
+
+            const guard = getGuard();
+            if (guard) guard.invalidate();
+
+            this.setState({ emailVerifyState: 'verified', emailVerifyError: '' });
+            return this._syncAccountState(true);
+          })
+          .catch(err => {
+            if (this._unmounted) return;
+
+            const clerkErr = err && err.errors && err.errors[0];
+            const codeName = clerkErr ? clerkErr.code : (err && err.code);
+            const expired = codeName === 'verification_expired';
+            const already = codeName === 'verification_already_verified';
+
+            if (already) {
+              this.setState({ emailVerifyState: 'verified', emailVerifyError: '' });
+              this._syncAccountState(true);
+              return;
+            }
+
+            this.setState({
+              emailVerifyState: expired ? 'expired' : 'pending',
+              emailVerifyError: expired ? '' : clerk.describeError(err)
+            });
+          });
+      },
+
+      /** Asks Clerk to send a genuinely new code. */
+      resendEmailVerification: () => {
+        if (this.state.emailVerifyCooldown > 0) return;
+
+        const clerk = getClerk();
+        if (!clerk || !clerk.isReady) {
+          this.setState({ emailVerifyError: 'Verification is unavailable right now.' });
+          return;
+        }
+
+        this.setState({ emailVerifyState: 'pending', emailVerifyCode: '', emailVerifyError: '' });
+        this._startEmailCooldown();
+
+        const send = clerk.isSignedIn()
+          ? clerk.prepareEmailVerification()
+          : clerk.resendEmailCode();
+
+        Promise.resolve(send).then(() => {
           if (this._unmounted) return;
-          this.setState({ emailVerifyState: 'verified' });
+          this.toast('A new code is on its way to ' + (this.state.regEmail || 'your inbox'));
         }).catch(err => {
           if (this._unmounted) return;
-          const expired = err && (err.code === 'EXPIRED' || err.status === 410);
-          this.setState({
-            emailVerifyState: expired ? 'expired' : 'pending',
-            emailVerifyError: expired ? '' : ((err && err.message) || 'That code is not valid. Check and try again.')
-          });
+          this.setState({ emailVerifyError: clerk.describeError(err) });
         });
       },
 
-      resendEmailVerification: () => {
-        if (this.state.emailVerifyCooldown > 0) return;
-        this.setState({ emailVerifyState: 'pending', emailVerifyCode: '', emailVerifyError: '' });
-        this._startEmailCooldown();
-        this.toast('A new confirmation code is on its way to ' + (this.state.regEmail || 'your inbox'));
+      /**
+       * Re-checks with the server. Covers the case where the user completed
+       * verification in another tab or on their phone.
+       */
+      recheckEmailVerification: () => {
+        const api = getApi();
+        if (!api) return;
+        this.setState({ emailVerifyState: 'verifying', emailVerifyError: '' });
+        api.refreshVerification().then(result => {
+          if (this._unmounted) return;
+          const verified = result && result.status && result.status.email.verified;
+          this.setState({
+            emailVerifyState: verified ? 'verified' : 'pending',
+            emailVerifyError: verified ? '' : 'Not verified yet. Enter the code from your email.'
+          });
+          if (verified) this._syncAccountState(true);
+        }).catch(() => {
+          if (!this._unmounted) this.setState({ emailVerifyState: 'pending' });
+        });
+      },
+
+      /**
+       * Lets the user correct a mistyped address. Signing out returns them to
+       * registration with a clean slate — the alternative (silently reusing a
+       * wrong address) is what strands people permanently.
+       */
+      changeVerifyEmail: () => {
+        const clerk = getClerk();
+        this.setState({ emailVerifyCode: '', emailVerifyError: '', emailVerifyState: 'pending' });
+
+        const done = () => {
+          if (this._unmounted) return;
+          this._applyAnonymous();
+          this.toast('Enter the email address you would like to use.');
+          this.go('onboardWelcome');
+        };
+
+        if (clerk && clerk.isReady) {
+          clerk.signOut().then(done).catch(done);
+        } else {
+          done();
+        }
       },
 
       finishEmailVerification: () => {
-        this.setState({ emailVerifyCode: '', emailVerifyState: 'pending' });
-        this._afterAuthRedirect('profile');
-      },
-
-      skipEmailVerification: () => {
-        this.setState({ emailVerifyCode: '', emailVerifyError: '' });
-        this._afterAuthRedirect('profile');
+        this.setState({ emailVerifyCode: '' });
+        this._syncAccountState(true).then(state => {
+          if (this._unmounted) return;
+          this._routeByAccountState(state);
+        });
       },
 
       // ══════════════════════════════════════════════════════════════════
@@ -8593,11 +9486,13 @@ class Component extends DCLogic {
       attrStorage: this.state.attrStorage,
       attrRam: this.state.attrRam,
       attrColor: this.state.attrColor,
+      attrModel: this.state.attrModel,
       listingFulfillmentModel: this.state.listingFulfillmentModel,
       updateAttrBrand: (e) => this.setState({ attrBrand: e && e.target ? e.target.value : e }),
       updateAttrStorage: (e) => this.setState({ attrStorage: e && e.target ? e.target.value : e }),
       updateAttrRam: (e) => this.setState({ attrRam: e && e.target ? e.target.value : e }),
       updateAttrColor: (e) => this.setState({ attrColor: e && e.target ? e.target.value : e }),
+      updateAttrModel: (e) => this.setState({ attrModel: e && e.target ? e.target.value : e }),
       updateListingFulfillmentModel: (e) => this.setState({ listingFulfillmentModel: e && e.target ? e.target.value : e }),
       proceedToPricing: () => this.go('uploadPrice'),
       openListingPreview: () => this.go('listingPreview'),
@@ -8607,31 +9502,38 @@ class Component extends DCLogic {
       previewListingStock: this.state.previewListingStock,
       previewListingDescription: this.state.previewListingDescription,
       publishBusy: this.state.publishBusy,
-      submitFinalPublish: () => {
-        this.setState({ publishBusy: true });
-        const api = getApi();
-        const done = () => {
-          this.setState({ publishBusy: false });
-          this.toast('Your listing is now LIVE across Cameroon!');
-          this.go('uploadSuccess');
-        };
-        if (!api) { setTimeout(done, 600); return; }
-        api.createListing({
-          storeId: 'store_orca_electronics',
-          listingType: this.state.newListingType,
-          categoryId: this.state.newListingCategory,
-          title: this.state.newListingTitle,
-          basePriceMinor: 745000,
-          currency: 'XAF',
-          fulfillmentModel: this.state.listingFulfillmentModel,
-          attributes: {
-            brand: this.state.attrBrand,
-            storage: this.state.attrStorage,
-            ram: this.state.attrRam,
-            color: this.state.attrColor
-          }
-        }).then(done).catch(done);
+
+      // Listing wizard state, surfaced so the screens can show real progress,
+      // real image thumbnails and real per-field validation messages.
+      draftListingId: this.state.draftListingId,
+      draftListingBusy: this.state.draftListingBusy,
+      draftListingError: this.state.draftListingError,
+      listingFieldErrors: this.state.listingFieldErrors,
+      listingUploads: this.state.listingUploads,
+      listingUploadBusy: this.state.listingUploadBusy,
+      listingUploadError: this.state.listingUploadError,
+      listingImageCount: this.state.listingUploads.length,
+      newListingDescription: this.state.newListingDescription,
+      updateNewListingTitle: (e) => this.setState({
+        newListingTitle: e && e.target ? e.target.value : e, draftListingError: ''
+      }),
+      updateNewListingDescription: (e) => this.setState({
+        newListingDescription: e && e.target ? e.target.value : e, draftListingError: ''
+      }),
+      updateNewListingPrice: (e) => this.setState({
+        newListingPrice: e && e.target ? e.target.value : e, draftListingError: ''
+      }),
+
+      /** Uploads the chosen files, one authorized request each. */
+      pickListingImages: (e) => {
+        const files = e && e.target && e.target.files ? Array.from(e.target.files) : [];
+        if (!files.length) return;
+        this.uploadListingImages(files);
       },
+
+      removeListingImage: (uploadId) => this.discardListingImage(uploadId),
+
+      submitFinalPublish: () => this.publishListing(),
 
       // ══════════════════════════════════════════════════════════════════
       // SEARCH & FILTER INTERACTIONS
@@ -8670,46 +9572,106 @@ class Component extends DCLogic {
       userPhoneCity: '+237 ' + (this.state.regPhone || '690 12 34 56') + ' · ' + (this.state.regCity ? this.state.regCity.charAt(0).toUpperCase() + this.state.regCity.slice(1) : 'Douala') + ', Cameroon',
       activeDeliveriesLabel: '1 Active Delivery',
       savedItemsLabel: '34 Products Saved',
-      ctaAction: this.state.isLoggedIn ? (this.state.userRole !== 'buyer' ? on.upload : () => { this.toast('To upload listings, set up your seller boutique'); this.go('onboardSeller'); }) : on.onboardWelcome,
+      // "Sell on LOUMOO" always leads somewhere useful. The guard asks the
+      // server whether this account may create a listing and, if not, sends
+      // the user to the ONE screen that lets them become eligible — with the
+      // listing wizard remembered as the destination to resume afterwards.
+      ctaAction: () => this.requireCapability('upload', 'canCreateListing'),
       ctaLabel: this.state.isLoggedIn ? 'Sell on LOUMOO' : 'Join LOUMOO',
-      navUploadAction: this.state.isLoggedIn ? (this.state.userRole !== 'buyer' ? on.upload : () => { this.toast('To upload listings, set up your seller boutique'); this.go('onboardSeller'); }) : on.onboardWelcome,
+      navUploadAction: () => this.requireCapability('upload', 'canCreateListing'),
       navUploadLabel: this.state.isLoggedIn ? 'Upload a listing' : 'Join LOUMOO',
-      signIn: () => {
-        this.setState({ isLoggedIn: true, authStatus: 'authenticated' });
-        if (typeof localStorage !== 'undefined') {
-          localStorage.setItem('loumoo_auth_user', JSON.stringify({ isLoggedIn: true, role: this.state.userRole, name: this.state.regFirstName }));
-        }
-        this.toast('Welcome back to LOUMOO, ' + (this.state.regFirstName || 'Tchuekam'));
-        this.go('home');
-      },
-      /** Revokes the session server-side, then clears every cached principal. */
+      canCreateListing: Boolean(this.state.capabilities.canCreateListing),
+      canPurchase: Boolean(this.state.capabilities.canPurchase),
+      accountStateLabel: this.state.accountState || '',
+      // The header's "Sign in" affordance opens the real sign-in screen. It
+      // no longer *performs* a sign-in: only Clerk can do that.
+      signIn: () => this.go('signIn'),
+
+      /** Ends the Clerk session, then clears every cached principal. */
       signOut: () => {
         const api = getApi();
+        const clerk = getClerk();
+        const guard = getGuard();
+
+        const finish = () => {
+          if (this._unmounted) return;
+          this._applyAnonymous();
+          if (guard) { guard.invalidate(); guard.clearIntent(); }
+          if (typeof localStorage !== 'undefined') {
+            try {
+              localStorage.removeItem('loumoo_auth_user');
+              localStorage.removeItem('loumoo_onboarding_draft');
+            } catch (e) {}
+          }
+          this.toast('Signed out of LOUMOO');
+          this.go('home');
+        };
+
         if (api) { try { api.signOut(); } catch (e) {} }
-        this._applyAnonymous();
-        if (typeof localStorage !== 'undefined') {
-          localStorage.removeItem('loumoo_auth_user');
+        if (clerk && clerk.isReady) {
+          clerk.signOut().then(finish).catch(finish);
+        } else {
+          finish();
         }
-        this.toast('Signed out of LOUMOO');
-        this.go('home');
       },
+
+      // Server-backed onboarding progress, for the review screen and the
+      // progress indicator.
+      onboardingBusy: this.state.onboardingBusy,
+      onboardingError: this.state.onboardingError,
+      onboardingPercentage: this.state.serverOnboarding
+        ? this.state.serverOnboarding.percentage
+        : completionScore,
+      onboardingNextStep: this.state.serverOnboarding
+        ? this.state.serverOnboarding.nextStep
+        : null,
+
+      /**
+       * Submits every outstanding onboarding step to the server, in order.
+       * The server records completion; the browser only reports the answers.
+       * If any step is rejected the wizard stays put and says which field.
+       */
       completeOnboarding: () => {
-        this.setState({
-          isLoggedIn: true,
-          authStatus: 'authenticated',
-          userName: this.state.regFirstName || 'Rostand'
-        });
-        if (typeof localStorage !== 'undefined') {
-          localStorage.setItem('loumoo_auth_user', JSON.stringify({
-            isLoggedIn: true,
-            role: this.state.userRole,
-            name: this.state.regFirstName || 'Rostand',
-            email: this.state.regEmail,
-            phone: this.state.regPhone
-          }));
-          localStorage.removeItem('loumoo_onboarding_draft');
+        if (this.state.onboardingBusy) return;
+
+        const api = getApi();
+        if (!api || this.state.authStatus !== 'authenticated') {
+          this.setState({
+            onboardingError: 'Your session ended. Sign in again to finish setting up your account.'
+          });
+          this.go('signIn');
+          return;
         }
-        this.go('onboardSuccess');
+
+        this.setState({ onboardingBusy: true, onboardingError: '' });
+
+        this._submitRemainingOnboardingSteps()
+          .then(state => {
+            if (this._unmounted) return;
+            this.setState({ onboardingBusy: false });
+
+            if (typeof localStorage !== 'undefined') {
+              try { localStorage.removeItem('loumoo_onboarding_draft'); } catch (e) {}
+            }
+
+            if (state && state.onboarding && state.onboarding.status !== 'COMPLETED') {
+              this.setState({
+                onboardingError: 'A few details are still needed: ' + (state.onboarding.nextStep || 'check the previous steps') + '.'
+              });
+              return;
+            }
+            this.go('onboardSuccess');
+          })
+          .catch(err => {
+            if (this._unmounted) return;
+            const fields = err && err.details && err.details.fields;
+            this.setState({
+              onboardingBusy: false,
+              onboardingError: fields && fields.length
+                ? fields.map(f => f.message).join(' ')
+                : ((err && err.message) || 'We could not save your details. Please try again.')
+            });
+          });
       },
       userName: this.props.userName ?? this.state.userName ?? 'Tchuekam',
       showAds: this.props.showAds ?? true,
@@ -8735,7 +9697,7 @@ class Component extends DCLogic {
       followLabel: this.state.following ? 'FOLLOWING' : 'FOLLOW',
       toggleSave: () => { const next = !this.state.saved; this.setState({ saved: next }); this.toast(next ? 'Saved to your list' : 'Removed from saved'); },
       payNow: () => { this.go('paying'); setTimeout(() => this.go('success'), 1800); },
-      publish: () => { this.go('uploadSuccess'); },
+      publish: () => this.publishListing(),
       bookFlight: () => { this.go('travelTicket'); }
     };
   }

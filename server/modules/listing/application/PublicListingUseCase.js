@@ -1,74 +1,91 @@
 /**
- * PublicListingUseCase
- * Serves public marketplace listings and customer PDP detail projections.
+ * PublicListingUseCase — buyer-facing listing detail (PDP).
+ * ---------------------------------------------------------------------------
+ * Serves ONLY listings that actually exist in the database.
+ *
+ * The previous revision, when the query returned nothing, fabricated a
+ * "MacBook Air M2" belonging to a hardcoded seller id and served it with a
+ * 200. A shopper could therefore be shown, and try to buy, a product that had
+ * never been listed by anyone. A missing listing is now a 404.
  */
 
-const { SupabaseClient } = require('../../../infrastructure/database/SupabaseClient');
 const CacheService = require('../../../infrastructure/cache/CacheService');
 const AnalyticsService = require('../../../infrastructure/analytics/AnalyticsService');
+const ListingRepository = require('../infrastructure/ListingRepository');
+const StoreRepository = require('../../store/infrastructure/StoreRepository');
+const MediaStorageService = require('../../../infrastructure/storage/MediaStorageService');
 const { NotFoundError } = require('../../../shared/errors/AppError');
 const Listing = require('../domain/Listing');
-const logger = require('../../../shared/logging/logger');
 
 class PublicListingUseCase {
-  static async getListingDetail(idOrSlug, userId = 'anonymous') {
-    const cacheKey = `listing:public:${idOrSlug}`;
+  /**
+   * @param {object|string} listingOrId  A row already loaded by the route (so
+   *        the visibility check happens once, in one place), or an id/slug.
+   * @param {string} userId  For analytics attribution only — never for access.
+   */
+  static async getListingDetail(listingOrId, userId = 'anonymous') {
+    const row = typeof listingOrId === 'string'
+      ? (await ListingRepository.findById(listingOrId)) || (await ListingRepository.findBySlug(listingOrId))
+      : listingOrId;
 
-    const data = await CacheService.remember(cacheKey, 300, async () => {
-      const supabase = SupabaseClient.admin;
-      let listingData = null;
+    if (!row) {
+      throw new NotFoundError('Listing', String(listingOrId));
+    }
 
-      try {
-        const { data: res, error } = await supabase
-          .from('iam.listings')
-          .select('*, iam.listing_media(*), iam.listing_variants(*), iam.listing_inventory(*)')
-          .or(`id.eq.${idOrSlug},slug.eq.${idOrSlug}`)
-          .eq('status', 'PUBLISHED')
-          .eq('visibility', 'PUBLIC')
-          .single();
+    const detail = await CacheService.remember(`listing:public:${row.id}`, 120, async () => {
+      const [media, attributes, store] = await Promise.all([
+        ListingRepository.listMedia(row.id),
+        ListingRepository.listAttributes(row.id),
+        StoreRepository.findByIdOrSlug(row.store_id)
+      ]);
 
-        if (res && !error) listingData = res;
-      } catch (err) {
-        logger.warn(`[PublicListing] DB fallback: ${err.message}`);
-      }
+      const listing = new Listing(row);
 
-      if (!listingData) {
-        // Sample fallback listing for demo PDP
-        if (idOrSlug.includes('macbook') || idOrSlug === 'lst_macbook_m2_douala') {
-          return new Listing({
-            id: 'lst_macbook_m2_douala',
-            store_id: 'store_orca_electronics',
-            seller_id: 'usr_rostand_123',
-            title: 'Apple MacBook Air 13” M2 (Space Grey) — 8GB / 256GB SSD',
-            slug: 'apple-macbook-air-13-m2-space-grey',
-            brand: 'Apple',
-            model: 'MacBook Air M2',
-            condition: 'new',
-            status: 'PUBLISHED',
-            visibility: 'PUBLIC',
-            currency: 'XAF',
-            base_price_minor: 745000,
-            has_variants: true,
-            on_hand: 14,
-            media: [
-              { id: 'med_1', url: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8', is_cover: true }
-            ]
-          }).toPublicJSON();
-        }
-        throw new NotFoundError('Listing', idOrSlug);
-      }
+      const images = await Promise.all(media.map(async m => ({
+        id: m.id,
+        url: m.storage_path
+          ? (await MediaStorageService.createSignedUrl(m.storage_path)) || m.url
+          : m.url,
+        isCover: m.is_cover,
+        displayOrder: m.display_order,
+        width: m.width,
+        height: m.height,
+        altText: m.alt_text
+      })));
 
-      const listing = new Listing(listingData);
-      return listing.toPublicJSON();
+      return {
+        ...listing.toPublicJSON(),
+        attributes,
+        media: images,
+        coverImage: images.find(i => i.isCover) || images[0] || null,
+        // A public storefront card only — never the merchant's private contact
+        // details or verification internals.
+        store: store
+          ? {
+            id: store.id,
+            name: store.name,
+            slug: store.slug,
+            logoUrl: store.logo_url,
+            isVerified: store.is_verified,
+            verificationTier: store.verification_tier,
+            rating: store.rating,
+            ratingCount: store.rating_count,
+            followerCount: store.follower_count
+          }
+          : null
+      };
     }, 'catalog');
 
     AnalyticsService.track(userId, 'listing_viewed', {
-      listingId: data.id,
-      title: data.title,
-      price: data.pricing?.basePriceMinor
+      listingId: detail.id,
+      title: detail.title,
+      storeId: row.store_id
     });
 
-    return data;
+    // View counting is best-effort telemetry; a failure must not break the PDP.
+    ListingRepository.update(row.id, { view_count: (row.view_count || 0) + 1 }).catch(() => null);
+
+    return detail;
   }
 }
 

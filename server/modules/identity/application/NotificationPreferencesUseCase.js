@@ -6,7 +6,7 @@
  */
 
 const { z } = require('zod');
-const { SupabaseClient } = require('../../../infrastructure/database/SupabaseClient');
+const { SupabaseClient, handleDatabaseFailure } = require('../../../infrastructure/database/SupabaseClient.js');
 const CacheService = require('../../../infrastructure/cache/CacheService');
 const { ValidationError } = require('../../../shared/errors/AppError');
 const logger = require('../../../shared/logging/logger');
@@ -45,16 +45,17 @@ class NotificationPreferencesUseCase {
     try {
       const supabase = SupabaseClient.getAdmin();
       const { data, error } = await supabase
-        .from('iam.notification_preferences')
+        .from('notification_preferences')
         .select('*')
         .eq('user_id', userId)
         .single();
 
+      if (error) { handleDatabaseFailure(error, 'NotificationPreferences'); }
       if (!error && data) {
         prefs = this._mapRow(data);
       }
     } catch (err) {
-      logger.warn(`[NotificationPreferences] Supabase query fallback: ${err.message}`);
+      handleDatabaseFailure(err, 'Supabase query');
     }
 
     if (!prefs) {
@@ -95,7 +96,7 @@ class NotificationPreferencesUseCase {
     try {
       const supabase = SupabaseClient.getAdmin();
       const { data: row, error } = await supabase
-        .from('iam.notification_preferences')
+        .from('notification_preferences')
         .upsert({
           user_id: userId,
           channels: {
@@ -115,9 +116,10 @@ class NotificationPreferencesUseCase {
         .select()
         .single();
 
+      if (error) { handleDatabaseFailure(error, 'NotificationPreferences'); }
       if (!error && row) updated = this._mapRow(row);
     } catch (err) {
-      logger.warn(`[NotificationPreferences] Supabase upsert fallback: ${err.message}`);
+      handleDatabaseFailure(err, 'Supabase upsert');
     }
 
     if (!updated) {

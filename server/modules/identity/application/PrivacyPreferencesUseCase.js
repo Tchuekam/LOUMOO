@@ -5,7 +5,7 @@
  */
 
 const { z } = require('zod');
-const { SupabaseClient } = require('../../../infrastructure/database/SupabaseClient');
+const { SupabaseClient, handleDatabaseFailure, tryGetAdmin } = require('../../../infrastructure/database/SupabaseClient.js');
 const CacheService = require('../../../infrastructure/cache/CacheService');
 const AnalyticsService = require('../../../infrastructure/analytics/AnalyticsService');
 const { ValidationError, AuthorizationError } = require('../../../shared/errors/AppError');
@@ -34,10 +34,11 @@ class PrivacyPreferencesUseCase {
       profileVisibility: 'public'
     };
 
-    const adminDb = SupabaseClient.getAdminClient();
+    const adminDb = tryGetAdmin('PrivacyPreferencesUseCase');
     if (adminDb) {
       try {
-        const { data, error } = await adminDb.from('privacy_preferences').select('*').eq('user_id', userId).single();
+        const { data, error } = await adminDb.schema('system').from('privacy_preferences').select('*').eq('user_id', userId).single();
+        if (error) { handleDatabaseFailure(error, 'PrivacyPreferences'); }
         if (data && !error) {
           const loaded = {
             userId: data.user_id,
@@ -75,10 +76,10 @@ class PrivacyPreferencesUseCase {
       profileVisibility: data.profileVisibility !== undefined ? data.profileVisibility : current.profileVisibility
     };
 
-    const adminDb = SupabaseClient.getAdminClient();
+    const adminDb = tryGetAdmin('PrivacyPreferencesUseCase');
     if (adminDb) {
       try {
-        await adminDb.from('privacy_preferences').upsert({
+        await adminDb.schema('system').from('privacy_preferences').upsert({
           user_id: userId,
           analytics_consent: updated.analyticsConsent,
           marketing_emails: updated.marketingEmails,
@@ -87,7 +88,7 @@ class PrivacyPreferencesUseCase {
           updated_at: new Date().toISOString()
         });
       } catch (err) {
-        logger.warn(`[PrivacyPreferences] Supabase upsert error: ${err.message}`);
+        handleDatabaseFailure(err, 'Supabase upsert');
       }
     }
 

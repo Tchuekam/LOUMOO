@@ -3,26 +3,26 @@
  * Manages store fulfillment policies, payment options, and merchant privacy.
  */
 
-const { SupabaseClient } = require('../../../infrastructure/database/SupabaseClient');
 const CacheService = require('../../../infrastructure/cache/CacheService');
+const { SupabaseClient, handleDatabaseFailure } = require('../../../infrastructure/database/SupabaseClient.js');
 const StoreSettings = require('../domain/StoreSettings');
 const logger = require('../../../shared/logging/logger');
 
 class StoreSettingsUseCase {
   static async getSettings(store) {
-    const supabase = SupabaseClient.admin;
+    const supabase = SupabaseClient.getAdmin();
     let data = null;
 
     try {
       const { data: res, error } = await supabase
-        .from('iam.store_settings')
+        .from('store_settings')
         .select('*')
         .eq('store_id', store.id)
         .single();
 
       if (res && !error) data = res;
     } catch (err) {
-      logger.warn(`[StoreSettings] Query fallback: ${err.message}`);
+      handleDatabaseFailure(err, 'Query');
     }
 
     const settings = new StoreSettings(data || { store_id: store.id });
@@ -30,7 +30,7 @@ class StoreSettingsUseCase {
   }
 
   static async updateSettings(store, updates = {}) {
-    const supabase = SupabaseClient.admin;
+    const supabase = SupabaseClient.getAdmin();
     const dbUpdates = {
       currency: updates.currency,
       accepts_escrow: updates.acceptsEscrow,
@@ -52,10 +52,10 @@ class StoreSettingsUseCase {
 
     try {
       await supabase
-        .from('iam.store_settings')
+        .from('store_settings')
         .upsert({ store_id: store.id, ...dbUpdates }, { onConflict: 'store_id' });
     } catch (err) {
-      logger.warn(`[StoreSettings] Update fallback: ${err.message}`);
+      handleDatabaseFailure(err, 'Update');
     }
 
     await CacheService.del(`store:management:${store.id}`);

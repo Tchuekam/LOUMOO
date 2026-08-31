@@ -3,6 +3,7 @@
  * Sliding-window counter backed by Redis or In-Memory map
  */
 
+const crypto = require('crypto');
 const RedisConnection = require('./RedisConnection');
 const { RateLimitError } = require('../../shared/errors/AppError');
 const logger = require('../../shared/logging/logger');
@@ -93,11 +94,40 @@ class RateLimitService {
   /**
    * Express Middleware Factory
    */
+  /**
+   * Chooses the bucket a request is counted against.
+   *
+   * An authenticated caller gets their OWN bucket, keyed by a hash of the
+   * presented credential. That matters in both directions:
+   *   - many people behind one address (an office, a university, a carrier's
+   *     CGNAT) no longer share a single quota and lock each other out
+   *   - one abusive account cannot dilute its usage across rotating addresses
+   *
+   * The credential is hashed — never stored or logged in the clear. Anonymous
+   * traffic still buckets by client address.
+   */
+  resolveKey(req) {
+    if (req.auth && req.auth.userId) return `user:${req.auth.userId}`;
+
+    const header = req.headers && req.headers.authorization;
+    if (header && /^Bearer\s+.+/i.test(header)) {
+      const token = header.replace(/^Bearer\s+/i, '').trim();
+      const digest = crypto.createHash('sha256').update(token).digest('hex').slice(0, 32);
+      return `token:${digest}`;
+    }
+
+    const forwarded = req.headers && req.headers['x-forwarded-for'];
+    const ip = (typeof forwarded === 'string' ? forwarded.split(',')[0].trim() : null)
+      || req.ip
+      || (req.socket && req.socket.remoteAddress)
+      || 'unknown';
+
+    return `ip:${ip}`;
+  }
+
   middleware({ maxRequests = 60, windowSeconds = 60, keyGenerator = null }) {
     return async (req, res, next) => {
-      const key = keyGenerator 
-        ? keyGenerator(req) 
-        : (req.auth?.userId || req.headers['x-forwarded-for'] || req.ip || req.socket.remoteAddress || 'unknown');
+      const key = keyGenerator ? keyGenerator(req) : this.resolveKey(req);
 
       try {
         const result = await this.consume(key, maxRequests, windowSeconds);

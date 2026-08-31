@@ -6,8 +6,8 @@
 
 -- 1. Addresses Table (African & Cameroon Marketplace Schema)
 CREATE TABLE IF NOT EXISTS iam.addresses (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL REFERENCES iam.profiles(id) ON DELETE CASCADE,
+    id VARCHAR(64) PRIMARY KEY DEFAULT gen_random_uuid()::text,
+    user_id VARCHAR(64) NOT NULL REFERENCES iam.profiles(id) ON DELETE CASCADE,
     recipient_name VARCHAR(150) NOT NULL,
     phone_number VARCHAR(32) NOT NULL,
     country VARCHAR(64) NOT NULL DEFAULT 'Cameroon',
@@ -29,8 +29,8 @@ CREATE INDEX IF NOT EXISTS idx_addresses_default ON iam.addresses(user_id, is_de
 
 -- 2. Saved Items (Wishlist) Table
 CREATE TABLE IF NOT EXISTS iam.saved_items (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL REFERENCES iam.profiles(id) ON DELETE CASCADE,
+    id VARCHAR(64) PRIMARY KEY DEFAULT gen_random_uuid()::text,
+    user_id VARCHAR(64) NOT NULL REFERENCES iam.profiles(id) ON DELETE CASCADE,
     product_id VARCHAR(64) NOT NULL,
     title VARCHAR(255) NOT NULL,
     price_xaf NUMERIC(12, 2) NOT NULL,
@@ -46,8 +46,8 @@ CREATE INDEX IF NOT EXISTS idx_saved_items_product ON iam.saved_items(product_id
 
 -- 3. Followed Stores Table
 CREATE TABLE IF NOT EXISTS iam.followed_stores (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL REFERENCES iam.profiles(id) ON DELETE CASCADE,
+    id VARCHAR(64) PRIMARY KEY DEFAULT gen_random_uuid()::text,
+    user_id VARCHAR(64) NOT NULL REFERENCES iam.profiles(id) ON DELETE CASCADE,
     store_id VARCHAR(64) NOT NULL,
     store_name VARCHAR(255) NOT NULL,
     store_avatar TEXT,
@@ -62,8 +62,8 @@ CREATE INDEX IF NOT EXISTS idx_followed_stores_store ON iam.followed_stores(stor
 
 -- 4. User Activities (User-Facing Activity Stream)
 CREATE TABLE IF NOT EXISTS iam.user_activities (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL REFERENCES iam.profiles(id) ON DELETE CASCADE,
+    id VARCHAR(64) PRIMARY KEY DEFAULT gen_random_uuid()::text,
+    user_id VARCHAR(64) NOT NULL REFERENCES iam.profiles(id) ON DELETE CASCADE,
     action_type VARCHAR(64) NOT NULL, -- 'profile_updated', 'address_added', 'address_removed', 'store_followed', 'store_unfollowed', 'item_saved', 'item_removed', 'order_placed', 'settings_changed'
     title VARCHAR(255) NOT NULL,
     description TEXT,
@@ -76,8 +76,8 @@ CREATE INDEX IF NOT EXISTS idx_user_activities_user ON iam.user_activities(user_
 
 -- 5. Notification Preferences Table
 CREATE TABLE IF NOT EXISTS iam.notification_preferences (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL REFERENCES iam.profiles(id) ON DELETE CASCADE UNIQUE,
+    id VARCHAR(64) PRIMARY KEY DEFAULT gen_random_uuid()::text,
+    user_id VARCHAR(64) NOT NULL REFERENCES iam.profiles(id) ON DELETE CASCADE UNIQUE,
     channels JSONB NOT NULL DEFAULT '{"in_app": true, "email": true, "sms": true, "whatsapp": false}'::jsonb,
     categories JSONB NOT NULL DEFAULT '{"transactional": true, "marketing": true, "social": true, "system": true}'::jsonb,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -88,9 +88,9 @@ CREATE INDEX IF NOT EXISTS idx_notif_pref_user ON iam.notification_preferences(u
 
 -- 6. Orders Domain Table (Purchase History Foundation)
 CREATE TABLE IF NOT EXISTS iam.orders (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    buyer_id UUID NOT NULL REFERENCES iam.profiles(id) ON DELETE RESTRICT,
-    seller_id UUID REFERENCES iam.profiles(id) ON DELETE SET NULL,
+    id VARCHAR(64) PRIMARY KEY DEFAULT gen_random_uuid()::text,
+    buyer_id VARCHAR(64) NOT NULL REFERENCES iam.profiles(id) ON DELETE RESTRICT,
+    seller_id VARCHAR(64) REFERENCES iam.profiles(id) ON DELETE SET NULL,
     order_number VARCHAR(64) NOT NULL UNIQUE,
     total_amount_xaf NUMERIC(14, 2) NOT NULL,
     items JSONB NOT NULL DEFAULT '[]'::jsonb,
@@ -116,31 +116,31 @@ ALTER TABLE iam.orders ENABLE ROW LEVEL SECURITY;
 -- 8. Strict RLS Policies for Resource Owners
 CREATE POLICY "Users can manage own addresses"
     ON iam.addresses FOR ALL
-    USING (user_id = auth.uid())
-    WITH CHECK (user_id = auth.uid());
+    USING (user_id = auth.uid()::text)
+    WITH CHECK (user_id = auth.uid()::text);
 
 CREATE POLICY "Users can manage own saved items"
     ON iam.saved_items FOR ALL
-    USING (user_id = auth.uid())
-    WITH CHECK (user_id = auth.uid());
+    USING (user_id = auth.uid()::text)
+    WITH CHECK (user_id = auth.uid()::text);
 
 CREATE POLICY "Users can manage own followed stores"
     ON iam.followed_stores FOR ALL
-    USING (user_id = auth.uid())
-    WITH CHECK (user_id = auth.uid());
+    USING (user_id = auth.uid()::text)
+    WITH CHECK (user_id = auth.uid()::text);
 
 CREATE POLICY "Users can view own user activities"
     ON iam.user_activities FOR SELECT
-    USING (user_id = auth.uid());
+    USING (user_id = auth.uid()::text);
 
 CREATE POLICY "Users can manage own notification preferences"
     ON iam.notification_preferences FOR ALL
-    USING (user_id = auth.uid())
-    WITH CHECK (user_id = auth.uid());
+    USING (user_id = auth.uid()::text)
+    WITH CHECK (user_id = auth.uid()::text);
 
 CREATE POLICY "Buyers can view own orders"
     ON iam.orders FOR SELECT
-    USING (buyer_id = auth.uid());
+    USING (buyer_id = auth.uid()::text);
 
 -- Service Role Full Access
 CREATE POLICY "Service role full access to addresses" ON iam.addresses FOR ALL TO service_role USING (true) WITH CHECK (true);

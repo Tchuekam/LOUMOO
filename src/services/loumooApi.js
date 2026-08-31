@@ -100,12 +100,37 @@
   function LoumooApiClient() {
     var store = safeStorage();
     this.token = store ? store.getItem(TOKEN_KEY) : null;
+    this._tokenProvider = null;
     this._inflight = {};
   }
 
   /* ---------------------------------------------------------------------- */
   /* Session token                                                          */
   /* ---------------------------------------------------------------------- */
+
+  /**
+   * Registers the live session-token source (Clerk).
+   *
+   * Clerk session tokens are short-lived and refreshed by its SDK, so the
+   * client asks for a fresh one per request instead of caching a copy that
+   * silently expires. A stored token remains only as a same-tab fallback for
+   * environments where the Clerk SDK is unavailable.
+   */
+  LoumooApiClient.prototype.setTokenProvider = function (fn) {
+    this._tokenProvider = typeof fn === 'function' ? fn : null;
+  };
+
+  LoumooApiClient.prototype.resolveToken = function () {
+    var self = this;
+    if (this._tokenProvider) {
+      try {
+        return Promise.resolve(this._tokenProvider()).then(function (t) {
+          return t || self.token || null;
+        }).catch(function () { return self.token || null; });
+      } catch (e) { /* fall through to the stored token */ }
+    }
+    return Promise.resolve(this.token || null);
+  };
 
   LoumooApiClient.prototype.setAuthToken = function (token) {
     this.token = token || null;
@@ -152,8 +177,8 @@
       }));
     }
 
-    var headers = { 'Content-Type': 'application/json' };
-    if (this.token) headers.Authorization = 'Bearer ' + this.token;
+    var headers = {};
+    if (!options.rawBody) headers['Content-Type'] = 'application/json';
     if (options.idempotencyKey) headers['Idempotency-Key'] = options.idempotencyKey;
     if (options.headers) {
       for (var h in options.headers) {
@@ -163,10 +188,18 @@
       }
     }
 
-    var init = { method: options.method || 'GET', headers: headers };
-    if (options.body !== undefined) init.body = JSON.stringify(options.body);
+    return this.resolveToken().then(function (token) {
+      if (token) headers.Authorization = 'Bearer ' + token;
 
-    return fetch(baseUrl() + endpoint, init).then(function (res) {
+      var init = { method: options.method || 'GET', headers: headers };
+      if (options.rawBody !== undefined && options.rawBody !== null) {
+        init.body = options.rawBody;
+      } else if (options.body !== undefined) {
+        init.body = JSON.stringify(options.body);
+      }
+
+      return fetch(baseUrl() + endpoint, init);
+    }).then(function (res) {
       return res.json().catch(function () { return {}; }).then(function (body) {
         if (!res.ok) {
           // A rejected token means the session is gone — drop it immediately so
@@ -201,24 +234,24 @@
   /* AUTHENTICATION  — server/modules/identity/.../authRoutes.js            */
   /* ====================================================================== */
 
-  LoumooApiClient.prototype.signUp = function (payload) {
-    return this.request('/api/v1/auth/signup', { method: 'POST', body: payload });
+  /**
+   * GET /api/v1/auth/config — the browser-safe bootstrap (Clerk publishable
+   * key, which verification channels this deployment actually supports).
+   */
+  LoumooApiClient.prototype.getAuthConfig = function () {
+    return this.request('/api/v1/auth/config');
   };
 
   /**
-   * POST /api/v1/auth/signin -> SignInUseCase
-   * Returns { success, message, token, user, permissions }.
-   * The returned token is persisted so every later call is authenticated.
+   * POST /api/v1/auth/session — called once, immediately after Clerk
+   * authenticates the browser. Provisions the LOUMOO profile on first sign-in
+   * and returns the authoritative account state.
+   *
+   * There is no payload: the identity is taken from the verified session token
+   * alone, so nothing the page could send can influence which account it gets.
    */
-  LoumooApiClient.prototype.signIn = function (credentials) {
-    var self = this;
-    return this.request('/api/v1/auth/signin', {
-      method: 'POST',
-      body: credentials
-    }).then(function (data) {
-      if (data && data.token) self.setAuthToken(data.token);
-      return data;
-    });
+  LoumooApiClient.prototype.establishSession = function () {
+    return this.request('/api/v1/auth/session', { method: 'POST' });
   };
 
   LoumooApiClient.prototype.signOut = function () {
@@ -231,39 +264,97 @@
       });
   };
 
-  LoumooApiClient.prototype.sendOtp = function (phoneNumber) {
-    return this.request('/api/v1/auth/otp/send', {
+  /* ---------------------------- Account state ---------------------------- */
+
+  /**
+   * GET /api/v1/me/state — THE authoritative answer to "who is this and what
+   * may they do". Every guard in the UI reads this; nothing is inferred from
+   * localStorage.
+   */
+  LoumooApiClient.prototype.getAccountState = function () {
+    return this.request('/api/v1/me/state');
+  };
+
+  LoumooApiClient.prototype.resolveCapability = function (capability) {
+    return this.request('/api/v1/me/state/resolve' + qs({ capability: capability }));
+  };
+
+  /* ---------------------------- Verification ----------------------------- */
+
+  LoumooApiClient.prototype.getVerificationStatus = function () {
+    return this.request('/api/v1/auth/verification');
+  };
+
+  /** Re-reads Clerk server-side and mirrors the result. */
+  LoumooApiClient.prototype.refreshVerification = function () {
+    return this.request('/api/v1/auth/verification/refresh', { method: 'POST' });
+  };
+
+  LoumooApiClient.prototype.requestEmailVerification = function () {
+    return this.request('/api/v1/auth/verification/email', { method: 'POST' });
+  };
+
+  LoumooApiClient.prototype.requestPhoneVerification = function (phoneNumber) {
+    return this.request('/api/v1/auth/verification/phone', {
       method: 'POST',
       body: { phoneNumber: phoneNumber }
     });
   };
 
-  LoumooApiClient.prototype.verifyOtp = function (phoneNumber, code) {
-    return this.request('/api/v1/auth/otp/verify', {
+  /* ----------------------------- Onboarding ------------------------------ */
+
+  LoumooApiClient.prototype.getOnboarding = function () {
+    return this.request('/api/v1/me/onboarding');
+  };
+
+  LoumooApiClient.prototype.getOnboardingSteps = function () {
+    return this.request('/api/v1/me/onboarding/steps');
+  };
+
+  LoumooApiClient.prototype.startOnboarding = function (intent) {
+    return this.request('/api/v1/me/onboarding/start', {
       method: 'POST',
-      body: { phoneNumber: phoneNumber, code: code }
+      body: { intent: intent || 'buyer' }
     });
   };
 
-  LoumooApiClient.prototype.requestPasswordReset = function (email) {
-    return this.request('/api/v1/auth/password-reset/request', {
-      method: 'POST',
-      body: { email: email }
-    });
-  };
-
-  LoumooApiClient.prototype.confirmPasswordReset = function (payload) {
-    return this.request('/api/v1/auth/password-reset/confirm', {
-      method: 'POST',
-      body: payload
-    });
-  };
-
-  LoumooApiClient.prototype.verifyEmail = function (payload) {
-    return this.request('/api/v1/auth/email/verify', {
+  LoumooApiClient.prototype.submitOnboardingStep = function (stepKey, payload) {
+    return this.request('/api/v1/me/onboarding/steps/' + encodeURIComponent(stepKey), {
       method: 'POST',
       body: payload || {}
     });
+  };
+
+  LoumooApiClient.prototype.startSelling = function () {
+    return this.request('/api/v1/me/selling/start', { method: 'POST' });
+  };
+
+  /* ------------------------------- Uploads ------------------------------- */
+
+  /**
+   * POST /api/v1/uploads/listing-media — sends the raw image bytes.
+   *
+   * The server determines the real format from the bytes, so no filename or
+   * Content-Type is sent that it could be tempted to trust. Returns an opaque
+   * `uploadId` which the listing endpoints accept.
+   */
+  LoumooApiClient.prototype.uploadListingImage = function (fileOrBlob, listingId) {
+    return this.request(
+      '/api/v1/uploads/listing-media' + qs({ listingId: listingId }),
+      {
+        method: 'POST',
+        rawBody: fileOrBlob,
+        headers: { 'Content-Type': 'application/octet-stream' }
+      }
+    );
+  };
+
+  LoumooApiClient.prototype.discardUpload = function (uploadId) {
+    return this.request('/api/v1/uploads/' + encodeURIComponent(uploadId), { method: 'DELETE' });
+  };
+
+  LoumooApiClient.prototype.getUploadLimits = function () {
+    return this.request('/api/v1/uploads/limits');
   };
 
   /* ====================================================================== */
@@ -277,7 +368,16 @@
    */
   LoumooApiClient.prototype.getMe = function () {
     var self = this;
-    if (!this.token) return Promise.resolve(null);
+    // Skip the round trip only when there is genuinely no credential to try —
+    // the live provider (Clerk) is consulted, not just the stored fallback.
+    return this.resolveToken().then(function (token) {
+      if (!token) return null;
+      return self._fetchMe();
+    });
+  };
+
+  LoumooApiClient.prototype._fetchMe = function () {
+    var self = this;
     return this.request('/api/v1/users/me').then(function (data) {
       return (data && data.user) || null;
     }).catch(function (err) {
@@ -571,8 +671,39 @@
     return this.request('/api/v1/listings/' + encodeURIComponent(id) + '/archive', { method: 'POST' });
   };
 
-  LoumooApiClient.prototype.addListingMedia = function (id, mediaPayload) {
-    return this.request('/api/v1/listings/' + encodeURIComponent(id) + '/media', { method: 'POST', body: mediaPayload });
+  /**
+   * Attaches images that were already uploaded and validated.
+   * Takes upload ids, never URLs: a client-supplied URL would let anyone point
+   * a listing at arbitrary remote content.
+   */
+  LoumooApiClient.prototype.addListingMedia = function (id, uploadIds) {
+    var ids = Array.isArray(uploadIds) ? uploadIds : [uploadIds];
+    return this.request('/api/v1/listings/' + encodeURIComponent(id) + '/media', {
+      method: 'POST',
+      body: { uploadIds: ids }
+    });
+  };
+
+  LoumooApiClient.prototype.getListingMedia = function (id) {
+    return this.request('/api/v1/listings/' + encodeURIComponent(id) + '/media');
+  };
+
+  LoumooApiClient.prototype.reorderListingMedia = function (id, mediaIds) {
+    return this.request('/api/v1/listings/' + encodeURIComponent(id) + '/media/order', {
+      method: 'PATCH',
+      body: { mediaIds: mediaIds }
+    });
+  };
+
+  LoumooApiClient.prototype.setListingCover = function (id, mediaId) {
+    return this.request('/api/v1/listings/' + encodeURIComponent(id) + '/media/' + encodeURIComponent(mediaId) + '/cover', {
+      method: 'POST'
+    });
+  };
+
+  /** The canonical listing form rules, so the wizard validates what the server validates. */
+  LoumooApiClient.prototype.getListingSchema = function () {
+    return this.request('/api/v1/listings/schema');
   };
 
   LoumooApiClient.prototype.removeListingMedia = function (id, mediaId) {

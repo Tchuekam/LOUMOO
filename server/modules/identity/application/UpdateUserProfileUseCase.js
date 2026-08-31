@@ -5,7 +5,7 @@
  */
 
 const { z } = require('zod');
-const { SupabaseClient } = require('../../../infrastructure/database/SupabaseClient');
+const { SupabaseClient, tryGetAdmin } = require('../../../infrastructure/database/SupabaseClient');
 const CacheService = require('../../../infrastructure/cache/CacheService');
 const UserProfile = require('../entities/UserProfile');
 const { ValidationError, NotFoundError, AuthorizationError } = require('../../../shared/errors/AppError');
@@ -64,7 +64,7 @@ class UpdateUserProfileUseCase {
     profile.updatedAt = new Date();
 
     // 5. Update Database
-    const adminDb = SupabaseClient.getAdminClient();
+    const adminDb = tryGetAdmin('UpdateUserProfileUseCase');
     if (adminDb) {
       try {
         const { error } = await adminDb.from('profiles').update({

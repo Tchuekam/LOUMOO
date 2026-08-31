@@ -295,7 +295,10 @@ def get_account_access_view():
         </div>
         <h1 style="font-size:25px;margin:0 0 8px;line-height:1.2">Verify your email</h1>
         <p style="font-size:14px;color:var(--color-text-secondary);max-width:420px;margin:0 auto;line-height:1.5">
-          We sent a 6-digit confirmation code to <strong style="color:var(--color-text)">{{ verifyEmailAddress }}</strong>. Enter it below to secure your account.
+          We sent a 6-digit confirmation code to <strong style="color:var(--color-text)">{{ verifyEmailAddress }}</strong>. Enter it below to continue.
+        </p>
+        <p style="font-size:12.5px;color:var(--color-text-muted);max-width:440px;margin:12px auto 0;line-height:1.55">
+          {{ verifyEmailWhy }}
         </p>
       </div>
 
@@ -317,6 +320,20 @@ def get_account_access_view():
           <button onClick="{{ resendEmailVerification }}" disabled="{{ emailVerifyCooldown > 0 }}" style="border:none;background:transparent;padding:0;font:700 12px/1 var(--font-heading);color:{{ emailVerifyCooldown > 0 ? 'var(--color-text-muted)' : 'var(--color-accent)' }};cursor:{{ emailVerifyCooldown > 0 ? 'default' : 'pointer' }}">
             {{ emailVerifyCooldown > 0 ? 'RESEND IN ' + emailVerifyCooldown + 'S' : 'RESEND CODE' }}
           </button>
+        </div>
+
+        <div style="border-top:1px solid var(--color-border);padding-top:14px;display:flex;flex-direction:column;gap:10px">
+          <p style="font:400 12px/1.5 var(--font-body);color:var(--color-text-muted);margin:0">
+            {{ verifyEmailNoCodeHelp }}
+          </p>
+          <div style="display:flex;flex-wrap:wrap;gap:14px">
+            <button onClick="{{ recheckEmailVerification }}" style="border:none;background:transparent;padding:0;font:700 12px/1 var(--font-heading);color:var(--color-accent);cursor:pointer">
+              I ALREADY VERIFIED — CHECK AGAIN
+            </button>
+            <button onClick="{{ changeVerifyEmail }}" style="border:none;background:transparent;padding:0;font:700 12px/1 var(--font-heading);color:var(--color-text-secondary);cursor:pointer">
+              USE A DIFFERENT EMAIL
+            </button>
+          </div>
         </div>
       </div>
     </sc-if>
@@ -341,6 +358,9 @@ def get_account_access_view():
         <h1 style="font-size:25px;margin:0 0 8px;line-height:1.2">Email verified</h1>
         <p style="font-size:14px;color:var(--color-text-secondary);max-width:400px;margin:0 auto;line-height:1.5">
           <strong style="color:var(--color-text)">{{ verifyEmailAddress }}</strong> is now confirmed on your LOUMOO account.
+        </p>
+        <p style="font-size:12.5px;color:var(--color-text-muted);max-width:400px;margin:10px auto 0;line-height:1.55">
+          {{ verifyEmailNext }}
         </p>
 
         <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:20px;background:var(--color-success-100);border-radius:var(--radius-pill);padding:9px 16px;width:fit-content;margin-left:auto;margin-right:auto">
@@ -387,9 +407,15 @@ def get_account_access_view():
       </button>
     </sc-if>
 
-    <sc-if value="{{ emailVerifyState !== 'verifying' }}">
-      <button onClick="{{ skipEmailVerification }}" class="btn btn-secondary btn-block" style="height:44px;font-size:13px;cursor:pointer">
-        I'LL DO THIS LATER
+    <sc-if value="{{ emailVerifyState === 'pending' }}">
+      <button onClick="{{ recheckEmailVerification }}" class="btn btn-secondary btn-block" style="height:44px;font-size:13px;cursor:pointer">
+        I VERIFIED ON ANOTHER DEVICE
+      </button>
+    </sc-if>
+
+    <sc-if value="{{ emailVerifyState === 'expired' }}">
+      <button onClick="{{ changeVerifyEmail }}" class="btn btn-secondary btn-block" style="height:44px;font-size:13px;cursor:pointer">
+        USE A DIFFERENT EMAIL ADDRESS
       </button>
     </sc-if>
   </div>
