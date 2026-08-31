@@ -194,28 +194,36 @@
       var createPayload = {
         emailAddress: params.email,
         password: params.password,
-        firstName: params.firstName,
-        lastName: params.lastName
+        firstName: params.firstName || '',
+        lastName: params.lastName || ''
       };
-      return state.clerk.client.signUp.create(createPayload)
-        .then(function (signUp) {
-          if (signUp.status === 'complete' && signUp.createdSessionId) {
-            return state.clerk.setActive({ session: signUp.createdSessionId })
-              .then(function () { return { needsEmailCode: false, emailAddress: params.email }; });
-          }
-
-          // If email verification was already prepared by create(), do not re-prepare
-          var emailVer = signUp.verifications && signUp.verifications.emailAddress;
-          if (emailVer && emailVer.status === 'unverified' && emailVer.strategy === 'email_code') {
-            return { needsEmailCode: true, emailAddress: params.email };
-          }
-
-          return state.clerk.client.signUp
-            .prepareEmailAddressVerification({ strategy: 'email_code' })
+      return state.clerk.client.signUp.create(createPayload).then(function (signUp) {
+        if (signUp.status === 'complete' && signUp.createdSessionId) {
+          return state.clerk.setActive({ session: signUp.createdSessionId })
             .then(function () {
-              return { needsEmailCode: true, emailAddress: params.email };
+              if (state.clerk && state.clerk.session && typeof state.clerk.session.getToken === 'function') {
+                return state.clerk.session.getToken().then(function (tok) {
+                  var c = api();
+                  if (c && tok) c.setAuthToken(tok);
+                  return { needsEmailCode: false, emailAddress: params.email };
+                });
+              }
+              return { needsEmailCode: false, emailAddress: params.email };
             });
-        });
+        }
+
+        // If email verification was already prepared by create(), do not re-prepare
+        var emailVer = signUp.verifications && signUp.verifications.emailAddress;
+        if (emailVer && emailVer.status === 'unverified' && emailVer.strategy === 'email_code') {
+          return { needsEmailCode: true, emailAddress: params.email };
+        }
+
+        return state.clerk.client.signUp
+          .prepareEmailAddressVerification({ strategy: 'email_code' })
+          .then(function () {
+            return { needsEmailCode: true, emailAddress: params.email };
+          });
+      });
     },
 
     /** Submits the code the user actually received. */
@@ -225,9 +233,10 @@
       return state.clerk.client.signUp
         .attemptEmailAddressVerification({ code: cleanCode })
         .then(function (signUp) {
-          // If already complete with session id, activate immediately
-          if (signUp.status === 'complete' && signUp.createdSessionId) {
-            return state.clerk.setActive({ session: signUp.createdSessionId }).then(function () {
+          // If complete or has session id, activate immediately
+          var sessionId = signUp.createdSessionId;
+          if (sessionId) {
+            return state.clerk.setActive({ session: sessionId }).then(function () {
               if (state.clerk && state.clerk.session && typeof state.clerk.session.getToken === 'function') {
                 return state.clerk.session.getToken().then(function (tok) {
                   var c = api();
@@ -238,91 +247,43 @@
             });
           }
 
-          var emailVer = signUp.verifications && signUp.verifications.emailAddress;
-          var isVerified = emailVer && emailVer.status === 'verified';
-
-          // If email is verified but missing requirements remain, resolve them automatically
-          if (isVerified || signUp.status === 'missing_requirements') {
+          // Handle missing username if required by Clerk
+          if (signUp.status === 'missing_requirements') {
             var missing = signUp.missingFields || [];
             var updatePayload = {};
 
-            if (missing.indexOf('username') !== -1 || !signUp.username) {
+            if (missing.indexOf('username') !== -1) {
               var emailPrefix = (signUp.emailAddress || 'user').split('@')[0].replace(/[^a-zA-Z0-9_]/g, '_');
               if (emailPrefix.length < 4) emailPrefix = 'user_' + emailPrefix;
               updatePayload.username = (emailPrefix.slice(0, 14) + '_' + Math.floor(1000 + Math.random() * 9000)).slice(0, 20);
             }
-            if (missing.indexOf('first_name') !== -1 && !signUp.firstName) {
-              updatePayload.firstName = 'User';
+            if (missing.indexOf('first_name') !== -1 && signUp.firstName) {
+              updatePayload.firstName = signUp.firstName;
             }
-            if (missing.indexOf('last_name') !== -1 && !signUp.lastName) {
-              updatePayload.lastName = 'Member';
-            }
-            if (missing.indexOf('phone_number') !== -1 || missing.indexOf('phoneNumber') !== -1) {
-              updatePayload.phoneNumber = '+1202' + Math.floor(1000000 + Math.random() * 9000000);
+            if (missing.indexOf('last_name') !== -1 && signUp.lastName) {
+              updatePayload.lastName = signUp.lastName;
             }
 
             if (Object.keys(updatePayload).length > 0) {
-              return state.clerk.client.signUp.update(updatePayload)
-                .then(function (updatedSignUp) {
-                  var sid = updatedSignUp.createdSessionId || signUp.createdSessionId;
-                  if (sid) {
-                    return state.clerk.setActive({ session: sid }).then(function () {
-                  if (state.clerk && state.clerk.session && typeof state.clerk.session.getToken === 'function') {
-                    return state.clerk.session.getToken().then(function (tok) {
-                      var c = api();
-                      if (c && tok) c.setAuthToken(tok);
-                      return tok;
-                    });
-                  }
-                });
-                  }
-                  if (state.clerk.session) {
-                    return state.clerk.session;
-                  }
-                  if (updatedSignUp.status === 'complete') {
-                    return state.clerk.session;
-                  }
-                  // Clean readable error if something is still missing
-                  var remaining = (updatedSignUp.missingFields || []).filter(Boolean);
-                  if (remaining.length > 0) {
-                    var err = new Error('Please complete the required details: ' + remaining.join(', '));
-                    err.code = 'MISSING_REQUIREMENTS';
-                    throw err;
-                  }
-                  return state.clerk.session;
-                })
-                .catch(function (updateErr) {
-                  if (signUp.createdSessionId) {
-                    return state.clerk.setActive({ session: signUp.createdSessionId }).then(function () {
-              if (state.clerk && state.clerk.session && typeof state.clerk.session.getToken === 'function') {
-                return state.clerk.session.getToken().then(function (tok) {
-                  var c = api();
-                  if (c && tok) c.setAuthToken(tok);
-                  return tok;
-                });
-              }
-            });
-                  }
-                  if (state.clerk.session) {
-                    return state.clerk.session;
-                  }
-                  throw updateErr;
-                });
+              return state.clerk.client.signUp.update(updatePayload).then(function (updatedSignUp) {
+                var sid = updatedSignUp.createdSessionId;
+                if (sid) {
+                  return state.clerk.setActive({ session: sid }).then(function () {
+                    if (state.clerk && state.clerk.session && typeof state.clerk.session.getToken === 'function') {
+                      return state.clerk.session.getToken().then(function (tok) {
+                        var c = api();
+                        if (c && tok) c.setAuthToken(tok);
+                        return tok;
+                      });
+                    }
+                  });
+                }
+                return state.clerk.session;
+              });
             }
           }
 
-          if (signUp.createdSessionId) {
-            return state.clerk.setActive({ session: signUp.createdSessionId }).then(function () {
-              if (state.clerk && state.clerk.session && typeof state.clerk.session.getToken === 'function') {
-                return state.clerk.session.getToken().then(function (tok) {
-                  var c = api();
-                  if (c && tok) c.setAuthToken(tok);
-                  return tok;
-                });
-              }
-            });
-          }
-          if (state.clerk.session) {
+          if (state.clerk && state.clerk.session) {
             return state.clerk.session;
           }
 

@@ -1230,7 +1230,7 @@ class Component extends DCLogic {
     const clerk = getClerk();
     if (!api) return Promise.resolve(null);
 
-    const getToken = () => {
+    const resolveActiveToken = () => {
       if (clerk && typeof clerk.getToken === 'function') {
         return clerk.getToken();
       }
@@ -1240,18 +1240,26 @@ class Component extends DCLogic {
       return Promise.resolve(api.getAuthToken());
     };
 
-    return getToken()
+    return resolveActiveToken()
       .then(token => {
         if (token) {
           api.setAuthToken(token);
           return token;
         }
-        // Poll briefly in case Clerk SDK is finalizing the session in the background
-        return new Promise(resolve => setTimeout(resolve, 150))
-          .then(() => getToken())
-          .then(t => { if (t) api.setAuthToken(t); return t; });
+        // Brief poll if Clerk session is activating
+        return new Promise(resolve => setTimeout(resolve, 200))
+          .then(() => resolveActiveToken())
+          .then(t => {
+            if (t) api.setAuthToken(t);
+            return t;
+          });
       })
-      .then(() => api.establishSession())
+      .then(token => {
+        if (!token) {
+          throw new Error('Authentication session could not be established. Please click Continue to try again.');
+        }
+        return api.establishSession();
+      })
       .then(state => {
         if (guard) guard.adopt(state);
         if (this._unmounted) return state;
@@ -1260,7 +1268,6 @@ class Component extends DCLogic {
       });
   }
 
-  /** Projects the server's account-state envelope onto the view. */
   _applyAccountState(state) {
     const user = state.user || {};
     const role = state.state === 'SELLER_READY' || state.state === 'SELLER_VERIFICATION_REQUIRED'
