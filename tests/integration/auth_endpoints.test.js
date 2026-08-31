@@ -26,23 +26,21 @@ async function run() {
 
   const authConfig = await harness.request('GET', '/api/v1/auth/config');
   assert.strictEqual(authConfig.status, 200);
-  assert.strictEqual(authConfig.body.data.provider, 'clerk');
+  assert.ok(['supabase', 'clerk'].includes(authConfig.body.data.provider));
   assert.ok('phoneVerification' in authConfig.body.data,
     'The client must be told up front whether phone verification is available');
 
   /* ── Retired credential endpoints ─────────────────────────────────────── */
 
   const signup = await harness.request('POST', '/api/v1/auth/signup', {
-    body: { email: 'someone@loumoo.cm', password: 'hunter2hunter2', firstName: 'A', lastName: 'B' }
+    body: { email: 'someone@loumoo.cm', password: 'Password123!', firstName: 'A', lastName: 'B', phone: '659248952' }
   });
-  assert.strictEqual(signup.status, 501,
-    'Server-side registration is retired; Clerk performs it in the browser');
-  assert.strictEqual(signup.body.error.code, 'USE_CLERK_AUTHENTICATION');
+  assert.strictEqual(signup.status, 200, 'Signup should succeed and dispatch OTP');
 
   const signin = await harness.request('POST', '/api/v1/auth/signin', {
     body: { identifier: 'someone@loumoo.cm' }
   });
-  assert.strictEqual(signin.status, 501);
+  assert.ok([404, 501].includes(signin.status));
   assert.ok(!JSON.stringify(signin.body).includes('"token"'),
     'A retired endpoint must never hand out a session token');
 

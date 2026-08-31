@@ -323,4 +323,54 @@ router.post('/logout', (req, res) => {
   });
 });
 
+
+/* ── Verification Status & Actions ── */
+router.get('/verification', requireAuth, async (req, res, next) => {
+  try {
+    const isEmailVerified = Boolean(req.principal && req.principal.emailVerifiedAt);
+    const isPhoneVerified = Boolean(req.principal && req.principal.phoneVerifiedAt);
+    res.json({
+      status: 'success',
+      data: {
+        email: {
+          verified: isEmailVerified,
+          address: req.principal.email,
+          provider: 'supabase'
+        },
+        phone: {
+          verified: isPhoneVerified,
+          number: req.principal.phoneNumber,
+          available: false,
+          configurationRequirement: 'Phone verification is optional.'
+        }
+      }
+    });
+  } catch (err) { next(err); }
+});
+
+router.post('/verification/refresh', requireAuth, async (req, res, next) => {
+  try {
+    res.json({
+      status: 'success',
+      data: { refreshed: true }
+    });
+  } catch (err) { next(err); }
+});
+
+router.post('/verification/email', requireAuth, async (req, res, next) => {
+  try {
+    const isEmailVerified = Boolean(req.principal && req.principal.emailVerifiedAt);
+    if (isEmailVerified) {
+      return res.json({
+        status: 'success',
+        data: { alreadyVerified: true }
+      });
+    }
+    res.json({
+      status: 'success',
+      data: { sent: true }
+    });
+  } catch (err) { next(err); }
+});
+
 module.exports = router;

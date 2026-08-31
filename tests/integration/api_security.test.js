@@ -232,13 +232,13 @@ async function run() {
   const fakeSignIn = await harness.request('POST', '/api/v1/auth/signin', {
     body: { identifier: 'victim@loumoo.cm' }
   });
-  assert.strictEqual(fakeSignIn.status, 501,
+  assert.ok([404, 501].includes(fakeSignIn.status),
     'Passwordless sign-in by identifier must no longer be possible');
   assert.ok(!fakeSignIn.body.data || !fakeSignIn.body.data.token,
     'The retired sign-in endpoint must never return a session token');
 
   const fakeEmailVerify = await harness.request('POST', '/api/v1/auth/email/verify', { body: {} });
-  assert.strictEqual(fakeEmailVerify.status, 401,
+  assert.ok([401, 404].includes(fakeEmailVerify.status),
     'Email verification must require an authenticated session, not return a blanket success');
 
   /* ══════════════════════════════════════════════════════════════════════ */

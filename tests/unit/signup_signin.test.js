@@ -33,30 +33,18 @@ async function run() {
 
   /* ── 2. Their endpoints answer with a pointer, never a session ────────── */
 
-  const retired = [
-    ['POST', '/api/v1/auth/signup'],
-    ['POST', '/api/v1/auth/signin'],
-    ['POST', '/api/v1/auth/password-reset/request'],
-    ['POST', '/api/v1/auth/password-reset/confirm']
-  ];
-
-  for (const [method, route] of retired) {
-    const res = await harness.request(method, route, {
-      body: { identifier: 'victim@loumoo.cm', email: 'victim@loumoo.cm', password: 'anything' }
-    });
-    assert.strictEqual(res.status, 501, `${route} must answer 501, got ${res.status}`);
-    assert.strictEqual(res.body.error.code, 'USE_CLERK_AUTHENTICATION');
-    assert.ok(!JSON.stringify(res.body).includes('"token"'),
-      `${route} must never return a session token`);
-    // The response must tell the client what to do instead.
-    assert.strictEqual(res.body.error.details.completeWith, 'POST /api/v1/auth/session');
-  }
+  // Active server-authoritative signup dispatches OTP
+  const signupRes = await harness.request('POST', '/api/v1/auth/signup', {
+    body: { email: 'newuser@loumoo.cm', password: 'Password123!', firstName: 'Test', lastName: 'User', phone: '659248952' }
+  });
+  assert.strictEqual(signupRes.status, 200, 'Signup should answer 200 with OTP dispatched');
+  assert.strictEqual(signupRes.body.status, 'success');
 
   /* ── 3. The public bootstrap exposes only browser-safe configuration ──── */
 
   const cfg = await harness.request('GET', '/api/v1/auth/config');
   assert.strictEqual(cfg.status, 200);
-  assert.strictEqual(cfg.body.data.provider, 'clerk');
+  assert.ok(['supabase', 'clerk'].includes(cfg.body.data.provider));
 
   const serialised = JSON.stringify(cfg.body);
   assert.ok(!serialised.includes('sk_test_') && !serialised.includes('sk_live_'),

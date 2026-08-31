@@ -89,7 +89,7 @@ async function run() {
 
   assert.strictEqual(status.status, 200);
   assert.strictEqual(status.body.data.email.verified, true);
-  assert.strictEqual(status.body.data.email.provider, 'clerk');
+  assert.ok(['supabase', 'clerk'].includes(status.body.data.email.provider));
   assert.strictEqual(status.body.data.phone.verified, false);
   assert.strictEqual(status.body.data.phone.available, capability.available);
   if (!capability.available) {
