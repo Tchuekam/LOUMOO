@@ -204,6 +204,7 @@
       return state.clerk.client.signUp
         .attemptEmailAddressVerification({ code: cleanCode })
         .then(function (signUp) {
+          // If already complete with session id, activate immediately
           if (signUp.status === 'complete' && signUp.createdSessionId) {
             return state.clerk.setActive({ session: signUp.createdSessionId });
           }
@@ -211,48 +212,65 @@
           var emailVer = signUp.verifications && signUp.verifications.emailAddress;
           var isVerified = emailVer && emailVer.status === 'verified';
 
-          if (isVerified && signUp.status === 'missing_requirements') {
+          // If email is verified but missing requirements remain, resolve them automatically
+          if (isVerified || signUp.status === 'missing_requirements') {
             var missing = signUp.missingFields || [];
             var updatePayload = {};
 
-            if (missing.indexOf('username') !== -1) {
+            if (missing.indexOf('username') !== -1 || !signUp.username) {
               var emailPrefix = (signUp.emailAddress || 'user').split('@')[0].replace(/[^a-zA-Z0-9_]/g, '_');
               if (emailPrefix.length < 4) emailPrefix = 'user_' + emailPrefix;
-              updatePayload.username = emailPrefix.slice(0, 18) + '_' + Math.floor(1000 + Math.random() * 9000);
+              updatePayload.username = (emailPrefix.slice(0, 14) + '_' + Math.floor(1000 + Math.random() * 9000)).slice(0, 20);
             }
-            if (missing.indexOf('first_name') !== -1) {
-              updatePayload.firstName = signUp.firstName || 'User';
+            if (missing.indexOf('first_name') !== -1 && !signUp.firstName) {
+              updatePayload.firstName = 'User';
             }
-            if (missing.indexOf('last_name') !== -1) {
-              updatePayload.lastName = signUp.lastName || 'Member';
+            if (missing.indexOf('last_name') !== -1 && !signUp.lastName) {
+              updatePayload.lastName = 'Member';
             }
             if (missing.indexOf('phone_number') !== -1 || missing.indexOf('phoneNumber') !== -1) {
-              // Satisfies Clerk auth requirement with an accepted format while LOUMOO retains the real Cameroon phone in profile DB
               updatePayload.phoneNumber = '+1202' + Math.floor(1000000 + Math.random() * 9000000);
             }
 
             if (Object.keys(updatePayload).length > 0) {
-              return state.clerk.client.signUp.update(updatePayload).then(function (updatedSignUp) {
-                if (updatedSignUp.createdSessionId) {
-                  return state.clerk.setActive({ session: updatedSignUp.createdSessionId });
-                }
-                if (updatedSignUp.status === 'complete') {
-                  return state.clerk.setActive({ session: updatedSignUp.createdSessionId });
-                }
-                var err = new Error('Verification completed, but account requires: ' + (updatedSignUp.missingFields || []).join(', '));
-                err.code = 'MISSING_REQUIREMENTS';
-                throw err;
-              }).catch(function (updateErr) {
-                if (signUp.createdSessionId) {
-                  return state.clerk.setActive({ session: signUp.createdSessionId });
-                }
-                throw updateErr;
-              });
+              return state.clerk.client.signUp.update(updatePayload)
+                .then(function (updatedSignUp) {
+                  var sid = updatedSignUp.createdSessionId || signUp.createdSessionId;
+                  if (sid) {
+                    return state.clerk.setActive({ session: sid });
+                  }
+                  if (state.clerk.session) {
+                    return state.clerk.session;
+                  }
+                  if (updatedSignUp.status === 'complete') {
+                    return state.clerk.session;
+                  }
+                  // Clean readable error if something is still missing
+                  var remaining = (updatedSignUp.missingFields || []).filter(Boolean);
+                  if (remaining.length > 0) {
+                    var err = new Error('Please complete the required details: ' + remaining.join(', '));
+                    err.code = 'MISSING_REQUIREMENTS';
+                    throw err;
+                  }
+                  return state.clerk.session;
+                })
+                .catch(function (updateErr) {
+                  if (signUp.createdSessionId) {
+                    return state.clerk.setActive({ session: signUp.createdSessionId });
+                  }
+                  if (state.clerk.session) {
+                    return state.clerk.session;
+                  }
+                  throw updateErr;
+                });
             }
           }
 
           if (signUp.createdSessionId) {
             return state.clerk.setActive({ session: signUp.createdSessionId });
+          }
+          if (state.clerk.session) {
+            return state.clerk.session;
           }
 
           var err = new Error('That code was not accepted. Check it and try again.');

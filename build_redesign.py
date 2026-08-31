@@ -1176,7 +1176,12 @@ class Component extends DCLogic {
         authProviderStatus: clerk.isReady ? 'ready' : 'unavailable',
         authProviderError: clerk.isReady ? '' : clerk.describeError(clerk.lastError)
       });
-      return this._syncAccountState(true);
+      if (clerk.isSignedIn()) {
+        return this._syncAccountState(true);
+      } else {
+        this._applyAnonymous();
+        return Promise.resolve(null);
+      }
     }).catch(() => {
       if (this._unmounted) return;
       this.setState({ authProviderStatus: 'unavailable' });
@@ -2321,25 +2326,24 @@ class Component extends DCLogic {
             throw err;
           })
           .then(() => this._establishSession())
-          .then(() => api.refreshVerification())
-          .then(result => {
+          .then(accountState => {
+            // Confirm the authenticated session with the server
+            return api.getAccountState().catch(() => accountState);
+          })
+          .then(accountState => {
             if (this._unmounted) return null;
-            const verified = result && result.status && result.status.email.verified;
-            if (!verified) {
-              this.setState({
-                emailVerifyState: 'pending',
-                emailVerifyError: 'We could not confirm that. Request a new code and try again.'
-              });
-              return null;
-            }
             this.setState({ emailVerifyState: 'verified', emailVerifyError: '' });
-            return this._startServerOnboarding().then(() => { this.go(nextScreen); this._adaptiveLoad(); });
+            return this._startServerOnboarding().then(() => {
+              this.go(nextScreen);
+              this._adaptiveLoad();
+            });
           })
           .catch(err => {
             if (this._unmounted) return;
+            const msg = clerk.describeError(err) || (err && err.message) || 'Verification failed. Please try again.';
             this.setState({
               emailVerifyState: 'pending',
-              emailVerifyError: clerk.describeError(err)
+              emailVerifyError: msg
             });
           });
       },

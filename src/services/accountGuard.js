@@ -63,7 +63,16 @@
       if (fresh) return Promise.resolve(cache.state);
       if (cache.inflight) return cache.inflight;
 
-      cache.inflight = client.getAccountState()
+      // Do not make an unauthenticated network call if no token exists
+      return client.resolveToken().then(function (token) {
+        if (!token) {
+          cache.state = null;
+          cache.fetchedAt = Date.now();
+          cache.inflight = null;
+          return null;
+        }
+
+        cache.inflight = client.getAccountState()
         .then(function (state) {
           cache.state = state;
           cache.fetchedAt = Date.now();
@@ -82,7 +91,8 @@
           throw err;
         });
 
-      return cache.inflight;
+        return cache.inflight;
+      });
     },
 
     /** The cached state without any network call. May be null. */
