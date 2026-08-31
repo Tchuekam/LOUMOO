@@ -2252,7 +2252,9 @@ class Component extends DCLogic {
 
         this.setState({ regBusy: true, regError: '' });
 
-        clerk.signUp({ email: email, password: password, firstName: first, lastName: last })
+        const phone = (this.state.regPhone || '').trim();
+        const cleanPhone = phone ? (phone.startsWith('+') ? phone.replace(/[\s-]/g, '') : ('+237' + phone.replace(/[^0-9]/g, ''))) : '';
+        clerk.signUp({ email: email, password: password, firstName: first, lastName: last, phone: cleanPhone, phoneNumber: cleanPhone })
           .then(result => {
             if (this._unmounted) return null;
             this.setState({
