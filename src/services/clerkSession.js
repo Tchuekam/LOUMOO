@@ -233,21 +233,33 @@
       return state.clerk.client.signUp
         .attemptEmailAddressVerification({ code: cleanCode })
         .then(function (signUp) {
-          // If complete or has session id, activate immediately
           var sessionId = signUp.createdSessionId;
-          if (sessionId) {
-            return state.clerk.setActive({ session: sessionId }).then(function () {
-              if (state.clerk && state.clerk.session && typeof state.clerk.session.getToken === 'function') {
-                return state.clerk.session.getToken().then(function (tok) {
-                  var c = api();
-                  if (c && tok) c.setAuthToken(tok);
-                  return tok;
-                });
-              }
+
+          var activateAndExtract = function (sid) {
+            if (!sid) return Promise.resolve(null);
+            return state.clerk.setActive({ session: sid }).then(function () {
+              var getTok = function () {
+                if (state.clerk && state.clerk.session && typeof state.clerk.session.getToken === 'function') {
+                  return state.clerk.session.getToken();
+                }
+                if (state.clerk && state.clerk.client && state.clerk.client.sessions) {
+                  var s = state.clerk.client.sessions.find(function (item) { return item.id === sid; });
+                  if (s && typeof s.getToken === 'function') return s.getToken();
+                }
+                return Promise.resolve(null);
+              };
+              return getTok().then(function (tok) {
+                var c = api();
+                if (c && tok) c.setAuthToken(tok);
+                return tok;
+              });
             });
+          };
+
+          if (sessionId) {
+            return activateAndExtract(sessionId);
           }
 
-          // Handle missing username if required by Clerk
           if (signUp.status === 'missing_requirements') {
             var missing = signUp.missingFields || [];
             var updatePayload = {};
@@ -266,17 +278,9 @@
 
             if (Object.keys(updatePayload).length > 0) {
               return state.clerk.client.signUp.update(updatePayload).then(function (updatedSignUp) {
-                var sid = updatedSignUp.createdSessionId;
+                var sid = updatedSignUp.createdSessionId || signUp.createdSessionId;
                 if (sid) {
-                  return state.clerk.setActive({ session: sid }).then(function () {
-                    if (state.clerk && state.clerk.session && typeof state.clerk.session.getToken === 'function') {
-                      return state.clerk.session.getToken().then(function (tok) {
-                        var c = api();
-                        if (c && tok) c.setAuthToken(tok);
-                        return tok;
-                      });
-                    }
-                  });
+                  return activateAndExtract(sid);
                 }
                 return state.clerk.session;
               });

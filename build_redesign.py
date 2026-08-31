@@ -1231,42 +1231,40 @@ class Component extends DCLogic {
     const clerk = getClerk();
     if (!api) return Promise.resolve(null);
 
-    const resolveActiveToken = () => {
+    const resolveActiveToken = async () => {
       if (clerk && typeof clerk.getToken === 'function') {
-        return clerk.getToken();
+        const t = await clerk.getToken();
+        if (t) return t;
       }
       if (clerk && clerk.session && typeof clerk.session.getToken === 'function') {
-        return clerk.session.getToken();
+        const t = await clerk.session.getToken();
+        if (t) return t;
       }
-      return Promise.resolve(api.getAuthToken());
+      if (typeof window !== 'undefined' && window.Clerk && window.Clerk.session && typeof window.Clerk.session.getToken === 'function') {
+        const t = await window.Clerk.session.getToken();
+        if (t) return t;
+      }
+      if (api.getAuthToken()) {
+        return api.getAuthToken();
+      }
+      return null;
     };
 
-    return resolveActiveToken()
-      .then(token => {
-        if (token) {
-          api.setAuthToken(token);
-          return token;
-        }
-        // Brief poll if Clerk session is activating
-        return new Promise(resolve => setTimeout(resolve, 200))
-          .then(() => resolveActiveToken())
-          .then(t => {
-            if (t) api.setAuthToken(t);
-            return t;
-          });
-      })
-      .then(token => {
-        if (!token) {
-          throw new Error('Authentication session could not be established. Please click Continue to try again.');
-        }
-        return api.establishSession();
-      })
-      .then(state => {
-        if (guard) guard.adopt(state);
-        if (this._unmounted) return state;
-        if (state && state.isAuthenticated) this._applyAccountState(state);
-        return state;
-      });
+    return (async () => {
+      let token = await resolveActiveToken();
+      for (let i = 0; !token && i < 5; i++) {
+        await new Promise(r => setTimeout(r, 100));
+        token = await resolveActiveToken();
+      }
+      if (token) {
+        api.setAuthToken(token);
+      }
+      const state = await api.establishSession();
+      if (guard) guard.adopt(state);
+      if (this._unmounted) return state;
+      if (state && state.isAuthenticated) this._applyAccountState(state);
+      return state;
+    })();
   }
 
   _applyAccountState(state) {
