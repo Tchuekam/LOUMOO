@@ -126,8 +126,14 @@
           var client = api();
           if (client) {
             client.setTokenProvider(function () {
-              if (!state.clerk || !state.clerk.session) return null;
-              return state.clerk.session.getToken();
+              if (!state.clerk) return null;
+              if (state.clerk.session && typeof state.clerk.session.getToken === 'function') {
+                return state.clerk.session.getToken();
+              }
+              if (typeof state.clerk.getToken === 'function') {
+                return state.clerk.getToken();
+              }
+              return null;
             });
           }
 
@@ -153,6 +159,21 @@
 
     isSignedIn: function () {
       return Boolean(state.clerk && state.clerk.session);
+    },
+
+    getToken: function () {
+      if (!state.clerk) return Promise.resolve(null);
+      if (state.clerk.session && typeof state.clerk.session.getToken === 'function') {
+        return state.clerk.session.getToken();
+      }
+      if (typeof state.clerk.getToken === 'function') {
+        return state.clerk.getToken();
+      }
+      return Promise.resolve(null);
+    },
+
+    get session() {
+      return state.clerk ? state.clerk.session : null;
     },
 
     /** The Clerk-side view of the signed-in user; never an authorization input. */
@@ -206,7 +227,15 @@
         .then(function (signUp) {
           // If already complete with session id, activate immediately
           if (signUp.status === 'complete' && signUp.createdSessionId) {
-            return state.clerk.setActive({ session: signUp.createdSessionId });
+            return state.clerk.setActive({ session: signUp.createdSessionId }).then(function () {
+              if (state.clerk && state.clerk.session && typeof state.clerk.session.getToken === 'function') {
+                return state.clerk.session.getToken().then(function (tok) {
+                  var c = api();
+                  if (c && tok) c.setAuthToken(tok);
+                  return tok;
+                });
+              }
+            });
           }
 
           var emailVer = signUp.verifications && signUp.verifications.emailAddress;
@@ -237,7 +266,15 @@
                 .then(function (updatedSignUp) {
                   var sid = updatedSignUp.createdSessionId || signUp.createdSessionId;
                   if (sid) {
-                    return state.clerk.setActive({ session: sid });
+                    return state.clerk.setActive({ session: sid }).then(function () {
+                  if (state.clerk && state.clerk.session && typeof state.clerk.session.getToken === 'function') {
+                    return state.clerk.session.getToken().then(function (tok) {
+                      var c = api();
+                      if (c && tok) c.setAuthToken(tok);
+                      return tok;
+                    });
+                  }
+                });
                   }
                   if (state.clerk.session) {
                     return state.clerk.session;
@@ -256,7 +293,15 @@
                 })
                 .catch(function (updateErr) {
                   if (signUp.createdSessionId) {
-                    return state.clerk.setActive({ session: signUp.createdSessionId });
+                    return state.clerk.setActive({ session: signUp.createdSessionId }).then(function () {
+              if (state.clerk && state.clerk.session && typeof state.clerk.session.getToken === 'function') {
+                return state.clerk.session.getToken().then(function (tok) {
+                  var c = api();
+                  if (c && tok) c.setAuthToken(tok);
+                  return tok;
+                });
+              }
+            });
                   }
                   if (state.clerk.session) {
                     return state.clerk.session;
@@ -267,7 +312,15 @@
           }
 
           if (signUp.createdSessionId) {
-            return state.clerk.setActive({ session: signUp.createdSessionId });
+            return state.clerk.setActive({ session: signUp.createdSessionId }).then(function () {
+              if (state.clerk && state.clerk.session && typeof state.clerk.session.getToken === 'function') {
+                return state.clerk.session.getToken().then(function (tok) {
+                  var c = api();
+                  if (c && tok) c.setAuthToken(tok);
+                  return tok;
+                });
+              }
+            });
           }
           if (state.clerk.session) {
             return state.clerk.session;

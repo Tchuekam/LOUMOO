@@ -1227,14 +1227,37 @@ class Component extends DCLogic {
   _establishSession() {
     const api = getApi();
     const guard = getGuard();
+    const clerk = getClerk();
     if (!api) return Promise.resolve(null);
 
-    return api.establishSession().then(state => {
-      if (guard) guard.adopt(state);
-      if (this._unmounted) return state;
-      if (state && state.isAuthenticated) this._applyAccountState(state);
-      return state;
-    });
+    const getToken = () => {
+      if (clerk && typeof clerk.getToken === 'function') {
+        return clerk.getToken();
+      }
+      if (clerk && clerk.session && typeof clerk.session.getToken === 'function') {
+        return clerk.session.getToken();
+      }
+      return Promise.resolve(api.getAuthToken());
+    };
+
+    return getToken()
+      .then(token => {
+        if (token) {
+          api.setAuthToken(token);
+          return token;
+        }
+        // Poll briefly in case Clerk SDK is finalizing the session in the background
+        return new Promise(resolve => setTimeout(resolve, 150))
+          .then(() => getToken())
+          .then(t => { if (t) api.setAuthToken(t); return t; });
+      })
+      .then(() => api.establishSession())
+      .then(state => {
+        if (guard) guard.adopt(state);
+        if (this._unmounted) return state;
+        if (state && state.isAuthenticated) this._applyAccountState(state);
+        return state;
+      });
   }
 
   /** Projects the server's account-state envelope onto the view. */
