@@ -43,6 +43,7 @@ class UserProfile {
     status = 'active',
     deletionRequestedAt = null,
     deletedAt = null,
+    version = 1,
     metadata = {},
     createdAt = new Date(),
     updatedAt = new Date()
@@ -79,6 +80,7 @@ class UserProfile {
     this.status = status;
     this.deletionRequestedAt = deletionRequestedAt;
     this.deletedAt = deletedAt;
+    this.version = typeof version === 'number' && version > 0 ? version : 1;
     this.metadata = metadata;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
@@ -99,6 +101,38 @@ class UserProfile {
 
   get fullName() {
     return `${this.firstName} ${this.lastName}`.trim() || 'LOUMOO User';
+  }
+
+  /**
+   * Validates if a KYC state transition is legal according to the account state machine.
+   * Rules:
+   *   pending -> submitted
+   *   submitted -> verified | rejected
+   *   rejected -> submitted (must re-submit before any new verification attempt)
+   *   verified -> (terminal state, immutable)
+   */
+  canTransitionKycStatus(targetStatus) {
+    const current = this.kycDocStatus || 'pending';
+    const target = targetStatus || current;
+
+    if (current === target) return { valid: true };
+
+    const LEGAL_TRANSITIONS = {
+      pending: ['submitted'],
+      submitted: ['verified', 'rejected'],
+      rejected: ['submitted'],
+      verified: []
+    };
+
+    const allowed = LEGAL_TRANSITIONS[current] || [];
+    if (!allowed.includes(target)) {
+      return {
+        valid: false,
+        reason: `Cannot transition KYC status from '${current}' to '${target}'. Allowed transitions from '${current}': [${allowed.join(', ') || 'none'}].`
+      };
+    }
+
+    return { valid: true };
   }
 
   isSeller() {
@@ -157,7 +191,8 @@ class UserProfile {
       businessName: this.businessName,
       kycDocStatus: this.kycDocStatus,
       completionPercentage: this.completionPercentage,
-      accountStatus: this.accountStatus
+      accountStatus: this.accountStatus,
+      version: this.version
     };
   }
 

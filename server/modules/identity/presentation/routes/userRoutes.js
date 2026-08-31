@@ -24,7 +24,15 @@ const AccountStateService = require('../../application/AccountStateService');
 const UserProfile = require('../../entities/UserProfile');
 const { NotFoundError } = require('../../../../shared/errors/AppError');
 const CacheService = require('../../../../infrastructure/cache/CacheService');
+const RateLimitService = require('../../../../infrastructure/cache/RateLimitService');
 const logger = require('../../../../shared/logging/logger');
+
+
+const profileUpdateRateLimiter = RateLimitService.middleware({
+  maxRequests: 10,
+  windowSeconds: 60,
+  keyGenerator: req => `profile_update:${req.userProfile ? req.userProfile.id : RateLimitService.resolveKey(req)}`
+});
 
 // ── 04.01 PERSONAL PROFILE ──
 // GET /api/v1/users/me
@@ -68,10 +76,11 @@ router.get('/:userId/public', async (req, res, next) => {
   }
 });
 
-// PATCH /api/v1/users/me
-router.patch('/me', requireAuth, async (req, res, next) => {
+// PATCH /api/v1/users/me (Hardened Profile Update with Rate Limiting)
+router.patch('/me', requireAuth, profileUpdateRateLimiter, async (req, res, next) => {
   try {
-    const result = await UpdateUserProfileUseCase.execute(req.userProfile, req.body);
+    const clientIp = (req.headers && req.headers['x-forwarded-for']) || req.ip || (req.socket && req.socket.remoteAddress);
+    const result = await UpdateUserProfileUseCase.execute(req.userProfile, req.body, { ip: clientIp });
     await UserActivityUseCase.recordActivity(req.userProfile.id, {
       actionType: 'profile_updated',
       title: 'Profile Updated',

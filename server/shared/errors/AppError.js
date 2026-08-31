@@ -88,6 +88,17 @@ class RateLimitError extends AppError {
   }
 }
 
+class ServiceUnavailableError extends AppError {
+  constructor(message = 'Service temporarily unavailable. Please try again later.', details = null) {
+    super(message, {
+      code: 'SERVICE_UNAVAILABLE',
+      statusCode: 503,
+      isOperational: true,
+      details
+    });
+  }
+}
+
 class InfrastructureError extends AppError {
   constructor(service = 'Infrastructure', message = 'Service connection failed', originalError = null) {
     super(`${service} error: ${message}`, {
@@ -139,6 +150,7 @@ class IdempotencyError extends AppError {
 }
 
 module.exports = {
+  ServiceUnavailableError,
   AppError,
   ValidationError,
   AuthenticationError,
