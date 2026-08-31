@@ -1,13 +1,12 @@
 /**
  * Centralized Redis Connection Manager (ioredis)
- * Manages singleton Redis connection pool with exponential reconnection logic
+ * Manages singleton Redis connection pool with exponential reconnection logic and keep-alive resilience
  */
 
 const Redis = require('ioredis');
 const { config } = require('../../config/env');
 const logger = require('../../shared/logging/logger');
-
-let instance = null;
+let instance = null;
 
 class RedisConnection {
   static getInstance() {
@@ -22,14 +21,24 @@ class RedisConnection {
           maxRetriesPerRequest: 3,
           enableReadyCheck: true,
           lazyConnect: false,
-          connectTimeout: 8000,
+          connectTimeout: 10000,
+          family: 4,
+          keepAlive: 10000,
+          enableAutoPipelining: true,
+          reconnectOnError(err) {
+            const targetErrors = ['READONLY', 'ECONNRESET', 'ETIMEDOUT', 'EAI_AGAIN'];
+            if (targetErrors.some(sub => (err && err.message ? err.message : '').includes(sub))) {
+              return true;
+            }
+            return false;
+          },
           retryStrategy(times) {
-            if (times > 3) {
-              logger.warn('[Redis] Max connection retry attempts reached (3/3), using in-memory fallback.');
+            if (times > 5) {
+              logger.warn('GRedis] Max connection retry attempts reached (' + times + '/5), using in-memory fallback.');
               return null;
             }
-            const delay = Math.min(times * 200, 2000);
-            logger.warn(`[Redis] Connection retry attempt #${times} in ${delay}ms`);
+            const delay = Math.min(times * 250, 2000);
+            logger.warn('[Redis] Connection retry attempt #' + times + ' in ' + delay + 'ms');
             return delay;
           }
         });

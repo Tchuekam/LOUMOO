@@ -170,17 +170,24 @@
      */
     signUp: function (params) {
       requireReady();
-      return state.clerk.client.signUp.create({
+      var createPayload = {
         emailAddress: params.email,
         password: params.password,
         firstName: params.firstName,
         lastName: params.lastName
-      }).then(function (signUp) {
-        if (signUp.status === 'complete') {
+      };
+      return state.clerk.client.signUp.create(createPayload).then(function (signUp) {
+        if (signUp.status === 'complete' && signUp.createdSessionId) {
           return state.clerk.setActive({ session: signUp.createdSessionId })
             .then(function () { return { needsEmailCode: false, emailAddress: params.email }; });
         }
-        // Clerk sends the message. LOUMOO never generates or delivers a code.
+
+        // If email verification was already prepared by create(), do not re-prepare
+        var emailVer = signUp.verifications && signUp.verifications.emailAddress;
+        if (emailVer && emailVer.status === 'unverified' && emailVer.strategy === 'email_code') {
+          return { needsEmailCode: true, emailAddress: params.email };
+        }
+
         return state.clerk.client.signUp
           .prepareEmailAddressVerification({ strategy: 'email_code' })
           .then(function () {
@@ -192,15 +199,50 @@
     /** Submits the code the user actually received. */
     verifyEmailCode: function (code) {
       requireReady();
+      var cleanCode = String(code || '').trim().replace(/[^0-9]/g, '');
       return state.clerk.client.signUp
-        .attemptEmailAddressVerification({ code: String(code).trim() })
+        .attemptEmailAddressVerification({ code: cleanCode })
         .then(function (signUp) {
-          if (signUp.status !== 'complete') {
-            var err = new Error('That code was not accepted. Check it and try again.');
-            err.code = 'VERIFICATION_INCOMPLETE';
-            throw err;
+          if (signUp.status === 'complete' && signUp.createdSessionId) {
+            return state.clerk.setActive({ session: signUp.createdSessionId });
           }
-          return state.clerk.setActive({ session: signUp.createdSessionId });
+
+          var emailVer = signUp.verifications && signUp.verifications.emailAddress;
+          var isVerified = emailVer && emailVer.status === 'verified';
+
+          if (isVerified && signUp.status === 'missing_requirements') {
+            var missing = signUp.missingFields || [];
+            var updatePayload = {};
+
+            if (missing.indexOf('username') !== -1) {
+              var emailPrefix = (signUp.emailAddress || 'user').split('@')[0].replace(/[^a-zA-Z0-9_]/g, '_');
+              if (emailPrefix.length < 4) emailPrefix = 'user_' + emailPrefix;
+              updatePayload.username = emailPrefix.slice(0, 18) + '_' + Math.floor(1000 + Math.random() * 9000);
+            }
+            if (missing.indexOf('first_name') !== -1 && signUp.firstName) {
+              updatePayload.firstName = signUp.firstName;
+            }
+            if (missing.indexOf('last_name') !== -1 && signUp.lastName) {
+              updatePayload.lastName = signUp.lastName;
+            }
+
+            return state.clerk.client.signUp.update(updatePayload).then(function (updatedSignUp) {
+              if (updatedSignUp.createdSessionId) {
+                return state.clerk.setActive({ session: updatedSignUp.createdSessionId });
+              }
+              var err = new Error('Verification completed, but account requires: ' + (updatedSignUp.missingFields || []).join(', '));
+              err.code = 'MISSING_REQUIREMENTS';
+              throw err;
+            });
+          }
+
+          if (signUp.createdSessionId) {
+            return state.clerk.setActive({ session: signUp.createdSessionId });
+          }
+
+          var err = new Error('That code was not accepted. Check it and try again.');
+          err.code = 'VERIFICATION_INCOMPLETE';
+          throw err;
         });
     },
 

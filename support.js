@@ -232,7 +232,13 @@
     if (expr.length >= 2 && (expr[0] === '"' || expr[0] === "'") && expr[expr.length - 1] === expr[0]) {
       return expr.slice(1, -1);
     }
-    return resolvePath(vals, expr);
+    const pathVal = resolvePath(vals, expr);
+    if (pathVal !== void 0) return pathVal;
+    try {
+      return new Function('vals', 'with(vals || {}) { return (' + expr + '); }')(vals);
+    } catch (_) {
+      return void 0;
+    }
   }
   function parensWrapWhole(expr) {
     let depth = 0;
