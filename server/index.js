@@ -133,11 +133,26 @@ app.get('/api/config', (req, res) => {
   });
 });
 
-// 7. Static frontend assets
-app.use(express.static(path.resolve(__dirname, '..')));
-
 app.get(['/', '/index.html', '/app'], (req, res) => {
   res.sendFile(path.resolve(__dirname, '..', 'Commerce App.dc.html'));
+});
+
+// 7. Static frontend assets (registered after the explicit frontend routes so
+// that '/' serves the generated single-file app, not the legacy index.html stub)
+app.use(express.static(path.resolve(__dirname, '..')));
+
+// 7b. API 404 — unknown /api routes answer JSON, never Express's HTML "Cannot GET" page.
+// The frontend must always be able to parse an error response.
+app.use('/api', (req, res) => {
+  res.status(404).json({
+    success: false,
+    error: {
+      code: 'ROUTE_NOT_FOUND',
+      message: `No route matches ${req.method} ${req.originalUrl}`,
+      details: null,
+      requestId: req.requestId || 'req_unknown'
+    }
+  });
 });
 
 // 8. Sentry error handler

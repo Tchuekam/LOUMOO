@@ -1,0 +1,34 @@
+name: Deploy to Railway
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    name: Deploy (railwayapp/actions-push)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Pushes the pushed commit to Railway. It is inert until the repository
+      # secrets below exist — set them once, then every merge to main ships:
+      #
+      #   RAILWAY_TOKEN      (required)
+      #     Railway Dashboard -> Account -> Tokens -> New Token
+      #     then GitHub repo -> Settings -> Secrets and variables -> Actions
+      #     -> New repository secret -> RAILWAY_TOKEN
+      #
+      #   RAILWAY_SERVICE_ID (recommended; targets one service)
+      #     Railway Dashboard -> Service -> Settings -> General -> Service ID
+      #
+      #   Alternative: set RAILWAY_PROJECT_ID instead of RAILWAY_SERVICE_ID to
+      #   ship to the project's default branch target.
+      - name: Deploy to Railway
+        uses: railwayapp/actions-push@v1
+        with:
+          token: ${{ secrets.RAILWAY_TOKEN }}
+          service: ${{ secrets.RAILWAY_SERVICE_ID }}
+          # project: ${{ secrets.RAILWAY_PROJECT_ID }}
+          # verbose: true

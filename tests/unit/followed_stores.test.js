@@ -7,6 +7,8 @@ const assert = require('assert');
 const FollowedStoresUseCase = require('../../server/modules/identity/application/FollowedStoresUseCase');
 const { ConflictError } = require('../../server/shared/errors/AppError');
 const harness = require('../helpers/harness');
+const dbModule = require('../../server/infrastructure/database/SupabaseClient');
+const { makeFakeDb } = require('../helpers/fallbackDb');
 
 async function run() {
   console.log('  Testing Followed Stores Service...');
@@ -62,6 +64,69 @@ async function run() {
 
   const checkAfterUnfollow = await FollowedStoresUseCase.isStoreFollowed(userId, storeId);
   assert.strictEqual(checkAfterUnfollow, false, 'Store should no longer be followed');
+
+  /* ── 6. Regression: memory-store merge on reads (dev fallback path) ────── */
+  // The in-memory store is populated only when the DB write fails (dev mode).
+  // Once populated, reads MUST stay consistent with it:
+  //   (a) DB returns EMPTY rows  -> merge the in-memory records
+  //   (b) DB ERRORS              -> fall back to the in-memory records
+  // This pins the historical bug where listFollowedStores consulted the
+  // memory store only in the catch block, discarding fallback records
+  // whenever the DB was healthy but returned no rows.
+
+  const originalGetAdmin = dbModule.SupabaseClient.getAdmin;
+  try {
+    const forcedError = { code: 'PGRST301', message: 'connection refused (forced)' };
+
+    // (a) prime the in-memory store via the DB-error fallback on follow.
+    const fallbackUser = `usr_follow_fallback_${Date.now()}`;
+    const fallbackStoreId = 'store_fallback_regression';
+    dbModule.SupabaseClient.getAdmin = () => makeFakeDb({ data: null, count: 0, error: forcedError });
+
+    const fallbackFollowed = await FollowedStoresUseCase.followStore(fallbackUser, {
+      storeId: fallbackStoreId,
+      storeName: 'Fallback Boutique',
+      city: 'Douala',
+      isVerified: true
+    });
+    assert.ok(fallbackFollowed.id, 'DB-error follow must fall back to an in-memory record');
+    assert.strictEqual(fallbackFollowed.storeId, fallbackStoreId);
+
+    // (a2) DB healthy but EMPTY: the read must merge the in-memory record.
+    dbModule.SupabaseClient.getAdmin = () => makeFakeDb({ data: [], count: 0, error: null });
+
+    const mergedList = await FollowedStoresUseCase.listFollowedStores(fallbackUser, { limit: 10, offset: 0 });
+    assert.strictEqual(mergedList.stores.length, 1,
+      'A DB-empty read must surface in-memory fallback records (merge)');
+    assert.strictEqual(mergedList.stores[0].storeId, fallbackStoreId);
+    assert.strictEqual(mergedList.total, 1, 'Merged total must count the in-memory records');
+
+    const mergedCheck = await FollowedStoresUseCase.isStoreFollowed(fallbackUser, fallbackStoreId);
+    assert.strictEqual(mergedCheck, true,
+      'isStoreFollowed must consult the memory store when the DB returns no rows');
+
+    // (b) DB ERRORS on read: fall back to the in-memory store.
+    const errorUser = `usr_follow_error_${Date.now()}`;
+    dbModule.SupabaseClient.getAdmin = () => makeFakeDb({ data: null, count: 0, error: forcedError });
+
+    const errorList = await FollowedStoresUseCase.listFollowedStores(errorUser, { limit: 10, offset: 0 });
+    assert.strictEqual(errorList.stores.length, 0,
+      'A DB-error read with an empty memory store must return no stores');
+
+    const errorFallbackUser = `usr_follow_error_fb_${Date.now()}`;
+    const errorFallbackFollowed = await FollowedStoresUseCase.followStore(errorFallbackUser, {
+      storeId: 'store_error_fallback',
+      storeName: 'Error Fallback Boutique'
+    });
+    assert.ok(errorFallbackFollowed.id);
+
+    const errorListWithMemory = await FollowedStoresUseCase.listFollowedStores(errorFallbackUser, { limit: 10, offset: 0 });
+    assert.strictEqual(errorListWithMemory.stores.length, 1,
+      'A DB-error read must fall back to in-memory records');
+    assert.strictEqual(errorListWithMemory.stores[0].storeId, 'store_error_fallback');
+  } finally {
+    dbModule.SupabaseClient.getAdmin = originalGetAdmin;
+  }
 
   console.log('    ✓ Followed stores tests passed.');
 }

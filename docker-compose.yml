@@ -1,0 +1,38 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# LOUMOO — LOCAL DEVELOPMENT CONVENIENCE ONLY
+# Production deploys run on Railway (see railway.json); this file is not used
+# by Railway and exists purely for a reproducible local container.
+#
+# Usage:
+#   cp .env.example .env      # fill in real values (placeholders are fine for a dev smoke boot)
+#   docker compose up --build
+# Then: http://localhost:8080/api/v1/health  →  http://localhost:8080/
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env                 # created from .env.example; secrets never committed
+    restart: unless-stopped
+
+  # ── Local Redis (optional) ────────────────────────────────────────────────
+  # PRODUCTION uses Railway's managed Redis (external), so this block is
+  # commented out on purpose. To use it locally:
+  #   1. uncomment the service below
+  #   2. add REDIS_URL=redis://redis:6379 to .env
+  #
+  # redis:
+  #   image: redis:7-alpine
+  #   ports:
+  #     - "6379:6379"
+  #   restart: unless-stopped
+  #   volumes:
+  #     - redis-data:/data
+  #
+  # volumes:
+  #   redis-data:

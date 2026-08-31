@@ -1,0 +1,44 @@
+# ── Dependencies (installed inside the image, never copied) ──────────────
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ── Version control & CI ─────────────────────────────────────────────────
+.git
+.gitignore
+.github
+
+# ── Secrets — never into the image or the build context ─────────────────
+.env
+.env.*
+!.env.example
+
+# ── Tests, docs & non-runtime tooling ───────────────────────────────────
+tests
+docs
+scripts
+README.md
+verify_runtime.js
+verify_screens.py
+build_redesign.py
+
+# ── Local/dev artifacts ──────────────────────────────────────────────────
+.claude
+_ds
+.thumbnail
+uploads
+coverage
+*.log
+.DS_Store
+
+# ── Python (src/ ships, but caches/bytecode never do) ───────────────────
+__pycache__
+*.pyc
+*.pyo
+
+# ── Container metadata (not needed inside the build context) ────────────
+Dockerfile
+.dockerignore
+docker-compose.yml
+railway.json

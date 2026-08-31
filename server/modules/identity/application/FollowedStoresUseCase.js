@@ -52,6 +52,15 @@ class FollowedStoresUseCase {
       } else {
         throw error || new Error('No data');
       }
+      // If the DB has no rows (or follow previously fell back to memory in dev),
+      // surface the local in-memory store so state stays consistent.
+      if (stores.length === 0) {
+        const userStores = this._memoryStore.get(userId) || [];
+        if (userStores.length > 0) {
+          stores = userStores.slice(offset, offset + limit);
+          total = userStores.length;
+        }
+      }
     } catch (err) {
       handleDatabaseFailure(err, 'Supabase query');
       const userStores = this._memoryStore.get(userId) || [];
@@ -181,6 +190,10 @@ class FollowedStoresUseCase {
 
       if (error) throw error;
       if (data && data.length > 0) isFollowed = true;
+      if (!isFollowed) {
+        const userStores = this._memoryStore.get(userId) || [];
+        if (userStores.some(s => s.storeId === storeId)) isFollowed = true;
+      }
     } catch (err) {
       const userStores = this._memoryStore.get(userId) || [];
       isFollowed = userStores.some(s => s.storeId === storeId);
