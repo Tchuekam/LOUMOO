@@ -338,29 +338,6 @@ def get_onboarding_view():
         No code yet? Check your spam folder, then resend. Codes expire after a short window for your security.
       </p>
     </div>
-
-    <!-- Phone verification: offered when the platform can genuinely perform it -->
-    <sc-if value="{{ phoneVerificationAvailable }}">
-      <div class="card-premium" style="margin-top:16px;display:flex;flex-direction:column;gap:10px">
-        <div style="font:700 12px/1 var(--font-heading);color:var(--color-text)">ALSO VERIFY YOUR PHONE</div>
-        <p style="font:400 12.5px/1.5 var(--font-body);color:var(--color-text-secondary);margin:0">
-          Verified numbers get faster Mobile Money checkout and higher buyer trust.
-        </p>
-        <button onClick="{{ startPhoneVerification }}" style="border:none;background:transparent;padding:0;text-align:left;font:700 12px/1 var(--font-heading);color:var(--color-accent);cursor:pointer">
-          SEND A CODE TO +237 {{ regPhone }}
-        </button>
-      </div>
-    </sc-if>
-
-    <!-- ...and honestly explained when it cannot -->
-    <sc-if value="{{ !phoneVerificationAvailable }}">
-      <div style="margin-top:16px;display:flex;align-items:flex-start;gap:10px;background:var(--color-neutral-100);border:1px solid var(--color-divider);border-radius:var(--radius-sm);padding:12px 14px">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-muted)" stroke-width="1.9" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
-        <span style="font:400 12px/1.5 var(--font-body);color:var(--color-text-secondary)">
-          Phone verification is not switched on for LOUMOO yet, so your number is saved for delivery and Mobile Money but is not verified. Your email verification is what secures the account.
-        </span>
-      </div>
-    </sc-if>
   </div>
 
   <!-- Continue CTA (Dynamic branch to Buyer, Seller, or Both) -->

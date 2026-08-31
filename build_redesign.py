@@ -2370,12 +2370,40 @@ class Component extends DCLogic {
           })
           .catch(err => {
             if (this._unmounted) return;
-            const msg = clerk.describeError(err) || (err && err.message) || 'Verification failed. Please try again.';
+            const clerkErr = err && err.errors && err.errors[0];
+            const errCode = clerkErr ? clerkErr.code : (err && err.code);
+            const status = (clerkErr && clerkErr.status) || (err && err.status);
+            const isRateLimit = errCode === 'too_many_attempts' || status === 429 || String(err && err.message).toLowerCase().includes('too many');
+            const msg = isRateLimit
+              ? 'Too many attempts on this code. Please click "Resend code" below to receive a fresh code.'
+              : (clerk.describeError(err) || (err && err.message) || 'Verification failed. Please try again.');
             this.setState({
               emailVerifyState: 'pending',
               emailVerifyError: msg
             });
           });
+      },
+      resendEmailVerification: () => {
+        if (this.state.emailVerifyCooldown > 0) return;
+        const clerk = getClerk();
+        if (!clerk || !clerk.isReady) {
+          this.setState({ emailVerifyError: 'Verification service is initializing. Please wait.' });
+          return;
+        }
+        this.setState({ emailVerifyError: '', emailVerifyCode: '', emailVerifyState: 'pending' });
+        clerk.resendEmailCode()
+          .then(() => {
+            this._startEmailCooldown();
+            this.toast('New 6-digit verification code sent to ' + (this.state.regEmail || 'your email'));
+          })
+          .catch(err => {
+            const msg = clerk.describeError(err) || (err && err.message) || 'Could not resend code. Please wait a moment.';
+            this.setState({ emailVerifyError: msg });
+          });
+      },
+      changeVerifyEmail: () => {
+        this.setState({ emailVerifyError: '', emailVerifyCode: '', emailVerifyState: 'idle' });
+        this.go('onboardIdentity');
       },
       continueAfterBuyer: () => {
         if (this.state.userRole === 'both') {
