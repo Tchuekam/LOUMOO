@@ -2347,9 +2347,11 @@ class Component extends DCLogic {
 
         this.setState({ emailVerifyState: 'verifying', emailVerifyError: '' });
 
-        const attempt = clerk.isSignedIn()
-          ? clerk.attemptEmailVerification(code)
-          : clerk.verifyEmailCode(code);
+        const attempt = (typeof clerk.verifyEmailCode === 'function')
+          ? clerk.verifyEmailCode(code)
+          : ((typeof clerk.attemptEmailVerification === 'function')
+              ? clerk.attemptEmailVerification(code)
+              : Promise.reject(new Error('Verification service not ready')));
 
         Promise.resolve(attempt)
           .then(() => this._establishSession())

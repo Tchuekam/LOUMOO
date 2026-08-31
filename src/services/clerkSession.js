@@ -100,6 +100,14 @@
       });
     },
 
+        attemptEmailVerification: function (code) {
+      return this.verifyEmailCode(code);
+    },
+
+    prepareEmailVerification: function () {
+      return this.resendEmailCode();
+    },
+
     verifyEmailCode: function (code) {
       var cleanCode = String(code || '').trim().replace(/[^0-9]/g, '');
       var email = state.currentEmail;
