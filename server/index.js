@@ -12,6 +12,7 @@ const { Sentry } = require('./clients/sentry');
 const logger = require('./shared/logging/logger');
 const requestContext = require('./shared/middleware/requestContext');
 const errorHandler = require('./shared/middleware/errorHandler');
+const { securityHeaders } = require('./shared/middleware/securityHeaders');
 const RateLimitService = require('./infrastructure/cache/RateLimitService');
 const IdempotencyService = require('./infrastructure/cache/IdempotencyService');
 
@@ -29,7 +30,8 @@ assertProductionConfig();
 if (!config.isProduction) {
   const problems = validateProductionConfig();
   for (const p of problems) {
-    logger.warn(`[Config] ${p.variable}: ${p.reason}`);
+    const label = p.severity === 'warning' ? 'warning' : 'ERROR';
+    logger.warn(`[Config] (${label}) ${p.variable}: ${p.reason}`);
   }
 }
 
@@ -37,6 +39,9 @@ const app = express();
 
 // Trust reverse proxies (Cloudflare / Netlify / Nginx) for correct client IPs.
 app.set('trust proxy', 1);
+
+// 0. Security headers (before anything can write a response).
+app.use(securityHeaders);
 
 // 1. Request context & tracing
 app.use(requestContext);

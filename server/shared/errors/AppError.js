@@ -100,6 +100,24 @@ class InfrastructureError extends AppError {
   }
 }
 
+/**
+ * A capability the deployment has deliberately not configured — the correct
+ * answer to the request is 503 with a machine-readable code, not a generic
+ * failure and not a degraded (insecure) fallback. Used by the Clerk webhook
+ * endpoint when CLERK_WEBHOOK_SECRET is absent: the endpoint refuses to
+ * process unsigned identity events.
+ */
+class NotConfiguredError extends AppError {
+  constructor(message = 'This capability is not configured for this deployment', details = null) {
+    super(message, {
+      code: 'WEBHOOK_NOT_CONFIGURED',
+      statusCode: 503,
+      isOperational: true,
+      details
+    });
+  }
+}
+
 class ExternalServiceError extends AppError {
   constructor(provider = 'ExternalProvider', message = 'Provider returned an error', details = null) {
     super(`${provider} integration error: ${message}`, {
@@ -130,5 +148,6 @@ module.exports = {
   RateLimitError,
   InfrastructureError,
   ExternalServiceError,
-  IdempotencyError
+  IdempotencyError,
+  NotConfiguredError
 };

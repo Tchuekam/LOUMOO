@@ -249,15 +249,58 @@ async function run() {
     raw: JSON.stringify({ type: 'user.deleted', data: { id: sellerA.clerkUserId } }),
     headers: { 'Content-Type': 'application/json' }
   });
+  // 401 = secret configured, signature verification failed (the test env may
+  // carry CLERK_WEBHOOK_SECRET from .env.local). 503 = secret not configured,
+  // endpoint refuses to process ANY unsigned identity event. Both are the
+  // same guarantee: unsigned payloads never reach profile mutation.
   assert.ok([401, 503].includes(forgedWebhook.status),
     `An unsigned Clerk webhook must be refused, got ${forgedWebhook.status}`);
+  if (forgedWebhook.status === 503) {
+    assert.strictEqual(forgedWebhook.body.error.code, 'WEBHOOK_NOT_CONFIGURED',
+      'The 503 must carry the machine-readable WEBHOOK_NOT_CONFIGURED code');
+  }
 
   // ...and seller A must still exist.
   const sellerAStill = await harness.request('GET', '/api/v1/me/state', { token: sellerA.token });
   assert.strictEqual(sellerAStill.status, 200,
     'A forged user.deleted webhook must not have deleted the account');
 
-  console.log('  ✓ Direct API bypass suite: all 11 attack classes rejected');
+  /* ══════════════════════════════════════════════════════════════════════ */
+  /* 12. SECURITY HEADERS ARE PRESENT ON EVERY RESPONSE                     */
+  /* ══════════════════════════════════════════════════════════════════════ */
+
+  const guarded = await harness.request('GET', '/api/v1/health');
+  assert.strictEqual(guarded.status, 200);
+
+  assert.strictEqual(guarded.headers['x-content-type-options'], 'nosniff',
+    'X-Content-Type-Options: nosniff must be set');
+  assert.strictEqual(guarded.headers['x-frame-options'], 'DENY',
+    'X-Frame-Options: DENY must be set');
+  assert.strictEqual(guarded.headers['referrer-policy'], 'strict-origin-when-cross-origin',
+    'Referrer-Policy must be set to strict-origin-when-cross-origin');
+
+  const csp = guarded.headers['content-security-policy'];
+  assert.ok(csp && csp.includes("default-src 'self'"), 'CSP must default to self');
+  assert.ok(csp && !csp.includes("script-src 'self' 'unsafe-inline'"),
+    'CSP script-src must NOT allow unsafe-inline');
+  assert.ok(csp && csp.includes('frame-ancestors'), 'CSP must lock down framing');
+  assert.ok(csp && csp.includes('object-src'), 'CSP must disable plugins');
+
+  // Plain HTTP must NOT receive HSTS, but an https request through the trusted
+  // proxy must. This proves the HSTS logic is conditional on TLS.
+  assert.strictEqual(guarded.headers['strict-transport-security'], undefined,
+    'HSTS must not be sent over plain http');
+
+  const tlsProxied = await harness.request('GET', '/api/v1/health', {
+    headers: { 'X-Forwarded-Proto': 'https' }
+  });
+  assert.ok(
+    tlsProxied.headers['strict-transport-security'] &&
+    tlsProxied.headers['strict-transport-security'].startsWith('max-age=31536000'),
+    'HSTS must be present when the request arrives via https (trust proxy)'
+  );
+
+  console.log('  ✓ Direct API bypass suite: all 11 attack classes rejected + security headers verified');
 }
 
 module.exports = { run };

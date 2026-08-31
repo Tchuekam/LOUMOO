@@ -1,14 +1,85 @@
 /**
  * ListingAIService (06.16 AI-Assisted Listing Creation & Sections 34-37 AI Provider Abstraction)
  * Intelligent listing assistant for title proposals, structured descriptions, category prediction & attribute extraction.
+ *
+ * REAL provider wiring: when AISSTREAM_API_KEY and an OpenAI-compatible
+ * AISSTREAM_BASE_URL are both configured, title suggestions come from the live
+ * chat-completions API. Otherwise the service runs on the deterministic
+ * offline baseline below — which is explicitly logged, never presented as AI
+ * output. NODE_ENV=test always uses the offline baseline so the suite is
+ * hermetic (no network, no cost).
  */
+
+const config = require('../../../config');
+const logger = require('../../../shared/logging/logger');
+
+const AI_READY = Boolean(config.aisstream.apiKey) && Boolean(config.aisstream.baseUrl);
+
+if (config.aisstream.apiKey && !config.aisstream.baseUrl) {
+  logger.warn(
+    '[ListingAI] AISSTREAM_API_KEY is set but no AISSTREAM_BASE_URL (OpenAI-compatible endpoint) — ' +
+    'listing AI runs on the deterministic offline baseline, NOT a live LLM.'
+  );
+} else if (!config.aisstream.apiKey) {
+  logger.warn(
+    '[ListingAI] AISSTREAM_API_KEY not configured — listing AI runs on the deterministic offline baseline.'
+  );
+} else {
+  logger.info(`[ListingAI] Live LLM provider enabled (${config.aisstream.model} via chat completions).`);
+}
+
+/**
+ * OpenAI-compatible chat completion against the configured AISStream provider.
+ * Throws on non-OK responses / network errors; caller decides the fallback.
+ */
+async function chatCompletion(systemPrompt, userPrompt) {
+  const { apiKey, baseUrl, model } = config.aisstream;
+  const response = await fetch(`${baseUrl.replace(/\/+$/, '')}/v1/chat/completions`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`
+    },
+    body: JSON.stringify({
+      model,
+      messages: [
+        ...(systemPrompt ? [{ role: 'system', content: systemPrompt }] : []),
+        { role: 'user', content: userPrompt }
+      ],
+      max_tokens: 100,
+      temperature: 0.4
+    }),
+    signal: AbortSignal.timeout(10000)
+  });
+
+  if (!response.ok) {
+    throw new Error(`chat completions HTTP ${response.status}`);
+  }
+
+  const data = await response.json();
+  return (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content || '').trim();
+}
 
 class ListingAIService {
   static async suggestTitle(rawInput) {
     const text = (rawInput || '').trim();
     if (!text) return 'Premium Marketplace Listing';
 
-    // Simulated deterministic NLP enhancement baseline
+    // Real LLM path — only when a live OpenAI-compatible provider is configured
+    // and we are not in the hermetic test environment.
+    if (AI_READY && !config.isTest) {
+      try {
+        const aiTitle = await chatCompletion(
+          'You write marketplace listing titles. Reply with ONLY the title — 12 words or fewer, no quotes, no punctuation at the end.',
+          `Create a compelling marketplace listing title for: ${text}`
+        );
+        if (aiTitle) return aiTitle;
+      } catch (err) {
+        logger.warn(`[ListingAI] LLM title suggestion failed (${err.message}); falling back to offline baseline.`);
+      }
+    }
+
+    // Deterministic offline baseline — clearly NOT a simulated AI call.
     if (text.toLowerCase().includes('macbook')) {
       return 'Apple MacBook Air 13” M2 (2023) — 8GB / 256GB SSD Sealed Box';
     }

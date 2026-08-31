@@ -146,6 +146,7 @@ ALTER TABLE system.webhook_events ENABLE ROW LEVEL SECURITY;
 ALTER TABLE system.feature_flags ENABLE ROW LEVEL SECURITY;
 
 -- Allow public read of feature flags
+DROP POLICY IF EXISTS "Public read for feature flags" ON system.feature_flags;
 CREATE POLICY "Public read for feature flags" ON system.feature_flags
     FOR SELECT USING (true);
 

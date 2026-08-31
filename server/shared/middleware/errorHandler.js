@@ -15,7 +15,8 @@ const { Sentry } = require('../../clients/sentry');
  */
 const EXPECTED_5XX_CODES = new Set([
   'USE_CLERK_AUTHENTICATION',
-  'PHONE_VERIFICATION_NOT_CONFIGURED'
+  'PHONE_VERIFICATION_NOT_CONFIGURED',
+  'WEBHOOK_NOT_CONFIGURED'
 ]);
 
 function errorHandler(err, req, res, next) {

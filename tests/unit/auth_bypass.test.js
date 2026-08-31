@@ -15,13 +15,38 @@ const path = require('path');
 
 const PROJECT_ROOT = path.resolve(__dirname, '..', '..');
 
-function evalInEnv(script, env) {
+function evalInEnv(script, env, options = {}) {
   return execFileSync(process.execPath, ['-e', script], {
     cwd: PROJECT_ROOT,
     env: { ...process.env, ...env },
     encoding: 'utf8',
-    stdio: ['ignore', 'pipe', 'pipe']
+    stdio: ['ignore', 'pipe', 'pipe'],
+    ...options
   }).trim();
+}
+
+/** Parses the last line of a child process's stdout as JSON. */
+function lastJsonLine(stdout) {
+  const lines = stdout.split('\n').filter(Boolean);
+  return JSON.parse(lines[lines.length - 1]);
+}
+
+/** Env shared by the production-mode child processes below. */
+function productionEnv(overrides = {}) {
+  return {
+    NODE_ENV: 'production',
+    // Deliberately dummy: the point is that the server boots when the
+    // security-critical credentials are PRESENT, and CLERK_WEBHOOK_SECRET is
+    // the one credential whose absence must NOT block boot.
+    CLERK_SECRET_KEY: 'sk_test_dummy',
+    CLERK_PUBLISHABLE_KEY: 'pk_test_dummy',
+    CLERK_WEBHOOK_SECRET: '',
+    SUPABASE_URL: 'https://example.supabase.co',
+    SUPABASE_SERVICE_ROLE_KEY: 'sb_test_dummy',
+    CORS_ORIGINS: 'https://loumoo.cm',
+    LOUMOO_TEST_AUTH_SECRET: '',
+    ...overrides
+  };
 }
 
 async function run() {
@@ -96,6 +121,68 @@ async function run() {
 
   assert.ok(problems.includes('LOUMOO_TEST_AUTH_SECRET'),
     'Setting the test bypass secret in production must be reported as a misconfiguration');
+
+  /* ── 5. CLERK_WEBHOOK_SECRET is a warning, NOT a boot blocker ──────────── */
+  /*    .env.example documents that without it the webhook endpoint answers  */
+  /*    503. The old code threw at boot, contradicting the docs and blocking */
+  /*    every deployment whose operator does not yet have a signing secret.  */
+
+  const bootWithoutWebhookSecret = lastJsonLine(evalInEnv(
+    `const c = require('./server/config/env');
+     c.assertProductionConfig();                      // must NOT throw
+     const problems = c.validateProductionConfig();
+     const wh = problems.find(p => p.variable === 'CLERK_WEBHOOK_SECRET');
+     console.log(JSON.stringify({
+       booted: true,
+       reported: Boolean(wh),
+       severity: wh ? wh.severity : null,
+       fatalCount: problems.filter(p => p.severity === 'error').length
+     }));`,
+    productionEnv()
+  ));
+
+  assert.strictEqual(bootWithoutWebhookSecret.booted, true,
+    'Production must boot without CLERK_WEBHOOK_SECRET — the endpoint degrades to 503, the deployment must not');
+  assert.strictEqual(bootWithoutWebhookSecret.reported, true,
+    'validateProductionConfig must still surface the missing webhook secret');
+  assert.strictEqual(bootWithoutWebhookSecret.severity, 'warning',
+    'A missing webhook secret is a warning-level problem, not a boot blocker');
+  assert.strictEqual(bootWithoutWebhookSecret.fatalCount, 0,
+    'No fatal configuration problems must remain when only the webhook secret is absent');
+
+  /* ── 6. The live webhook route answers 503 WEBHOOK_NOT_CONFIGURED ─────── */
+
+  const webhookProbe = lastJsonLine(evalInEnv(
+    `const http = require('http');
+     const app = require('./server/index');           // boots the REAL server
+     const server = http.createServer(app);
+     server.listen(0, '127.0.0.1', () => {
+       const port = server.address().port;
+       const payload = JSON.stringify({ type: 'user.deleted', data: { id: 'user_attacker' } });
+       const req = http.request({
+         host: '127.0.0.1', port, path: '/api/v1/webhooks/clerk', method: 'POST',
+         headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(payload) }
+       }, res => {
+         let body = '';
+         res.on('data', c => body += c);
+         res.on('end', () => {
+           let parsed = null;
+           try { parsed = JSON.parse(body); } catch (e) { /* not JSON */ }
+           console.log(JSON.stringify({ status: res.statusCode, code: parsed && parsed.error && parsed.error.code }));
+           server.close(() => process.exit(0));
+         });
+       });
+       req.on('error', err => { console.error(err); process.exit(1); });
+       req.write(payload); req.end();
+     });`,
+    productionEnv(),
+    { timeout: 30000 }
+  ));
+
+  assert.strictEqual(webhookProbe.status, 503,
+    'The Clerk webhook endpoint must answer 503 when CLERK_WEBHOOK_SECRET is not configured');
+  assert.strictEqual(webhookProbe.code, 'WEBHOOK_NOT_CONFIGURED',
+    'The 503 must carry the machine-readable WEBHOOK_NOT_CONFIGURED code');
 
   console.log('  ✓ Development bypass provably cannot execute in production');
 }

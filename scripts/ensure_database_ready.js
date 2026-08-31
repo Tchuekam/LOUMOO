@@ -73,16 +73,12 @@ async function viaManagement() {
     "select table_schema, table_name from information_schema.tables where table_schema in ('iam','system') order by 1,2"));
   log('Existing iam/system tables:', tablesRes.slice(0, 400));
 
-  // 2. apply each migration (split statements on ';' at line boundaries)
+  // 2. apply each migration as ONE query batch (DO $$ ... $$; blocks and
+  //    multi-statement files survive intact — splitting on ';\n' would shred them)
   for (const m of MIGRATIONS) {
     const sql = fs.readFileSync(path.join(MIGRATIONS_DIR, m), 'utf8');
-    const statements = sql.split(';\n').map(s => s.trim()).filter(s => s && !s.startsWith('--'));
-    const pre = await execSql("select to_regclass('iam.listings') as lst");
-    for (const stmt of statements) {
-      if (/^\s*$/m.test(stmt)) continue;
-      await execSql(stmt);
-    }
-    log('Applied migration:', m, `(${statements.length} statements)`);
+    await execSql(sql);
+    log('Applied migration:', m, '(single batch)');
   }
 
   // 3. expose schemas

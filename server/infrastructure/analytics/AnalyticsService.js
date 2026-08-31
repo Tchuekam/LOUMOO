@@ -17,12 +17,22 @@ let posthogClient = null;
  */
 const isProjectKey = key => typeof key === 'string' && key.startsWith('phc_');
 
-if (config.posthog.apiKey && !isProjectKey(config.posthog.apiKey)) {
+let analyticsDisabledReason = null;
+
+if (!config.posthog.apiKey) {
+  analyticsDisabledReason = 'POSTHOG_API_KEY is not configured';
   logger.warn(
-    '[Analytics] POSTHOG_API_KEY does not look like a project key (expected a "phc_" prefix). ' +
-    'Product analytics are disabled. Copy the Project API Key from PostHog → Settings → Project.'
+    '[Analytics] POSTHOG_API_KEY is not configured — product analytics are DISABLED. ' +
+    'Tracked events are NOT persisted anywhere.'
   );
-} else if (config.posthog.apiKey) {
+} else if (!isProjectKey(config.posthog.apiKey)) {
+  analyticsDisabledReason = 'POSTHOG_API_KEY is not a project key (expected "phc_" prefix)';
+  logger.warn(
+    '[Analytics] POSTHOG_API_KEY does not look like a project key (expected a "phc_" prefix) — ' +
+    'the live capture endpoint rejects personal ("phx_") keys with 401. ' +
+    'Product analytics are DISABLED. Copy the Project API Key from PostHog → Settings → Project.'
+  );
+} else {
   try {
     posthogClient = new PostHog(config.posthog.apiKey, {
       host: config.posthog.host,
@@ -35,6 +45,7 @@ if (config.posthog.apiKey && !isProjectKey(config.posthog.apiKey)) {
     }
     logger.info('[Analytics] PostHog provider initialized successfully.');
   } catch (err) {
+    analyticsDisabledReason = `PostHog client initialization failed: ${err.message}`;
     logger.error('[Analytics] Failed to initialize PostHog provider', err);
   }
 }
@@ -75,7 +86,13 @@ class AnalyticsService {
           }
         });
       } else {
-        logger.debug(`[Analytics Track (Simulated)] ${eventName} for ${distinctId}`, properties);
+        // Honest degradation: the event was NOT persisted anywhere. This is a
+        // loud, unambiguous marker — never a pretend success.
+        logger.debug(
+          `[Analytics] Event NOT persisted (analytics disabled — ${analyticsDisabledReason}): ` +
+          `${eventName} for ${distinctId}`,
+          properties
+        );
       }
     } catch (err) {
       // Analytics failures must NEVER break critical user flows

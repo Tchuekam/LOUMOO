@@ -2,6 +2,7 @@
 /**
  * LOUMOO — Backend Services & API Keys Verification Suite
  * Performs comprehensive live diagnostic health checks across all configured cloud providers.
+ * Prints status codes and provider names only — NEVER secret values.
  */
 
 const fs = require('fs');
@@ -156,46 +157,62 @@ async function verifyAll() {
     }
   }
 
-  // 3. Clerk Auth Keys Validation
+  // 3. Clerk — LIVE API authentication check
   total++;
-  const clerkPubKey = process.env.CLERK_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
   const clerkSecret = process.env.CLERK_SECRET_KEY;
-  const clerkAppId = process.env.CLERK_APP_ID;
-
-  if (clerkPubKey && clerkSecret) {
-    if (clerkPubKey.startsWith('pk_') && clerkSecret.startsWith('sk_')) {
-      pass('Clerk Auth', `Valid key pair configured (App ID: ${clerkAppId || 'configured'}, pub: ${clerkPubKey.substring(0, 12)}...)`);
-      passed++;
-    } else {
-      warn('Clerk Auth', 'Keys present but might not follow standard pk_/sk_ format');
-    }
+  if (!clerkSecret) {
+    fail('Clerk Auth', 'Missing CLERK_SECRET_KEY');
   } else {
-    fail('Clerk Auth', 'Missing Clerk Publishable or Secret Key');
+    try {
+      const res = await fetch('https://api.clerk.com/v1/users?limit=1', {
+        headers: { Authorization: `Bearer ${clerkSecret}` },
+        signal: AbortSignal.timeout(8000)
+      });
+      if (res.ok) {
+        pass('Clerk Auth', `Live API authenticated (HTTP ${res.status} from /v1/users)`);
+        passed++;
+      } else {
+        warn('Clerk Auth', `Live API responded HTTP ${res.status} — key may be invalid or revoked`);
+      }
+    } catch (e) {
+      fail('Clerk Auth', `Live API call failed: ${e.message}`);
+    }
   }
 
-  // 4. Resend Transactional Email
+  // 4. Resend Transactional Email — LIVE API authentication check
   total++;
   const resendKey = process.env.RESEND_API_KEY;
   if (resendKey) {
     try {
-      const startTime = Date.now();
-      const res = await fetch('https://api.resend.com/emails', {
-        headers: {
-          'Authorization': `Bearer ${resendKey}`
-        },
+      const res = await fetch('https://api.resend.com/domains', {
+        headers: { 'Authorization': `Bearer ${resendKey}` },
         signal: AbortSignal.timeout(8000)
       });
-      const latency = Date.now() - startTime;
       let data = {};
-      try {
-        data = await res.json();
-      } catch (e) {}
+      try { data = await res.json(); } catch (e) {}
 
-      if (res.ok || data.name === 'restricted_api_key' || res.status === 200 || res.status === 401) {
-        pass('Resend Email', `API Key authenticated (${data.message || 'Restricted transactional send permission'}, ${latency}ms)`);
+      if (res.ok) {
+        pass('Resend Email', `Live API authenticated (HTTP ${res.status} from /domains)`);
         passed++;
+      } else if (data.name === 'restricted_api_key' || res.status === 401) {
+        // 401 with restricted_api_key means the key IS valid but scoped to
+        // sending email only — exactly what LOUMOO uses it for. Prove the
+        // send endpoint authorizes the key (422 = auth OK, payload invalid;
+        // nothing is actually sent).
+        const sendProbe = await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${resendKey}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({}),
+          signal: AbortSignal.timeout(8000)
+        });
+        if (sendProbe.status === 401) {
+          fail('Resend Email', `/emails rejected the key (HTTP 401)`);
+        } else {
+          pass('Resend Email', `Send-scoped key valid (GET /domains HTTP ${res.status} restricted_api_key; POST /emails HTTP ${sendProbe.status} = auth OK)`);
+          passed++;
+        }
       } else {
-        warn('Resend Email', `API responded with HTTP ${res.status}: ${data.message || ''}`);
+        warn('Resend Email', `Live API responded HTTP ${res.status}: ${data.message || ''}`);
       }
     } catch (e) {
       fail('Resend Email', `API call failed: ${e.message}`);
@@ -204,22 +221,20 @@ async function verifyAll() {
     fail('Resend Email', 'Missing RESEND_API_KEY');
   }
 
-  // 5. ElevenLabs Voice API
+  // 5. ElevenLabs Voice API — LIVE
   total++;
   const elevenKey = process.env.ELEVENLABS_API_KEY;
   if (elevenKey) {
     try {
       const startTime = Date.now();
       const res = await fetch('https://api.elevenlabs.io/v1/user', {
-        headers: {
-          'xi-api-key': elevenKey
-        },
+        headers: { 'xi-api-key': elevenKey },
         signal: AbortSignal.timeout(8000)
       });
       const latency = Date.now() - startTime;
       if (res.ok) {
         const userData = await res.json();
-        pass('ElevenLabs Voice', `Authenticated successfully (Tier: ${userData?.subscription?.tier || 'active'}, ${latency}ms)`);
+        pass('ElevenLabs Voice', `Live API authenticated (HTTP ${res.status}, Tier: ${userData?.subscription?.tier || 'active'}, ${latency}ms)`);
         passed++;
       } else {
         warn('ElevenLabs Voice', `HTTP ${res.status}: API rejected or unauthorized`);
@@ -231,28 +246,53 @@ async function verifyAll() {
     fail('ElevenLabs Voice', 'Missing ELEVENLABS_API_KEY');
   }
 
-  // 6. PostHog Analytics
+  // 6. PostHog Analytics — LIVE capture endpoint check
   total++;
   const posthogKey = process.env.POSTHOG_API_KEY;
   if (posthogKey) {
-    if (posthogKey.startsWith('phx_') || posthogKey.startsWith('phc_')) {
-      pass('PostHog Analytics', `API key structure verified (${posthogKey.substring(0, 12)}...)`);
-      passed++;
-    } else {
-      warn('PostHog Analytics', 'API key does not have standard phx_ prefix');
+    const posthogHost = process.env.POSTHOG_HOST || 'https://us.i.posthog.com';
+    try {
+      const res = await fetch(`${posthogHost}/batch`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          api_key: posthogKey,
+          batch: [{ event: 'service_verification', distinct_id: 'verify', properties: {} }]
+        }),
+        signal: AbortSignal.timeout(8000)
+      });
+      if (res.ok) {
+        pass('PostHog Analytics', `Live capture accepted (HTTP ${res.status} from ${posthogHost}/batch)`);
+        passed++;
+      } else if (res.status === 401) {
+        warn('PostHog Analytics', `Live capture rejected the key (HTTP 401). A personal ("phx_") key cannot ingest events — use a project ("phc_") key.`);
+      } else {
+        warn('PostHog Analytics', `Live capture responded HTTP ${res.status}`);
+      }
+    } catch (e) {
+      fail('PostHog Analytics', `Live API call failed: ${e.message}`);
     }
   } else {
     fail('PostHog Analytics', 'Missing POSTHOG_API_KEY');
   }
 
-  // 7. Sentry DSN
+  // 7. Sentry DSN — parse validation (no network round-trip)
   total++;
   const sentryDsn = process.env.SENTRY_DSN;
-  if (sentryDsn && sentryDsn.includes('@') && sentryDsn.includes('sentry.io')) {
-    pass('Sentry APM', `DSN verified (${sentryDsn.split('@')[1]})`);
-    passed++;
+  if (sentryDsn) {
+    try {
+      const u = new URL(sentryDsn);
+      if (u.protocol === 'https:' && u.hostname.includes('sentry.io') && u.pathname.match(/^\/(\d+)/)) {
+        pass('Sentry APM', `DSN parses (host: ${u.hostname})`);
+        passed++;
+      } else {
+        fail('Sentry APM', 'DSN present but has unexpected format');
+      }
+    } catch (e) {
+      fail('Sentry APM', `DSN parse error: ${e.message}`);
+    }
   } else {
-    fail('Sentry APM', 'Invalid or missing SENTRY_DSN');
+    fail('Sentry APM', 'Missing SENTRY_DSN');
   }
 
   // 8. GitHub PAT Token
@@ -268,10 +308,9 @@ async function verifyAll() {
         },
         signal: AbortSignal.timeout(8000)
       });
-      const latency = Date.now() - startTime;
       if (res.ok) {
         const ghUser = await res.json();
-        pass('GitHub PAT', `Authenticated as @${ghUser.login} (${ghUser.name || 'Developer'}, ${latency}ms)`);
+        pass('GitHub PAT', `Authenticated as @${ghUser.login} (${ghUser.name || 'Developer'}, ${Date.now() - startTime}ms)`);
         passed++;
       } else {
         warn('GitHub PAT', `HTTP ${res.status}: Token may have expired or lacks user scope`);
@@ -295,10 +334,9 @@ async function verifyAll() {
         },
         signal: AbortSignal.timeout(8000)
       });
-      const latency = Date.now() - startTime;
       if (res.ok) {
         const netlifyUser = await res.json();
-        pass('Netlify PAT', `Authenticated as ${netlifyUser.email || netlifyUser.full_name || 'Netlify User'} (${latency}ms)`);
+        pass('Netlify PAT', `Authenticated as ${netlifyUser.email || netlifyUser.full_name || 'Netlify User'} (${Date.now() - startTime}ms)`);
         passed++;
       } else {
         warn('Netlify PAT', `HTTP ${res.status}`);
@@ -310,17 +348,70 @@ async function verifyAll() {
     fail('Netlify PAT', 'Missing NETLIFY_AUTH_TOKEN');
   }
 
-  // 10. AISStream Key
+  // 10. AISStream — LIVE maritime websocket subscription check
   total++;
   const aisKey = process.env.AISSTREAM_API_KEY;
-  if (aisKey && aisKey.length >= 20) {
-    pass('AISStream API', `Telemetry key configured (${aisKey.substring(0, 8)}...)`);
-    passed++;
+  if (aisKey) {
+    try {
+      const WebSocket = require('ws');
+      const ws = new WebSocket('wss://stream.aisstream.io/v0/stream');
+      const outcome = await new Promise((resolve) => {
+        const timer = setTimeout(() => resolve({ ok: false, why: 'timeout — no data frame received' }), 15000);
+        ws.on('open', () => {
+          ws.send(JSON.stringify({
+            APIKey: aisKey,
+            BoundingBoxes: [[[3.0, 9.0], [5.0, 10.5]]],
+            FilterMessageTypes: ['PositionReport']
+          }));
+        });
+        ws.on('message', (data) => {
+          const s = String(data);
+          if (/MessageType|PositionReport|ShipData/i.test(s)) {
+            clearTimeout(timer);
+            resolve({ ok: true, why: 'live maritime data frame received (subscription accepted)' });
+          } else if (/invalid|refus|unauthor|error/i.test(s)) {
+            clearTimeout(timer);
+            resolve({ ok: false, why: `stream rejected: ${s.slice(0, 100)}` });
+          }
+        });
+        ws.on('close', (code) => { clearTimeout(timer); resolve({ ok: false, why: `socket closed (code ${code})` }); });
+        ws.on('error', (e) => { clearTimeout(timer); resolve({ ok: false, why: `websocket error: ${e.message}` }); });
+      });
+      try { ws.close(); } catch (e) {}
+      if (outcome.ok) { pass('AISStream Marine', `Live subscription OK — ${outcome.why}`); passed++; }
+      else { warn('AISStream Marine', outcome.why); }
+    } catch (e) {
+      fail('AISStream Marine', `Websocket check failed: ${e.message}`);
+    }
   } else {
-    fail('AISStream API', 'Missing or invalid AISSTREAM_API_KEY');
+    fail('AISStream Marine', 'Missing AISSTREAM_API_KEY');
   }
 
-  // 11. Google SMTP App Password
+  // 11. AISStream LLM chat-completions probe (only when a base URL is configured)
+  total++;
+  if (aisKey && process.env.AISSTREAM_BASE_URL) {
+    try {
+      const url = `${process.env.AISSTREAM_BASE_URL.replace(/\/+$/, '')}/v1/chat/completions`;
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${aisKey}` },
+        body: JSON.stringify({
+          model: process.env.AISSTREAM_MODEL || 'gpt-4o-mini',
+          messages: [{ role: 'user', content: 'Say OK' }],
+          max_tokens: 8
+        }),
+        signal: AbortSignal.timeout(12000)
+      });
+      if (res.ok) { pass('AISStream Chat', `LLM chat completions live (HTTP ${res.status})`); passed++; }
+      else { warn('AISStream Chat', `LLM chat completions responded HTTP ${res.status} — check AISSTREAM_BASE_URL / model`); }
+    } catch (e) {
+      fail('AISStream Chat', `LLM chat completions unreachable: ${e.message}`);
+    }
+  } else {
+    warn('AISStream Chat', 'AISSTREAM_BASE_URL not configured — chat-completions probe skipped (offline baseline in use)');
+  }
+
+  // 12. Google SMTP App Password
   total++;
   const googleAppPass = process.env.GOOGLE_APP_PASSWORD;
   if (googleAppPass) {

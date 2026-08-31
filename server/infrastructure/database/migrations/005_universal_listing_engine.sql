@@ -212,22 +212,28 @@ ALTER TABLE iam.listing_availability ENABLE ROW LEVEL SECURITY;
 ALTER TABLE iam.listing_drafts ENABLE ROW LEVEL SECURITY;
 
 -- Public read for published listings and taxonomy
+DROP POLICY IF EXISTS "Public read for published listings" ON iam.listings;
 CREATE POLICY "Public read for published listings" ON iam.listings
   FOR SELECT USING (status = 'PUBLISHED' AND visibility = 'PUBLIC' AND deleted_at IS NULL);
 
+DROP POLICY IF EXISTS "Public read for active categories" ON iam.listing_categories;
 CREATE POLICY "Public read for active categories" ON iam.listing_categories
   FOR SELECT USING (is_active = true);
 
+DROP POLICY IF EXISTS "Public read for category attributes" ON iam.category_attributes;
 CREATE POLICY "Public read for category attributes" ON iam.category_attributes
   FOR SELECT USING (true);
 
+DROP POLICY IF EXISTS "Public read for published listing media" ON iam.listing_media;
 CREATE POLICY "Public read for published listing media" ON iam.listing_media
   FOR SELECT USING (EXISTS (SELECT 1 FROM iam.listings l WHERE l.id = listing_media.listing_id AND l.status = 'PUBLISHED' AND l.deleted_at IS NULL));
 
+DROP POLICY IF EXISTS "Public read for published listing variants" ON iam.listing_variants;
 CREATE POLICY "Public read for published listing variants" ON iam.listing_variants
   FOR SELECT USING (EXISTS (SELECT 1 FROM iam.listings l WHERE l.id = listing_variants.listing_id AND l.status = 'PUBLISHED' AND l.deleted_at IS NULL));
 
 -- Store owners and staff full access to own listings
+DROP POLICY IF EXISTS "Store owners manage own listings" ON iam.listings;
 CREATE POLICY "Store owners manage own listings" ON iam.listings
   FOR ALL USING (
     EXISTS (
@@ -238,6 +244,7 @@ CREATE POLICY "Store owners manage own listings" ON iam.listings
     )
   );
 
+DROP POLICY IF EXISTS "Store owners manage own listing drafts" ON iam.listing_drafts;
 CREATE POLICY "Store owners manage own listing drafts" ON iam.listing_drafts
   FOR ALL USING (
     seller_id = auth.uid()::text::text OR

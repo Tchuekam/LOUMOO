@@ -5,8 +5,17 @@
  * re-exports this module — there is intentionally only one config object.
  *
  * Production policy: the server refuses to boot when a credential that
- * security depends on is missing. A misconfigured production deployment must
- * fail loudly at startup, never degrade silently into a permissive mode.
+ * security depends on is missing (severity 'error'). A misconfigured
+ * production deployment must fail loudly at startup, never degrade silently
+ * into a permissive mode.
+ *
+ * One credential is deliberately a WARNING, not a boot blocker:
+ * CLERK_WEBHOOK_SECRET. Its absence cannot be exploited — the webhook
+ * endpoint answers 503 WEBHOOK_NOT_CONFIGURED and processes NO unsigned
+ * identity event (see clerkWebhookHandler.js). The documented intent in
+ * .env.example is exactly that: "Without it the webhook endpoint answers
+ * 503". Blocking the whole deployment on it is therefore a deployment
+ * availability bug, not a security requirement.
  */
 
 const { z } = require('zod');
@@ -73,6 +82,11 @@ const envSchema = z.object({
 
   // AISStream
   AISSTREAM_API_KEY: z.string().optional(),
+  // OpenAI-compatible base URL for the AISStream LLM chat provider
+  // (e.g. https://api.openai.com/v1 or a self-hosted OpenAI-compatible gateway).
+  // Leave empty when using the deterministic offline listing-AI baseline.
+  AISSTREAM_BASE_URL: z.string().optional(),
+  AISSTREAM_MODEL: z.string().optional(),
 
   // Google SMTP / App Password
   GOOGLE_APP_PASSWORD: z.string().optional(),
@@ -166,7 +180,11 @@ const config = {
     enabled: !isProduction && Boolean(env.LOUMOO_TEST_AUTH_SECRET)
   },
 
-  aisstream: { apiKey: env.AISSTREAM_API_KEY || '' },
+  aisstream: {
+    apiKey: env.AISSTREAM_API_KEY || '',
+    baseUrl: env.AISSTREAM_BASE_URL || '',
+    model: env.AISSTREAM_MODEL || 'gpt-4o-mini'
+  },
   google: { appPassword: env.GOOGLE_APP_PASSWORD || '' },
   elevenlabs: { apiKey: env.ELEVENLABS_API_KEY || '' },
 
@@ -189,45 +207,64 @@ const config = {
 const PRODUCTION_REQUIRED = [
   ['CLERK_SECRET_KEY', config.clerk.secretKey, 'Session verification is impossible without it.'],
   ['CLERK_PUBLISHABLE_KEY', config.clerk.publishableKey, 'Required to resolve the Clerk frontend API and validate token issuers.'],
-  ['CLERK_WEBHOOK_SECRET', config.clerk.webhookSecret, 'Unsigned webhooks would let anyone forge identity events.'],
   ['SUPABASE_URL', config.supabase.url, 'No database means no authoritative account state.'],
   ['SUPABASE_SERVICE_ROLE_KEY', config.supabase.serviceRoleKey, 'The API cannot read or write account state without it.']
 ];
 
 /**
+ * Missing credentials that degrade ONE capability but are not exploitable and
+ * must not block boot. The webhook endpoint refuses to process unsigned
+ * identity events (503 WEBHOOK_NOT_CONFIGURED) until the secret is set — the
+ * documented behavior in .env.example is that the server runs without it.
+ */
+const PRODUCTION_WARNINGS = [
+  ['CLERK_WEBHOOK_SECRET', config.clerk.webhookSecret,
+    'Missing. The /api/v1/webhooks/clerk endpoint answers 503 WEBHOOK_NOT_CONFIGURED ' +
+    'until the Svix signing secret is configured — identity events are NOT processed.']
+];
+
+/**
  * Returns the list of misconfigurations. Always safe to call — it never
- * includes secret VALUES, only variable names.
+ * includes secret VALUES, only variable names. Each problem carries a
+ * severity: 'error' blocks boot, 'warning' is logged and does not.
  */
 function validateProductionConfig() {
   const problems = [];
 
   for (const [name, value, why] of PRODUCTION_REQUIRED) {
-    if (!value) problems.push({ variable: name, reason: `Missing. ${why}` });
+    if (!value) problems.push({ variable: name, reason: `Missing. ${why}`, severity: 'error' });
+  }
+
+  for (const [name, value, why] of PRODUCTION_WARNINGS) {
+    if (!value) problems.push({ variable: name, reason: why, severity: 'warning' });
   }
 
   if (config.corsOrigins.includes('*')) {
     problems.push({
       variable: 'CORS_ORIGINS',
-      reason: 'Wildcard "*" is not permitted in production; list the exact origins.'
+      reason: 'Wildcard "*" is not permitted in production; list the exact origins.',
+      severity: 'error'
     });
   }
 
   if (env.LOUMOO_TEST_AUTH_SECRET) {
     problems.push({
       variable: 'LOUMOO_TEST_AUTH_SECRET',
-      reason: 'The test authentication bypass secret must never be set in production.'
+      reason: 'The test authentication bypass secret must never be set in production.',
+      severity: 'error'
     });
   }
 
   return problems;
 }
 
-/** Throws in production when required configuration is absent. */
+/** Throws in production when a security-critical configuration is absent. */
 function assertProductionConfig() {
   if (!config.isProduction) return [];
   const problems = validateProductionConfig();
-  if (problems.length > 0) {
-    const detail = problems.map(p => `  - ${p.variable}: ${p.reason}`).join('\n');
+  const fatal = problems.filter(p => p.severity === 'error');
+  if (fatal.length > 0) {
+    const detail = fatal.map(p => `  - ${p.variable}: ${p.reason}`).join('\n');
     throw new Error(
       `[LOUMOO] Refusing to start in production with an insecure configuration:\n${detail}\n` +
       'See .env.example for the full list of required variables.'

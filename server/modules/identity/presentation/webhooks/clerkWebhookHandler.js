@@ -28,7 +28,7 @@ const { EVENT_TYPES, createDomainEvent } = require('../../../../infrastructure/e
 const AnalyticsService = require('../../../../infrastructure/analytics/AnalyticsService');
 const EmailProvider = require('../../../../infrastructure/email/EmailProvider');
 const logger = require('../../../../shared/logging/logger');
-const { AuthenticationError, InfrastructureError } = require('../../../../shared/errors/AppError');
+const { AuthenticationError, NotConfiguredError } = require('../../../../shared/errors/AppError');
 
 const HANDLED_EVENTS = new Set(['user.created', 'user.updated', 'user.deleted']);
 
@@ -41,11 +41,18 @@ async function handleClerkWebhook(req, res, next) {
   try {
     if (!config.clerk.webhookSecret) {
       // Refusing is the only safe answer. Accepting unsigned identity events
-      // would let anyone create, mutate or delete any LOUMOO account.
-      logger.error('[ClerkWebhook] Rejected: CLERK_WEBHOOK_SECRET is not configured');
-      throw new InfrastructureError(
-        'Clerk',
-        'Webhook processing is disabled: CLERK_WEBHOOK_SECRET is not configured'
+      // would let anyone create, mutate or delete any LOUMOO account. This is
+      // the DOCUMENTED behavior (.env.example): the deployment boots, the
+      // endpoint answers 503 WEBHOOK_NOT_CONFIGURED, and no identity event is
+      // processed. It is a warning in production config validation, not a
+      // boot blocker — an absent secret cannot be exploited, only unused.
+      logger.warn(
+        '[ClerkWebhook] Rejected: CLERK_WEBHOOK_SECRET is not configured — ' +
+        'answering 503 WEBHOOK_NOT_CONFIGURED. Identity events will not be processed.'
+      );
+      throw new NotConfiguredError(
+        'Webhook processing is disabled: CLERK_WEBHOOK_SECRET is not configured',
+        { requirement: 'CLERK_WEBHOOK_SECRET', endpoint: '/api/v1/webhooks/clerk' }
       );
     }
 

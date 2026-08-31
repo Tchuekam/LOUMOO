@@ -194,10 +194,12 @@ ALTER TABLE iam.store_settings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE iam.store_analytics ENABLE ROW LEVEL SECURITY;
 
 -- Stores RLS: Public active stores are viewable by all; draft/private stores only by members
+DROP POLICY IF EXISTS p_stores_public_read ON iam.stores;
 CREATE POLICY p_stores_public_read ON iam.stores
     FOR SELECT USING (status = 'ACTIVE' AND visibility = 'PUBLIC' AND deleted_at IS NULL);
 
 -- Store Verifications RLS: Strictly private to store members with admin/owner role
+DROP POLICY IF EXISTS p_store_verifications_owner ON iam.store_verifications;
 CREATE POLICY p_store_verifications_owner ON iam.store_verifications
     FOR ALL USING (
         store_id IN (
@@ -207,6 +209,7 @@ CREATE POLICY p_store_verifications_owner ON iam.store_verifications
     );
 
 -- Store Settings RLS: Only store owners/admins can read and update
+DROP POLICY IF EXISTS p_store_settings_owner ON iam.store_settings;
 CREATE POLICY p_store_settings_owner ON iam.store_settings
     FOR ALL USING (
         store_id IN (
@@ -216,6 +219,7 @@ CREATE POLICY p_store_settings_owner ON iam.store_settings
     );
 
 -- Store Analytics RLS: Only store members can read private performance data
+DROP POLICY IF EXISTS p_store_analytics_members ON iam.store_analytics;
 CREATE POLICY p_store_analytics_members ON iam.store_analytics
     FOR SELECT USING (
         store_id IN (

@@ -114,38 +114,50 @@ ALTER TABLE iam.notification_preferences ENABLE ROW LEVEL SECURITY;
 ALTER TABLE iam.orders ENABLE ROW LEVEL SECURITY;
 
 -- 8. Strict RLS Policies for Resource Owners
+DROP POLICY IF EXISTS "Users can manage own addresses" ON iam.addresses;
 CREATE POLICY "Users can manage own addresses"
     ON iam.addresses FOR ALL
     USING (user_id = auth.uid()::text)
     WITH CHECK (user_id = auth.uid()::text);
 
+DROP POLICY IF EXISTS "Users can manage own saved items" ON iam.saved_items;
 CREATE POLICY "Users can manage own saved items"
     ON iam.saved_items FOR ALL
     USING (user_id = auth.uid()::text)
     WITH CHECK (user_id = auth.uid()::text);
 
+DROP POLICY IF EXISTS "Users can manage own followed stores" ON iam.followed_stores;
 CREATE POLICY "Users can manage own followed stores"
     ON iam.followed_stores FOR ALL
     USING (user_id = auth.uid()::text)
     WITH CHECK (user_id = auth.uid()::text);
 
+DROP POLICY IF EXISTS "Users can view own user activities" ON iam.user_activities;
 CREATE POLICY "Users can view own user activities"
     ON iam.user_activities FOR SELECT
     USING (user_id = auth.uid()::text);
 
+DROP POLICY IF EXISTS "Users can manage own notification preferences" ON iam.notification_preferences;
 CREATE POLICY "Users can manage own notification preferences"
     ON iam.notification_preferences FOR ALL
     USING (user_id = auth.uid()::text)
     WITH CHECK (user_id = auth.uid()::text);
 
+DROP POLICY IF EXISTS "Buyers can view own orders" ON iam.orders;
 CREATE POLICY "Buyers can view own orders"
     ON iam.orders FOR SELECT
     USING (buyer_id = auth.uid()::text);
 
 -- Service Role Full Access
+DROP POLICY IF EXISTS "Service role full access to addresses" ON iam.addresses;
 CREATE POLICY "Service role full access to addresses" ON iam.addresses FOR ALL TO service_role USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Service role full access to saved_items" ON iam.saved_items;
 CREATE POLICY "Service role full access to saved_items" ON iam.saved_items FOR ALL TO service_role USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Service role full access to followed_stores" ON iam.followed_stores;
 CREATE POLICY "Service role full access to followed_stores" ON iam.followed_stores FOR ALL TO service_role USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Service role full access to user_activities" ON iam.user_activities;
 CREATE POLICY "Service role full access to user_activities" ON iam.user_activities FOR ALL TO service_role USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Service role full access to notification_preferences" ON iam.notification_preferences;
 CREATE POLICY "Service role full access to notification_preferences" ON iam.notification_preferences FOR ALL TO service_role USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Service role full access to orders" ON iam.orders;
 CREATE POLICY "Service role full access to orders" ON iam.orders FOR ALL TO service_role USING (true) WITH CHECK (true);

@@ -64,6 +64,7 @@ ALTER TABLE system.account_security_events ENABLE ROW LEVEL SECURITY;
 
 -- 5. Strict RLS Policies
 -- Users can view and update only their own privacy preferences
+DROP POLICY IF EXISTS "Users can manage own privacy preferences" ON system.privacy_preferences;
 CREATE POLICY "Users can manage own privacy preferences"
   ON system.privacy_preferences
   FOR ALL
@@ -71,12 +72,14 @@ CREATE POLICY "Users can manage own privacy preferences"
   WITH CHECK (user_id = auth.uid()::text);
 
 -- Users can view their own security audit events
+DROP POLICY IF EXISTS "Users can view own security events" ON system.account_security_events;
 CREATE POLICY "Users can view own security events"
   ON system.account_security_events
   FOR SELECT
   USING (user_id = auth.uid()::text);
 
 -- Service role has full access
+DROP POLICY IF EXISTS "Service role full access to privacy preferences" ON system.privacy_preferences;
 CREATE POLICY "Service role full access to privacy preferences"
   ON system.privacy_preferences
   FOR ALL
@@ -84,6 +87,7 @@ CREATE POLICY "Service role full access to privacy preferences"
   USING (true)
   WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Service role full access to security events" ON system.account_security_events;
 CREATE POLICY "Service role full access to security events"
   ON system.account_security_events
   FOR ALL
