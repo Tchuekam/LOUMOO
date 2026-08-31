@@ -69,6 +69,33 @@ class DeleteAccountUseCase {
       );
     }
 
+    // 1b. Anonymize PII in child rows. The profile row is KEPT (so FK-restricted
+    //     purchase history preserves referential integrity), but that means
+    //     ON DELETE CASCADE never fires — addresses, saved items and followed
+    //     stores would keep the user's real name/phone/street forever. Blank
+    //     every PII-bearing field so deletion really removes the identity.
+    //     Non-PII rows (orders, activity log, security events) are preserved
+    //     untouched for the audit trail.
+    const piiAnonymizations = [
+      { table: 'addresses', fields: { recipient_name: null, phone_number: null, street_address: null, landmark: null, quarter: null, delivery_instructions: null } },
+      { table: 'saved_items', fields: { title: 'Deleted item', image_url: null, category: null, metadata: {} } },
+      { table: 'followed_stores', fields: { store_name: 'Deleted store', store_avatar: null, city: null } }
+    ];
+    const piiErrors = [];
+    for (const { table, fields } of piiAnonymizations) {
+      try {
+        const { error: childError } = await db.from(table).update(fields).eq('user_id', userId);
+        if (childError) piiErrors.push(`${table}: ${childError.message}`);
+      } catch (err) {
+        piiErrors.push(`${table}: ${err.message}`);
+      }
+    }
+    if (piiErrors.length > 0) {
+      // Never silently succeed: the profile is anonymized, but the child PII
+      // cleanup is the second half of the promise.
+      logger.error(`[DeleteAccount] Child PII anonymization incomplete: ${piiErrors.join(' | ')}`);
+    }
+
     // 2. Delete the Clerk identity, which also revokes every session.
     //    A failure here is reported: the user's personal data is gone, but
     //    telling them the account is fully deleted when their sign-in still

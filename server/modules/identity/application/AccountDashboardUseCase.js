@@ -82,7 +82,9 @@ class AccountDashboardUseCase {
         followedStores: followedStoresRes.total || 0,
         activeDeliveries: activeDeliveriesCount,
         addresses: addresses.length,
-        unreadNotifications: 2 // Dynamic simulated unread notifications
+        // Notifications are delivered by the notification pipeline; until it
+        // exists, 0 is the truth. A hardcoded 2 here was a lie to the user.
+        unreadNotifications: 0
       },
       defaultAddress,
       activeDeliveries: purchasesRes.orders || [],

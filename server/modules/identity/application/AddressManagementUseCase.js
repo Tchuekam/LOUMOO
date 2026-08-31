@@ -80,6 +80,23 @@ class AddressManagementUseCase {
     }
     const data = parseResult.data;
 
+    // Hard cap: an unbounded address list is an abuse vector (storage + cache
+    // bloat per user) and a UX failure. 20 is far beyond real needs.
+    const MAX_ADDRESSES = 20;
+    try {
+      const countRes = await SupabaseClient.getAdmin()
+        .from('addresses')
+        .select('id', { count: 'exact', head: true })
+        .eq('user_id', userId)
+        .is('deleted_at', null);
+      if (countRes.error) handleDatabaseFailure(countRes.error, 'Address count');
+      else if ((countRes.count || 0) >= MAX_ADDRESSES) {
+        throw new ValidationError(`You can save at most ${MAX_ADDRESSES} addresses`);
+      }
+    } catch (err) {
+      if (err instanceof ValidationError) throw err;
+    }
+
     let address = null;
 
     try {
@@ -229,29 +246,73 @@ class AddressManagementUseCase {
 
   /**
    * Delete address (Soft delete to preserve completed order historical snapshots)
+   *
+   * Strict semantics: deleting an address that does not exist (or is not the
+   * caller's) is a NOT_FOUND, not a silent success. If the deleted address was
+   * the default of its category, the most recent surviving address in that
+   * category is promoted so checkout always has a default.
    */
   async deleteAddress(userId, addressId) {
     if (!userId || !addressId) throw new ValidationError('User ID and Address ID are required');
 
+    // Capture the row BEFORE soft-deleting: we need its category/default state.
+    let target = null;
     try {
       const supabase = SupabaseClient.getAdmin();
-      const { error } = await supabase
+      const { data: row, error } = await supabase
+        .from('addresses')
+        .select('id, category, is_default')
+        .eq('id', addressId)
+        .eq('user_id', userId)
+        .is('deleted_at', null)
+        .maybeSingle();
+
+      if (error) throw error;
+      if (!row) throw new NotFoundError('Address not found or unauthorized');
+      target = row;
+
+      const { error: delError } = await supabase
         .from('addresses')
         .update({ deleted_at: new Date().toISOString(), is_default: false })
         .eq('id', addressId)
         .eq('user_id', userId);
+      if (delError) throw delError;
 
-      if (error) throw error;
+      // Promote a survivor when the deleted address was the default.
+      if (target.is_default) {
+        const { data: survivors, error: survError } = await supabase
+          .from('addresses')
+          .select('id')
+          .eq('user_id', userId)
+          .eq('category', target.category)
+          .is('deleted_at', null)
+          .order('created_at', { ascending: false })
+          .limit(1);
+        if (survError) throw survError;
+        if (survivors && survivors.length > 0) {
+          await supabase
+            .from('addresses')
+            .update({ is_default: true })
+            .eq('id', survivors[0].id)
+            .eq('user_id', userId);
+        }
+      }
     } catch (err) {
+      if (err instanceof NotFoundError) throw err;
       handleDatabaseFailure(err, 'Supabase delete');
-    }
-
-    // Always soft-delete in memory store regardless of DB outcome
-    const userAddresses = this._memoryStore.get(userId) || [];
-    const target = userAddresses.find(a => a.id === addressId);
-    if (target) {
-      target.deletedAt = new Date().toISOString();
-      target.isDefault = false;
+      // Memory-store fallback (dev only): mimic the DB semantics.
+      const userAddresses = this._memoryStore.get(userId) || [];
+      const index = userAddresses.findIndex(a => a.id === addressId && !a.deletedAt);
+      if (index === -1) throw new NotFoundError('Address not found');
+      const wasDefault = userAddresses[index].isDefault;
+      const category = userAddresses[index].category;
+      userAddresses[index].deletedAt = new Date().toISOString();
+      userAddresses[index].isDefault = false;
+      if (wasDefault) {
+        const survivors = userAddresses.filter(a => !a.deletedAt && a.category === category);
+        if (survivors.length > 0) survivors[0].isDefault = true;
+      }
+      this._memoryStore.set(userId, userAddresses);
     }
 
     await this._invalidateCache(userId);

@@ -25,7 +25,15 @@ const allProducts = [
 // GET /api/v1/products
 router.get('/products', async (req, res, next) => {
   try {
-    const { category, search, vertical, limit = 50, page = 1 } = req.query;
+    const { category, search, vertical } = req.query;
+
+    // Bounds: page >= 1, limit in [1, 100]. NaN/negative/huge values are
+    // clamped instead of producing slice(start, start+NaN) or full-table scans.
+    const rawLimit = parseInt(req.query.limit, 10);
+    const rawPage = parseInt(req.query.page, 10);
+    const limit = Number.isFinite(rawLimit) && rawLimit >= 1 ? Math.min(rawLimit, 100) : 50;
+    const page = Number.isFinite(rawPage) && rawPage >= 1 ? rawPage : 1;
+
     const cacheKey = `list:${category || 'all'}:${vertical || 'all'}:${search || ''}:${page}:${limit}`;
 
     const data = await CacheService.remember(cacheKey, 120, async () => {
@@ -35,6 +43,11 @@ router.get('/products', async (req, res, next) => {
         filtered = filtered.filter(p => p.vertical?.toLowerCase() === vertical.toLowerCase());
       }
 
+      const KNOWN_CATEGORIES = new Set(allProducts.map(p => p.category?.toLowerCase()).filter(Boolean));
+      if (category && !KNOWN_CATEGORIES.has(category.toLowerCase())) {
+        // Unknown category is not a 500 — it is an empty result with metadata.
+        return { items: [], total: 0, page, limit, hasMore: false };
+      }
       if (category) {
         filtered = filtered.filter(p => p.category?.toLowerCase() === category.toLowerCase());
       }
@@ -48,14 +61,14 @@ router.get('/products', async (req, res, next) => {
         );
       }
 
-      const startIndex = (parseInt(page, 10) - 1) * parseInt(limit, 10);
-      const paginated = filtered.slice(startIndex, startIndex + parseInt(limit, 10));
+      const startIndex = (page - 1) * limit;
+      const paginated = filtered.slice(startIndex, startIndex + limit);
 
       return {
         items: paginated,
         total: filtered.length,
-        page: parseInt(page, 10),
-        limit: parseInt(limit, 10),
+        page,
+        limit,
         hasMore: startIndex + paginated.length < filtered.length
       };
     }, 'catalog');

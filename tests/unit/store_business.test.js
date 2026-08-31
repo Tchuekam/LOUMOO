@@ -213,21 +213,27 @@ async function testStoreDiscoveryUseCase() {
 
 function testStoreAnalyticsUseCase() {
   const StoreAnalyticsUseCase = require('../../server/modules/store/application/StoreAnalyticsUseCase');
-  const store = { id: 'store_test_1', name: 'Test Store', followerCount: 100 };
+  const store = { id: 'store_test_1', name: 'Test Store', owner_id: 'usr_test_owner' };
 
   return StoreAnalyticsUseCase.getAnalytics(store, 'today').then(a => {
     assert.strictEqual(a.period, 'today');
-    assert.ok(a.summary.totalRevenueXaf > 0, 'Revenue > 0');
-    assert.ok(a.summary.totalOrders >= 1, 'At least 1 order');
-    assert.ok(a.topSellingProducts.length > 0, 'Has top products');
-    console.log('  ✓ StoreAnalyticsUseCase: today period');
+    // REAL analytics: no fabricated metrics. Revenue/orders reflect the actual
+    // database (zero for a store with no orders is the honest answer).
+    assert.strictEqual(a.dataSource, 'live', 'Analytics must be sourced from the live DB');
+    assert.ok(Number.isFinite(a.summary.totalRevenueXaf), 'Revenue must be a number (0 is valid)');
+    assert.ok(Array.isArray(a.topSellingProducts), 'Top products must be an array (empty is valid)');
+    assert.strictEqual(typeof a.summary.totalStoreViews, 'number');
+    assert.strictEqual(a.trackedMetricsAvailable, false, 'Visitor-level metrics must not be faked');
+    console.log('  ✓ StoreAnalyticsUseCase: today period (live data contract)');
     return StoreAnalyticsUseCase.getAnalytics(store, '30d');
   }).then(a => {
     assert.strictEqual(a.period, '30d');
-    assert.ok(a.summary.totalRevenueXaf > 100000, '30d revenue should be substantial');
-    assert.ok(a.summary.conversionRate > 0, 'Has conversion rate');
-    assert.ok(a.trafficBreakdown, 'Has traffic breakdown');
-    console.log('  ✓ StoreAnalyticsUseCase: 30d period with traffic');
+    assert.strictEqual(a.dataSource, 'live');
+    assert.ok(Number.isFinite(a.summary.totalRevenueXaf), '30d revenue must be a number (0 is valid)');
+    assert.ok(Array.isArray(a.topSellingProducts), '30d top products array');
+    assert.ok(a.window && a.window.from && a.window.to, 'Has explicit reporting window');
+    assert.strictEqual('conversionRate' in a.summary, false, 'No fabricated conversion rate');
+    console.log('  ✓ StoreAnalyticsUseCase: 30d period with live window');
   });
 }
 

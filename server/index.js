@@ -15,6 +15,8 @@ const errorHandler = require('./shared/middleware/errorHandler');
 const { securityHeaders } = require('./shared/middleware/securityHeaders');
 const RateLimitService = require('./infrastructure/cache/RateLimitService');
 const IdempotencyService = require('./infrastructure/cache/IdempotencyService');
+const OutboxService = require('./infrastructure/events/OutboxService');
+const { MediaStorageService } = require('./infrastructure/storage/MediaStorageService');
 
 // Domain route modules
 const healthRoutes = require('./modules/system/routes/healthRoutes');
@@ -164,13 +166,69 @@ if (Sentry && Sentry.setupExpressErrorHandler) {
 app.use(errorHandler);
 
 if (require.main === module) {
-  app.listen(config.port, () => {
+  const server = app.listen(config.port, () => {
     logger.info(`LOUMOO Enterprise Gateway running at http://localhost:${config.port}`);
     logger.info(`   - Health:        http://localhost:${config.port}/api/v1/health`);
     logger.info(`   - Account state: http://localhost:${config.port}/api/v1/me/state`);
     logger.info(`   - Listings:      http://localhost:${config.port}/api/v1/listings/taxonomy`);
     logger.info(`   - Frontend:      http://localhost:${config.port}/`);
   });
+
+  // ── Background workers (only when the process owns the listen socket) ──────
+  // The transactional outbox must deliver, and orphaned staging media must be
+  // swept. Both run on unref'd timers so they never keep the process alive.
+  const workers = [];
+
+  const outboxTimer = setInterval(async () => {
+    try {
+      const { processed } = await OutboxService.processPendingBatch(50);
+      if (processed > 0) logger.debug(`[OutboxWorker] dispatched ${processed} event(s)`);
+    } catch (err) {
+      logger.error(`[OutboxWorker] tick failed: ${err.message}`);
+    }
+  }, 15_000);
+  outboxTimer.unref();
+  workers.push(outboxTimer);
+
+  const sweepTimer = setInterval(async () => {
+    try {
+      const res = await MediaStorageService.sweepOrphans({ limit: 200 });
+      const swept = res.swept || res.removed || 0;
+      if (swept > 0) logger.info(`[MediaSweep] swept ${swept} orphaned staging object(s)`);
+    } catch (err) {
+      logger.error(`[MediaSweep] sweep failed: ${err.message}`);
+    }
+  }, 60 * 60 * 1000); // hourly
+  sweepTimer.unref();
+  workers.push(sweepTimer);
+
+  // Graceful shutdown — Railway / Kubernetes / Docker send SIGTERM before
+  // killing the process. Drained in-flight requests, stopped workers, closed
+  // Redis and exited cleanly so no event is half-written.
+  let shuttingDown = false;
+  async function shutdown(signal) {
+    if (shuttingDown) return;
+    shuttingDown = true;
+    logger.info(`[Shutdown] Received ${signal} — draining connections (max 10s).`);
+    const timer = setTimeout(() => {
+      logger.error('[Shutdown] Drain timeout exceeded — forcing exit.');
+      process.exit(1);
+    }, 10_000);
+    timer.unref();
+    server.close(async () => {
+      logger.info('[Shutdown] HTTP server closed.');
+      for (const t of workers) clearInterval(t);
+      try {
+        const RedisConnection = require('./infrastructure/cache/RedisConnection');
+        const redis = RedisConnection.getInstance();
+        if (redis && redis.status === 'ready') await redis.quit();
+      } catch (_) { /* Redis optional at shutdown */ }
+      logger.info('[Shutdown] Complete. Bye.');
+      process.exit(0);
+    });
+  }
+  process.on('SIGTERM', () => shutdown('SIGTERM'));
+  process.on('SIGINT', () => shutdown('SIGINT'));
 }
 
 module.exports = app;
