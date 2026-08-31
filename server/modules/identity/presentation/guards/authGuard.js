@@ -15,7 +15,7 @@
  *   - trust anything the browser stored about itself
  */
 
-const ClerkIdentityProvider = require('../../infrastructure/ClerkIdentityProvider');
+const SupabaseIdentityProvider = require('../../infrastructure/SupabaseIdentityProvider');
 const AccountStateService = require('../../application/AccountStateService');
 const ProfileRepository = require('../../infrastructure/ProfileRepository');
 const UserProfile = require('../../entities/UserProfile');
@@ -57,7 +57,7 @@ async function requireAuth(req, res, next) {
       throw new AuthenticationError('Authentication required. Sign in to continue.');
     }
 
-    const claims = await ClerkIdentityProvider.verifySessionToken(token);
+    const claims = await SupabaseIdentityProvider.verifySessionToken(token);
 
     const { principal, accountState } = await AccountStateService.resolve(claims.userId, {
       source: claims.source
@@ -78,7 +78,7 @@ async function requireAuth(req, res, next) {
       principal,
       accountState,
       auth: {
-        clerkUserId: claims.userId,
+        clerkUserId: claims.userId, email: claims.email, metadata: claims.metadata,
         sessionId: claims.sessionId,
         source: claims.source,
         userId: principal.id
@@ -112,14 +112,14 @@ async function optionalAuth(req, res, next) {
   }
 
   try {
-    const claims = await ClerkIdentityProvider.verifySessionToken(token);
+    const claims = await SupabaseIdentityProvider.verifySessionToken(token);
     const { principal, accountState } = await AccountStateService.resolve(claims.userId, {
       source: claims.source
     });
     attachPrincipal(req, {
       principal,
       accountState,
-      auth: principal ? { clerkUserId: claims.userId, sessionId: claims.sessionId, source: claims.source, userId: principal.id } : null
+      auth: principal ? { clerkUserId: claims.userId, email: claims.email, metadata: claims.metadata, sessionId: claims.sessionId, source: claims.source, userId: principal.id } : null
     });
   } catch (err) {
     logger.debug(`[AuthGuard] Optional auth ignored an unusable token: ${err.message}`);

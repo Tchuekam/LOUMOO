@@ -45,34 +45,25 @@ class MovedToClerkError extends AppError {
 /* ── Public bootstrap: what the browser needs to start Clerk ─────────────── */
 // GET /api/v1/auth/config
 router.get('/config', (req, res) => {
-  const phone = ClerkIdentityProvider.phoneVerificationCapability();
   res.json({
     status: 'success',
     data: {
-      provider: 'clerk',
-      // Publishable key only. The secret key never leaves the server.
-      publishableKey: config.clerk.publishableKey || null,
-      configured: ClerkIdentityProvider.isConfigured,
-      emailVerification: { enabled: true, provider: 'clerk' },
+      provider: 'supabase',
+      supabaseUrl: config.supabase.url,
+      anonKey: config.supabase.anonKey,
+      publishableKey: config.supabase.anonKey,
+      configured: true,
+      emailVerification: { enabled: true, provider: 'supabase' },
       phoneVerification: {
-        enabled: phone.available,
-        provider: phone.provider,
-        configurationRequirement: phone.requirement
+        enabled: false,
+        provider: 'none',
+        configurationRequirement: 'Phone verification is handled via application profile data.'
       }
     }
   });
 });
 
-/* ── Session establishment ───────────────────────────────────────────────── */
-/**
- * POST /api/v1/auth/session
- * Called once, right after Clerk authenticates the browser.
- * Verifies the presented session token, provisions the LOUMOO profile if this
- * is a first sign-in, and returns the authoritative account state.
- *
- * There is no request body: the ONLY input is the verified bearer token, so
- * there is nothing a client could supply to influence which account it gets.
- */
+/* ── Session establishment ── */
 router.post('/session', requireAuth, async (req, res, next) => {
   try {
     await ProfileRepository.recordLogin(req.principal.id, req.principal.clerkUserId);
