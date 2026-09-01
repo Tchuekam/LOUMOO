@@ -2060,7 +2060,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 <div class="outer-wrap">
 
 <!-- Desktop Sidebar Navigation (≥1024px) -->
-<nav class="sidebar-nav {{ sidebarCollapsed ? 'collapsed' : '' }}">
+<nav class="sidebar-nav {{ sidebarNavClass }}">
   <div class="sidebar-header">
     <div class="sidebar-brand-group">
       <span style="font:800 20px/1 var(--font-heading);letter-spacing:-.03em;color:var(--color-accent)">LOUMOO</span>
@@ -15896,6 +15896,9 @@ class Component extends DCLogic {
     SCREENS.forEach(k => { is[k] = s === k; });
     const on = {};
     SCREENS.forEach(k => { on[k] = () => this.go(k); });
+    on.toggleSidebar = () => this.toggleSidebar();
+    on.expandSidebar = () => this.expandSidebar();
+    on.collapseSidebar = () => this.collapseSidebar();
 
     const handleSellClick = () => {
       if (this.state.authStatus !== 'authenticated' && !this.state.isLoggedIn) {
@@ -15987,6 +15990,11 @@ class Component extends DCLogic {
 
     return {
       is, on, st, pick,
+      sidebarCollapsed: Boolean(this.state.sidebarCollapsed),
+      sidebarNavClass: Boolean(this.state.sidebarCollapsed) ? 'collapsed' : '',
+      toggleSidebar: () => this.toggleSidebar(),
+      expandSidebar: () => this.expandSidebar(),
+      collapseSidebar: () => this.collapseSidebar(),
       photoLabel: 'PRODUCT PHOTO ' + this.state.sel.photo.slice(1) + ' / 6',
       qty: this.state.qty,
       darkMode: this.state.darkMode,
