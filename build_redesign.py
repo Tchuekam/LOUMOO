@@ -339,6 +339,23 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   display: flex; flex-direction: column; background: var(--color-bg);
   overflow: hidden; flex: 1; position: relative;
 }
+/*
+ * Desktop side panels (Account Settings, Account Hub, …) render as bare
+ * children of .outer-wrap, which is height:100dvh + overflow:hidden. They had
+ * no scroll container of their own, so anything past the fold was clipped and
+ * unreachable — on a 720px-tall window the "SIGN OUT OF LOUMOO" button sits at
+ * y=1177 and could not be clicked at all.
+ *
+ * .sidebar-nav and .device-frame already manage their own scrolling and are
+ * excluded, so the mobile layout is untouched.
+ */
+.outer-wrap > div:not(.device-frame):not(.sidebar-nav),
+.outer-wrap > section:not(.device-frame):not(.sidebar-nav) {
+  max-height: 100dvh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
 .scr {
   flex: 1; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth; padding-bottom: calc(76px + env(safe-area-inset-bottom, 16px));
@@ -362,13 +379,19 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   .sidebar-nav {
     display: flex !important; flex-direction: column; width: 260px; height: 100vh;
     background: var(--color-surface); border-right: 1px solid var(--color-divider);
-    flex: none; padding: 20px 14px 16px; box-sizing: border-box; overflow-y: auto; z-index: 10;
+    flex: none; padding: 20px 14px 16px; box-sizing: border-box; overflow-y: auto; overflow-x: hidden; z-index: 10;
+    transition: width 0.22s cubic-bezier(0.4, 0, 0.2, 1), padding 0.22s ease;
   }
-  .device-frame { max-width: none !important; height: 100vh !important; background: var(--color-bg) !important; flex: 1 !important; }
+  .sidebar-nav.collapsed {
+    width: 72px !important;
+    padding: 16px 8px !important;
+    align-items: center;
+  }
+  .device-frame { max-width: none !important; height: 100vh !important; background: var(--color-bg) !important; flex: 1 !important; transition: all 0.22s ease; }
   .status-bar, .bottom-nav-mobile { display: none !important; }
   .desktop-topbar {
     display: flex !important; align-items: center; justify-content: space-between;
-    height: 62px; padding: 0 28px; background: var(--color-surface);
+    height: 62px; padding: 0 24px; background: var(--color-surface);
     border-bottom: 1px solid var(--color-divider); flex: none; gap: 16px; z-index: 10;
     box-sizing: border-box; box-shadow: var(--shadow-xs);
   }
@@ -420,23 +443,52 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 }
 
 /* Sidebar Nav */
-.sidebar-header { display: flex; align-items: center; justify-content: space-between; padding-bottom: 16px; border-bottom: 1px solid var(--color-divider); margin-bottom: 16px; }
+.sidebar-header { display: flex; align-items: center; justify-content: space-between; padding-bottom: 14px; border-bottom: 1px solid var(--color-divider); margin-bottom: 14px; min-height: 38px; }
+.sidebar-brand-group { display: flex; align-items: center; gap: 8px; }
+.sidebar-logo-icon { display: none; width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, var(--color-accent) 0%, #0056b3 100%); color: #fff; align-items: center; justify-content: center; font: 800 18px/1 var(--font-heading); cursor: pointer; box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3); transition: transform .15s ease; }
+.sidebar-logo-icon:hover { transform: scale(1.06); }
+.sidebar-toggle-btn { width: 32px; height: 32px; border-radius: 8px; border: 1px solid transparent; background: transparent; color: var(--color-text-secondary); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.15s ease; flex-shrink: 0; }
+.sidebar-toggle-btn:hover { background: var(--color-surface-hover); color: var(--color-text); border-color: var(--color-divider); }
 .sidebar-section-title { font: 700 9.5px/1 var(--font-heading); letter-spacing: .12em; color: var(--color-text-muted); padding: 10px 10px 6px; text-transform: uppercase; }
 .nav-item {
   display: flex; align-items: center; gap: 12px; width: 100%; padding: 9px 12px;
   border: none; border-radius: var(--radius-sm); background: transparent;
   color: var(--color-text-secondary); font: 600 13px/1.2 var(--font-body);
-  text-align: left; cursor: pointer; transition: all 0.15s ease;
+  text-align: left; cursor: pointer; transition: all 0.15s ease; white-space: nowrap; position: relative;
 }
+.nav-item svg { flex-shrink: 0; }
 .nav-item:hover { background: var(--color-surface-hover); color: var(--color-accent); }
 .nav-item.active { background: var(--color-accent-100); color: var(--color-accent); font-weight: 700; }
 .sidebar-badge { margin-left: auto; min-width: 18px; height: 18px; border-radius: 9px; background: var(--color-neutral-200); color: var(--color-text); font: 700 9.5px/18px var(--font-heading); text-align: center; padding: 0 4px; }
+.sidebar-cta-wrap { margin-top: 16px; padding: 0 4px; }
 .sidebar-cta-btn {
   display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; height: 42px;
   border-radius: var(--radius-pill); background: var(--color-accent); color: #fff; border: none;
-  font: 700 12.5px/1 var(--font-heading); box-shadow: var(--shadow-glow-blue); cursor: pointer;
+  font: 700 12.5px/1 var(--font-heading); box-shadow: var(--shadow-glow-blue); cursor: pointer; transition: all 0.15s ease; white-space: nowrap;
 }
 .sidebar-footer { border-top: 1px solid var(--color-divider); padding-top: 14px; margin-top: auto; }
+
+/* ── Collapsed / Icon-Only Rail Mode (Desktop ≥1024px) ── */
+.sidebar-nav.collapsed .sidebar-header { justify-content: center !important; padding-bottom: 12px; margin-bottom: 12px; }
+.sidebar-nav.collapsed .sidebar-brand-group { display: none !important; }
+.sidebar-nav.collapsed .sidebar-logo-icon { display: flex !important; }
+.sidebar-nav.collapsed .sidebar-toggle-btn { display: none !important; }
+.sidebar-nav.collapsed .sidebar-section-title { display: none !important; }
+.sidebar-nav.collapsed .nav-item { justify-content: center !important; width: 44px !important; height: 44px !important; padding: 0 !important; margin: 2px auto !important; border-radius: 12px !important; }
+.sidebar-nav.collapsed .nav-item span:not(.sidebar-badge) { display: none !important; }
+.sidebar-nav.collapsed .nav-item .sidebar-badge {
+  position: absolute !important; top: 4px !important; right: 4px !important;
+  min-width: 8px !important; height: 8px !important; font-size: 0 !important;
+  padding: 0 !important; border-radius: 50% !important; margin: 0 !important;
+  border: 2px solid var(--color-surface) !important;
+}
+.sidebar-nav.collapsed .sidebar-cta-wrap { padding: 0 !important; margin-top: 12px !important; display: flex !important; justify-content: center !important; width: 100% !important; }
+.sidebar-nav.collapsed .sidebar-cta-btn { width: 44px !important; height: 44px !important; min-width: 44px !important; border-radius: 50% !important; padding: 0 !important; margin: 0 auto !important; }
+.sidebar-nav.collapsed .sidebar-cta-btn span { display: none !important; }
+.sidebar-nav.collapsed .sidebar-footer { width: 100% !important; display: flex !important; justify-content: center !important; padding-top: 10px !important; }
+.sidebar-nav.collapsed .sidebar-footer .nav-item { justify-content: center !important; width: 44px !important; height: 44px !important; padding: 0 !important; margin: 0 auto !important; }
+.sidebar-nav.collapsed .sidebar-footer .nav-item div:not(:first-child),
+.sidebar-nav.collapsed .sidebar-footer .nav-item svg:last-child { display: none !important; }
 
 /* ── Dark Mode Obsidian Tech ── */
 [data-theme="dark"] {
@@ -2041,56 +2093,62 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 <div class="outer-wrap">
 
 <!-- Desktop Sidebar Navigation (≥1024px) -->
-<nav class="sidebar-nav">
+<nav class="sidebar-nav {{ sidebarCollapsed ? 'collapsed' : '' }}">
   <div class="sidebar-header">
-    <div style="display:flex;align-items:center;gap:8px">
+    <div class="sidebar-brand-group">
       <span style="font:800 20px/1 var(--font-heading);letter-spacing:-.03em;color:var(--color-accent)">LOUMOO</span>
       <span style="font:800 9px/1 var(--font-heading);letter-spacing:.08em;background:var(--color-accent-100);color:var(--color-accent);padding:2px 6px;border-radius:var(--radius-pill)">UNIVERSAL</span>
     </div>
+    <div class="sidebar-logo-icon" onClick="{{ toggleSidebar }}" title="Expand sidebar navigation">
+      <span>L</span>
+    </div>
+    <button onClick="{{ toggleSidebar }}" class="sidebar-toggle-btn" aria-label="Collapse sidebar" title="Collapse sidebar to icon rail">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 3v18"/></svg>
+    </button>
   </div>
 
-  <div style="display:flex;flex-direction:column;gap:2px;flex:1">
+  <div style="display:flex;flex-direction:column;gap:2px;flex:1;width:100%">
     <div class="sidebar-section-title">Discovery &amp; Marketplace</div>
-    <button onClick="{{ on.home }}" class="nav-item {{ is.home ? 'active' : '' }}">
+    <button onClick="{{ on.home }}" class="nav-item {{ is.home ? 'active' : '' }}" title="Marketplace Hub">
       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
       <span>Marketplace Hub</span>
     </button>
-    <button onClick="{{ on.category }}" class="nav-item {{ is.category ? 'active' : '' }}">
+    <button onClick="{{ on.category }}" class="nav-item {{ is.category ? 'active' : '' }}" title="All Categories &amp; Taxonomy">
       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
       <span>All Categories</span>
     </button>
-    <button onClick="{{ on.store }}" class="nav-item {{ (is.store || is.business) ? 'active' : '' }}">
+    <button onClick="{{ on.store }}" class="nav-item {{ (is.store || is.business) ? 'active' : '' }}" title="Stores &amp; Official Brands">
       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 3h20l-2 10H4L2 3z"/><path d="M6 13v7a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-7"/></svg>
       <span>Stores &amp; Brands</span>
     </button>
-    <button onClick="{{ on.travel }}" class="nav-item {{ (is.travel || is.travelResults || is.travelDetail || is.travelBus || is.travelPackages || is.travelVisa) ? 'active' : '' }}">
+    <button onClick="{{ on.travel }}" class="nav-item {{ (is.travel || is.travelResults || is.travelDetail || is.travelBus || is.travelPackages || is.travelVisa) ? 'active' : '' }}" title="Travel, Hotels &amp; Mobility">
       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1z"/></svg>
       <span>Travel &amp; Flights</span>
     </button>
-    <button onClick="{{ on.announce }}" class="nav-item {{ (is.announce || is.announceDetail) ? 'active' : '' }}">
+    <button onClick="{{ on.announce }}" class="nav-item {{ (is.announce || is.announceDetail) ? 'active' : '' }}" title="Announcements &amp; Job Board">
       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
       <span>Announcements &amp; Jobs</span>
     </button>
 
     <div class="sidebar-section-title" style="margin-top:12px">Tools &amp; Comparison</div>
-    <button onClick="{{ on.vs }}" class="nav-item {{ (is.vs || is.vsCompare) ? 'active' : '' }}">
+    <button onClick="{{ on.vs }}" class="nav-item {{ (is.vs || is.vsCompare) ? 'active' : '' }}" title="VS Comparison Matrix">
       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="18" rx="1"/><rect x="14" y="3" width="7" height="18" rx="1"/></svg>
       <span>VS Comparison</span>
       <span class="sidebar-badge">{{ vsCount }}</span>
     </button>
-    <button onClick="{{ on.chat }}" class="nav-item {{ (is.chat || is.threadSeller) ? 'active' : '' }}">
+    <button onClick="{{ on.chat }}" class="nav-item {{ (is.chat || is.threadSeller) ? 'active' : '' }}" title="Direct Seller &amp; Merchant Discussions">
       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
       <span>Discussions</span>
       <span class="sidebar-badge" style="background:var(--color-wa-green);color:#fff">2</span>
     </button>
-    <button onClick="{{ on.threadAi }}" class="nav-item {{ is.threadAi ? 'active' : '' }}">
+    <button onClick="{{ on.threadAi }}" class="nav-item {{ is.threadAi ? 'active' : '' }}" title="TchueKAM AI Intelligence Engine">
       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
       <span>TchueKAM AI</span>
       <span style="margin-left:auto;font:800 8.5px/1 var(--font-heading);background:var(--color-accent-100);color:var(--color-accent);padding:2px 6px;border-radius:var(--radius-pill)">AI</span>
     </button>
 
-    <div style="margin-top:16px;padding:0 4px">
-      <button onClick="{{ ctaAction }}" class="sidebar-cta-btn">
+    <div class="sidebar-cta-wrap">
+      <button onClick="{{ ctaAction }}" class="sidebar-cta-btn" title="{{ ctaLabel }}">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         <span>{{ ctaLabel }}</span>
       </button>
@@ -2099,7 +2157,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 
   <div class="sidebar-footer">
     <sc-if value="{{ isLoggedIn }}">
-      <button onClick="{{ on.profile }}" class="nav-item {{ (is.profile || is.settings || is.orders || is.seller) ? 'active' : '' }}" style="padding:6px 8px">
+      <button onClick="{{ on.profile }}" class="nav-item {{ (is.profile || is.settings || is.orders || is.seller) ? 'active' : '' }}" style="padding:6px 8px" title="{{ userName }} · {{ profileRoleLabel }}">
         <div style="width:30px;height:30px;border-radius:50%;background:var(--color-accent);color:#fff;display:flex;align-items:center;justify-content:center;font:800 11px/1 var(--font-heading);flex:none">{{ userInitials }}</div>
         <div style="flex:1;min-width:0">
           <div style="font-weight:700;font-size:12.5px;color:var(--color-text);line-height:1.1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ userName }}</div>
@@ -2109,7 +2167,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
       </button>
     </sc-if>
     <sc-if value="{{ !isLoggedIn }}">
-      <button onClick="{{ on.signIn }}" class="nav-item" style="padding:8px 12px;background:var(--color-accent-100);color:var(--color-accent);border-radius:var(--radius-sm);justify-content:center;font-weight:700">
+      <button onClick="{{ on.signIn }}" class="nav-item" style="padding:8px 12px;background:var(--color-accent-100);color:var(--color-accent);border-radius:var(--radius-sm);justify-content:center;font-weight:700" title="Sign In to LOUMOO">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
         <span>Sign In to LOUMOO</span>
       </button>
@@ -2121,7 +2179,10 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 
 <!-- Desktop Topbar (≥1024px) -->
 <div class="desktop-topbar">
-  <div style="display:flex;align-items:center;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px">
+    <button onClick="{{ toggleSidebar }}" aria-label="Toggle sidebar navigation" title="{{ sidebarCollapsed ? 'Expand full sidebar' : 'Collapse to icon rail' }}" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--color-text);transition:all .15s ease">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 3v18"/></svg>
+    </button>
     <button onClick="{{ back }}" aria-label="Go back" title="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--color-text)">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
     </button>
@@ -2241,8 +2302,11 @@ footer_and_scripts = """
 
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:446,&quot;height&quot;:900},&quot;userName&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Tchuekam&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;showAds&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Home&quot;}}">
 const SCREENS = [
+  // NOTE: 'sellers' was declared here but has no template anywhere, so any
+  // control routed to it landed the user on a blank screen. The two "COMPARE
+  // SELLERS" buttons now point at 'vs' (the comparison hub, which exists).
   'home','search','filters','voice','category','bestpicks','freeday','notifications','chat','threadAi','threadSeller',
-  'product','sellers','cart','checkout','paying','success','orders','store','business','brand','vs','vsCompare','visual',
+  'product','cart','checkout','paying','success','orders','store','business','brand','vs','vsCompare','visual',
   'visualScan','visualResults','upload','uploadDetails','uploadPrice','uploadSuccess','myListings','travel','travelBus',
   'travelPackages','travelVisa','travelResults','travelDetail','travelPassenger','travelTicket','announce','announceStudio','announceCampaigns','announceDetail',
   'profile','seller','settings','payFailed','networkError','saved','transactions','loading',
@@ -2364,11 +2428,11 @@ const PRODUCTS_DATA = {
     storeCity: 'Douala, Akwa',
     storeRating: '4.9',
     storeVerified: true,
-    coverImage: 'https://res.insta360.com/static/c212314bdffc00af1dd1bbb5a475846f/%E5%BC%80%E5%9C%BA%E5%8A%A8%E7%94%BB3480-2270_2%E5%80%8D_medium.jpg',
+    coverImage: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=800&q=85',
     images: [
-      'https://res.insta360.com/static/c212314bdffc00af1dd1bbb5a475846f/%E5%BC%80%E5%9C%BA%E5%8A%A8%E7%94%BB3480-2270_2%E5%80%8D_medium.jpg',
-      'https://res.insta360.com/dynamic/store/c75b9cdd117b5fd36f217b3058ca5ca6/2831_21976821-f13e-4823-820c-660ba7db44f4.png',
-      'https://res.insta360.com/static/86725227ea198f24458df872cf5d691e/x4_standalone.png'
+      'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=800&q=85',
+      'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=800&q=85',
+      'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?auto=format&fit=crop&w=800&q=85'
     ],
     videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-surfer-riding-a-wave-in-the-sea-1224-large.mp4',
     attributes: [
@@ -2399,11 +2463,11 @@ const PRODUCTS_DATA = {
     storeCity: 'Douala, Akwa Commercial',
     storeRating: '4.9',
     storeVerified: true,
-    coverImage: 'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-15-pro-finish-select-202309-6-7inch-naturaltitanium?wid=1000&hei=1000&fmt=jpeg&qlt=90',
+    coverImage: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=800&q=85',
     images: [
-      'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-15-pro-finish-select-202309-6-7inch-naturaltitanium?wid=1000&hei=1000&fmt=jpeg&qlt=90',
-      'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-15-pro-model-unselect-gallery-1-202309?wid=1000&hei=1000&fmt=jpeg&qlt=90',
-      'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-15-pro-model-unselect-gallery-2-202309?wid=1000&hei=1000&fmt=jpeg&qlt=90'
+      'https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=800&q=85',
+      'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?auto=format&fit=crop&w=800&q=85',
+      'https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?auto=format&fit=crop&w=800&q=85'
     ],
     videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
     attributes: [
@@ -2418,7 +2482,7 @@ const PRODUCTS_DATA = {
   },
   'macbook_m2': {
     id: 'macbook_m2',
-    title: 'Apple MacBook Air 13” M2 (Midnight) — 8GB / 256GB SSD',
+    title: 'Apple MacBook Air 13” M2 (Space Grey) — 8GB / 256GB SSD',
     brand: 'Apple',
     category: 'laptops',
     categoryLabel: 'Laptops & Workstations',
@@ -2434,11 +2498,11 @@ const PRODUCTS_DATA = {
     storeCity: 'Douala, Akwa',
     storeRating: '4.9',
     storeVerified: true,
-    coverImage: 'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/macbook-air-midnight-select-20220606?wid=1000&hei=1000&fmt=jpeg&qlt=90',
+    coverImage: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=85',
     images: [
-      'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/macbook-air-midnight-select-20220606?wid=1000&hei=1000&fmt=jpeg&qlt=90',
-      'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/macbook-air-space-gray-select-20220606?wid=1000&hei=1000&fmt=jpeg&qlt=90',
-      'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/mba13-midnight-gallery-1-202402?wid=1000&hei=1000&fmt=jpeg&qlt=90'
+      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=85',
+      'https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?auto=format&fit=crop&w=800&q=85',
+      'https://images.unsplash.com/photo-1541807084-5c52b6b3adef?auto=format&fit=crop&w=800&q=85'
     ],
     videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
     attributes: [
@@ -2503,10 +2567,10 @@ const PRODUCTS_DATA = {
     storeCity: 'Douala, Akwa',
     storeRating: '4.9',
     storeVerified: true,
-    coverImage: 'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/watch-s9-select-202309_GEO_US?wid=1000&hei=1000&fmt=jpeg&qlt=90',
+    coverImage: 'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=800&q=85',
     images: [
-      'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/watch-s9-select-202309_GEO_US?wid=1000&hei=1000&fmt=jpeg&qlt=90',
-      'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/watch-s9-select-202309_GEO_US?wid=1000&hei=1000&fmt=jpeg&qlt=90'
+      'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=800&q=85',
+      'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=85'
     ],
     videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
     attributes: [
@@ -2516,224 +2580,6 @@ const PRODUCTS_DATA = {
       { key: 'Sensors', val: 'ECG, Blood Oxygen, Temperature Sensor, Fall Detection' }
     ],
     description: 'Smarter, brighter, and mightier. Powered by the S9 SiP with a magical new double-tap gesture and a display that reaches up to 2000 nits — twice as bright as Series 8.'
-  },
-  'insta360_ace_pro_2': {
-    id: 'insta360_ace_pro_2',
-    title: 'Insta360 Ace Pro 2 Co-Engineered with Leica 8K Action Cam',
-    brand: 'Insta360',
-    category: 'electronics',
-    categoryLabel: 'Smart Action Cameras',
-    conditionLabel: 'Brand New · Sealed Box',
-    fulfillmentLabel: 'Same-Day Express Courier',
-    badge: 'LEICA 8K',
-    rating: '5.0',
-    reviewCount: 98,
-    soldCount: 64,
-    price: 'XAF 445 000',
-    salePrice: 'XAF 490 000',
-    storeName: 'Orca Electronics Douala',
-    storeCity: 'Douala, Akwa',
-    storeRating: '4.9',
-    storeVerified: true,
-    coverImage: 'https://res.insta360.com/dynamic/store/388277be5c0d60dd43ca969c3a3c2605/2753_8b3a0e19-947b-4bb8-95ef-968e0d4212a4.png',
-    images: [
-      'https://res.insta360.com/dynamic/store/388277be5c0d60dd43ca969c3a3c2605/2753_8b3a0e19-947b-4bb8-95ef-968e0d4212a4.png',
-      'https://res.insta360.com/static/7b7f1e63a1672620d43a60a7479708a3/ace_pro_2_body.png'
-    ],
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-surfer-riding-a-wave-in-the-sea-1224-large.mp4',
-    attributes: [
-      { key: 'Optics', val: 'Leica SUMMARIT Pro Optical Lens System' },
-      { key: 'Resolution', val: '8K @ 30fps / 4K @ 120fps Active HDR' },
-      { key: 'Display', val: '2.5” Flip Touchscreen with Dual AI Chips' }
-    ],
-    description: 'Co-engineered with Leica, featuring revolutionary dual AI chips for superior low-light imaging (PureVideo) and stunning 8K capture.'
-  },
-  'insta360_go_3s': {
-    id: 'insta360_go_3s',
-    title: 'Insta360 GO 3S 4K Tiny Magnetic Action Camera (128GB)',
-    brand: 'Insta360',
-    category: 'electronics',
-    categoryLabel: 'Smart Action Cameras',
-    conditionLabel: 'Brand New · Sealed Box',
-    fulfillmentLabel: 'Same-Day Express Courier',
-    badge: 'TINY 4K',
-    rating: '4.9',
-    reviewCount: 84,
-    soldCount: 52,
-    price: 'XAF 295 000',
-    salePrice: 'XAF 330 000',
-    storeName: 'Orca Electronics Douala',
-    storeCity: 'Douala, Akwa',
-    storeRating: '4.9',
-    storeVerified: true,
-    coverImage: 'https://wassets.insta360.com/store/5931cc33f6be4487a0a430ec43a5c66d/330_1047f7c8-ff23-42e6-a075-2b9943c9e188.png',
-    images: [
-      'https://wassets.insta360.com/store/5931cc33f6be4487a0a430ec43a5c66d/330_1047f7c8-ff23-42e6-a075-2b9943c9e188.png',
-      'https://res.insta360.com/static/4e17cb95a31a90c598ecad5bb4ce580b/go3s_standalone.png'
-    ],
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-surfer-riding-a-wave-in-the-sea-1224-large.mp4',
-    attributes: [
-      { key: 'Weight', val: 'Only 39 grams (Ultra-Lightweight Magnetic Body)' },
-      { key: 'Video', val: '4K Hands-Free POV with Apple Find My Support' },
-      { key: 'Action Pod', val: 'Flip Touchscreen Housing with 140 min Battery' }
-    ],
-    description: 'The world’s smallest 4K action cam. Mount it anywhere with magnetic accessories for effortless first-person POV perspectives.'
-  },
-  'insta360_flow_pro': {
-    id: 'insta360_flow_pro',
-    title: 'Insta360 Flow Pro AI Tracking Smartphone Gimbal (Apple DockKit)',
-    brand: 'Insta360',
-    category: 'electronics',
-    categoryLabel: 'Gimbals & Accessories',
-    conditionLabel: 'Brand New · Sealed Box',
-    fulfillmentLabel: 'Same-Day Express Courier',
-    badge: 'APPLE DOCKKIT',
-    rating: '4.9',
-    reviewCount: 72,
-    soldCount: 46,
-    price: 'XAF 149 000',
-    salePrice: 'XAF 175 000',
-    storeName: 'Orca Electronics Douala',
-    storeCity: 'Douala, Akwa',
-    storeRating: '4.9',
-    storeVerified: true,
-    coverImage: 'https://res.insta360.com/dynamic/store/12626e6561dae2c85cd3c3d2c734965a/2673_42a14a33-fab1-43d1-b474-2df2cc617280.png',
-    images: [
-      'https://res.insta360.com/dynamic/store/12626e6561dae2c85cd3c3d2c734965a/2673_42a14a33-fab1-43d1-b474-2df2cc617280.png',
-      'https://res.insta360.com/dynamic/store/c75b9cdd117b5fd36f217b3058ca5ca6/2831_21976821-f13e-4823-820c-660ba7db44f4.png'
-    ],
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
-    attributes: [
-      { key: 'Tracking', val: 'Apple DockKit Native 360° Infinite Tracking' },
-      { key: 'Stabilization', val: '3-Axis Mechanical Gimbal Stabilization' },
-      { key: 'Built-in Tools', val: 'Built-in Tripod & Selfie Stick Extension' }
-    ],
-    description: 'The first AI gimbal with Apple DockKit integration. Seamless tracking with native iPhone camera app and 200+ iOS video tools.'
-  },
-  'apple_watch_ultra_2': {
-    id: 'apple_watch_ultra_2',
-    title: 'Apple Watch Ultra 2 GPS + Cellular 49mm Titanium — Trail Loop',
-    brand: 'Apple',
-    category: 'wearables',
-    categoryLabel: 'Smartwatches & Fitness',
-    conditionLabel: 'Brand New · 1 Year Apple Warranty',
-    fulfillmentLabel: 'Same-Day Express Courier',
-    badge: 'ULTRA 2',
-    rating: '5.0',
-    reviewCount: 156,
-    soldCount: 94,
-    price: 'XAF 545 000',
-    salePrice: 'XAF 590 000',
-    storeName: 'Orca Electronics Douala',
-    storeCity: 'Douala, Akwa',
-    storeRating: '4.9',
-    storeVerified: true,
-    coverImage: 'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/watch-ultra2-select-202409_GEO_US?wid=1000&hei=1000&fmt=jpeg&qlt=90',
-    images: [
-      'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/watch-ultra2-select-202409_GEO_US?wid=1000&hei=1000&fmt=jpeg&qlt=90',
-      'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/watch-ultra2-select-202409-black_GEO_US?wid=1000&hei=1000&fmt=jpeg&qlt=90'
-    ],
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
-    attributes: [
-      { key: 'Case', val: '49mm Aerospace Grade Titanium (100m Water Resistant)' },
-      { key: 'Display', val: '3000 nits Peak Sapphire Crystal Display' },
-      { key: 'Battery', val: 'Up to 36 hours normal / 72 hours Low Power Mode' }
-    ],
-    description: 'The most rugged and capable Apple Watch. Built for endurance athletes, outdoor adventurers, and water sports enthusiasts with dual-frequency GPS.'
-  },
-  'airpods_pro_2': {
-    id: 'airpods_pro_2',
-    title: 'Apple AirPods Pro (2nd Generation) with MagSafe Case (USB-C)',
-    brand: 'Apple',
-    category: 'audio',
-    categoryLabel: 'Pro Audio & Earbuds',
-    conditionLabel: 'Brand New · Sealed Box',
-    fulfillmentLabel: 'Same-Day Express Courier',
-    badge: 'H2 PRO',
-    rating: '4.9',
-    reviewCount: 215,
-    soldCount: 140,
-    price: 'XAF 185 000',
-    salePrice: 'XAF 210 000',
-    storeName: 'Orca Electronics Douala',
-    storeCity: 'Douala, Akwa',
-    storeRating: '4.9',
-    storeVerified: true,
-    coverImage: 'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/MTJV3?wid=1000&hei=1000&fmt=jpeg&qlt=90',
-    images: [
-      'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/MTJV3?wid=1000&hei=1000&fmt=jpeg&qlt=90',
-      'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/MTJV3_AV1?wid=1000&hei=1000&fmt=jpeg&qlt=90',
-      'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/MTJV3_AV2?wid=1000&hei=1000&fmt=jpeg&qlt=90'
-    ],
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
-    attributes: [
-      { key: 'Chip', val: 'Apple H2 Headphone Silicon with Adaptive Audio' },
-      { key: 'ANC', val: 'Up to 2x more Active Noise Cancellation' },
-      { key: 'Charging', val: 'MagSafe USB-C Case with Precision Finding Speaker' }
-    ],
-    description: 'Up to 2x more Active Noise Cancellation, Adaptive Audio, and Personalized Spatial Audio with dynamic head tracking.'
-  },
-  'airpods_max': {
-    id: 'airpods_max',
-    title: 'Apple AirPods Max Wireless Over-Ear Headphones (USB-C)',
-    brand: 'Apple',
-    category: 'audio',
-    categoryLabel: 'Pro Audio & Headphones',
-    conditionLabel: 'Brand New · Sealed Box',
-    fulfillmentLabel: 'Same-Day Express Courier',
-    badge: 'HI-RES AUDIO',
-    rating: '4.9',
-    reviewCount: 88,
-    soldCount: 45,
-    price: 'XAF 410 000',
-    salePrice: 'XAF 460 000',
-    storeName: 'Orca Electronics Douala',
-    storeCity: 'Douala, Akwa',
-    storeRating: '4.9',
-    storeVerified: true,
-    coverImage: 'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/airpods-max-select-202409-midnight?wid=1000&hei=1000&fmt=jpeg&qlt=90',
-    images: [
-      'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/airpods-max-select-202409-midnight?wid=1000&hei=1000&fmt=jpeg&qlt=90',
-      'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/airpods-max-select-spacegray-202011?wid=1000&hei=1000&fmt=jpeg&qlt=90'
-    ],
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
-    attributes: [
-      { key: 'Acoustic Design', val: 'Apple-designed 40mm dynamic driver' },
-      { key: 'Noise Cancellation', val: 'Pro-level Active Noise Cancellation & Transparency' },
-      { key: 'Headband', val: 'Knit-mesh canopy and memory foam ear cushions' }
-    ],
-    description: 'The ultimate personal listening experience. High-fidelity audio, industry-leading Active Noise Cancellation, and Spatial Audio.'
-  },
-  'ipad_pro_m4': {
-    id: 'ipad_pro_m4',
-    title: 'Apple iPad Pro 13” M4 Chip Ultra Retina Tandem OLED (256GB)',
-    brand: 'Apple',
-    category: 'electronics',
-    categoryLabel: 'Tablets & Flagships',
-    conditionLabel: 'Brand New · 1 Year Apple Warranty',
-    fulfillmentLabel: 'Same-Day Express Courier',
-    badge: 'M4 CHIP',
-    rating: '5.0',
-    reviewCount: 92,
-    soldCount: 58,
-    price: 'XAF 940 000',
-    salePrice: 'XAF 1 050 000',
-    storeName: 'Orca Electronics Douala',
-    storeCity: 'Douala, Akwa',
-    storeRating: '4.9',
-    storeVerified: true,
-    coverImage: 'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/ipad-pro-13-select-wifi-spaceblack-202405?wid=1000&hei=1000&fmt=jpeg&qlt=90',
-    images: [
-      'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/ipad-pro-13-select-wifi-spaceblack-202405?wid=1000&hei=1000&fmt=jpeg&qlt=90',
-      'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/ipad-pro-model-select-gallery-1-202405?wid=1000&hei=1000&fmt=jpeg&qlt=90'
-    ],
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
-    attributes: [
-      { key: 'Display', val: '13” Ultra Retina XDR Tandem OLED (1600 nits peak HDR)' },
-      { key: 'Processor', val: 'Apple M4 Chip with Next-Gen Neural Engine (38 TOPS)' },
-      { key: 'Design', val: 'Impossibly thin 5.1mm aerospace aluminium chassis' }
-    ],
-    description: 'The thinnest Apple product ever made. Packed with the game-changing performance of the Apple M4 chip and groundbreaking Ultra Retina XDR Tandem OLED.'
   },
   'nike_air_force_1': {
     id: 'nike_air_force_1',
@@ -2927,6 +2773,7 @@ const PRODUCTS_DATA = {
 class Component extends DCLogic {
   state = {
     screen: 'home', stack: [], cart: 2, vs: 2, toast: '', following: false, saved: false,
+    sidebarCollapsed: false,
     vsFilterMode: 'all',
     vsPriority: 'perf',
     vsSlot1Active: true,
@@ -3230,6 +3077,15 @@ class Component extends DCLogic {
     clearTimeout(this._t);
     this._t = setTimeout(() => this.setState({ toast: '' }), 3200);
   };
+  toggleSidebar = () => {
+    this.setState(st => ({ sidebarCollapsed: !st.sidebarCollapsed }));
+  };
+  expandSidebar = () => {
+    this.setState({ sidebarCollapsed: false });
+  };
+  collapseSidebar = () => {
+    this.setState({ sidebarCollapsed: true });
+  };
 
   componentDidMount() {
     this._restoreOnboardingDraft();
@@ -3240,6 +3096,10 @@ class Component extends DCLogic {
         if (this.state.stack.length > 0 && !NO_NAV.includes(this.state.screen)) {
           this.back();
         }
+      }
+      if (e && (e.ctrlKey || e.metaKey) && (e.key === 'b' || e.key === 'B' || e.key === '[')) {
+        e.preventDefault();
+        this.toggleSidebar();
       }
     };
     if (typeof window !== 'undefined') {
@@ -3433,6 +3293,25 @@ class Component extends DCLogic {
     // id. Project the real values once, here, and let every screen read them.
     const seller = state.seller || {};
 
+    /*
+     * Pull the real account counts once per session. The profile panel shows
+     * "active deliveries" and "saved products", but only openAccountDashboard()
+     * ever fetched them — which is why those figures had to be hardcoded to
+     * look populated. One guarded fetch on authentication makes them real.
+     */
+    if (!this._dashboardRequested) {
+      this._dashboardRequested = true;
+      const dashApi = getApi();
+      if (dashApi) {
+        dashApi.getDashboard().then(d => {
+          if (!this._unmounted && d) this.setState({ dashboard: d });
+        }).catch(() => {
+          // Counts stay at their honest zero; never block the session on this.
+          this._dashboardRequested = false;
+        });
+      }
+    }
+
     this.setState({
       isLoggedIn: true,
       authStatus: 'authenticated',
@@ -3465,12 +3344,15 @@ class Component extends DCLogic {
   _applyAnonymous() {
     const guard = getGuard();
     if (guard) guard.invalidate();
+    // The next account must never inherit the previous one's counts.
+    this._dashboardRequested = false;
 
     this.setState({
       isLoggedIn: false,
       authStatus: 'anonymous',
       sessionUser: null,
       accountState: null,
+      dashboard: null,
       sellerStatus: 'NONE',
       primaryStoreId: null,
       capabilities: {},
@@ -6370,8 +6252,23 @@ class Component extends DCLogic {
           : 'Douala';
         return (phone ? phone + ' · ' : '') + city + ', Cameroon';
       })(),
-      activeDeliveriesLabel: '1 Active Delivery',
-      savedItemsLabel: '34 Products Saved',
+      /*
+       * These were the literal strings '1 Active Delivery' and
+       * '34 Products Saved', shown identically to every account — a brand-new
+       * user with an empty wishlist was told they had 34 saved products.
+       * GET /users/me/dashboard already returns real counts; use them, and say
+       * "None" honestly when there are none.
+       */
+      activeDeliveriesLabel: (() => {
+        const n = Number((this.state.dashboard && this.state.dashboard.counts
+          && this.state.dashboard.counts.activeDeliveries) || 0);
+        return n === 0 ? 'No active delivery' : (n + (n === 1 ? ' Active Delivery' : ' Active Deliveries'));
+      })(),
+      savedItemsLabel: (() => {
+        const n = Number((this.state.dashboard && this.state.dashboard.counts
+          && this.state.dashboard.counts.savedItems) || 0);
+        return n === 0 ? 'No saved products yet' : (n + (n === 1 ? ' Product Saved' : ' Products Saved'));
+      })(),
       // "Sell on LOUMOO" always leads somewhere useful. The guard asks the
       // server whether this account may create a listing and, if not, sends
       // the user to the ONE screen that lets them become eligible — with the
