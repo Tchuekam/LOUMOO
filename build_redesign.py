@@ -538,6 +538,296 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 .pass-header { background: linear-gradient(135deg, #002b61 0%, #007aff 100%); color: #fff; padding: 24px 20px; }
 .pass-body { padding: 20px; background: var(--color-surface); border-bottom: 1px dashed var(--color-divider); }
 .pass-qr-wrap { padding: 24px 20px; text-align: center; background: var(--color-surface-subtle); }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   LOUMOO COMPARISON ENGINE & SIDE-BY-SIDE MATRIX STYLES
+   ══════════════════════════════════════════════════════════════════════ */
+.compare-container {
+  background: var(--color-bg);
+  min-height: 100vh;
+  padding-bottom: 120px;
+  overflow-x: hidden;
+}
+
+.compare-sticky-header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--color-divider);
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+[data-theme="dark"] .compare-sticky-header {
+  background: rgba(18, 20, 24, 0.94);
+  border-bottom-color: var(--color-divider);
+}
+
+.compare-filter-pill-group {
+  display: flex;
+  gap: 4px;
+  background: var(--color-neutral-100);
+  padding: 3px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-divider);
+}
+[data-theme="dark"] .compare-filter-pill-group {
+  background: var(--color-neutral-800);
+}
+
+.compare-pill-btn {
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  border: none;
+  background: transparent;
+  font: 700 11px/1 var(--font-heading);
+  letter-spacing: 0.03em;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.compare-pill-btn:hover {
+  color: var(--color-text);
+}
+.compare-pill-btn.active {
+  background: var(--color-surface);
+  color: var(--color-accent);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+[data-theme="dark"] .compare-pill-btn.active {
+  background: var(--color-neutral-700);
+  color: #fff;
+}
+
+.compare-hero-grid {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 16px;
+  align-items: stretch;
+  margin-bottom: 28px;
+}
+.compare-hero-card {
+  position: relative;
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.compare-hero-card:hover {
+  border-color: var(--color-accent-300);
+  box-shadow: var(--shadow-md);
+}
+
+.compare-vs-badge {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #111214;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: 800 15px/1 var(--font-heading);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  border: 2px solid #fff;
+}
+
+.compare-matrix-table {
+  width: 100%;
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-divider);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 28px;
+}
+
+.compare-matrix-header {
+  background: var(--color-surface);
+  border-bottom: 2px solid var(--color-divider);
+  padding: 14px 20px;
+  display: grid;
+  grid-template-columns: 260px 1fr 1fr;
+  gap: 20px;
+  align-items: center;
+  position: sticky;
+  top: 60px;
+  z-index: 20;
+}
+
+.compare-accordion-header {
+  background: var(--color-neutral-100);
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font: 700 12px/1 var(--font-heading);
+  color: var(--color-text);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  user-select: none;
+  border-top: 1px solid var(--color-divider);
+  border-bottom: 1px solid var(--color-divider);
+  transition: background 0.15s ease;
+}
+.compare-accordion-header:hover {
+  background: var(--color-neutral-200);
+}
+[data-theme="dark"] .compare-accordion-header {
+  background: var(--color-neutral-800);
+  border-color: var(--color-neutral-700);
+}
+
+.compare-matrix-row {
+  display: grid;
+  grid-template-columns: 260px 1fr 1fr;
+  gap: 20px;
+  padding: 13px 20px;
+  border-bottom: 1px solid var(--color-divider);
+  align-items: center;
+  transition: background 0.15s ease;
+}
+.compare-matrix-row:hover {
+  background: rgba(0, 122, 255, 0.02);
+}
+.compare-matrix-row:last-child {
+  border-bottom: none;
+}
+
+.badge-winner-tag {
+  font: 800 10px/1 var(--font-heading);
+  padding: 3px 7px;
+  border-radius: var(--radius-pill);
+  letter-spacing: 0.03em;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  white-space: nowrap;
+}
+.badge-winner-blue {
+  color: var(--color-accent);
+  background: var(--color-accent-100);
+  border: 1px solid rgba(0, 122, 255, 0.2);
+}
+.badge-winner-green {
+  color: var(--color-success);
+  background: var(--color-success-100);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+.badge-tie-tag {
+  color: var(--color-text-secondary);
+  background: var(--color-neutral-100);
+  border: 1px solid var(--color-divider);
+  font: 700 9.5px/1 var(--font-heading);
+  padding: 3px 6px;
+  border-radius: var(--radius-pill);
+}
+
+.compare-priority-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--color-divider);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: 600 12px/1 var(--font-heading);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 38px;
+}
+.compare-priority-pill:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+.compare-priority-pill.active {
+  border-color: var(--color-accent);
+  background: var(--color-accent-100);
+  color: var(--color-accent);
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(0, 122, 255, 0.15);
+}
+
+.delta-grid-row {
+  display: grid;
+  grid-template-columns: 180px 1fr 1fr auto;
+  gap: 14px;
+  padding: 12px 16px;
+  background: var(--color-neutral-100);
+  border-radius: var(--radius-md);
+  align-items: center;
+  transition: transform 0.15s ease;
+}
+.delta-grid-row:hover {
+  transform: translateX(2px);
+}
+[data-theme="dark"] .delta-grid-row {
+  background: var(--color-neutral-800);
+}
+
+/* Responsive Mobile Rules (<768px) */
+@media (max-width: 768px) {
+  .compare-hero-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .compare-hero-vs-wrap {
+    display: none !important;
+  }
+  .compare-matrix-header {
+    grid-template-columns: 130px 1fr 1fr;
+    gap: 10px;
+    padding: 10px 12px;
+  }
+  .compare-matrix-row {
+    grid-template-columns: 130px 1fr 1fr;
+    gap: 10px;
+    padding: 10px 12px;
+  }
+  .delta-grid-row {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .delta-grid-row > div:nth-child(1) {
+    font-weight: 800;
+    color: var(--color-text);
+  }
+  .delta-grid-row > span:last-child {
+    align-self: flex-start;
+    margin-top: 4px;
+  }
+  .verdict-columns {
+    grid-template-columns: 1fr !important;
+  }
+  .value-columns {
+    grid-template-columns: 1fr !important;
+  }
+  .compare-sticky-header {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 10px 14px;
+  }
+  .compare-filter-pill-group {
+    justify-content: center;
+  }
+}
+
 </style>
 </helmet>
 
@@ -726,7 +1016,7 @@ footer_and_scripts = """
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:446,&quot;height&quot;:900},&quot;userName&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Tchuekam&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;showAds&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Home&quot;}}">
 const SCREENS = [
   'home','search','filters','voice','category','bestpicks','freeday','notifications','chat','threadAi','threadSeller',
-  'product','sellers','cart','checkout','paying','success','orders','store','business','vs','vsCompare','visual',
+  'product','sellers','cart','checkout','paying','success','orders','store','business','brand','vs','vsCompare','visual',
   'visualScan','visualResults','upload','uploadDetails','uploadPrice','uploadSuccess','myListings','travel','travelBus',
   'travelPackages','travelVisa','travelResults','travelDetail','travelPassenger','travelTicket','announce','announceStudio','announceCampaigns','announceDetail',
   'profile','seller','settings','payFailed','networkError','saved','transactions','loading',
@@ -831,7 +1121,19 @@ function getClerk() {
 
 class Component extends DCLogic {
   state = {
-    screen: 'home', stack: [], cart: 2, vs: 1, toast: '', following: false, saved: false,
+    screen: 'home', stack: [], cart: 2, vs: 2, toast: '', following: false, saved: false,
+    vsFilterMode: 'all',
+    vsPriority: 'perf',
+    vsSlot1Active: true,
+    vsSlot2Active: true,
+    vsSlot3Active: false,
+    vsSlot4Active: false,
+    vsSecPerfOpen: true,
+    vsSecDispOpen: true,
+    vsSecBattOpen: true,
+    vsSecBuildOpen: true,
+    vsSecPortsOpen: true,
+    vsSecCommOpen: true,
     qty: 1, freeday: false, darkMode: false,
     isLoggedIn: false,
     // Authoritative session state resolved from GET /api/v1/me/state.
@@ -1001,6 +1303,12 @@ class Component extends DCLogic {
     payoutAmount: '500 000',
     hotelCity: 'kribi',
 
+    // ── Travel & Mobility Ecosystem State ──
+    travelServiceTab: 'bus',
+    travelMyTripsTab: 'upcoming',
+    busOperatorFilter: 'all',
+    selectedBusSeat: '4A',
+
     // ── Phase E: Store & Business System State ──
     createStoreName: '',
     createStoreCategory: 'electronics',
@@ -1029,6 +1337,15 @@ class Component extends DCLogic {
     storeCloseTime: '18:30',
     storeLocationStreet: 'Boulevard de la Liberté, Akwa Commercial Zone',
     storeLocationLandmark: 'Next to Total Akwa Roundabout',
+
+    // ── Stores & Brands Discovery / Storefront State ──
+    storeSearchQuery: '',
+    storeCityFilter: 'all',
+    storeCategoryFilter: 'all',
+    storeVerifiedOnly: false,
+    storeActiveTab: 'home',
+    selectedBrand: 'apple',
+    brandFollowed: false,
 
     // ── Search & Filter State ──
     searchQuery: 'MacBook Air M2',
@@ -3458,6 +3775,38 @@ class Component extends DCLogic {
         ]).then(done).catch(done);
       },
 
+      // ── Stores & Brands Discovery / Storefront Getters & Actions ──
+      storeSearchQuery: this.state.storeSearchQuery || '',
+      updateStoreSearch: (e) => this.setState({ storeSearchQuery: e && e.target ? e.target.value : e }),
+      clearStoreSearch: () => this.setState({ storeSearchQuery: '' }),
+      storeCityFilter: this.state.storeCityFilter || 'all',
+      updateStoreCityFilter: (e) => this.setState({ storeCityFilter: e && e.target ? e.target.value : e }),
+      storeCategoryFilter: this.state.storeCategoryFilter || 'all',
+      setStoreCategory: (cat) => this.setState({ storeCategoryFilter: cat }),
+      storeVerifiedOnly: Boolean(this.state.storeVerifiedOnly),
+      toggleStoreVerifiedOnly: () => this.setState(st => ({ storeVerifiedOnly: !st.storeVerifiedOnly })),
+      storeActiveTab: this.state.storeActiveTab || 'home',
+      setStoreActiveTab: (tab) => this.setState({ storeActiveTab: tab }),
+      resetStoreFilters: () => { this.setState({ storeSearchQuery: '', storeCityFilter: 'all', storeCategoryFilter: 'all', storeVerifiedOnly: false }); this.toast('Store discovery filters reset'); },
+      shareStore: () => { this.toast('Store link copied to clipboard!'); },
+      shareBrand: () => { this.toast('Official brand link copied to clipboard!'); },
+
+      // ── Brand Destinations Hub Getters & Actions ──
+      selectedBrand: this.state.selectedBrand || 'apple',
+      selectBrand: (b) => this.setState({ selectedBrand: b }),
+      openBrand: (b) => { this.setState({ selectedBrand: b }); this.go('brand'); },
+      isBrandApple: (this.state.selectedBrand || 'apple') === 'apple',
+      isBrandSony: this.state.selectedBrand === 'sony',
+      isBrandSamsung: this.state.selectedBrand === 'samsung',
+      isBrandAnker: this.state.selectedBrand === 'anker',
+      isBrandNike: this.state.selectedBrand === 'nike',
+      brandFollowed: Boolean(this.state.brandFollowed),
+      toggleBrandFollow: () => {
+        const next = !this.state.brandFollowed;
+        this.setState({ brandFollowed: next });
+        this.toast(next ? 'Following official brand updates' : 'Unfollowed official brand');
+      },
+
       // ══════════════════════════════════════════════════════════════════
       // PHASE F — UNIVERSAL LISTING & SELLING ENGINE (Prompt 06)
       // ══════════════════════════════════════════════════════════════════
@@ -3658,6 +4007,80 @@ class Component extends DCLogic {
       cartCount: this.state.cart,
       cartLabel: (this.state.qty + 1) + ' items · 2 sellers',
       vsCount: this.state.vs,
+      vsFilterAll: this.state.vsFilterMode === 'all',
+      vsFilterDiff: this.state.vsFilterMode === 'diff',
+      vsFilterWinners: this.state.vsFilterMode === 'winners',
+      setVsFilterAll: () => { this.setState({ vsFilterMode: 'all' }); this.toast('Showing all 9 specification categories'); },
+      setVsFilterDiff: () => { this.setState({ vsFilterMode: 'diff' }); this.toast('Filtered: showing differences only'); },
+      setVsFilterWinners: () => { this.setState({ vsFilterMode: 'winners' }); this.toast('Filtered: highlighting key winners'); },
+
+      vsPriPerf: this.state.vsPriority === 'perf',
+      vsPriPrice: this.state.vsPriority === 'price',
+      vsPriDisp: this.state.vsPriority === 'display',
+      vsPriBatt: this.state.vsPriority === 'battery',
+      vsPriPort: this.state.vsPriority === 'portability',
+      vsPriWarr: this.state.vsPriority === 'warranty',
+
+      setVsPriorityPerf: () => { this.setState({ vsPriority: 'perf' }); this.toast('Prioritizing Performance & M3 Pro Architecture'); },
+      setVsPriorityPrice: () => { this.setState({ vsPriority: 'price' }); this.toast('Prioritizing Lowest Price & Budget Efficiency'); },
+      setVsPriorityDisp: () => { this.setState({ vsPriority: 'display' }); this.toast('Prioritizing 120Hz Liquid Retina XDR'); },
+      setVsPriorityBatt: () => { this.setState({ vsPriority: 'battery' }); this.toast('Prioritizing 18-Hour Battery Endurance'); },
+      setVsPriorityPort: () => { this.setState({ vsPriority: 'portability' }); this.toast('Prioritizing 1.24kg Featherweight Portability'); },
+      setVsPriorityWarr: () => { this.setState({ vsPriority: 'warranty' }); this.toast('Prioritizing 12–36 Month Official Warranty'); },
+
+      vsSlot1Active: this.state.vsSlot1Active !== false,
+      vsSlot2Active: this.state.vsSlot2Active !== false,
+      vsSlot3Active: Boolean(this.state.vsSlot3Active),
+      vsSlot4Active: Boolean(this.state.vsSlot4Active),
+      vsEmpty: !this.state.vsSlot1Active && !this.state.vsSlot2Active && !this.state.vsSlot3Active && !this.state.vsSlot4Active,
+
+      removeVsSlot1: () => {
+        this.setState(st => ({ vsSlot1Active: false, vs: Math.max(0, st.vs - 1) }));
+        this.toast('Removed MacBook Air from comparison');
+      },
+      removeVsSlot2: () => {
+        this.setState(st => ({ vsSlot2Active: false, vs: Math.max(0, st.vs - 1) }));
+        this.toast('Removed MacBook Pro from comparison');
+      },
+      toggleVsSlot3: () => {
+        const next = !this.state.vsSlot3Active;
+        this.setState(st => ({ vsSlot3Active: next, vs: next ? st.vs + 1 : Math.max(0, st.vs - 1) }));
+        this.toast(next ? 'Added Lenovo ThinkPad X1 to comparison' : 'Removed ThinkPad X1');
+      },
+      addVsThinkPad: () => {
+        this.setState(st => ({ vsSlot3Active: true, vs: st.vsSlot3Active ? st.vs : st.vs + 1 }));
+        this.toast('Added Lenovo ThinkPad X1 Carbon Gen 11');
+      },
+      addVsXps: () => {
+        this.setState(st => ({ vsSlot4Active: true, vs: st.vsSlot4Active ? st.vs : st.vs + 1 }));
+        this.toast('Added Dell XPS 15 OLED (3.5K)');
+      },
+      removeVsSlot4: () => {
+        this.setState(st => ({ vsSlot4Active: false, vs: Math.max(0, st.vs - 1) }));
+        this.toast('Removed Dell XPS 15 from comparison');
+      },
+      clearVsAll: () => {
+        this.setState({ vs: 0, vsSlot1Active: false, vsSlot2Active: false, vsSlot3Active: false, vsSlot4Active: false });
+        this.toast('Comparison workspace cleared');
+      },
+      resetVsDefaults: () => {
+        this.setState({ vs: 2, vsSlot1Active: true, vsSlot2Active: true, vsSlot3Active: false, vsSlot4Active: false });
+        this.toast('Restored MacBook Air vs MacBook Pro comparison');
+      },
+
+      vsSecPerfOpen: this.state.vsSecPerfOpen !== false,
+      vsSecDispOpen: this.state.vsSecDispOpen !== false,
+      vsSecBattOpen: this.state.vsSecBattOpen !== false,
+      vsSecBuildOpen: this.state.vsSecBuildOpen !== false,
+      vsSecPortsOpen: this.state.vsSecPortsOpen !== false,
+      vsSecCommOpen: this.state.vsSecCommOpen !== false,
+
+      toggleVsPerfSec: () => this.setState(st => ({ vsSecPerfOpen: !st.vsSecPerfOpen })),
+      toggleVsDispSec: () => this.setState(st => ({ vsSecDispOpen: !st.vsSecDispOpen })),
+      toggleVsBattSec: () => this.setState(st => ({ vsSecBattOpen: !st.vsSecBattOpen })),
+      toggleVsBuildSec: () => this.setState(st => ({ vsSecBuildOpen: !st.vsSecBuildOpen })),
+      toggleVsPortsSec: () => this.setState(st => ({ vsSecPortsOpen: !st.vsSecPortsOpen })),
+      toggleVsCommSec: () => this.setState(st => ({ vsSecCommOpen: !st.vsSecCommOpen })),
       toast: this.state.toast,
       clearToast: () => this.setState({ toast: '' }),
       back: this.back,
@@ -3678,6 +4101,43 @@ class Component extends DCLogic {
       toggleSave: () => { const next = !this.state.saved; this.setState({ saved: next }); this.toast(next ? 'Saved to your list' : 'Removed from saved'); },
       payNow: () => { this.go('paying'); setTimeout(() => this.go('success'), 1800); },
       publish: () => this.publishListing(),
+
+      // ── Travel & Mobility Ecosystem Getters & Actions ──
+      isTravelTabBus: this.state.travelServiceTab === 'bus',
+      isTravelTabFlight: this.state.travelServiceTab === 'flight',
+      isTravelTabTrain: this.state.travelServiceTab === 'train',
+      isTravelTabTaxi: this.state.travelServiceTab === 'taxi',
+      setTravelTabBus: () => { this.setState({ travelServiceTab: 'bus' }); this.toast('Switched to Intercity Bus (4 Official Agencies)'); },
+      setTravelTabFlight: () => { this.setState({ travelServiceTab: 'flight' }); this.toast('Switched to Flights (Camair-Co & International)'); },
+      setTravelTabTrain: () => { this.setState({ travelServiceTab: 'train' }); this.toast('Switched to Camrail InterCity Passenger Trains'); },
+      setTravelTabTaxi: () => { this.setState({ travelServiceTab: 'taxi' }); this.toast('Switched to Taxi & Airport Transfers'); },
+
+      isBusFilterAll: this.state.busOperatorFilter === 'all',
+      isBusFilterGeneral: this.state.busOperatorFilter === 'general',
+      isBusFilterFinexs: this.state.busOperatorFilter === 'finexs',
+      isBusFilterTouristique: this.state.busOperatorFilter === 'touristique',
+      setBusFilterAll: () => { this.setState({ busOperatorFilter: 'all' }); this.toast('Showing all 4 bus agencies'); },
+      setBusFilterGeneral: () => { this.setState({ busOperatorFilter: 'general' }); this.toast('Filtered: General Express Voyages'); },
+      setBusFilterFinexs: () => { this.setState({ busOperatorFilter: 'finexs' }); this.toast('Filtered: Finexs Voyages VIP'); },
+      setBusFilterTouristique: () => { this.setState({ busOperatorFilter: 'touristique' }); this.toast('Filtered: Touristique Express VIP'); },
+
+      isSeat1A: this.state.selectedBusSeat === '1A',
+      isSeat1B: this.state.selectedBusSeat === '1B',
+      isSeat2A: this.state.selectedBusSeat === '2A',
+      isSeat2C: this.state.selectedBusSeat === '2C',
+      isSeat4A: this.state.selectedBusSeat === '4A',
+      isSeat4B: this.state.selectedBusSeat === '4B',
+      isSeat4C: this.state.selectedBusSeat === '4C',
+      setBusSeat1A: () => { this.setState({ selectedBusSeat: '1A' }); this.toast('Selected Seat 1A (Window VIP)'); },
+      setBusSeat1B: () => { this.setState({ selectedBusSeat: '1B' }); this.toast('Selected Seat 1B (Aisle VIP)'); },
+      setBusSeat2A: () => { this.setState({ selectedBusSeat: '2A' }); this.toast('Selected Seat 2A (Window VIP)'); },
+      setBusSeat2C: () => { this.setState({ selectedBusSeat: '2C' }); this.toast('Selected Seat 2C (Solo VIP)'); },
+      setBusSeat4A: () => { this.setState({ selectedBusSeat: '4A' }); this.toast('Selected Seat 4A (Window VIP)'); },
+      setBusSeat4B: () => { this.setState({ selectedBusSeat: '4B' }); this.toast('Selected Seat 4B (Aisle VIP)'); },
+      setBusSeat4C: () => { this.setState({ selectedBusSeat: '4C' }); this.toast('Selected Seat 4C (Solo VIP)'); },
+
+      swapTravelRoute: () => { this.toast('Swapped Origin & Destination (Douala ⇄ Yaoundé)'); },
+      bookTravelItem: () => { this.go('paying'); setTimeout(() => this.go('travelTicket'), 1200); },
       bookFlight: () => { this.go('travelTicket'); }
     };
   }

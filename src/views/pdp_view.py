@@ -18,7 +18,10 @@ def get_product_view():
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
     </button>
     
-    <span style="font:700 12px/1 var(--font-heading);letter-spacing:.08em;color:var(--color-text-muted);text-transform:uppercase">APPLE LAPTOPS</span>
+    <button onClick="{{ () => openBrand('apple') }}" style="border:none;background:transparent;cursor:pointer;font:700 12px/1 var(--font-heading);letter-spacing:.08em;color:var(--color-accent);text-transform:uppercase;display:flex;align-items:center;gap:4px">
+      <span> APPLE OFFICIAL</span>
+      <span>→</span>
+    </button>
 
     <div style="display:flex;gap:8px">
       <button onClick="{{ toggleSave }}" aria-label="Save product" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:{{ saved ? 'var(--color-accent-sale)' : 'var(--color-text)' }}">
@@ -131,18 +134,21 @@ def get_product_view():
         </div>
 
         <!-- Verified Merchant Callout -->
-        <div class="card-premium" style="padding:14px 18px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center">
+        <div class="card-premium" style="padding:14px 18px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
           <div style="display:flex;align-items:center;gap:12px">
-            <div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--color-accent),#003d8a);color:#fff;display:flex;align-items:center;justify-content:center;font:800 16px/1 var(--font-heading)">O</div>
+            <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--color-accent),#003d8a);color:#fff;display:flex;align-items:center;justify-content:center;font:800 17px/1 var(--font-heading)">O</div>
             <div>
               <div style="display:flex;align-items:center;gap:6px">
-                <span style="font:700 13.5px/1.2 var(--font-heading);color:var(--color-text)">Orca Electronics</span>
+                <span style="font:700 14px/1.2 var(--font-heading);color:var(--color-text)">Orca Electronics</span>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--color-accent)" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
               </div>
-              <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Akwa, Douala · ★ 4.9 · Verified Partner</div>
+              <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Akwa, Douala · ★ 4.9 · Official Partner</div>
             </div>
           </div>
-          <button onClick="{{ on.sellers }}" class="btn btn-secondary btn-sm">2 OTHER SELLERS →</button>
+          <div style="display:flex;align-items:center;gap:8px">
+            <button onClick="{{ on.business }}" class="btn btn-primary" style="height:34px;padding:0 14px;font-size:11.5px;font-weight:700">VISIT STOREFRONT →</button>
+            <button onClick="{{ on.sellers }}" class="btn btn-secondary" style="height:34px;padding:0 10px;font-size:11px">2 OTHER SELLERS</button>
+          </div>
         </div>
 
       </div>

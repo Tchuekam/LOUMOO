@@ -27,6 +27,7 @@ const listingRoutes = require('./modules/listing/presentation/routes/listingRout
 const uploadRoutes = require('./modules/listing/presentation/routes/uploadRoutes');
 const adaptiveRoutes = require('./modules/adaptive/presentation/routes/adaptiveRoutes');
 const announcementRoutes = require('./modules/announcement/presentation/routes/announcementRoutes');
+const travelRoutes = require('./modules/travel/presentation/routes/travelRoutes');
 
 // Fail fast rather than boot a production server that cannot enforce its own
 // security model. In development the same problems are logged as warnings.
@@ -99,6 +100,7 @@ v1Router.use('/stores', storeRoutes);
 v1Router.use('/listings', listingRoutes);
 v1Router.use('/uploads', uploadRoutes);
 v1Router.use('/announcements', announcementRoutes);
+v1Router.use('/travel', travelRoutes);
 
 app.use('/api/v1', v1Router);
 

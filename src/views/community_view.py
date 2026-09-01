@@ -897,27 +897,28 @@ def get_community_view():
      5. ELEVATED PRODUCT COMPARISON WORKSPACE (is.vs)
      ══════════════════════════════════════════════════════════════════════ -->
 <sc-if value="{{ is.vs }}">
-<div style="padding-bottom:100px;background:var(--color-bg);min-height:100vh">
+<div style="padding-bottom:100px;background:var(--color-bg);min-height:100vh" class="compare-container">
   
   <!-- Sticky Glassmorphic Header -->
-  <div style="position:sticky;top:0;z-index:30;background:rgba(255,255,255,0.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--color-divider);padding:14px 20px;display:flex;align-items:center;justify-content:space-between">
+  <div class="compare-sticky-header">
     <div style="display:flex;align-items:center;gap:14px">
-      <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;transition:all 0.2s">
+      <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;transition:all 0.2s">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
       </button>
       <div>
         <div style="display:flex;align-items:center;gap:8px">
           <h2 style="margin:0;font:800 18px/1.2 var(--font-heading);color:var(--color-text);letter-spacing:-0.02em">Compare Products</h2>
-          <span style="background:var(--color-accent-100);color:var(--color-accent);font:800 11px/1 var(--font-heading);padding:3px 8px;border-radius:var(--radius-pill)">2 / 4 SELECTED</span>
+          <span style="background:var(--color-accent-100);color:var(--color-accent);font:800 11px/1 var(--font-heading);padding:3px 8px;border-radius:var(--radius-pill)">{{ vsCount }} / 4 SELECTED</span>
         </div>
         <p style="margin:2px 0 0;font:400 12px/1.3 var(--font-body);color:var(--color-text-secondary)">See what actually separates them before you buy.</p>
       </div>
     </div>
     
     <div style="display:flex;align-items:center;gap:10px">
-      <button onClick="{{ clearToast }}" style="border:none;background:transparent;color:var(--color-text-muted);font:600 12px/1 var(--font-heading);cursor:pointer;padding:6px 10px">Clear All</button>
-      <button onClick="{{ on.vsCompare }}" class="btn btn-primary" style="height:38px;padding:0 16px;font-size:12.5px;font-weight:700;box-shadow:0 4px 14px rgba(0,122,255,0.25)">
-        <span>Compare Now (2)</span>
+      <button onClick="{{ clearVsAll }}" style="border:none;background:transparent;color:var(--color-text-muted);font:600 12px/1 var(--font-heading);cursor:pointer;padding:8px 12px;min-height:44px">Clear All</button>
+      <button onClick="{{ resetVsDefaults }}" style="border:1px solid var(--color-divider);background:var(--color-surface);color:var(--color-text);font:700 12px/1 var(--font-heading);cursor:pointer;padding:8px 12px;border-radius:var(--radius-pill);min-height:44px">Restore Defaults</button>
+      <button onClick="{{ on.vsCompare }}" class="btn btn-primary" style="height:42px;padding:0 18px;font-size:12.5px;font-weight:700;box-shadow:0 4px 14px rgba(0,122,255,0.25);border-radius:var(--radius-pill)">
+        <span>Compare Now ({{ vsCount }})</span>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="margin-left:4px"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
       </button>
     </div>
@@ -928,7 +929,7 @@ def get_community_view():
     <!-- Compatibility Banner -->
     <div style="background:rgba(0,122,255,0.05);border:1px solid rgba(0,122,255,0.2);border-radius:var(--radius-md);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
       <div style="display:flex;align-items:center;gap:10px">
-        <div style="width:28px;height:28px;border-radius:50%;background:var(--color-accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px">✓</div>
+        <div style="width:28px;height:28px;border-radius:50%;background:var(--color-accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800">✓</div>
         <div>
           <span style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Category Compatible: Laptops &amp; Computers</span>
           <span style="font:400 12px/1.2 var(--font-body);color:var(--color-text-secondary);margin-left:6px">· Full Apple Silicon &amp; PC architecture comparison matrix active.</span>
@@ -940,10 +941,11 @@ def get_community_view():
     <!-- Product Selection Grid (2 to 4 Slots) -->
     <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:16px;margin-bottom:32px">
       
-      <!-- Slot 1: MacBook Air M2 (Selected) -->
-      <div class="card-premium" style="position:relative;border:2px solid var(--color-accent);background:var(--color-surface);box-shadow:0 8px 24px rgba(0,122,255,0.08)">
+      <!-- Slot 1: MacBook Air M2 (Selected or Empty) -->
+      <sc-if value="{{ vsSlot1Active }}">
+      <div class="card-premium compare-hero-card" style="position:relative;border:2px solid var(--color-accent);background:var(--color-surface);box-shadow:0 8px 24px rgba(0,122,255,0.08)">
         <span style="position:absolute;top:12px;left:12px;background:var(--color-accent);color:#fff;font:800 10px/1 var(--font-heading);padding:4px 8px;border-radius:var(--radius-pill);letter-spacing:0.04em">PRIMARY CANDIDATE</span>
-        <button onClick="{{ clearToast }}" aria-label="Remove product" style="position:absolute;top:12px;right:12px;width:28px;height:28px;border-radius:50%;border:1px solid var(--color-divider);background:var(--color-surface);color:var(--color-text-muted);display:flex;align-items:center;justify-content:center;cursor:pointer">✕</button>
+        <button onClick="{{ removeVsSlot1 }}" aria-label="Remove product" style="position:absolute;top:12px;right:12px;width:32px;height:32px;border-radius:50%;border:1px solid var(--color-divider);background:var(--color-surface);color:var(--color-text-muted);display:flex;align-items:center;justify-content:center;cursor:pointer">✕</button>
 
         <div style="text-align:center;padding:24px 12px 12px">
           <div class="ph" style="aspect-ratio:4/3;max-width:180px;margin:0 auto 14px;border-radius:var(--radius-md);background:linear-gradient(135deg,#f8f9fc,#edf2f7)">
@@ -982,11 +984,13 @@ def get_community_view():
           <span style="font:700 11px/1 var(--font-heading);color:var(--color-success);background:var(--color-success-100);padding:3px 7px;border-radius:var(--radius-pill)">VALUE 92/100</span>
         </div>
       </div>
+      </sc-if>
 
-      <!-- Slot 2: MacBook Pro 14 M3 Pro (Selected) -->
-      <div class="card-premium" style="position:relative;border:2px solid var(--color-accent);background:var(--color-surface);box-shadow:0 8px 24px rgba(0,122,255,0.08)">
+      <!-- Slot 2: MacBook Pro 14 M3 Pro (Selected or Empty) -->
+      <sc-if value="{{ vsSlot2Active }}">
+      <div class="card-premium compare-hero-card" style="position:relative;border:2px solid var(--color-accent);background:var(--color-surface);box-shadow:0 8px 24px rgba(0,122,255,0.08)">
         <span style="position:absolute;top:12px;left:12px;background:#111214;color:#fff;font:800 10px/1 var(--font-heading);padding:4px 8px;border-radius:var(--radius-pill);letter-spacing:0.04em">PRO PICK</span>
-        <button onClick="{{ clearToast }}" aria-label="Remove product" style="position:absolute;top:12px;right:12px;width:28px;height:28px;border-radius:50%;border:1px solid var(--color-divider);background:var(--color-surface);color:var(--color-text-muted);display:flex;align-items:center;justify-content:center;cursor:pointer">✕</button>
+        <button onClick="{{ removeVsSlot2 }}" aria-label="Remove product" style="position:absolute;top:12px;right:12px;width:32px;height:32px;border-radius:50%;border:1px solid var(--color-divider);background:var(--color-surface);color:var(--color-text-muted);display:flex;align-items:center;justify-content:center;cursor:pointer">✕</button>
 
         <div style="text-align:center;padding:24px 12px 12px">
           <div class="ph" style="aspect-ratio:4/3;max-width:180px;margin:0 auto 14px;border-radius:var(--radius-md);background:linear-gradient(135deg,#1f242e,#0f1117)">
@@ -1025,29 +1029,138 @@ def get_community_view():
           <span style="font:700 11px/1 var(--font-heading);color:var(--color-accent);background:var(--color-accent-100);padding:3px 7px;border-radius:var(--radius-pill)">VALUE 89/100</span>
         </div>
       </div>
+      </sc-if>
 
-      <!-- Slot 3: Interactive Add Product Slot -->
-      <div class="card-premium" style="border:2px dashed var(--color-accent-300);background:rgba(0,122,255,0.02);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 16px;text-align:center;min-height:380px;cursor:pointer" onClick="{{ on.search }}">
+      <!-- Slot 3: Lenovo ThinkPad X1 (Active or Interactive Add Slot) -->
+      <sc-if value="{{ vsSlot3Active }}">
+      <div class="card-premium compare-hero-card" style="position:relative;border:2px solid #7c3aed;background:var(--color-surface);box-shadow:0 8px 24px rgba(124,58,237,0.08)">
+        <span style="position:absolute;top:12px;left:12px;background:#7c3aed;color:#fff;font:800 10px/1 var(--font-heading);padding:4px 8px;border-radius:var(--radius-pill);letter-spacing:0.04em">BUSINESS PICK</span>
+        <button onClick="{{ toggleVsSlot3 }}" aria-label="Remove product" style="position:absolute;top:12px;right:12px;width:32px;height:32px;border-radius:50%;border:1px solid var(--color-divider);background:var(--color-surface);color:var(--color-text-muted);display:flex;align-items:center;justify-content:center;cursor:pointer">✕</button>
+
+        <div style="text-align:center;padding:24px 12px 12px">
+          <div class="ph" style="aspect-ratio:4/3;max-width:180px;margin:0 auto 14px;border-radius:var(--radius-md);background:linear-gradient(135deg,#2d3748,#1a202c)">
+            <div style="font:800 20px/1 var(--font-heading);color:#fff;opacity:0.85">ThinkPad X1</div>
+            <div style="font:500 11px/1 var(--font-body);color:rgba(255,255,255,0.7);margin-top:4px">14" Carbon Gen 11</div>
+          </div>
+          <span style="font:700 11px/1 var(--font-heading);color:var(--color-text-muted);text-transform:uppercase">WINDOWS LAPTOPS</span>
+          <h3 style="margin:4px 0 6px;font:800 16px/1.3 var(--font-heading);color:var(--color-text)">Lenovo ThinkPad X1 Carbon Gen 11</h3>
+          
+          <div style="display:flex;align-items:baseline;justify-content:center;gap:8px;margin-bottom:8px">
+            <span style="font:800 20px/1 var(--font-heading);color:var(--color-accent)">XAF 890 000</span>
+            <span style="font:500 13px/1 var(--font-body);text-decoration:line-through;color:var(--color-text-muted)">980 000</span>
+            <span style="font:800 10px/1 var(--font-heading);background:var(--color-accent-sale-100);color:var(--color-accent-sale);padding:2px 6px;border-radius:var(--radius-pill)">-9%</span>
+          </div>
+
+          <div style="display:flex;align-items:center;justify-content:center;gap:6px;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px">
+            <span style="color:#eab308;font-weight:700">★ 4.8</span>
+            <span>(95 reviews)</span>
+            <span>·</span>
+            <span style="color:var(--color-success);font-weight:600">✓ In Stock</span>
+          </div>
+
+          <div style="background:var(--color-neutral-100);border-radius:var(--radius-sm);padding:10px;text-align:left;font-size:11.5px;color:var(--color-text-secondary);display:flex;flex-direction:column;gap:4px">
+            <div style="display:flex;justify-content:space-between"><span>Processor:</span><strong style="color:var(--color-text)">Intel Core i7-1365U</strong></div>
+            <div style="display:flex;justify-content:space-between"><span>Memory / RAM:</span><strong style="color:var(--color-text)">16 GB LPDDR5</strong></div>
+            <div style="display:flex;justify-content:space-between"><span>Weight:</span><strong style="color:var(--color-text)">1.12 kg (Carbon Fiber)</strong></div>
+            <div style="display:flex;justify-content:space-between"><span>Warranty:</span><strong style="color:var(--color-text)">36 Mo Lenovo Pro</strong></div>
+          </div>
+        </div>
+
+        <div style="border-top:1px solid var(--color-divider);padding:12px;display:flex;align-items:center;justify-content:space-between">
+          <div style="display:flex;align-items:center;gap:6px">
+            <div style="width:20px;height:20px;border-radius:50%;background:#e11d48;color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800">L</div>
+            <span style="font:600 12px/1 var(--font-heading);color:var(--color-text)">Douala Tech Hub</span>
+          </div>
+          <span style="font:700 11px/1 var(--font-heading);color:#7c3aed;background:#ede9fe;padding:3px 7px;border-radius:var(--radius-pill)">VALUE 91/100</span>
+        </div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ !vsSlot3Active }}">
+      <div class="card-premium compare-hero-card" style="border:2px dashed var(--color-accent-300);background:rgba(0,122,255,0.02);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 16px;text-align:center;min-height:380px;cursor:pointer" onClick="{{ toggleVsSlot3 }}">
         <div style="width:52px;height:52px;border-radius:50%;background:var(--color-accent-100);color:var(--color-accent);display:flex;align-items:center;justify-content:center;margin-bottom:14px">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         </div>
         <h4 style="margin:0 0 4px;font:700 15px/1.3 var(--font-heading);color:var(--color-text)">Add 3rd Product</h4>
         <p style="margin:0 0 16px;font:400 12px/1.4 var(--font-body);color:var(--color-text-secondary);max-width:200px">Compare with ThinkPad X1 Carbon or Dell XPS 15.</p>
-        <button class="btn btn-outline" style="height:36px;padding:0 16px;font-size:12px">Search Catalog</button>
+        <button class="btn btn-outline" style="height:38px;padding:0 18px;font-size:12px;min-height:44px">Add ThinkPad X1</button>
       </div>
+      </sc-if>
 
-      <!-- Slot 4: Optional 4th Slot Placeholder -->
-      <div class="card-premium" style="border:2px dashed var(--color-divider);background:var(--color-surface);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 16px;text-align:center;min-height:380px;opacity:0.75" onClick="{{ on.search }}">
+      <!-- Slot 4: Dell XPS 15 (Active or Available) -->
+      <sc-if value="{{ vsSlot4Active }}">
+      <div class="card-premium compare-hero-card" style="position:relative;border:2px solid #0284c7;background:var(--color-surface);box-shadow:0 8px 24px rgba(2,132,199,0.08)">
+        <span style="position:absolute;top:12px;left:12px;background:#0284c7;color:#fff;font:800 10px/1 var(--font-heading);padding:4px 8px;border-radius:var(--radius-pill);letter-spacing:0.04em">CREATIVE WORKSTATION</span>
+        <button onClick="{{ removeVsSlot4 }}" aria-label="Remove product" style="position:absolute;top:12px;right:12px;width:32px;height:32px;border-radius:50%;border:1px solid var(--color-divider);background:var(--color-surface);color:var(--color-text-muted);display:flex;align-items:center;justify-content:center;cursor:pointer">✕</button>
+
+        <div style="text-align:center;padding:24px 12px 12px">
+          <div class="ph" style="aspect-ratio:4/3;max-width:180px;margin:0 auto 14px;border-radius:var(--radius-md);background:linear-gradient(135deg,#0f172a,#1e293b)">
+            <div style="font:800 20px/1 var(--font-heading);color:#fff;opacity:0.85">Dell XPS 15</div>
+            <div style="font:500 11px/1 var(--font-body);color:rgba(255,255,255,0.7);margin-top:4px">3.5K OLED Touch</div>
+          </div>
+          <span style="font:700 11px/1 var(--font-heading);color:var(--color-text-muted);text-transform:uppercase">WINDOWS WORKSTATIONS</span>
+          <h3 style="margin:4px 0 6px;font:800 16px/1.3 var(--font-heading);color:var(--color-text)">Dell XPS 15 (RTX 4060)</h3>
+          
+          <div style="display:flex;align-items:baseline;justify-content:center;gap:8px;margin-bottom:8px">
+            <span style="font:800 20px/1 var(--font-heading);color:var(--color-accent)">XAF 1 180 000</span>
+            <span style="font:500 13px/1 var(--font-body);text-decoration:line-through;color:var(--color-text-muted)">1 290 000</span>
+            <span style="font:800 10px/1 var(--font-heading);background:var(--color-accent-sale-100);color:var(--color-accent-sale);padding:2px 6px;border-radius:var(--radius-pill)">-8%</span>
+          </div>
+
+          <div style="display:flex;align-items:center;justify-content:center;gap:6px;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px">
+            <span style="color:#eab308;font-weight:700">★ 4.9</span>
+            <span>(112 reviews)</span>
+            <span>·</span>
+            <span style="color:var(--color-success);font-weight:600">✓ In Stock</span>
+          </div>
+
+          <div style="background:var(--color-neutral-100);border-radius:var(--radius-sm);padding:10px;text-align:left;font-size:11.5px;color:var(--color-text-secondary);display:flex;flex-direction:column;gap:4px">
+            <div style="display:flex;justify-content:space-between"><span>GPU:</span><strong style="color:var(--color-text)">NVIDIA RTX 4060 8GB</strong></div>
+            <div style="display:flex;justify-content:space-between"><span>Memory / RAM:</span><strong style="color:var(--color-text)">32 GB DDR5</strong></div>
+            <div style="display:flex;justify-content:space-between"><span>Display:</span><strong style="color:var(--color-text)">3.5K OLED Touch</strong></div>
+            <div style="display:flex;justify-content:space-between"><span>Storage:</span><strong style="color:var(--color-text)">1 TB PCIe 4.0 SSD</strong></div>
+          </div>
+        </div>
+
+        <div style="border-top:1px solid var(--color-divider);padding:12px;display:flex;align-items:center;justify-content:space-between">
+          <div style="display:flex;align-items:center;gap:6px">
+            <div style="width:20px;height:20px;border-radius:50%;background:#0284c7;color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800">D</div>
+            <span style="font:600 12px/1 var(--font-heading);color:var(--color-text)">Dell Pro Center Yaoundé</span>
+          </div>
+          <span style="font:700 11px/1 var(--font-heading);color:#0284c7;background:#e0f2fe;padding:3px 7px;border-radius:var(--radius-pill)">VALUE 88/100</span>
+        </div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ !vsSlot4Active }}">
+      <div class="card-premium compare-hero-card" style="border:2px dashed var(--color-divider);background:var(--color-surface);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 16px;text-align:center;min-height:380px;cursor:pointer" onClick="{{ addVsXps }}">
         <div style="width:44px;height:44px;border-radius:50%;background:var(--color-neutral-100);color:var(--color-text-muted);display:flex;align-items:center;justify-content:center;margin-bottom:12px">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         </div>
         <h4 style="margin:0 0 4px;font:600 14px/1.3 var(--font-heading);color:var(--color-text-secondary)">Slot 4 Available</h4>
-        <p style="margin:0;font:400 11.5px/1.4 var(--font-body);color:var(--color-text-muted)">Up to 4 items in one view</p>
+        <p style="margin:0 0 12px;font:400 11.5px/1.4 var(--font-body);color:var(--color-text-muted)">Add Dell XPS 15 OLED (3.5K)</p>
+        <button class="btn btn-secondary btn-sm" style="height:36px;padding:0 14px;font-size:11.5px;min-height:44px">+ Add Dell XPS 15</button>
       </div>
+      </sc-if>
 
     </div>
 
-    <!-- Suggested Alternatives Quick Add Drawer / Section -->
+    <!-- Empty State when All Slots Cleared -->
+    <sc-if value="{{ vsEmpty }}">
+    <div class="card-premium" style="text-align:center;padding:48px 24px;background:var(--color-surface);border-radius:var(--radius-lg);margin-bottom:32px">
+      <div style="width:64px;height:64px;border-radius:50%;background:var(--color-neutral-100);color:var(--color-text-muted);display:flex;align-items:center;justify-content:center;margin:0 auto 16px">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect width="8" height="18" x="3" y="3" rx="1"/><rect width="8" height="18" x="13" y="3" rx="1"/></svg>
+      </div>
+      <h3 style="margin:0 0 6px;font:800 20px/1.2 var(--font-heading);color:var(--color-text)">Comparison Workspace Empty</h3>
+      <p style="margin:0 0 20px;font:400 13.5px/1.4 var(--font-body);color:var(--color-text-secondary);max-width:440px;margin-left:auto;margin-right:auto">Select 2 to 4 products from the marketplace or restore the default MacBook Air vs Pro head-to-head comparison.</p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <button onClick="{{ resetVsDefaults }}" class="btn btn-primary" style="height:44px;padding:0 22px;font-weight:700">Restore MacBook Air vs Pro</button>
+        <button onClick="{{ on.search }}" class="btn btn-secondary" style="height:44px;padding:0 22px;font-weight:700">Browse Catalog</button>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- Suggested Alternatives Quick Add Section -->
     <div style="margin-top:32px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
         <div>
@@ -1072,7 +1185,7 @@ def get_community_view():
               <div style="font:400 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">1.12 kg Carbon · Intel i7 · 16GB RAM</div>
             </div>
           </div>
-          <button onClick="{{ on.vsCompare }}" class="btn btn-secondary btn-sm" style="font-weight:700">+ ADD</button>
+          <button onClick="{{ toggleVsSlot3 }}" class="btn btn-secondary btn-sm" style="font-weight:700;min-height:44px">+ ADD</button>
         </div>
 
         <!-- Suggestion 2: Dell XPS 15 OLED -->
@@ -1088,7 +1201,7 @@ def get_community_view():
               <div style="font:400 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">32GB RAM · 1TB SSD · RTX 4060</div>
             </div>
           </div>
-          <button onClick="{{ on.vsCompare }}" class="btn btn-secondary btn-sm" style="font-weight:700">+ ADD</button>
+          <button onClick="{{ addVsXps }}" class="btn btn-secondary btn-sm" style="font-weight:700;min-height:44px">+ ADD</button>
         </div>
 
       </div>
@@ -1100,7 +1213,7 @@ def get_community_view():
   <div style="position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,0.95);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid var(--color-divider);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 -4px 20px rgba(0,0,0,0.06);z-index:30">
     <div>
       <div style="font:700 14px/1.2 var(--font-heading);color:var(--color-text)">MacBook Air M2 vs MacBook Pro 14 M3</div>
-      <div style="font:400 12px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">2 Products Ready · Full Specs, Value &amp; Seller Intelligence</div>
+      <div style="font:400 12px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">{{ vsCount }} Products Ready · Full Specs, Value &amp; Seller Intelligence</div>
     </div>
     <button onClick="{{ on.vsCompare }}" class="btn btn-primary" style="height:46px;padding:0 28px;font-size:14px;font-weight:800;border-radius:var(--radius-pill);box-shadow:0 6px 20px rgba(0,122,255,0.3)">
       <span>Compare Head-to-Head</span>
@@ -1116,12 +1229,12 @@ def get_community_view():
      6. ELEVATED SIDE-BY-SIDE COMPARISON MATRIX (is.vsCompare)
      ══════════════════════════════════════════════════════════════════════ -->
 <sc-if value="{{ is.vsCompare }}">
-<div style="padding-bottom:120px;background:var(--color-bg);min-height:100vh">
+<div style="padding-bottom:120px;background:var(--color-bg);min-height:100vh" class="compare-container">
   
   <!-- Sticky Glassmorphic Navigation Header -->
-  <div style="position:sticky;top:0;z-index:30;background:rgba(255,255,255,0.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--color-divider);padding:12px 20px;display:flex;align-items:center;justify-content:space-between">
+  <div class="compare-sticky-header">
     <div style="display:flex;align-items:center;gap:12px">
-      <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
+      <button onClick="{{ on.vs }}" aria-label="Go back to comparison setup" style="border:1px solid var(--color-divider);background:var(--color-surface);width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
       </button>
       <div>
@@ -1131,10 +1244,10 @@ def get_community_view():
     </div>
 
     <!-- Filter Pills (All / Differences / Winners) -->
-    <div style="display:flex;gap:6px;background:var(--color-neutral-100);padding:3px;border-radius:var(--radius-pill);border:1px solid var(--color-divider)" class="compare-filter-pills">
-      <button onClick="{{ clearToast }}" style="padding:6px 12px;border-radius:var(--radius-pill);border:none;background:var(--color-surface);font:700 11px/1 var(--font-heading);color:var(--color-accent);box-shadow:0 1px 3px rgba(0,0,0,0.08);cursor:pointer">ALL SPECS</button>
-      <button onClick="{{ clearToast }}" style="padding:6px 12px;border-radius:var(--radius-pill);border:none;background:transparent;font:600 11px/1 var(--font-heading);color:var(--color-text-secondary);cursor:pointer">DIFFERENCES ONLY</button>
-      <button onClick="{{ clearToast }}" style="padding:6px 12px;border-radius:var(--radius-pill);border:none;background:transparent;font:600 11px/1 var(--font-heading);color:var(--color-text-secondary);cursor:pointer">WINNERS ONLY</button>
+    <div class="compare-filter-pill-group">
+      <button onClick="{{ setVsFilterAll }}" class="compare-pill-btn {{ vsFilterAll ? 'active' : '' }}">ALL SPECS</button>
+      <button onClick="{{ setVsFilterDiff }}" class="compare-pill-btn {{ vsFilterDiff ? 'active' : '' }}">DIFFERENCES ONLY</button>
+      <button onClick="{{ setVsFilterWinners }}" class="compare-pill-btn {{ vsFilterWinners ? 'active' : '' }}">WINNERS ONLY</button>
     </div>
   </div>
 
@@ -1143,18 +1256,18 @@ def get_community_view():
     <!-- ══════════════════════════════════════════════════════════════════════════
          STAGE 1: PRODUCT COMPARISON HERO (Side-by-Side Cards)
          ══════════════════════════════════════════════════════════════════════ -->
-    <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:stretch;margin-bottom:28px" class="compare-hero-grid">
+    <div class="compare-hero-grid">
       
       <!-- Product A: MacBook Air M2 -->
-      <div class="card-premium" style="position:relative;background:var(--color-surface);padding:20px;border-radius:var(--radius-lg);display:flex;flex-direction:column;justify-content:space-between">
+      <div class="card-premium compare-hero-card" style="border:2px solid var(--color-accent);box-shadow:0 8px 24px rgba(0,122,255,0.08)">
         <div>
           <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
             <span style="font:800 11px/1 var(--font-heading);background:var(--color-accent-100);color:var(--color-accent);padding:4px 10px;border-radius:var(--radius-pill)">BEST VALUE</span>
             <div style="display:flex;gap:6px">
-              <button onClick="{{ toggleSave }}" aria-label="Save product" style="width:32px;height:32px;border-radius:50%;border:1px solid var(--color-divider);background:var(--color-surface);display:flex;align-items:center;justify-content:center;color:{{ saved ? 'var(--color-accent-sale)' : 'var(--color-text)' }}">
+              <button onClick="{{ toggleSave }}" aria-label="Save product" style="width:34px;height:34px;border-radius:50%;border:1px solid var(--color-divider);background:var(--color-surface);display:flex;align-items:center;justify-content:center;color:{{ saved ? 'var(--color-accent-sale)' : 'var(--color-text)' }}">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="{{ saved ? 'currentColor' : 'none' }}" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
               </button>
-              <button onClick="{{ on.vs }}" aria-label="Swap product" style="width:32px;height:32px;border-radius:50%;border:1px solid var(--color-divider);background:var(--color-surface);display:flex;align-items:center;justify-content:center;color:var(--color-text-muted)">⇄</button>
+              <button onClick="{{ on.vs }}" aria-label="Swap product" style="width:34px;height:34px;border-radius:50%;border:1px solid var(--color-divider);background:var(--color-surface);display:flex;align-items:center;justify-content:center;color:var(--color-text-muted)">⇄</button>
             </div>
           </div>
 
@@ -1197,23 +1310,21 @@ def get_community_view():
       </div>
 
       <!-- Center Subtle Editorial VS Badge -->
-      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px 0">
-        <div style="width:46px;height:46px;border-radius:50%;background:#111214;color:#fff;display:flex;align-items:center;justify-content:center;font:800 15px/1 var(--font-heading);box-shadow:0 4px 14px rgba(0,0,0,0.15)">
-          VS
-        </div>
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px 0" class="compare-hero-vs-wrap">
+        <div class="compare-vs-badge">VS</div>
         <span style="font:700 10px/1 var(--font-heading);letter-spacing:0.08em;color:var(--color-text-muted);margin-top:6px;text-transform:uppercase">HEAD TO HEAD</span>
       </div>
 
       <!-- Product B: MacBook Pro 14 M3 Pro -->
-      <div class="card-premium" style="position:relative;background:var(--color-surface);padding:20px;border-radius:var(--radius-lg);display:flex;flex-direction:column;justify-content:space-between">
+      <div class="card-premium compare-hero-card" style="border:2px solid #111214;box-shadow:0 8px 24px rgba(0,0,0,0.08)">
         <div>
           <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
             <span style="font:800 11px/1 var(--font-heading);background:#111214;color:#fff;padding:4px 10px;border-radius:var(--radius-pill)">BEST OVERALL</span>
             <div style="display:flex;gap:6px">
-              <button onClick="{{ toggleSave }}" aria-label="Save product" style="width:32px;height:32px;border-radius:50%;border:1px solid var(--color-divider);background:var(--color-surface);display:flex;align-items:center;justify-content:center;color:{{ saved ? 'var(--color-accent-sale)' : 'var(--color-text)' }}">
+              <button onClick="{{ toggleSave }}" aria-label="Save product" style="width:34px;height:34px;border-radius:50%;border:1px solid var(--color-divider);background:var(--color-surface);display:flex;align-items:center;justify-content:center;color:{{ saved ? 'var(--color-accent-sale)' : 'var(--color-text)' }}">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="{{ saved ? 'currentColor' : 'none' }}" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
               </button>
-              <button onClick="{{ on.vs }}" aria-label="Swap product" style="width:32px;height:32px;border-radius:50%;border:1px solid var(--color-divider);background:var(--color-surface);display:flex;align-items:center;justify-content:center;color:var(--color-text-muted)">⇄</button>
+              <button onClick="{{ on.vs }}" aria-label="Swap product" style="width:34px;height:34px;border-radius:50%;border:1px solid var(--color-divider);background:var(--color-surface);display:flex;align-items:center;justify-content:center;color:var(--color-text-muted)">⇄</button>
             </div>
           </div>
 
@@ -1327,45 +1438,78 @@ def get_community_view():
 
       <!-- Priority Chips -->
       <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px">
-        <button onClick="{{ clearToast }}" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:var(--radius-pill);border:2px solid var(--color-accent);background:var(--color-accent-100);color:var(--color-accent);font:700 12px/1 var(--font-heading);cursor:pointer">
+        <button onClick="{{ setVsPriorityPerf }}" class="compare-priority-pill {{ vsPriPerf ? 'active' : '' }}">
           <span>⚡ Performance &amp; RAM</span>
           <span style="background:var(--color-accent);color:#fff;width:16px;height:16px;border-radius:50%;font-size:10px;display:flex;align-items:center;justify-content:center">5</span>
         </button>
-        <button onClick="{{ clearToast }}" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:var(--radius-pill);border:1px solid var(--color-divider);background:var(--color-surface);color:var(--color-text);font:600 12px/1 var(--font-heading);cursor:pointer">
+        <button onClick="{{ setVsPriorityPrice }}" class="compare-priority-pill {{ vsPriPrice ? 'active' : '' }}">
           <span>💰 Lowest Price</span>
-          <span style="background:var(--color-neutral-200);color:var(--color-text);width:16px;height:16px;border-radius:50%;font-size:10px;display:flex;align-items:center;justify-content:center">3</span>
+          <span style="background:var(--color-neutral-200);color:var(--color-text);width:16px;height:16px;border-radius:50%;font-size:10px;display:flex;align-items:center;justify-content:center">5</span>
         </button>
-        <button onClick="{{ clearToast }}" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:var(--radius-pill);border:2px solid var(--color-accent);background:var(--color-accent-100);color:var(--color-accent);font:700 12px/1 var(--font-heading);cursor:pointer">
+        <button onClick="{{ setVsPriorityDisp }}" class="compare-priority-pill {{ vsPriDisp ? 'active' : '' }}">
           <span>🖥 120Hz Liquid Retina Display</span>
           <span style="background:var(--color-accent);color:#fff;width:16px;height:16px;border-radius:50%;font-size:10px;display:flex;align-items:center;justify-content:center">5</span>
         </button>
-        <button onClick="{{ clearToast }}" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:var(--radius-pill);border:1px solid var(--color-divider);background:var(--color-surface);color:var(--color-text);font:600 12px/1 var(--font-heading);cursor:pointer">
+        <button onClick="{{ setVsPriorityBatt }}" class="compare-priority-pill {{ vsPriBatt ? 'active' : '' }}">
           <span>🔋 Battery Endurance</span>
-          <span style="background:var(--color-neutral-200);color:var(--color-text);width:16px;height:16px;border-radius:50%;font-size:10px;display:flex;align-items:center;justify-content:center">3</span>
+          <span style="background:var(--color-neutral-200);color:var(--color-text);width:16px;height:16px;border-radius:50%;font-size:10px;display:flex;align-items:center;justify-content:center">4</span>
         </button>
-        <button onClick="{{ clearToast }}" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:var(--radius-pill);border:1px solid var(--color-divider);background:var(--color-surface);color:var(--color-text);font:600 12px/1 var(--font-heading);cursor:pointer">
+        <button onClick="{{ setVsPriorityPort }}" class="compare-priority-pill {{ vsPriPort ? 'active' : '' }}">
           <span>🪶 Ultra Portability</span>
-          <span style="background:var(--color-neutral-200);color:var(--color-text);width:16px;height:16px;border-radius:50%;font-size:10px;display:flex;align-items:center;justify-content:center">3</span>
+          <span style="background:var(--color-neutral-200);color:var(--color-text);width:16px;height:16px;border-radius:50%;font-size:10px;display:flex;align-items:center;justify-content:center">4</span>
         </button>
-        <button onClick="{{ clearToast }}" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:var(--radius-pill);border:1px solid var(--color-divider);background:var(--color-surface);color:var(--color-text);font:600 12px/1 var(--font-heading);cursor:pointer">
+        <button onClick="{{ setVsPriorityWarr }}" class="compare-priority-pill {{ vsPriWarr ? 'active' : '' }}">
           <span>🛡 12+ Months Warranty</span>
           <span style="background:var(--color-neutral-200);color:var(--color-text);width:16px;height:16px;border-radius:50%;font-size:10px;display:flex;align-items:center;justify-content:center">4</span>
         </button>
       </div>
 
       <!-- Live Calculated Recommendation Box -->
+      <sc-if value="{{ vsPriPerf || vsPriDisp }}">
       <div style="background:var(--color-neutral-100);border-radius:var(--radius-md);padding:14px 18px;display:flex;align-items:center;justify-content:space-between">
         <div style="display:flex;align-items:center;gap:12px">
           <div style="width:38px;height:38px;border-radius:50%;background:var(--color-accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800">
             🎯
           </div>
           <div>
-            <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Recommended For Your Priorities: <strong style="color:var(--color-accent)">MacBook Pro 14” (M3 Pro)</strong></div>
-            <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Scored higher due to high Performance (11-Core CPU / 18GB RAM) and 120Hz ProMotion weights.</div>
+            <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Recommended For Your Priorities: <strong style="color:var(--color-accent)">MacBook Pro 14” (M3 Pro) · 96% Match</strong></div>
+            <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Scored highest due to heavy 11-Core M3 Pro computation and 120Hz ProMotion XDR display weights.</div>
           </div>
         </div>
-        <button onClick="{{ addToCart }}" class="btn btn-primary btn-sm" style="font-weight:800">SELECT WINNER →</button>
+        <button onClick="{{ addToCart }}" class="btn btn-primary btn-sm" style="font-weight:800;height:38px">SELECT PRO 14 →</button>
       </div>
+      </sc-if>
+
+      <sc-if value="{{ vsPriPrice || vsPriPort || vsPriBatt }}">
+      <div style="background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.25);border-radius:var(--radius-md);padding:14px 18px;display:flex;align-items:center;justify-content:space-between">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:38px;height:38px;border-radius:50%;background:var(--color-success);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800">
+            ✓
+          </div>
+          <div>
+            <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Recommended For Your Priorities: <strong style="color:var(--color-success)">MacBook Air 13” (M2) · 98% Match</strong></div>
+            <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Scored highest due to XAF 505,000 savings, 1.24kg ultra-portable chassis, and 18h battery life.</div>
+          </div>
+        </div>
+        <button onClick="{{ addToCart }}" class="btn btn-primary btn-sm" style="font-weight:800;height:38px;background:var(--color-success)">SELECT AIR M2 →</button>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ vsPriWarr }}">
+      <div style="background:var(--color-neutral-100);border-radius:var(--radius-md);padding:14px 18px;display:flex;align-items:center;justify-content:space-between">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:38px;height:38px;border-radius:50%;background:var(--color-accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800">
+            🛡
+          </div>
+          <div>
+            <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Warranty &amp; Protection: <strong style="color:var(--color-accent)">Both Include 12 Months Official Apple Coverage</strong></div>
+            <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Both devices feature Tier 1 Escrow with guaranteed pre-delivery verification in Cameroon.</div>
+          </div>
+        </div>
+        <button onClick="{{ addToCart }}" class="btn btn-primary btn-sm" style="font-weight:800;height:38px">COMPARE DETAILS →</button>
+      </div>
+      </sc-if>
+
     </div>
 
 
@@ -1384,51 +1528,51 @@ def get_community_view():
       <div style="display:flex;flex-direction:column;gap:10px">
         
         <!-- Delta 1: Processor -->
-        <div style="display:grid;grid-template-columns:180px 1fr 1fr auto;gap:14px;padding:12px 14px;background:var(--color-neutral-100);border-radius:var(--radius-sm);align-items:center" class="delta-row">
+        <div class="delta-grid-row">
           <div style="font:700 13px/1 var(--font-heading);color:var(--color-text)">Processor &amp; Cores</div>
           <div style="font:500 12.5px/1.2 var(--font-body);color:var(--color-text-secondary)">Apple M2 (8 CPU / 8 GPU)</div>
           <div style="font:700 12.5px/1.2 var(--font-body);color:var(--color-text)">Apple M3 Pro (11 CPU / 14 GPU)</div>
-          <span style="font:800 10.5px/1 var(--font-heading);color:var(--color-accent);background:var(--color-accent-100);padding:4px 8px;border-radius:var(--radius-pill)">PRO WINS (+65% SPEED)</span>
+          <span class="badge-winner-tag badge-winner-blue">PRO WINS (+65% SPEED)</span>
         </div>
 
         <!-- Delta 2: Memory -->
-        <div style="display:grid;grid-template-columns:180px 1fr 1fr auto;gap:14px;padding:12px 14px;background:var(--color-neutral-100);border-radius:var(--radius-sm);align-items:center" class="delta-row">
+        <div class="delta-grid-row">
           <div style="font:700 13px/1 var(--font-heading);color:var(--color-text)">Memory (RAM)</div>
           <div style="font:500 12.5px/1.2 var(--font-body);color:var(--color-text-secondary)">8 GB Unified Memory</div>
           <div style="font:700 12.5px/1.2 var(--font-body);color:var(--color-text)">18 GB Unified Memory</div>
-          <span style="font:800 10.5px/1 var(--font-heading);color:var(--color-accent);background:var(--color-accent-100);padding:4px 8px;border-radius:var(--radius-pill)">PRO WINS (+10GB RAM)</span>
+          <span class="badge-winner-tag badge-winner-blue">PRO WINS (+10GB RAM)</span>
         </div>
 
         <!-- Delta 3: Display -->
-        <div style="display:grid;grid-template-columns:180px 1fr 1fr auto;gap:14px;padding:12px 14px;background:var(--color-neutral-100);border-radius:var(--radius-sm);align-items:center" class="delta-row">
+        <div class="delta-grid-row">
           <div style="font:700 13px/1 var(--font-heading);color:var(--color-text)">Display &amp; Refresh</div>
           <div style="font:500 12.5px/1.2 var(--font-body);color:var(--color-text-secondary)">60Hz Liquid Retina (500 nits)</div>
           <div style="font:700 12.5px/1.2 var(--font-body);color:var(--color-text)">120Hz Mini-LED XDR (1600 nits)</div>
-          <span style="font:800 10.5px/1 var(--font-heading);color:var(--color-accent);background:var(--color-accent-100);padding:4px 8px;border-radius:var(--radius-pill)">PRO WINS (120HZ XDR)</span>
+          <span class="badge-winner-tag badge-winner-blue">PRO WINS (120HZ XDR)</span>
         </div>
 
         <!-- Delta 4: Weight -->
-        <div style="display:grid;grid-template-columns:180px 1fr 1fr auto;gap:14px;padding:12px 14px;background:var(--color-neutral-100);border-radius:var(--radius-sm);align-items:center" class="delta-row">
+        <div class="delta-grid-row">
           <div style="font:700 13px/1 var(--font-heading);color:var(--color-text)">Weight &amp; Chassis</div>
           <div style="font:700 12.5px/1.2 var(--font-body);color:var(--color-text)">1.24 kg (Fanless 100% Silent)</div>
           <div style="font:500 12.5px/1.2 var(--font-body);color:var(--color-text-secondary)">1.61 kg (Active Dual-Fan)</div>
-          <span style="font:800 10.5px/1 var(--font-heading);color:var(--color-success);background:var(--color-success-100);padding:4px 8px;border-radius:var(--radius-pill)">AIR WINS (-370G LIGHTER)</span>
+          <span class="badge-winner-tag badge-winner-green">AIR WINS (-370G LIGHTER)</span>
         </div>
 
         <!-- Delta 5: Ports -->
-        <div style="display:grid;grid-template-columns:180px 1fr 1fr auto;gap:14px;padding:12px 14px;background:var(--color-neutral-100);border-radius:var(--radius-sm);align-items:center" class="delta-row">
+        <div class="delta-grid-row">
           <div style="font:700 13px/1 var(--font-heading);color:var(--color-text)">Port Selection</div>
           <div style="font:500 12.5px/1.2 var(--font-body);color:var(--color-text-secondary)">2× Thunderbolt / USB 4, MagSafe</div>
           <div style="font:700 12.5px/1.2 var(--font-body);color:var(--color-text)">3× TB4, HDMI 2.1, SDXC Slot, MagSafe</div>
-          <span style="font:800 10.5px/1 var(--font-heading);color:var(--color-accent);background:var(--color-accent-100);padding:4px 8px;border-radius:var(--radius-pill)">PRO WINS (HDMI + SDXC)</span>
+          <span class="badge-winner-tag badge-winner-blue">PRO WINS (HDMI + SDXC)</span>
         </div>
 
         <!-- Delta 6: Price -->
-        <div style="display:grid;grid-template-columns:180px 1fr 1fr auto;gap:14px;padding:12px 14px;background:var(--color-neutral-100);border-radius:var(--radius-sm);align-items:center" class="delta-row">
+        <div class="delta-grid-row">
           <div style="font:700 13px/1 var(--font-heading);color:var(--color-text)">Market Price (XAF)</div>
           <div style="font:800 13.5px/1.2 var(--font-heading);color:var(--color-success)">XAF 745 000</div>
           <div style="font:800 13.5px/1.2 var(--font-heading);color:var(--color-text)">XAF 1 250 000</div>
-          <span style="font:800 10.5px/1 var(--font-heading);color:var(--color-success);background:var(--color-success-100);padding:4px 8px;border-radius:var(--radius-pill)">AIR SAVES XAF 505,000</span>
+          <span class="badge-winner-tag badge-winner-green">AIR SAVES XAF 505,000</span>
         </div>
 
       </div>
@@ -1438,10 +1582,10 @@ def get_community_view():
     <!-- ══════════════════════════════════════════════════════════════════════════
          STAGE 5: FULL SIDE-BY-SIDE MATRIX (9 Categorized Accordions)
          ══════════════════════════════════════════════════════════════════════ -->
-    <div class="card-premium" style="background:var(--color-surface);border-radius:var(--radius-lg);padding:0;overflow:hidden;margin-bottom:28px">
+    <div class="compare-matrix-table">
       
       <!-- Table Top Sticky Bar -->
-      <div style="background:var(--color-surface);border-bottom:2px solid var(--color-divider);padding:14px 20px;display:grid;grid-template-columns:260px 1fr 1fr;gap:20px;align-items:center" class="matrix-sticky-header">
+      <div class="compare-matrix-header">
         <div style="font:800 14px/1 var(--font-heading);color:var(--color-text);text-transform:uppercase;letter-spacing:0.04em">Specification</div>
         <div style="font:800 14px/1 var(--font-heading);color:var(--color-accent);display:flex;align-items:center;gap:6px">
           <span>MacBook Air 13” (M2)</span>
@@ -1455,185 +1599,239 @@ def get_community_view():
 
       <!-- 1. PERFORMANCE ACCORDION -->
       <div style="border-bottom:1px solid var(--color-divider)">
-        <div style="background:var(--color-neutral-100);padding:10px 20px;display:flex;align-items:center;gap:8px;font:700 12px/1 var(--font-heading);color:var(--color-text-muted);text-transform:uppercase;letter-spacing:0.06em">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="16" height="16" x="4" y="4" rx="2"/><rect width="6" height="6" x="9" y="9" rx="1"/><path d="M15 2v2"/><path d="M15 20v2"/><path d="M2 15h2"/><path d="M2 9h2"/><path d="M20 15h2"/><path d="M20 9h2"/><path d="M9 2v2"/><path d="M9 20v2"/></svg>
-          <span>1. Performance &amp; Architecture</span>
+        <div class="compare-accordion-header" onClick="{{ toggleVsPerfSec }}">
+          <div style="display:flex;align-items:center;gap:8px">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="16" height="16" x="4" y="4" rx="2"/><rect width="6" height="6" x="9" y="9" rx="1"/><path d="M15 2v2"/><path d="M15 20v2"/><path d="M2 15h2"/><path d="M2 9h2"/><path d="M20 15h2"/><path d="M20 9h2"/><path d="M9 2v2"/><path d="M9 20v2"/></svg>
+            <span>1. Performance &amp; Architecture</span>
+          </div>
+          <span>{{ vsSecPerfOpen ? '▾' : '▸' }}</span>
         </div>
         
-        <div style="display:grid;grid-template-columns:260px 1fr 1fr;gap:20px;padding:12px 20px;border-bottom:1px solid var(--color-divider);align-items:center" class="matrix-row">
-          <div style="font:600 12.5px/1.3 var(--font-body);color:var(--color-text-secondary)">Processor</div>
-          <div style="font:500 13px/1.3 var(--font-body);color:var(--color-text)">Apple M2 (8 Cores)</div>
-          <div style="font:700 13px/1.3 var(--font-body);color:var(--color-text);display:flex;align-items:center;justify-content:space-between">
-            <span>Apple M3 Pro (11 Cores)</span>
-            <span style="font:800 10px/1 var(--font-heading);color:var(--color-accent);background:var(--color-accent-100);padding:2px 6px;border-radius:var(--radius-pill)">WINNER</span>
+        <sc-if value="{{ vsSecPerfOpen }}">
+        <div>
+          <div class="compare-matrix-row">
+            <div style="font:600 12.5px/1.3 var(--font-body);color:var(--color-text-secondary)">Processor</div>
+            <div style="font:500 13px/1.3 var(--font-body);color:var(--color-text)">Apple M2 (8 Cores)</div>
+            <div style="font:700 13px/1.3 var(--font-body);color:var(--color-text);display:flex;align-items:center;justify-content:space-between">
+              <span>Apple M3 Pro (11 Cores)</span>
+              <span class="badge-winner-tag badge-winner-blue">WINNER</span>
+            </div>
           </div>
-        </div>
 
-        <div style="display:grid;grid-template-columns:260px 1fr 1fr;gap:20px;padding:12px 20px;border-bottom:1px solid var(--color-divider);align-items:center" class="matrix-row">
-          <div style="font:600 12.5px/1.3 var(--font-body);color:var(--color-text-secondary)">Unified Memory (RAM)</div>
-          <div style="font:500 13px/1.3 var(--font-body);color:var(--color-text)">8 GB Unified</div>
-          <div style="font:700 13px/1.3 var(--font-body);color:var(--color-text);display:flex;align-items:center;justify-content:space-between">
-            <span>18 GB Unified (150 GB/s)</span>
-            <span style="font:800 10px/1 var(--font-heading);color:var(--color-accent);background:var(--color-accent-100);padding:2px 6px;border-radius:var(--radius-pill)">WINNER</span>
+          <div class="compare-matrix-row">
+            <div style="font:600 12.5px/1.3 var(--font-body);color:var(--color-text-secondary)">Unified Memory (RAM)</div>
+            <div style="font:500 13px/1.3 var(--font-body);color:var(--color-text)">8 GB Unified</div>
+            <div style="font:700 13px/1.3 var(--font-body);color:var(--color-text);display:flex;align-items:center;justify-content:space-between">
+              <span>18 GB Unified (150 GB/s)</span>
+              <span class="badge-winner-tag badge-winner-blue">WINNER</span>
+            </div>
           </div>
-        </div>
 
-        <div style="display:grid;grid-template-columns:260px 1fr 1fr;gap:20px;padding:12px 20px;border-bottom:1px solid var(--color-divider);align-items:center" class="matrix-row">
-          <div style="font:600 12.5px/1.3 var(--font-body);color:var(--color-text-secondary)">Graphics GPU</div>
-          <div style="font:500 13px/1.3 var(--font-body);color:var(--color-text)">8-Core GPU</div>
-          <div style="font:700 13px/1.3 var(--font-body);color:var(--color-text);display:flex;align-items:center;justify-content:space-between">
-            <span>14-Core GPU + Ray Tracing</span>
-            <span style="font:800 10px/1 var(--font-heading);color:var(--color-accent);background:var(--color-accent-100);padding:2px 6px;border-radius:var(--radius-pill)">WINNER</span>
+          <div class="compare-matrix-row">
+            <div style="font:600 12.5px/1.3 var(--font-body);color:var(--color-text-secondary)">Graphics GPU</div>
+            <div style="font:500 13px/1.3 var(--font-body);color:var(--color-text)">8-Core GPU</div>
+            <div style="font:700 13px/1.3 var(--font-body);color:var(--color-text);display:flex;align-items:center;justify-content:space-between">
+              <span>14-Core GPU + Ray Tracing</span>
+              <span class="badge-winner-tag badge-winner-blue">WINNER</span>
+            </div>
           </div>
-        </div>
 
-        <div style="display:grid;grid-template-columns:260px 1fr 1fr;gap:20px;padding:12px 20px;align-items:center" class="matrix-row">
-          <div style="font:600 12.5px/1.3 var(--font-body);color:var(--color-text-secondary)">Thermal Architecture</div>
-          <div style="font:700 13px/1.3 var(--font-body);color:var(--color-success);display:flex;align-items:center;justify-content:space-between">
-            <span>Fanless 100% Silent</span>
-            <span style="font:800 10px/1 var(--font-heading);color:var(--color-success);background:var(--color-success-100);padding:2px 6px;border-radius:var(--radius-pill)">SILENT</span>
+          <div class="compare-matrix-row">
+            <div style="font:600 12.5px/1.3 var(--font-body);color:var(--color-text-secondary)">Thermal Architecture</div>
+            <div style="font:700 13px/1.3 var(--font-body);color:var(--color-success);display:flex;align-items:center;justify-content:space-between">
+              <span>Fanless 100% Silent</span>
+              <span class="badge-winner-tag badge-winner-green">SILENT</span>
+            </div>
+            <div style="font:500 13px/1.3 var(--font-body);color:var(--color-text)">Active Dual-Fan High Cooling</div>
           </div>
-          <div style="font:500 13px/1.3 var(--font-body);color:var(--color-text)">Active Dual-Fan High Cooling</div>
         </div>
+        </sc-if>
       </div>
 
       <!-- 2. DISPLAY ACCORDION -->
       <div style="border-bottom:1px solid var(--color-divider)">
-        <div style="background:var(--color-neutral-100);padding:10px 20px;display:flex;align-items:center;gap:8px;font:700 12px/1 var(--font-heading);color:var(--color-text-muted);text-transform:uppercase;letter-spacing:0.06em">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></svg>
-          <span>2. Display &amp; Visuals</span>
+        <div class="compare-accordion-header" onClick="{{ toggleVsDispSec }}">
+          <div style="display:flex;align-items:center;gap:8px">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></svg>
+            <span>2. Display &amp; Visuals</span>
+          </div>
+          <span>{{ vsSecDispOpen ? '▾' : '▸' }}</span>
         </div>
         
-        <div style="display:grid;grid-template-columns:260px 1fr 1fr;gap:20px;padding:12px 20px;border-bottom:1px solid var(--color-divider);align-items:center" class="matrix-row">
-          <div style="font:600 12.5px/1.3 var(--font-body);color:var(--color-text-secondary)">Screen Size</div>
-          <div style="font:500 13px/1.3 var(--font-body);color:var(--color-text)">13.6-inch Liquid Retina</div>
-          <div style="font:700 13px/1.3 var(--font-body);color:var(--color-text)">14.2-inch Liquid Retina XDR</div>
-        </div>
+        <sc-if value="{{ vsSecDispOpen }}">
+        <div>
+          <div class="compare-matrix-row">
+            <div style="font:600 12.5px/1.3 var(--font-body);color:var(--color-text-secondary)">Screen Size</div>
+            <div style="font:500 13px/1.3 var(--font-body);color:var(--color-text)">13.6-inch Liquid Retina</div>
+            <div style="font:700 13px/1.3 var(--font-body);color:var(--color-text)">14.2-inch Liquid Retina XDR</div>
+          </div>
 
-        <div style="display:grid;grid-template-columns:260px 1fr 1fr;gap:20px;padding:12px 20px;border-bottom:1px solid var(--color-divider);align-items:center" class="matrix-row">
-          <div style="font:600 12.5px/1.3 var(--font-body);color:var(--color-text-secondary)">Refresh Rate</div>
-          <div style="font:500 13px/1.3 var(--font-body);color:var(--color-text)">60 Hz Fixed</div>
-          <div style="font:700 13px/1.3 var(--font-body);color:var(--color-text);display:flex;align-items:center;justify-content:space-between">
-            <span>120 Hz ProMotion (Adaptive)</span>
-            <span style="font:800 10px/1 var(--font-heading);color:var(--color-accent);background:var(--color-accent-100);padding:2px 6px;border-radius:var(--radius-pill)">WINNER</span>
+          <div class="compare-matrix-row">
+            <div style="font:600 12.5px/1.3 var(--font-body);color:var(--color-text-secondary)">Refresh Rate</div>
+            <div style="font:500 13px/1.3 var(--font-body);color:var(--color-text)">60 Hz Fixed</div>
+            <div style="font:700 13px/1.3 var(--font-body);color:var(--color-text);display:flex;align-items:center;justify-content:space-between">
+              <span>120 Hz ProMotion (Adaptive)</span>
+              <span class="badge-winner-tag badge-winner-blue">WINNER</span>
+            </div>
+          </div>
+
+          <div class="compare-matrix-row">
+            <div style="font:600 12.5px/1.3 var(--font-body);color:var(--color-text-secondary)">Peak Brightness</div>
+            <div style="font:500 13px/1.3 var(--font-body);color:var(--color-text)">500 nits Peak SDR</div>
+            <div style="font:700 13px/1.3 var(--font-body);color:var(--color-text);display:flex;align-items:center;justify-content:space-between">
+              <span>1600 nits Peak HDR (600 SDR)</span>
+              <span class="badge-winner-tag badge-winner-blue">3× BRIGHTER</span>
+            </div>
           </div>
         </div>
-
-        <div style="display:grid;grid-template-columns:260px 1fr 1fr;gap:20px;padding:12px 20px;align-items:center" class="matrix-row">
-          <div style="font:600 12.5px/1.3 var(--font-body);color:var(--color-text-secondary)">Peak Brightness</div>
-          <div style="font:500 13px/1.3 var(--font-body);color:var(--color-text)">500 nits Peak SDR</div>
-          <div style="font:700 13px/1.3 var(--font-body);color:var(--color-text);display:flex;align-items:center;justify-content:space-between">
-            <span>1600 nits Peak HDR (600 SDR)</span>
-            <span style="font:800 10px/1 var(--font-heading);color:var(--color-accent);background:var(--color-accent-100);padding:2px 6px;border-radius:var(--radius-pill)">3× BRIGHTER</span>
-          </div>
-        </div>
+        </sc-if>
       </div>
 
       <!-- 3. BATTERY & CHARGING -->
       <div style="border-bottom:1px solid var(--color-divider)">
-        <div style="background:var(--color-neutral-100);padding:10px 20px;display:flex;align-items:center;gap:8px;font:700 12px/1 var(--font-heading);color:var(--color-text-muted);text-transform:uppercase;letter-spacing:0.06em">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 7h1a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2"/><path d="M6 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h1"/><path d="m11 7-3 5h4l-3 5"/><line x1="22" x2="22" y1="11" y2="13"/></svg>
-          <span>3. Battery &amp; Power</span>
+        <div class="compare-accordion-header" onClick="{{ toggleVsBattSec }}">
+          <div style="display:flex;align-items:center;gap:8px">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 7h1a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2"/><path d="M6 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h1"/><path d="m11 7-3 5h4l-3 5"/><line x1="22" x2="22" y1="11" y2="13"/></svg>
+            <span>3. Battery &amp; Power</span>
+          </div>
+          <span>{{ vsSecBattOpen ? '▾' : '▸' }}</span>
         </div>
         
-        <div style="display:grid;grid-template-columns:260px 1fr 1fr;gap:20px;padding:12px 20px;border-bottom:1px solid var(--color-divider);align-items:center" class="matrix-row">
-          <div style="font:600 12.5px/1.3 var(--font-body);color:var(--color-text-secondary)">Battery Endurance</div>
-          <div style="font:700 13px/1.3 var(--font-body);color:var(--color-text);display:flex;align-items:center;justify-content:space-between">
-            <span>18 Hours Wireless Web</span>
-            <span style="font:800 10px/1 var(--font-heading);color:var(--color-accent);background:var(--color-accent-100);padding:2px 6px;border-radius:var(--radius-pill)">TIE</span>
+        <sc-if value="{{ vsSecBattOpen }}">
+        <div>
+          <!-- Show row only if not differences only -->
+          <sc-if value="{{ !vsFilterDiff }}">
+          <div class="compare-matrix-row">
+            <div style="font:600 12.5px/1.3 var(--font-body);color:var(--color-text-secondary)">Battery Endurance</div>
+            <div style="font:700 13px/1.3 var(--font-body);color:var(--color-text);display:flex;align-items:center;justify-content:space-between">
+              <span>18 Hours Wireless Web</span>
+              <span class="badge-tie-tag">TIE</span>
+            </div>
+            <div style="font:700 13px/1.3 var(--font-body);color:var(--color-text);display:flex;align-items:center;justify-content:space-between">
+              <span>18 Hours Video Playback</span>
+              <span class="badge-tie-tag">TIE</span>
+            </div>
           </div>
-          <div style="font:700 13px/1.3 var(--font-body);color:var(--color-text);display:flex;align-items:center;justify-content:space-between">
-            <span>18 Hours Video Playback</span>
-            <span style="font:800 10px/1 var(--font-heading);color:var(--color-accent);background:var(--color-accent-100);padding:2px 6px;border-radius:var(--radius-pill)">TIE</span>
-          </div>
-        </div>
+          </sc-if>
 
-        <div style="display:grid;grid-template-columns:260px 1fr 1fr;gap:20px;padding:12px 20px;align-items:center" class="matrix-row">
-          <div style="font:600 12.5px/1.3 var(--font-body);color:var(--color-text-secondary)">Fast Charging</div>
-          <div style="font:500 13px/1.3 var(--font-body);color:var(--color-text)">Up to 67W MagSafe 3</div>
-          <div style="font:700 13px/1.3 var(--font-body);color:var(--color-text);display:flex;align-items:center;justify-content:space-between">
-            <span>Up to 96W Fast Charge</span>
-            <span style="font:800 10px/1 var(--font-heading);color:var(--color-accent);background:var(--color-accent-100);padding:2px 6px;border-radius:var(--radius-pill)">WINNER</span>
+          <div class="compare-matrix-row">
+            <div style="font:600 12.5px/1.3 var(--font-body);color:var(--color-text-secondary)">Fast Charging</div>
+            <div style="font:500 13px/1.3 var(--font-body);color:var(--color-text)">Up to 67W MagSafe 3</div>
+            <div style="font:700 13px/1.3 var(--font-body);color:var(--color-text);display:flex;align-items:center;justify-content:space-between">
+              <span>Up to 96W Fast Charge</span>
+              <span class="badge-winner-tag badge-winner-blue">WINNER</span>
+            </div>
           </div>
         </div>
+        </sc-if>
       </div>
 
       <!-- 4. BUILD & WEIGHT -->
       <div style="border-bottom:1px solid var(--color-divider)">
-        <div style="background:var(--color-neutral-100);padding:10px 20px;display:flex;align-items:center;gap:8px;font:700 12px/1 var(--font-heading);color:var(--color-text-muted);text-transform:uppercase;letter-spacing:0.06em">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"/><line x1="16" x2="2" y1="8" y2="22"/><line x1="17.5" x2="9" y1="15" y2="15"/></svg>
-          <span>4. Build, Materials &amp; Portability</span>
+        <div class="compare-accordion-header" onClick="{{ toggleVsBuildSec }}">
+          <div style="display:flex;align-items:center;gap:8px">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"/><line x1="16" x2="2" y1="8" y2="22"/><line x1="17.5" x2="9" y1="15" y2="15"/></svg>
+            <span>4. Build, Materials &amp; Portability</span>
+          </div>
+          <span>{{ vsSecBuildOpen ? '▾' : '▸' }}</span>
         </div>
         
-        <div style="display:grid;grid-template-columns:260px 1fr 1fr;gap:20px;padding:12px 20px;border-bottom:1px solid var(--color-divider);align-items:center" class="matrix-row">
-          <div style="font:600 12.5px/1.3 var(--font-body);color:var(--color-text-secondary)">Chassis Weight</div>
-          <div style="font:700 13px/1.3 var(--font-body);color:var(--color-success);display:flex;align-items:center;justify-content:space-between">
-            <span>1.24 kg (Ultra Portable)</span>
-            <span style="font:800 10px/1 var(--font-heading);color:var(--color-success);background:var(--color-success-100);padding:2px 6px;border-radius:var(--radius-pill)">-370G LIGHTER</span>
+        <sc-if value="{{ vsSecBuildOpen }}">
+        <div>
+          <div class="compare-matrix-row">
+            <div style="font:600 12.5px/1.3 var(--font-body);color:var(--color-text-secondary)">Chassis Weight</div>
+            <div style="font:700 13px/1.3 var(--font-body);color:var(--color-success);display:flex;align-items:center;justify-content:space-between">
+              <span>1.24 kg (Ultra Portable)</span>
+              <span class="badge-winner-tag badge-winner-green">-370G LIGHTER</span>
+            </div>
+            <div style="font:500 13px/1.3 var(--font-body);color:var(--color-text)">1.61 kg (Workstation Build)</div>
           </div>
-          <div style="font:500 13px/1.3 var(--font-body);color:var(--color-text)">1.61 kg (Workstation Build)</div>
-        </div>
 
-        <div style="display:grid;grid-template-columns:260px 1fr 1fr;gap:20px;padding:12px 20px;align-items:center" class="matrix-row">
-          <div style="font:600 12.5px/1.3 var(--font-body);color:var(--color-text-secondary)">Chassis Thickness</div>
-          <div style="font:700 13px/1.3 var(--font-body);color:var(--color-success);display:flex;align-items:center;justify-content:space-between">
-            <span>1.13 cm Flat Uniform</span>
-            <span style="font:800 10px/1 var(--font-heading);color:var(--color-success);background:var(--color-success-100);padding:2px 6px;border-radius:var(--radius-pill)">SLIMMER</span>
+          <div class="compare-matrix-row">
+            <div style="font:600 12.5px/1.3 var(--font-body);color:var(--color-text-secondary)">Chassis Thickness</div>
+            <div style="font:700 13px/1.3 var(--font-body);color:var(--color-success);display:flex;align-items:center;justify-content:space-between">
+              <span>1.13 cm Flat Uniform</span>
+              <span class="badge-winner-tag badge-winner-green">SLIMMER</span>
+            </div>
+            <div style="font:500 13px/1.3 var(--font-body);color:var(--color-text)">1.55 cm</div>
           </div>
-          <div style="font:500 13px/1.3 var(--font-body);color:var(--color-text)">1.55 cm</div>
         </div>
+        </sc-if>
       </div>
 
       <!-- 5. PORTS & CONNECTIVITY -->
       <div style="border-bottom:1px solid var(--color-divider)">
-        <div style="background:var(--color-neutral-100);padding:10px 20px;display:flex;align-items:center;gap:8px;font:700 12px/1 var(--font-heading);color:var(--color-text-muted);text-transform:uppercase;letter-spacing:0.06em">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" x2="12.01" y1="20" y2="20"/></svg>
-          <span>5. Connectivity &amp; Ports</span>
+        <div class="compare-accordion-header" onClick="{{ toggleVsPortsSec }}">
+          <div style="display:flex;align-items:center;gap:8px">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" x2="12.01" y1="20" y2="20"/></svg>
+            <span>5. Connectivity &amp; Ports</span>
+          </div>
+          <span>{{ vsSecPortsOpen ? '▾' : '▸' }}</span>
         </div>
         
-        <div style="display:grid;grid-template-columns:260px 1fr 1fr;gap:20px;padding:12px 20px;border-bottom:1px solid var(--color-divider);align-items:center" class="matrix-row">
-          <div style="font:600 12.5px/1.3 var(--font-body);color:var(--color-text-secondary)">Port Array</div>
-          <div style="font:500 13px/1.3 var(--font-body);color:var(--color-text)">2× Thunderbolt / USB 4, MagSafe 3</div>
-          <div style="font:700 13px/1.3 var(--font-body);color:var(--color-text);display:flex;align-items:center;justify-content:space-between">
-            <span>3× TB4, HDMI 2.1, SDXC Slot, MagSafe 3</span>
-            <span style="font:800 10px/1 var(--font-heading);color:var(--color-accent);background:var(--color-accent-100);padding:2px 6px;border-radius:var(--radius-pill)">WINNER</span>
+        <sc-if value="{{ vsSecPortsOpen }}">
+        <div>
+          <div class="compare-matrix-row">
+            <div style="font:600 12.5px/1.3 var(--font-body);color:var(--color-text-secondary)">Port Array</div>
+            <div style="font:500 13px/1.3 var(--font-body);color:var(--color-text)">2× Thunderbolt / USB 4, MagSafe 3</div>
+            <div style="font:700 13px/1.3 var(--font-body);color:var(--color-text);display:flex;align-items:center;justify-content:space-between">
+              <span>3× TB4, HDMI 2.1, SDXC Slot, MagSafe 3</span>
+              <span class="badge-winner-tag badge-winner-blue">WINNER</span>
+            </div>
           </div>
-        </div>
 
-        <div style="display:grid;grid-template-columns:260px 1fr 1fr;gap:20px;padding:12px 20px;align-items:center" class="matrix-row">
-          <div style="font:600 12.5px/1.3 var(--font-body);color:var(--color-text-secondary)">External Display Support</div>
-          <div style="font:500 13px/1.3 var(--font-body);color:var(--color-text)">1 External Display (Up to 6K)</div>
-          <div style="font:700 13px/1.3 var(--font-body);color:var(--color-text);display:flex;align-items:center;justify-content:space-between">
-            <span>Up to 2 External Displays</span>
-            <span style="font:800 10px/1 var(--font-heading);color:var(--color-accent);background:var(--color-accent-100);padding:2px 6px;border-radius:var(--radius-pill)">2× DISPLAYS</span>
+          <div class="compare-matrix-row">
+            <div style="font:600 12.5px/1.3 var(--font-body);color:var(--color-text-secondary)">External Display Support</div>
+            <div style="font:500 13px/1.3 var(--font-body);color:var(--color-text)">1 External Display (Up to 6K)</div>
+            <div style="font:700 13px/1.3 var(--font-body);color:var(--color-text);display:flex;align-items:center;justify-content:space-between">
+              <span>Up to 2 External Displays</span>
+              <span class="badge-winner-tag badge-winner-blue">2× DISPLAYS</span>
+            </div>
           </div>
         </div>
+        </sc-if>
       </div>
 
       <!-- 6. COMMERCE & WARRANTY -->
       <div>
-        <div style="background:var(--color-neutral-100);padding:10px 20px;display:flex;align-items:center;gap:8px;font:700 12px/1 var(--font-heading);color:var(--color-text-muted);text-transform:uppercase;letter-spacing:0.06em">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-          <span>6. Commerce, Warranty &amp; Escrow</span>
+        <div class="compare-accordion-header" onClick="{{ toggleVsCommSec }}">
+          <div style="display:flex;align-items:center;gap:8px">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <span>6. Commerce, Warranty &amp; Escrow</span>
+          </div>
+          <span>{{ vsSecCommOpen ? '▾' : '▸' }}</span>
         </div>
         
-        <div style="display:grid;grid-template-columns:260px 1fr 1fr;gap:20px;padding:12px 20px;border-bottom:1px solid var(--color-divider);align-items:center" class="matrix-row">
-          <div style="font:600 12.5px/1.3 var(--font-body);color:var(--color-text-secondary)">Official Warranty</div>
-          <div style="font:700 13px/1.3 var(--font-body);color:var(--color-text);display:flex;align-items:center;justify-content:space-between">
-            <span>12 Months Official Apple</span>
-            <span style="font:800 10px/1 var(--font-heading);color:var(--color-accent);background:var(--color-accent-100);padding:2px 6px;border-radius:var(--radius-pill)">TIE</span>
+        <sc-if value="{{ vsSecCommOpen }}">
+        <div>
+          <!-- Show row only if not differences only -->
+          <sc-if value="{{ !vsFilterDiff }}">
+          <div class="compare-matrix-row">
+            <div style="font:600 12.5px/1.3 var(--font-body);color:var(--color-text-secondary)">Official Warranty</div>
+            <div style="font:700 13px/1.3 var(--font-body);color:var(--color-text);display:flex;align-items:center;justify-content:space-between">
+              <span>12 Months Official Apple</span>
+              <span class="badge-tie-tag">TIE</span>
+            </div>
+            <div style="font:700 13px/1.3 var(--font-body);color:var(--color-text);display:flex;align-items:center;justify-content:space-between">
+              <span>12 Months Official Apple</span>
+              <span class="badge-tie-tag">TIE</span>
+            </div>
           </div>
-          <div style="font:700 13px/1.3 var(--font-body);color:var(--color-text);display:flex;align-items:center;justify-content:space-between">
-            <span>12 Months Official Apple</span>
-            <span style="font:800 10px/1 var(--font-heading);color:var(--color-accent);background:var(--color-accent-100);padding:2px 6px;border-radius:var(--radius-pill)">TIE</span>
-          </div>
-        </div>
 
-        <div style="display:grid;grid-template-columns:260px 1fr 1fr;gap:20px;padding:12px 20px;align-items:center" class="matrix-row">
-          <div style="font:600 12.5px/1.3 var(--font-body);color:var(--color-text-secondary)">Escrow Protection Tier</div>
-          <div style="font:700 13px/1.3 var(--font-body);color:var(--color-success)">Tier 1 Full Escrow (Inspection Guaranteed)</div>
-          <div style="font:700 13px/1.3 var(--font-body);color:var(--color-success)">Tier 1 Full Escrow (Inspection Guaranteed)</div>
+          <div class="compare-matrix-row">
+            <div style="font:600 12.5px/1.3 var(--font-body);color:var(--color-text-secondary)">Escrow Protection Tier</div>
+            <div style="font:700 13px/1.3 var(--font-body);color:var(--color-success)">Tier 1 Full Escrow (Inspection Guaranteed)</div>
+            <div style="font:700 13px/1.3 var(--font-body);color:var(--color-success)">Tier 1 Full Escrow (Inspection Guaranteed)</div>
+          </div>
+          </sc-if>
+
+          <div class="compare-matrix-row">
+            <div style="font:600 12.5px/1.3 var(--font-body);color:var(--color-text-secondary)">Cameroon Delivery Realities</div>
+            <div style="font:600 12.5px/1.3 var(--font-body);color:var(--color-text)">Same-day Douala · 24h Yaoundé</div>
+            <div style="font:600 12.5px/1.3 var(--font-body);color:var(--color-text)">Same-day Yaoundé · 24h Douala</div>
+          </div>
         </div>
+        </sc-if>
       </div>
 
     </div>
@@ -1722,8 +1920,8 @@ def get_community_view():
             Includes 12 Months Official Apple Warranty · Free same-day delivery in Douala · In-store pickup available at Akwa boulevard.
           </div>
           <div style="display:flex;gap:8px">
-            <button onClick="{{ addToCart }}" class="btn btn-primary" style="flex:1;height:38px;font-size:12.5px;font-weight:700">BUY FROM ORCA</button>
-            <button onClick="{{ on.threadSeller }}" aria-label="Message seller on WhatsApp" class="btn btn-secondary" style="height:38px;padding:0 12px;color:var(--color-wa-teal)">
+            <button onClick="{{ addToCart }}" class="btn btn-primary" style="flex:1;height:40px;font-size:12.5px;font-weight:700">BUY FROM ORCA</button>
+            <button onClick="{{ on.threadSeller }}" aria-label="Message seller on WhatsApp" class="btn btn-secondary" style="height:40px;padding:0 14px;color:var(--color-wa-teal)">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
               <span style="margin-left:4px;font-size:11px;font-weight:700">CHAT</span>
             </button>
@@ -1747,8 +1945,8 @@ def get_community_view():
             Direct Apple Certified Importer · Same-day delivery in Yaoundé &amp; 24h express to Douala · Full escrow protection.
           </div>
           <div style="display:flex;gap:8px">
-            <button onClick="{{ addToCart }}" class="btn btn-primary" style="flex:1;height:38px;font-size:12.5px;font-weight:700">BUY FROM KAMERTECH</button>
-            <button onClick="{{ on.threadSeller }}" aria-label="Message seller on WhatsApp" class="btn btn-secondary" style="height:38px;padding:0 12px;color:var(--color-wa-teal)">
+            <button onClick="{{ addToCart }}" class="btn btn-primary" style="flex:1;height:40px;font-size:12.5px;font-weight:700">BUY FROM KAMERTECH</button>
+            <button onClick="{{ on.threadSeller }}" aria-label="Message seller on WhatsApp" class="btn btn-secondary" style="height:40px;padding:0 14px;color:var(--color-wa-teal)">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
               <span style="margin-left:4px;font-size:11px;font-weight:700">CHAT</span>
             </button>
@@ -1766,7 +1964,7 @@ def get_community_view():
       <div style="font:700 11px/1 var(--font-heading);color:var(--color-text-muted)">RECOMMENDED FOR YOU</div>
       <div style="font:800 14px/1.2 var(--font-heading);color:var(--color-text);margin-top:2px">MacBook Pro 14” (M3) · XAF 1.25M</div>
     </div>
-    <button onClick="{{ addToCart }}" class="btn btn-primary" style="height:42px;padding:0 20px;font-size:13px;font-weight:800;border-radius:var(--radius-pill)">
+    <button onClick="{{ addToCart }}" class="btn btn-primary" style="height:44px;padding:0 20px;font-size:13px;font-weight:800;border-radius:var(--radius-pill);min-height:44px">
       <span>ADD TO BAG</span>
       <span style="margin-left:4px">→</span>
     </button>
@@ -1774,4 +1972,5 @@ def get_community_view():
 
 </div>
 </sc-if>
+
 """

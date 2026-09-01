@@ -10,7 +10,7 @@ print("Screens found:", screens)
 defined_screens = [
     'home','search','filters','voice','category','bestpicks','freeday',
     'notifications','chat','threadAi','threadSeller','product','sellers',
-    'cart','checkout','paying','success','orders','store','business',
+    'cart','checkout','paying','success','orders','store','business','brand',
     'vs','vsCompare','visual','visualScan','visualResults','upload',
     'uploadDetails','uploadPrice','uploadSuccess','myListings','travel',
     'travelBus','travelPackages','travelVisa','travelResults','travelDetail',
