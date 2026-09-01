@@ -55,6 +55,48 @@ async function throttleUploads(req, res, next) {
 }
 
 /**
+ * POST /api/v1/uploads/verification-document
+ *   Query:   ?docType=cni_front | cni_back | rccm | passport  (default: cni_front)
+ *   Body:    raw document bytes (JPEG, PNG, WEBP, PDF)
+ *   Returns: { uploadId, url, docType, mimeType, fileSizeBytes }
+ *
+ * Stored in isolated private storage prefix for official verification.
+ */
+router.post('/verification-document',
+  requireAuth,
+  throttleUploads,
+  rawImageBody,
+  async (req, res, next) => {
+    try {
+      const buffer = req.body;
+      const docType = (req.query.docType || 'cni_front').toLowerCase();
+      if (!['cni_front', 'cni_back', 'rccm', 'passport'].includes(docType)) {
+        throw new ValidationError('Invalid document type. Must be one of: cni_front, cni_back, rccm, passport.');
+      }
+      if (!Buffer.isBuffer(buffer) || buffer.length === 0) {
+        throw new ValidationError('No document file data was received.');
+      }
+
+      const upload = await MediaStorageService.stageVerificationDocument({
+        buffer,
+        principal: req.principal,
+        docType
+      });
+
+      res.status(201).json({
+        status: 'success',
+        data: {
+          uploadId: upload.id,
+          url: upload.signedUrl,
+          docType,
+          mimeType: upload.mime_type,
+          fileSizeBytes: upload.file_size_bytes
+        }
+      });
+    } catch (err) { next(err); }
+  });
+
+/**
  * POST /api/v1/uploads/listing-media
  *   Body:    raw image bytes
  *   Query:   ?listingId=<draft listing id>   (optional)

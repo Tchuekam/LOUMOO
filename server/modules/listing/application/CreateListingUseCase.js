@@ -22,6 +22,7 @@ const MediaStorageService = require('../../../infrastructure/storage/MediaStorag
 const AnalyticsService = require('../../../infrastructure/analytics/AnalyticsService');
 const BehavioralSignalService = require('../../adaptive/application/BehavioralSignalService');
 const Listing = require('../domain/Listing');
+const Store = require('../../store/domain/Store');
 const logger = require('../../../shared/logging/logger');
 const {
   AuthorizationError,
@@ -54,6 +55,23 @@ class CreateListingUseCase {
 
     if (store.status === 'SUSPENDED' || store.status === 'CLOSED') {
       throw new AuthorizationError(`This boutique is ${store.status.toLowerCase()} and cannot publish new listings.`);
+    }
+
+    // ── 1b. STORE VERTICAL & LISTING TYPE AUTHORIZATION ─────────────────
+    // A boutique's category restricts what types of commercial listings it can publish.
+    // e.g. An electronics shop cannot publish hotel accommodations, and a service boutique cannot publish transport routes.
+    const rawListingType = (input && input.listingType) ? String(input.listingType).toUpperCase() : 'PHYSICAL_PRODUCT';
+    const storeObj = (store instanceof Store) ? store : new Store(store);
+    if (!storeObj.canCreateListingType(rawListingType)) {
+      throw new AuthorizationError(
+        `Your boutique (${storeObj.categoryId || 'General'}) is not authorized to publish ${rawListingType} listings. Allowed types: ${storeObj.getAllowedListingTypes().join(', ')}.`,
+        {
+          storeId: store.id,
+          storeCategory: storeObj.categoryId,
+          attemptedType: rawListingType,
+          allowedTypes: storeObj.getAllowedListingTypes()
+        }
+      );
     }
 
     // ── 2. DUPLICATE SUBMISSION DEFENCE ────────────────────────────────────

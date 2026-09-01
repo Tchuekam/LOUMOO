@@ -38,6 +38,8 @@ const purchaseHistoryTest = require('./unit/purchase_history.test');
 const accountDashboardTest = require('./unit/account_dashboard.test');
 const authenticatedUiTest = require('./unit/authenticated_ui.test');
 const categoryTaxonomyTest = require('./unit/category_taxonomy.test');
+const coreCommerceUnificationTest = require('./integration/core_commerce_unification.test');
+const identityRoleHardeningTest = require('./integration/identity_role_hardening.test');
 
 const suites = [
   // Foundation Suites
@@ -72,7 +74,13 @@ const suites = [
   { name: 'Authenticated UI & Get Started State', test: authenticatedUiTest.run },
 
   // Phase Discovery & Category Taxonomy Suite
-  { name: 'All Categories & Commerce Taxonomy Discovery', test: categoryTaxonomyTest.run }
+  { name: 'All Categories & Commerce Taxonomy Discovery', test: categoryTaxonomyTest.run },
+
+  // Phase 1 Core Commerce Unification Suite
+  { name: 'Core Commerce Unification (Listing -> PostgreSQL -> Catalog -> PDP)', test: coreCommerceUnificationTest.run },
+
+  // Critical Production Hardening Suite
+  { name: 'Identity, Role, Category-First Store & Vertical Authorization', test: identityRoleHardeningTest.run }
 ];
 
 async function main() {

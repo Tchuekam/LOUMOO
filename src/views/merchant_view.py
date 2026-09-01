@@ -1086,15 +1086,15 @@ def get_merchant_view():
   
   <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
     <div style="display:flex;align-items:center;gap:12px">
-      <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
+      <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
       </button>
       <div>
         <h4 style="margin:0;font-size:16px">Seller Studio</h4>
-        <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary)">Merchant Dashboard &amp; Analytics</div>
+        <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary)">Merchant Dashboard &amp; Inventory</div>
       </div>
     </div>
-    <button onClick="{{ on.upload }}" class="btn btn-primary" style="height:36px;padding:0 14px;font-size:12px">+ POST LISTING</button>
+    <button onClick="{{ handleSellClick }}" class="btn btn-primary" style="height:36px;padding:0 14px;font-size:12px;cursor:pointer">+ POST LISTING</button>
   </div>
 
   <div style="padding:16px;max-width:960px;margin:0 auto;display:flex;flex-direction:column;gap:16px">
@@ -1103,20 +1103,20 @@ def get_merchant_view():
     <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px">
       <div class="card-premium" style="padding:18px">
         <div style="font:700 11px/1 var(--font-heading);color:var(--color-text-muted);text-transform:uppercase">MONTHLY REVENUE</div>
-        <div style="font:800 22px/1 var(--font-heading);color:var(--color-text);margin:8px 0 4px">XAF 4.25M</div>
-        <div style="font:600 11px/1 var(--font-body);color:var(--color-success)">+18.4% vs last month</div>
+        <div style="font:800 22px/1 var(--font-heading);color:var(--color-text);margin:8px 0 4px">{{ sellerRevenue || 'XAF 0' }}</div>
+        <div style="font:600 11px/1 var(--font-body);color:{{ sellerRevenueDeltaColor || 'var(--color-text-muted)' }}">{{ sellerRevenueDelta || 'No sales this month yet' }}</div>
       </div>
 
       <div class="card-premium" style="padding:18px">
         <div style="font:700 11px/1 var(--font-heading);color:var(--color-text-muted);text-transform:uppercase">ACTIVE ORDERS</div>
-        <div style="font:800 22px/1 var(--font-heading);color:var(--color-accent);margin:8px 0 4px">6 Pending</div>
-        <div style="font:500 11px/1 var(--font-body);color:var(--color-text-secondary)">2 ready for dispatch</div>
+        <div style="font:800 22px/1 var(--font-heading);color:var(--color-accent);margin:8px 0 4px">{{ sellerActiveOrdersCount || 0 }} Pending</div>
+        <div style="font:500 11px/1 var(--font-body);color:var(--color-text-secondary)">{{ sellerActiveOrdersNote || '0 ready for dispatch' }}</div>
       </div>
 
       <div class="card-premium" style="padding:18px">
         <div style="font:700 11px/1 var(--font-heading);color:var(--color-text-muted);text-transform:uppercase">STORE VIEWS</div>
-        <div style="font:800 22px/1 var(--font-heading);color:var(--color-text);margin:8px 0 4px">12.4k</div>
-        <div style="font:600 11px/1 var(--font-body);color:var(--color-success)">+840 this week</div>
+        <div style="font:800 22px/1 var(--font-heading);color:var(--color-text);margin:8px 0 4px">{{ sellerStoreViewsCount || 0 }}</div>
+        <div style="font:600 11px/1 var(--font-body);color:var(--color-text-secondary)">{{ sellerStoreViewsNote || '0 views this week' }}</div>
       </div>
     </div>
 
@@ -1126,16 +1126,23 @@ def get_merchant_view():
         <h4 style="margin:0;font-size:15px">Inventory &amp; Listings</h4>
         <button onClick="{{ on.myListings }}" style="border:none;background:transparent;font:700 12px/1 var(--font-heading);color:var(--color-accent);cursor:pointer">View all listings →</button>
       </div>
-      <div style="display:flex;flex-direction:column;gap:10px">
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--color-divider);font-size:12.5px">
-          <span>MacBook Air M2 13” (14 in stock)</span>
-          <span class="tag tag-accent" style="min-height:20px;padding:2px 6px;font-size:10px">LIVE</span>
+
+      <sc-if value="{{ sellerLiveCount > 0 }}">
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--color-divider);font-size:12.5px">
+            <span>{{ currentProductTitle || 'Active Listing' }} (In Stock)</span>
+            <span class="tag tag-accent" style="min-height:20px;padding:2px 6px;font-size:10px">LIVE</span>
+          </div>
         </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;font-size:12.5px">
-          <span>Anker 737 Power Bank (8 in stock)</span>
-          <span class="tag tag-accent" style="min-height:20px;padding:2px 6px;font-size:10px">LIVE</span>
+      </sc-if>
+
+      <sc-if value="{{ !sellerLiveCount }}">
+        <div style="padding:24px 16px;text-align:center;background:var(--color-neutral-100);border-radius:var(--radius-md);border:1px dashed var(--color-divider)">
+          <div style="font:700 14px/1.2 var(--font-heading);color:var(--color-text);margin-bottom:6px">No listings published yet</div>
+          <div style="font:400 12px/1.4 var(--font-body);color:var(--color-text-secondary);margin-bottom:14px">Publish your first product, service, or booking to start receiving customer orders across Cameroon.</div>
+          <button onClick="{{ handleSellClick }}" class="btn btn-primary" style="height:36px;padding:0 16px;font-size:12px;cursor:pointer">+ POST YOUR FIRST LISTING</button>
         </div>
-      </div>
+      </sc-if>
     </div>
 
   </div>
@@ -1143,51 +1150,82 @@ def get_merchant_view():
 </sc-if>
 
 <!-- ══════════════════════════════════════════════════════════════════════════
-     LISTING WIZARD STEP 1: CATEGORY SELECTION (is.upload)
+     LISTING WIZARD STEP 1: CONTEXTUAL STORE PUBLISHING (is.upload)
      ══════════════════════════════════════════════════════════════════════ -->
 <sc-if value="{{ is.upload }}">
 <div style="padding-bottom:32px">
   <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
-    <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
+    <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
     </button>
-    <div>
-      <h4 style="margin:0;font-size:16px">Post a Listing · Step 1 of 3</h4>
-      <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary)">Select listing category</div>
+    <div style="flex:1;min-width:0">
+      <h4 style="margin:0;font-size:16px">Publish to {{ currentStoreName || 'Marketplace' }}</h4>
+      <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">
+        Store Vertical: <span style="font-weight:700;color:var(--color-accent)">{{ currentStoreCategoryLabel || 'Physical Retail' }}</span>
+      </div>
     </div>
   </div>
 
   <div style="padding:16px;max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:12px">
     
-    <button onClick="{{ on.uploadDetails }}" class="card-premium" style="display:flex;align-items:center;gap:14px;padding:16px;text-align:left;cursor:pointer">
-      <div style="width:44px;height:44px;border-radius:var(--radius-sm);background:var(--color-accent-100);color:var(--color-accent);display:flex;align-items:center;justify-content:center;flex-shrink:0">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect width="18" height="12" x="3" y="4" rx="2"/><line x1="2" x2="22" y1="20" y2="20"/></svg>
-      </div>
-      <div style="flex:1">
-        <div style="font:800 15px/1.2 var(--font-heading);color:var(--color-text)">Electronics &amp; Physical Products</div>
-        <div style="font:400 12px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Laptops, smartphones, fashion, appliances, hardware</div>
-      </div>
-      <span style="color:var(--color-accent);font-weight:800">→</span>
-    </button>
+    <div style="font:700 12px/1 var(--font-heading);letter-spacing:.08em;color:var(--color-text-muted);text-transform:uppercase;margin-bottom:2px">
+      Authorized Content Formats
+    </div>
 
-    <button onClick="{{ on.uploadDetails }}" class="card-premium" style="display:flex;align-items:center;gap:14px;padding:16px;text-align:left;cursor:pointer">
-      <div style="width:44px;height:44px;border-radius:var(--radius-sm);background:var(--color-neutral-200);color:var(--color-text);display:flex;align-items:center;justify-content:center;flex-shrink:0">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
-      </div>
-      <div style="flex:1">
-        <div style="font:800 15px/1.2 var(--font-heading);color:var(--color-text)">Professional Services</div>
-        <div style="font:400 12px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Photography, solar technicians, tutoring, legal</div>
-      </div>
-      <span style="color:var(--color-accent);font-weight:800">→</span>
-    </button>
+    <!-- Physical Products / Retail Vertical -->
+    <sc-if value="{{ !storeCategory || storeCategory === 'electronics' || storeCategory === 'fashion' || storeCategory === 'home' || storeCategory === 'food' || storeCategory === 'beauty' || storeCategory === 'automotive' || storeCategory === 'general' }}">
+      <button onClick="{{ selectCategoryPhysical }}" class="card-premium" style="display:flex;align-items:center;gap:14px;padding:16px;text-align:left;cursor:pointer">
+        <div style="width:44px;height:44px;border-radius:var(--radius-sm);background:var(--color-accent-100);color:var(--color-accent);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect width="18" height="12" x="3" y="4" rx="2"/><line x1="2" x2="22" y1="20" y2="20"/></svg>
+        </div>
+        <div style="flex:1">
+          <div style="font:800 15px/1.2 var(--font-heading);color:var(--color-text)">Physical Product / Inventory</div>
+          <div style="font:400 12px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Post items with price, condition, specifications, and escrow delivery</div>
+        </div>
+        <span style="color:var(--color-accent);font-weight:800">→</span>
+      </button>
+    </sc-if>
 
-    <button onClick="{{ on.uploadDetails }}" class="card-premium" style="display:flex;align-items:center;gap:14px;padding:16px;text-align:left;cursor:pointer">
-      <div style="width:44px;height:44px;border-radius:var(--radius-sm);background:var(--color-neutral-200);color:var(--color-text);display:flex;align-items:center;justify-content:center;flex-shrink:0">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 22v-6.57"/><path d="M12 11h.01"/><path d="M12 7h.01"/><path d="M14 15.43V22"/><path d="M15 11h.01"/><path d="M15 7h.01"/><path d="M16 16h2a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/><path d="M18 22v-4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v4"/><path d="M8 22v-6.57"/><path d="M9 11h.01"/><path d="M9 7h.01"/></svg>
+    <!-- Services Vertical -->
+    <sc-if value="{{ storeCategory === 'services' }}">
+      <button onClick="{{ selectCategoryService }}" class="card-premium" style="display:flex;align-items:center;gap:14px;padding:16px;text-align:left;cursor:pointer">
+        <div style="width:44px;height:44px;border-radius:var(--radius-sm);background:var(--color-accent-100);color:var(--color-accent);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+        </div>
+        <div style="flex:1">
+          <div style="font:800 15px/1.2 var(--font-heading);color:var(--color-text)">Professional Service / Gig</div>
+          <div style="font:400 12px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Photography, solar technicians, repair services, consulting</div>
+        </div>
+        <span style="color:var(--color-accent);font-weight:800">→</span>
+      </button>
+    </sc-if>
+
+    <!-- Hospitality / Accommodations Vertical -->
+    <sc-if value="{{ storeCategory === 'hotels' || storeCategory === 'hospitality' }}">
+      <button onClick="{{ selectCategoryHospitality }}" class="card-premium" style="display:flex;align-items:center;gap:14px;padding:16px;text-align:left;cursor:pointer">
+        <div style="width:44px;height:44px;border-radius:var(--radius-sm);background:var(--color-accent-100);color:var(--color-accent);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 22v-6.57"/><path d="M12 11h.01"/><path d="M12 7h.01"/><path d="M14 15.43V22"/><path d="M15 11h.01"/><path d="M15 7h.01"/><path d="M16 16h2a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/><path d="M18 22v-4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v4"/><path d="M8 22v-6.57"/><path d="M9 11h.01"/><path d="M9 7h.01"/></svg>
+        </div>
+        <div style="flex:1">
+          <div style="font:800 15px/1.2 var(--font-heading);color:var(--color-text)">Room, Suite &amp; Booking</div>
+          <div style="font:400 12px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Hotel rooms, furnished apartments, venue reservations</div>
+        </div>
+        <span style="color:var(--color-accent);font-weight:800">→</span>
+      </button>
+    </sc-if>
+
+    <!-- Universal Announcement / Broadcast -->
+    <div style="margin-top:8px;font:700 12px/1 var(--font-heading);letter-spacing:.08em;color:var(--color-text-muted);text-transform:uppercase">
+      Commercial Broadcast
+    </div>
+
+    <button onClick="{{ openAnnounceStudioFromSell }}" class="card-premium" style="display:flex;align-items:center;gap:14px;padding:16px;text-align:left;cursor:pointer">
+      <div style="width:44px;height:44px;border-radius:var(--radius-sm);background:var(--color-secondary-100,#fef3c7);color:var(--color-secondary-800,#92400e);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
       </div>
       <div style="flex:1">
-        <div style="font:800 15px/1.2 var(--font-heading);color:var(--color-text)">Hospitality &amp; Rentals</div>
-        <div style="font:400 12px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Hotel rooms, guest houses, vehicle rentals</div>
+        <div style="font:800 15px/1.2 var(--font-heading);color:var(--color-text)">Post Store Announcement / Deal</div>
+        <div style="font:400 12px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Broadcast flash promotions, stock arrivals, or business updates</div>
       </div>
       <span style="color:var(--color-accent);font-weight:800">→</span>
     </button>
@@ -1202,12 +1240,12 @@ def get_merchant_view():
 <sc-if value="{{ is.uploadDetails }}">
 <div style="padding-bottom:32px">
   <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
-    <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
+    <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
     </button>
     <div>
       <h4 style="margin:0;font-size:16px">Listing Details · Step 2 of 3</h4>
-      <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary)">Title, photos &amp; condition</div>
+      <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary)">Title, photos &amp; specifications</div>
     </div>
   </div>
 
@@ -1218,27 +1256,37 @@ def get_merchant_view():
       <div style="width:48px;height:48px;border-radius:50%;background:var(--color-accent-100);color:var(--color-accent);display:flex;align-items:center;justify-content:center;margin:0 auto 10px">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
       </div>
-      <div style="font:800 14px/1 var(--font-heading);color:var(--color-text)">Add Studio Photos</div>
-      <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:4px">Upload up to 6 high-resolution photos with plain background</div>
-      <button onClick="{{ say.mainImg }}" class="btn btn-secondary" style="margin-top:12px;height:36px;font-size:12px">+ CHOOSE FILES</button>
+      <div style="font:800 14px/1 var(--font-heading);color:var(--color-text)">Upload Listing Photos</div>
+      <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:4px">Upload high-resolution photos representing your listing</div>
+      <button onClick="{{ say.mainImg }}" class="btn btn-secondary" style="margin-top:12px;height:36px;font-size:12px;cursor:pointer">+ CHOOSE FILES</button>
     </div>
 
     <!-- Form Inputs -->
     <div class="card-premium" style="display:flex;flex-direction:column;gap:12px">
       <div style="display:flex;justify-content:space-between;align-items:center">
-        <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);display:block">LISTING TITLE</label>
-        <button onClick="{{ say.aiTitle }}" style="border:none;background:var(--color-accent-100);color:var(--color-accent);padding:2px 8px;border-radius:var(--radius-sm);font:700 10.5px/1 var(--font-heading);cursor:pointer">⚡ AI ENHANCE</button>
+        <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);display:block">LISTING TITLE *</label>
       </div>
-      <input type="text" class="input" value="{{ newListingTitle }}">
+      <input type="text" class="input" placeholder="e.g. Apple MacBook Air M2 13” 256GB" value="{{ newListingTitle }}" onChange="{{ updateNewListingTitle }}">
 
       <div>
         <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:4px;display:block">DESCRIPTION &amp; KEY SPECS</label>
-        <textarea class="input" style="min-height:90px;padding:10px 14px;resize:vertical">{{ previewListingDescription }}</textarea>
+        <textarea class="input" style="min-height:90px;padding:10px 14px;resize:vertical" placeholder="Describe the item condition, accessories, warranty, and features..." value="{{ newListingDescription }}" onChange="{{ updateNewListingDescription }}"></textarea>
+      </div>
+
+      <div>
+        <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:4px;display:block">LOCATION / CITY</label>
+        <select class="input" value="{{ newListingCity }}" onChange="{{ updateNewListingCity }}" style="cursor:pointer">
+          <option value="Douala">Douala (Akwa, Bonapriso, Bonanjo)</option>
+          <option value="Yaoundé">Yaoundé (Bastos, Centre)</option>
+          <option value="Bafoussam">Bafoussam</option>
+          <option value="Kribi">Kribi</option>
+          <option value="Limbé">Limbé</option>
+        </select>
       </div>
     </div>
 
-    <button onClick="{{ on.listingAttributes }}" class="btn btn-primary btn-block" style="height:48px;font-size:14px;cursor:pointer">
-      CONTINUE TO ATTRIBUTES &amp; SPECS <span>→</span>
+    <button onClick="{{ continueToUploadPrice }}" class="btn btn-primary btn-block" style="height:48px;font-size:14px;cursor:pointer">
+      CONTINUE TO PRICING &amp; LOGISTICS <span>→</span>
     </button>
   </div>
 </div>
@@ -1250,12 +1298,12 @@ def get_merchant_view():
 <sc-if value="{{ is.uploadPrice }}">
 <div style="padding-bottom:32px">
   <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
-    <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
+    <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
     </button>
     <div>
-      <h4 style="margin:0;font-size:16px">Price &amp; Shipping · Step 4 of 5</h4>
-      <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary)">Set price and delivery coverage</div>
+      <h4 style="margin:0;font-size:16px">Price &amp; Publishing · Step 3 of 3</h4>
+      <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary)">Set price and publish listing</div>
     </div>
   </div>
 
@@ -1263,11 +1311,11 @@ def get_merchant_view():
     
     <div class="card-premium" style="display:flex;flex-direction:column;gap:12px">
       <div>
-        <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:4px;display:block">SELLING PRICE (XAF)</label>
-        <input type="text" class="input" value="{{ newListingPrice }}" style="font-weight:800;font-size:18px">
+        <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:4px;display:block">PRICE (XAF) *</label>
+        <input type="number" class="input" placeholder="e.g. 745000" value="{{ newListingPrice }}" onChange="{{ updateNewListingPrice }}" style="font-weight:800;font-size:18px">
       </div>
       <div style="font:500 11.5px/1 var(--font-body);color:var(--color-text-muted)">
-        Market suggestion: Similar M2 laptops in Douala sell for XAF 730 000 - 760 000.
+        Specify the total price in Central African CFA Franc (XAF).
       </div>
     </div>
 
@@ -1275,15 +1323,15 @@ def get_merchant_view():
     <div class="card-premium">
       <div style="display:flex;align-items:center;gap:8px;font:800 13px/1 var(--font-heading);color:var(--color-text);margin-bottom:6px">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        <span>Enable LOUMOO Escrow Protection</span>
+        <span>LOUMOO Escrow Protection</span>
       </div>
       <div style="font:400 12px/1.4 var(--font-body);color:var(--color-text-secondary)">
-        Buyers are 4x more likely to order when protected by escrow. Funds are transferred to your MoMo account immediately upon delivery.
+        Funds are securely held in escrow and disbursed directly to your Mobile Money / Orange Money account upon buyer confirmation.
       </div>
     </div>
 
-    <button onClick="{{ openListingPreview }}" class="btn btn-primary btn-block" style="height:48px;font-size:14px;cursor:pointer">
-      PREVIEW LIVE PRODUCT PAGE <span>👁️</span>
+    <button onClick="{{ submitPublishListing }}" disabled="{{ uploadPublishBusy }}" class="btn btn-primary btn-block" style="height:48px;font-size:14px;cursor:pointer">
+      {{ uploadPublishBusy ? 'PUBLISHING LISTING...' : 'PUBLISH LISTING TO MARKETPLACE 🚀' }}
     </button>
   </div>
 </div>
@@ -1300,12 +1348,12 @@ def get_merchant_view():
 
   <h2 style="margin:0 0 8px;font-size:24px">Listing Is Live!</h2>
   <p style="font-size:13.5px;color:var(--color-text-secondary);line-height:1.5;margin:0 auto 20px">
-    Your MacBook Air M2 13” is now live across Douala, Yaoundé, and Cameroon.
+    <strong>{{ newListingTitle || 'Your listing' }}</strong> is now published across Douala, Yaoundé, and Cameroon.
   </p>
 
   <div style="display:flex;flex-direction:column;gap:10px">
-    <button onClick="{{ on.product }}" class="btn btn-primary btn-block" style="height:46px">VIEW LIVE LISTING</button>
-    <button onClick="{{ on.myListings }}" class="btn btn-secondary btn-block" style="height:44px">MANAGE INVENTORY</button>
+    <button onClick="{{ on.product }}" class="btn btn-primary btn-block" style="height:46px;cursor:pointer">VIEW LIVE LISTING</button>
+    <button onClick="{{ on.myListings }}" class="btn btn-secondary btn-block" style="height:44px;cursor:pointer">MANAGE INVENTORY</button>
     <button onClick="{{ on.home }}" style="border:none;background:transparent;padding:8px;font:700 12px/1 var(--font-heading);color:var(--color-text-secondary);cursor:pointer">Back to Marketplace</button>
   </div>
 </div>
@@ -1318,7 +1366,7 @@ def get_merchant_view():
 <div style="padding-bottom:32px">
   <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
     <div style="display:flex;align-items:center;gap:12px">
-      <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
+      <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
       </button>
       <div>
@@ -1326,29 +1374,38 @@ def get_merchant_view():
         <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary)">Manage your active &amp; draft listings</div>
       </div>
     </div>
-    <button onClick="{{ on.upload }}" class="btn btn-primary" style="height:36px;padding:0 14px;font-size:12px">+ POST</button>
+    <button onClick="{{ handleSellClick }}" class="btn btn-primary" style="height:36px;padding:0 14px;font-size:12px;cursor:pointer">+ POST</button>
   </div>
 
   <div style="padding:16px;max-width:900px;margin:0 auto">
     <div class="hs" style="gap:8px;margin-bottom:16px">
-      <button class="tag tag-accent">Live (6)</button>
-      <button class="tag tag-neutral">Drafts (2)</button>
-      <button class="tag tag-neutral">Sold (48)</button>
-      <button class="tag tag-neutral">Paused (0)</button>
+      <button class="tag tag-accent">Live ({{ sellerLiveCount || 0 }})</button>
+      <button class="tag tag-neutral">Drafts ({{ sellerDraftCount || 0 }})</button>
+      <button class="tag tag-neutral">Sold ({{ sellerSoldCount || 0 }})</button>
     </div>
 
-    <div class="card-premium">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <div style="display:flex;gap:12px;align-items:center">
-          <div class="ph" style="width:60px;height:60px;border-radius:var(--radius-sm)"></div>
-          <div>
-            <div style="font:700 13.5px/1.2 var(--font-heading);color:var(--color-text)">MacBook Air M2 13” (Space Grey)</div>
-            <div style="font:800 13.5px/1 var(--font-heading);color:var(--color-accent);margin-top:3px">XAF 745 000</div>
+    <sc-if value="{{ sellerLiveCount > 0 }}">
+      <div class="card-premium">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="display:flex;gap:12px;align-items:center">
+            <div class="ph" style="width:60px;height:60px;border-radius:var(--radius-sm)"></div>
+            <div>
+              <div style="font:700 13.5px/1.2 var(--font-heading);color:var(--color-text)">{{ currentProductTitle || 'Active Listing' }}</div>
+              <div style="font:800 13.5px/1 var(--font-heading);color:var(--color-accent);margin-top:3px">XAF {{ newListingPrice || '745 000' }}</div>
+            </div>
           </div>
+          <button onClick="{{ on.product }}" class="btn btn-secondary" style="height:34px;padding:0 12px;font-size:11.5px;cursor:pointer">VIEW</button>
         </div>
-        <button onClick="{{ on.product }}" class="btn btn-secondary" style="height:34px;padding:0 12px;font-size:11.5px">EDIT</button>
       </div>
-    </div>
+    </sc-if>
+
+    <sc-if value="{{ !sellerLiveCount }}">
+      <div style="padding:32px 16px;text-align:center;background:var(--color-surface);border-radius:var(--radius-md);border:1px dashed var(--color-divider)">
+        <div style="font:700 14px/1.2 var(--font-heading);color:var(--color-text);margin-bottom:6px">No active inventory</div>
+        <div style="font:400 12px/1.4 var(--font-body);color:var(--color-text-secondary);margin-bottom:14px">Your inventory is currently empty. Post a new listing to start selling across Cameroon.</div>
+        <button onClick="{{ handleSellClick }}" class="btn btn-primary" style="height:36px;padding:0 16px;font-size:12px;cursor:pointer">+ POST NEW LISTING</button>
+      </div>
+    </sc-if>
   </div>
 </div>
 </sc-if>

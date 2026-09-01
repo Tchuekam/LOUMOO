@@ -36,15 +36,25 @@ const CAMEROON_CITIES = [
   'ngaoundere', 'bertoua', 'buea', 'limbe', 'kribi', 'ebolowa', 'other'
 ];
 
+function normalizeCity(v) {
+  if (!v || typeof v !== 'string') return '';
+  return v.trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+}
+
 const STEP_SCHEMAS = {
   PERSONAL_INFO: z.object({
     firstName: z.string().trim().min(1, 'First name is required').max(60),
     lastName: z.string().trim().min(1, 'Last name is required').max(60),
-    phoneNumber: z.string().trim().max(32).optional().nullable()
+    phoneNumber: z.string().trim().max(32).optional().nullable(),
+    phone: z.string().trim().max(32).optional().nullable(),
+    city: z.string().trim().transform(normalizeCity).refine(
+      v => !v || CAMEROON_CITIES.includes(v),
+      { message: `City must be one of: ${CAMEROON_CITIES.join(', ')}` }
+    ).optional().nullable()
   }),
 
   LOCATION: z.object({
-    city: z.string().trim().toLowerCase().refine(
+    city: z.string().trim().transform(normalizeCity).refine(
       v => CAMEROON_CITIES.includes(v),
       { message: `City must be one of: ${CAMEROON_CITIES.join(', ')}` }
     ),
@@ -215,7 +225,8 @@ class OnboardingUseCase {
         return {
           first_name: payload.firstName,
           last_name: payload.lastName,
-          ...(payload.phoneNumber ? { phone_number: payload.phoneNumber } : {})
+          ...((payload.phoneNumber || payload.phone) ? { phone_number: payload.phoneNumber || payload.phone } : {}),
+          ...(payload.city ? { city: payload.city.toLowerCase() } : {})
         };
       case 'LOCATION':
         return {

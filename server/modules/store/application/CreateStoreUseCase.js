@@ -19,9 +19,16 @@ const { ValidationError, ConflictError, UnauthorizedError, InfrastructureError }
 const Store = require('../domain/Store');
 const logger = require('../../../shared/logging/logger');
 
+const VALID_STORE_CATEGORIES = [
+  'electronics', 'fashion', 'home', 'services', 'hotels', 'food', 'automotive', 'beauty', 'travel', 'general'
+];
+
 const CreateStoreSchema = z.object({
   name: z.string().trim().min(2, 'Store name must be at least 2 characters').max(255),
-  categoryId: z.string().trim().min(1).max(64).default('electronics'),
+  categoryId: z.string().trim().min(1, 'Choose what type of store or business you are operating.')
+    .refine(v => VALID_STORE_CATEGORIES.includes(v.toLowerCase()), {
+      message: 'Select a valid business category from the LOUMOO taxonomy.'
+    }),
   sellerType: z.enum(['FREELANCER', 'SHOP', 'AGENCY', 'INSTITUTE', 'BRAND', 'ORGANIZATION', 'OTHER', 'freelancer', 'shop', 'agency', 'institute', 'brand', 'organization', 'other']).default('SHOP'),
   organizationId: z.string().trim().max(64).optional().nullable(),
   description: z.string().trim().max(2000).optional().nullable(),
@@ -51,9 +58,10 @@ class CreateStoreUseCase {
       );
     }
 
+    const rawCategory = rawInput.categoryId || rawInput.category;
     const parsed = CreateStoreSchema.safeParse({
       ...rawInput,
-      categoryId: rawInput.categoryId || rawInput.category || 'electronics'
+      categoryId: rawCategory ? String(rawCategory).toLowerCase().trim() : undefined
     });
     if (!parsed.success) {
       throw new ValidationError('Store details need your attention.', {
@@ -128,21 +136,25 @@ class CreateStoreUseCase {
       });
       if (memberError) throw memberError;
 
-      await Promise.all([
-        db.from('store_profiles').insert({
-          store_id: storeData.id,
-          tagline: input.tagline || `Authentic ${input.name} products`,
-          bio: storeData.description
-        }),
-        db.from('store_locations').insert({
-          store_id: storeData.id,
-          city,
-          region: /yaound/i.test(city) ? 'Centre' : 'Littoral',
-          street_address: input.streetAddress || `${city} Commercial District`
-        }),
-        db.from('store_hours').insert({ store_id: storeData.id, timezone: 'Africa/Douala' }),
-        db.from('store_settings').insert({ store_id: storeData.id, currency: 'XAF' })
-      ]);
+      try {
+        await Promise.all([
+          db.from('store_profiles').insert({
+            store_id: storeData.id,
+            tagline: input.tagline || `Authentic ${input.name} products`,
+            bio: storeData.description
+          }),
+          db.from('store_locations').insert({
+            store_id: storeData.id,
+            city,
+            region: /yaound/i.test(city) ? 'Centre' : 'Littoral',
+            street_address: input.streetAddress || `${city} Commercial District`
+          }),
+          db.from('store_hours').insert({ store_id: storeData.id, timezone: 'Africa/Douala' }),
+          db.from('store_settings').insert({ store_id: storeData.id, currency: 'XAF' })
+        ]);
+      } catch (secErr) {
+        logger.warn(`[CreateStore] Secondary record creation notice: ${secErr.message}`);
+      }
     } catch (err) {
       await db.from('stores').delete().eq('id', storeData.id).then(() => {
         logger.warn(`[CreateStore] Rolled back partially created store ${storeData.id}`);

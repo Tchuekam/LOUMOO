@@ -44,6 +44,11 @@
       if (storedToken && api) {
         api.setAuthToken(storedToken);
       }
+      if (api && typeof api.setTokenProvider === 'function') {
+        api.setTokenProvider(function () {
+          return LoumooAuthService.getToken();
+        });
+      }
       state.status = 'ready';
       return Promise.resolve(state);
     },
@@ -188,9 +193,15 @@
       state.session = null;
       state.user = null;
       var api = getApi();
-      if (api) api.clearAuthToken();
+      if (api && typeof api.clearSession === 'function') {
+        api.clearSession();
+      }
       if (typeof localStorage !== 'undefined') {
-        localStorage.removeItem('loumoo_token');
+        try {
+          localStorage.removeItem('loumoo_token');
+          localStorage.removeItem('loumoo_auth_user');
+          localStorage.removeItem('loumoo_onboarding_draft');
+        } catch (e) {}
       }
       emit();
       return Promise.resolve();

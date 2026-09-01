@@ -1,15 +1,17 @@
 /**
  * Catalog Comparison Service
- * Application Service coordinating product resolution, candidate suggestions,
- * and multi-seller marketplace options.
+ * ---------------------------------------------------------------------------
+ * Coordinates product resolution, candidate suggestions, and multi-seller
+ * marketplace options across canonical database listings and seed benchmarks.
  */
 
 const { products: rawProducts } = require('../dataLoader');
 const { ComparisonEngine } = require('../domain/ComparisonEngine');
 const { NotFoundError, ValidationError } = require('../../../shared/errors/AppError');
+const CatalogRepository = require('../infrastructure/CatalogRepository');
 
 // Flatten all catalog products
-function getAllProducts() {
+function getAllSeedProducts() {
   return [
     ...(rawProducts.electronics || []).map(p => ({ ...p, vertical: 'electronics' })),
     ...(rawProducts.hotels || []).map(p => ({ ...p, vertical: 'hotels' })),
@@ -22,20 +24,46 @@ class ComparisonService {
   /**
    * Retrieves head-to-head comparison for a list of product IDs
    */
-  static getComparison(productIds, userPriorities = {}) {
+  static async getComparison(productIds, userPriorities = {}) {
     if (!Array.isArray(productIds) || productIds.length === 0) {
       throw new ValidationError('Product IDs are required for comparison.', [
         { field: 'ids', message: 'Provide 2 to 4 product IDs.' }
       ]);
     }
 
-    const all = getAllProducts();
+    const allSeed = getAllSeedProducts();
     const resolvedProducts = [];
 
     for (const id of productIds) {
-      const found = all.find(p => p.id === id || p.slug === id);
+      const found = allSeed.find(p => p.id === id || p.slug === id);
       if (found) {
         resolvedProducts.push(found);
+      } else {
+        try {
+          const dbProduct = await CatalogRepository.findPublicProductByIdOrSlug(id);
+          if (dbProduct) {
+            resolvedProducts.push({
+              id: dbProduct.id,
+              title: dbProduct.title,
+              brand: dbProduct.brand || 'Bespoke',
+              category: dbProduct.category,
+              price: dbProduct.price,
+              priceNumeric: dbProduct.priceNumeric,
+              rating: dbProduct.rating,
+              reviewsCount: dbProduct.reviewsCount,
+              merchant: dbProduct.merchant,
+              merchantCity: dbProduct.merchantCity,
+              verified: dbProduct.verified,
+              badge: dbProduct.verified ? 'VERIFIED' : null,
+              badgeClass: 'badge-blue',
+              image: dbProduct.image,
+              specs: dbProduct.specs || {},
+              attributes: dbProduct.attributes || {}
+            });
+          }
+        } catch (e) {
+          // Continue checking remaining IDs
+        }
       }
     }
 
@@ -49,16 +77,14 @@ class ComparisonService {
   /**
    * Suggests candidate products to add to comparison
    */
-  static getCompareCandidates({ category, currentProductId, search, limit = 8 }) {
-    const all = getAllProducts();
+  static async getCompareCandidates({ category, currentProductId, search, limit = 8 } = {}) {
+    const all = getAllSeedProducts();
     let candidates = [...all];
 
-    // Exclude current product if provided
     if (currentProductId) {
       candidates = candidates.filter(p => p.id !== currentProductId);
     }
 
-    // Filter by category or subCategory
     if (category) {
       const catLower = category.toLowerCase();
       candidates = candidates.filter(p => 
@@ -68,7 +94,6 @@ class ComparisonService {
       );
     }
 
-    // Search query filter
     if (search) {
       const q = search.toLowerCase();
       candidates = candidates.filter(p =>

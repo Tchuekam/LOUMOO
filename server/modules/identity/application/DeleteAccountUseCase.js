@@ -21,8 +21,8 @@ class DeleteAccountUseCase {
       throw new AuthorizationError('Authentication required to perform account deletion');
     }
 
-    if (confirmText !== 'DELETE') {
-      throw new ValidationError('Explicit confirmation required: Please type "DELETE" to confirm account removal.');
+    if (confirmText !== 'DELETE' && confirmText !== 'DELETE MY ACCOUNT') {
+      throw new ValidationError('Explicit confirmation required: Please type "DELETE" or "DELETE MY ACCOUNT" to confirm account removal.');
     }
 
     const userId = currentUser.id;
@@ -90,6 +90,21 @@ class DeleteAccountUseCase {
         piiErrors.push(`${table}: ${err.message}`);
       }
     }
+
+    // Deactivate any owned stores
+    try {
+      await db.from('stores').update({ status: 'deactivated', is_active: false }).eq('owner_id', userId);
+    } catch (storeErr) {
+      logger.warn(`[DeleteAccount] Could not deactivate stores for user ${userId}: ${storeErr.message}`);
+    }
+
+    // Revoke local auth sessions
+    try {
+      await db.from('auth_sessions').delete().eq('user_id', userId);
+    } catch (sessionErr) {
+      logger.debug(`[DeleteAccount] Auth session deletion notice: ${sessionErr.message}`);
+    }
+
     if (piiErrors.length > 0) {
       // Never silently succeed: the profile is anonymized, but the child PII
       // cleanup is the second half of the promise.

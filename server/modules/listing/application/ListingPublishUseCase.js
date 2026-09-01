@@ -110,7 +110,9 @@ class ListingPublishUseCase {
       rejection_reason: null
     });
 
-    await CacheService.delete(`listing:${updated.id}`, 'catalog').catch(() => null);
+    await CacheService.delete(`catalog:detail:${updated.id}`, 'catalog').catch(() => null);
+    await CacheService.delPattern('catalog:list:*', 'catalog').catch(() => null);
+    await CacheService.delPattern('list:*', 'catalog').catch(() => null);
 
     await OutboxService.enqueue({
       eventType: 'listing.published',
@@ -133,7 +135,9 @@ class ListingPublishUseCase {
   static async pause({ listingRow, principal }) {
     this.assertTransition(listingRow.status, 'PAUSED');
     const updated = await ListingRepository.update(listingRow.id, { status: 'PAUSED' });
-    await CacheService.delete(`listing:${updated.id}`, 'catalog').catch(() => null);
+    await CacheService.delete(`catalog:detail:${updated.id}`, 'catalog').catch(() => null);
+    await CacheService.delPattern('catalog:list:*', 'catalog').catch(() => null);
+    await CacheService.delPattern('list:*', 'catalog').catch(() => null);
     AnalyticsService.track(principal.id, 'listing_paused', { listingId: updated.id });
     logger.info(`[Publish] user=${principal.id} listing=${updated.id} PAUSED`);
     return CreateListingUseCase.hydrate(updated);
@@ -142,7 +146,9 @@ class ListingPublishUseCase {
   static async archive({ listingRow, principal }) {
     this.assertTransition(listingRow.status, 'ARCHIVED');
     const updated = await ListingRepository.softDelete(listingRow.id);
-    await CacheService.delete(`listing:${updated.id}`, 'catalog').catch(() => null);
+    await CacheService.delete(`catalog:detail:${updated.id}`, 'catalog').catch(() => null);
+    await CacheService.delPattern('catalog:list:*', 'catalog').catch(() => null);
+    await CacheService.delPattern('list:*', 'catalog').catch(() => null);
     AnalyticsService.track(principal.id, 'listing_archived', { listingId: updated.id });
     logger.info(`[Publish] user=${principal.id} listing=${updated.id} ARCHIVED`);
     return { id: updated.id, status: updated.status, archivedAt: updated.deleted_at };

@@ -1,6 +1,9 @@
 /**
  * Catalog Module — API Routes
- * Serves multi-vertical commerce products, hotels, flights, store listings & comparison engine
+ * ---------------------------------------------------------------------------
+ * The public commerce discovery gateway for LOUMOO.
+ * Discovers real, published seller listings from PostgreSQL `iam.listings`,
+ * hydrates cover images and store metadata, and provides the Comparison Engine.
  */
 
 const express = require('express');
@@ -8,20 +11,9 @@ const router = express.Router();
 const CacheService = require('../../../infrastructure/cache/CacheService');
 const AnalyticsService = require('../../../infrastructure/analytics/AnalyticsService');
 const { NotFoundError, ValidationError } = require('../../../shared/errors/AppError');
+const CatalogRepository = require('../infrastructure/CatalogRepository');
 const ComparisonService = require('../application/ComparisonService');
-
-// Load foundational dataset via robust dataLoader
-const { products, categories } = require('../dataLoader');
-
-// Flatten all multi-vertical items into an indexable array
-const allProducts = [
-  ...(products.hotels || []).map(p => ({ ...p, vertical: 'hotels' })),
-  ...(products.electronics || []).map(p => ({ ...p, vertical: 'electronics' })),
-  ...(products.fashion || []).map(p => ({ ...p, vertical: 'fashion' })),
-  ...(products.home || []).map(p => ({ ...p, vertical: 'home' })),
-  ...(products.services || []).map(p => ({ ...p, vertical: 'services' })),
-  ...(products.education || []).map(p => ({ ...p, vertical: 'education' }))
-];
+const ListingTaxonomyUseCase = require('../../listing/application/ListingTaxonomyUseCase');
 
 // GET /api/v1/catalog/compare OR /api/v1/products/compare
 const handleCompare = async (req, res, next) => {
@@ -45,7 +37,6 @@ const handleCompare = async (req, res, next) => {
         try {
           priorities = JSON.parse(req.query.priorities);
         } catch {
-          // If comma-separated top priorities: ?priorities=price,performance
           req.query.priorities.split(',').forEach(p => {
             priorities[p.trim()] = 5;
           });
@@ -55,9 +46,8 @@ const handleCompare = async (req, res, next) => {
       }
     }
 
-    const comparison = ComparisonService.getComparison(ids, priorities);
+    const comparison = await ComparisonService.getComparison(ids, priorities);
 
-    // Track analytics event asynchronously
     AnalyticsService.track(req.userId || 'anonymous', 'products_compared', {
       productIds: ids,
       recommended: comparison.recommendation?.recommendedProductId
@@ -76,7 +66,7 @@ router.get('/products/compare', handleCompare);
 const handleCompareCandidates = async (req, res, next) => {
   try {
     const { category, currentId, search, limit } = req.query;
-    const candidates = ComparisonService.getCompareCandidates({
+    const candidates = await ComparisonService.getCompareCandidates({
       category,
       currentProductId: currentId,
       search,
@@ -95,49 +85,27 @@ router.get('/products/compare/candidates', handleCompareCandidates);
 // GET /api/v1/products
 router.get('/products', async (req, res, next) => {
   try {
-    const { category, search, vertical } = req.query;
+    const { category, search, q, vertical, storeId, brand, sortBy } = req.query;
+    const searchQuery = search || q || '';
 
     const rawLimit = parseInt(req.query.limit, 10);
     const rawPage = parseInt(req.query.page, 10);
     const limit = Number.isFinite(rawLimit) && rawLimit >= 1 ? Math.min(rawLimit, 100) : 50;
     const page = Number.isFinite(rawPage) && rawPage >= 1 ? rawPage : 1;
 
-    const cacheKey = `list:${category || 'all'}:${vertical || 'all'}:${search || ''}:${page}:${limit}`;
+    const cacheKey = `catalog:list:${category || 'all'}:${vertical || 'all'}:${searchQuery}:${storeId || 'all'}:${brand || 'all'}:${sortBy || 'recent'}:${page}:${limit}`;
 
-    const data = await CacheService.remember(cacheKey, 120, async () => {
-      let filtered = [...allProducts];
-
-      if (vertical) {
-        filtered = filtered.filter(p => p.vertical?.toLowerCase() === vertical.toLowerCase());
-      }
-
-      const KNOWN_CATEGORIES = new Set(allProducts.map(p => p.category?.toLowerCase()).filter(Boolean));
-      if (category && !KNOWN_CATEGORIES.has(category.toLowerCase())) {
-        return { items: [], total: 0, page, limit, hasMore: false };
-      }
-      if (category) {
-        filtered = filtered.filter(p => p.category?.toLowerCase() === category.toLowerCase());
-      }
-
-      if (search) {
-        const q = search.toLowerCase();
-        filtered = filtered.filter(p => 
-          p.title?.toLowerCase().includes(q) || 
-          p.merchant?.toLowerCase().includes(q) ||
-          p.category?.toLowerCase().includes(q)
-        );
-      }
-
-      const startIndex = (page - 1) * limit;
-      const paginated = filtered.slice(startIndex, startIndex + limit);
-
-      return {
-        items: paginated,
-        total: filtered.length,
+    const data = await CacheService.remember(cacheKey, 60, async () => {
+      return CatalogRepository.listPublishedListings({
+        category,
+        vertical,
+        search: searchQuery,
+        storeId,
+        brand,
         page,
         limit,
-        hasMore: startIndex + paginated.length < filtered.length
-      };
+        sortBy
+      });
     }, 'catalog');
 
     res.json({ success: true, data });
@@ -150,17 +118,16 @@ router.get('/products', async (req, res, next) => {
 router.get('/products/:id', async (req, res, next) => {
   try {
     const { id } = req.params;
-    const cacheKey = `detail:${id}`;
+    const cacheKey = `catalog:detail:${id}`;
 
-    const product = await CacheService.remember(cacheKey, 300, async () => {
-      return allProducts.find(p => p.id === id) || null;
+    const product = await CacheService.remember(cacheKey, 120, async () => {
+      return CatalogRepository.findPublicProductByIdOrSlug(id);
     }, 'catalog');
 
     if (!product) {
       throw new NotFoundError('Product', id);
     }
 
-    // Track analytics event asynchronously
     AnalyticsService.track(req.userId || 'anonymous', 'product_viewed', {
       productId: id,
       title: product.title,
@@ -177,8 +144,9 @@ router.get('/products/:id', async (req, res, next) => {
 // GET /api/v1/categories
 router.get('/categories', async (req, res, next) => {
   try {
-    const data = await CacheService.remember('categories:all', 600, async () => {
-      return categories || [];
+    const data = await CacheService.remember('catalog:categories:all', 300, async () => {
+      const taxonomy = await ListingTaxonomyUseCase.getTaxonomyTree();
+      return taxonomy.categories || [];
     }, 'catalog');
 
     res.json({ success: true, data });

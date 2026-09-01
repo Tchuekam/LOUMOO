@@ -103,6 +103,24 @@ class CacheService {
     return true;
   }
 
+  async flush(namespace = null) {
+    if (!namespace) {
+      try {
+        if (this.redis && this.redis.status === 'ready') {
+          const keys = await this.redis.keys('*');
+          if (keys && keys.length > 0) {
+            await this.redis.del(...keys);
+          }
+        }
+      } catch (e) {
+        logger.warn(`[CacheService] Redis flush failed: ${e.message}`);
+      }
+      this.memoryFallback.clear();
+      return true;
+    }
+    return this.delPattern('*', namespace);
+  }
+
   async remember(key, ttlSeconds, fetchFn, namespace = 'loumoo') {
     const cached = await this.get(key, namespace);
     if (cached !== null && cached !== undefined) {

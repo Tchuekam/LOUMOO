@@ -878,8 +878,26 @@
     return this.request('/api/v1/catalog/compare' + qs(query));
   };
 
-  LoumooApiClient.prototype.getCompareCandidates = function (params) {
-    return this.request('/api/v1/catalog/compare/candidates' + qs(params || {}));
+  /* ══════════════════════════════════════════════════════════════════════════
+     11. BINARY MEDIA & VERIFICATION DOCUMENT UPLOADS
+     ══════════════════════════════════════════════════════════════════════════ */
+
+  LoumooApiClient.prototype.uploadListingMedia = function (fileOrBuffer, listingId) {
+    var url = '/api/v1/uploads/listing-media' + (listingId ? '?listingId=' + encodeURIComponent(listingId) : '');
+    return this.request(url, {
+      method: 'POST',
+      rawBody: fileOrBuffer,
+      headers: { 'Content-Type': (fileOrBuffer && fileOrBuffer.type) || 'application/octet-stream' }
+    });
+  };
+
+  LoumooApiClient.prototype.uploadVerificationDocument = function (fileOrBuffer, docType) {
+    var type = docType || 'cni_front';
+    return this.request('/api/v1/uploads/verification-document?docType=' + encodeURIComponent(type), {
+      method: 'POST',
+      rawBody: fileOrBuffer,
+      headers: { 'Content-Type': (fileOrBuffer && fileOrBuffer.type) || 'application/octet-stream' }
+    });
   };
 
   LoumooApiClient.prototype.getHealth = function () {

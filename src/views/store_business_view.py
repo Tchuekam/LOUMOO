@@ -247,11 +247,15 @@ def get_store_business_view():
       <div style="font:700 12px/1 var(--font-heading);letter-spacing:.08em;color:var(--color-text-muted);text-transform:uppercase">Document Uploads (Encrypted &amp; Private)</div>
 
       <div style="border:1.5px dashed var(--color-divider);border-radius:var(--radius-sm);padding:14px;text-align:center">
-        <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">National ID Card (CNI) or Passport</div>
-        <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary);margin:4px 0 10px">Clear front &amp; back scan of representative ID</div>
-        <button onClick="{{ simulateVerDocAttach }}" class="btn btn-secondary" style="height:32px;font-size:11px">
-          {{ verDocAttached ? '✓ 2 Documents Attached' : '+ CHOOSE ID SCAN' }}
-        </button>
+        <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">National ID Card (CNI), Passport, or RCCM</div>
+        <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary);margin:4px 0 10px">Clear front &amp; back scan of representative ID or business certificate</div>
+        <label class="btn btn-secondary" style="height:34px;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:6px">
+          <input type="file" id="storeVerDocInput" accept="image/jpeg,image/png,image/webp,application/pdf" style="display:none" onChange="{{ handleStoreVerDocUpload }}">
+          <span>{{ verDocUploading ? 'ENCRYPTING & UPLOADING...' : (verDocUploaded ? '✓ ' + (verDocFileName || 'Document Attached') : '+ CHOOSE DOCUMENT') }}</span>
+        </label>
+        <sc-if value="{{ verDocUploadError }}">
+          <div style="color:var(--color-accent-sale);font-size:11px;margin-top:6px">{{ verDocUploadError }}</div>
+        </sc-if>
       </div>
 
       <div style="font:400 11px/1.4 var(--font-body);color:var(--color-text-muted)">

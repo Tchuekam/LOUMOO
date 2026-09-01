@@ -9,6 +9,8 @@ const StoreVerification = require('../domain/StoreVerification');
 const AnalyticsService = require('../../../infrastructure/analytics/AnalyticsService');
 const logger = require('../../../shared/logging/logger');
 
+const ProfileRepository = require('../../identity/infrastructure/ProfileRepository');
+
 class StoreVerificationUseCase {
   static async getVerification(store) {
     const supabase = SupabaseClient.getAdmin();
@@ -21,23 +23,30 @@ class StoreVerificationUseCase {
         .eq('store_id', store.id)
         .single();
 
-      if (res && !error) data = res;
+      if (error && error.code !== 'PGRST116') {
+        logger.error(`[StoreVerification] Fetch failed for store ${store.id}: ${error.message}`);
+      }
+      data = res;
     } catch (err) {
-      handleDatabaseFailure(err, 'Query');
+      handleDatabaseFailure(err, 'Get');
     }
 
     if (!data) {
+      // Default initial state
       return {
         storeId: store.id,
         verificationStatus: store.isVerified ? 'APPROVED' : 'DRAFT',
         legalBusinessName: store.name,
         businessType: 'pro',
-        rccmNumber: '',
-        taxIdNiu: '',
-        representativeFullName: '',
-        hasIdFront: false,
-        hasIdBack: false,
-        hasBusinessDoc: false
+        rccmNumber: null,
+        taxIdNiu: null,
+        representativeFullName: null,
+        representativeIdType: 'cni',
+        representativeIdNumber: null,
+        idDocumentFrontUrl: null,
+        idDocumentBackUrl: null,
+        businessDocumentUrl: null,
+        submittedAt: null
       };
     }
 
@@ -60,14 +69,14 @@ class StoreVerificationUseCase {
       store_id: store.id,
       legal_business_name: legalBusinessName,
       business_type: businessType,
-      rccm_number: rccmNumber || 'RC/DLA/2023/B/1842',
-      tax_id_niu: taxIdNiu || 'M052112345678A',
-      representative_full_name: representativeFullName,
+      rccm_number: rccmNumber || null,
+      tax_id_niu: taxIdNiu || null,
+      representative_full_name: representativeFullName || userProfile.fullName || null,
       representative_id_type: verificationInput.representativeIdType || 'cni',
-      representative_id_number: verificationInput.representativeIdNumber || '118294029',
-      id_document_front_url: verificationInput.idDocumentFrontUrl || 'private://docs/cni_front.jpg',
-      id_document_back_url: verificationInput.idDocumentBackUrl || 'private://docs/cni_back.jpg',
-      business_document_url: verificationInput.businessDocumentUrl || 'private://docs/rccm_certificate.pdf',
+      representative_id_number: verificationInput.representativeIdNumber || null,
+      id_document_front_url: verificationInput.idDocumentFrontUrl || verificationInput.idDocumentUrl || null,
+      id_document_back_url: verificationInput.idDocumentBackUrl || null,
+      business_document_url: verificationInput.businessDocumentUrl || null,
       verification_status: 'SUBMITTED',
       submitted_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
@@ -85,6 +94,14 @@ class StoreVerificationUseCase {
         .from('stores')
         .update({ status: 'PENDING_VERIFICATION', updated_at: new Date().toISOString() })
         .eq('id', store.id);
+
+      // Update user profile kyc status
+      await ProfileRepository.update(userProfile.id, {
+        kyc_doc_type: verificationInput.representativeIdType || 'cni',
+        kyc_doc_status: 'submitted',
+        rccm_number: rccmNumber || null,
+        tax_niu_number: taxIdNiu || null
+      }, userProfile.clerkUserId);
     } catch (err) {
       handleDatabaseFailure(err, 'Submit');
     }

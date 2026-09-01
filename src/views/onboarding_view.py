@@ -813,28 +813,32 @@ def get_onboarding_view():
       </div>
       <div style="font:800 15px/1 var(--font-heading);color:var(--color-text)">Upload National ID (CNI) or RCCM</div>
       <div style="font:400 12px/1.4 var(--font-body);color:var(--color-text-secondary);margin:6px 0 14px">
-        Take a clear photo of your CNI card, Passport, or Business Attestation.
+        Upload a clear photo or PDF of your CNI card, Passport, or Business Attestation.
       </div>
       <div style="display:flex;justify-content:center;gap:10px">
-        <button onClick="{{ simulateUploadDoc }}" class="btn btn-secondary" style="height:38px;font-size:12px;cursor:pointer">
+        <label class="btn btn-secondary" style="height:38px;font-size:12px;cursor:pointer;display:inline-flex;align-items:center;gap:6px">
+          <input type="file" id="onboardDocFileInput" accept="image/jpeg,image/png,image/webp,application/pdf" style="display:none" onChange="{{ handleVerificationDocUpload }}">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
-          <span>CHOOSE PHOTO / DOCUMENT</span>
-        </button>
+          <span>{{ docUploading ? 'ENCRYPTING & UPLOADING...' : (docUploaded ? 'CHANGE DOCUMENT' : 'CHOOSE PHOTO / PDF') }}</span>
+        </label>
       </div>
+      <sc-if value="{{ docUploadError }}">
+        <div style="color:var(--color-accent-sale);font-size:12px;margin-top:8px">{{ docUploadError }}</div>
+      </sc-if>
     </div>
     </sc-if>
 
     <!-- Upload Status Preview -->
     <sc-if value="{{ docUploaded }}">
-    <div style="background:var(--color-success-100);border:1px solid var(--color-success);border-radius:var(--radius-md);padding:12px 16px;display:flex;align-items:center;justify-content:space-between">
+    <div style="background:var(--color-success-100,#dcfce7);border:1px solid var(--color-success);border-radius:var(--radius-md);padding:12px 16px;display:flex;align-items:center;justify-content:space-between">
       <div style="display:flex;align-items:center;gap:10px">
         <span style="color:var(--color-success);font-weight:800">✓</span>
         <div>
-          <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">CNI_Rostand_Tchuekam_Recto.jpg</div>
-          <div style="font:400 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">2.4 MB · Ready for verification</div>
+          <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">{{ docFileName || 'Official_Document.pdf' }}</div>
+          <div style="font:400 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">{{ docFileSize || 'Encrypted' }} · Stored in private vault</div>
         </div>
       </div>
-      <span class="tag tag-accent" style="min-height:20px;padding:2px 8px;font-size:10px">UPLOADED</span>
+      <span class="tag tag-accent" style="min-height:20px;padding:2px 8px;font-size:10px">ENCRYPTED</span>
     </div>
     </sc-if>
 
@@ -881,18 +885,18 @@ def get_onboarding_view():
       <div class="card-premium" style="padding:16px 20px">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
           <div style="font:700 11px/1 var(--font-heading);color:var(--color-text-muted);letter-spacing:.08em;text-transform:uppercase">PERSONAL IDENTITY</div>
-          <button onClick="{{ on.onboardIdentity }}" style="border:none;background:transparent;color:var(--color-accent);font:700 11.5px/1 var(--font-heading);cursor:pointer">EDIT</button>
+          <button onClick="{{ editIdentityFromReview }}" style="border:none;background:transparent;color:var(--color-accent);font:700 11.5px/1 var(--font-heading);cursor:pointer">EDIT</button>
         </div>
         <div style="font:800 15px/1.2 var(--font-heading);color:var(--color-text)">{{ regFirstName }} {{ regLastName }}</div>
         <div style="font:400 12.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:4px">+237 {{ regPhone }} · {{ regEmail }}</div>
-        <div style="font:400 12px/1 var(--font-body);color:var(--color-text-muted);margin-top:3px">Douala, Cameroon</div>
+        <div style="font:400 12px/1 var(--font-body);color:var(--color-text-muted);margin-top:3px">{{ regCity ? regCity : 'Douala' }}, Cameroon</div>
       </div>
 
       <!-- Section 2: Account Role -->
       <div class="card-premium" style="padding:16px 20px">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
           <div style="font:700 11px/1 var(--font-heading);color:var(--color-text-muted);letter-spacing:.08em;text-transform:uppercase">ACCOUNT ROLE</div>
-          <button onClick="{{ on.onboardType }}" style="border:none;background:transparent;color:var(--color-accent);font:700 11.5px/1 var(--font-heading);cursor:pointer">EDIT</button>
+          <button onClick="{{ editRoleFromReview }}" style="border:none;background:transparent;color:var(--color-accent);font:700 11.5px/1 var(--font-heading);cursor:pointer">EDIT</button>
         </div>
         <div style="display:flex;align-items:center;gap:8px">
           <span class="tag tag-accent" style="min-height:22px;padding:2px 8px;font-size:10.5px;text-transform:uppercase">{{ userRole }} ACCOUNT</span>
@@ -905,7 +909,7 @@ def get_onboarding_view():
       <div class="card-premium" style="padding:16px 20px">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
           <div style="font:700 11px/1 var(--font-heading);color:var(--color-text-muted);letter-spacing:.08em;text-transform:uppercase">SHOPPING PREFERENCES</div>
-          <button onClick="{{ on.onboardBuyer }}" style="border:none;background:transparent;color:var(--color-accent);font:700 11.5px/1 var(--font-heading);cursor:pointer">EDIT</button>
+          <button onClick="{{ editBuyerFromReview }}" style="border:none;background:transparent;color:var(--color-accent);font:700 11.5px/1 var(--font-heading);cursor:pointer">EDIT</button>
         </div>
         <div style="font:600 13.5px/1.3 var(--font-body);color:var(--color-text)">
           Tech &amp; Laptops · Flights &amp; Hotels · Verified Sellers
@@ -918,10 +922,10 @@ def get_onboarding_view():
       <div class="card-premium" style="padding:16px 20px">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
           <div style="font:700 11px/1 var(--font-heading);color:var(--color-text-muted);letter-spacing:.08em;text-transform:uppercase">STOREFRONT PROFILE</div>
-          <button onClick="{{ on.onboardBusiness }}" style="border:none;background:transparent;color:var(--color-accent);font:700 11.5px/1 var(--font-heading);cursor:pointer">EDIT</button>
+          <button onClick="{{ editBusinessFromReview }}" style="border:none;background:transparent;color:var(--color-accent);font:700 11.5px/1 var(--font-heading);cursor:pointer">EDIT</button>
         </div>
-        <div style="font:800 15px/1.2 var(--font-heading);color:var(--color-text)">{{ regBusinessName }}</div>
-        <div style="font:400 12.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:4px">SARL · Akwa, Douala · Escrow Ready</div>
+        <div style="font:800 15px/1.2 var(--font-heading);color:var(--color-text)">{{ regBusinessName ? regBusinessName : 'My Boutique' }}</div>
+        <div style="font:400 12.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:4px">Boutique · Douala · Escrow Ready</div>
       </div>
       </sc-if>
 

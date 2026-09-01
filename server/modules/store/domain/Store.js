@@ -116,6 +116,34 @@ class Store {
       updatedAt: this.updatedAt
     };
   }
+
+  getAllowedListingTypes() {
+    const cat = String(this.categoryId || 'electronics').toLowerCase();
+    switch (cat) {
+      case 'services':
+        return ['SERVICE'];
+      case 'hotels':
+      case 'hospitality':
+        return ['BOOKING', 'ACCOMMODATION', 'RENTAL'];
+      case 'travel':
+        return ['TRANSPORT', 'BOOKING'];
+      case 'electronics':
+      case 'fashion':
+      case 'home':
+      case 'food':
+      case 'automotive':
+      case 'beauty':
+      case 'general':
+      default:
+        return ['PHYSICAL_PRODUCT', 'BUNDLE', 'RENTAL', 'DIGITAL_PRODUCT'];
+    }
+  }
+
+  canCreateListingType(listingType) {
+    if (!listingType) return false;
+    const allowed = this.getAllowedListingTypes();
+    return allowed.includes(String(listingType).toUpperCase());
+  }
 }
 
 module.exports = Store;

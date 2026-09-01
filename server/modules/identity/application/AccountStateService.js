@@ -60,6 +60,11 @@ function projectProfile(row, completedSteps = []) {
     sellerType: row.seller_type,
     businessName: row.business_name,
     primaryStoreId: row.primary_store_id,
+    taxNiuNumber: row.tax_niu_number || null,
+    rccmNumber: row.rccm_number || null,
+    businessAddress: row.business_address || null,
+    kycDocType: row.kyc_doc_type || null,
+    kycDocStatus: row.kyc_doc_status || 'pending',
 
     // Long-term interests & priorities (declared through any onboarding path).
     buyerInterests: row.buyer_interests || [],
