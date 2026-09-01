@@ -15,13 +15,15 @@ const AnalyticsService = require('../../../infrastructure/analytics/AnalyticsSer
 const ProfileRepository = require('../../../modules/identity/infrastructure/ProfileRepository');
 const StoreRepository = require('../infrastructure/StoreRepository');
 const { SELLER_STATUS } = require('../../identity/domain/AccountState');
-const { ValidationError, ConflictError, InfrastructureError } = require('../../../shared/errors/AppError');
+const { ValidationError, ConflictError, UnauthorizedError, InfrastructureError } = require('../../../shared/errors/AppError');
 const Store = require('../domain/Store');
 const logger = require('../../../shared/logging/logger');
 
 const CreateStoreSchema = z.object({
   name: z.string().trim().min(2, 'Store name must be at least 2 characters').max(255),
   categoryId: z.string().trim().min(1).max(64).default('electronics'),
+  sellerType: z.enum(['FREELANCER', 'SHOP', 'AGENCY', 'INSTITUTE', 'BRAND', 'ORGANIZATION', 'OTHER', 'freelancer', 'shop', 'agency', 'institute', 'brand', 'organization', 'other']).default('SHOP'),
+  organizationId: z.string().trim().max(64).optional().nullable(),
   description: z.string().trim().max(2000).optional().nullable(),
   city: z.string().trim().max(64).optional().nullable(),
   phoneNumber: z.string().trim().max(32).optional().nullable(),
@@ -70,11 +72,30 @@ class CreateStoreUseCase {
     }
 
     const db = SupabaseDatabase.getAdmin();
+
+    // Verify organization membership if organizationId is supplied (Prevent IDOR)
+    if (input.organizationId) {
+      const { data: orgMembership } = await db
+        .from('organization_members')
+        .select('role, status')
+        .eq('organization_id', input.organizationId)
+        .eq('user_id', principal.id)
+        .eq('status', 'ACTIVE')
+        .maybeSingle();
+
+      if (!orgMembership && principal.primaryRole !== 'admin') {
+        throw new UnauthorizedError('You are not an active member of the specified organization.');
+      }
+    }
+
     const city = input.city || principal.city || 'Douala';
+    const sellerType = String(input.sellerType || 'SHOP').toUpperCase();
 
     const storeData = {
       id: `store_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 7)}`,
       owner_id: principal.id,
+      organization_id: input.organizationId || null,
+      seller_type: sellerType,
       name: input.name,
       slug: Store.generateSlug(input.name),
       description: input.description || `Official store for ${input.name} in ${city}, Cameroon.`,
@@ -85,6 +106,8 @@ class CreateStoreUseCase {
       visibility: 'PUBLIC',
       is_verified: false,
       verification_tier: 'unverified',
+      reputation_score: 100.00,
+      trust_tier: 'NEW',
       onboarding_step: 'IN_PROGRESS',
       onboarding_completed: false,
       created_at: new Date().toISOString(),
@@ -96,8 +119,6 @@ class CreateStoreUseCase {
       throw new InfrastructureError('Supabase', `store creation failed: ${storeError.message}`, storeError);
     }
 
-    // From here on, any failure must undo the store row rather than leave an
-    // ownerless storefront in the database.
     try {
       const { error: memberError } = await db.from('store_members').insert({
         store_id: storeData.id,
@@ -129,8 +150,6 @@ class CreateStoreUseCase {
       throw new InfrastructureError('Supabase', `store setup failed: ${err.message}`, err);
     }
 
-    // Link the boutique to the account and record the seller intent. The
-    // account is NOT seller-ready yet — the store must still be activated.
     await ProfileRepository.update(principal.id, {
       primary_store_id: storeData.id,
       seller_status: principal.sellerStatus === SELLER_STATUS.READY
@@ -142,10 +161,11 @@ class CreateStoreUseCase {
       storeId: storeData.id,
       storeName: input.name,
       category: storeData.category_id,
+      sellerType,
       city
     });
 
-    logger.info(`[CreateStore] user=${principal.id} created store=${storeData.id}`);
+    logger.info(`[CreateStore] user=${principal.id} created store=${storeData.id} sellerType=${sellerType}`);
     return new Store(storeData).toOwnerJSON();
   }
 }

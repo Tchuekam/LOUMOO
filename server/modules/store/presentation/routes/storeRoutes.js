@@ -2,7 +2,8 @@
  * Store & Business Module — Master API Routes (Phase 5)
  * Handles: 05.01 Create, 05.02 Onboarding, 05.03 Management, 05.04 Profile,
  *          05.05 Verification, 05.06 Categories, 05.07 Discovery, 05.08 Follow,
- *          05.09 Analytics, 05.10 Settings, 05.11 Hours, 05.12 Location.
+ *          05.09 Analytics, 05.10 Settings, 05.11 Hours, 05.12 Location,
+ *          and Public Commercial Seller Profile (/s/:slug).
  */
 
 const express = require('express');
@@ -23,6 +24,7 @@ const StoreAnalyticsUseCase = require('../../application/StoreAnalyticsUseCase')
 const StoreSettingsUseCase = require('../../application/StoreSettingsUseCase');
 const StoreHoursUseCase = require('../../application/StoreHoursUseCase');
 const StoreLocationUseCase = require('../../application/StoreLocationUseCase');
+const PublicProfileService = require('../../../identity/application/PublicProfileService');
 
 // ── 05.06 CATEGORIES (PUBLIC) ──
 // GET /api/v1/stores/categories
@@ -41,6 +43,17 @@ router.get('/discovery', async (req, res, next) => {
   try {
     const result = await StoreDiscoveryUseCase.discoverStores(req.query);
     res.json({ status: 'success', data: result });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// ── PUBLIC COMMERCIAL SELLER PROFILE (/s/:slug) ──
+// GET /api/v1/stores/s/:slug
+router.get('/s/:slug', optionalAuth, async (req, res, next) => {
+  try {
+    const seller = await PublicProfileService.getSellerPublicProfile(req.params.slug, req.principal);
+    res.json({ status: 'success', data: { seller } });
   } catch (err) {
     next(err);
   }
@@ -230,7 +243,6 @@ router.patch('/:storeId/hours', requireAuth, requireStoreAccess('store.manage_se
 // GET /api/v1/stores/:storeId/location
 router.get('/:storeId/location', optionalAuth, resolveStore(), async (req, res, next) => {
   try {
-    // Precise street addresses are owner-only; the public view is coarse.
     const isOwner = Boolean(req.principal && req.store && req.store.ownerId === req.principal.id);
     const location = await StoreLocationUseCase.getLocation(req.store, isOwner);
     res.json({ status: 'success', data: location });

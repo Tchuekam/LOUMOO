@@ -41,7 +41,7 @@ async function run() {
   assert.strictEqual(basicProfile.completionPercentage >= 20, true, 'Base profile should have at least 20% completion');
 
   const richProfile = new UserProfile({
-    id: 'usr_test_2',
+    id: 'usr_test_up_' + Date.now(),
     clerkUserId: 'user_2',
     email: 'merchant@loumoo.cm',
     firstName: 'Mr',
@@ -62,7 +62,7 @@ async function run() {
 
   // 2. Public card sanitization (No PII leaked)
   const merchantCard = richProfile.toSafeMerchantPublicCard();
-  assert.strictEqual(merchantCard.id, 'usr_test_2');
+  assert.strictEqual(merchantCard.id, richProfile.id);
   assert.strictEqual(merchantCard.fullName, 'Orca Electronics');
   assert.strictEqual(merchantCard.email, undefined, 'Merchant card must never leak email');
   assert.strictEqual(merchantCard.phoneNumber, undefined, 'Merchant card must never leak phone');

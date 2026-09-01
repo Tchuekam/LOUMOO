@@ -14,6 +14,14 @@ class UserProfile {
   constructor({
     id,
     clerkUserId,
+    username = null,
+    bio = null,
+    headline = null,
+    socialLinks = {},
+    badges = [],
+    followerCount = 0,
+    followingCount = 0,
+    reputationScore = 100.00,
     phoneNumber = null,
     phone = null,
     email = null,
@@ -50,6 +58,15 @@ class UserProfile {
   }) {
     this.id = id;
     this.clerkUserId = clerkUserId;
+    this.username = username || (id ? `user_${id.slice(0, 8)}` : null);
+    this.bio = bio;
+    this.headline = headline;
+    this.socialLinks = socialLinks || {};
+    this.badges = Array.isArray(badges) ? badges : [];
+    this.followerCount = Number(followerCount) || 0;
+    this.followingCount = Number(followingCount) || 0;
+    this.reputationScore = Number(reputationScore) || 100.00;
+
     this.phoneNumber = phoneNumber || phone;
     this.email = email;
     this.firstName = firstName;
@@ -105,11 +122,6 @@ class UserProfile {
 
   /**
    * Validates if a KYC state transition is legal according to the account state machine.
-   * Rules:
-   *   pending -> submitted
-   *   submitted -> verified | rejected
-   *   rejected -> submitted (must re-submit before any new verification attempt)
-   *   verified -> (terminal state, immutable)
    */
   canTransitionKycStatus(targetStatus) {
     const current = this.kycDocStatus || 'pending';
@@ -149,14 +161,10 @@ class UserProfile {
   }
 
   /**
-   * Profile completeness, for the "finish setting up your account" nudge.
-   *
-   * Presentation only — nothing in the authorization path reads this. The
-   * account state machine decides what a user may do; this number just tells
-   * them how filled-in their profile looks.
+   * Profile completeness calculation.
    */
   calculateCompletionPercentage() {
-    let score = 20;                                                   // signed up
+    let score = 20;
     if (this.isEmailVerified) score += 12;
     if (this.isPhoneVerified) score += 12;
     if (this.city && String(this.city).trim().length > 0) score += 12;
@@ -171,6 +179,14 @@ class UserProfile {
     return {
       id: this.id,
       clerkUserId: this.clerkUserId,
+      username: this.username,
+      bio: this.bio,
+      headline: this.headline,
+      socialLinks: this.socialLinks,
+      badges: this.badges,
+      followerCount: this.followerCount,
+      followingCount: this.followingCount,
+      reputationScore: this.reputationScore,
       email: this.email,
       phoneNumber: this.phoneNumber,
       firstName: this.firstName,
@@ -197,22 +213,21 @@ class UserProfile {
   }
 
   /**
-   * The public merchant card. Deliberately narrow: it must never leak an
-   * email, a phone number or an internal verification timestamp to a stranger
-   * browsing a storefront.
+   * The public merchant card.
    */
   toSafeMerchantPublicCard() {
     return {
       id: this.id,
+      username: this.username,
       fullName: this.businessName || this.fullName,
       avatarUrl: this.avatarUrl,
+      headline: this.headline,
       city: this.city,
       sellerType: this.sellerType,
-      // The badge a buyer sees means "identity documents were checked", which
-      // is the KYC outcome — not merely "this account is allowed to list".
       isVerifiedSeller: this.kycDocStatus === 'verified',
-      // Whether the boutique is live, which is a different question.
       isActiveSeller: this.sellerStatus === 'READY',
+      followerCount: this.followerCount,
+      reputationScore: this.reputationScore,
       completionPercentage: this.completionPercentage
     };
   }

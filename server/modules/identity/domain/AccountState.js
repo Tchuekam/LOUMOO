@@ -16,15 +16,13 @@
  *         v
  *   ONBOARDING_IN_PROGRESS        (started, not finished)
  *         v
- *   ACCOUNT_READY                 (buyer-complete: can browse, buy, save)
+ *   ACCOUNT_READY                 (buyer-complete: can browse, buy, save, follow, review, recommend)
  *         v                       (user opted into selling)
  *   SELLER_VERIFICATION_REQUIRED  (seller onboarding started/incomplete)
  *         v
  *   SELLER_READY                  (may create, edit and publish listings)
  *
- * Impossible states are impossible by construction: the state is *computed*
- * from a small set of canonical timestamps, never stored as an independent
- * flag that could drift out of sync.
+ * Fundamental Rule: Every user is a buyer. A seller can also buy.
  */
 
 const ACCOUNT_STATES = Object.freeze({
@@ -68,12 +66,7 @@ const SELLER_STATUS = Object.freeze({
 });
 
 /**
- * The buyer onboarding journey. Order is authoritative: `nextStep` walks this
- * list and returns the first step that is not yet completed.
- *
- * `ACCOUNT_IDENTITY` and `CONTACT_VERIFICATION` are satisfied by Clerk itself,
- * so they are marked `derived` — the server confirms them rather than asking
- * the user to fill in a form.
+ * The buyer onboarding journey.
  */
 const ONBOARDING_STEPS = Object.freeze([
   { key: 'ACCOUNT_IDENTITY', title: 'Account identity', derived: true, sellerOnly: false },
@@ -88,9 +81,8 @@ const ONBOARDING_STEPS = Object.freeze([
 const ONBOARDING_STEP_KEYS = Object.freeze(ONBOARDING_STEPS.map(s => s.key));
 
 /**
- * Capabilities are the ONLY thing route guards should test. They are a pure
- * function of the account state, so there is exactly one place to change when
- * a rule changes.
+ * Capabilities are the ONLY thing route guards test.
+ * Every user who reaches ACCOUNT_READY retains full buyer, social, and recommendation rights.
  */
 function capabilitiesFor(state, opts = {}) {
   const rank = STATE_RANK[state] ?? 0;
@@ -106,11 +98,17 @@ function capabilitiesFor(state, opts = {}) {
     canVerifyContact: authenticated,
     canCompleteOnboarding: verified,
     canManageProfile: verified,
+    // Buyer capabilities:
     canSaveItems: accountReady,
     canFollowStores: accountReady,
+    canFollow: accountReady,
+    canReview: accountReady,
+    canRecommend: accountReady,
     canPurchase: accountReady,
     canStartSelling: accountReady,
+    // Seller & Team capabilities:
     canManageStore: sellerReady || state === ACCOUNT_STATES.SELLER_VERIFICATION_REQUIRED,
+    canManageOrganization: accountReady,
     canCreateListing: sellerReady,
     canUploadListingMedia: sellerReady,
     canPublishListing: sellerReady && opts.storeActive !== false
@@ -119,8 +117,6 @@ function capabilitiesFor(state, opts = {}) {
 
 /**
  * The route a blocked user must be sent to in order to make progress.
- * Deterministic — this is what prevents redirect loops: every state maps to
- * exactly one destination, and that destination never maps back to itself.
  */
 const STATE_DESTINATION = Object.freeze({
   [ACCOUNT_STATES.UNAUTHENTICATED]: '/sign-in',
@@ -147,14 +143,6 @@ const STATE_SCREEN = Object.freeze({
   [ACCOUNT_STATES.DELETED]: 'signIn'
 });
 
-/**
- * Contact verification policy.
- *
- * LOUMOO requires a verified email. Phone is required only when the platform
- * is configured with a working SMS/phone verification provider — we never
- * demand a verification the system is incapable of performing, and we never
- * pretend a phone is verified when it is not.
- */
 function contactRequirement(profile, providerConfig = {}) {
   const emailVerified = Boolean(profile && profile.emailVerifiedAt);
   const phoneVerified = Boolean(profile && profile.phoneVerifiedAt);
@@ -169,17 +157,6 @@ function contactRequirement(profile, providerConfig = {}) {
   };
 }
 
-/**
- * Derive the canonical account state.
- *
- * @param {object|null} profile  Normalised application profile (see
- *        UserProfile#toStateJSON) or null when there is no valid session.
- * @param {object} options
- * @param {boolean} options.phoneVerificationEnabled  Whether a real phone
- *        verification provider is configured for this deployment.
- * @param {boolean} options.storeActive  Whether the seller's store is active.
- * @returns {{state:string, capabilities:object, contact:object, onboarding:object, destination:string, screen:string}}
- */
 function deriveAccountState(profile, options = {}) {
   if (!profile || !profile.id) {
     return buildResult(ACCOUNT_STATES.UNAUTHENTICATED, null, options);
@@ -214,7 +191,6 @@ function deriveAccountState(profile, options = {}) {
   if (sellerStatus === SELLER_STATUS.READY) {
     return buildResult(ACCOUNT_STATES.SELLER_READY, profile, options);
   }
-  // ONBOARDING or PENDING_VERIFICATION
   return buildResult(ACCOUNT_STATES.SELLER_VERIFICATION_REQUIRED, profile, options);
 }
 
@@ -235,10 +211,6 @@ function buildResult(state, profile, options) {
   };
 }
 
-/**
- * Summarises onboarding progress and — critically — computes the *resume
- * point*, so a user who abandons on step 4 comes back to step 4 on any device.
- */
 function onboardingSummary(profile) {
   const status = (profile && profile.onboardingStatus) || ONBOARDING_STATUS.NOT_STARTED;
   const completed = (profile && Array.isArray(profile.completedOnboardingSteps))
@@ -267,12 +239,11 @@ function onboardingSummary(profile) {
   };
 }
 
-/** True when `state` has reached at least `requiredState` on the happy path. */
 function isAtLeast(state, requiredState) {
   const a = STATE_RANK[state];
   const b = STATE_RANK[requiredState];
   if (a === undefined || b === undefined) return false;
-  if (a < 0) return false; // suspended / deleted never satisfy anything
+  if (a < 0) return false;
   return a >= b;
 }
 

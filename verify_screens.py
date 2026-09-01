@@ -14,10 +14,17 @@ defined_screens = [
     'vs','vsCompare','visual','visualScan','visualResults','upload',
     'uploadDetails','uploadPrice','uploadSuccess','myListings','travel',
     'travelBus','travelPackages','travelVisa','travelResults','travelDetail',
-    'travelPassenger','travelTicket','announce','announceDetail','profile',
+    'travelPassenger','travelTicket','announce','announceStudio','announceCampaigns','announceDetail','profile',
     'seller','settings','payFailed','networkError','saved','transactions','loading',
-    'onboardWelcome','onboardType','onboardIdentity','onboardOtp','onboardBuyer',
-    'onboardSeller','onboardBusiness','onboardVerify','onboardReview','onboardSuccess'
+    'onboardWelcome','onboardType','onboardIdentity','onboardOtp','onboardAdaptive','onboardBuyer',
+    'onboardSeller','onboardBusiness','onboardVerify','onboardReview','onboardSuccess',
+    'signIn','forgotPassword','resetPassword','verifyEmail',
+    'accountDashboard','editProfile','addresses','notificationPreferences',
+    'privacySettings','securitySettings','followedStores','userActivity','deleteAccount',
+    'orderDetail','refundRequest','writeReview','sellerOrderDetail','sellerPayouts',
+    'hotelSearch','hotelDetail','hotelBooking','createStore','storeOnboarding',
+    'storeSettings','storeVerification','storeAnalytics','listingAttributes','listingPreview',
+    'publicUserProfile','sellerPublicPage'
 ]
 
 missing = [s for s in defined_screens if s not in screens]

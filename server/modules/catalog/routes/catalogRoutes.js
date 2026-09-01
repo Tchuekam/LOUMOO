@@ -1,13 +1,14 @@
 /**
  * Catalog Module — API Routes
- * Serves multi-vertical commerce products, hotels, flights, and store listings
+ * Serves multi-vertical commerce products, hotels, flights, store listings & comparison engine
  */
 
 const express = require('express');
 const router = express.Router();
 const CacheService = require('../../../infrastructure/cache/CacheService');
 const AnalyticsService = require('../../../infrastructure/analytics/AnalyticsService');
-const { NotFoundError } = require('../../../shared/errors/AppError');
+const { NotFoundError, ValidationError } = require('../../../shared/errors/AppError');
+const ComparisonService = require('../application/ComparisonService');
 
 // Load foundational dataset via robust dataLoader
 const { products, categories } = require('../dataLoader');
@@ -22,13 +23,80 @@ const allProducts = [
   ...(products.education || []).map(p => ({ ...p, vertical: 'education' }))
 ];
 
+// GET /api/v1/catalog/compare OR /api/v1/products/compare
+const handleCompare = async (req, res, next) => {
+  try {
+    let ids = req.query.ids;
+    if (typeof ids === 'string') {
+      ids = ids.split(',').map(s => s.trim()).filter(Boolean);
+    } else if (Array.isArray(req.query.id)) {
+      ids = req.query.id;
+    }
+
+    if (!ids || ids.length === 0) {
+      throw new ValidationError('Product IDs are required for comparison.', [
+        { field: 'ids', message: 'Provide 2 to 4 comma-separated product IDs in ?ids=id1,id2.' }
+      ]);
+    }
+
+    let priorities = {};
+    if (req.query.priorities) {
+      if (typeof req.query.priorities === 'string') {
+        try {
+          priorities = JSON.parse(req.query.priorities);
+        } catch {
+          // If comma-separated top priorities: ?priorities=price,performance
+          req.query.priorities.split(',').forEach(p => {
+            priorities[p.trim()] = 5;
+          });
+        }
+      } else if (typeof req.query.priorities === 'object') {
+        priorities = req.query.priorities;
+      }
+    }
+
+    const comparison = ComparisonService.getComparison(ids, priorities);
+
+    // Track analytics event asynchronously
+    AnalyticsService.track(req.userId || 'anonymous', 'products_compared', {
+      productIds: ids,
+      recommended: comparison.recommendation?.recommendedProductId
+    });
+
+    res.json({ success: true, data: comparison });
+  } catch (err) {
+    next(err);
+  }
+};
+
+router.get('/catalog/compare', handleCompare);
+router.get('/products/compare', handleCompare);
+
+// GET /api/v1/catalog/compare/candidates OR /api/v1/products/compare/candidates
+const handleCompareCandidates = async (req, res, next) => {
+  try {
+    const { category, currentId, search, limit } = req.query;
+    const candidates = ComparisonService.getCompareCandidates({
+      category,
+      currentProductId: currentId,
+      search,
+      limit: limit ? parseInt(limit, 10) : 8
+    });
+
+    res.json({ success: true, data: candidates });
+  } catch (err) {
+    next(err);
+  }
+};
+
+router.get('/catalog/compare/candidates', handleCompareCandidates);
+router.get('/products/compare/candidates', handleCompareCandidates);
+
 // GET /api/v1/products
 router.get('/products', async (req, res, next) => {
   try {
     const { category, search, vertical } = req.query;
 
-    // Bounds: page >= 1, limit in [1, 100]. NaN/negative/huge values are
-    // clamped instead of producing slice(start, start+NaN) or full-table scans.
     const rawLimit = parseInt(req.query.limit, 10);
     const rawPage = parseInt(req.query.page, 10);
     const limit = Number.isFinite(rawLimit) && rawLimit >= 1 ? Math.min(rawLimit, 100) : 50;
@@ -45,7 +113,6 @@ router.get('/products', async (req, res, next) => {
 
       const KNOWN_CATEGORIES = new Set(allProducts.map(p => p.category?.toLowerCase()).filter(Boolean));
       if (category && !KNOWN_CATEGORIES.has(category.toLowerCase())) {
-        // Unknown category is not a 500 — it is an empty result with metadata.
         return { items: [], total: 0, page, limit, hasMore: false };
       }
       if (category) {

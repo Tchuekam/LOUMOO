@@ -1,0 +1,432 @@
+# -*- coding: utf-8 -*-
+"""
+LOUMOO PUBLIC PROFILE & COMMERCIAL SELLER IDENTITY VIEWS
+---------------------------------------------------------------------------
+Powers:
+  1. Public User Profile:  is.publicUserProfile (/u/:username)
+  2. Public Commercial Page: is.sellerPublicPage (/s/:sellerSlug)
+"""
+
+
+def get_public_profile_view():
+    return """
+<!-- ══════════════════════════════════════════════════════════════════════════
+     1. PUBLIC USER PROFILE VIEW (is.publicUserProfile)
+     Read model: PublicProfileService.getUserPublicProfile()
+     ══════════════════════════════════════════════════════════════════════ -->
+<sc-if value="{{ is.publicUserProfile }}">
+<div style="padding-bottom:64px;min-height:100vh;background:var(--color-background)">
+
+  <!-- Sticky navigation bar -->
+  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:30">
+    <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;flex-shrink:0">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <div style="flex:1;min-width:0">
+      <div style="font:700 15px/1.2 var(--font-heading);color:var(--color-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ publicUser.name || 'Member Profile' }}</div>
+      <div style="font:400 12px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">@{{ publicUser.username }}</div>
+    </div>
+    <button onClick="{{ on.shareProfile }}" aria-label="Share profile" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;flex-shrink:0">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+    </button>
+  </div>
+
+  <div style="max-width:860px;margin:0 auto;padding:0 16px">
+
+    <!-- Loading Skeleton -->
+    <sc-if value="{{ publicUserLoading }}">
+      <div style="margin-top:16px;display:flex;flex-direction:column;gap:16px">
+        <div class="skel" style="height:160px;border-radius:var(--radius-lg)"></div>
+        <div class="skel" style="height:120px;border-radius:var(--radius-md)"></div>
+        <div class="skel" style="height:200px;border-radius:var(--radius-md)"></div>
+      </div>
+    </sc-if>
+
+    <!-- Loaded User Profile -->
+    <sc-if value="{{ !publicUserLoading && publicUser }}">
+      <div style="margin-top:16px;display:flex;flex-direction:column;gap:16px">
+
+        <!-- Hero Card with Avatar, Trust Badge & Follow Action -->
+        <div class="card-premium" style="position:relative;overflow:hidden;padding:24px 20px">
+          <!-- Background accent gradient -->
+          <div style="position:absolute;top:0;left:0;right:0;height:6px;background:linear-gradient(90deg,var(--color-accent) 0%,#2b6cb0 50%,#319795 100%)"></div>
+
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap">
+            <div style="display:flex;gap:16px;align-items:center">
+              <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--color-accent) 0%,#003d8a 100%);color:#fff;display:flex;align-items:center;justify-content:center;font:800 24px/1 var(--font-heading);flex-shrink:0;box-shadow:0 4px 14px rgba(0,0,0,0.12)">
+                <sc-if value="{{ publicUser.avatarUrl }}">
+                  <img src="{{ publicUser.avatarUrl }}" alt="{{ publicUser.name }}" style="width:100%;height:100%;object-fit:cover;border-radius:50%" />
+                </sc-if>
+                <sc-if value="{{ !publicUser.avatarUrl }}">
+                  {{ publicUserInitials }}
+                </sc-if>
+              </div>
+
+              <div>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <h3 style="margin:0;font:800 20px/1.2 var(--font-heading);color:var(--color-text)">{{ publicUser.name }}</h3>
+                  <sc-if value="{{ publicUser.isPhoneVerified || publicUser.isEmailVerified }}">
+                    <span title="Verified Member" style="color:var(--color-accent);display:inline-flex;align-items:center">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                    </span>
+                  </sc-if>
+                </div>
+                <div style="font:500 13px/1.4 var(--font-body);color:var(--color-text-secondary);margin-top:2px">@{{ publicUser.username }} &bull; {{ publicUser.city }}, Cameroon</div>
+                <div style="font:600 13.5px/1.4 var(--font-body);color:var(--color-accent);margin-top:4px">{{ publicUser.headline }}</div>
+              </div>
+            </div>
+
+            <!-- Follow / Action Button -->
+            <div style="display:flex;gap:8px;align-items:center">
+              <sc-if value="{{ !isSelfUser }}">
+                <button onClick="{{ on.toggleFollowUser }}" class="btn" style="min-width:110px;height:40px;padding:0 18px;border-radius:20px;font-weight:700;cursor:pointer;background:{{ publicUser.isFollowing ? 'var(--color-surface)' : 'var(--color-accent)' }};color:{{ publicUser.isFollowing ? 'var(--color-text)' : '#fff' }};border:1px solid {{ publicUser.isFollowing ? 'var(--color-divider)' : 'var(--color-accent)' }}">
+                  {{ publicUser.isFollowing ? 'Following' : '+ Follow' }}
+                </button>
+                <button onClick="{{ on.recommendUserModal }}" class="btn btn-outline" style="height:40px;padding:0 14px;border-radius:20px;font-weight:600;cursor:pointer">
+                  Endorse
+                </button>
+              </sc-if>
+              <sc-if value="{{ isSelfUser }}">
+                <button onClick="{{ on.openEditProfile }}" class="btn btn-outline" style="height:40px;padding:0 16px;border-radius:20px;font-weight:600;cursor:pointer">
+                  Edit Profile
+                </button>
+              </sc-if>
+            </div>
+          </div>
+
+          <!-- Bio -->
+          <sc-if value="{{ publicUser.bio }}">
+            <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--color-divider);font:400 14px/1.6 var(--font-body);color:var(--color-text)">
+              {{ publicUser.bio }}
+            </div>
+          </sc-if>
+
+          <!-- Social Metrics Bar -->
+          <div style="margin-top:16px;padding:12px 16px;background:var(--color-surface-subtle);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:space-around;gap:12px">
+            <div style="text-align:center">
+              <div style="font:800 16px/1.2 var(--font-heading);color:var(--color-text)">{{ publicUser.followerCount }}</div>
+              <div style="font:500 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Followers</div>
+            </div>
+            <div style="width:1px;height:24px;background:var(--color-divider)"></div>
+            <div style="text-align:center">
+              <div style="font:800 16px/1.2 var(--font-heading);color:var(--color-text)">{{ publicUser.followingCount }}</div>
+              <div style="font:500 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Following</div>
+            </div>
+            <div style="width:1px;height:24px;background:var(--color-divider)"></div>
+            <div style="text-align:center">
+              <div style="font:800 16px/1.2 var(--font-heading);color:var(--color-accent)">{{ publicUser.reputationScore }}</div>
+              <div style="font:500 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Trust Index</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Associated Commercial Seller Stores / Boutiques -->
+        <sc-if value="{{ publicUser.sellerStores && publicUser.sellerStores.length > 0 }}">
+          <div class="card-premium" style="display:flex;flex-direction:column;gap:14px;padding:20px">
+            <h4 style="margin:0;font:800 16px/1.2 var(--font-heading);color:var(--color-text)">Commercial Boutiques & Services</h4>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px">
+              <sc-for items="{{ publicUser.sellerStores }}" var="st">
+                <div onClick="{{ on.openSellerPage(st.slug) }}" style="padding:14px;border:1px solid var(--color-divider);border-radius:var(--radius-md);background:var(--color-surface);cursor:pointer;display:flex;align-items:center;gap:12px;transition:transform 0.15s ease,box-shadow 0.15s ease">
+                  <div style="width:44px;height:44px;border-radius:var(--radius-sm);background:var(--color-surface-subtle);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--color-accent);flex-shrink:0">
+                    <sc-if value="{{ st.logoUrl }}">
+                      <img src="{{ st.logoUrl }}" alt="{{ st.name }}" style="width:100%;height:100%;object-fit:cover;border-radius:var(--radius-sm)" />
+                    </sc-if>
+                    <sc-if value="{{ !st.logoUrl }}">
+                      {{ st.name.slice(0, 2).toUpperCase() }}
+                    </sc-if>
+                  </div>
+                  <div style="flex:1;min-width:0">
+                    <div style="font:700 14px/1.2 var(--font-heading);color:var(--color-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ st.name }}</div>
+                    <div style="display:flex;align-items:center;gap:6px;margin-top:4px">
+                      <span class="tag tag-accent" style="font-size:9px;padding:1px 6px">{{ st.sellerType }}</span>
+                      <span style="font:600 11px/1 var(--font-body);color:var(--color-accent)">★ {{ st.rating }}</span>
+                    </div>
+                  </div>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--color-text-tertiary)"><path d="m9 18 6-6-6-6"/></svg>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- Social Recommendations / Endorsements Received -->
+        <div class="card-premium" style="display:flex;flex-direction:column;gap:14px;padding:20px">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <h4 style="margin:0;font:800 16px/1.2 var(--font-heading);color:var(--color-text)">Community Endorsements</h4>
+            <span style="font:600 12px/1 var(--font-body);color:var(--color-text-secondary)">{{ publicUser.recommendations ? publicUser.recommendations.length : 0 }} recommendations</span>
+          </div>
+
+          <sc-if value="{{ !publicUser.recommendations || publicUser.recommendations.length === 0 }}">
+            <div style="text-align:center;padding:24px 12px;color:var(--color-text-secondary);font:400 13px/1.5 var(--font-body)">
+              No endorsements yet. Work or transact with {{ publicUser.name }} to leave a verified recommendation.
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ publicUser.recommendations && publicUser.recommendations.length > 0 }}">
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <sc-for items="{{ publicUser.recommendations }}" var="rec">
+                <div style="padding:14px;border:1px solid var(--color-divider);border-radius:var(--radius-sm);background:var(--color-surface)">
+                  <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+                    <div style="width:32px;height:32px;border-radius:50%;background:var(--color-accent-100);color:var(--color-accent);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px">
+                      {{ rec.author ? rec.author.name.slice(0, 1) : 'U' }}
+                    </div>
+                    <div>
+                      <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">{{ rec.author ? rec.author.name : 'LOUMOO Member' }}</div>
+                      <div style="font:500 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Relationship: <span style="text-transform:capitalize">{{ rec.relationshipContext }}</span></div>
+                    </div>
+                  </div>
+                  <div style="font:400 13px/1.5 var(--font-body);color:var(--color-text)">"{{ rec.note }}"</div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+
+      </div>
+    </sc-if>
+
+  </div>
+</div>
+</sc-if>
+
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     2. PUBLIC COMMERCIAL SELLER IDENTITY PAGE (is.sellerPublicPage)
+     Read model: PublicProfileService.getSellerPublicProfile()
+     ══════════════════════════════════════════════════════════════════════ -->
+<sc-if value="{{ is.sellerPublicPage }}">
+<div style="padding-bottom:64px;min-height:100vh;background:var(--color-background)">
+
+  <!-- Sticky top bar -->
+  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:30">
+    <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;flex-shrink:0">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <div style="flex:1;min-width:0">
+      <div style="font:700 15px/1.2 var(--font-heading);color:var(--color-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ publicSeller.name || 'Commercial Boutique' }}</div>
+      <div style="display:flex;align-items:center;gap:6px;margin-top:2px">
+        <span class="tag tag-accent" style="font-size:9px;padding:1px 6px">{{ publicSeller.sellerType || 'SHOP' }}</span>
+        <span style="font:600 11.5px/1 var(--font-body);color:var(--color-accent)">★ {{ publicSeller.rating || '5.0' }} ({{ publicSeller.ratingCount || 0 }})</span>
+      </div>
+    </div>
+    <button onClick="{{ on.shareSeller }}" aria-label="Share store" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;flex-shrink:0">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+    </button>
+  </div>
+
+  <div style="max-width:960px;margin:0 auto;padding:0 16px">
+
+    <!-- Loading Skeleton -->
+    <sc-if value="{{ publicSellerLoading }}">
+      <div style="margin-top:16px;display:flex;flex-direction:column;gap:16px">
+        <div class="skel" style="height:200px;border-radius:var(--radius-lg)"></div>
+        <div class="skel" style="height:120px;border-radius:var(--radius-md)"></div>
+        <div class="skel" style="height:300px;border-radius:var(--radius-md)"></div>
+      </div>
+    </sc-if>
+
+    <!-- Loaded Commercial Seller Storefront -->
+    <sc-if value="{{ !publicSellerLoading && publicSeller }}">
+      <div style="margin-top:16px;display:flex;flex-direction:column;gap:20px">
+
+        <!-- Store Header Banner Card -->
+        <div class="card-premium" style="position:relative;overflow:hidden;padding:0">
+          <div style="height:120px;background:linear-gradient(135deg,var(--color-accent) 0%,#002b66 50%,#001a3d 100%);position:relative">
+            <sc-if value="{{ publicSeller.coverUrl }}">
+              <img src="{{ publicSeller.coverUrl }}" alt="Store cover" style="width:100%;height:100%;object-fit:cover" />
+            </sc-if>
+          </div>
+
+          <div style="padding:16px 20px 20px;position:relative">
+            <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-top:-48px;margin-bottom:12px;flex-wrap:wrap">
+              <div style="width:76px;height:76px;border-radius:var(--radius-md);border:3px solid var(--color-surface);background:var(--color-surface);display:flex;align-items:center;justify-content:center;font:800 24px/1 var(--font-heading);color:var(--color-accent);box-shadow:0 4px 12px rgba(0,0,0,0.12);overflow:hidden">
+                <sc-if value="{{ publicSeller.logoUrl }}">
+                  <img src="{{ publicSeller.logoUrl }}" alt="{{ publicSeller.name }}" style="width:100%;height:100%;object-fit:cover" />
+                </sc-if>
+                <sc-if value="{{ !publicSeller.logoUrl }}">
+                  {{ publicSeller.name.slice(0, 2).toUpperCase() }}
+                </sc-if>
+              </div>
+
+              <!-- Follow & Recommend Buttons -->
+              <div style="display:flex;gap:8px;align-items:center">
+                <button onClick="{{ on.toggleFollowSeller }}" class="btn" style="min-width:110px;height:38px;padding:0 18px;border-radius:20px;font-weight:700;cursor:pointer;background:{{ publicSeller.isFollowing ? 'var(--color-surface)' : 'var(--color-accent)' }};color:{{ publicSeller.isFollowing ? 'var(--color-text)' : '#fff' }};border:1px solid {{ publicSeller.isFollowing ? 'var(--color-divider)' : 'var(--color-accent)' }}">
+                  {{ publicSeller.isFollowing ? 'Following' : '+ Follow' }}
+                </button>
+                <button onClick="{{ on.openReviewModal }}" class="btn btn-outline" style="height:38px;padding:0 14px;border-radius:20px;font-weight:600;cursor:pointer">
+                  ★ Review
+                </button>
+                <button onClick="{{ on.openRecommendStoreModal }}" class="btn btn-outline" style="height:38px;padding:0 14px;border-radius:20px;font-weight:600;cursor:pointer">
+                  Endorse
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                <h2 style="margin:0;font:800 22px/1.2 var(--font-heading);color:var(--color-text)">{{ publicSeller.name }}</h2>
+                <sc-if value="{{ publicSeller.isVerified }}">
+                  <span class="tag" style="background:var(--color-accent-100);color:var(--color-accent);font-size:10px;font-weight:700">VERIFIED SELLER</span>
+                </sc-if>
+                <span class="tag tag-accent" style="font-size:10px;font-weight:700">{{ publicSeller.sellerType }}</span>
+                <span class="tag" style="background:var(--color-success-100);color:var(--color-success);font-size:10px;font-weight:700">{{ publicSeller.trustTier }}</span>
+              </div>
+              <div style="font:400 13.5px/1.5 var(--font-body);color:var(--color-text-secondary);margin-top:6px">
+                {{ publicSeller.description }}
+              </div>
+              <sc-if value="{{ publicSeller.organization }}">
+                <div style="margin-top:8px;display:flex;align-items:center;gap:6px;font:500 12px/1 var(--font-body);color:var(--color-accent)">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M3 7v14M21 7v14M6 7V3h12v4M9 21v-4h6v4"/></svg>
+                  <span>Part of <strong>{{ publicSeller.organization.name }}</strong> ({{ publicSeller.organization.orgType }})</span>
+                </div>
+              </sc-if>
+            </div>
+
+            <!-- Multi-Signal Trust Scoreboard -->
+            <div style="margin-top:18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;padding:12px;background:var(--color-surface-subtle);border-radius:var(--radius-sm)">
+              <div style="text-align:center">
+                <div style="font:800 18px/1.2 var(--font-heading);color:var(--color-accent)">{{ publicSeller.reputationScore }}</div>
+                <div style="font:600 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Trust Index</div>
+              </div>
+              <div style="text-align:center">
+                <div style="font:800 18px/1.2 var(--font-heading);color:var(--color-text)">★ {{ publicSeller.rating }}</div>
+                <div style="font:600 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">{{ publicSeller.ratingCount }} Reviews</div>
+              </div>
+              <div style="text-align:center">
+                <div style="font:800 18px/1.2 var(--font-heading);color:var(--color-text)">{{ publicSeller.recommendationCount }}</div>
+                <div style="font:600 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Endorsements</div>
+              </div>
+              <div style="text-align:center">
+                <div style="font:800 18px/1.2 var(--font-heading);color:var(--color-text)">{{ publicSeller.followerCount }}</div>
+                <div style="font:600 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Followers</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product / Service Catalog Listings -->
+        <div class="card-premium" style="display:flex;flex-direction:column;gap:16px;padding:20px">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <h3 style="margin:0;font:800 18px/1.2 var(--font-heading);color:var(--color-text)">Featured Products & Services</h3>
+            <span style="font:600 12.5px/1 var(--font-body);color:var(--color-text-secondary)">{{ publicSeller.listings ? publicSeller.listings.length : 0 }} available</span>
+          </div>
+
+          <sc-if value="{{ !publicSeller.listings || publicSeller.listings.length === 0 }}">
+            <div style="text-align:center;padding:32px 16px;color:var(--color-text-secondary);font:400 14px/1.5 var(--font-body)">
+              No published items currently in this showcase. Check back soon!
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ publicSeller.listings && publicSeller.listings.length > 0 }}">
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px">
+              <sc-for items="{{ publicSeller.listings }}" var="item">
+                <div onClick="{{ on.openListing(item.id) }}" style="border:1px solid var(--color-divider);border-radius:var(--radius-md);overflow:hidden;background:var(--color-surface);cursor:pointer;display:flex;flex-direction:column;transition:transform 0.15s ease,box-shadow 0.15s ease">
+                  <div style="height:140px;background:var(--color-surface-subtle);position:relative">
+                    <sc-if value="{{ item.cover_image_url }}">
+                      <img src="{{ item.cover_image_url }}" alt="{{ item.title }}" style="width:100%;height:100%;object-fit:cover" />
+                    </sc-if>
+                  </div>
+                  <div style="padding:12px;display:flex;flex-direction:column;gap:6px;flex:1">
+                    <div style="font:700 14px/1.3 var(--font-heading);color:var(--color-text);overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">{{ item.title }}</div>
+                    <div style="font:800 15px/1.2 var(--font-heading);color:var(--color-accent);margin-top:auto">{{ item.price_xaf }} XAF</div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+
+        <!-- Verified Reviews & Community Feedback -->
+        <div class="card-premium" style="display:flex;flex-direction:column;gap:16px;padding:20px">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <h3 style="margin:0;font:800 18px/1.2 var(--font-heading);color:var(--color-text)">Customer Reviews & Ratings</h3>
+            <button onClick="{{ on.openReviewModal }}" class="btn btn-outline" style="height:32px;padding:0 12px;font-size:12px;border-radius:16px;cursor:pointer">Write a Review</button>
+          </div>
+
+          <sc-if value="{{ publicSeller.ratingSummary }}">
+            <div style="display:flex;gap:20px;align-items:center;padding:16px;background:var(--color-surface-subtle);border-radius:var(--radius-sm);flex-wrap:wrap">
+              <div style="text-align:center;min-width:90px">
+                <div style="font:800 28px/1 var(--font-heading);color:var(--color-text)">{{ publicSeller.ratingSummary.average }}</div>
+                <div style="color:var(--color-accent);margin:4px 0">★★★★★</div>
+                <div style="font:500 11px/1 var(--font-body);color:var(--color-text-secondary)">{{ publicSeller.ratingSummary.total }} total reviews</div>
+                <div style="font:600 10.5px/1 var(--font-body);color:var(--color-success);margin-top:2px">{{ publicSeller.ratingSummary.verifiedCount }} verified buyers</div>
+              </div>
+
+              <!-- Breakdown bars -->
+              <div style="flex:1;min-width:180px;display:flex;flex-direction:column;gap:4px">
+                <div style="display:flex;align-items:center;gap:8px;font-size:11px">
+                  <span>5★</span>
+                  <div style="flex:1;height:6px;background:var(--color-divider);border-radius:3px;overflow:hidden">
+                    <div style="width:{{ publicSeller.ratingSummary.percentageBreakdown[5] }}%;height:100%;background:var(--color-accent)"></div>
+                  </div>
+                  <span>{{ publicSeller.ratingSummary.breakdown[5] }}</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;font-size:11px">
+                  <span>4★</span>
+                  <div style="flex:1;height:6px;background:var(--color-divider);border-radius:3px;overflow:hidden">
+                    <div style="width:{{ publicSeller.ratingSummary.percentageBreakdown[4] }}%;height:100%;background:var(--color-accent)"></div>
+                  </div>
+                  <span>{{ publicSeller.ratingSummary.breakdown[4] }}</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;font-size:11px">
+                  <span>3★</span>
+                  <div style="flex:1;height:6px;background:var(--color-divider);border-radius:3px;overflow:hidden">
+                    <div style="width:{{ publicSeller.ratingSummary.percentageBreakdown[3] }}%;height:100%;background:var(--color-accent)"></div>
+                  </div>
+                  <span>{{ publicSeller.ratingSummary.breakdown[3] }}</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;font-size:11px">
+                  <span>2★</span>
+                  <div style="flex:1;height:6px;background:var(--color-divider);border-radius:3px;overflow:hidden">
+                    <div style="width:{{ publicSeller.ratingSummary.percentageBreakdown[2] }}%;height:100%;background:var(--color-accent)"></div>
+                  </div>
+                  <span>{{ publicSeller.ratingSummary.breakdown[2] }}</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;font-size:11px">
+                  <span>1★</span>
+                  <div style="flex:1;height:6px;background:var(--color-divider);border-radius:3px;overflow:hidden">
+                    <div style="width:{{ publicSeller.ratingSummary.percentageBreakdown[1] }}%;height:100%;background:var(--color-accent)"></div>
+                  </div>
+                  <span>{{ publicSeller.ratingSummary.breakdown[1] }}</span>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- Review items -->
+          <sc-if value="{{ !publicSeller.reviews || publicSeller.reviews.length === 0 }}">
+            <div style="text-align:center;padding:24px 12px;color:var(--color-text-secondary);font:400 13px/1.5 var(--font-body)">
+              No reviews written yet. Be the first customer to review this boutique!
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ publicSeller.reviews && publicSeller.reviews.length > 0 }}">
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <sc-for items="{{ publicSeller.reviews }}" var="rev">
+                <div style="padding:14px;border:1px solid var(--color-divider);border-radius:var(--radius-sm);background:var(--color-surface)">
+                  <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px">
+                    <div style="display:flex;align-items:center;gap:8px">
+                      <span style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">{{ rev.author ? rev.author.name : 'LOUMOO Buyer' }}</span>
+                      <sc-if value="{{ rev.isVerifiedPurchase }}">
+                        <span class="tag" style="background:var(--color-success-100);color:var(--color-success);font-size:9px;padding:1px 6px">VERIFIED ORDER</span>
+                      </sc-if>
+                    </div>
+                    <span style="font:700 12px/1 var(--font-heading);color:var(--color-accent)">★ {{ rev.rating }}.0</span>
+                  </div>
+                  <sc-if value="{{ rev.title }}">
+                    <div style="font:700 13.5px/1.3 var(--font-heading);color:var(--color-text);margin-bottom:4px">{{ rev.title }}</div>
+                  </sc-if>
+                  <div style="font:400 13px/1.5 var(--font-body);color:var(--color-text)">{{ rev.content }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+
+      </div>
+    </sc-if>
+
+  </div>
+</div>
+</sc-if>
+"""

@@ -24,14 +24,21 @@ const {
 
 /**
  * Maps a raw `iam.profiles` row plus its onboarding rows onto the neutral
- * shape the state machine consumes. Keeping this projection in one place is
- * what stops column names leaking into business logic.
+ * shape the state machine consumes.
  */
 function projectProfile(row, completedSteps = []) {
   if (!row) return null;
   return {
     id: row.id,
     clerkUserId: row.clerk_user_id,
+    username: row.username || `user_${row.id ? row.id.slice(0, 8) : 'anon'}`,
+    bio: row.bio,
+    headline: row.headline,
+    socialLinks: row.social_links || {},
+    badges: Array.isArray(row.badges) ? row.badges : [],
+    followerCount: Number(row.follower_count) || 0,
+    followingCount: Number(row.following_count) || 0,
+    reputationScore: Number(row.reputation_score) || 100.00,
     email: row.email,
     phoneNumber: row.phone_number,
     firstName: row.first_name || '',
@@ -73,31 +80,15 @@ function projectProfile(row, completedSteps = []) {
 class AccountStateService {
   /**
    * Resolves the full authenticated principal for a verified Clerk user id.
-   * Provisions the application profile on first sight, and refreshes the
-   * mirrored verification state from Clerk when it may be stale.
-   *
-   * @param {string} clerkUserId  Already-verified subject of a session token.
-   * @param {object} opts
-   * @param {boolean} opts.forceClerkRefresh  Re-read Clerk even if recently synced.
-   * @param {boolean} opts.skipClerk  Recompute from LOUMOO's own state only.
-   *        Used immediately after this server wrote to the profile: our own
-   *        write cannot have changed anything at the identity provider, and a
-   *        round-trip there would only add latency and a failure mode.
-   * @returns {Promise<{profile:object, principal:object, accountState:object}>}
    */
   static async resolve(clerkUserId, opts = {}) {
     let identity = null;
 
-    // Test-harness principals have no Clerk record to read; they are
-    // provisioned from their id alone and their verification state lives
-    // entirely in LOUMOO's own database.
     const isTestPrincipal = opts.source === 'test-harness';
 
     if (!isTestPrincipal && !opts.skipClerk && opts.source !== 'supabase' && ClerkIdentityProvider.isConfigured) {
       const clerkUser = await ClerkIdentityProvider.getUser(clerkUserId);
       if (!clerkUser) {
-        // The session verified, but the identity is gone from Clerk (deleted
-        // between issuing the token and now). Treat it as signed out.
         await ProfileRepository.markDeleted(clerkUserId).catch(() => null);
         return { profile: null, principal: null, accountState: deriveAccountState(null, stateOptions()) };
       }
@@ -134,7 +125,6 @@ class AccountStateService {
 
   /**
    * Recomputes the state after a local write, without consulting Clerk.
-   * @returns {Promise<{profile:object, principal:object, accountState:object}>}
    */
   static async reloadLocal(clerkUserId) {
     return this.resolve(clerkUserId, { skipClerk: true, forceClerkRefresh: true });
@@ -150,8 +140,7 @@ class AccountStateService {
   }
 
   /**
-   * The client-facing state envelope. This is what the browser renders from —
-   * a *projection* of the server's decision, never an input to it.
+   * The client-facing state envelope.
    */
   static toClientState(principal, accountState) {
     return {
@@ -173,12 +162,18 @@ class AccountStateService {
       user: principal
         ? {
           id: principal.id,
+          username: principal.username,
           firstName: principal.firstName,
           lastName: principal.lastName,
           fullName: `${principal.firstName} ${principal.lastName}`.trim(),
+          avatarUrl: principal.avatarUrl,
+          headline: principal.headline,
+          bio: principal.bio,
+          followerCount: principal.followerCount,
+          followingCount: principal.followingCount,
+          reputationScore: principal.reputationScore,
           email: principal.email,
           phoneNumber: principal.phoneNumber,
-          avatarUrl: principal.avatarUrl,
           city: principal.city,
           primaryRole: principal.primaryRole,
           sellerType: principal.sellerType,
@@ -196,7 +191,6 @@ function stateOptions() {
   };
 }
 
-/** Re-read Clerk at most once every 5 minutes unless explicitly forced. */
 function shouldResync(profileRow, force) {
   if (force) return true;
   if (!profileRow.clerk_last_synced_at) return true;

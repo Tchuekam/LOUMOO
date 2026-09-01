@@ -786,6 +786,102 @@
     });
   };
 
+
+  /* ====================================================================== */
+  /* ANNOUNCEMENTS & COMMERCIAL DISTRIBUTION                                 */
+  /* server/modules/announcement/presentation/routes/announcementRoutes.js   */
+  /* ====================================================================== */
+
+  LoumooApiClient.prototype.getAnnouncementFeed = function (params) {
+    return this.request('/api/v1/announcements' + qs(params));
+  };
+
+  LoumooApiClient.prototype.getAnnouncement = function (idOrSlug) {
+    return this.request('/api/v1/announcements/' + encodeURIComponent(idOrSlug));
+  };
+
+  LoumooApiClient.prototype.getSellerAnnouncements = function (storeId, params) {
+    return this.request('/api/v1/announcements/seller/' + encodeURIComponent(storeId) + qs(params));
+  };
+
+  LoumooApiClient.prototype.getStoreCampaignsOverview = function (storeId) {
+    return this.request('/api/v1/announcements/seller/' + encodeURIComponent(storeId) + '/campaigns-overview');
+  };
+
+  LoumooApiClient.prototype.createAnnouncement = function (payload) {
+    return this.request('/api/v1/announcements', {
+      method: 'POST',
+      body: payload
+    });
+  };
+
+  LoumooApiClient.prototype.updateAnnouncement = function (id, payload) {
+    return this.request('/api/v1/announcements/' + encodeURIComponent(id), {
+      method: 'PATCH',
+      body: payload
+    });
+  };
+
+  LoumooApiClient.prototype.publishAnnouncement = function (id) {
+    return this.request('/api/v1/announcements/' + encodeURIComponent(id) + '/publish', {
+      method: 'POST'
+    });
+  };
+
+  LoumooApiClient.prototype.scheduleAnnouncement = function (id, scheduledFor, expiresAt) {
+    return this.request('/api/v1/announcements/' + encodeURIComponent(id) + '/schedule', {
+      method: 'POST',
+      body: { scheduledFor: scheduledFor, expiresAt: expiresAt }
+    });
+  };
+
+  LoumooApiClient.prototype.cancelAnnouncementSchedule = function (id) {
+    return this.request('/api/v1/announcements/' + encodeURIComponent(id) + '/cancel-schedule', {
+      method: 'POST'
+    });
+  };
+
+  LoumooApiClient.prototype.archiveAnnouncement = function (id) {
+    return this.request('/api/v1/announcements/' + encodeURIComponent(id) + '/archive', {
+      method: 'POST'
+    });
+  };
+
+  LoumooApiClient.prototype.deleteAnnouncement = function (id) {
+    return this.request('/api/v1/announcements/' + encodeURIComponent(id), {
+      method: 'DELETE'
+    });
+  };
+
+  LoumooApiClient.prototype.recordAnnouncementEvent = function (id, eventType, metadata) {
+    return this.request('/api/v1/announcements/' + encodeURIComponent(id) + '/events', {
+      method: 'POST',
+      body: { eventType: eventType, metadata: metadata }
+    });
+  };
+
+  LoumooApiClient.prototype.getAnnouncementAnalytics = function (id) {
+    return this.request('/api/v1/announcements/' + encodeURIComponent(id) + '/analytics');
+  };
+
+
+  /* ══════════════════════════════════════════════════════════════════════════
+     10. PRODUCT COMPARISON & HEAD-TO-HEAD DECISION ENGINE SDK
+     ══════════════════════════════════════════════════════════════════════════ */
+
+  LoumooApiClient.prototype.compareProducts = function (productIds, userPriorities) {
+    var idsStr = Array.isArray(productIds) ? productIds.join(',') : productIds;
+    var query = { ids: idsStr };
+    if (userPriorities) {
+      query.priorities = typeof userPriorities === 'object' ? JSON.stringify(userPriorities) : userPriorities;
+    }
+    return this.request('/api/v1/catalog/compare' + qs(query));
+  };
+
+  LoumooApiClient.prototype.getCompareCandidates = function (params) {
+    return this.request('/api/v1/catalog/compare/candidates' + qs(params || {}));
+  };
+
   LoumooApiClient.prototype.getHealth = function () {
     return this.request('/api/v1/health').catch(function (e) {
       return { status: 'offline', error: e.message };

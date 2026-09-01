@@ -28,6 +28,7 @@ from src.views.order_product_flow_view import get_order_product_flow_view
 from src.views.hotel_vertical_view import get_hotel_vertical_view
 from src.views.store_business_view import get_store_business_view
 from src.views.listing_creation_view import get_listing_creation_view
+from src.views.public_profile_view import get_public_profile_view
 
 # Define Master Header & Styles
 header_and_styles = """<!DOCTYPE html>
@@ -727,7 +728,7 @@ const SCREENS = [
   'home','search','filters','voice','category','bestpicks','freeday','notifications','chat','threadAi','threadSeller',
   'product','sellers','cart','checkout','paying','success','orders','store','business','vs','vsCompare','visual',
   'visualScan','visualResults','upload','uploadDetails','uploadPrice','uploadSuccess','myListings','travel','travelBus',
-  'travelPackages','travelVisa','travelResults','travelDetail','travelPassenger','travelTicket','announce','announceDetail',
+  'travelPackages','travelVisa','travelResults','travelDetail','travelPassenger','travelTicket','announce','announceStudio','announceCampaigns','announceDetail',
   'profile','seller','settings','payFailed','networkError','saved','transactions','loading',
   'onboardWelcome','onboardType','onboardIdentity','onboardOtp','onboardAdaptive','onboardBuyer','onboardSeller','onboardBusiness','onboardVerify','onboardReview','onboardSuccess',
   // Phase A — Account access (returning users)
@@ -739,7 +740,7 @@ const SCREENS = [
   // Phase E — Store & Business System (Prompt 05)
   'createStore','storeOnboarding','storeSettings','storeVerification','storeAnalytics',
   // Phase F — Universal Listing & Selling Engine (Prompt 06)
-  'listingAttributes','listingPreview'
+  'listingAttributes','listingPreview','publicUserProfile','sellerPublicPage'
 ];
 const GROUPS = {
   searchTab: ['all','products','stores','services','travel'],
@@ -770,7 +771,7 @@ const NO_NAV = [
   'signIn','forgotPassword','resetPassword','verifyEmail',
   'editProfile','addAddress','editAddress','deleteAccount','refundRequest','writeReview','sellerOrderDetail','hotelBooking',
   'createStore','storeOnboarding','storeSettings','storeVerification','storeAnalytics',
-  'listingAttributes','listingPreview'
+  'listingAttributes','listingPreview','publicUserProfile','sellerPublicPage'
 ];
 
 /**
@@ -3662,12 +3663,12 @@ class Component extends DCLogic {
       back: this.back,
       showNav: !NO_NAV.includes(s),
       navHome: this.navColor('home', 'category', 'bestpicks', 'freeday', 'notifications', 'search', 'product', 'cart', 'chat'),
-      navStore: this.navColor('store', 'business'),
+      navStore: this.navColor('store', 'business', 'sellerPublicPage'),
       navVs: this.navColor('vs', 'vsCompare'),
       navUpload: this.navColor('upload', 'uploadDetails', 'uploadPrice', 'myListings'),
       navTravel: this.navColor('travel', 'travelBus', 'travelPackages', 'travelVisa', 'travelResults', 'travelDetail', 'travelPassenger', 'hotelSearch', 'hotelDetail', 'hotelBooking'),
-      navAnnounce: this.navColor('announce', 'announceDetail'),
-      navProfile: this.navColor('profile', 'seller', 'orders', 'settings', 'accountDashboard', 'editProfile', 'addresses', 'notificationPreferences', 'privacySettings', 'securitySettings', 'followedStores', 'userActivity', 'signIn', 'forgotPassword', 'resetPassword', 'verifyEmail'),
+      navAnnounce: this.navColor('announce', 'announceStudio', 'announceCampaigns', 'announceDetail'),
+      navProfile: this.navColor('profile', 'seller', 'orders', 'settings', 'accountDashboard', 'editProfile', 'addresses', 'notificationPreferences', 'privacySettings', 'securitySettings', 'followedStores', 'userActivity', 'publicUserProfile', 'signIn', 'forgotPassword', 'resetPassword', 'verifyEmail'),
       setScroller: (el) => { this._sc = el; },
       addToCart: () => { this.setState(st => ({ cart: st.cart + 1 })); this.toast('Added to Bag — 1 item from Orca Electronics'); },
       addToVs: () => { this.setState(st => ({ vs: st.vs + 1 })); this.go('vsCompare'); },
@@ -3710,6 +3711,7 @@ full_html = (
     + get_travel_view()
     + get_store_business_view()
     + get_listing_creation_view()
+    + get_public_profile_view()
     + footer_and_scripts
 )
 

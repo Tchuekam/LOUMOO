@@ -57,6 +57,15 @@ class AuthorizationError extends AppError {
   }
 }
 
+class UnauthorizedError extends AuthorizationError {
+  constructor(message = 'Unauthorized action or insufficient permissions', details = null) {
+    super(message, details);
+    this.code = 'UNAUTHORIZED';
+  }
+}
+
+class ForbiddenError extends AuthorizationError {}
+
 class NotFoundError extends AppError {
   constructor(resource = 'Resource', id = '') {
     super(`${resource}${id ? ` with id '${id}'` : ''} was not found`, {
@@ -68,7 +77,7 @@ class NotFoundError extends AppError {
 }
 
 class ConflictError extends AppError {
-  constructor(message = 'Resource conflict or duplicate state', details = null) {
+  constructor(message = 'Resource already exists or conflict occurred', details = null) {
     super(message, {
       code: 'CONFLICT',
       statusCode: 409,
@@ -78,46 +87,37 @@ class ConflictError extends AppError {
 }
 
 class RateLimitError extends AppError {
-  constructor(message = 'Too many requests. Please try again later.', retryAfterSeconds = 60) {
+  constructor(message = 'Rate limit exceeded. Please try again later.', retryAfter = 60) {
     super(message, {
       code: 'RATE_LIMITED',
       statusCode: 429,
-      details: { retryAfterSeconds }
+      details: { retryAfter }
     });
-    this.retryAfterSeconds = retryAfterSeconds;
-  }
-}
-
-class ServiceUnavailableError extends AppError {
-  constructor(message = 'Service temporarily unavailable. Please try again later.', details = null) {
-    super(message, {
-      code: 'SERVICE_UNAVAILABLE',
-      statusCode: 503,
-      isOperational: true,
-      details
-    });
+    this.retryAfterSeconds = retryAfter;
   }
 }
 
 class InfrastructureError extends AppError {
-  constructor(service = 'Infrastructure', message = 'Service connection failed', originalError = null) {
+  constructor(service = 'Infrastructure', message = 'Service failure', originalError = null) {
     super(`${service} error: ${message}`, {
-      code: 'INFRASTRUCTURE_UNAVAILABLE',
-      statusCode: 503,
-      isOperational: true,
-      details: { service, originalMessage: originalError?.message }
+      code: 'INFRASTRUCTURE_ERROR',
+      statusCode: 500,
+      isOperational: false,
+      details: originalError ? { message: originalError.message } : null
     });
-    this.originalError = originalError;
   }
 }
 
-/**
- * A capability the deployment has deliberately not configured — the correct
- * answer to the request is 503 with a machine-readable code, not a generic
- * failure and not a degraded (insecure) fallback. Used by the Clerk webhook
- * endpoint when CLERK_WEBHOOK_SECRET is absent: the endpoint refuses to
- * process unsigned identity events.
- */
+class ServiceUnavailableError extends AppError {
+  constructor(message = 'Service temporarily unavailable') {
+    super(message, {
+      code: 'SERVICE_UNAVAILABLE',
+      statusCode: 503,
+      isOperational: true
+    });
+  }
+}
+
 class NotConfiguredError extends AppError {
   constructor(message = 'This capability is not configured for this deployment', details = null) {
     super(message, {
@@ -155,6 +155,8 @@ module.exports = {
   ValidationError,
   AuthenticationError,
   AuthorizationError,
+  UnauthorizedError,
+  ForbiddenError,
   NotFoundError,
   ConflictError,
   RateLimitError,

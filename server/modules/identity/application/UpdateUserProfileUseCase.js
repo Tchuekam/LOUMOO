@@ -36,12 +36,19 @@ const ALLOWED_SHOPPING_PRIORITIES = [
 
 // Strict Sanitized Input Schema
 const NAME_REGEX = /^[a-zA-ZÀ-ÿ\s'-]+$/;
+const USERNAME_REGEX = /^[a-zA-Z0-9_-]{3,48}$/;
 const CITY_REGEX = /^[a-zA-ZÀ-ÿ0-9\s'(),.-]+$/;
 const BUSINESS_NAME_REGEX = /^[a-zA-Z0-9À-ÿ\s'.,&()-]+$/;
 const NIU_REGEX = /^[A-Za-z0-9]{10,16}$/;
 const RCCM_REGEX = /^[A-Za-z0-9\/\s.-]{6,40}$/;
 
 const UpdateProfileSchema = z.object({
+  username: z.string().trim().min(3).max(48).regex(USERNAME_REGEX, {
+    message: 'Username must be 3-48 characters, containing only letters, numbers, underscores, and hyphens.'
+  }).optional(),
+  headline: z.string().trim().max(255).optional().nullable(),
+  bio: z.string().trim().max(2000).optional().nullable(),
+  socialLinks: z.record(z.string()).optional(),
   firstName: z.string().trim().min(1).max(60).regex(NAME_REGEX, {
     message: 'First name may only contain letters, spaces, hyphens, and apostrophes.'
   }).optional(),
@@ -58,7 +65,7 @@ const UpdateProfileSchema = z.object({
   shoppingPriorities: z.array(z.enum(ALLOWED_SHOPPING_PRIORITIES, {
     errorMap: () => ({ message: 'Invalid shopping priority.' })
   })).max(10).optional(),
-  sellerType: z.enum(['individual', 'pro', 'company', 'service']).optional(),
+  sellerType: z.enum(['individual', 'pro', 'company', 'service', 'FREELANCER', 'SHOP', 'AGENCY', 'INSTITUTE', 'BRAND', 'ORGANIZATION', 'OTHER']).optional(),
   businessName: z.string().trim().max(120).regex(BUSINESS_NAME_REGEX, {
     message: 'Business name may only contain alphanumeric characters, spaces, and common punctuation.'
   }).optional().nullable(),
@@ -154,6 +161,10 @@ class UpdateUserProfileUseCase {
       }
     };
 
+    trackChange('username', profile.username, data.username);
+    trackChange('headline', profile.headline, data.headline);
+    trackChange('bio', profile.bio, data.bio);
+    trackChange('socialLinks', profile.socialLinks, data.socialLinks);
     trackChange('firstName', profile.firstName, data.firstName);
     trackChange('lastName', profile.lastName, data.lastName);
     trackChange('city', profile.city, data.city);
@@ -169,6 +180,10 @@ class UpdateUserProfileUseCase {
     trackChange('kycDocStatus', profile.kycDocStatus, data.kycDocStatus);
 
     // 6. Apply Fields to Entity
+    if (data.username) profile.username = data.username.toLowerCase();
+    if (data.headline !== undefined) profile.headline = data.headline;
+    if (data.bio !== undefined) profile.bio = data.bio;
+    if (data.socialLinks !== undefined) profile.socialLinks = data.socialLinks;
     if (data.firstName) profile.firstName = data.firstName;
     if (data.lastName) profile.lastName = data.lastName;
     if (data.city) profile.city = data.city;
@@ -195,6 +210,10 @@ class UpdateUserProfileUseCase {
     }
 
     const payload = {
+      username: profile.username,
+      headline: profile.headline,
+      bio: profile.bio,
+      social_links: profile.socialLinks,
       first_name: profile.firstName,
       last_name: profile.lastName,
       city: profile.city,
@@ -219,12 +238,16 @@ class UpdateUserProfileUseCase {
       try {
         const { error } = await adminDb.from('profiles').update(payload).eq('id', profile.id);
         if (error) {
+          if (error.code === '23505') {
+            throw new ConflictError(`The username '${profile.username}' is already taken.`);
+          }
           throw new InfrastructureError('Supabase', error.message, error);
         }
         dbSuccess = true;
         break;
       } catch (err) {
         lastError = err;
+        if (err instanceof ConflictError) throw err;
         if (attempt < maxRetries) {
           await new Promise(r => setTimeout(r, 100 * (attempt + 1)));
         }

@@ -31,10 +31,11 @@ export const routes = {
   success: { title: 'Order Confirmed', section: 'checkout' },
   orders: { title: 'My Orders', section: 'checkout' },
 
-  // Store & Merchant
+  // Store & Commercial Identity
   store: { title: 'Store Directory', section: 'store' },
   business: { title: 'Business Profile', section: 'store' },
   seller: { title: 'Seller Studio', section: 'store' },
+  sellerPublicPage: { title: 'Commercial Boutique', section: 'store' },
   myListings: { title: 'My Listings', section: 'store' },
   
   // Listing Upload Flow
@@ -63,7 +64,8 @@ export const routes = {
   saved: { title: 'Saved Items', section: 'tools' },
   transactions: { title: 'Transactions Ledger', section: 'tools' },
   settings: { title: 'Settings', section: 'profile' },
-  profile: { title: 'User Profile', section: 'profile' }
+  profile: { title: 'User Profile', section: 'profile' },
+  publicUserProfile: { title: 'Member Profile', section: 'profile' }
 };
 
 export const NO_NAV_SCREENS = [
