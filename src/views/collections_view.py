@@ -586,7 +586,7 @@ def get_collections_view():
               <button onClick="{{ () => openProduct('insta360_x4') }}" aria-label="View Insta360 X4 8K" style="background:none;border:none;text-align:left;cursor:pointer;padding:0">
                 <div style="position:relative;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc;display:flex;align-items:center;justify-content:center">
                   <span class="badge-floating badge-sale">8K 360°</span>
-                  <img src="https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=600&q=85" alt="Insta360 X4 8K" style="max-width:85%;max-height:85%;object-fit:contain;transition:transform 0.3s ease">
+                  <img src="https://res.insta360.com/static/c212314bdffc00af1dd1bbb5a475846f/%E5%BC%80%E5%9C%BA%E5%8A%A8%E7%94%BB3480-2270_2%E5%80%8D_medium.jpg" alt="Insta360 X4 8K" style="max-width:85%;max-height:85%;object-fit:contain;transition:transform 0.3s ease">
                 </div>
                 <div style="padding:10px 4px 4px">
                   <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Insta360 X4 8K</div>
@@ -604,7 +604,7 @@ def get_collections_view():
               <button onClick="{{ () => openProduct('iphone_15_pro') }}" aria-label="View iPhone 15 Pro Max" style="background:none;border:none;text-align:left;cursor:pointer;padding:0">
                 <div style="position:relative;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc;display:flex;align-items:center;justify-content:center">
                   <span class="badge-floating badge-blue">TITANIUM</span>
-                  <img src="https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=600&q=85" alt="iPhone 15 Pro Max" style="max-width:85%;max-height:85%;object-fit:contain;transition:transform 0.3s ease">
+                  <img src="https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-15-pro-finish-select-202309-6-7inch-naturaltitanium?wid=600&hei=600&fmt=jpeg&qlt=90" alt="iPhone 15 Pro Max" style="max-width:85%;max-height:85%;object-fit:contain;transition:transform 0.3s ease">
                 </div>
                 <div style="padding:10px 4px 4px">
                   <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">iPhone 15 Pro Max</div>
@@ -622,7 +622,7 @@ def get_collections_view():
               <button onClick="{{ () => openProduct('insta360_ace_pro_2') }}" aria-label="View Insta360 Ace Pro 2" style="background:none;border:none;text-align:left;cursor:pointer;padding:0">
                 <div style="position:relative;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc;display:flex;align-items:center;justify-content:center">
                   <span class="badge-floating badge-sale">LEICA 8K</span>
-                  <img src="https://images.unsplash.com/photo-1502920917128-1aa500764cbd?auto=format&fit=crop&w=600&q=85" alt="Insta360 Ace Pro 2" style="max-width:85%;max-height:85%;object-fit:contain;transition:transform 0.3s ease">
+                  <img src="https://res.insta360.com/dynamic/store/388277be5c0d60dd43ca969c3a3c2605/2753_8b3a0e19-947b-4bb8-95ef-968e0d4212a4.png" alt="Insta360 Ace Pro 2" style="max-width:85%;max-height:85%;object-fit:contain;transition:transform 0.3s ease">
                 </div>
                 <div style="padding:10px 4px 4px">
                   <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Insta360 Ace Pro 2</div>
@@ -640,7 +640,7 @@ def get_collections_view():
               <button onClick="{{ () => openProduct('macbook_m2') }}" aria-label="View MacBook Air M2" style="background:none;border:none;text-align:left;cursor:pointer;padding:0">
                 <div style="position:relative;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc;display:flex;align-items:center;justify-content:center">
                   <span class="badge-floating badge-sale">-10%</span>
-                  <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=600&q=85" alt="MacBook Air M2" style="max-width:85%;max-height:85%;object-fit:contain;transition:transform 0.3s ease">
+                  <img src="https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/macbook-air-midnight-select-20220606?wid=600&hei=600&fmt=jpeg&qlt=90" alt="MacBook Air M2" style="max-width:85%;max-height:85%;object-fit:contain;transition:transform 0.3s ease">
                 </div>
                 <div style="padding:10px 4px 4px">
                   <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">MacBook Air M2 13”</div>
@@ -658,7 +658,7 @@ def get_collections_view():
               <button onClick="{{ () => openProduct('apple_watch_ultra_2') }}" aria-label="View Apple Watch Ultra 2" style="background:none;border:none;text-align:left;cursor:pointer;padding:0">
                 <div style="position:relative;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc;display:flex;align-items:center;justify-content:center">
                   <span class="badge-floating badge-new">ULTRA 2</span>
-                  <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600&q=85" alt="Apple Watch Ultra 2" style="max-width:85%;max-height:85%;object-fit:contain;transition:transform 0.3s ease">
+                  <img src="https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/watch-ultra2-select-202409_GEO_US?wid=600&hei=600&fmt=jpeg&qlt=90" alt="Apple Watch Ultra 2" style="max-width:85%;max-height:85%;object-fit:contain;transition:transform 0.3s ease">
                 </div>
                 <div style="padding:10px 4px 4px">
                   <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Apple Watch Ultra 2</div>
@@ -676,7 +676,7 @@ def get_collections_view():
               <button onClick="{{ () => openProduct('airpods_pro_2') }}" aria-label="View AirPods Pro 2" style="background:none;border:none;text-align:left;cursor:pointer;padding:0">
                 <div style="position:relative;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc;display:flex;align-items:center;justify-content:center">
                   <span class="badge-floating badge-blue">H2 PRO</span>
-                  <img src="https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?auto=format&fit=crop&w=600&q=85" alt="AirPods Pro 2" style="max-width:85%;max-height:85%;object-fit:contain;transition:transform 0.3s ease">
+                  <img src="https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/MTJV3?wid=600&hei=600&fmt=jpeg&qlt=90" alt="AirPods Pro 2" style="max-width:85%;max-height:85%;object-fit:contain;transition:transform 0.3s ease">
                 </div>
                 <div style="padding:10px 4px 4px">
                   <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">AirPods Pro 2 USB-C</div>
@@ -694,7 +694,7 @@ def get_collections_view():
               <button onClick="{{ () => openProduct('insta360_flow_pro') }}" aria-label="View Insta360 Flow Pro" style="background:none;border:none;text-align:left;cursor:pointer;padding:0">
                 <div style="position:relative;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc;display:flex;align-items:center;justify-content:center">
                   <span class="badge-floating badge-blue">DOCKKIT</span>
-                  <img src="https://images.unsplash.com/photo-1589492477829-5e65395b66cc?auto=format&fit=crop&w=600&q=85" alt="Insta360 Flow Pro" style="max-width:85%;max-height:85%;object-fit:contain;transition:transform 0.3s ease">
+                  <img src="https://res.insta360.com/dynamic/store/12626e6561dae2c85cd3c3d2c734965a/2673_42a14a33-fab1-43d1-b474-2df2cc617280.png" alt="Insta360 Flow Pro" style="max-width:85%;max-height:85%;object-fit:contain;transition:transform 0.3s ease">
                 </div>
                 <div style="padding:10px 4px 4px">
                   <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Insta360 Flow Pro</div>

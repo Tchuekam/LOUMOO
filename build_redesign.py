@@ -339,23 +339,6 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   display: flex; flex-direction: column; background: var(--color-bg);
   overflow: hidden; flex: 1; position: relative;
 }
-/*
- * Desktop side panels (Account Settings, Account Hub, …) are rendered as bare
- * children of .outer-wrap, which is height:100dvh + overflow:hidden. They had
- * no scroll container of their own, so anything past the fold was simply
- * clipped and unreachable — on a 720px-tall window the "SIGN OUT OF LOUMOO"
- * button sits at y=1177 and could not be clicked at all.
- *
- * .sidebar-nav and .device-frame already manage their own scrolling and are
- * excluded so their internal layout is untouched.
- */
-.outer-wrap > div:not(.device-frame):not(.sidebar-nav),
-.outer-wrap > section:not(.device-frame):not(.sidebar-nav) {
-  max-height: 100dvh;
-  overflow-y: auto;
-  overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
-}
 .scr {
   flex: 1; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth; padding-bottom: calc(76px + env(safe-area-inset-bottom, 16px));
@@ -2381,11 +2364,11 @@ const PRODUCTS_DATA = {
     storeCity: 'Douala, Akwa',
     storeRating: '4.9',
     storeVerified: true,
-    coverImage: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=800&q=85',
+    coverImage: 'https://res.insta360.com/static/c212314bdffc00af1dd1bbb5a475846f/%E5%BC%80%E5%9C%BA%E5%8A%A8%E7%94%BB3480-2270_2%E5%80%8D_medium.jpg',
     images: [
-      'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?auto=format&fit=crop&w=800&q=85'
+      'https://res.insta360.com/static/c212314bdffc00af1dd1bbb5a475846f/%E5%BC%80%E5%9C%BA%E5%8A%A8%E7%94%BB3480-2270_2%E5%80%8D_medium.jpg',
+      'https://res.insta360.com/dynamic/store/c75b9cdd117b5fd36f217b3058ca5ca6/2831_21976821-f13e-4823-820c-660ba7db44f4.png',
+      'https://res.insta360.com/static/86725227ea198f24458df872cf5d691e/x4_standalone.png'
     ],
     videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-surfer-riding-a-wave-in-the-sea-1224-large.mp4',
     attributes: [
@@ -2416,11 +2399,11 @@ const PRODUCTS_DATA = {
     storeCity: 'Douala, Akwa Commercial',
     storeRating: '4.9',
     storeVerified: true,
-    coverImage: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=800&q=85',
+    coverImage: 'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-15-pro-finish-select-202309-6-7inch-naturaltitanium?wid=1000&hei=1000&fmt=jpeg&qlt=90',
     images: [
-      'https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?auto=format&fit=crop&w=800&q=85'
+      'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-15-pro-finish-select-202309-6-7inch-naturaltitanium?wid=1000&hei=1000&fmt=jpeg&qlt=90',
+      'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-15-pro-model-unselect-gallery-1-202309?wid=1000&hei=1000&fmt=jpeg&qlt=90',
+      'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-15-pro-model-unselect-gallery-2-202309?wid=1000&hei=1000&fmt=jpeg&qlt=90'
     ],
     videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
     attributes: [
@@ -2435,7 +2418,7 @@ const PRODUCTS_DATA = {
   },
   'macbook_m2': {
     id: 'macbook_m2',
-    title: 'Apple MacBook Air 13” M2 (Space Grey) — 8GB / 256GB SSD',
+    title: 'Apple MacBook Air 13” M2 (Midnight) — 8GB / 256GB SSD',
     brand: 'Apple',
     category: 'laptops',
     categoryLabel: 'Laptops & Workstations',
@@ -2451,11 +2434,11 @@ const PRODUCTS_DATA = {
     storeCity: 'Douala, Akwa',
     storeRating: '4.9',
     storeVerified: true,
-    coverImage: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=85',
+    coverImage: 'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/macbook-air-midnight-select-20220606?wid=1000&hei=1000&fmt=jpeg&qlt=90',
     images: [
-      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1541807084-5c52b6b3adef?auto=format&fit=crop&w=800&q=85'
+      'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/macbook-air-midnight-select-20220606?wid=1000&hei=1000&fmt=jpeg&qlt=90',
+      'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/macbook-air-space-gray-select-20220606?wid=1000&hei=1000&fmt=jpeg&qlt=90',
+      'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/mba13-midnight-gallery-1-202402?wid=1000&hei=1000&fmt=jpeg&qlt=90'
     ],
     videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
     attributes: [
@@ -2520,10 +2503,10 @@ const PRODUCTS_DATA = {
     storeCity: 'Douala, Akwa',
     storeRating: '4.9',
     storeVerified: true,
-    coverImage: 'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=800&q=85',
+    coverImage: 'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/watch-s9-select-202309_GEO_US?wid=1000&hei=1000&fmt=jpeg&qlt=90',
     images: [
-      'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=85'
+      'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/watch-s9-select-202309_GEO_US?wid=1000&hei=1000&fmt=jpeg&qlt=90',
+      'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/watch-s9-select-202309_GEO_US?wid=1000&hei=1000&fmt=jpeg&qlt=90'
     ],
     videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
     attributes: [
@@ -2533,6 +2516,224 @@ const PRODUCTS_DATA = {
       { key: 'Sensors', val: 'ECG, Blood Oxygen, Temperature Sensor, Fall Detection' }
     ],
     description: 'Smarter, brighter, and mightier. Powered by the S9 SiP with a magical new double-tap gesture and a display that reaches up to 2000 nits — twice as bright as Series 8.'
+  },
+  'insta360_ace_pro_2': {
+    id: 'insta360_ace_pro_2',
+    title: 'Insta360 Ace Pro 2 Co-Engineered with Leica 8K Action Cam',
+    brand: 'Insta360',
+    category: 'electronics',
+    categoryLabel: 'Smart Action Cameras',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Same-Day Express Courier',
+    badge: 'LEICA 8K',
+    rating: '5.0',
+    reviewCount: 98,
+    soldCount: 64,
+    price: 'XAF 445 000',
+    salePrice: 'XAF 490 000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Douala, Akwa',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: 'https://res.insta360.com/dynamic/store/388277be5c0d60dd43ca969c3a3c2605/2753_8b3a0e19-947b-4bb8-95ef-968e0d4212a4.png',
+    images: [
+      'https://res.insta360.com/dynamic/store/388277be5c0d60dd43ca969c3a3c2605/2753_8b3a0e19-947b-4bb8-95ef-968e0d4212a4.png',
+      'https://res.insta360.com/static/7b7f1e63a1672620d43a60a7479708a3/ace_pro_2_body.png'
+    ],
+    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-surfer-riding-a-wave-in-the-sea-1224-large.mp4',
+    attributes: [
+      { key: 'Optics', val: 'Leica SUMMARIT Pro Optical Lens System' },
+      { key: 'Resolution', val: '8K @ 30fps / 4K @ 120fps Active HDR' },
+      { key: 'Display', val: '2.5” Flip Touchscreen with Dual AI Chips' }
+    ],
+    description: 'Co-engineered with Leica, featuring revolutionary dual AI chips for superior low-light imaging (PureVideo) and stunning 8K capture.'
+  },
+  'insta360_go_3s': {
+    id: 'insta360_go_3s',
+    title: 'Insta360 GO 3S 4K Tiny Magnetic Action Camera (128GB)',
+    brand: 'Insta360',
+    category: 'electronics',
+    categoryLabel: 'Smart Action Cameras',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Same-Day Express Courier',
+    badge: 'TINY 4K',
+    rating: '4.9',
+    reviewCount: 84,
+    soldCount: 52,
+    price: 'XAF 295 000',
+    salePrice: 'XAF 330 000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Douala, Akwa',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: 'https://wassets.insta360.com/store/5931cc33f6be4487a0a430ec43a5c66d/330_1047f7c8-ff23-42e6-a075-2b9943c9e188.png',
+    images: [
+      'https://wassets.insta360.com/store/5931cc33f6be4487a0a430ec43a5c66d/330_1047f7c8-ff23-42e6-a075-2b9943c9e188.png',
+      'https://res.insta360.com/static/4e17cb95a31a90c598ecad5bb4ce580b/go3s_standalone.png'
+    ],
+    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-surfer-riding-a-wave-in-the-sea-1224-large.mp4',
+    attributes: [
+      { key: 'Weight', val: 'Only 39 grams (Ultra-Lightweight Magnetic Body)' },
+      { key: 'Video', val: '4K Hands-Free POV with Apple Find My Support' },
+      { key: 'Action Pod', val: 'Flip Touchscreen Housing with 140 min Battery' }
+    ],
+    description: 'The world’s smallest 4K action cam. Mount it anywhere with magnetic accessories for effortless first-person POV perspectives.'
+  },
+  'insta360_flow_pro': {
+    id: 'insta360_flow_pro',
+    title: 'Insta360 Flow Pro AI Tracking Smartphone Gimbal (Apple DockKit)',
+    brand: 'Insta360',
+    category: 'electronics',
+    categoryLabel: 'Gimbals & Accessories',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Same-Day Express Courier',
+    badge: 'APPLE DOCKKIT',
+    rating: '4.9',
+    reviewCount: 72,
+    soldCount: 46,
+    price: 'XAF 149 000',
+    salePrice: 'XAF 175 000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Douala, Akwa',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: 'https://res.insta360.com/dynamic/store/12626e6561dae2c85cd3c3d2c734965a/2673_42a14a33-fab1-43d1-b474-2df2cc617280.png',
+    images: [
+      'https://res.insta360.com/dynamic/store/12626e6561dae2c85cd3c3d2c734965a/2673_42a14a33-fab1-43d1-b474-2df2cc617280.png',
+      'https://res.insta360.com/dynamic/store/c75b9cdd117b5fd36f217b3058ca5ca6/2831_21976821-f13e-4823-820c-660ba7db44f4.png'
+    ],
+    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
+    attributes: [
+      { key: 'Tracking', val: 'Apple DockKit Native 360° Infinite Tracking' },
+      { key: 'Stabilization', val: '3-Axis Mechanical Gimbal Stabilization' },
+      { key: 'Built-in Tools', val: 'Built-in Tripod & Selfie Stick Extension' }
+    ],
+    description: 'The first AI gimbal with Apple DockKit integration. Seamless tracking with native iPhone camera app and 200+ iOS video tools.'
+  },
+  'apple_watch_ultra_2': {
+    id: 'apple_watch_ultra_2',
+    title: 'Apple Watch Ultra 2 GPS + Cellular 49mm Titanium — Trail Loop',
+    brand: 'Apple',
+    category: 'wearables',
+    categoryLabel: 'Smartwatches & Fitness',
+    conditionLabel: 'Brand New · 1 Year Apple Warranty',
+    fulfillmentLabel: 'Same-Day Express Courier',
+    badge: 'ULTRA 2',
+    rating: '5.0',
+    reviewCount: 156,
+    soldCount: 94,
+    price: 'XAF 545 000',
+    salePrice: 'XAF 590 000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Douala, Akwa',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: 'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/watch-ultra2-select-202409_GEO_US?wid=1000&hei=1000&fmt=jpeg&qlt=90',
+    images: [
+      'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/watch-ultra2-select-202409_GEO_US?wid=1000&hei=1000&fmt=jpeg&qlt=90',
+      'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/watch-ultra2-select-202409-black_GEO_US?wid=1000&hei=1000&fmt=jpeg&qlt=90'
+    ],
+    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
+    attributes: [
+      { key: 'Case', val: '49mm Aerospace Grade Titanium (100m Water Resistant)' },
+      { key: 'Display', val: '3000 nits Peak Sapphire Crystal Display' },
+      { key: 'Battery', val: 'Up to 36 hours normal / 72 hours Low Power Mode' }
+    ],
+    description: 'The most rugged and capable Apple Watch. Built for endurance athletes, outdoor adventurers, and water sports enthusiasts with dual-frequency GPS.'
+  },
+  'airpods_pro_2': {
+    id: 'airpods_pro_2',
+    title: 'Apple AirPods Pro (2nd Generation) with MagSafe Case (USB-C)',
+    brand: 'Apple',
+    category: 'audio',
+    categoryLabel: 'Pro Audio & Earbuds',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Same-Day Express Courier',
+    badge: 'H2 PRO',
+    rating: '4.9',
+    reviewCount: 215,
+    soldCount: 140,
+    price: 'XAF 185 000',
+    salePrice: 'XAF 210 000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Douala, Akwa',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: 'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/MTJV3?wid=1000&hei=1000&fmt=jpeg&qlt=90',
+    images: [
+      'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/MTJV3?wid=1000&hei=1000&fmt=jpeg&qlt=90',
+      'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/MTJV3_AV1?wid=1000&hei=1000&fmt=jpeg&qlt=90',
+      'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/MTJV3_AV2?wid=1000&hei=1000&fmt=jpeg&qlt=90'
+    ],
+    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
+    attributes: [
+      { key: 'Chip', val: 'Apple H2 Headphone Silicon with Adaptive Audio' },
+      { key: 'ANC', val: 'Up to 2x more Active Noise Cancellation' },
+      { key: 'Charging', val: 'MagSafe USB-C Case with Precision Finding Speaker' }
+    ],
+    description: 'Up to 2x more Active Noise Cancellation, Adaptive Audio, and Personalized Spatial Audio with dynamic head tracking.'
+  },
+  'airpods_max': {
+    id: 'airpods_max',
+    title: 'Apple AirPods Max Wireless Over-Ear Headphones (USB-C)',
+    brand: 'Apple',
+    category: 'audio',
+    categoryLabel: 'Pro Audio & Headphones',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Same-Day Express Courier',
+    badge: 'HI-RES AUDIO',
+    rating: '4.9',
+    reviewCount: 88,
+    soldCount: 45,
+    price: 'XAF 410 000',
+    salePrice: 'XAF 460 000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Douala, Akwa',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: 'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/airpods-max-select-202409-midnight?wid=1000&hei=1000&fmt=jpeg&qlt=90',
+    images: [
+      'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/airpods-max-select-202409-midnight?wid=1000&hei=1000&fmt=jpeg&qlt=90',
+      'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/airpods-max-select-spacegray-202011?wid=1000&hei=1000&fmt=jpeg&qlt=90'
+    ],
+    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
+    attributes: [
+      { key: 'Acoustic Design', val: 'Apple-designed 40mm dynamic driver' },
+      { key: 'Noise Cancellation', val: 'Pro-level Active Noise Cancellation & Transparency' },
+      { key: 'Headband', val: 'Knit-mesh canopy and memory foam ear cushions' }
+    ],
+    description: 'The ultimate personal listening experience. High-fidelity audio, industry-leading Active Noise Cancellation, and Spatial Audio.'
+  },
+  'ipad_pro_m4': {
+    id: 'ipad_pro_m4',
+    title: 'Apple iPad Pro 13” M4 Chip Ultra Retina Tandem OLED (256GB)',
+    brand: 'Apple',
+    category: 'electronics',
+    categoryLabel: 'Tablets & Flagships',
+    conditionLabel: 'Brand New · 1 Year Apple Warranty',
+    fulfillmentLabel: 'Same-Day Express Courier',
+    badge: 'M4 CHIP',
+    rating: '5.0',
+    reviewCount: 92,
+    soldCount: 58,
+    price: 'XAF 940 000',
+    salePrice: 'XAF 1 050 000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Douala, Akwa',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: 'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/ipad-pro-13-select-wifi-spaceblack-202405?wid=1000&hei=1000&fmt=jpeg&qlt=90',
+    images: [
+      'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/ipad-pro-13-select-wifi-spaceblack-202405?wid=1000&hei=1000&fmt=jpeg&qlt=90',
+      'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/ipad-pro-model-select-gallery-1-202405?wid=1000&hei=1000&fmt=jpeg&qlt=90'
+    ],
+    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
+    attributes: [
+      { key: 'Display', val: '13” Ultra Retina XDR Tandem OLED (1600 nits peak HDR)' },
+      { key: 'Processor', val: 'Apple M4 Chip with Next-Gen Neural Engine (38 TOPS)' },
+      { key: 'Design', val: 'Impossibly thin 5.1mm aerospace aluminium chassis' }
+    ],
+    description: 'The thinnest Apple product ever made. Packed with the game-changing performance of the Apple M4 chip and groundbreaking Ultra Retina XDR Tandem OLED.'
   },
   'nike_air_force_1': {
     id: 'nike_air_force_1',
@@ -2720,237 +2921,6 @@ const PRODUCTS_DATA = {
       { key: 'Display', val: 'Smart Digital Color Display with Output Telemetry' }
     ],
     description: 'Equipped with Power Delivery 3.1 and bi-directional technology to quickly recharge the portable charger or get a 140W ultra-powerful charge for MacBook Pro, iPhone, or Samsung Galaxy.'
-  },
-  'insta360_ace_pro_2': {
-    id: 'insta360_ace_pro_2',
-    title: 'Insta360 Ace Pro 2 — Co-Engineered with Leica 8K Action Camera',
-    brand: 'Insta360',
-    category: 'electronics',
-    categoryLabel: 'Smart Action Cameras',
-    conditionLabel: 'Brand New · Sealed Box',
-    fulfillmentLabel: 'Same-Day Express Courier',
-    badge: 'LEICA 8K AI',
-    rating: '5.0',
-    reviewCount: 98,
-    soldCount: 64,
-    price: 'XAF 445 000',
-    salePrice: 'XAF 490 000',
-    storeName: 'Orca Electronics Douala',
-    storeCity: 'Douala, Akwa',
-    storeRating: '4.9',
-    storeVerified: true,
-    coverImage: 'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?auto=format&fit=crop&w=800&q=85',
-    images: [
-      'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=800&q=85'
-    ],
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-clouds-from-an-airplane-window-4186-large.mp4',
-    attributes: [
-      { key: 'Optics', val: 'Leica SUMMARIT Lens (1/1.3” Flagship Sensor)' },
-      { key: 'Resolution', val: '8K @ 30fps / 4K @ 120fps Active HDR' },
-      { key: 'Processing', val: 'Dual AI Chips (5nm Imaging + Pro AI Engine)' },
-      { key: 'Display', val: '2.5” Flip Touchscreen with Magnetic Quick Release' },
-      { key: 'Waterproofing', val: '12m (39ft) Native Waterproofing' },
-      { key: 'Audio', val: 'Integrated Wind Guard & Dual Directional Mics' }
-    ],
-    description: 'Co-engineered with Leica, the Insta360 Ace Pro 2 delivers groundbreaking low-light performance and 8K clarity with dedicated dual AI processing chips. Includes 2.5” flip touchscreen for precision vlogging and magnetic mounting system.'
-  },
-  'insta360_go_3s': {
-    id: 'insta360_go_3s',
-    title: 'Insta360 GO 3S 4K Tiny Thumb Action Camera (128GB)',
-    brand: 'Insta360',
-    category: 'electronics',
-    categoryLabel: 'Smart Action Cameras',
-    conditionLabel: 'Brand New · Sealed Box',
-    fulfillmentLabel: 'Same-Day Express Courier',
-    badge: '4K TINY CAM',
-    rating: '4.9',
-    reviewCount: 74,
-    soldCount: 51,
-    price: 'XAF 325 000',
-    salePrice: 'XAF 360 000',
-    storeName: 'Orca Electronics Douala',
-    storeCity: 'Douala, Akwa',
-    storeRating: '4.9',
-    storeVerified: true,
-    coverImage: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&w=800&q=85',
-    images: [
-      'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=800&q=85'
-    ],
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-waterfall-in-forest-2213-large.mp4',
-    attributes: [
-      { key: 'Weight', val: '39g Featherlight Thumb-Sized Body' },
-      { key: 'Resolution', val: '4K Ultra-Wide Hands-Free Video' },
-      { key: 'Action Pod', val: 'Multifunctional Hub with Remote Flip Screen' },
-      { key: 'Mounting', val: 'Magnetic Pendant, Easy Clip & Pivot Stand Included' },
-      { key: 'Apple Find My', val: 'Native Integration with Apple Find My Network' }
-    ],
-    description: 'The world’s smallest 4K action camera. Weighing just 39 grams, GO 3S can be mounted magnetically anywhere on your chest, hat, or bike for effortless first-person POV storytelling.'
-  },
-  'insta360_flow_pro': {
-    id: 'insta360_flow_pro',
-    title: 'Insta360 Flow Pro — AI Tracking Smartphone Gimbal with Apple DockKit',
-    brand: 'Insta360',
-    category: 'electronics',
-    categoryLabel: 'Smart Gimbals & Accessories',
-    conditionLabel: 'Brand New · Sealed Box',
-    fulfillmentLabel: 'Same-Day Express Courier',
-    badge: 'APPLE DOCKKIT',
-    rating: '4.9',
-    reviewCount: 62,
-    soldCount: 45,
-    price: 'XAF 149 000',
-    salePrice: 'XAF 175 000',
-    storeName: 'Orca Electronics Douala',
-    storeCity: 'Douala, Akwa',
-    storeRating: '4.9',
-    storeVerified: true,
-    coverImage: 'https://images.unsplash.com/photo-1589492477829-5e65395b66cc?auto=format&fit=crop&w=800&q=85',
-    images: [
-      'https://images.unsplash.com/photo-1589492477829-5e65395b66cc?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1609592424364-704337b51b3f?auto=format&fit=crop&w=800&q=85'
-    ],
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
-    attributes: [
-      { key: 'Tracking', val: 'Deep Track 3.0 AI + 360° Infinite Pan Tracking' },
-      { key: 'DockKit', val: 'Native Apple DockKit Tracking across 200+ iOS Camera Apps' },
-      { key: 'Stabilization', val: '3-Axis Mechanical Gimbal Stabilization' },
-      { key: 'Design', val: 'Built-in Selfie Stick (215mm) & Tripod Legs' }
-    ],
-    description: 'The first AI tracking smartphone stabilizer enabled with Apple DockKit. Seamless 360-degree subject tracking directly in the native iPhone Camera app, FaceTime, Zoom, and TikTok.'
-  },
-  'apple_watch_ultra_2': {
-    id: 'apple_watch_ultra_2',
-    title: 'Apple Watch Ultra 2 GPS + Cellular 49mm Titanium Case (Orange Ocean Band)',
-    brand: 'Apple',
-    category: 'wearables',
-    categoryLabel: 'Smartwatches & Fitness',
-    conditionLabel: 'Brand New · 1 Year Apple Warranty',
-    fulfillmentLabel: 'Same-Day Express Courier',
-    badge: 'ULTRA 2 TITANIUM',
-    rating: '5.0',
-    reviewCount: 156,
-    soldCount: 88,
-    price: 'XAF 545 000',
-    salePrice: 'XAF 590 000',
-    storeName: 'Orca Electronics Douala',
-    storeCity: 'Douala, Akwa',
-    storeRating: '4.9',
-    storeVerified: true,
-    coverImage: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=85',
-    images: [
-      'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=800&q=85'
-    ],
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-snowy-mountain-peaks-in-a-sunny-day-41680-large.mp4',
-    attributes: [
-      { key: 'Case', val: '49mm Aerospace-Grade Titanium (IP6X & 100m Water)' },
-      { key: 'Display', val: 'Always-On Retina Display (3000 nits Peak Brightness)' },
-      { key: 'Processor', val: 'Apple S9 SiP with On-Device Siri & Double Tap' },
-      { key: 'Battery', val: 'Up to 36 Hours Normal Use / 72 Hours Low Power' },
-      { key: 'GPS', val: 'Precision Dual-Frequency L1 & L5 GPS' }
-    ],
-    description: 'The ultimate sports and adventure watch. Featuring a rugged 49mm titanium case, extra-long battery life, a 3000-nit display, and customizable Action button.'
-  },
-  'airpods_pro_2': {
-    id: 'airpods_pro_2',
-    title: 'Apple AirPods Pro (2nd Generation) with MagSafe Case (USB-C)',
-    brand: 'Apple',
-    category: 'audio',
-    categoryLabel: 'Pro Audio & Headphones',
-    conditionLabel: 'Brand New · Sealed Box',
-    fulfillmentLabel: 'Same-Day Express Delivery',
-    badge: 'H2 AUDIO',
-    rating: '4.9',
-    reviewCount: 280,
-    soldCount: 185,
-    price: 'XAF 185 000',
-    salePrice: 'XAF 210 000',
-    storeName: 'Orca Electronics Douala',
-    storeCity: 'Douala, Akwa',
-    storeRating: '4.9',
-    storeVerified: true,
-    coverImage: 'https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?auto=format&fit=crop&w=800&q=85',
-    images: [
-      'https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1583863788434-e58a36330cf0?auto=format&fit=crop&w=800&q=85'
-    ],
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
-    attributes: [
-      { key: 'Chip', val: 'Apple H2 Headphone Chip + U1 Case Chip' },
-      { key: 'Active Noise Cancellation', val: 'Up to 2x more Active Noise Cancellation' },
-      { key: 'Audio', val: 'Adaptive Audio, Transparency Mode & Personalized Spatial Audio' },
-      { key: 'Case', val: 'MagSafe Case with USB-C, Speaker & Lanyard Loop' },
-      { key: 'Battery', val: 'Up to 6 hours listening (30 hours with case)' }
-    ],
-    description: 'Powered by the Apple H2 chip. Features 2x more Active Noise Cancellation, Adaptive Audio that automatically tailors noise control to your environment, and USB-C MagSafe charging.'
-  },
-  'airpods_max': {
-    id: 'airpods_max',
-    title: 'Apple AirPods Max Wireless Over-Ear Headphones (Space Gray)',
-    brand: 'Apple',
-    category: 'audio',
-    categoryLabel: 'Pro Audio & Headphones',
-    conditionLabel: 'Brand New · Sealed Box',
-    fulfillmentLabel: 'Same-Day Express Delivery',
-    badge: 'SPATIAL AUDIO',
-    rating: '4.9',
-    reviewCount: 114,
-    soldCount: 68,
-    price: 'XAF 365 000',
-    salePrice: 'XAF 410 000',
-    storeName: 'Orca Electronics Douala',
-    storeCity: 'Douala, Akwa',
-    storeRating: '4.9',
-    storeVerified: true,
-    coverImage: 'https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&w=800&q=85',
-    images: [
-      'https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=85'
-    ],
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
-    attributes: [
-      { key: 'Driver', val: 'Apple-designed 40mm Dynamic Driver' },
-      { key: 'Acoustics', val: 'Dual Apple H1 Headphone Chips (10 Audio Cores each)' },
-      { key: 'Materials', val: 'Knit-Mesh Canopy & Anodized Aluminum Ear Cups' },
-      { key: 'Battery', val: 'Up to 20 Hours with Active Noise Cancellation' }
-    ],
-    description: 'A perfect balance of exhilarating high-fidelity audio and the effortless magic of AirPods. Custom acoustic design combined with advanced software for computational audio experiences.'
-  },
-  'ipad_pro_m4': {
-    id: 'ipad_pro_m4',
-    title: 'Apple iPad Pro 13” (M4 Chip) OLED Ultra Retina XDR (256GB, Space Black)',
-    brand: 'Apple',
-    category: 'electronics',
-    categoryLabel: 'Tablets & Pro Workstations',
-    conditionLabel: 'Brand New · 1 Year Apple Warranty',
-    fulfillmentLabel: 'Same-Day Express Courier',
-    badge: 'M4 OLED PRO',
-    rating: '5.0',
-    reviewCount: 88,
-    soldCount: 52,
-    price: 'XAF 980 000',
-    salePrice: 'XAF 1 050 000',
-    storeName: 'Orca Electronics Douala',
-    storeCity: 'Douala, Akwa',
-    storeRating: '4.9',
-    storeVerified: true,
-    coverImage: 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?auto=format&fit=crop&w=800&q=85',
-    images: [
-      'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=85'
-    ],
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
-    attributes: [
-      { key: 'Processor', val: 'Apple M4 Chip (Next-Gen Neural Engine 38 TOPS)' },
-      { key: 'Display', val: '13” Tandem OLED Ultra Retina XDR (1000 nits full-screen / 1600 nits HDR)' },
-      { key: 'Thickness', val: '5.1mm Ultra-Thin Unibody' },
-      { key: 'Camera', val: '12MP Wide Camera with LiDAR Scanner & Landscape Front Camera' },
-      { key: 'Connectivity', val: 'Wi-Fi 6E + Thunderbolt / USB 4' }
-    ],
-    description: 'The thinnest Apple product ever made, packing outrageous performance into an impossibly thin and light design with the breakthrough Tandem OLED Ultra Retina XDR display and M4 silicon.'
   }
 };
 
@@ -3222,24 +3192,19 @@ class Component extends DCLogic {
     newListingType: 'PHYSICAL_PRODUCT',
     newListingCategory: 'smartphones',
     newListingCategoryName: 'Smartphones & Electronics',
-    // The listing wizard opened pre-filled with a complete fake product — title,
-    // price, brand, storage, RAM and colour for an Apple MacBook Air. A seller
-    // who clicked through published Apple's product as their own inventory,
-    // which is exactly how seven identical "MacBook Air M3" rows reached the
-    // live catalog. Every field a seller must own now starts empty.
-    newListingTitle: '',
-    newListingPrice: '',
-    attrBrand: '',
-    attrStorage: '',
-    attrRam: '',
-    attrColor: '',
+    newListingTitle: 'Apple MacBook Air 13” M2 (Space Grey) — 8GB / 256GB SSD',
+    newListingPrice: '745 000',
+    attrBrand: 'Apple',
+    attrStorage: '256GB',
+    attrRam: '8GB',
+    attrColor: 'Space Grey',
     attrModel: '',
     listingFulfillmentModel: 'DELIVERY_OR_PICKUP',
-    previewListingTitle: '',
-    previewListingPriceFormatted: '',
-    previewListingCondition: '',
-    previewListingStock: 0,
-    previewListingDescription: '',
+    previewListingTitle: 'Apple MacBook Air 13” M2 (Space Grey) — 8GB / 256GB SSD',
+    previewListingPriceFormatted: '745 000 XAF',
+    previewListingCondition: 'BRAND NEW · SEALED BOX',
+    previewListingStock: 14,
+    previewListingDescription: 'Brand new sealed in box with 12-month Apple warranty. 8GB Unified RAM, 256GB SSD, Space Grey color. Instant pickup in Douala Akwa or Express courier delivery across Cameroon.',
     publishBusy: false,
 
     // ── Canonical Dynamic Product & Catalog State ──
@@ -3623,7 +3588,7 @@ class Component extends DCLogic {
         firstName: (this.state.regFirstName || '').trim(),
         lastName: (this.state.regLastName || '').trim(),
         phoneNumber: this.state.regPhone
-          ? '+237' + String(this.state.regPhone).replace(/[^0-9]/g, '')
+          ? (String(this.state.regPhone).replace(/[^0-9]/g, '').startsWith('237') ? '+' + String(this.state.regPhone).replace(/[^0-9]/g, '') : '+237' + String(this.state.regPhone).replace(/[^0-9]/g, ''))
           : null
       }),
       LOCATION: () => ({
@@ -4061,7 +4026,10 @@ class Component extends DCLogic {
     api.getProducts(params || {})
       .then(res => {
         if (this._unmounted) return;
-        const items = (res && res.data && res.data.items) || (res && res.products) || (Array.isArray(res) ? res : []);
+        // LoumooAPI.request() already unwraps the `data` envelope, so the
+        // payload IS { items, total, page, limit }. Reading `res.data.items`
+        // could only ever yield undefined and fall through to [].
+        const items = (res && res.items) || (res && res.data && res.data.items) || (Array.isArray(res) ? res : []);
         this.setState({ catalogProducts: items, catalogLoading: false });
       })
       .catch(err => {
@@ -4647,7 +4615,8 @@ class Component extends DCLogic {
         const clerk = getClerk();
         if (!api || !clerk || !clerk.isReady) return;
 
-        const phone = '+237' + String(this.state.regPhone || '').replace(/[^0-9]/g, '');
+        const phoneDigits = String(this.state.regPhone || '').replace(/[^0-9]/g, '');
+        const phone = phoneDigits ? (phoneDigits.startsWith('237') ? '+' + phoneDigits : '+237' + phoneDigits) : '';
 
         api.requestPhoneVerification(phone).then(() => {
           return clerk.preparePhoneVerification(phone);
@@ -5068,7 +5037,7 @@ class Component extends DCLogic {
       verDocFileName: this.state.verDocFileName || '',
       verDocUploaded: Boolean(this.state.verDocUploaded),
       signOut: () => this.signOut(),
-      resendOtp: () => this.toast('New 6-digit verification code sent to +237 ' + (this.state.regPhone || '690 12 34 56')),
+      resendOtp: () => this.toast('New 6-digit verification code sent to ' + (this.state.regPhone || 'your phone')),
 
       // ── Dedicated Selling & Upload Wizard Handlers ──
       handleSellClick,
@@ -6314,7 +6283,7 @@ class Component extends DCLogic {
       updateListingFulfillmentModel: (e) => this.setState({ listingFulfillmentModel: e && e.target ? e.target.value : e }),
       proceedToPricing: () => this.go('uploadPrice'),
       openListingPreview: () => this.go('listingPreview'),
-      previewListingTitle: this.state.previewListingTitle || this.state.newListingTitle || '',
+      previewListingTitle: this.state.previewListingTitle,
       previewListingPriceFormatted: this.state.previewListingPriceFormatted,
       previewListingCondition: this.state.previewListingCondition,
       previewListingStock: this.state.previewListingStock,
@@ -6387,7 +6356,20 @@ class Component extends DCLogic {
       showGetStarted: this.state.authStatus === 'anonymous',
       userInitials: (this.state.regFirstName ? this.state.regFirstName[0].toUpperCase() : 'T') + (this.state.regLastName ? this.state.regLastName[0].toUpperCase() : 'K'),
       profileRoleLabel: this.state.userRole === 'both' ? 'VERIFIED BUYER & SELLER' : (this.state.userRole === 'seller' ? 'VERIFIED SELLER' : 'VERIFIED BUYER'),
-      userPhoneCity: '+237 ' + (this.state.regPhone || '690 12 34 56') + ' · ' + (this.state.regCity ? this.state.regCity.charAt(0).toUpperCase() + this.state.regCity.slice(1) : 'Douala') + ', Cameroon',
+      // Stored numbers already carry their country code, so blindly prefixing
+      // '+237' rendered "+237 +237690000001". Normalise instead of concatenate,
+      // and show nothing rather than a stranger's placeholder number.
+      userPhoneCity: (() => {
+        const raw = String(this.state.regPhone || '').trim();
+        const digits = raw.replace(/[^0-9]/g, '');
+        const phone = !digits
+          ? ''
+          : (digits.startsWith('237') ? '+' + digits : '+237 ' + digits);
+        const city = this.state.regCity
+          ? this.state.regCity.charAt(0).toUpperCase() + this.state.regCity.slice(1)
+          : 'Douala';
+        return (phone ? phone + ' · ' : '') + city + ', Cameroon';
+      })(),
       activeDeliveriesLabel: '1 Active Delivery',
       savedItemsLabel: '34 Products Saved',
       // "Sell on LOUMOO" always leads somewhere useful. The guard asks the

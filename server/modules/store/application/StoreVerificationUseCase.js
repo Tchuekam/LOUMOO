@@ -74,9 +74,22 @@ class StoreVerificationUseCase {
       representative_full_name: representativeFullName || userProfile.fullName || null,
       representative_id_type: verificationInput.representativeIdType || 'cni',
       representative_id_number: verificationInput.representativeIdNumber || null,
-      id_document_front_url: verificationInput.idDocumentFrontUrl || verificationInput.idDocumentUrl || null,
-      id_document_back_url: verificationInput.idDocumentBackUrl || null,
-      business_document_url: verificationInput.businessDocumentUrl || null,
+      // `cniFrontUrl` / `cniBackUrl` / `rccmUrl` are the names the browser
+      // actually sends (and the names this module's own GET projection returns).
+      // Only `idDocumentFrontUrl` was read, so every uploaded CNI/RCCM was
+      // silently discarded: the record said SUBMITTED, and a compliance
+      // reviewer opening it found no document at all.
+      id_document_front_url: verificationInput.idDocumentFrontUrl
+        || verificationInput.idDocumentUrl
+        || verificationInput.cniFrontUrl
+        || null,
+      id_document_back_url: verificationInput.idDocumentBackUrl
+        || verificationInput.cniBackUrl
+        || null,
+      business_document_url: verificationInput.businessDocumentUrl
+        || verificationInput.rccmUrl
+        || verificationInput.rccmDocumentUrl
+        || null,
       verification_status: 'SUBMITTED',
       submitted_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
@@ -89,11 +102,23 @@ class StoreVerificationUseCase {
         .from('store_verifications')
         .upsert(dbPayload, { onConflict: 'store_id' });
 
-      // Update store status to PENDING_VERIFICATION if it was DRAFT
-      await supabase
-        .from('stores')
-        .update({ status: 'PENDING_VERIFICATION', updated_at: new Date().toISOString() })
-        .eq('id', store.id);
+      /*
+       * Verification is an UPGRADE, never a demotion.
+       *
+       * This used to set PENDING_VERIFICATION unconditionally despite the
+       * comment saying "if it was DRAFT". Submitting legal documents therefore
+       * took an ACTIVE boutique offline: its owner lost canPublishListing and
+       * every one of its listings dropped out of the public catalog. A seller
+       * doing exactly what LOUMOO asks of them got their storefront switched
+       * off as the reward.
+       */
+      if (store.status !== 'ACTIVE') {
+        await supabase
+          .from('stores')
+          .update({ status: 'PENDING_VERIFICATION', updated_at: new Date().toISOString() })
+          .eq('id', store.id);
+        store.status = 'PENDING_VERIFICATION';
+      }
 
       // Update user profile kyc status
       await ProfileRepository.update(userProfile.id, {

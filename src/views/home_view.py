@@ -91,7 +91,7 @@ def get_home_view():
 
           <div style="display:flex;justify-content:center;align-items:center;position:relative;z-index:2">
             <div style="position:relative;width:100%;max-width:340px;height:220px;display:flex;align-items:center;justify-content:center;border-radius:24px;overflow:hidden;background:radial-gradient(circle, rgba(0,122,255,0.08) 0%, rgba(15,23,42,0.04) 100%)">
-              <img src="https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=600&q=85" alt="Insta360 X4 8K Camera" style="max-width:85%;max-height:85%;object-fit:contain;filter:drop-shadow(0 14px 28px rgba(0,0,0,0.25));transition:transform 0.4s ease">
+              <img src="https://res.insta360.com/static/c212314bdffc00af1dd1bbb5a475846f/%E5%BC%80%E5%9C%BA%E5%8A%A8%E7%94%BB3480-2270_2%E5%80%8D_medium.jpg" alt="Insta360 X4 8K Camera" style="max-width:85%;max-height:85%;object-fit:contain;filter:drop-shadow(0 14px 28px rgba(0,0,0,0.25));transition:transform 0.4s ease">
             </div>
           </div>
         </div>
@@ -111,7 +111,7 @@ def get_home_view():
           </div>
           <div style="display:flex;justify-content:center;align-items:center">
             <div style="width:100%;max-width:280px;height:200px;background:radial-gradient(circle, #e2e8f0 0%, #cbd5e1 100%);border-radius:24px;display:flex;align-items:center;justify-content:center;overflow:hidden">
-              <img src="https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=600&q=85" alt="iPhone 15 Pro Max Titanium" style="max-width:85%;max-height:85%;object-fit:contain;filter:drop-shadow(0 12px 24px rgba(0,0,0,0.2))">
+              <img src="https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-15-pro-finish-select-202309-6-7inch-naturaltitanium?wid=1000&hei=1000&fmt=jpeg&qlt=90" alt="iPhone 15 Pro Max Titanium" style="max-width:85%;max-height:85%;object-fit:contain;filter:drop-shadow(0 12px 24px rgba(0,0,0,0.2))">
             </div>
           </div>
         </div>
@@ -131,7 +131,7 @@ def get_home_view():
           </div>
           <div style="display:flex;justify-content:center;align-items:center">
             <div style="width:100%;max-width:280px;height:200px;background:radial-gradient(circle, #e2e8f0 0%, #cbd5e1 100%);border-radius:24px;display:flex;align-items:center;justify-content:center;overflow:hidden">
-              <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=600&q=85" alt="MacBook Air M2" style="max-width:85%;max-height:85%;object-fit:contain;filter:drop-shadow(0 12px 24px rgba(0,0,0,0.2))">
+              <img src="https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/macbook-air-midnight-select-20220606?wid=1000&hei=1000&fmt=jpeg&qlt=90" alt="MacBook Air M2" style="max-width:85%;max-height:85%;object-fit:contain;filter:drop-shadow(0 12px 24px rgba(0,0,0,0.2))">
             </div>
           </div>
         </div>
@@ -232,7 +232,7 @@ def get_home_view():
         <div>
           <div class="product-card-img-wrap" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc;display:flex;align-items:center;justify-content:center">
             <span class="badge-floating badge-new">NEW</span>
-            <img src="https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80" alt="Insta360 X4 8K 360 Action Camera" style="max-width:85%;max-height:85%;object-fit:contain;transition:transform 0.3s ease">
+            <img src="https://res.insta360.com/static/c212314bdffc00af1dd1bbb5a475846f/%E5%BC%80%E5%9C%BA%E5%8A%A8%E7%94%BB3480-2270_2%E5%80%8D_medium.jpg" alt="Insta360 X4 8K 360 Action Camera" style="max-width:85%;max-height:85%;object-fit:contain;transition:transform 0.3s ease">
           </div>
           <div style="font:700 13px/1.3 var(--font-heading);color:var(--color-text);min-height:34px;margin-top:8px">Insta360 X4 8K 360°<br>Action Camera</div>
         </div>
@@ -244,7 +244,7 @@ def get_home_view():
         <div>
           <div class="product-card-img-wrap" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc;display:flex;align-items:center;justify-content:center">
             <span class="badge-floating badge-blue">TITANIUM</span>
-            <img src="https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=400&q=80" alt="iPhone 15 Pro Max 256GB" style="max-width:85%;max-height:85%;object-fit:contain;transition:transform 0.3s ease">
+            <img src="https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-15-pro-finish-select-202309-6-7inch-naturaltitanium?wid=800&hei=800&fmt=jpeg&qlt=90" alt="iPhone 15 Pro Max 256GB" style="max-width:85%;max-height:85%;object-fit:contain;transition:transform 0.3s ease">
           </div>
           <div style="font:700 13px/1.3 var(--font-heading);color:var(--color-text);min-height:34px;margin-top:8px">iPhone 15 Pro Max<br>256GB</div>
         </div>
@@ -268,7 +268,7 @@ def get_home_view():
         <div>
           <div class="product-card-img-wrap" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc;display:flex;align-items:center;justify-content:center">
             <span class="badge-floating badge-new">SERIES 9</span>
-            <img src="https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=400&q=80" alt="Apple Watch Series 9 GPS 45mm" style="max-width:85%;max-height:85%;object-fit:contain;transition:transform 0.3s ease">
+            <img src="https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/watch-s9-select-202309_GEO_US?wid=800&hei=800&fmt=jpeg&qlt=90" alt="Apple Watch Series 9 GPS 45mm" style="max-width:85%;max-height:85%;object-fit:contain;transition:transform 0.3s ease">
           </div>
           <div style="font:700 13px/1.3 var(--font-heading);color:var(--color-text);min-height:34px;margin-top:8px">Apple Watch Series 9<br>GPS 45mm</div>
         </div>
@@ -280,7 +280,7 @@ def get_home_view():
         <div>
           <div class="product-card-img-wrap" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc;display:flex;align-items:center;justify-content:center">
             <span class="badge-floating badge-blue">LIQUID RETINA</span>
-            <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80" alt="MacBook Air M2 15-inch" style="max-width:85%;max-height:85%;object-fit:contain;transition:transform 0.3s ease">
+            <img src="https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/macbook-air-midnight-select-20220606?wid=800&hei=800&fmt=jpeg&qlt=90" alt="MacBook Air M2 15-inch" style="max-width:85%;max-height:85%;object-fit:contain;transition:transform 0.3s ease">
           </div>
           <div style="font:700 13px/1.3 var(--font-heading);color:var(--color-text);min-height:34px;margin-top:8px">MacBook Air M2<br>15-inch</div>
         </div>
@@ -447,7 +447,7 @@ def get_home_view():
           <div style="font:700 11.5px/1 var(--font-heading);color:var(--color-accent);margin-top:16px">Shop now →</div>
         </div>
         <div style="display:flex;justify-content:center;align-items:center;width:72px;height:72px;flex-shrink:0">
-          <img src="https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=300&h=300&q=85" alt="iPhone 15 Pro Max" style="max-width:100%;max-height:100%;object-fit:contain;filter:drop-shadow(0 8px 16px rgba(0,0,0,0.15))">
+          <img src="https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-15-pro-finish-select-202309-6-7inch-naturaltitanium?wid=300&hei=300&fmt=png-alpha" alt="iPhone 15 Pro Max" style="max-width:100%;max-height:100%;object-fit:contain;filter:drop-shadow(0 8px 16px rgba(0,0,0,0.15))">
         </div>
       </button>
 
@@ -459,7 +459,7 @@ def get_home_view():
           <div style="font:700 11.5px/1 var(--font-heading);color:var(--color-accent);margin-top:16px">Shop now →</div>
         </div>
         <div style="display:flex;justify-content:center;align-items:center;width:72px;height:72px;flex-shrink:0">
-          <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=300&h=300&q=85" alt="MacBook Pro Apple Silicon" style="max-width:100%;max-height:100%;object-fit:contain;filter:drop-shadow(0 8px 16px rgba(0,0,0,0.15))">
+          <img src="https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/mbp14-spaceblack-select-202310?wid=300&hei=300&fmt=png-alpha" alt="MacBook Pro Apple Silicon" style="max-width:100%;max-height:100%;object-fit:contain;filter:drop-shadow(0 8px 16px rgba(0,0,0,0.15))">
         </div>
       </button>
 
@@ -471,7 +471,7 @@ def get_home_view():
           <div style="font:700 11.5px/1 var(--font-heading);color:var(--color-accent);margin-top:16px">Shop now →</div>
         </div>
         <div style="display:flex;justify-content:center;align-items:center;width:72px;height:72px;flex-shrink:0">
-          <img src="https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=300&h=300&q=85" alt="Apple Watch Series 9" style="max-width:100%;max-height:100%;object-fit:contain;filter:drop-shadow(0 8px 16px rgba(0,0,0,0.15))">
+          <img src="https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/watch-ultra2-select-202409_GEO_US?wid=300&hei=300&fmt=png-alpha" alt="Apple Watch Ultra 2" style="max-width:100%;max-height:100%;object-fit:contain;filter:drop-shadow(0 8px 16px rgba(0,0,0,0.15))">
         </div>
       </button>
 
@@ -483,7 +483,7 @@ def get_home_view():
           <div style="font:700 11.5px/1 var(--font-heading);color:var(--color-accent);margin-top:16px">Shop now →</div>
         </div>
         <div style="display:flex;justify-content:center;align-items:center;width:72px;height:72px;flex-shrink:0">
-          <img src="https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?auto=format&fit=crop&w=300&h=300&q=85" alt="AirPods Pro 2" style="max-width:100%;max-height:100%;object-fit:contain;filter:drop-shadow(0 8px 16px rgba(0,0,0,0.15))">
+          <img src="https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/MTJV3?wid=300&hei=300&fmt=png-alpha" alt="AirPods Pro 2" style="max-width:100%;max-height:100%;object-fit:contain;filter:drop-shadow(0 8px 16px rgba(0,0,0,0.15))">
         </div>
       </button>
 
@@ -495,7 +495,7 @@ def get_home_view():
           <div style="font:700 11.5px/1 var(--font-heading);color:var(--color-accent);margin-top:16px">Shop now →</div>
         </div>
         <div style="display:flex;justify-content:center;align-items:center;width:72px;height:72px;flex-shrink:0">
-          <img src="https://images.unsplash.com/photo-1583863788434-e58a36330cf0?auto=format&fit=crop&w=300&h=300&q=85" alt="Apple MagSafe Accessories" style="max-width:100%;max-height:100%;object-fit:contain;filter:drop-shadow(0 8px 16px rgba(0,0,0,0.15))">
+          <img src="https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/MHXH3?wid=300&hei=300&fmt=png-alpha" alt="Apple MagSafe Accessories" style="max-width:100%;max-height:100%;object-fit:contain;filter:drop-shadow(0 8px 16px rgba(0,0,0,0.15))">
         </div>
       </button>
     </div>
@@ -939,7 +939,7 @@ def get_home_view():
           <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('ipad-air-m2', 'iPad Air M2'); } }}" class="wishlist-float-btn" aria-label="Save iPad Air M2 to wishlist">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('ipad-air-m2') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('ipad-air-m2') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
           </button>
-          <img src="https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?auto=format&fit=crop&w=400&q=80" alt="iPad Air M2" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+          <img src="https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/ipad-air-storage-select-202405-11inch-spacegray?wid=800&hei=800&fmt=jpeg&qlt=90" alt="iPad Air M2" style="width:100%;height:100%;object-fit:contain;padding:12px;transition:transform 0.3s ease">
         </div>
         <div class="disc-card-body">
           <div class="disc-card-name">iPad Air M2</div>
@@ -1118,7 +1118,7 @@ def get_home_view():
           <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('macbook-air-13', 'MacBook Air M2 13-inch'); } }}" class="wishlist-float-btn" aria-label="Save MacBook Air to wishlist">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('macbook-air-13') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('macbook-air-13') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
           </button>
-          <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80" alt="MacBook Air M2" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+          <img src="https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/macbook-air-midnight-select-20220606?wid=800&hei=800&fmt=jpeg&qlt=90" alt="MacBook Air M2" style="width:100%;height:100%;object-fit:contain;padding:12px;transition:transform 0.3s ease">
         </div>
         <div class="disc-card-body">
           <div class="disc-card-name">MacBook Air M2</div>
@@ -1229,7 +1229,7 @@ def get_home_view():
           <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('insta360-x4-flagship', 'Insta360 X4 8K'); } }}" class="wishlist-float-btn" aria-label="Save Insta360 X4 to wishlist">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('insta360-x4-flagship') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('insta360-x4-flagship') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
           </button>
-          <img src="https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80" alt="Insta360 X4 8K" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+          <img src="https://res.insta360.com/static/c212314bdffc00af1dd1bbb5a475846f/%E5%BC%80%E5%9C%BA%E5%8A%A8%E7%94%BB3480-2270_2%E5%80%8D_medium.jpg" alt="Insta360 X4 8K" style="width:100%;height:100%;object-fit:contain;padding:8px;transition:transform 0.3s ease">
         </div>
         <div class="disc-card-body">
           <div class="disc-card-name">Insta360 X4</div>
@@ -1283,27 +1283,36 @@ def get_home_view():
 
         <div class="discovery-product-grid">
           <!-- 1. Kente Bomber Jacket -->
-          <div class="discovery-product-card" onClick="{{ () => openProduct('bazin_boubou') }}" style="cursor:pointer">
-            <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
+          <div class="discovery-product-card" onClick="{{ on.product }}">
+            <div class="disc-card-img-box">
               <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('kente-bomber', 'Kente Bomber Jacket'); } }}" class="wishlist-float-btn" aria-label="Save Kente Bomber to wishlist">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('kente-bomber') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('kente-bomber') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
               </button>
-              <img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=400&h=400&q=80" alt="Kente Bomber Jacket" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+              <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
+                <path d="M22 28 L36 22 L64 22 L78 28 L84 56 L72 58 L68 34 L68 82 L32 82 L32 34 L28 58 L16 56 Z" fill="#d97706" opacity="0.9" stroke="#78350f" stroke-width="1.5"/>
+                <line x1="32" y1="44" x2="68" y2="44" stroke="#15803d" stroke-width="2"/>
+                <line x1="32" y1="56" x2="68" y2="56" stroke="#b91c1c" stroke-width="2"/>
+                <line x1="32" y1="68" x2="68" y2="68" stroke="#1e3a8a" stroke-width="2"/>
+              </svg>
             </div>
             <div class="disc-card-body">
               <div class="disc-card-name">Kente Bomber Jacket</div>
-              <div class="disc-card-sub">Handwoven Silk &amp; Cotton</div>
+              <div class="disc-card-sub">Handwoven Silk & Cotton</div>
               <div class="disc-card-price">55.000 FCFA</div>
             </div>
           </div>
 
           <!-- 2. Sahel Handcrafted Duffle Bag -->
-          <div class="discovery-product-card" onClick="{{ () => openProduct('bazin_boubou') }}" style="cursor:pointer">
-            <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
+          <div class="discovery-product-card" onClick="{{ on.product }}">
+            <div class="disc-card-img-box">
               <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('sahel-duffle', 'Sahel Leather Duffle'); } }}" class="wishlist-float-btn" aria-label="Save Sahel Duffle to wishlist">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('sahel-duffle') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('sahel-duffle') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
               </button>
-              <img src="https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=400&h=400&q=80" alt="Sahel Leather Duffle" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+              <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
+                <rect x="18" y="36" width="64" height="42" rx="10" fill="#78350f" stroke="#451a03" stroke-width="1.5"/>
+                <path d="M34 36 C34 22 66 22 66 36" stroke="#92400e" stroke-width="3" fill="none"/>
+                <line x1="18" y1="56" x2="82" y2="56" stroke="#b45309" stroke-width="1.5"/>
+              </svg>
             </div>
             <div class="disc-card-body">
               <div class="disc-card-name">Sahel Leather Duffle</div>
@@ -1313,12 +1322,16 @@ def get_home_view():
           </div>
 
           <!-- 3. Afro-Futurist Graphic Tee -->
-          <div class="discovery-product-card" onClick="{{ () => openProduct('bazin_boubou') }}" style="cursor:pointer">
-            <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
+          <div class="discovery-product-card" onClick="{{ on.product }}">
+            <div class="disc-card-img-box">
               <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('afro-tee', 'Afro-Futurist Graphic Tee'); } }}" class="wishlist-float-btn" aria-label="Save Afro Tee to wishlist">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('afro-tee') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('afro-tee') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
               </button>
-              <img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=400&h=400&q=80" alt="Afro-Futurist Tee" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+              <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
+                <path d="M28 26 L40 22 L60 22 L72 26 L80 44 L70 48 L66 36 L66 82 L34 82 L34 36 L30 48 L20 44 Z" fill="#18181b" stroke="#27272a" stroke-width="1.5"/>
+                <circle cx="50" cy="50" r="10" fill="#f59e0b"/>
+                <path d="M44 54 Q50 44 56 54" stroke="#09090b" stroke-width="2"/>
+              </svg>
             </div>
             <div class="disc-card-body">
               <div class="disc-card-name">Afro-Futurist Tee</div>
@@ -1328,12 +1341,15 @@ def get_home_view():
           </div>
 
           <!-- 4. Handcrafted Brass Bangle -->
-          <div class="discovery-product-card" onClick="{{ () => openProduct('rolex_submariner') }}" style="cursor:pointer">
-            <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
+          <div class="discovery-product-card" onClick="{{ on.product }}">
+            <div class="disc-card-img-box">
               <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('brass-bangle', 'Handcrafted Brass Bangle'); } }}" class="wishlist-float-btn" aria-label="Save Brass Bangle to wishlist">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('brass-bangle') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('brass-bangle') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
               </button>
-              <img src="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=400&h=400&q=80" alt="Forged Brass Bangle" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+              <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
+                <circle cx="50" cy="50" r="28" fill="none" stroke="#eab308" stroke-width="8" stroke-dasharray="160 20"/>
+                <circle cx="50" cy="50" r="24" fill="none" stroke="#ca8a04" stroke-width="1.5"/>
+              </svg>
             </div>
             <div class="disc-card-body">
               <div class="disc-card-name">Forged Brass Bangle</div>
@@ -1349,34 +1365,44 @@ def get_home_view():
     <sc-if value="{{ infiniteFeedBatch >= 2 }}">
       <div style="margin-top:40px;padding-top:20px;border-top:1px solid var(--color-divider)">
         <div class="editorial-section-header">
-          <h2 class="editorial-section-title">Outdoor &amp; adventure gear</h2>
-          <button onClick="{{ () => openCategory('electronics') }}" class="editorial-see-all">See all →</button>
+          <h2 class="editorial-section-title">Outdoor & adventure gear</h2>
+          <button onClick="{{ () => openCategory('sports') }}" class="editorial-see-all">See all →</button>
         </div>
 
         <div class="discovery-product-grid">
-          <!-- 1. Insta360 Ace Pro 2 (Leica AI 8K) -->
-          <div class="discovery-product-card" onClick="{{ () => openProduct('insta360_ace_pro_2') }}" style="cursor:pointer">
-            <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
-              <span class="badge-floating badge-sale">LEICA 8K</span>
-              <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('insta360-ace-pro-2', 'Insta360 Ace Pro 2'); } }}" class="wishlist-float-btn" aria-label="Save Insta360 Ace Pro 2 to wishlist">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('insta360-ace-pro-2') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('insta360-ace-pro-2') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          <!-- 1. Solar Powerbank 30000mAh -->
+          <div class="discovery-product-card" onClick="{{ on.product }}">
+            <div class="disc-card-img-box">
+              <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('solar-powerbank', 'Solar Powerbank 30000mAh'); } }}" class="wishlist-float-btn" aria-label="Save Solar Powerbank to wishlist">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('solar-powerbank') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('solar-powerbank') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
               </button>
-              <img src="https://images.unsplash.com/photo-1502920917128-1aa500764cbd?auto=format&fit=crop&w=400&h=400&q=80" alt="Insta360 Ace Pro 2" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+              <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
+                <rect x="26" y="16" width="48" height="68" rx="8" fill="#1e293b" stroke="#f59e0b" stroke-width="1.5"/>
+                <rect x="30" y="22" width="40" height="34" rx="2" fill="#0f172a" stroke="#334155"/>
+                <line x1="40" y1="22" x2="40" y2="56" stroke="#334155"/>
+                <line x1="50" y1="22" x2="50" y2="56" stroke="#334155"/>
+                <line x1="60" y1="22" x2="60" y2="56" stroke="#334155"/>
+                <circle cx="50" cy="70" r="4" fill="#22c55e"/>
+              </svg>
             </div>
             <div class="disc-card-body">
-              <div class="disc-card-name">Insta360 Ace Pro 2</div>
-              <div class="disc-card-sub">Leica 8K Dual AI Chip</div>
-              <div class="disc-card-price">445.000 FCFA</div>
+              <div class="disc-card-name">Solar Powerbank 30K</div>
+              <div class="disc-card-sub">Rugged IP67 Water Resistant</div>
+              <div class="disc-card-price">45.000 FCFA</div>
             </div>
           </div>
 
           <!-- 2. Tactical Trail Backpack -->
-          <div class="discovery-product-card" onClick="{{ () => openProduct('bazin_boubou') }}" style="cursor:pointer">
-            <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
+          <div class="discovery-product-card" onClick="{{ on.product }}">
+            <div class="disc-card-img-box">
               <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('trail-backpack', 'Tactical Trail Backpack'); } }}" class="wishlist-float-btn" aria-label="Save Trail Backpack to wishlist">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('trail-backpack') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('trail-backpack') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
               </button>
-              <img src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=400&h=400&q=80" alt="Tactical Trail Backpack" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+              <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
+                <path d="M30 30 C30 20 70 20 70 30 L74 84 L26 84 Z" fill="#334155" stroke="#1e293b" stroke-width="1.5"/>
+                <rect x="36" y="44" width="28" height="24" rx="4" fill="#475569"/>
+                <line x1="30" y1="40" x2="70" y2="40" stroke="#f59e0b" stroke-width="2"/>
+              </svg>
             </div>
             <div class="disc-card-body">
               <div class="disc-card-name">Tactical Trail Pack</div>
@@ -1385,29 +1411,37 @@ def get_home_view():
             </div>
           </div>
 
-          <!-- 3. Insta360 Flow Pro (Apple DockKit Gimbal) -->
-          <div class="discovery-product-card" onClick="{{ () => openProduct('insta360_flow_pro') }}" style="cursor:pointer">
-            <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
-              <span class="badge-floating badge-blue">DOCKKIT</span>
-              <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('insta360-flow-pro', 'Insta360 Flow Pro'); } }}" class="wishlist-float-btn" aria-label="Save Insta360 Flow Pro to wishlist">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('insta360-flow-pro') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('insta360-flow-pro') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          <!-- 3. 3-Axis Gimbal Stabilizer -->
+          <div class="discovery-product-card" onClick="{{ on.product }}">
+            <div class="disc-card-img-box">
+              <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('gimbal-stabilizer', '3-Axis Gimbal Stabilizer'); } }}" class="wishlist-float-btn" aria-label="Save Gimbal Stabilizer to wishlist">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('gimbal-stabilizer') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('gimbal-stabilizer') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
               </button>
-              <img src="https://images.unsplash.com/photo-1589492477829-5e65395b66cc?auto=format&fit=crop&w=400&h=400&q=80" alt="Insta360 Flow Pro Gimbal" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+              <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
+                <rect x="44" y="44" width="12" height="46" rx="6" fill="#1e293b" stroke="#475569" stroke-width="1.5"/>
+                <circle cx="50" cy="32" r="16" stroke="#007aff" stroke-width="3" fill="none"/>
+                <rect x="36" y="20" width="28" height="10" rx="3" fill="#334155"/>
+                <circle cx="50" cy="56" r="3" fill="#22c55e"/>
+              </svg>
             </div>
             <div class="disc-card-body">
-              <div class="disc-card-name">Insta360 Flow Pro</div>
-              <div class="disc-card-sub">Apple DockKit AI Gimbal</div>
-              <div class="disc-card-price">149.000 FCFA</div>
+              <div class="disc-card-name">3-Axis Pro Gimbal</div>
+              <div class="disc-card-sub">AI Tracking & Wireless Mic</div>
+              <div class="disc-card-price">145.000 FCFA</div>
             </div>
           </div>
 
           <!-- 4. Polarized UV Sport Sunglasses -->
-          <div class="discovery-product-card" onClick="{{ () => openProduct('nike_air_force_1') }}" style="cursor:pointer">
-            <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
+          <div class="discovery-product-card" onClick="{{ on.product }}">
+            <div class="disc-card-img-box">
               <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('sport-sunglasses', 'Polarized UV Sunglasses'); } }}" class="wishlist-float-btn" aria-label="Save Sport Sunglasses to wishlist">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('sport-sunglasses') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('sport-sunglasses') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
               </button>
-              <img src="https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=400&h=400&q=80" alt="Polarized Sport Glasses" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+              <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
+                <path d="M14 46 Q50 36 86 46 L82 64 C76 68 66 68 58 64 L50 52 L42 64 C34 68 24 68 18 64 Z" fill="#0f172a" stroke="#007aff" stroke-width="1.5"/>
+                <rect x="22" y="48" width="22" height="14" rx="4" fill="#0284c7" opacity="0.8"/>
+                <rect x="56" y="48" width="22" height="14" rx="4" fill="#0284c7" opacity="0.8"/>
+              </svg>
             </div>
             <div class="disc-card-body">
               <div class="disc-card-name">Polarized Sport Glasses</div>
@@ -1423,34 +1457,43 @@ def get_home_view():
     <sc-if value="{{ infiniteFeedBatch >= 3 }}">
       <div style="margin-top:40px;padding-top:20px;border-top:1px solid var(--color-divider)">
         <div class="editorial-section-header">
-          <h2 class="editorial-section-title">Audio studio &amp; smart living</h2>
+          <h2 class="editorial-section-title">Audio studio & smart living</h2>
           <button onClick="{{ () => openCategory('electronics') }}" class="editorial-see-all">See all →</button>
         </div>
 
         <div class="discovery-product-grid">
-          <!-- 1. Apple AirPods Max Pro Studio -->
-          <div class="discovery-product-card" onClick="{{ () => openProduct('airpods_max') }}" style="cursor:pointer">
-            <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
-              <span class="badge-floating badge-blue">STUDIO HIFI</span>
-              <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('airpods-max', 'Apple AirPods Max'); } }}" class="wishlist-float-btn" aria-label="Save AirPods Max to wishlist">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('airpods-max') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('airpods-max') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          <!-- 1. Audio-Technica ATH-M50x -->
+          <div class="discovery-product-card" onClick="{{ on.product }}">
+            <div class="disc-card-img-box">
+              <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('ath-m50x', 'Audio-Technica ATH-M50x'); } }}" class="wishlist-float-btn" aria-label="Save ATH-M50x to wishlist">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('ath-m50x') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('ath-m50x') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
               </button>
-              <img src="https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&w=400&h=400&q=80" alt="Apple AirPods Max" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+              <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
+                <path d="M26 50 C26 26 74 26 74 50" stroke="#090a0f" stroke-width="6" stroke-linecap="round"/>
+                <rect x="18" y="44" width="16" height="28" rx="8" fill="#18181b" stroke="#71717a" stroke-width="1.5"/>
+                <circle cx="26" cy="58" r="4" fill="#a1a1aa"/>
+                <rect x="66" y="44" width="16" height="28" rx="8" fill="#18181b" stroke="#71717a" stroke-width="1.5"/>
+                <circle cx="74" cy="58" r="4" fill="#a1a1aa"/>
+              </svg>
             </div>
             <div class="disc-card-body">
-              <div class="disc-card-name">Apple AirPods Max</div>
-              <div class="disc-card-sub">Computational Hi-Fi Audio</div>
-              <div class="disc-card-price">365.000 FCFA</div>
+              <div class="disc-card-name">Audio-Technica M50x</div>
+              <div class="disc-card-sub">Studio Monitor Headphones</div>
+              <div class="disc-card-price">135.000 FCFA</div>
             </div>
           </div>
 
           <!-- 2. Marshall Emberton II -->
-          <div class="discovery-product-card" onClick="{{ () => openProduct('sony_xm5') }}" style="cursor:pointer">
-            <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
+          <div class="discovery-product-card" onClick="{{ on.product }}">
+            <div class="disc-card-img-box">
               <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('marshall-emberton', 'Marshall Emberton II'); } }}" class="wishlist-float-btn" aria-label="Save Marshall Emberton to wishlist">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('marshall-emberton') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('marshall-emberton') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
               </button>
-              <img src="https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?auto=format&fit=crop&w=400&h=400&q=80" alt="Marshall Emberton II" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+              <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
+                <rect x="20" y="32" width="60" height="38" rx="6" fill="#1c1917" stroke="#78716c" stroke-width="1.5"/>
+                <rect x="24" y="36" width="52" height="30" rx="3" fill="#292524"/>
+                <circle cx="50" cy="51" r="7" fill="#d97706"/>
+              </svg>
             </div>
             <div class="disc-card-body">
               <div class="disc-card-name">Marshall Emberton II</div>
@@ -1460,12 +1503,17 @@ def get_home_view():
           </div>
 
           <!-- 3. Smart Air Fryer Touch -->
-          <div class="discovery-product-card" onClick="{{ () => openProduct('anker_737') }}" style="cursor:pointer">
-            <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
+          <div class="discovery-product-card" onClick="{{ on.product }}">
+            <div class="disc-card-img-box">
               <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('smart-air-fryer', 'Smart Air Fryer Touch'); } }}" class="wishlist-float-btn" aria-label="Save Smart Air Fryer to wishlist">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('smart-air-fryer') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('smart-air-fryer') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
               </button>
-              <img src="https://images.unsplash.com/photo-1585515320310-259814833e62?auto=format&fit=crop&w=400&h=400&q=80" alt="Smart Air Fryer Pro" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+              <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
+                <rect x="26" y="18" width="48" height="66" rx="12" fill="#18181b" stroke="#3f3f46" stroke-width="1.5"/>
+                <rect x="32" y="26" width="36" height="16" rx="4" fill="#09090b" stroke="#22c55e" stroke-width="1"/>
+                <rect x="32" y="48" width="36" height="28" rx="6" fill="#27272a"/>
+                <line x1="44" y1="62" x2="56" y2="62" stroke="#71717a" stroke-width="3" stroke-linecap="round"/>
+              </svg>
             </div>
             <div class="disc-card-body">
               <div class="disc-card-name">Smart Air Fryer Pro</div>
@@ -1473,25 +1521,6 @@ def get_home_view():
               <div class="disc-card-price">85.000 FCFA</div>
             </div>
           </div>
-
-          <!-- 4. Apple Watch Ultra 2 -->
-          <div class="discovery-product-card" onClick="{{ () => openProduct('apple_watch_ultra_2') }}" style="cursor:pointer">
-            <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
-              <span class="badge-floating badge-sale">ULTRA 2</span>
-              <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('apple-watch-ultra-2', 'Apple Watch Ultra 2'); } }}" class="wishlist-float-btn" aria-label="Save Apple Watch Ultra 2 to wishlist">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('apple-watch-ultra-2') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('apple-watch-ultra-2') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-              </button>
-              <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=400&h=400&q=80" alt="Apple Watch Ultra 2" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
-            </div>
-            <div class="disc-card-body">
-              <div class="disc-card-name">Apple Watch Ultra 2</div>
-              <div class="disc-card-sub">49mm Titanium GPS+Cell</div>
-              <div class="disc-card-price">545.000 FCFA</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </sc-if>
 
           <!-- 4. Espresso Barista Touch -->
           <div class="discovery-product-card" onClick="{{ on.product }}">
