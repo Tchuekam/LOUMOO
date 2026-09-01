@@ -828,6 +828,1213 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   }
 }
 
+/* ══════════════════════════════════════════════════════════════════════════
+   LOUMOO HOMEPAGE MASTER HUB — APPLE & INSTA360 EDITORIAL COMMERCE SUITE
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* Hero Cinematic Banner */
+.hero-cinematic-banner {
+  background: linear-gradient(135deg, #f0f4f9 0%, #e2ebf5 50%, #d8e5f3 100%);
+  border-radius: 28px;
+  padding: 36px 40px 28px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  margin-bottom: 24px;
+}
+[data-theme="dark"] .hero-cinematic-banner {
+  background: linear-gradient(135deg, #131722 0%, #1a2030 50%, #151926 100%);
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.hero-grid-layout {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  align-items: center;
+  gap: 32px;
+  min-height: 280px;
+}
+
+@media (max-width: 768px) {
+  .hero-cinematic-banner {
+    padding: 24px 20px 22px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+  }
+  .hero-grid-layout {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
+.hero-btn-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #111214;
+  color: #ffffff;
+  border-radius: 9999px;
+  padding: 12px 24px;
+  font: 700 13.5px/1 var(--font-heading);
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  transition: all 0.2s var(--ease-spring);
+}
+.hero-btn-pill:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  background: #000000;
+}
+[data-theme="dark"] .hero-btn-pill {
+  background: #ffffff;
+  color: #111214;
+}
+[data-theme="dark"] .hero-btn-pill:hover {
+  background: #f0f0f0;
+}
+
+.hero-dots-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 18px;
+}
+.hero-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.2);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.hero-dot.active {
+  width: 22px;
+  border-radius: 4px;
+  background: #111214;
+}
+[data-theme="dark"] .hero-dot {
+  background: rgba(255, 255, 255, 0.25);
+}
+[data-theme="dark"] .hero-dot.active {
+  background: #ffffff;
+}
+
+/* Category Discovery Squircle Grid / Rail */
+.cat-discovery-rail {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  padding: 4px 0 20px;
+  margin: 0;
+}
+.cat-discovery-rail::-webkit-scrollbar { display: none; }
+.cat-squircle-card {
+  flex: 0 0 auto;
+  width: 76px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: transform 0.2s var(--ease-spring);
+}
+.cat-squircle-card:hover {
+  transform: translateY(-3px);
+}
+.cat-squircle-icon-wrap {
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+.cat-squircle-card:hover .cat-squircle-icon-wrap {
+  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+  transform: scale(1.04);
+}
+.cat-squircle-label {
+  font: 700 10.5px/1.2 var(--font-heading);
+  letter-spacing: 0.02em;
+  color: var(--color-text);
+  text-align: center;
+}
+
+/* Section Header */
+.editorial-section-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 16px 0 12px;
+}
+.editorial-section-title {
+  font: 800 20px/1.15 var(--font-heading);
+  letter-spacing: -0.025em;
+  color: var(--color-text);
+  margin: 0;
+}
+.editorial-see-all {
+  font: 700 12px/1 var(--font-heading);
+  letter-spacing: 0.04em;
+  color: var(--color-accent);
+  background: transparent;
+  border: none;
+  padding: 4px 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: gap 0.15s ease;
+}
+.editorial-see-all:hover {
+  gap: 7px;
+  color: var(--color-accent-hover);
+}
+
+/* New Arrivals Rail / Grid */
+.new-arrivals-rail {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 14px;
+  padding-bottom: 24px;
+}
+@media (max-width: 1200px) {
+  .new-arrivals-rail {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (max-width: 768px) {
+  .new-arrivals-rail {
+    display: flex;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    gap: 12px;
+    margin-inline: -16px;
+    padding-inline: 16px;
+  }
+  .new-arrivals-rail > button {
+    flex: 0 0 160px;
+    width: 160px;
+  }
+}
+
+.product-card-elevated {
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider);
+  border-radius: 18px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.22s var(--ease-spring);
+  box-shadow: var(--shadow-xs);
+  position: relative;
+  overflow: hidden;
+}
+.product-card-elevated:hover {
+  transform: translateY(-4px);
+  border-color: var(--color-neutral-300);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+}
+.product-card-img-wrap {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: #f8f9fa;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  position: relative;
+  overflow: hidden;
+}
+[data-theme="dark"] .product-card-img-wrap {
+  background: #141822;
+}
+
+/* Editorial Asymmetric Video Grid (Insta360 style) */
+.editorial-asymmetric-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 0.85fr 0.75fr;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+@media (max-width: 1024px) {
+  .editorial-asymmetric-grid {
+    grid-template-columns: 1.2fr 1fr;
+  }
+  .editorial-asymmetric-grid > div:nth-child(3) {
+    grid-column: span 2;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+}
+@media (max-width: 640px) {
+  .editorial-asymmetric-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .editorial-asymmetric-grid > div:nth-child(3) {
+    display: flex;
+    flex-direction: column;
+    grid-column: span 1;
+  }
+}
+
+.editorial-video-card {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #111214;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 24px;
+  cursor: pointer;
+  transition: transform 0.25s var(--ease-spring), box-shadow 0.25s ease;
+  min-height: 240px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.editorial-video-card:hover {
+  transform: translateY(-3px) scale(1.01);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.28);
+}
+
+.video-play-btn-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.28);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1.5px solid rgba(255, 255, 255, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  transition: all 0.2s var(--ease-spring);
+}
+.editorial-video-card:hover .video-play-btn-circle {
+  transform: scale(1.12);
+  background: rgba(255, 255, 255, 0.45);
+}
+
+/* Apple-style Shop by Category (Dual-Pane Cards) */
+.shop-by-cat-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 14px;
+  margin-bottom: 28px;
+}
+@media (max-width: 1200px) {
+  .shop-by-cat-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (max-width: 768px) {
+  .shop-by-cat-grid {
+    display: flex;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    gap: 12px;
+    margin-inline: -16px;
+    padding-inline: 16px;
+  }
+  .shop-by-cat-grid > button {
+    flex: 0 0 210px;
+    width: 210px;
+  }
+}
+
+.shop-cat-card-apple {
+  background: #f5f6f8;
+  border: 1px solid var(--color-divider);
+  border-radius: 20px;
+  padding: 18px 16px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 8px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.22s var(--ease-spring);
+  min-height: 140px;
+}
+[data-theme="dark"] .shop-cat-card-apple {
+  background: #151822;
+}
+.shop-cat-card-apple:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+  border-color: var(--color-neutral-300);
+}
+
+/* Featured Stores Brand Avatars */
+.featured-stores-rail {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 14px;
+  padding-bottom: 24px;
+}
+@media (max-width: 1100px) {
+  .featured-stores-rail {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+@media (max-width: 640px) {
+  .featured-stores-rail {
+    display: flex;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    gap: 12px;
+    margin-inline: -16px;
+    padding-inline: 16px;
+  }
+  .featured-stores-rail > button {
+    flex: 0 0 84px;
+    width: 84px;
+  }
+}
+
+.brand-circle-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: center;
+  transition: transform 0.2s var(--ease-spring);
+}
+.brand-circle-btn:hover {
+  transform: translateY(-3px);
+}
+.brand-circle-logo-wrap {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1.5px solid var(--color-divider);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-xs);
+  transition: all 0.2s ease;
+  overflow: hidden;
+}
+.brand-circle-btn:hover .brand-circle-logo-wrap {
+  border-color: var(--color-accent);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+[data-theme="dark"] .brand-circle-logo-wrap {
+  background: #1a1e2a;
+}
+
+/* Lifestyle Video Grid */
+.lifestyle-video-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 28px;
+}
+@media (max-width: 900px) {
+  .lifestyle-video-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 540px) {
+  .lifestyle-video-grid {
+    display: flex;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    gap: 12px;
+    margin-inline: -16px;
+    padding-inline: 16px;
+  }
+  .lifestyle-video-grid > button {
+    flex: 0 0 240px;
+    width: 240px;
+  }
+}
+
+.lifestyle-card {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #111214;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 16px;
+  cursor: pointer;
+  transition: transform 0.22s var(--ease-spring), box-shadow 0.22s ease;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+.lifestyle-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   LOUMOO HOMEPAGE V2: DISCOVERY ENGINE & INFINITE COMMERCE FEED STYLES
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* Discovery Product Grid: Mobile (2 products/row) · Desktop (4 products/row) */
+.discovery-product-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 28px;
+}
+@media (max-width: 768px) {
+  .discovery-product-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+}
+
+.discovery-product-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider);
+  border-radius: 18px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: transform 0.22s var(--ease-spring), box-shadow 0.22s ease, border-color 0.22s ease;
+  position: relative;
+  box-shadow: var(--shadow-xs);
+}
+.discovery-product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+  border-color: var(--color-neutral-300);
+}
+[data-theme="dark"] .discovery-product-card {
+  background: #141722;
+}
+
+.disc-card-img-box {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: #f8f9fa;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+[data-theme="dark"] .disc-card-img-box {
+  background: #1a1e2a;
+}
+
+.wishlist-float-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 5;
+  box-shadow: var(--shadow-xs);
+  transition: transform 0.18s ease, background 0.18s ease;
+}
+.wishlist-float-btn:hover {
+  transform: scale(1.12);
+}
+
+.disc-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.disc-card-name {
+  font: 700 13.5px/1.25 var(--font-heading);
+  color: var(--color-text);
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.disc-card-sub {
+  font: 500 11.5px/1.2 var(--font-body);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 4px;
+}
+.disc-card-price {
+  font: 800 14px/1 var(--font-heading);
+  color: var(--color-text);
+  margin-top: 2px;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   INSTA360 OFFICIAL BENTO VIDEO SHOWCASE GRID
+   ══════════════════════════════════════════════════════════════════════ */
+.insta360-bento-video-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 2.1fr 1.15fr;
+  gap: 14px;
+  margin-bottom: 28px;
+  position: relative;
+}
+@media (max-width: 960px) {
+  .insta360-bento-video-grid {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 12px;
+    margin-inline: -16px;
+    padding-inline: 16px;
+    padding-bottom: 12px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .insta360-bento-video-grid::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.insta-video-card-tall {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  min-height: 380px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.16);
+}
+@media (max-width: 960px) {
+  .insta-video-card-tall {
+    flex: 0 0 260px;
+    scroll-snap-align: start;
+    min-height: 340px;
+  }
+}
+.insta-video-card-tall:hover {
+  transform: translateY(-3px) scale(1.01);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.28);
+}
+
+.insta-video-middle-col {
+  display: grid;
+  grid-template-rows: 1.25fr 1fr;
+  gap: 14px;
+}
+@media (max-width: 960px) {
+  .insta-video-middle-col {
+    display: flex;
+    gap: 12px;
+    flex: 0 0 auto;
+  }
+}
+
+.insta-video-card-wide {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  min-height: 195px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.14);
+}
+@media (max-width: 960px) {
+  .insta-video-card-wide {
+    flex: 0 0 280px;
+    scroll-snap-align: start;
+    min-height: 340px;
+  }
+}
+.insta-video-card-wide:hover {
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.24);
+}
+
+.insta-video-middle-bottom-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+@media (max-width: 960px) {
+  .insta-video-middle-bottom-row {
+    display: flex;
+    gap: 12px;
+    flex: 0 0 auto;
+  }
+}
+
+.insta-video-card-compact {
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  min-height: 165px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.12);
+}
+@media (max-width: 960px) {
+  .insta-video-card-compact {
+    flex: 0 0 240px;
+    scroll-snap-align: start;
+    min-height: 340px;
+  }
+}
+.insta-video-card-compact:hover {
+  transform: translateY(-2px) scale(1.015);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.22);
+}
+
+.insta-play-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.28);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  transition: transform 0.2s ease, background 0.2s ease;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+}
+.insta-video-card-tall:hover .insta-play-btn,
+.insta-video-card-wide:hover .insta-play-btn,
+.insta-video-card-compact:hover .insta-play-btn {
+  transform: translate(-50%, -50%) scale(1.12);
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.insta-card-bottom-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 24px 16px 14px;
+  background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.85) 100%);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 8px;
+  z-index: 2;
+}
+
+.insta-card-meta-left {
+  display: flex;
+  flex-direction: column;
+}
+
+.insta-card-title {
+  font: 800 15.5px/1.2 var(--font-heading);
+  letter-spacing: -0.01em;
+  color: #ffffff;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+}
+
+.insta-card-author {
+  font: 500 11.5px/1.2 var(--font-body);
+  color: rgba(255, 255, 255, 0.85);
+  margin-top: 3px;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+
+.insta-device-pill {
+  background: rgba(0, 0, 0, 0.52);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 4px 9px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font: 700 11px/1 var(--font-heading);
+  color: #ffffff;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.insta-carousel-nav-btn {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.28);
+  cursor: pointer;
+  z-index: 5;
+  transition: transform 0.18s ease, background 0.18s ease;
+}
+.insta-carousel-nav-btn:hover {
+  transform: translateY(-50%) scale(1.1);
+  background: #ffffff;
+}
+
+/* Asymmetric 360 Video Storytelling Grid */
+.asymmetric-360-grid {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+@media (max-width: 680px) {
+  .asymmetric-360-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.asym-360-feature-card {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  background: linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.75) 100%), radial-gradient(circle at 50% 30%, #0369a1 0%, #082f49 100%);
+  color: #ffffff;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 290px;
+  cursor: pointer;
+  transition: transform 0.22s var(--ease-spring), box-shadow 0.22s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+}
+.asym-360-feature-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.28);
+}
+
+.asym-360-right-col {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.asym-360-small-card {
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  color: #ffffff;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 136px;
+  flex: 1;
+  cursor: pointer;
+  transition: transform 0.22s var(--ease-spring), box-shadow 0.22s ease;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.12);
+}
+.asym-360-small-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.24);
+}
+
+.asym-card-planet {
+  background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.75) 100%), radial-gradient(circle at 60% 40%, #38bdf8 0%, #0284c7 40%, #0c4a6e 100%);
+}
+.asym-card-aiedit {
+  background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.75) 100%), radial-gradient(circle at 60% 40%, #c2410c 0%, #7c2d12 50%, #451a03 100%);
+}
+
+.asym-360-header {
+  display: flex;
+  flex-direction: column;
+}
+.asym-360-title {
+  font: 800 17px/1.2 var(--font-heading);
+  letter-spacing: -0.02em;
+  color: #ffffff;
+}
+.asym-360-sub {
+  font: 500 12px/1.2 var(--font-body);
+  color: rgba(255, 255, 255, 0.8);
+  margin-top: 3px;
+}
+.asym-360-center-play {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 10px 0;
+}
+.asym-360-footer {
+  display: flex;
+  align-items: center;
+}
+
+/* Collections V2 Editorial Grid */
+.collections-v2-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 28px;
+}
+@media (max-width: 900px) {
+  .collections-v2-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 480px) {
+  .collections-v2-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+}
+
+.collection-v2-card {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  border-radius: 20px;
+  overflow: hidden;
+  padding: 18px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  color: #ffffff;
+  cursor: pointer;
+  transition: transform 0.22s var(--ease-spring), box-shadow 0.22s ease;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.14);
+}
+.collection-v2-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+}
+
+.coll-weekend {
+  background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.85) 100%), radial-gradient(circle at 50% 30%, #92400e 0%, #451a03 100%);
+}
+.coll-school {
+  background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.85) 100%), radial-gradient(circle at 50% 30%, #ea580c 0%, #1c1917 100%);
+}
+.coll-creator {
+  background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.85) 100%), radial-gradient(circle at 50% 30%, #334155 0%, #090a0f 100%);
+}
+.coll-gifts {
+  background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.85) 100%), radial-gradient(circle at 50% 30%, #991b1b 0%, #450a0a 100%);
+}
+
+.coll-card-icon-play {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.coll-card-content {
+  display: flex;
+  flex-direction: column;
+}
+.coll-card-title {
+  font: 800 16px/1.15 var(--font-heading);
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+
+/* Travel the World Mobility Grid */
+.travel-world-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 12px;
+  margin-bottom: 28px;
+}
+@media (max-width: 1024px) {
+  .travel-world-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (max-width: 540px) {
+  .travel-world-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+}
+
+.travel-squircle-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider);
+  border-radius: 18px;
+  padding: 14px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: transform 0.2s var(--ease-spring), box-shadow 0.2s ease, border-color 0.2s ease;
+  box-shadow: var(--shadow-xs);
+}
+.travel-squircle-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--color-accent);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+}
+[data-theme="dark"] .travel-squircle-card {
+  background: #141722;
+}
+
+.travel-squircle-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+.travel-squircle-label {
+  font: 700 12px/1 var(--font-heading);
+  color: var(--color-text);
+  text-align: center;
+}
+
+/* LOUMOO African Marketplace Editorial Banner */
+.marketplace-africa-banner {
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider);
+  border-radius: 24px;
+  padding: 28px 28px 24px;
+  margin-bottom: 32px;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  align-items: center;
+  gap: 20px;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  position: relative;
+}
+@media (max-width: 768px) {
+  .marketplace-africa-banner {
+    grid-template-columns: 1fr;
+    padding: 22px 18px;
+    text-align: left;
+  }
+}
+[data-theme="dark"] .marketplace-africa-banner {
+  background: #141722;
+}
+
+.africa-banner-eyebrow {
+  font: 800 12px/1 var(--font-heading);
+  letter-spacing: 0.14em;
+  color: var(--color-text);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.africa-banner-heading {
+  font: 800 clamp(24px, 3.5vw, 34px)/1.1 var(--font-heading);
+  letter-spacing: -0.03em;
+  color: var(--color-text);
+  margin: 0 0 8px;
+}
+.africa-banner-sub {
+  font: 500 13.5px/1.3 var(--font-body);
+  color: var(--color-text-secondary);
+  margin: 0 0 18px;
+}
+.africa-banner-btn {
+  height: 38px;
+  padding: 0 20px;
+  border-radius: var(--radius-pill);
+  background: var(--color-text);
+  color: var(--color-surface);
+  border: none;
+  font: 800 12.5px/1 var(--font-heading);
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  transition: transform 0.18s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.africa-banner-btn:hover {
+  transform: scale(1.04);
+}
+.africa-banner-right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* More to Explore Category Visual Tiles */
+.more-explore-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 28px;
+}
+@media (max-width: 900px) {
+  .more-explore-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 480px) {
+  .more-explore-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+}
+
+.more-explore-card {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: 20px;
+  overflow: hidden;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  color: #ffffff;
+  cursor: pointer;
+  transition: transform 0.22s var(--ease-spring), box-shadow 0.22s ease;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.1);
+}
+.more-explore-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.22);
+}
+
+.tile-home {
+  background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.8) 100%), radial-gradient(circle at 50% 30%, #64748b 0%, #1e293b 100%);
+}
+.tile-beauty {
+  background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.8) 100%), radial-gradient(circle at 50% 30%, #f472b6 0%, #831843 100%);
+}
+.tile-sports {
+  background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.8) 100%), radial-gradient(circle at 50% 30%, #f97316 0%, #7c2d12 100%);
+}
+.tile-groceries {
+  background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.8) 100%), radial-gradient(circle at 50% 30%, #22c55e 0%, #14532d 100%);
+}
+
+.more-explore-play {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.more-explore-text {
+  display: flex;
+  flex-direction: column;
+}
+.more-explore-title {
+  font: 800 16px/1.1 var(--font-heading);
+  color: #ffffff;
+}
+.more-explore-sub {
+  font: 500 11.5px/1 var(--font-body);
+  color: rgba(255, 255, 255, 0.85);
+  margin-top: 3px;
+}
+
+/* Video Player Modal */
+.video-player-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.82);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.2s ease;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.video-player-dialog {
+  background: #0f1117;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 24px;
+  max-width: 720px;
+  width: 100%;
+  overflow: hidden;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
+  color: #ffffff;
+}
+
 </style>
 </helmet>
 
@@ -1002,6 +2209,31 @@ footer_and_scripts = """
 </div>
 </sc-if>
 
+<sc-if value="{{ hasActiveVideoModal }}">
+<div class="video-player-backdrop" onClick="{{ closeVideoModal }}">
+  <div class="video-player-dialog" onClick="{{ (e) => e && e.stopPropagation && e.stopPropagation() }}">
+    <div style="position:relative;aspect-ratio:16/9;background:#000;display:flex;align-items:center;justify-content:center;overflow:hidden">
+      <div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 50%, rgba(0, 122, 255, 0.3) 0%, #05070d 85%)"></div>
+      <div style="text-align:center;position:relative;z-index:2;padding:20px">
+        <div style="width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,0.25);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;border:2px solid rgba(255,255,255,0.7);box-shadow:0 8px 30px rgba(0,0,0,0.5)">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="#ffffff" style="margin-left:3px"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </div>
+        <div style="font:800 22px/1.2 var(--font-heading);letter-spacing:-.02em;color:#fff">{{ videoModalTitle }}</div>
+        <div style="font:500 13px/1.4 var(--font-body);color:rgba(255,255,255,0.75);margin-top:6px">{{ videoModalSubtitle }}</div>
+      </div>
+      <button onClick="{{ closeVideoModal }}" aria-label="Close video" style="position:absolute;top:14px;right:14px;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,0.65);border:1px solid rgba(255,255,255,0.3);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:10;font-size:14px">✕</button>
+    </div>
+    <div style="padding:16px 22px;display:flex;align-items:center;justify-content:space-between;background:#141720;border-top:1px solid rgba(255,255,255,0.08)">
+      <div>
+        <span style="font:800 9.5px/1 var(--font-heading);letter-spacing:.12em;color:var(--color-accent);text-transform:uppercase">{{ videoModalTag }}</span>
+        <div style="font:500 12.5px/1.3 var(--font-body);color:#cbd1db;margin-top:4px">Shot in 8K 360° · Stabilized FlowState · Invisible Selfie Stick</div>
+      </div>
+      <button onClick="{{ quickExploreInsta360 }}" class="btn btn-primary" style="height:38px;padding:0 18px;font-size:12.5px">EXPLORE PRODUCT</button>
+    </div>
+  </div>
+</div>
+</sc-if>
+
 <sc-if value="{{ toast }}">
 <div class="toast-banner">
   <span>{{ toast }}</span>
@@ -1134,6 +2366,10 @@ class Component extends DCLogic {
     vsSecBuildOpen: true,
     vsSecPortsOpen: true,
     vsSecCommOpen: true,
+    heroSlide: 0,
+    activeVideoModal: null,
+    productWishlist: {},
+    infiniteFeedBatch: 1,
     qty: 1, freeday: false, darkMode: false,
     isLoggedIn: false,
     // Authoritative session state resolved from GET /api/v1/me/state.
@@ -1346,6 +2582,15 @@ class Component extends DCLogic {
     storeActiveTab: 'home',
     selectedBrand: 'apple',
     brandFollowed: false,
+
+    // ── All Categories & Taxonomy Discovery State ──
+    categorySearchQuery: '',
+    categorySelectedDomain: 'all',
+    activeCategorySlug: 'all',
+    activeSubcategorySlug: 'all',
+    categorySortBy: 'popular',
+    categoryCityFilter: 'all',
+    categoryVerifiedOnly: false,
 
     // ── Search & Filter State ──
     searchQuery: 'MacBook Air M2',
@@ -3807,6 +5052,115 @@ class Component extends DCLogic {
         this.toast(next ? 'Following official brand updates' : 'Unfollowed official brand');
       },
 
+      // ── All Categories & Taxonomy Discovery Getters & Actions ──
+      categorySearchQuery: this.state.categorySearchQuery || '',
+      updateCategorySearch: (e) => this.setState({ categorySearchQuery: e && e.target ? e.target.value : e }),
+      clearCategorySearch: () => this.setState({ categorySearchQuery: '' }),
+      categorySelectedDomain: this.state.categorySelectedDomain || 'all',
+      selectCategoryDomain: (dom) => this.setState({ categorySelectedDomain: dom }),
+      isCategoryDomainAll: (this.state.categorySelectedDomain || 'all') === 'all',
+      isCategoryDomainShop: this.state.categorySelectedDomain === 'shop',
+      isCategoryDomainServices: this.state.categorySelectedDomain === 'services',
+      isCategoryDomainTravel: this.state.categorySelectedDomain === 'travel',
+      isCategoryDomainBusiness: this.state.categorySelectedDomain === 'business',
+
+      activeCategorySlug: this.state.activeCategorySlug || 'all',
+      isCategoryDirectory: (this.state.activeCategorySlug || 'all') === 'all',
+      isCategoryDrilldown: (this.state.activeCategorySlug || 'all') !== 'all',
+      isCategoryElectronics: this.state.activeCategorySlug === 'electronics',
+      isCategoryFashion: this.state.activeCategorySlug === 'fashion',
+      isCategoryHome: this.state.activeCategorySlug === 'home',
+      isCategoryAutomotive: this.state.activeCategorySlug === 'automotive',
+      isCategoryServices: this.state.activeCategorySlug === 'services',
+      isCategoryHotels: this.state.activeCategorySlug === 'hotels',
+      isCategoryTravel: this.state.activeCategorySlug === 'travel',
+      isCategoryRealEstate: this.state.activeCategorySlug === 'real_estate',
+      isCategoryBanks: this.state.activeCategorySlug === 'banks',
+      isCategoryDigital: this.state.activeCategorySlug === 'digital',
+
+      activeSubcategorySlug: this.state.activeSubcategorySlug || 'all',
+      selectSubcategory: (sub) => this.setState({ activeSubcategorySlug: sub }),
+      isSubcatAll: (this.state.activeSubcategorySlug || 'all') === 'all',
+
+      openAllCategories: () => {
+        this.setState({ activeCategorySlug: 'all', activeSubcategorySlug: 'all', categorySearchQuery: '' });
+        this.go('category');
+      },
+      openCategory: (catSlug) => {
+        this.setState({ activeCategorySlug: catSlug, activeSubcategorySlug: 'all', categorySearchQuery: '' });
+        this.go('category');
+      },
+
+      // Category Search Match helpers
+      categoryHasQuery: Boolean((this.state.categorySearchQuery || '').trim()),
+      matchElectronics: (() => {
+        const q = (this.state.categorySearchQuery || '').trim().toLowerCase();
+        if (!q) return true;
+        return 'electronics technology laptop phone audio smartphone charger macbook iphone tech'.includes(q) || q.includes('elec') || q.includes('tech') || q.includes('phone') || q.includes('lap') || q.includes('mac') || q.includes('gadget');
+      })(),
+      matchFashion: (() => {
+        const q = (this.state.categorySearchQuery || '').trim().toLowerCase();
+        if (!q) return true;
+        return 'fashion luxury clothing shoes footwear sneakers watch apparel dress streetwear'.includes(q) || q.includes('fash') || q.includes('shoe') || q.includes('cloth') || q.includes('lux') || q.includes('wear');
+      })(),
+      matchHome: (() => {
+        const q = (this.state.categorySearchQuery || '').trim().toLowerCase();
+        if (!q) return true;
+        return 'home living furniture appliances kitchen decor sofa office table bed'.includes(q) || q.includes('home') || q.includes('furn') || q.includes('appli') || q.includes('kitch');
+      })(),
+      matchAutomotive: (() => {
+        const q = (this.state.categorySearchQuery || '').trim().toLowerCase();
+        if (!q) return true;
+        return 'automotive vehicles cars suv motorbike spare parts tires toyota nissan'.includes(q) || q.includes('car') || q.includes('auto') || q.includes('veh') || q.includes('tire') || q.includes('moto');
+      })(),
+      matchServices: (() => {
+        const q = (this.state.categorySearchQuery || '').trim().toLowerCase();
+        if (!q) return true;
+        return 'services repairs phone repair screen battery creative photography design education coding training'.includes(q) || q.includes('serv') || q.includes('rep') || q.includes('fix') || q.includes('photo') || q.includes('code') || q.includes('edu');
+      })(),
+      matchHotels: (() => {
+        const q = (this.state.categorySearchQuery || '').trim().toLowerCase();
+        if (!q) return true;
+        return 'hotels hospitality lodging suites resort stays room studio bed sawa akwa'.includes(q) || q.includes('hot') || q.includes('stay') || q.includes('suit') || q.includes('lodg') || q.includes('room') || q.includes('resort');
+      })(),
+      matchTravel: (() => {
+        const q = (this.state.categorySearchQuery || '').trim().toLowerCase();
+        if (!q) return true;
+        return 'travel mobility bus flights trains finexs camair camrail ticket transport chauffeur airport'.includes(q) || q.includes('trav') || q.includes('bus') || q.includes('flig') || q.includes('train') || q.includes('tick');
+      })(),
+      matchRealEstate: (() => {
+        const q = (this.state.categorySearchQuery || '').trim().toLowerCase();
+        if (!q) return true;
+        return 'real estate property houses duplex apartments land plots commercial office villa'.includes(q) || q.includes('real') || q.includes('prop') || q.includes('hous') || q.includes('apart') || q.includes('land') || q.includes('villa');
+      })(),
+      matchBanks: (() => {
+        const q = (this.state.categorySearchQuery || '').trim().toLowerCase();
+        if (!q) return true;
+        return 'banks finance banking money transfer microfinance loan agency orange mtn'.includes(q) || q.includes('bank') || q.includes('fin') || q.includes('mon') || q.includes('loan');
+      })(),
+      matchDigital: (() => {
+        const q = (this.state.categorySearchQuery || '').trim().toLowerCase();
+        if (!q) return true;
+        return 'digital products software licenses templates saas courses download kits'.includes(q) || q.includes('dig') || q.includes('soft') || q.includes('temp') || q.includes('down') || q.includes('app');
+      })(),
+
+      categorySortBy: this.state.categorySortBy || 'popular',
+      setCategorySort: (sort) => this.setState({ categorySortBy: sort }),
+      categoryCityFilter: this.state.categoryCityFilter || 'all',
+      updateCategoryCity: (e) => this.setState({ categoryCityFilter: e && e.target ? e.target.value : e }),
+      categoryVerifiedOnly: Boolean(this.state.categoryVerifiedOnly),
+      toggleCategoryVerified: () => this.setState(st => ({ categoryVerifiedOnly: !st.categoryVerifiedOnly })),
+      resetCategoryFilters: () => {
+        this.setState({
+          categorySearchQuery: '',
+          categorySelectedDomain: 'all',
+          categoryCityFilter: 'all',
+          categoryVerifiedOnly: false,
+          activeSubcategorySlug: 'all'
+        });
+        this.toast('Category filters reset');
+      },
+
       // ══════════════════════════════════════════════════════════════════
       // PHASE F — UNIVERSAL LISTING & SELLING ENGINE (Prompt 06)
       // ══════════════════════════════════════════════════════════════════
@@ -4092,7 +5446,23 @@ class Component extends DCLogic {
       navTravel: this.navColor('travel', 'travelBus', 'travelPackages', 'travelVisa', 'travelResults', 'travelDetail', 'travelPassenger', 'hotelSearch', 'hotelDetail', 'hotelBooking'),
       navAnnounce: this.navColor('announce', 'announceStudio', 'announceCampaigns', 'announceDetail'),
       navProfile: this.navColor('profile', 'seller', 'orders', 'settings', 'accountDashboard', 'editProfile', 'addresses', 'notificationPreferences', 'privacySettings', 'securitySettings', 'followedStores', 'userActivity', 'publicUserProfile', 'signIn', 'forgotPassword', 'resetPassword', 'verifyEmail'),
-      setScroller: (el) => { this._sc = el; },
+      setScroller: (el) => {
+        this._sc = el;
+        if (el && !this._scrollAttached) {
+          this._scrollAttached = true;
+          el.addEventListener('scroll', () => {
+            if (this.state.screen === 'home' && el.scrollTop + el.clientHeight >= el.scrollHeight - 380) {
+              if ((this.state.infiniteFeedBatch || 1) < 3 && !this._loadingBatch) {
+                this._loadingBatch = true;
+                const nextBatch = (this.state.infiniteFeedBatch || 1) + 1;
+                this.setState({ infiniteFeedBatch: nextBatch });
+                this.toast(nextBatch === 2 ? 'Loaded African heritage & outdoor collections' : 'Loaded audio studio & smart living discoveries');
+                setTimeout(() => { this._loadingBatch = false; }, 600);
+              }
+            }
+          });
+        }
+      },
       addToCart: () => { this.setState(st => ({ cart: st.cart + 1 })); this.toast('Added to Bag — 1 item from Orca Electronics'); },
       addToVs: () => { this.setState(st => ({ vs: st.vs + 1 })); this.go('vsCompare'); },
       claimGift: () => this.toast('Gift claimed. The seller will message you shortly.'),
@@ -4101,6 +5471,29 @@ class Component extends DCLogic {
       toggleSave: () => { const next = !this.state.saved; this.setState({ saved: next }); this.toast(next ? 'Saved to your list' : 'Removed from saved'); },
       payNow: () => { this.go('paying'); setTimeout(() => this.go('success'), 1800); },
       publish: () => this.publishListing(),
+
+      // ── Wishlist State & Infinite Discovery Commerce Feed ──
+      isWishlisted: (id) => Boolean(this.state.productWishlist && this.state.productWishlist[id]),
+      toggleProductWishlist: (id, name) => {
+        const current = this.state.productWishlist || {};
+        const isCurrentlySaved = Boolean(current[id]);
+        const next = { ...current, [id]: !isCurrentlySaved };
+        this.setState({ productWishlist: next });
+        this.toast(!isCurrentlySaved ? `Saved ${name || 'item'} to your wishlist` : `Removed ${name || 'item'} from wishlist`);
+      },
+      infiniteFeedBatch: this.state.infiniteFeedBatch || 1,
+      isInfiniteBatch2OrMore: (this.state.infiniteFeedBatch || 1) >= 2,
+      isInfiniteBatch3: (this.state.infiniteFeedBatch || 1) >= 3,
+      loadMoreDiscoveries: () => {
+        const currentBatch = this.state.infiniteFeedBatch || 1;
+        if (currentBatch >= 3) {
+          this.toast('You have reached the end of today’s curated discoveries!');
+          return;
+        }
+        const nextBatch = currentBatch + 1;
+        this.setState({ infiniteFeedBatch: nextBatch });
+        this.toast(nextBatch === 2 ? 'Loaded African heritage & outdoor gear' : 'Loaded pro audio & smart living innovations');
+      },
 
       // ── Travel & Mobility Ecosystem Getters & Actions ──
       isTravelTabBus: this.state.travelServiceTab === 'bus',
@@ -4138,7 +5531,42 @@ class Component extends DCLogic {
 
       swapTravelRoute: () => { this.toast('Swapped Origin & Destination (Douala ⇄ Yaoundé)'); },
       bookTravelItem: () => { this.go('paying'); setTimeout(() => this.go('travelTicket'), 1200); },
-      bookFlight: () => { this.go('travelTicket'); }
+      bookFlight: () => { this.go('travelTicket'); },
+
+      // ── Homepage Master Hub (Apple & Insta360 Cinematic Hub) ──
+      isHeroSlide0: this.state.heroSlide === 0,
+      isHeroSlide1: this.state.heroSlide === 1,
+      isHeroSlide2: this.state.heroSlide === 2,
+      setHeroSlide0: () => this.setState({ heroSlide: 0 }),
+      setHeroSlide1: () => this.setState({ heroSlide: 1 }),
+      setHeroSlide2: () => this.setState({ heroSlide: 2 }),
+
+      hasActiveVideoModal: Boolean(this.state.activeVideoModal),
+      videoModalTitle: this.state.activeVideoModal ? this.state.activeVideoModal.title : '',
+      videoModalSubtitle: this.state.activeVideoModal ? this.state.activeVideoModal.subtitle : '',
+      videoModalTag: this.state.activeVideoModal ? this.state.activeVideoModal.tag : '',
+      openVideoModal: (title, subtitle, tag) => {
+        this.setState({ activeVideoModal: { title: title || 'Insta360 Cinematic Action', subtitle: subtitle || 'Shot on Insta360 X4 in 8K 360°', tag: tag || 'INSTA360 8K' } });
+      },
+      closeVideoModal: () => this.setState({ activeVideoModal: null }),
+      quickExploreInsta360: () => {
+        this.setState({ activeVideoModal: null });
+        this.go('product');
+        this.toast('Viewing Insta360 X4 Flagship Edition');
+      },
+      nextInstaVideoSlide: () => {
+        try {
+          const sc = document.getElementById('instaVideoBentoRail') || document.getElementById('instaVideoBentoRail2');
+          if (sc) sc.scrollBy({ left: 300, behavior: 'smooth' });
+        } catch (_) {}
+        this.toast('Viewing more Insta360 creator clips');
+      },
+      prevInstaVideoSlide: () => {
+        try {
+          const sc = document.getElementById('instaVideoBentoRail') || document.getElementById('instaVideoBentoRail2');
+          if (sc) sc.scrollBy({ left: -300, behavior: 'smooth' });
+        } catch (_) {}
+      }
     };
   }
 }

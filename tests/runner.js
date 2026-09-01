@@ -37,6 +37,7 @@ const notificationPreferencesTest = require('./unit/notification_preferences.tes
 const purchaseHistoryTest = require('./unit/purchase_history.test');
 const accountDashboardTest = require('./unit/account_dashboard.test');
 const authenticatedUiTest = require('./unit/authenticated_ui.test');
+const categoryTaxonomyTest = require('./unit/category_taxonomy.test');
 
 const suites = [
   // Foundation Suites
@@ -68,7 +69,10 @@ const suites = [
   { name: 'Notification Preferences (04.09)', test: notificationPreferencesTest.run },
   { name: 'Purchase History & Orders (04.06)', test: purchaseHistoryTest.run },
   { name: 'Account Dashboard Read Model (04.02)', test: accountDashboardTest.run },
-  { name: 'Authenticated UI & Get Started State', test: authenticatedUiTest.run }
+  { name: 'Authenticated UI & Get Started State', test: authenticatedUiTest.run },
+
+  // Phase Discovery & Category Taxonomy Suite
+  { name: 'All Categories & Commerce Taxonomy Discovery', test: categoryTaxonomyTest.run }
 ];
 
 async function main() {

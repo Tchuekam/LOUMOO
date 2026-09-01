@@ -41,9 +41,11 @@ function loadEsmDataset(relativeFilePath, exportName) {
 const products = loadEsmDataset('src/data/products.js', 'products') || {};
 const categories = loadEsmDataset('src/data/categories.js', 'categories') || [];
 const curatedBrands = loadEsmDataset('src/data/categories.js', 'curatedBrands') || [];
+const commerceDomains = loadEsmDataset('src/data/categories.js', 'commerceDomains') || [];
 
 module.exports = {
   products,
   categories,
-  curatedBrands
+  curatedBrands,
+  commerceDomains
 };
