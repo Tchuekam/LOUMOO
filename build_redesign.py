@@ -339,6 +339,23 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   display: flex; flex-direction: column; background: var(--color-bg);
   overflow: hidden; flex: 1; position: relative;
 }
+/*
+ * Desktop side panels (Account Settings, Account Hub, …) are rendered as bare
+ * children of .outer-wrap, which is height:100dvh + overflow:hidden. They had
+ * no scroll container of their own, so anything past the fold was simply
+ * clipped and unreachable — on a 720px-tall window the "SIGN OUT OF LOUMOO"
+ * button sits at y=1177 and could not be clicked at all.
+ *
+ * .sidebar-nav and .device-frame already manage their own scrolling and are
+ * excluded so their internal layout is untouched.
+ */
+.outer-wrap > div:not(.device-frame):not(.sidebar-nav),
+.outer-wrap > section:not(.device-frame):not(.sidebar-nav) {
+  max-height: 100dvh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
 .scr {
   flex: 1; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth; padding-bottom: calc(76px + env(safe-area-inset-bottom, 16px));
@@ -2213,22 +2230,16 @@ footer_and_scripts = """
 <div class="video-player-backdrop" onClick="{{ closeVideoModal }}">
   <div class="video-player-dialog" onClick="{{ (e) => e && e.stopPropagation && e.stopPropagation() }}">
     <div style="position:relative;aspect-ratio:16/9;background:#000;display:flex;align-items:center;justify-content:center;overflow:hidden">
-      <div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 50%, rgba(0, 122, 255, 0.3) 0%, #05070d 85%)"></div>
-      <div style="text-align:center;position:relative;z-index:2;padding:20px">
-        <div style="width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,0.25);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;border:2px solid rgba(255,255,255,0.7);box-shadow:0 8px 30px rgba(0,0,0,0.5)">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="#ffffff" style="margin-left:3px"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-        </div>
-        <div style="font:800 22px/1.2 var(--font-heading);letter-spacing:-.02em;color:#fff">{{ videoModalTitle }}</div>
-        <div style="font:500 13px/1.4 var(--font-body);color:rgba(255,255,255,0.75);margin-top:6px">{{ videoModalSubtitle }}</div>
-      </div>
+      <video src="{{ videoModalUrl }}" autoplay controls playsinline style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0"></video>
       <button onClick="{{ closeVideoModal }}" aria-label="Close video" style="position:absolute;top:14px;right:14px;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,0.65);border:1px solid rgba(255,255,255,0.3);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:10;font-size:14px">✕</button>
     </div>
     <div style="padding:16px 22px;display:flex;align-items:center;justify-content:space-between;background:#141720;border-top:1px solid rgba(255,255,255,0.08)">
-      <div>
+      <div style="flex:1;min-width:0;margin-right:12px">
         <span style="font:800 9.5px/1 var(--font-heading);letter-spacing:.12em;color:var(--color-accent);text-transform:uppercase">{{ videoModalTag }}</span>
-        <div style="font:500 12.5px/1.3 var(--font-body);color:#cbd1db;margin-top:4px">Shot in 8K 360° · Stabilized FlowState · Invisible Selfie Stick</div>
+        <div style="font:800 16px/1.2 var(--font-heading);letter-spacing:-.02em;color:#fff;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ videoModalTitle }}</div>
+        <div style="font:500 12px/1.3 var(--font-body);color:#cbd1db;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ videoModalSubtitle }}</div>
       </div>
-      <button onClick="{{ quickExploreInsta360 }}" class="btn btn-primary" style="height:38px;padding:0 18px;font-size:12.5px">EXPLORE PRODUCT</button>
+      <button onClick="{{ quickExploreInsta360 }}" class="btn btn-primary" style="height:38px;padding:0 18px;font-size:12.5px;flex-shrink:0">EXPLORE PRODUCT</button>
     </div>
   </div>
 </div>
@@ -2351,6 +2362,598 @@ function getClerk() {
   return null;
 }
 
+const PRODUCTS_DATA = {
+  'insta360_x4': {
+    id: 'insta360_x4',
+    title: 'Insta360 X4 8K 360° Waterproof Action Camera',
+    brand: 'Insta360',
+    category: 'electronics',
+    categoryLabel: 'Smart Action Cameras',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Same-Day Express Courier',
+    badge: 'FLAGSHIP 8K',
+    rating: '4.9',
+    reviewCount: 142,
+    soldCount: 85,
+    price: 'XAF 495 000',
+    salePrice: 'XAF 540 000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Douala, Akwa',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=800&q=85',
+    images: [
+      'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=800&q=85',
+      'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=800&q=85',
+      'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?auto=format&fit=crop&w=800&q=85'
+    ],
+    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-surfer-riding-a-wave-in-the-sea-1224-large.mp4',
+    attributes: [
+      { key: 'Resolution', val: '8K 360° Video @ 30fps / 5.7K @ 60fps' },
+      { key: 'Stabilization', val: 'FlowState 6-Axis Gimbal + 360° Horizon Lock' },
+      { key: 'Waterproof', val: '10m (33ft) Native Waterproofing without Case' },
+      { key: 'Battery', val: '2290 mAh Extended Cell (135 min runtime)' },
+      { key: 'Audio', val: '4-Mic Directional Wind Reduction Audio Matrix' },
+      { key: 'Display', val: '2.5” Ultra-Bright Corning Gorilla Glass Touchscreen' }
+    ],
+    description: 'The revolutionary Insta360 X4 brings cinema-grade 8K 360-degree capture to your pocket. Featuring the all-new 5nm AI processing chip, FlowState stabilization, and invisible selfie stick algorithm for third-person drone-like perspectives. Native waterproofing up to 10 meters and 135 minutes battery endurance make it the ultimate gear for extreme sports, creator vlogs, and cinematic travel in Cameroon.'
+  },
+  'iphone_15_pro': {
+    id: 'iphone_15_pro',
+    title: 'Apple iPhone 15 Pro Max 256GB — Natural Titanium',
+    brand: 'Apple',
+    category: 'smartphones',
+    categoryLabel: 'Smartphones & Flagships',
+    conditionLabel: 'Brand New · 1 Year Apple Warranty',
+    fulfillmentLabel: 'Same-Day Express Courier',
+    badge: 'APPLE OFFICIAL',
+    rating: '5.0',
+    reviewCount: 328,
+    soldCount: 210,
+    price: 'XAF 890 000',
+    salePrice: 'XAF 950 000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Douala, Akwa Commercial',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=800&q=85',
+    images: [
+      'https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=800&q=85',
+      'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?auto=format&fit=crop&w=800&q=85',
+      'https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?auto=format&fit=crop&w=800&q=85'
+    ],
+    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
+    attributes: [
+      { key: 'Processor', val: 'Apple A17 Pro (3nm Pro GPU)' },
+      { key: 'Camera', val: '48MP Main + 5x Optical Periscope Telephoto' },
+      { key: 'Display', val: '6.7” Super Retina XDR 120Hz ProMotion OLED' },
+      { key: 'Build', val: 'Aerospace-Grade Grade 5 Titanium Chassis' },
+      { key: 'Port', val: 'USB-C (USB 3 Speeds up to 10Gbps)' },
+      { key: 'Storage', val: '256GB NVMe High-Speed Flash' }
+    ],
+    description: 'Forged in titanium with the industry-leading A17 Pro chip. Features a customizable Action Button, next-generation portraits with focus and depth control, and 5x optical telephoto zoom. Comes sealed in box with 1-year official Apple international warranty and Loumoo Escrow guarantee.'
+  },
+  'macbook_m2': {
+    id: 'macbook_m2',
+    title: 'Apple MacBook Air 13” M2 (Space Grey) — 8GB / 256GB SSD',
+    brand: 'Apple',
+    category: 'laptops',
+    categoryLabel: 'Laptops & Workstations',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Same-Day Express Delivery',
+    badge: 'BESTSELLER',
+    rating: '4.9',
+    reviewCount: 94,
+    soldCount: 62,
+    price: 'XAF 745 000',
+    salePrice: 'XAF 820 000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Douala, Akwa',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=85',
+    images: [
+      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=85',
+      'https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?auto=format&fit=crop&w=800&q=85',
+      'https://images.unsplash.com/photo-1541807084-5c52b6b3adef?auto=format&fit=crop&w=800&q=85'
+    ],
+    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
+    attributes: [
+      { key: 'Chipset', val: 'Apple M2 (8-core CPU / 8-core GPU)' },
+      { key: 'Unified Memory', val: '8GB High-Bandwidth Unified RAM' },
+      { key: 'Storage', val: '256GB High-Speed NVMe SSD' },
+      { key: 'Display', val: '13.6” Liquid Retina 500 nits True Tone' },
+      { key: 'Battery', val: 'Up to 18 Hours All-Day Battery Life' },
+      { key: 'Weight', val: '1.24 kg Featherlight Aluminium' }
+    ],
+    description: 'Redesigned around the next-generation M2 chip, the MacBook Air combines incredible speed and up to 18 hours of battery life inside an ultra-thin aluminium enclosure. Includes MagSafe 3 charging port, 1080p FaceTime HD camera, and Spatial Audio sound system.'
+  },
+  'sony_xm5': {
+    id: 'sony_xm5',
+    title: 'Sony WH-1000XM5 Wireless Noise-Canceling Headphones',
+    brand: 'Sony',
+    category: 'audio',
+    categoryLabel: 'Pro Audio & Headphones',
+    conditionLabel: 'Brand New · Factory Sealed',
+    fulfillmentLabel: 'Instant Akwa Pickup or Courier',
+    badge: 'TOP AUDIO',
+    rating: '4.8',
+    reviewCount: 76,
+    soldCount: 48,
+    price: 'XAF 189 000',
+    salePrice: 'XAF 215 000',
+    storeName: 'Digital Corner Bonapriso',
+    storeCity: 'Douala, Bonapriso',
+    storeRating: '4.8',
+    storeVerified: true,
+    coverImage: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=85',
+    images: [
+      'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=85',
+      'https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&w=800&q=85',
+      'https://images.unsplash.com/photo-1484704849700-f032a568e944?auto=format&fit=crop&w=800&q=85'
+    ],
+    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
+    attributes: [
+      { key: 'Noise Canceling', val: 'Auto NC Optimizer with 8 Microphones & 2 Processors' },
+      { key: 'Driver Unit', val: '30mm Carbon Fiber Specially Engineered Driver' },
+      { key: 'Battery Life', val: '30 Hours with ANC On (3 min charge = 3 hrs)' },
+      { key: 'Connectivity', val: 'Bluetooth 5.2 Multipoint (2 Devices Simultaneous)' },
+      { key: 'Codecs', val: 'LDAC, AAC, SBC with Hi-Res Wireless Audio' }
+    ],
+    description: 'Industry-leading noise cancellation with two processors and 8 microphones. Enjoy ultra-clear hands-free calling and magnificent high-resolution sound quality engineered with precision carbon fiber dome drivers.'
+  },
+  'apple_watch_s9': {
+    id: 'apple_watch_s9',
+    title: 'Apple Watch Series 9 GPS 45mm — Midnight Aluminum',
+    brand: 'Apple',
+    category: 'wearables',
+    categoryLabel: 'Smartwatches & Fitness',
+    conditionLabel: 'Brand New · 1 Year Apple Warranty',
+    fulfillmentLabel: 'Same-Day Express Courier',
+    badge: 'VERIFIED',
+    rating: '4.9',
+    reviewCount: 112,
+    soldCount: 78,
+    price: 'XAF 325 000',
+    salePrice: 'XAF 360 000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Douala, Akwa',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: 'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=800&q=85',
+    images: [
+      'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=800&q=85',
+      'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=85'
+    ],
+    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
+    attributes: [
+      { key: 'Processor', val: 'Apple S9 SiP (64-bit Dual Core + 4-core Neural Engine)' },
+      { key: 'Gesture', val: 'Double Tap Touchless Gesture Control' },
+      { key: 'Display', val: 'Always-On Retina OLED (up to 2000 nits brightness)' },
+      { key: 'Sensors', val: 'ECG, Blood Oxygen, Temperature Sensor, Fall Detection' }
+    ],
+    description: 'Smarter, brighter, and mightier. Powered by the S9 SiP with a magical new double-tap gesture and a display that reaches up to 2000 nits — twice as bright as Series 8.'
+  },
+  'nike_air_force_1': {
+    id: 'nike_air_force_1',
+    title: 'Nike Air Force 1 ‘07 Triple White Classic Edition',
+    brand: 'Nike',
+    category: 'fashion',
+    categoryLabel: 'Sneakers & Streetwear',
+    conditionLabel: 'Brand New · Original Box',
+    fulfillmentLabel: 'Express Delivery across Cameroon',
+    badge: 'ICONIC',
+    rating: '4.8',
+    reviewCount: 240,
+    soldCount: 190,
+    price: 'XAF 65 000',
+    salePrice: 'XAF 75 000',
+    storeName: 'Urban Kicks Bonamoussadi',
+    storeCity: 'Douala, Bonamoussadi',
+    storeRating: '4.8',
+    storeVerified: true,
+    coverImage: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=800&q=85',
+    images: [
+      'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=800&q=85',
+      'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=85'
+    ],
+    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
+    attributes: [
+      { key: 'Material', val: '100% Genuine Full-Grain Leather Upper' },
+      { key: 'Cushioning', val: 'Encapsulated Nike Air-Sole Cushioning Unit' },
+      { key: 'Outsole', val: 'Non-Marking Solid Rubber Traction Tread' }
+    ],
+    description: 'The radiance lives on in the Nike Air Force 1 07, the basketball icon that puts a fresh spin on what you know best: crisp leather, bold colors, and the perfect amount of flash.'
+  },
+  'galaxy_s24_ultra': {
+    id: 'galaxy_s24_ultra',
+    title: 'Samsung Galaxy S24 Ultra 5G 512GB (Titanium Gray)',
+    brand: 'Samsung',
+    category: 'smartphones',
+    categoryLabel: 'Smartphones & Flagships',
+    conditionLabel: 'Brand New · 2 Year Samsung Warranty',
+    fulfillmentLabel: 'Same-Day Express Courier',
+    badge: 'GALAXY AI',
+    rating: '4.9',
+    reviewCount: 165,
+    soldCount: 95,
+    price: 'XAF 820 000',
+    salePrice: 'XAF 890 000',
+    storeName: 'Mboppi Mobile Hub',
+    storeCity: 'Douala, Mboppi',
+    storeRating: '4.7',
+    storeVerified: true,
+    coverImage: 'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=800&q=85',
+    images: [
+      'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=800&q=85',
+      'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=800&q=85'
+    ],
+    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
+    attributes: [
+      { key: 'Processor', val: 'Snapdragon 8 Gen 3 for Galaxy (4nm)' },
+      { key: 'Camera', val: '200MP Quad Tele System with ProVisual AI' },
+      { key: 'Stylus', val: 'Embedded S Pen with Ultra-Low Latency' },
+      { key: 'Display', val: '6.8” Dynamic AMOLED 2X 120Hz Corning Armor (2600 nits)' }
+    ],
+    description: 'Unleash new levels of creativity and productivity with Galaxy AI. Built with a sturdy titanium frame and flat 6.8-inch display, accompanied by the iconic built-in S Pen.'
+  },
+  'ps5_slim': {
+    id: 'ps5_slim',
+    title: 'Sony PlayStation 5 Slim 1TB Disc Edition + DualSense Controller',
+    brand: 'Sony PlayStation',
+    category: 'gaming',
+    categoryLabel: 'Gaming Consoles',
+    conditionLabel: 'Brand New · Factory Sealed',
+    fulfillmentLabel: 'Same-Day Express Courier',
+    badge: 'PLAYSTATION 5',
+    rating: '4.9',
+    reviewCount: 88,
+    soldCount: 54,
+    price: 'XAF 380 000',
+    salePrice: 'XAF 420 000',
+    storeName: 'Digital Corner Bonapriso',
+    storeCity: 'Douala, Bonapriso',
+    storeRating: '4.8',
+    storeVerified: true,
+    coverImage: 'https://images.unsplash.com/photo-1606813907291-d86efa9b94db?auto=format&fit=crop&w=800&q=85',
+    images: [
+      'https://images.unsplash.com/photo-1606813907291-d86efa9b94db?auto=format&fit=crop&w=800&q=85',
+      'https://images.unsplash.com/photo-1592840496073-b50c590b979e?auto=format&fit=crop&w=800&q=85'
+    ],
+    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
+    attributes: [
+      { key: 'Storage', val: '1TB Ultra-Fast Custom NVMe SSD' },
+      { key: 'Graphics', val: 'Custom AMD RDNA 2 GPU with Ray Tracing (4K 120Hz)' },
+      { key: 'Controller', val: 'DualSense Wireless Controller with Haptic Feedback' }
+    ],
+    description: 'Experience lightning-fast loading with an ultra-high speed SSD, deeper immersion with support for haptic feedback, adaptive triggers, and 3D Audio, and an all-new generation of incredible PlayStation games.'
+  },
+  'rolex_submariner': {
+    id: 'rolex_submariner',
+    title: 'Rolex Submariner Date 41mm Oystersteel — Black Ceramic Bezel',
+    brand: 'Rolex',
+    category: 'fashion',
+    categoryLabel: 'Luxury Watches & Horology',
+    conditionLabel: 'Mint Condition · Box & Papers Included',
+    fulfillmentLabel: 'Insured Escrow Hand Delivery',
+    badge: 'CERTIFIED LUXURY',
+    rating: '5.0',
+    reviewCount: 31,
+    soldCount: 14,
+    price: 'XAF 7 850 000',
+    salePrice: '',
+    storeName: 'Geneva Horlogerie Akwa',
+    storeCity: 'Douala, Akwa',
+    storeRating: '5.0',
+    storeVerified: true,
+    coverImage: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=800&q=85',
+    images: [
+      'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=800&q=85',
+      'https://images.unsplash.com/photo-1547996160-71dfabb1c4f5?auto=format&fit=crop&w=800&q=85'
+    ],
+    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
+    attributes: [
+      { key: 'Movement', val: 'Calibre 3235 Perpetual Mechanical Self-Winding' },
+      { key: 'Case Diameter', val: '41mm Oystersteel with Cerachrom Ceramic Bezel' },
+      { key: 'Water Resistance', val: 'Waterproof to 300 meters (1000 feet)' }
+    ],
+    description: 'The benchmark among divers watches. Features the unidirectional rotatable Cerachrom bezel and solid-link Oyster bracelet with Glidelock extension system. Authenticity verified and backed by Loumoo Diamond Escrow.'
+  },
+  'bazin_boubou': {
+    id: 'bazin_boubou',
+    title: 'Royal Bazin Riche Grand Boubou — Hand-Embroidered Gold Thread',
+    brand: 'Maison du Bazin',
+    category: 'fashion',
+    categoryLabel: 'African Couture & Heritage',
+    conditionLabel: 'Brand New · Haute Couture',
+    fulfillmentLabel: 'Custom Tailored & Express Courier',
+    badge: 'HANDCRAFTED',
+    rating: '4.9',
+    reviewCount: 52,
+    soldCount: 37,
+    price: 'XAF 125 000',
+    salePrice: 'XAF 145 000',
+    storeName: 'Maison du Bazin & Soie',
+    storeCity: 'Yaoundé, Bastos',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=800&q=85',
+    images: [
+      'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=800&q=85',
+      'https://images.unsplash.com/photo-1576995853123-5a10305d93c0?auto=format&fit=crop&w=800&q=85'
+    ],
+    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
+    attributes: [
+      { key: 'Fabric', val: '100% Genuine Getzner Superior Cotton Damask' },
+      { key: 'Embroidery', val: 'Intricate Geometric Gold Metallic Thread' },
+      { key: 'Set Includes', val: '3 Pieces: Grand Boubou, Matching Tunic & Trousers' }
+    ],
+    description: 'Exquisite Cameroonian and West African formal ceremonial attire. Crafted from premium Getzner Bazin Riche with authentic wax shine and meticulous artisanal embroidery.'
+  },
+  'anker_737': {
+    id: 'anker_737',
+    title: 'Anker 737 Power Bank (PowerCore 24K) 140W Fast Charger',
+    brand: 'Anker',
+    category: 'electronics',
+    categoryLabel: 'Power Banks & Charging',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Same-Day Express Courier',
+    badge: 'POWER DELIVERY',
+    rating: '4.8',
+    reviewCount: 68,
+    soldCount: 42,
+    price: 'XAF 62 000',
+    salePrice: 'XAF 72 000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Douala, Akwa',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: 'https://images.unsplash.com/photo-1609592424364-704337b51b3f?auto=format&fit=crop&w=800&q=85',
+    images: [
+      'https://images.unsplash.com/photo-1609592424364-704337b51b3f?auto=format&fit=crop&w=800&q=85',
+      'https://images.unsplash.com/photo-1585338107529-13afc5f02586?auto=format&fit=crop&w=800&q=85'
+    ],
+    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
+    attributes: [
+      { key: 'Capacity', val: '24,000 mAh Ultra-High Capacity' },
+      { key: 'Output Power', val: '140W Two-Way High-Speed Fast Charging' },
+      { key: 'Display', val: 'Smart Digital Color Display with Output Telemetry' }
+    ],
+    description: 'Equipped with Power Delivery 3.1 and bi-directional technology to quickly recharge the portable charger or get a 140W ultra-powerful charge for MacBook Pro, iPhone, or Samsung Galaxy.'
+  },
+  'insta360_ace_pro_2': {
+    id: 'insta360_ace_pro_2',
+    title: 'Insta360 Ace Pro 2 — Co-Engineered with Leica 8K Action Camera',
+    brand: 'Insta360',
+    category: 'electronics',
+    categoryLabel: 'Smart Action Cameras',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Same-Day Express Courier',
+    badge: 'LEICA 8K AI',
+    rating: '5.0',
+    reviewCount: 98,
+    soldCount: 64,
+    price: 'XAF 445 000',
+    salePrice: 'XAF 490 000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Douala, Akwa',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: 'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?auto=format&fit=crop&w=800&q=85',
+    images: [
+      'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?auto=format&fit=crop&w=800&q=85',
+      'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=800&q=85',
+      'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=800&q=85'
+    ],
+    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-clouds-from-an-airplane-window-4186-large.mp4',
+    attributes: [
+      { key: 'Optics', val: 'Leica SUMMARIT Lens (1/1.3” Flagship Sensor)' },
+      { key: 'Resolution', val: '8K @ 30fps / 4K @ 120fps Active HDR' },
+      { key: 'Processing', val: 'Dual AI Chips (5nm Imaging + Pro AI Engine)' },
+      { key: 'Display', val: '2.5” Flip Touchscreen with Magnetic Quick Release' },
+      { key: 'Waterproofing', val: '12m (39ft) Native Waterproofing' },
+      { key: 'Audio', val: 'Integrated Wind Guard & Dual Directional Mics' }
+    ],
+    description: 'Co-engineered with Leica, the Insta360 Ace Pro 2 delivers groundbreaking low-light performance and 8K clarity with dedicated dual AI processing chips. Includes 2.5” flip touchscreen for precision vlogging and magnetic mounting system.'
+  },
+  'insta360_go_3s': {
+    id: 'insta360_go_3s',
+    title: 'Insta360 GO 3S 4K Tiny Thumb Action Camera (128GB)',
+    brand: 'Insta360',
+    category: 'electronics',
+    categoryLabel: 'Smart Action Cameras',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Same-Day Express Courier',
+    badge: '4K TINY CAM',
+    rating: '4.9',
+    reviewCount: 74,
+    soldCount: 51,
+    price: 'XAF 325 000',
+    salePrice: 'XAF 360 000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Douala, Akwa',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&w=800&q=85',
+    images: [
+      'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&w=800&q=85',
+      'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=800&q=85'
+    ],
+    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-waterfall-in-forest-2213-large.mp4',
+    attributes: [
+      { key: 'Weight', val: '39g Featherlight Thumb-Sized Body' },
+      { key: 'Resolution', val: '4K Ultra-Wide Hands-Free Video' },
+      { key: 'Action Pod', val: 'Multifunctional Hub with Remote Flip Screen' },
+      { key: 'Mounting', val: 'Magnetic Pendant, Easy Clip & Pivot Stand Included' },
+      { key: 'Apple Find My', val: 'Native Integration with Apple Find My Network' }
+    ],
+    description: 'The world’s smallest 4K action camera. Weighing just 39 grams, GO 3S can be mounted magnetically anywhere on your chest, hat, or bike for effortless first-person POV storytelling.'
+  },
+  'insta360_flow_pro': {
+    id: 'insta360_flow_pro',
+    title: 'Insta360 Flow Pro — AI Tracking Smartphone Gimbal with Apple DockKit',
+    brand: 'Insta360',
+    category: 'electronics',
+    categoryLabel: 'Smart Gimbals & Accessories',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Same-Day Express Courier',
+    badge: 'APPLE DOCKKIT',
+    rating: '4.9',
+    reviewCount: 62,
+    soldCount: 45,
+    price: 'XAF 149 000',
+    salePrice: 'XAF 175 000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Douala, Akwa',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: 'https://images.unsplash.com/photo-1589492477829-5e65395b66cc?auto=format&fit=crop&w=800&q=85',
+    images: [
+      'https://images.unsplash.com/photo-1589492477829-5e65395b66cc?auto=format&fit=crop&w=800&q=85',
+      'https://images.unsplash.com/photo-1609592424364-704337b51b3f?auto=format&fit=crop&w=800&q=85'
+    ],
+    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
+    attributes: [
+      { key: 'Tracking', val: 'Deep Track 3.0 AI + 360° Infinite Pan Tracking' },
+      { key: 'DockKit', val: 'Native Apple DockKit Tracking across 200+ iOS Camera Apps' },
+      { key: 'Stabilization', val: '3-Axis Mechanical Gimbal Stabilization' },
+      { key: 'Design', val: 'Built-in Selfie Stick (215mm) & Tripod Legs' }
+    ],
+    description: 'The first AI tracking smartphone stabilizer enabled with Apple DockKit. Seamless 360-degree subject tracking directly in the native iPhone Camera app, FaceTime, Zoom, and TikTok.'
+  },
+  'apple_watch_ultra_2': {
+    id: 'apple_watch_ultra_2',
+    title: 'Apple Watch Ultra 2 GPS + Cellular 49mm Titanium Case (Orange Ocean Band)',
+    brand: 'Apple',
+    category: 'wearables',
+    categoryLabel: 'Smartwatches & Fitness',
+    conditionLabel: 'Brand New · 1 Year Apple Warranty',
+    fulfillmentLabel: 'Same-Day Express Courier',
+    badge: 'ULTRA 2 TITANIUM',
+    rating: '5.0',
+    reviewCount: 156,
+    soldCount: 88,
+    price: 'XAF 545 000',
+    salePrice: 'XAF 590 000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Douala, Akwa',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=85',
+    images: [
+      'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=85',
+      'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=800&q=85'
+    ],
+    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-snowy-mountain-peaks-in-a-sunny-day-41680-large.mp4',
+    attributes: [
+      { key: 'Case', val: '49mm Aerospace-Grade Titanium (IP6X & 100m Water)' },
+      { key: 'Display', val: 'Always-On Retina Display (3000 nits Peak Brightness)' },
+      { key: 'Processor', val: 'Apple S9 SiP with On-Device Siri & Double Tap' },
+      { key: 'Battery', val: 'Up to 36 Hours Normal Use / 72 Hours Low Power' },
+      { key: 'GPS', val: 'Precision Dual-Frequency L1 & L5 GPS' }
+    ],
+    description: 'The ultimate sports and adventure watch. Featuring a rugged 49mm titanium case, extra-long battery life, a 3000-nit display, and customizable Action button.'
+  },
+  'airpods_pro_2': {
+    id: 'airpods_pro_2',
+    title: 'Apple AirPods Pro (2nd Generation) with MagSafe Case (USB-C)',
+    brand: 'Apple',
+    category: 'audio',
+    categoryLabel: 'Pro Audio & Headphones',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Same-Day Express Delivery',
+    badge: 'H2 AUDIO',
+    rating: '4.9',
+    reviewCount: 280,
+    soldCount: 185,
+    price: 'XAF 185 000',
+    salePrice: 'XAF 210 000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Douala, Akwa',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: 'https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?auto=format&fit=crop&w=800&q=85',
+    images: [
+      'https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?auto=format&fit=crop&w=800&q=85',
+      'https://images.unsplash.com/photo-1583863788434-e58a36330cf0?auto=format&fit=crop&w=800&q=85'
+    ],
+    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
+    attributes: [
+      { key: 'Chip', val: 'Apple H2 Headphone Chip + U1 Case Chip' },
+      { key: 'Active Noise Cancellation', val: 'Up to 2x more Active Noise Cancellation' },
+      { key: 'Audio', val: 'Adaptive Audio, Transparency Mode & Personalized Spatial Audio' },
+      { key: 'Case', val: 'MagSafe Case with USB-C, Speaker & Lanyard Loop' },
+      { key: 'Battery', val: 'Up to 6 hours listening (30 hours with case)' }
+    ],
+    description: 'Powered by the Apple H2 chip. Features 2x more Active Noise Cancellation, Adaptive Audio that automatically tailors noise control to your environment, and USB-C MagSafe charging.'
+  },
+  'airpods_max': {
+    id: 'airpods_max',
+    title: 'Apple AirPods Max Wireless Over-Ear Headphones (Space Gray)',
+    brand: 'Apple',
+    category: 'audio',
+    categoryLabel: 'Pro Audio & Headphones',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Same-Day Express Delivery',
+    badge: 'SPATIAL AUDIO',
+    rating: '4.9',
+    reviewCount: 114,
+    soldCount: 68,
+    price: 'XAF 365 000',
+    salePrice: 'XAF 410 000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Douala, Akwa',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: 'https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&w=800&q=85',
+    images: [
+      'https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&w=800&q=85',
+      'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=85'
+    ],
+    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
+    attributes: [
+      { key: 'Driver', val: 'Apple-designed 40mm Dynamic Driver' },
+      { key: 'Acoustics', val: 'Dual Apple H1 Headphone Chips (10 Audio Cores each)' },
+      { key: 'Materials', val: 'Knit-Mesh Canopy & Anodized Aluminum Ear Cups' },
+      { key: 'Battery', val: 'Up to 20 Hours with Active Noise Cancellation' }
+    ],
+    description: 'A perfect balance of exhilarating high-fidelity audio and the effortless magic of AirPods. Custom acoustic design combined with advanced software for computational audio experiences.'
+  },
+  'ipad_pro_m4': {
+    id: 'ipad_pro_m4',
+    title: 'Apple iPad Pro 13” (M4 Chip) OLED Ultra Retina XDR (256GB, Space Black)',
+    brand: 'Apple',
+    category: 'electronics',
+    categoryLabel: 'Tablets & Pro Workstations',
+    conditionLabel: 'Brand New · 1 Year Apple Warranty',
+    fulfillmentLabel: 'Same-Day Express Courier',
+    badge: 'M4 OLED PRO',
+    rating: '5.0',
+    reviewCount: 88,
+    soldCount: 52,
+    price: 'XAF 980 000',
+    salePrice: 'XAF 1 050 000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Douala, Akwa',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?auto=format&fit=crop&w=800&q=85',
+    images: [
+      'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?auto=format&fit=crop&w=800&q=85',
+      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=85'
+    ],
+    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
+    attributes: [
+      { key: 'Processor', val: 'Apple M4 Chip (Next-Gen Neural Engine 38 TOPS)' },
+      { key: 'Display', val: '13” Tandem OLED Ultra Retina XDR (1000 nits full-screen / 1600 nits HDR)' },
+      { key: 'Thickness', val: '5.1mm Ultra-Thin Unibody' },
+      { key: 'Camera', val: '12MP Wide Camera with LiDAR Scanner & Landscape Front Camera' },
+      { key: 'Connectivity', val: 'Wi-Fi 6E + Thunderbolt / USB 4' }
+    ],
+    description: 'The thinnest Apple product ever made, packing outrageous performance into an impossibly thin and light design with the breakthrough Tandem OLED Ultra Retina XDR display and M4 silicon.'
+  }
+};
+
 class Component extends DCLogic {
   state = {
     screen: 'home', stack: [], cart: 2, vs: 2, toast: '', following: false, saved: false,
@@ -2429,12 +3032,15 @@ class Component extends DCLogic {
     emailVerifyCooldown: 0,
 
     userRole: 'buyer',
-    regFirstName: 'Rostand',
-    regLastName: 'Tchuekam',
-    regPhone: '690 12 34 56',
-    regEmail: 'rostand@loumoo.cm',
+    // Empty, not seeded. These were pre-filled with a real person's name,
+    // phone and email, which any signed-in account whose own fields were blank
+    // then displayed as its own.
+    regFirstName: '',
+    regLastName: '',
+    regPhone: '',
+    regEmail: '',
     regCity: 'douala',
-    regAddress: 'Boulevard de la Liberté, Akwa, Douala',
+    regAddress: '',
     regBusinessName: 'Orca Electronics Douala',
     regRccm: 'RC/DLA/2023/B/1842',
     legalForm: 'sarl',
@@ -2466,18 +3072,17 @@ class Component extends DCLogic {
     dashboard: null,
     dashboardLoading: false,
     dashboardError: '',
-    profileFormFirstName: 'Rostand',
-    profileFormLastName: 'Tchuekam',
+    profileFormFirstName: '',
+    profileFormLastName: '',
     profileFormCity: 'douala',
-    profileFormBusinessName: 'Orca Electronics Douala',
+    profileFormBusinessName: '',
     profileFormSellerType: 'pro',
     profileFormDirty: false,
     profileSaving: false,
     profileFormError: '',
-    addressesList: [
-      { id: 'addr_1', recipientName: 'Rostand Tchuekam', phoneNumber: '690 12 34 56', streetAddress: 'Boulevard de la Liberté, Akwa', city: 'Douala', region: 'Littoral', isDefault: true },
-      { id: 'addr_2', recipientName: 'Rostand Tchuekam (Office)', phoneNumber: '677 88 99 00', streetAddress: 'Immeuble CAA, Bastos', city: 'Yaoundé', region: 'Centre', isDefault: false }
-    ],
+    // Seeded with two of a real person's home/office addresses until now, which
+    // any account with no addresses of its own displayed as its own.
+    addressesList: [],
     addressesLoading: false,
     addressFormName: '',
     addressFormPhone: '',
@@ -2514,6 +3119,10 @@ class Component extends DCLogic {
       { id: 'act_3', title: 'Followed Store', description: 'Subscribed to Orca Electronics Douala flash stock notifications', createdAt: '22 Aug 2026, 18:40' }
     ],
     activityLoading: false,
+    // Seller identity, mirrored from GET /me/state. The store is the source of
+    // truth for every seller capability; nothing here is decided locally.
+    sellerStatus: 'NONE',
+    primaryStoreId: null,
     deleteAccountConfirmText: '',
     deleteAccountReason: 'not_using',
     deleteAccountBusy: false,
@@ -2613,19 +3222,24 @@ class Component extends DCLogic {
     newListingType: 'PHYSICAL_PRODUCT',
     newListingCategory: 'smartphones',
     newListingCategoryName: 'Smartphones & Electronics',
-    newListingTitle: 'Apple MacBook Air 13” M2 (Space Grey) — 8GB / 256GB SSD',
-    newListingPrice: '745 000',
-    attrBrand: 'Apple',
-    attrStorage: '256GB',
-    attrRam: '8GB',
-    attrColor: 'Space Grey',
+    // The listing wizard opened pre-filled with a complete fake product — title,
+    // price, brand, storage, RAM and colour for an Apple MacBook Air. A seller
+    // who clicked through published Apple's product as their own inventory,
+    // which is exactly how seven identical "MacBook Air M3" rows reached the
+    // live catalog. Every field a seller must own now starts empty.
+    newListingTitle: '',
+    newListingPrice: '',
+    attrBrand: '',
+    attrStorage: '',
+    attrRam: '',
+    attrColor: '',
     attrModel: '',
     listingFulfillmentModel: 'DELIVERY_OR_PICKUP',
-    previewListingTitle: 'Apple MacBook Air 13” M2 (Space Grey) — 8GB / 256GB SSD',
-    previewListingPriceFormatted: '745 000 XAF',
-    previewListingCondition: 'BRAND NEW · SEALED BOX',
-    previewListingStock: 14,
-    previewListingDescription: 'Brand new sealed in box with 12-month Apple warranty. 8GB Unified RAM, 256GB SSD, Space Grey color. Instant pickup in Douala Akwa or Express courier delivery across Cameroon.',
+    previewListingTitle: '',
+    previewListingPriceFormatted: '',
+    previewListingCondition: '',
+    previewListingStock: 0,
+    previewListingDescription: '',
     publishBusy: false,
 
     // ── Canonical Dynamic Product & Catalog State ──
@@ -2848,11 +3462,19 @@ class Component extends DCLogic {
       ? 'seller'
       : 'buyer';
 
+    // The server already answers "does this account have a boutique, and is it
+    // live" in `state.seller`. Nothing was reading it, so the client invented
+    // `accountState.hasStore` (never sent) and fell back to a hardcoded store
+    // id. Project the real values once, here, and let every screen read them.
+    const seller = state.seller || {};
+
     this.setState({
       isLoggedIn: true,
       authStatus: 'authenticated',
       sessionUser: user,
       accountState: state.state,
+      sellerStatus: seller.status || 'NONE',
+      primaryStoreId: seller.storeId || user.primaryStoreId || null,
       capabilities: state.capabilities || {},
       serverOnboarding: state.onboarding || null,
       phoneVerificationAvailable: Boolean(state.contact && state.contact.phoneVerificationAvailable),
@@ -2884,6 +3506,8 @@ class Component extends DCLogic {
       authStatus: 'anonymous',
       sessionUser: null,
       accountState: null,
+      sellerStatus: 'NONE',
+      primaryStoreId: null,
       capabilities: {},
       serverOnboarding: null,
       userRole: 'buyer',
@@ -3358,11 +3982,29 @@ class Component extends DCLogic {
   }
 
   /**
-   * Opens and dynamically hydrates a real product listing from PostgreSQL.
+   * Opens and dynamically hydrates a real product listing from PostgreSQL or curated registry.
    */
   openProduct(productId) {
+    this.loadProductDetails(productId);
+  }
+
+  loadProductDetails(productId) {
     if (!productId) {
       this.go('product');
+      return;
+    }
+    const curated = typeof PRODUCTS_DATA !== 'undefined' && PRODUCTS_DATA[productId];
+    if (curated) {
+      this.setState({
+        screen: 'product',
+        currentProductId: productId,
+        currentProduct: curated,
+        productLoading: false,
+        productNotFound: false,
+        productError: '',
+        currentProductActiveImage: curated.coverImage || (curated.images && curated.images[0]) || null,
+        toast: ''
+      });
       return;
     }
     const api = getApi();
@@ -3377,7 +4019,7 @@ class Component extends DCLogic {
       toast: ''
     });
     if (!api) {
-      this.setState({ productLoading: false, productError: 'LOUMOO is unreachable right now.' });
+      this.setState({ productLoading: false, productNotFound: true });
       return;
     }
     api.getProduct(productId)
@@ -3606,12 +4248,36 @@ class Component extends DCLogic {
         this.go('signIn');
         return;
       }
-      const hasStore = this.state.store || (this.state.accountState && (this.state.accountState.hasStore || this.state.accountState.state === 'SELLER_READY' || this.state.accountState.state === 'STORE_ACTIVE' || this.state.accountState.state === 'STORE_PENDING'));
-      if (!hasStore) {
+      /*
+       * Sell never asks what kind of seller you are. That question belongs to
+       * store creation and is answered once, by the store's category.
+       *
+       * The previous gate tested `accountState.hasStore` and the states
+       * 'STORE_ACTIVE' / 'STORE_PENDING'. None of those exist: `accountState`
+       * holds a STRING, and the server's states are ACCOUNT_READY /
+       * SELLER_VERIFICATION_REQUIRED / SELLER_READY. The expression therefore
+       * collapsed to `this.state.store`, which nothing ever assigned — so every
+       * Sell click, for every seller, was sent back to store creation.
+       *
+       * Three real cases, decided from the server's own answer:
+       */
+      const storeId = this.state.primaryStoreId;
+
+      if (!storeId) {
+        // No boutique yet — this is the ONE moment seller type is asked.
         this.toast('Create your Boutique to start publishing listings across Cameroon');
         this.go('createStore');
         return;
       }
+
+      if (!this.state.capabilities.canCreateListing) {
+        // The boutique exists but is not activated yet. Resume its onboarding
+        // instead of asking them to create a second one.
+        this.toast('Finish activating your boutique to publish listings');
+        this.go('storeOnboarding');
+        return;
+      }
+
       this.go('upload');
     };
     on.upload = handleSellClick;
@@ -4303,29 +4969,39 @@ class Component extends DCLogic {
         if (!file) return;
         const api = getApi();
         this.setState({ docUploading: true, docUploadError: '' });
+
+        // No offline branch. It used to wait 600ms and then declare the
+        // document "encrypted and attached for verification" without a single
+        // byte leaving the browser — the user believed their CNI was submitted.
         if (!api) {
-          setTimeout(() => {
-            this.setState({
-              docUploading: false,
-              docUploaded: true,
-              docFileName: file.name,
-              docFileSize: (file.size / (1024 * 1024)).toFixed(1) + ' MB'
-            });
-            this.toast('Document encrypted and attached for verification');
-          }, 600);
+          this.setState({
+            docUploading: false,
+            docUploadError: 'LOUMOO is unreachable, so your document was not uploaded. Try again once you are online.'
+          });
           return;
         }
         api.uploadVerificationDocument(file, 'cni_front').then(res => {
           if (!this._unmounted) {
+            const data = (res && res.data) || res || {};
+            if (!data.uploadId) {
+              this.setState({
+                docUploading: false,
+                docUploaded: false,
+                docUploadError: 'The upload did not complete. Please try again.'
+              });
+              return;
+            }
             this.setState({
               docUploading: false,
               docUploaded: true,
               docFileName: file.name,
               docFileSize: (file.size / (1024 * 1024)).toFixed(1) + ' MB',
-              docUploadId: res && res.data && res.data.uploadId,
-              docUploadUrl: res && res.data && res.data.url
+              docUploadId: data.uploadId,
+              docUploadUrl: data.url
             });
-            this.toast('Document verified and safely encrypted');
+            // Uploaded is not verified. Saying "verified" told the user a
+            // review had already happened and passed.
+            this.toast('Document uploaded securely — pending review');
           }
         }).catch(err => {
           if (!this._unmounted) {
@@ -4341,28 +5017,38 @@ class Component extends DCLogic {
         if (!file) return;
         const api = getApi();
         this.setState({ verDocUploading: true, verDocUploadError: '' });
+
         if (!api) {
-          setTimeout(() => {
-            this.setState({
-              verDocUploading: false,
-              verDocUploaded: true,
-              verDocAttached: true,
-              verDocFileName: file.name
-            });
-            this.toast('Business verification document attached');
-          }, 600);
+          this.setState({
+            verDocUploading: false,
+            verDocUploadError: 'LOUMOO is unreachable, so your document was not uploaded. Try again once you are online.'
+          });
           return;
         }
         api.uploadVerificationDocument(file, 'rccm').then(res => {
           if (!this._unmounted) {
+            const data = (res && res.data) || res || {};
+            if (!data.uploadId) {
+              this.setState({
+                verDocUploading: false,
+                verDocUploaded: false,
+                verDocAttached: false,
+                verDocUploadError: 'The upload did not complete. Please try again.'
+              });
+              return;
+            }
             this.setState({
               verDocUploading: false,
               verDocUploaded: true,
               verDocAttached: true,
               verDocFileName: file.name,
-              verDocFrontUrl: res && res.data && res.data.url
+              // Carried into submitStoreVerificationDocs as cniFrontUrl; the
+              // previous key `verDocFrontUrl` was written but never read, so the
+              // document never reached the verification record.
+              verDocUploadUrl: data.url,
+              verDocFrontUrl: data.url
             });
-            this.toast('Legal document encrypted and staged for review');
+            this.toast('Legal document uploaded securely — pending review');
           }
         }).catch(err => {
           if (!this._unmounted) {
@@ -4377,14 +5063,6 @@ class Component extends DCLogic {
       docUploadError: this.state.docUploadError || '',
       docFileName: this.state.docFileName || '',
       docFileSize: this.state.docFileSize || '',
-      simulateUploadDoc: () => {
-        this.setState({ docUploaded: true, docFileName: 'CNI_Scanned_Document.pdf', docFileSize: '1.8 MB' });
-        this.toast('Document attached for verification');
-      },
-      simulateVerDocAttach: () => {
-        this.setState({ verDocAttached: true, verDocUploaded: true, verDocFileName: 'RCCM_Certificate.pdf' });
-        this.toast('Store verification document attached');
-      },
       verDocUploading: Boolean(this.state.verDocUploading),
       verDocUploadError: this.state.verDocUploadError || '',
       verDocFileName: this.state.verDocFileName || '',
@@ -4829,18 +5507,21 @@ class Component extends DCLogic {
       // B1. Account Dashboard
       dashboard: this.state.dashboard || {
         profile: {
-          name: (this.state.regFirstName || 'Rostand') + ' ' + (this.state.regLastName || 'Tchuekam'),
-          email: this.state.regEmail || 'rostand@loumoo.cm',
-          isPhoneVerified: true,
-          isEmailVerified: true,
-          completionPercentage: 85,
+          // Real values only. This block previously hardcoded a name, an email
+          // and isEmailVerified/isPhoneVerified: true, so an unverified account
+          // was shown its own dashboard saying it was fully verified.
+          name: ((this.state.regFirstName || '') + ' ' + (this.state.regLastName || '')).trim(),
+          email: this.state.regEmail || '',
+          isPhoneVerified: Boolean(this.state.phoneVerified),
+          isEmailVerified: this.state.emailVerifyState === 'verified',
+          completionPercentage: score,
           missingSetup: []
         },
         counts: {
           activeDeliveries: 1,
           savedItems: 34,
           followedStores: (this.state.followedStoresList ? this.state.followedStoresList.length : 2),
-          addresses: (this.state.addressesList ? this.state.addressesList.length : 2)
+          addresses: (this.state.addressesList ? this.state.addressesList.length : 0)
         },
         escrowProtection: { enabled: true, badge: 'Escrow Protected Account' },
         defaultAddress: this.state.addressesList && this.state.addressesList.find(a => a.isDefault) || null,
@@ -4852,7 +5533,7 @@ class Component extends DCLogic {
       dashboardCompletionWidth: '85%',
       dashboardHasMissingSetup: false,
       dashboardDisputeLabel: 'Escrow protection is active on all your MoMo & OM orders',
-      dashboardDefaultAddressLine: this.state.addressesList && this.state.addressesList[0] ? this.state.addressesList[0].streetAddress + ', ' + this.state.addressesList[0].city : 'Boulevard de la Liberté, Akwa, Douala',
+      dashboardDefaultAddressLine: this.state.addressesList && this.state.addressesList[0] ? this.state.addressesList[0].streetAddress + ', ' + this.state.addressesList[0].city : 'No delivery address yet',
       dashboardHasActivity: (this.state.activityList && this.state.activityList.length > 0),
 
       openAccountDashboard: () => {
@@ -4950,7 +5631,9 @@ class Component extends DCLogic {
         if (api) {
           this.setState({ addressesLoading: true });
           api.getAddresses().then(list => {
-            if (!this._unmounted && list && list.length) this.setState({ addressesList: list, addressesLoading: false });
+            // `list.length` was required before, so an account with zero
+            // addresses kept whatever was already on screen.
+            if (!this._unmounted && Array.isArray(list)) this.setState({ addressesList: list, addressesLoading: false });
             else if (!this._unmounted) this.setState({ addressesLoading: false });
           }).catch(() => { if (!this._unmounted) this.setState({ addressesLoading: false }); });
         }
@@ -5075,11 +5758,16 @@ class Component extends DCLogic {
           this.toast('Notification preferences saved');
           this.go('settings');
         };
-        if (!api) { setTimeout(done, 400); return; }
+        const fail = (msg) => {
+          if (this._unmounted) return;
+          this.setState({ notifSaving: false });
+          this.toast(msg);
+        };
+        if (!api) { fail('LOUMOO is unreachable. Your preferences were not saved.'); return; }
         api.updateNotificationPreferences({
           channels: { inApp: this.state.notifInApp, email: this.state.notifEmail, push: this.state.notifPush },
           categories: { orders: this.state.notifOrders, followedStores: this.state.notifFollowed, promotions: this.state.notifPromos }
-        }).then(done).catch(done);
+        }).then(done).catch(err => fail((err && err.message) || 'Could not save your notification preferences.'));
       },
 
       // B5. Privacy & Consent
@@ -5113,12 +5801,17 @@ class Component extends DCLogic {
           this.toast('Privacy preferences updated');
           this.go('settings');
         };
-        if (!api) { setTimeout(done, 400); return; }
+        const fail = (msg) => {
+          if (this._unmounted) return;
+          this.setState({ privacySaving: false });
+          this.toast(msg);
+        };
+        if (!api) { fail('LOUMOO is unreachable. Your privacy settings were not saved.'); return; }
         api.updatePrivacy({
           personalization: this.state.privacyPersonalization,
           analytics: this.state.privacyAnalytics,
           marketing: this.state.privacyMarketing
-        }).then(done).catch(done);
+        }).then(done).catch(err => fail((err && err.message) || 'Could not save your privacy settings.'));
       },
 
       // B6. Security & Sessions
@@ -5287,7 +5980,7 @@ class Component extends DCLogic {
         this.go('storeAnalytics');
         const api = getApi();
         if (api) {
-          api.getStoreAnalytics('store_orca_electronics', this.state.analyticsPeriod).then(r => {
+          api.getStoreAnalytics(this.state.primaryStoreId, this.state.analyticsPeriod).then(r => {
             if (r && r.data && r.data.summary && !this._unmounted) {
               this.setState({
                 analyticsRevenueFormatted: r.data.summary.totalRevenueFormatted || this.state.analyticsRevenueFormatted,
@@ -5358,27 +6051,51 @@ class Component extends DCLogic {
       updateVerBusinessType: (e) => this.setState({ verBusinessType: e && e.target ? e.target.value : e }),
       updateVerRccm: (e) => this.setState({ verRccm: e && e.target ? e.target.value : e }),
       updateVerNiu: (e) => this.setState({ verNiu: e && e.target ? e.target.value : e }),
-      simulateVerDocAttach: () => {
-        this.setState({ verDocAttached: true });
-        this.toast('2 Documents Attached (CNI Front & Back)');
-      },
+      verSubmitting: Boolean(this.state.verSubmitting),
+      verSubmitError: this.state.verSubmitError || '',
       submitStoreVerificationDocs: () => {
         const api = getApi();
-        const storeId = (this.state.store && this.state.store.id) || (this.state.userProfile && this.state.userProfile.primaryStoreId) || 'store_orca_electronics';
-        const done = () => {
-          this.setState({ storeVerificationStatusLabel: 'SUBMITTED' });
-          this.toast('Verification documents submitted for official review!');
-          this.go('storeOnboarding');
+        const storeId = this.state.primaryStoreId;
+        if (this.state.verSubmitting) return;
+
+        // Previously `.then(done).catch(done)`: a rejected request reported
+        // "submitted for official review!" and navigated away. A seller could
+        // wait indefinitely for a review of a document the server never got.
+        const fail = (msg) => {
+          if (this._unmounted) return;
+          this.setState({ verSubmitting: false, verSubmitError: msg });
+          this.toast(msg);
         };
-        if (!api) { setTimeout(done, 500); return; }
+
+        if (!storeId) {
+          fail('Create your boutique before submitting verification documents.');
+          return;
+        }
+        if (!this.state.verDocUploadUrl && !this.state.docUploadUrl) {
+          fail('Attach your CNI or RCCM document before submitting.');
+          return;
+        }
+        if (!api) {
+          fail('LOUMOO is unreachable. Check your connection and try again.');
+          return;
+        }
+
+        this.setState({ verSubmitting: true, verSubmitError: '' });
         api.submitStoreVerification(storeId, {
-          legalBusinessName: this.state.verLegalName || this.state.regBusinessName || 'LOUMOO Merchant',
+          legalBusinessName: this.state.verLegalName || this.state.regBusinessName || '',
           businessType: this.state.verBusinessType || 'individual',
           rccmNumber: this.state.verRccm || null,
           taxIdNiu: this.state.verNiu || null,
           representativeIdType: 'cni',
           cniFrontUrl: this.state.verDocUploadUrl || this.state.docUploadUrl || null
-        }).then(done).catch(done);
+        }).then(() => {
+          if (this._unmounted) return;
+          this.setState({ verSubmitting: false, storeVerificationStatusLabel: 'SUBMITTED' });
+          this.toast('Verification documents submitted for official review');
+          this.go('storeOnboarding');
+        }).catch(err => {
+          fail((err && err.message) || 'Could not submit your documents. Please try again.');
+        });
       },
       analyticsPeriod: this.state.analyticsPeriod,
       analyticsRevenueFormatted: this.state.analyticsRevenueFormatted,
@@ -5403,18 +6120,39 @@ class Component extends DCLogic {
       updateStoreCloseTime: (e) => this.setState({ storeCloseTime: e && e.target ? e.target.value : e }),
       updateStoreLocationStreet: (e) => this.setState({ storeLocationStreet: e && e.target ? e.target.value : e }),
       updateStoreLocationLandmark: (e) => this.setState({ storeLocationLandmark: e && e.target ? e.target.value : e }),
+      storeSettingsSaving: Boolean(this.state.storeSettingsSaving),
+      storeSettingsError: this.state.storeSettingsError || '',
       saveStoreSettingsAll: () => {
         const api = getApi();
-        const done = () => {
+        const storeId = this.state.primaryStoreId;
+        if (this.state.storeSettingsSaving) return;
+
+        // Every one of these three calls used to address the literal id
+        // 'store_orca_electronics', so a real seller's settings were written to
+        // a store that is not theirs (404 in practice) — and `.catch(done)`
+        // then reported "saved successfully". Nothing was ever saved.
+        const fail = (msg) => {
+          if (this._unmounted) return;
+          this.setState({ storeSettingsSaving: false, storeSettingsError: msg });
+          this.toast(msg);
+        };
+
+        if (!storeId) { fail('No boutique found on your account.'); return; }
+        if (!api) { fail('LOUMOO is unreachable. Check your connection and try again.'); return; }
+
+        this.setState({ storeSettingsSaving: true, storeSettingsError: '' });
+        Promise.all([
+          api.updateStoreProfile(storeId, { tagline: this.state.storeTagline, warrantyPolicy: this.state.storeWarrantyPolicy }),
+          api.updateStoreHours(storeId, { schedule: { open: this.state.storeOpenTime, close: this.state.storeCloseTime } }),
+          api.updateStoreLocation(storeId, { streetAddress: this.state.storeLocationStreet, landmark: this.state.storeLocationLandmark })
+        ]).then(() => {
+          if (this._unmounted) return;
+          this.setState({ storeSettingsSaving: false });
           this.toast('All store settings saved successfully');
           this.go('storeOnboarding');
-        };
-        if (!api) { setTimeout(done, 400); return; }
-        Promise.all([
-          api.updateStoreProfile('store_orca_electronics', { tagline: this.state.storeTagline, warrantyPolicy: this.state.storeWarrantyPolicy }),
-          api.updateStoreHours('store_orca_electronics', { schedule: { open: this.state.storeOpenTime, close: this.state.storeCloseTime } }),
-          api.updateStoreLocation('store_orca_electronics', { streetAddress: this.state.storeLocationStreet, landmark: this.state.storeLocationLandmark })
-        ]).then(done).catch(done);
+        }).catch(err => {
+          fail((err && err.message) || 'Could not save your store settings. Please try again.');
+        });
       },
 
       // ── Stores & Brands Discovery / Storefront Getters & Actions ──
@@ -5576,7 +6314,7 @@ class Component extends DCLogic {
       updateListingFulfillmentModel: (e) => this.setState({ listingFulfillmentModel: e && e.target ? e.target.value : e }),
       proceedToPricing: () => this.go('uploadPrice'),
       openListingPreview: () => this.go('listingPreview'),
-      previewListingTitle: this.state.previewListingTitle,
+      previewListingTitle: this.state.previewListingTitle || this.state.newListingTitle || '',
       previewListingPriceFormatted: this.state.previewListingPriceFormatted,
       previewListingCondition: this.state.previewListingCondition,
       previewListingStock: this.state.previewListingStock,
@@ -5753,7 +6491,14 @@ class Component extends DCLogic {
             });
           });
       },
-      userName: this.props.userName ?? this.state.userName ?? 'Tchuekam',
+      // The greeting is the AUTHENTICATED user's name. It used to fall back to
+      // the literal 'Tchuekam', so every LOUMOO account was greeted by another
+      // real person's name — and a signed-out visitor saw a name too.
+      userName: (this.state.sessionUser
+        && (this.state.sessionUser.firstName
+          || (this.state.sessionUser.fullName || '').split(' ')[0]))
+        || this.state.regFirstName
+        || '',
       showAds: this.props.showAds ?? true,
       cartCount: this.state.cart,
       cartLabel: (this.state.qty + 1) + ' items · 2 sellers',
@@ -5938,17 +6683,60 @@ class Component extends DCLogic {
       setHeroSlide1: () => this.setState({ heroSlide: 1 }),
       setHeroSlide2: () => this.setState({ heroSlide: 2 }),
 
+      // ── Dynamic PDP Product Details Bindings ──
+      currentProduct: this.state.currentProduct,
+      productLoading: this.state.productLoading,
+      productNotFound: this.state.productNotFound,
+      productError: this.state.productError,
+      currentProductActiveImage: this.state.currentProductActiveImage,
+      selectProductImage: (img) => this.selectProductImage(img),
+      retryLoadProduct: () => this.loadProductDetails(this.state.currentProductId),
+      openProduct: (id) => this.openProduct(id),
+      loadProductDetails: (id) => this.loadProductDetails(id),
+      
+      currentProductTitle: (this.state.currentProduct && (this.state.currentProduct.title || this.state.currentProduct.name)) || 'Apple MacBook Air 13” M2',
+      currentProductBrand: (this.state.currentProduct && this.state.currentProduct.brand) || 'Apple',
+      currentProductCategoryLabel: (this.state.currentProduct && (this.state.currentProduct.categoryLabel || this.state.currentProduct.category)) || 'Smartphones & Electronics',
+      currentProductConditionLabel: (this.state.currentProduct && this.state.currentProduct.conditionLabel) || 'Brand New · Sealed Box',
+      currentProductFulfillmentLabel: (this.state.currentProduct && this.state.currentProduct.fulfillmentLabel) || 'Same-Day Express Courier',
+      currentProductBadge: (this.state.currentProduct && this.state.currentProduct.badge) || 'VERIFIED BOUTIQUE',
+      currentProductRating: (this.state.currentProduct && this.state.currentProduct.rating) || '4.9',
+      currentProductReviewCount: (this.state.currentProduct && this.state.currentProduct.reviewCount) || 128,
+      currentProductSoldCount: (this.state.currentProduct && this.state.currentProduct.soldCount) || 84,
+      currentProductPrice: (this.state.currentProduct && (this.state.currentProduct.priceFormatted || this.state.currentProduct.price)) || 'XAF 745 000',
+      currentProductSalePrice: (this.state.currentProduct && this.state.currentProduct.salePrice) || '',
+      currentProductImages: (this.state.currentProduct && (this.state.currentProduct.images || (this.state.currentProduct.media && this.state.currentProduct.media.map(m => m.url)))) || [
+        'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=85',
+        'https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?auto=format&fit=crop&w=800&q=85',
+        'https://images.unsplash.com/photo-1541807084-5c52b6b3adef?auto=format&fit=crop&w=800&q=85'
+      ],
+      currentProductAttributesList: (this.state.currentProduct && this.state.currentProduct.attributes) || [
+        { key: 'Brand', val: 'Apple' },
+        { key: 'Processor', val: 'Apple M2 (8-core CPU)' },
+        { key: 'Storage', val: '256GB High-Speed SSD' },
+        { key: 'RAM', val: '8GB Unified Memory' },
+        { key: 'Warranty', val: '12-Month Official Apple' }
+      ],
+      currentProductDescription: (this.state.currentProduct && this.state.currentProduct.description) || 'Brand new sealed in box with 12-month Apple warranty. Instant pickup in Douala Akwa or express delivery across Cameroon.',
+      productStoreName: (this.state.currentProduct && this.state.currentProduct.storeName) || 'Orca Electronics Douala',
+      productStoreCity: (this.state.currentProduct && this.state.currentProduct.storeCity) || 'Douala, Akwa',
+      productStoreRating: (this.state.currentProduct && this.state.currentProduct.storeRating) || '4.9',
+      productStoreVerified: (this.state.currentProduct && this.state.currentProduct.storeVerified !== undefined) ? this.state.currentProduct.storeVerified : true,
+
+      // ── Video Modal Player State & Actions ──
       hasActiveVideoModal: Boolean(this.state.activeVideoModal),
       videoModalTitle: this.state.activeVideoModal ? this.state.activeVideoModal.title : '',
       videoModalSubtitle: this.state.activeVideoModal ? this.state.activeVideoModal.subtitle : '',
       videoModalTag: this.state.activeVideoModal ? this.state.activeVideoModal.tag : '',
-      openVideoModal: (title, subtitle, tag) => {
-        this.setState({ activeVideoModal: { title: title || 'Insta360 Cinematic Action', subtitle: subtitle || 'Shot on Insta360 X4 in 8K 360°', tag: tag || 'INSTA360 8K' } });
+      videoModalUrl: this.state.activeVideoModal ? this.state.activeVideoModal.url || 'https://assets.mixkit.co/videos/preview/mixkit-surfer-riding-a-wave-in-the-sea-1224-large.mp4' : '',
+      openVideoModal: (title, subtitle, tag, url) => {
+        this.setState({ activeVideoModal: { title: title || 'Insta360 Cinematic Action', subtitle: subtitle || 'Shot on Insta360 X4 in 8K 360°', tag: tag || 'INSTA360 8K', url: url || 'https://assets.mixkit.co/videos/preview/mixkit-surfer-riding-a-wave-in-the-sea-1224-large.mp4' } });
       },
       closeVideoModal: () => this.setState({ activeVideoModal: null }),
       quickExploreInsta360: () => {
+        const prodId = (this.state.activeVideoModal && this.state.activeVideoModal.tag && this.state.activeVideoModal.tag.includes('ACE')) ? 'insta360_x4' : 'insta360_x4';
         this.setState({ activeVideoModal: null });
-        this.go('product');
+        this.openProduct(prodId);
         this.toast('Viewing Insta360 X4 Flagship Edition');
       },
       nextInstaVideoSlide: () => {

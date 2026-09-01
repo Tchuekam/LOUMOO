@@ -205,10 +205,15 @@ const config = {
  * warning: running without them would mean running without authentication.
  */
 const PRODUCTION_REQUIRED = [
-  ['CLERK_SECRET_KEY', config.clerk.secretKey, 'Session verification is impossible without it.'],
-  ['CLERK_PUBLISHABLE_KEY', config.clerk.publishableKey, 'Required to resolve the Clerk frontend API and validate token issuers.'],
+  // Sessions are LOUMOO-issued HS256 JWTs verified in
+  // SupabaseIdentityProvider. Without this secret the server cannot verify a
+  // session at all, and an earlier revision fell back to a hardcoded value
+  // that is public in this repository — every account forgeable. It is
+  // therefore the single most important production credential.
+  ['SUPABASE_JWT_SECRET', config.supabase.jwtSecret, 'Session tokens cannot be signed or verified without it.'],
   ['SUPABASE_URL', config.supabase.url, 'No database means no authoritative account state.'],
-  ['SUPABASE_SERVICE_ROLE_KEY', config.supabase.serviceRoleKey, 'The API cannot read or write account state without it.']
+  ['SUPABASE_SERVICE_ROLE_KEY', config.supabase.serviceRoleKey, 'The API cannot read or write account state without it.'],
+  ['SUPABASE_ANON_KEY', config.supabase.anonKey, 'Password sign-in calls Supabase Auth through the public client.']
 ];
 
 /**
@@ -220,7 +225,12 @@ const PRODUCTION_REQUIRED = [
 const PRODUCTION_WARNINGS = [
   ['CLERK_WEBHOOK_SECRET', config.clerk.webhookSecret,
     'Missing. The /api/v1/webhooks/clerk endpoint answers 503 WEBHOOK_NOT_CONFIGURED ' +
-    'until the Svix signing secret is configured — identity events are NOT processed.']
+    'until the Svix signing secret is configured — identity events are NOT processed.'],
+  // Clerk no longer authenticates anyone: authGuard verifies Supabase/LOUMOO
+  // session tokens. These stay as warnings (the webhook and legacy adapters
+  // still read them) but must not block a boot that is otherwise secure.
+  ['CLERK_SECRET_KEY', config.clerk.secretKey,
+    'Missing. Only the legacy Clerk webhook/identity adapter needs it; session verification does not.']
 ];
 
 /**

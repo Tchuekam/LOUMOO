@@ -57,11 +57,17 @@ class CatalogRepository {
     const limitNum = Math.min(100, Math.max(1, Number(limit) || 20));
     const offset = (pageNum - 1) * limitNum;
 
+    // `stores!inner(status)` + `.eq('stores.status','ACTIVE')` is an INNER JOIN:
+    // a listing is only merchandisable while the boutique behind it is live.
+    // Without it, products from DRAFT boutiques — stores that never completed
+    // activation and whose owner is not even SELLER_READY — were on sale in the
+    // public marketplace.
     let query = this.db
       .from('listings')
-      .select(CATALOG_SELECT_COLUMNS, { count: 'exact' })
+      .select(`${CATALOG_SELECT_COLUMNS}, stores!inner(status)`, { count: 'exact' })
       .eq('status', 'PUBLISHED')
       .eq('visibility', 'PUBLIC')
+      .eq('stores.status', 'ACTIVE')
       .is('deleted_at', null);
 
     if (storeId) {
@@ -85,20 +91,29 @@ class CatalogRepository {
     // Sort order
     switch (sortBy) {
       case 'price_asc':
-        query = query.order('base_price_minor', { ascending: true });
+        query = query.order('base_price_minor', { ascending: true, nullsFirst: false });
         break;
       case 'price_desc':
-        query = query.order('base_price_minor', { ascending: false });
+        query = query.order('base_price_minor', { ascending: false, nullsFirst: false });
         break;
       case 'popular':
-        query = query.order('order_count', { ascending: false }).order('view_count', { ascending: false });
+        query = query
+          .order('order_count', { ascending: false, nullsFirst: false })
+          .order('view_count', { ascending: false, nullsFirst: false });
         break;
       case 'rating':
-        query = query.order('rating', { ascending: false });
+        query = query.order('rating', { ascending: false, nullsFirst: false });
         break;
       case 'recent':
       default:
-        query = query.order('published_at', { ascending: false }).order('created_at', { ascending: false });
+        // `nullsFirst: false` is load-bearing, not a nicety. PostgreSQL sorts
+        // NULLs FIRST for DESC by default, so rows carrying status=PUBLISHED
+        // with a NULL published_at occupied the entire first page and buried
+        // every genuinely published listing — a seller published an item and
+        // never saw it appear in the marketplace.
+        query = query
+          .order('published_at', { ascending: false, nullsFirst: false })
+          .order('created_at', { ascending: false, nullsFirst: false });
         break;
     }
 
@@ -164,11 +179,15 @@ class CatalogRepository {
   static async findPublicProductByIdOrSlug(idOrSlug) {
     if (!idOrSlug) return null;
 
+    // Same rule as the listing query: a product detail page must not be
+    // reachable for a boutique that is not live, or the link would simply be a
+    // back door into what the catalog refuses to list.
     let query = this.db
       .from('listings')
-      .select(CATALOG_SELECT_COLUMNS)
+      .select(`${CATALOG_SELECT_COLUMNS}, stores!inner(status)`)
       .eq('status', 'PUBLISHED')
       .eq('visibility', 'PUBLIC')
+      .eq('stores.status', 'ACTIVE')
       .is('deleted_at', null);
 
     if (idOrSlug.startsWith('lst_') || idOrSlug.includes('-')) {

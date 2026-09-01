@@ -18,6 +18,82 @@ function signJwt(payload, secret, expiresInSeconds = 2592000) {
   return header + '.' + body + '.' + signature;
 }
 
+/**
+ * THE session secret. There is deliberately no fallback default: a hardcoded
+ * one lived in this file and in SupabaseIdentityProvider, which meant a
+ * deployment that forgot SUPABASE_JWT_SECRET signed its sessions with a value
+ * published in the repository — anyone could mint a token for any account.
+ * Failing loudly is the only safe behaviour.
+ */
+function sessionSecret() {
+  const secret = config.supabase.jwtSecret;
+  if (!secret) {
+    throw new InfrastructureError(
+      'Config',
+      'Authentication is unavailable: SUPABASE_JWT_SECRET is not configured.'
+    );
+  }
+  return secret;
+}
+
+/** The ONE place a LOUMOO session token is minted. */
+function issueSessionToken({ userId, email, firstName, lastName, phone, city }) {
+  return signJwt(
+    {
+      sub: userId,
+      email: email,
+      role: 'authenticated',
+      iss: 'supabase',
+      app_metadata: { provider: 'email', providers: ['email'] },
+      user_metadata: {
+        first_name: firstName || '',
+        last_name: lastName || '',
+        phone_number: phone || '',
+        city: city || ''
+      }
+    },
+    sessionSecret(),
+    30 * 86400
+  );
+}
+
+/**
+ * Finds a Supabase auth user by email across ALL pages.
+ *
+ * `listUsers()` returns only the first page (50 users). Once the project passed
+ * that many accounts, an existing user stopped being found, and the caller fell
+ * back to a synthetic `usr_<hex>` id — silently handing the user a brand-new
+ * empty identity instead of their own account.
+ */
+async function findAuthUserByEmail(admin, email) {
+  if (!admin || !admin.auth || !admin.auth.admin) return null;
+  const perPage = 200;
+  for (let page = 1; page <= 25; page++) {
+    const { data, error } = await admin.auth.admin.listUsers({ page, perPage });
+    if (error || !data || !data.users || data.users.length === 0) return null;
+    const hit = data.users.find(u => String(u.email || '').toLowerCase() === email);
+    if (hit) return hit;
+    if (data.users.length < perPage) return null;
+  }
+  return null;
+}
+
+/**
+ * Emits the verification code to the server log.
+ *
+ * ONLY outside production. This used to be an unconditional console.log, which
+ * wrote a live authentication credential into the production log stream for
+ * every signup — anyone with log access could sign in as any user.
+ */
+function logDevOtp(label, email, code) {
+  if (config.isProduction) return;
+  console.log(`
+=======================================================
+  LOUMOO ${label} FOR [${email}]: ${code}
+=======================================================
+`);
+}
+
 
 const { requireAuth } = require('../guards/authGuard');
 const AccountStateService = require('../../application/AccountStateService');
@@ -29,7 +105,7 @@ const AnalyticsService = require('../../../../infrastructure/analytics/Analytics
 const { sendEmail } = require('../../../../clients/resend');
 const config = require('../../../../config/env');
 const logger = require('../../../../shared/logging/logger');
-const { AuthenticationError, ValidationError } = require('../../../../shared/errors/AppError');
+const { AuthenticationError, ValidationError, InfrastructureError } = require('../../../../shared/errors/AppError');
 
 const OTP_NAMESPACE = 'auth_otp';
 const OTP_TTL_SECONDS = 900; // 15 minutes
@@ -168,8 +244,7 @@ router.post('/verify-otp', async (req, res, next) => {
     try {
       const admin = SupabaseDatabase.getAdmin();
       if (admin && admin.auth && admin.auth.admin) {
-        const { data: userData } = await admin.auth.admin.listUsers();
-        const existing = userData && userData.users ? userData.users.find(u => u.email === cleanEmail) : null;
+        const existing = await findAuthUserByEmail(admin, cleanEmail);
         if (existing) {
           userId = existing.id;
           await admin.auth.admin.updateUserById(existing.id, { email_confirm: true });
@@ -197,24 +272,14 @@ router.post('/verify-otp', async (req, res, next) => {
     }
 
     // Generate authenticated JWT session token
-    const jwtSecret = config.supabase.jwtSecret || 'loumoo-default-jwt-secret-key-2026';
-    const sessionToken = signJwt(
-      {
-        sub: userId,
-        email: cleanEmail,
-        role: 'authenticated',
-        iss: 'supabase',
-        app_metadata: { provider: 'email', providers: ['email'] },
-        user_metadata: {
-          first_name: cached.firstName,
-          last_name: cached.lastName,
-          phone_number: cached.phone,
-          city: cached.city
-        }
-      },
-      jwtSecret,
-      30 * 86400
-    );
+    const sessionToken = issueSessionToken({
+      userId,
+      email: cleanEmail,
+      firstName: cached.firstName,
+      lastName: cached.lastName,
+      phone: cached.phone,
+      city: cached.city
+    });
 
     // Provision or update profile in database
     const { profile } = await ProfileRepository.getOrCreateForClerkUser({
@@ -252,6 +317,106 @@ router.post('/verify-otp', async (req, res, next) => {
           lastName: cached.lastName
         },
         accountState: AccountStateService.toClientState(profile, accountState)
+      }
+    });
+  } catch (err) { next(err); }
+});
+
+/* ── Password Sign-In (returning users) ──────────────────────────── */
+/**
+ * POST /api/v1/auth/login
+ *
+ * The browser has always called this endpoint (src/services/clerkSession.js
+ * `signIn`), but it did not exist — every returning user got
+ * 404 ROUTE_NOT_FOUND rendered as "Sign in failed". Registration worked, so the
+ * defect only ever showed up on the SECOND visit.
+ *
+ * The password is verified by Supabase Auth, which owns the credential. LOUMOO
+ * never reads, stores or compares a password hash itself; on success it mints
+ * the same session token the OTP path issues, so there is exactly one session
+ * format in the system.
+ */
+router.post('/login', async (req, res, next) => {
+  try {
+    const { email, password } = req.body || {};
+    const cleanEmail = String(email || '').trim().toLowerCase();
+
+    if (!cleanEmail || !cleanEmail.includes('@')) {
+      throw new ValidationError('Enter the email address on your account.');
+    }
+    if (!password) {
+      throw new ValidationError('Enter your password.');
+    }
+
+    const publicClient = SupabaseDatabase.getPublic();
+    const { data, error } = await publicClient.auth.signInWithPassword({
+      email: cleanEmail,
+      password: String(password)
+    });
+
+    // Wrong password and unknown account return the SAME message on purpose:
+    // distinguishing them turns this endpoint into an account enumerator.
+    if (error || !data || !data.user) {
+      logger.warn(`[Auth] Failed sign-in for ${cleanEmail}: ${error ? error.message : 'no user'}`);
+      throw new AuthenticationError('That email or password is incorrect.');
+    }
+
+    const authUser = data.user;
+    const meta = authUser.user_metadata || {};
+
+    const { profile } = await ProfileRepository.getOrCreateForClerkUser({
+      clerkUserId: authUser.id,
+      email: cleanEmail,
+      firstName: meta.first_name || '',
+      lastName: meta.last_name || '',
+      phoneNumber: meta.phone_number || '',
+      city: meta.city || ''
+    });
+
+    // A deleted account must not be re-openable with credentials that still
+    // work at the identity provider.
+    if (profile.deleted_at || profile.account_status === 'anonymized') {
+      throw new AuthenticationError('This account has been deleted and cannot be accessed.');
+    }
+    if (profile.account_status === 'suspended' || profile.status === 'suspended') {
+      throw new AuthenticationError('This account has been suspended. Contact LOUMOO support.');
+    }
+
+    // Supabase confirmed the address at signup; mirror that once so the
+    // account state machine does not send a verified user back to /verify.
+    if (authUser.email_confirmed_at && !profile.email_verified_at) {
+      await ProfileRepository.update(profile.id, {
+        email_verified_at: authUser.email_confirmed_at
+      }, authUser.id);
+    }
+
+    const sessionToken = issueSessionToken({
+      userId: authUser.id,
+      email: cleanEmail,
+      firstName: meta.first_name,
+      lastName: meta.last_name,
+      phone: meta.phone_number,
+      city: meta.city
+    });
+
+    await ProfileRepository.recordLogin(profile.id, authUser.id);
+    const { principal, accountState } = await AccountStateService.resolve(authUser.id, { source: 'supabase' });
+
+    AnalyticsService.track(profile.id, 'auth_signed_in', { method: 'password' });
+    logger.info(`[Auth] ${cleanEmail} signed in (id=${authUser.id}, state=${accountState.state})`);
+
+    res.json({
+      status: 'success',
+      data: {
+        token: sessionToken,
+        accessToken: sessionToken,
+        user: {
+          id: authUser.id,
+          email: cleanEmail,
+          firstName: meta.first_name || '',
+          lastName: meta.last_name || ''
+        },
+        accountState: AccountStateService.toClientState(principal, accountState)
       }
     });
   } catch (err) { next(err); }

@@ -208,10 +208,30 @@ try {
     throw new Error(`Expected 'onboardVerify', got '${comp.state.screen}'`);
   }
   vals.setVerifyNow();
-  vals.simulateUploadDoc();
+
+  /*
+   * Regression guard for the faked verification upload.
+   *
+   * This test used to call `simulateUploadDoc()`, which set docUploaded=true
+   * and invented the filename 'CNI_Scanned_Document.pdf' without uploading
+   * anything. The test passed while the feature did not exist, which is exactly
+   * how the broken pipeline stayed hidden.
+   *
+   * The fake handlers are gone. What is asserted now is that (a) no simulation
+   * handler can come back, and (b) with no API reachable in this sandbox the
+   * real handler refuses to mark a document as attached and surfaces an error.
+   */
+  if (typeof vals.simulateUploadDoc === 'function' || typeof vals.simulateVerDocAttach === 'function') {
+    throw new Error('A simulated document-attach handler was reintroduced; verification must never be faked.');
+  }
+
+  vals.handleVerificationDocUpload({ target: { files: [{ name: 'cni.png', size: 240000 }] } });
   vals = comp.renderVals();
-  if (!comp.state.docUploaded) {
-    throw new Error("Expected docUploaded to be true!");
+  if (comp.state.docUploaded) {
+    throw new Error('Document reported as attached without a successful upload!');
+  }
+  if (!comp.state.docUploadError) {
+    throw new Error('Expected a visible upload error when the document could not be sent.');
   }
   vals.on.onboardReview();
   vals = comp.renderVals();
@@ -254,7 +274,8 @@ try {
   }
   vals.on.onboardVerify();
   vals = comp.renderVals();
-  vals.simulateUploadDoc();
+  // Verification is optional in this branch; the user proceeds to review
+  // without attaching a document (no simulated attach exists any more).
   vals.on.onboardReview();
   vals = comp.renderVals();
   if (comp.state.screen !== 'onboardReview') {

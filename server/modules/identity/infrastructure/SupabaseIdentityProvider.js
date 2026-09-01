@@ -34,17 +34,6 @@ function verifyJwt(token, secret) {
   }
 }
 
-function decodeJwt(token) {
-  if (!token || typeof token !== 'string') return null;
-  const parts = token.split('.');
-  if (parts.length !== 3) return null;
-  try {
-    return JSON.parse(Buffer.from(parts[1], 'base64url').toString('utf8'));
-  } catch (e) {
-    return null;
-  }
-}
-
 const TEST_TOKEN_PREFIX = 'loumoo_test:';
 
 class SupabaseIdentityProvider {
@@ -72,8 +61,15 @@ class SupabaseIdentityProvider {
       return { userId, email: `${userId}@test.loumoo.cm`, metadata: {}, source: 'test-harness' };
     }
 
-    // 1. Try local HMAC verification
-    const jwtSecret = config.supabase.jwtSecret || 'loumoo-default-jwt-secret-key-2026';
+    // 1. Local HMAC verification against the configured session secret.
+    //    There is deliberately no default secret: the previous fallback value
+    //    was committed to this repository, so any deployment missing
+    //    SUPABASE_JWT_SECRET accepted tokens anybody could forge.
+    const jwtSecret = config.supabase.jwtSecret;
+    if (!jwtSecret) {
+      logger.error('[Identity] SUPABASE_JWT_SECRET is not configured — no session can be verified.');
+      throw new AuthenticationError('Authentication is unavailable. Please try again later.');
+    }
     const verified = verifyJwt(token, jwtSecret);
     if (verified && verified.sub) {
       return {
@@ -100,18 +96,10 @@ class SupabaseIdentityProvider {
       } catch (e) {}
     }
 
-    // 3. Fallback: decode unverified token if in development
-    if (config.isDevelopment) {
-      const decoded = decodeJwt(token);
-      if (decoded && decoded.sub) {
-        return {
-          userId: decoded.sub,
-          email: decoded.email || '',
-          metadata: decoded.user_metadata || {},
-          source: 'supabase'
-        };
-      }
-    }
+    // There is deliberately NO third fallback. A previous revision decoded the
+    // token WITHOUT verifying its signature whenever NODE_ENV was
+    // 'development' — which is the mode this project actually runs in — so any
+    // hand-written JWT authenticated as any user id.
 
     throw new AuthenticationError('Session expired or invalid. Please sign in again.');
   }
