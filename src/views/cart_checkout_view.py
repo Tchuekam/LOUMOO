@@ -215,7 +215,7 @@ def get_checkout_view():
     </div>
 
     <!-- Final Pay CTA Button -->
-    <button onClick="{{ payNow }}" class="btn {{ st.pay.om.w === '2px' ? 'btn-om' : 'btn-momo' }} btn-block" style="height:52px;font-size:15px;letter-spacing:.02em">
+    <button onClick="{{ payNow }}" class="btn btn-block {{ st.pay.om.w === '2px' ? 'btn-om' : 'btn-momo' }}" style="height:52px;font-size:15px;letter-spacing:.02em">
       <span>{{ payLabel }}</span>
       <span>🔒</span>
     </button>

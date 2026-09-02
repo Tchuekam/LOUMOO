@@ -9,7 +9,7 @@ print("Screens found:", screens)
 
 defined_screens = [
     'home','search','filters','voice','category','bestpicks','freeday',
-    'notifications','chat','threadAi','threadSeller','product','sellers',
+    'notifications','chat','threadAi','threadSeller','product',
     'cart','checkout','paying','success','orders','store','business','brand',
     'vs','vsCompare','visual','visualScan','visualResults','upload',
     'uploadDetails','uploadPrice','uploadSuccess','myListings','travel',

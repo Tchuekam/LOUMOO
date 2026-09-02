@@ -251,7 +251,7 @@ def get_search_and_ai_view():
       </div>
       <div style="display:flex;gap:10px;margin-top:14px">
         <button onClick="{{ on.product }}" class="btn btn-primary" style="flex:1;height:40px;font-size:12.5px">VIEW PRODUCT DETAILS</button>
-        <button onClick="{{ on.sellers }}" class="btn btn-secondary" style="flex:1;height:40px;font-size:12.5px">COMPARE SELLERS</button>
+        <button onClick="{{ on.vs }}" class="btn btn-secondary" style="flex:1;height:40px;font-size:12.5px">COMPARE SELLERS</button>
       </div>
     </div>
 

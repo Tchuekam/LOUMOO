@@ -88,6 +88,8 @@ async function run() {
         CLERK_WEBHOOK_SECRET: '',
         SUPABASE_URL: '',
         SUPABASE_SERVICE_ROLE_KEY: '',
+        SUPABASE_ANON_KEY: '',
+        SUPABASE_JWT_SECRET: '',
         CORS_ORIGINS: '*'
       }
     );
@@ -98,8 +100,17 @@ async function run() {
 
   assert.ok(refused,
     'A production server missing its security credentials must refuse to start, not degrade silently');
-  assert.ok(message.includes('CLERK_SECRET_KEY'),
-    'The refusal must name the missing variables so the operator can fix it');
+  /*
+   * This asserted CLERK_SECRET_KEY, from when Clerk verified sessions. It no
+   * longer does — authGuard verifies LOUMOO/Supabase HS256 tokens signed with
+   * SUPABASE_JWT_SECRET, and that secret had NO production check at all while a
+   * hardcoded fallback value sat in the repository. Boot must now refuse over
+   * the credential that actually protects sessions.
+   */
+  assert.ok(message.includes('SUPABASE_JWT_SECRET'),
+    'The refusal must name the session-signing secret so the operator can fix it');
+  assert.ok(message.includes('SUPABASE_SERVICE_ROLE_KEY'),
+    'The refusal must name every missing security credential, not just the first');
   assert.ok(message.includes('CORS_ORIGINS'),
     'A wildcard CORS origin must be rejected in production');
 

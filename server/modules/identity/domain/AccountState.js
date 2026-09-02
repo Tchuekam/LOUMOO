@@ -196,6 +196,28 @@ function deriveAccountState(profile, options = {}) {
 
 function buildResult(state, profile, options) {
   const contact = contactRequirement(profile, options);
+  const storeId = (profile && profile.primaryStoreId) || null;
+
+  /*
+   * Where a blocked account is sent to make progress.
+   *
+   * SELLER_VERIFICATION_REQUIRED used to map to 'onboardSeller' - the
+   * "What type of seller are you?" screen. That question belongs to onboarding
+   * and is answered once. Sending a seller back to it every time they pressed
+   * Sell asked them to re-answer it for ever and gave them no route to a live
+   * store: the definition of the loop.
+   *
+   * The state means "you opted into selling, your boutique is not live yet",
+   * so the destination is the ONE store setup flow - create it if there is
+   * none, otherwise finish activating the one that exists.
+   */
+  let screen = STATE_SCREEN[state];
+  let destination = STATE_DESTINATION[state];
+  if (state === ACCOUNT_STATES.SELLER_VERIFICATION_REQUIRED) {
+    screen = storeId ? 'storeOnboarding' : 'createStore';
+    destination = storeId ? '/seller/onboarding' : '/seller/create-store';
+  }
+
   return {
     state,
     rank: STATE_RANK[state],
@@ -206,8 +228,8 @@ function buildResult(state, profile, options) {
       status: (profile && profile.sellerStatus) || SELLER_STATUS.NONE,
       storeId: (profile && profile.primaryStoreId) || null
     },
-    destination: STATE_DESTINATION[state],
-    screen: STATE_SCREEN[state]
+    destination,
+    screen
   };
 }
 

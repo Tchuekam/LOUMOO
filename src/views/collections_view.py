@@ -581,66 +581,11 @@ def get_collections_view():
           
           <!-- Electronics Product Grid -->
           <sc-if value="{{ isCategoryElectronics }}">
-            <!-- 1. Insta360 X4 8K 360 Camera -->
-            <sc-if value="{{ isSubcatAll || activeSubcategorySlug === 'cameras' || activeSubcategorySlug === 'gadgets' }}">
-              <button onClick="{{ () => openProduct('insta360_x4') }}" aria-label="View Insta360 X4 8K" style="background:none;border:none;text-align:left;cursor:pointer;padding:0">
-                <div style="position:relative;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc;display:flex;align-items:center;justify-content:center">
-                  <span class="badge-floating badge-sale">8K 360°</span>
-                  <img src="https://res.insta360.com/static/c212314bdffc00af1dd1bbb5a475846f/%E5%BC%80%E5%9C%BA%E5%8A%A8%E7%94%BB3480-2270_2%E5%80%8D_medium.jpg" alt="Insta360 X4 8K" style="max-width:85%;max-height:85%;object-fit:contain;transition:transform 0.3s ease">
-                </div>
-                <div style="padding:10px 4px 4px">
-                  <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Insta360 X4 8K</div>
-                  <div style="font:400 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:4px">Orca Electronics · Akwa</div>
-                  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:8px">
-                    <span style="font:800 14px/1 var(--font-heading);color:var(--color-accent)">XAF 495 000</span>
-                    <span style="font:700 11px/1 var(--font-heading);color:#eab308">★ 4.9</span>
-                  </div>
-                </div>
-              </button>
-            </sc-if>
-
-            <!-- 2. iPhone 15 Pro Max 256GB -->
-            <sc-if value="{{ isSubcatAll || activeSubcategorySlug === 'smartphones' }}">
-              <button onClick="{{ () => openProduct('iphone_15_pro') }}" aria-label="View iPhone 15 Pro Max" style="background:none;border:none;text-align:left;cursor:pointer;padding:0">
-                <div style="position:relative;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc;display:flex;align-items:center;justify-content:center">
-                  <span class="badge-floating badge-blue">TITANIUM</span>
-                  <img src="https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-15-pro-finish-select-202309-6-7inch-naturaltitanium?wid=600&hei=600&fmt=jpeg&qlt=90" alt="iPhone 15 Pro Max" style="max-width:85%;max-height:85%;object-fit:contain;transition:transform 0.3s ease">
-                </div>
-                <div style="padding:10px 4px 4px">
-                  <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">iPhone 15 Pro Max</div>
-                  <div style="font:400 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:4px">Orca Electronics · Akwa</div>
-                  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:8px">
-                    <span style="font:800 14px/1 var(--font-heading);color:var(--color-accent)">XAF 890 000</span>
-                    <span style="font:700 11px/1 var(--font-heading);color:#eab308">★ 5.0</span>
-                  </div>
-                </div>
-              </button>
-            </sc-if>
-
-            <!-- 3. Insta360 Ace Pro 2 Leica 8K -->
-            <sc-if value="{{ isSubcatAll || activeSubcategorySlug === 'cameras' || activeSubcategorySlug === 'gadgets' }}">
-              <button onClick="{{ () => openProduct('insta360_ace_pro_2') }}" aria-label="View Insta360 Ace Pro 2" style="background:none;border:none;text-align:left;cursor:pointer;padding:0">
-                <div style="position:relative;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc;display:flex;align-items:center;justify-content:center">
-                  <span class="badge-floating badge-sale">LEICA 8K</span>
-                  <img src="https://res.insta360.com/dynamic/store/388277be5c0d60dd43ca969c3a3c2605/2753_8b3a0e19-947b-4bb8-95ef-968e0d4212a4.png" alt="Insta360 Ace Pro 2" style="max-width:85%;max-height:85%;object-fit:contain;transition:transform 0.3s ease">
-                </div>
-                <div style="padding:10px 4px 4px">
-                  <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Insta360 Ace Pro 2</div>
-                  <div style="font:400 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:4px">Orca Electronics · Akwa</div>
-                  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:8px">
-                    <span style="font:800 14px/1 var(--font-heading);color:var(--color-accent)">XAF 445 000</span>
-                    <span style="font:700 11px/1 var(--font-heading);color:#eab308">★ 5.0</span>
-                  </div>
-                </div>
-              </button>
-            </sc-if>
-
-            <!-- 4. MacBook Air M2 13" -->
             <sc-if value="{{ isSubcatAll || activeSubcategorySlug === 'laptops' }}">
               <button onClick="{{ () => openProduct('macbook_m2') }}" aria-label="View MacBook Air M2" style="background:none;border:none;text-align:left;cursor:pointer;padding:0">
-                <div style="position:relative;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc;display:flex;align-items:center;justify-content:center">
+                <div style="position:relative;aspect-ratio:4/3;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
                   <span class="badge-floating badge-sale">-10%</span>
-                  <img src="https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/macbook-air-midnight-select-20220606?wid=600&hei=600&fmt=jpeg&qlt=90" alt="MacBook Air M2" style="max-width:85%;max-height:85%;object-fit:contain;transition:transform 0.3s ease">
+                  <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=600&q=85" alt="MacBook Air M2" style="width:100%;height:100%;object-fit:cover">
                 </div>
                 <div style="padding:10px 4px 4px">
                   <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">MacBook Air M2 13”</div>
@@ -653,107 +598,50 @@ def get_collections_view():
               </button>
             </sc-if>
 
-            <!-- 5. Apple Watch Ultra 2 -->
-            <sc-if value="{{ isSubcatAll || activeSubcategorySlug === 'wearables' }}">
-              <button onClick="{{ () => openProduct('apple_watch_ultra_2') }}" aria-label="View Apple Watch Ultra 2" style="background:none;border:none;text-align:left;cursor:pointer;padding:0">
-                <div style="position:relative;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc;display:flex;align-items:center;justify-content:center">
-                  <span class="badge-floating badge-new">ULTRA 2</span>
-                  <img src="https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/watch-ultra2-select-202409_GEO_US?wid=600&hei=600&fmt=jpeg&qlt=90" alt="Apple Watch Ultra 2" style="max-width:85%;max-height:85%;object-fit:contain;transition:transform 0.3s ease">
-                </div>
-                <div style="padding:10px 4px 4px">
-                  <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Apple Watch Ultra 2</div>
-                  <div style="font:400 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:4px">Orca Electronics · Akwa</div>
-                  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:8px">
-                    <span style="font:800 14px/1 var(--font-heading);color:var(--color-accent)">XAF 545 000</span>
-                    <span style="font:700 11px/1 var(--font-heading);color:#eab308">★ 5.0</span>
-                  </div>
-                </div>
-              </button>
-            </sc-if>
-
-            <!-- 6. Apple AirPods Pro 2 -->
-            <sc-if value="{{ isSubcatAll || activeSubcategorySlug === 'audio' }}">
-              <button onClick="{{ () => openProduct('airpods_pro_2') }}" aria-label="View AirPods Pro 2" style="background:none;border:none;text-align:left;cursor:pointer;padding:0">
-                <div style="position:relative;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc;display:flex;align-items:center;justify-content:center">
-                  <span class="badge-floating badge-blue">H2 PRO</span>
-                  <img src="https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/MTJV3?wid=600&hei=600&fmt=jpeg&qlt=90" alt="AirPods Pro 2" style="max-width:85%;max-height:85%;object-fit:contain;transition:transform 0.3s ease">
-                </div>
-                <div style="padding:10px 4px 4px">
-                  <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">AirPods Pro 2 USB-C</div>
-                  <div style="font:400 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:4px">Orca Electronics · Akwa</div>
-                  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:8px">
-                    <span style="font:800 14px/1 var(--font-heading);color:var(--color-accent)">XAF 185 000</span>
-                    <span style="font:700 11px/1 var(--font-heading);color:#eab308">★ 4.9</span>
-                  </div>
-                </div>
-              </button>
-            </sc-if>
-
-            <!-- 7. Insta360 Flow Pro (AI Gimbal) -->
-            <sc-if value="{{ isSubcatAll || activeSubcategorySlug === 'accessories' || activeSubcategorySlug === 'gadgets' }}">
-              <button onClick="{{ () => openProduct('insta360_flow_pro') }}" aria-label="View Insta360 Flow Pro" style="background:none;border:none;text-align:left;cursor:pointer;padding:0">
-                <div style="position:relative;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc;display:flex;align-items:center;justify-content:center">
-                  <span class="badge-floating badge-blue">DOCKKIT</span>
-                  <img src="https://res.insta360.com/dynamic/store/12626e6561dae2c85cd3c3d2c734965a/2673_42a14a33-fab1-43d1-b474-2df2cc617280.png" alt="Insta360 Flow Pro" style="max-width:85%;max-height:85%;object-fit:contain;transition:transform 0.3s ease">
-                </div>
-                <div style="padding:10px 4px 4px">
-                  <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Insta360 Flow Pro</div>
-                  <div style="font:400 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:4px">Orca Electronics · Akwa</div>
-                  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:8px">
-                    <span style="font:800 14px/1 var(--font-heading);color:var(--color-accent)">XAF 149 000</span>
-                    <span style="font:700 11px/1 var(--font-heading);color:#eab308">★ 4.9</span>
-                  </div>
-                </div>
-              </button>
-            </sc-if>
-
-            <!-- 8. Sony WH-1000XM5 -->
             <sc-if value="{{ isSubcatAll || activeSubcategorySlug === 'audio' }}">
               <button onClick="{{ () => openProduct('sony_xm5') }}" aria-label="View Sony WH-1000XM5" style="background:none;border:none;text-align:left;cursor:pointer;padding:0">
-                <div style="position:relative;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc;display:flex;align-items:center;justify-content:center">
+                <div style="position:relative;aspect-ratio:4/3;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
                   <span class="badge-floating badge-new">NEW</span>
-                  <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=85" alt="Sony WH-1000XM5" style="max-width:85%;max-height:85%;object-fit:contain;transition:transform 0.3s ease">
+                  <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=85" alt="Sony WH-1000XM5" style="width:100%;height:100%;object-fit:cover">
                 </div>
                 <div style="padding:10px 4px 4px">
                   <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Sony WH-1000XM5</div>
                   <div style="font:400 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:4px">Digital Corner · Bonapriso</div>
                   <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:8px">
                     <span style="font:800 14px/1 var(--font-heading);color:var(--color-accent)">XAF 189 000</span>
-                    <span style="font:700 11px/1 var(--font-heading);color:#eab308">★ 4.8</span>
+                    <span style="font:700 11px/1 var(--font-heading);color:#eab308">★ 4.7</span>
                   </div>
                 </div>
               </button>
             </sc-if>
 
-            <!-- 9. Samsung Galaxy S24 Ultra -->
             <sc-if value="{{ isSubcatAll || activeSubcategorySlug === 'smartphones' }}">
-              <button onClick="{{ () => openProduct('galaxy_s24_ultra') }}" aria-label="View Samsung Galaxy S24 Ultra" style="background:none;border:none;text-align:left;cursor:pointer;padding:0">
-                <div style="position:relative;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc;display:flex;align-items:center;justify-content:center">
-                  <img src="https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=600&q=85" alt="Samsung Galaxy S24 Ultra" style="max-width:85%;max-height:85%;object-fit:contain;transition:transform 0.3s ease">
+              <button onClick="{{ () => openProduct('galaxy_s24_ultra') }}" aria-label="View Samsung Galaxy A55" style="background:none;border:none;text-align:left;cursor:pointer;padding:0">
+                <div style="position:relative;aspect-ratio:4/3;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
+                  <img src="https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=600&q=85" alt="Samsung Galaxy A55 5G" style="width:100%;height:100%;object-fit:cover">
                 </div>
                 <div style="padding:10px 4px 4px">
-                  <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Galaxy S24 Ultra 512GB</div>
+                  <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Samsung Galaxy A55 5G</div>
                   <div style="font:400 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:4px">Mboppi Mobile · Douala</div>
                   <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:8px">
-                    <span style="font:800 14px/1 var(--font-heading);color:var(--color-accent)">XAF 820 000</span>
-                    <span style="font:700 11px/1 var(--font-heading);color:#eab308">★ 4.9</span>
+                    <span style="font:800 14px/1 var(--font-heading);color:var(--color-accent)">XAF 245 000</span>
+                    <span style="font:700 11px/1 var(--font-heading);color:#eab308">★ 4.4</span>
                   </div>
                 </div>
               </button>
             </sc-if>
 
-            <!-- 10. Anker 737 140W Power Bank -->
             <sc-if value="{{ isSubcatAll || activeSubcategorySlug === 'power_accessories' }}">
               <button onClick="{{ () => openProduct('anker_737') }}" aria-label="View Anker 737 Power Bank" style="background:none;border:none;text-align:left;cursor:pointer;padding:0">
-                <div style="position:relative;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc;display:flex;align-items:center;justify-content:center">
-                  <img src="https://images.unsplash.com/photo-1609592424364-704337b51b3f?auto=format&fit=crop&w=600&q=85" alt="Anker 737 Power Bank" style="max-width:85%;max-height:85%;object-fit:contain;transition:transform 0.3s ease">
+                <div style="position:relative;aspect-ratio:4/3;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
+                  <img src="https://images.unsplash.com/photo-1609592424364-704337b51b3f?auto=format&fit=crop&w=600&q=85" alt="Anker 737 Power Bank" style="width:100%;height:100%;object-fit:cover">
                 </div>
                 <div style="padding:10px 4px 4px">
                   <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Anker 737 Power Bank 24k</div>
                   <div style="font:400 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:4px">Orca Electronics · Akwa</div>
                   <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:8px">
                     <span style="font:800 14px/1 var(--font-heading);color:var(--color-accent)">XAF 62 000</span>
-                    <span style="font:700 11px/1 var(--font-heading);color:#eab308">★ 4.8</span>
+                    <span style="font:700 11px/1 var(--font-heading);color:#eab308">★ 4.6</span>
                   </div>
                 </div>
               </button>
@@ -864,7 +752,7 @@ def get_collections_view():
       </p>
       <div style="display:flex;align-items:center;gap:14px">
         <button onClick="{{ on.product }}" class="btn btn-primary" style="height:42px">VIEW DETAILS · XAF 745 000</button>
-        <button onClick="{{ on.sellers }}" class="btn btn-secondary" style="height:42px;background:rgba(255,255,255,0.15);color:#fff;border-color:rgba(255,255,255,0.25)">COMPARE SELLERS</button>
+        <button onClick="{{ on.vs }}" class="btn btn-secondary" style="height:42px;background:rgba(255,255,255,0.15);color:#fff;border-color:rgba(255,255,255,0.25)">COMPARE SELLERS</button>
       </div>
     </div>
 

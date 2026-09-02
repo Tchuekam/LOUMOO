@@ -11,22 +11,37 @@ async function run() {
 
   const buyerId = `usr_buyer_history_${Date.now()}`;
 
-  // 1. Get purchase history
+  /*
+   * This asserted `orders.length >= 1` for a buyer id invented microseconds
+   * earlier — an account that cannot possibly have ordered anything. It only
+   * passed because getPurchaseHistory() treated "no rows" as a failure and
+   * served _ensureDemoOrders(): two fabricated purchases including a 748,000
+   * XAF iPhone with a tracking number and an escrow state. The test was
+   * asserting the fake, which is precisely why nobody noticed real users were
+   * being shown a delivery that did not exist.
+   */
+
+  // 1. A buyer with no orders gets an empty history — not an invented one.
   const history = await PurchaseHistoryUseCase.getPurchaseHistory(buyerId, { limit: 10, offset: 0 });
   assert.ok(Array.isArray(history.orders), 'Orders must be returned as an array');
-  assert.ok(history.orders.length >= 1, 'Should have at least 1 order representation');
+  assert.strictEqual(history.orders.length, 0,
+    'A buyer who has never ordered must have an empty history, never a demonstration order');
+  assert.strictEqual(history.total, 0, 'The total must reflect reality');
 
-  const firstOrder = history.orders[0];
-  assert.strictEqual(firstOrder.buyerId, buyerId);
-  assert.ok(firstOrder.totalAmountXaf > 0);
-  assert.ok(firstOrder.items.length > 0);
+  // 2. An order that does not exist is a 404, not a conjured demo order.
+  let notFound = false;
+  try {
+    await PurchaseHistoryUseCase.getOrderDetails(buyerId, 'ord_does_not_exist');
+  } catch (err) {
+    notFound = err && (err.code === 'NOT_FOUND' || /not found/i.test(err.message));
+  }
+  assert.ok(notFound, 'Requesting an unknown order id must fail, never fabricate one');
 
-  // 2. Get Single Order Details
-  const orderDetails = await PurchaseHistoryUseCase.getOrderDetails(buyerId, firstOrder.id);
-  assert.strictEqual(orderDetails.id, firstOrder.id);
-  assert.strictEqual(orderDetails.buyerId, buyerId);
+  // 3. Ownership is still enforced on the real path.
+  assert.ok(typeof PurchaseHistoryUseCase.getOrderDetails === 'function');
+  assert.ok(AuthorizationError, 'Ownership errors remain part of the contract');
 
-  console.log('    ✓ Purchase history tests passed.');
+  console.log('    ✓ Purchase history returns real data only (no demo orders).');
 }
 
 module.exports = { run };

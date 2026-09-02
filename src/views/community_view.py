@@ -14,44 +14,30 @@ def get_community_view():
 <div style="padding-bottom:56px;background:var(--color-bg);min-height:100vh">
   
   <!-- Shared Contextual Announce Header -->
-  <div style="background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:30;box-shadow:0 1px 3px rgba(0,0,0,0.05)">
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;max-width:1200px;margin:0 auto">
-      <div style="display:flex;align-items:center;gap:12px">
+  <div class="page-head-block">
+    <div class="page-head" style="position:static;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;border-bottom:none;justify-content:space-between;max-width:1200px;margin:0 auto">
+      <div class="page-head-main">
         <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
         </button>
-        <div>
-          <div style="display:flex;align-items:center;gap:6px">
-            <h3 style="margin:0;font-size:17px;font-weight:800;letter-spacing:-0.3px">LOUMOO Announce</h3>
-            <span class="tag tag-accent" style="min-height:18px;padding:1px 6px;font-size:9.5px;font-weight:800">COMMERCIAL FEED</span>
+        <div class="page-head-text">
+          <div style="display:flex;align-items:center;gap:6px;min-width:0">
+            <h3 class="page-head-title">LOUMOO Announce</h3>
+            <span class="tag tag-accent hide-tight" style="min-height:18px;padding:1px 6px;font-size:9.5px;font-weight:800;white-space:nowrap;flex-shrink:0">COMMERCIAL FEED</span>
           </div>
-          <div style="font:400 11.5px/1.2 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Discover live promotions, flash drops, tenders &amp; verified services</div>
+          <div class="page-head-sub">Live promotions, flash drops, tenders &amp; verified services</div>
         </div>
       </div>
       
-      <div style="display:flex;align-items:center;gap:8px">
+      <div class="page-head-actions">
         <button onClick="{{ on.announceStudio }}" class="btn btn-primary" style="height:36px;padding:0 14px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-          <span>OPEN STUDIO</span>
+          <span style="white-space:nowrap">OPEN STUDIO</span>
         </button>
       </div>
     </div>
 
-    <!-- 3-Experience Dedicated Navigation Bar -->
-    <div style="display:flex;border-top:1px solid var(--color-divider);max-width:1200px;margin:0 auto;padding:0 16px;overflow-x:auto">
-      <button onClick="{{ on.announce }}" class="tab-item active" style="padding:10px 16px;font-size:12.5px;font-weight:700;color:var(--color-accent);border-bottom:2px solid var(--color-accent);background:none;border-top:none;border-left:none;border-right:none;display:flex;align-items:center;gap:6px;cursor:pointer">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
-        <span>Commercial Feed</span>
-      </button>
-      <button onClick="{{ on.announceStudio }}" class="tab-item" style="padding:10px 16px;font-size:12.5px;font-weight:600;color:var(--color-text-secondary);border:none;background:none;display:flex;align-items:center;gap:6px;cursor:pointer">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-        <span>Publishing Studio</span>
-      </button>
-      <button onClick="{{ on.announceCampaigns }}" class="tab-item" style="padding:10px 16px;font-size:12.5px;font-weight:600;color:var(--color-text-secondary);border:none;background:none;display:flex;align-items:center;gap:6px;cursor:pointer">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-        <span>Campaigns &amp; Analytics</span>
-      </button>
-    </div>
+    <!-- Announce is a feed. Authoring lives under Sell; reporting lives in Seller Studio. -->
   </div>
 
   <!-- Feed Content Workspace -->
@@ -140,9 +126,9 @@ def get_community_view():
             <div class="ph" style="width:48px;height:48px;border-radius:6px;flex-shrink:0"></div>
             <div style="flex:1;min-width:0">
               <div style="font-size:12px;font-weight:700;color:var(--color-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">MacBook Air M3 Space Gray 16GB</div>
-              <div style="display:flex;align-items:baseline;gap:6px;margin-top:2px">
-                <span style="font-size:14px;font-weight:800;color:var(--color-accent)">XAF 850,000</span>
-                <span style="font-size:11px;color:var(--color-text-muted);text-decoration:line-through">XAF 900,000</span>
+              <div style="display:flex;align-items:baseline;gap:6px;margin-top:2px;flex-wrap:wrap;min-width:0">
+                <span style="font-size:14px;font-weight:800;color:var(--color-accent);white-space:nowrap">XAF 850,000</span>
+                <span style="font-size:11px;color:var(--color-text-muted);text-decoration:line-through;white-space:nowrap">XAF 900,000</span>
               </div>
             </div>
             <button class="btn btn-primary" style="height:30px;padding:0 10px;font-size:11px;font-weight:700">BUY NOW</button>
@@ -245,7 +231,7 @@ def get_community_view():
 <div style="padding-bottom:56px;background:var(--color-bg);min-height:100vh">
 
   <!-- Shared Contextual Announce Header -->
-  <div style="background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:30;box-shadow:0 1px 3px rgba(0,0,0,0.05)">
+  <div class="page-head-block">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;max-width:1200px;margin:0 auto">
       <div style="display:flex;align-items:center;gap:12px">
         <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
@@ -269,20 +255,7 @@ def get_community_view():
     </div>
 
     <!-- 3-Experience Dedicated Navigation Bar -->
-    <div style="display:flex;border-top:1px solid var(--color-divider);max-width:1200px;margin:0 auto;padding:0 16px;overflow-x:auto">
-      <button onClick="{{ on.announce }}" class="tab-item" style="padding:10px 16px;font-size:12.5px;font-weight:600;color:var(--color-text-secondary);border:none;background:none;display:flex;align-items:center;gap:6px;cursor:pointer">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
-        <span>Commercial Feed</span>
-      </button>
-      <button onClick="{{ on.announceStudio }}" class="tab-item active" style="padding:10px 16px;font-size:12.5px;font-weight:700;color:var(--color-accent);border-bottom:2px solid var(--color-accent);background:none;border-top:none;border-left:none;border-right:none;display:flex;align-items:center;gap:6px;cursor:pointer">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-        <span>Publishing Studio</span>
-      </button>
-      <button onClick="{{ on.announceCampaigns }}" class="tab-item" style="padding:10px 16px;font-size:12.5px;font-weight:600;color:var(--color-text-secondary);border:none;background:none;display:flex;align-items:center;gap:6px;cursor:pointer">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-        <span>Campaigns &amp; Analytics</span>
-      </button>
-    </div>
+      <!-- Reached from Sell (studio) and Seller Studio (campaigns); no sibling tabs. -->
   </div>
 
   <div style="padding:18px 16px;max-width:1200px;margin:0 auto">
@@ -480,8 +453,8 @@ def get_community_view():
               <div style="flex:1;min-width:0">
                 <div style="font-size:12px;font-weight:700;color:var(--color-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">MacBook Air M3 Space Gray 16GB</div>
                 <div style="display:flex;align-items:baseline;gap:6px;margin-top:2px">
-                  <span style="font-size:14px;font-weight:800;color:var(--color-accent)">XAF 850,000</span>
-                  <span style="font-size:11px;color:var(--color-text-muted);text-decoration:line-through">XAF 900,000</span>
+                  <span style="font-size:14px;font-weight:800;color:var(--color-accent);white-space:nowrap">XAF 850,000</span>
+                  <span style="font-size:11px;color:var(--color-text-muted);text-decoration:line-through;white-space:nowrap">XAF 900,000</span>
                 </div>
               </div>
               <button class="btn btn-primary" style="height:30px;padding:0 10px;font-size:11px;font-weight:700">BUY NOW</button>
@@ -547,7 +520,7 @@ def get_community_view():
 <div style="padding-bottom:56px;background:var(--color-bg);min-height:100vh">
 
   <!-- Shared Contextual Announce Header -->
-  <div style="background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:30;box-shadow:0 1px 3px rgba(0,0,0,0.05)">
+  <div class="page-head-block">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;max-width:1200px;margin:0 auto">
       <div style="display:flex;align-items:center;gap:12px">
         <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
@@ -571,20 +544,7 @@ def get_community_view():
     </div>
 
     <!-- 3-Experience Dedicated Navigation Bar -->
-    <div style="display:flex;border-top:1px solid var(--color-divider);max-width:1200px;margin:0 auto;padding:0 16px;overflow-x:auto">
-      <button onClick="{{ on.announce }}" class="tab-item" style="padding:10px 16px;font-size:12.5px;font-weight:600;color:var(--color-text-secondary);border:none;background:none;display:flex;align-items:center;gap:6px;cursor:pointer">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
-        <span>Commercial Feed</span>
-      </button>
-      <button onClick="{{ on.announceStudio }}" class="tab-item" style="padding:10px 16px;font-size:12.5px;font-weight:600;color:var(--color-text-secondary);border:none;background:none;display:flex;align-items:center;gap:6px;cursor:pointer">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-        <span>Publishing Studio</span>
-      </button>
-      <button onClick="{{ on.announceCampaigns }}" class="tab-item active" style="padding:10px 16px;font-size:12.5px;font-weight:700;color:var(--color-accent);border-bottom:2px solid var(--color-accent);background:none;border-top:none;border-left:none;border-right:none;display:flex;align-items:center;gap:6px;cursor:pointer">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-        <span>Campaigns &amp; Analytics</span>
-      </button>
-    </div>
+      <!-- Reached from Sell (studio) and Seller Studio (campaigns); no sibling tabs. -->
   </div>
 
   <!-- Analytics Dashboard Workspace -->
@@ -780,7 +740,7 @@ def get_community_view():
 <div style="padding-bottom:56px;background:var(--color-bg);min-height:100vh">
 
   <!-- Header with Back -->
-  <div style="background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:30">
+  <div class="page-head-block">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;max-width:800px;margin:0 auto">
       <div style="display:flex;align-items:center;gap:12px">
         <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
@@ -857,8 +817,8 @@ def get_community_view():
           <div style="flex:1;min-width:0">
             <h4 style="margin:0 0 4px;font-size:15px;font-weight:800;color:var(--color-text)">Apple MacBook Air 13.6" M3 Chip 16GB / 512GB SSD Space Gray</h4>
             <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:6px">
-              <span style="font-size:18px;font-weight:800;color:var(--color-accent)">XAF 850,000</span>
-              <span style="font-size:12px;color:var(--color-text-muted);text-decoration:line-through">XAF 900,000</span>
+              <span style="font-size:18px;font-weight:800;color:var(--color-accent);white-space:nowrap">XAF 850,000</span>
+              <span style="font-size:12px;color:var(--color-text-muted);text-decoration:line-through;white-space:nowrap">XAF 900,000</span>
             </div>
             <div style="font-size:11.5px;color:var(--color-success);font-weight:600">● 4 Units In Stock at Akwa Showroom</div>
           </div>
@@ -901,23 +861,23 @@ def get_community_view():
   
   <!-- Sticky Glassmorphic Header -->
   <div class="compare-sticky-header">
-    <div style="display:flex;align-items:center;gap:14px">
-      <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;transition:all 0.2s">
+    <div class="page-head-main">
+      <button onClick="{{ back }}" aria-label="Go back" class="icon-btn-round">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
       </button>
-      <div>
-        <div style="display:flex;align-items:center;gap:8px">
-          <h2 style="margin:0;font:800 18px/1.2 var(--font-heading);color:var(--color-text);letter-spacing:-0.02em">Compare Products</h2>
+      <div class="page-head-text">
+        <div style="display:flex;align-items:center;gap:8px;min-width:0">
+          <h2 class="page-head-title" style="font-size:18px">Compare Products</h2>
           <span style="background:var(--color-accent-100);color:var(--color-accent);font:800 11px/1 var(--font-heading);padding:3px 8px;border-radius:var(--radius-pill)">{{ vsCount }} / 4 SELECTED</span>
         </div>
-        <p style="margin:2px 0 0;font:400 12px/1.3 var(--font-body);color:var(--color-text-secondary)">See what actually separates them before you buy.</p>
+        <p class="page-head-sub" style="margin:2px 0 0">See what actually separates them before you buy.</p>
       </div>
     </div>
     
-    <div style="display:flex;align-items:center;gap:10px">
-      <button onClick="{{ clearVsAll }}" style="border:none;background:transparent;color:var(--color-text-muted);font:600 12px/1 var(--font-heading);cursor:pointer;padding:8px 12px;min-height:44px">Clear All</button>
-      <button onClick="{{ resetVsDefaults }}" style="border:1px solid var(--color-divider);background:var(--color-surface);color:var(--color-text);font:700 12px/1 var(--font-heading);cursor:pointer;padding:8px 12px;border-radius:var(--radius-pill);min-height:44px">Restore Defaults</button>
-      <button onClick="{{ on.vsCompare }}" class="btn btn-primary" style="height:42px;padding:0 18px;font-size:12.5px;font-weight:700;box-shadow:0 4px 14px rgba(0,122,255,0.25);border-radius:var(--radius-pill)">
+    <div class="page-head-actions" style="overflow-x:auto;scrollbar-width:none">
+      <button onClick="{{ clearVsAll }}" style="white-space:nowrap;flex-shrink:0;border:none;background:transparent;color:var(--color-text-muted);font:600 12px/1 var(--font-heading);cursor:pointer;padding:8px 12px;min-height:44px">Clear All</button>
+      <button onClick="{{ resetVsDefaults }}" style="white-space:nowrap;flex-shrink:0;border:1px solid var(--color-divider);background:var(--color-surface);color:var(--color-text);font:700 12px/1 var(--font-heading);cursor:pointer;padding:8px 12px;border-radius:var(--radius-pill);min-height:44px">Restore Defaults</button>
+      <button onClick="{{ on.vsCompare }}" class="btn btn-primary" style="white-space:nowrap;flex-shrink:0;height:42px;padding:0 18px;font-size:12.5px;font-weight:700;box-shadow:0 4px 14px rgba(0,122,255,0.25);border-radius:var(--radius-pill)">
         <span>Compare Now ({{ vsCount }})</span>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="margin-left:4px"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
       </button>
@@ -928,14 +888,14 @@ def get_community_view():
     
     <!-- Compatibility Banner -->
     <div style="background:rgba(0,122,255,0.05);border:1px solid rgba(0,122,255,0.2);border-radius:var(--radius-md);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
-      <div style="display:flex;align-items:center;gap:10px">
-        <div style="width:28px;height:28px;border-radius:50%;background:var(--color-accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800">✓</div>
-        <div>
-          <span style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Category Compatible: Laptops &amp; Computers</span>
-          <span style="font:400 12px/1.2 var(--font-body);color:var(--color-text-secondary);margin-left:6px">· Full Apple Silicon &amp; PC architecture comparison matrix active.</span>
+      <div style="display:flex;align-items:flex-start;gap:10px;min-width:0;flex:1 1 260px">
+        <div style="width:28px;height:28px;min-width:28px;flex-shrink:0;align-self:flex-start;border-radius:50%;background:var(--color-accent);color:#fff;display:flex;align-items:center;justify-content:center">✓</div>
+        <div style="min-width:0">
+          <div style="font:700 13px/1.35 var(--font-heading);color:var(--color-text)">Category Compatible: Laptops &amp; Computers</div>
+          <div style="font:400 12px/1.4 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Full Apple Silicon &amp; PC architecture comparison matrix active.</div>
         </div>
       </div>
-      <span style="font:700 11px/1 var(--font-heading);color:var(--color-accent);background:#fff;padding:4px 10px;border-radius:var(--radius-pill);border:1px solid rgba(0,122,255,0.2)">ELECTRONICS</span>
+      <span style="font:700 11px/1 var(--font-heading);color:var(--color-accent);background:#fff;padding:4px 10px;border-radius:var(--radius-pill);border:1px solid rgba(0,122,255,0.2);flex-shrink:0;white-space:nowrap">ELECTRONICS</span>
     </div>
 
     <!-- Product Selection Grid (2 to 4 Slots) -->
@@ -956,7 +916,7 @@ def get_community_view():
           <h3 style="margin:4px 0 6px;font:800 16px/1.3 var(--font-heading);color:var(--color-text)">Apple MacBook Air 13” (M2)</h3>
           
           <div style="display:flex;align-items:baseline;justify-content:center;gap:8px;margin-bottom:8px">
-            <span style="font:800 20px/1 var(--font-heading);color:var(--color-accent)">XAF 745 000</span>
+            <span style="font:800 20px/1 var(--font-heading);color:var(--color-accent);white-space:nowrap">XAF 745 000</span>
             <span style="font:500 13px/1 var(--font-body);text-decoration:line-through;color:var(--color-text-muted)">829 000</span>
             <span style="font:800 10px/1 var(--font-heading);background:var(--color-accent-sale-100);color:var(--color-accent-sale);padding:2px 6px;border-radius:var(--radius-pill)">-10%</span>
           </div>
@@ -1001,7 +961,7 @@ def get_community_view():
           <h3 style="margin:4px 0 6px;font:800 16px/1.3 var(--font-heading);color:var(--color-text)">Apple MacBook Pro 14” (M3 Pro)</h3>
           
           <div style="display:flex;align-items:baseline;justify-content:center;gap:8px;margin-bottom:8px">
-            <span style="font:800 20px/1 var(--font-heading);color:var(--color-accent)">XAF 1 250 000</span>
+            <span style="font:800 20px/1 var(--font-heading);color:var(--color-accent);white-space:nowrap">XAF 1 250 000</span>
             <span style="font:500 13px/1 var(--font-body);text-decoration:line-through;color:var(--color-text-muted)">1 380 000</span>
             <span style="font:800 10px/1 var(--font-heading);background:var(--color-accent-sale-100);color:var(--color-accent-sale);padding:2px 6px;border-radius:var(--radius-pill)">-9%</span>
           </div>
@@ -1046,7 +1006,7 @@ def get_community_view():
           <h3 style="margin:4px 0 6px;font:800 16px/1.3 var(--font-heading);color:var(--color-text)">Lenovo ThinkPad X1 Carbon Gen 11</h3>
           
           <div style="display:flex;align-items:baseline;justify-content:center;gap:8px;margin-bottom:8px">
-            <span style="font:800 20px/1 var(--font-heading);color:var(--color-accent)">XAF 890 000</span>
+            <span style="font:800 20px/1 var(--font-heading);color:var(--color-accent);white-space:nowrap">XAF 890 000</span>
             <span style="font:500 13px/1 var(--font-body);text-decoration:line-through;color:var(--color-text-muted)">980 000</span>
             <span style="font:800 10px/1 var(--font-heading);background:var(--color-accent-sale-100);color:var(--color-accent-sale);padding:2px 6px;border-radius:var(--radius-pill)">-9%</span>
           </div>
@@ -1102,7 +1062,7 @@ def get_community_view():
           <h3 style="margin:4px 0 6px;font:800 16px/1.3 var(--font-heading);color:var(--color-text)">Dell XPS 15 (RTX 4060)</h3>
           
           <div style="display:flex;align-items:baseline;justify-content:center;gap:8px;margin-bottom:8px">
-            <span style="font:800 20px/1 var(--font-heading);color:var(--color-accent)">XAF 1 180 000</span>
+            <span style="font:800 20px/1 var(--font-heading);color:var(--color-accent);white-space:nowrap">XAF 1 180 000</span>
             <span style="font:500 13px/1 var(--font-body);text-decoration:line-through;color:var(--color-text-muted)">1 290 000</span>
             <span style="font:800 10px/1 var(--font-heading);background:var(--color-accent-sale-100);color:var(--color-accent-sale);padding:2px 6px;border-radius:var(--radius-pill)">-8%</span>
           </div>
@@ -1280,7 +1240,7 @@ def get_community_view():
           <h3 style="margin:4px 0 8px;font:800 19px/1.2 var(--font-heading);color:var(--color-text)">Apple MacBook Air 13” (M2)</h3>
           
           <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:8px">
-            <span style="font:800 24px/1 var(--font-heading);color:var(--color-accent)">XAF 745 000</span>
+            <span style="font:800 24px/1 var(--font-heading);color:var(--color-accent);white-space:nowrap">XAF 745 000</span>
             <span style="font:500 14px/1 var(--font-body);text-decoration:line-through;color:var(--color-text-muted)">829 000</span>
             <span style="font:800 11px/1 var(--font-heading);background:var(--color-accent-sale-100);color:var(--color-accent-sale);padding:2px 8px;border-radius:var(--radius-pill)">SAVE XAF 84K</span>
           </div>
@@ -1337,7 +1297,7 @@ def get_community_view():
           <h3 style="margin:4px 0 8px;font:800 19px/1.2 var(--font-heading);color:var(--color-text)">Apple MacBook Pro 14” (M3 Pro)</h3>
           
           <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:8px">
-            <span style="font:800 24px/1 var(--font-heading);color:var(--color-accent)">XAF 1 250 000</span>
+            <span style="font:800 24px/1 var(--font-heading);color:var(--color-accent);white-space:nowrap">XAF 1 250 000</span>
             <span style="font:500 14px/1 var(--font-body);text-decoration:line-through;color:var(--color-text-muted)">1 380 000</span>
             <span style="font:800 11px/1 var(--font-heading);background:var(--color-accent-sale-100);color:var(--color-accent-sale);padding:2px 8px;border-radius:var(--radius-pill)">SAVE XAF 130K</span>
           </div>

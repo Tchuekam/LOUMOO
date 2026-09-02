@@ -91,7 +91,7 @@ def get_home_view():
 
           <div style="display:flex;justify-content:center;align-items:center;position:relative;z-index:2">
             <div style="position:relative;width:100%;max-width:340px;height:220px;display:flex;align-items:center;justify-content:center;border-radius:24px;overflow:hidden;background:radial-gradient(circle, rgba(0,122,255,0.08) 0%, rgba(15,23,42,0.04) 100%)">
-              <img src="https://res.insta360.com/static/c212314bdffc00af1dd1bbb5a475846f/%E5%BC%80%E5%9C%BA%E5%8A%A8%E7%94%BB3480-2270_2%E5%80%8D_medium.jpg" alt="Insta360 X4 8K Camera" style="max-width:85%;max-height:85%;object-fit:contain;filter:drop-shadow(0 14px 28px rgba(0,0,0,0.25));transition:transform 0.4s ease">
+              <img src="https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=600&q=85" alt="Insta360 X4 8K Camera" style="max-width:85%;max-height:85%;object-fit:contain;filter:drop-shadow(0 14px 28px rgba(0,0,0,0.25));transition:transform 0.4s ease">
             </div>
           </div>
         </div>
@@ -111,7 +111,7 @@ def get_home_view():
           </div>
           <div style="display:flex;justify-content:center;align-items:center">
             <div style="width:100%;max-width:280px;height:200px;background:radial-gradient(circle, #e2e8f0 0%, #cbd5e1 100%);border-radius:24px;display:flex;align-items:center;justify-content:center;overflow:hidden">
-              <img src="https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-15-pro-finish-select-202309-6-7inch-naturaltitanium?wid=1000&hei=1000&fmt=jpeg&qlt=90" alt="iPhone 15 Pro Max Titanium" style="max-width:85%;max-height:85%;object-fit:contain;filter:drop-shadow(0 12px 24px rgba(0,0,0,0.2))">
+              <img src="https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=600&q=85" alt="iPhone 15 Pro Max Titanium" style="max-width:85%;max-height:85%;object-fit:contain;filter:drop-shadow(0 12px 24px rgba(0,0,0,0.2))">
             </div>
           </div>
         </div>
@@ -131,7 +131,7 @@ def get_home_view():
           </div>
           <div style="display:flex;justify-content:center;align-items:center">
             <div style="width:100%;max-width:280px;height:200px;background:radial-gradient(circle, #e2e8f0 0%, #cbd5e1 100%);border-radius:24px;display:flex;align-items:center;justify-content:center;overflow:hidden">
-              <img src="https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/macbook-air-midnight-select-20220606?wid=1000&hei=1000&fmt=jpeg&qlt=90" alt="MacBook Air M2" style="max-width:85%;max-height:85%;object-fit:contain;filter:drop-shadow(0 12px 24px rgba(0,0,0,0.2))">
+              <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=600&q=85" alt="MacBook Air M2" style="max-width:85%;max-height:85%;object-fit:contain;filter:drop-shadow(0 12px 24px rgba(0,0,0,0.2))">
             </div>
           </div>
         </div>
@@ -232,7 +232,7 @@ def get_home_view():
         <div>
           <div class="product-card-img-wrap" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc;display:flex;align-items:center;justify-content:center">
             <span class="badge-floating badge-new">NEW</span>
-            <img src="https://res.insta360.com/static/c212314bdffc00af1dd1bbb5a475846f/%E5%BC%80%E5%9C%BA%E5%8A%A8%E7%94%BB3480-2270_2%E5%80%8D_medium.jpg" alt="Insta360 X4 8K 360 Action Camera" style="max-width:85%;max-height:85%;object-fit:contain;transition:transform 0.3s ease">
+            <img src="https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80" alt="Insta360 X4 8K 360 Action Camera" style="max-width:85%;max-height:85%;object-fit:contain;transition:transform 0.3s ease">
           </div>
           <div style="font:700 13px/1.3 var(--font-heading);color:var(--color-text);min-height:34px;margin-top:8px">Insta360 X4 8K 360°<br>Action Camera</div>
         </div>
@@ -244,7 +244,7 @@ def get_home_view():
         <div>
           <div class="product-card-img-wrap" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc;display:flex;align-items:center;justify-content:center">
             <span class="badge-floating badge-blue">TITANIUM</span>
-            <img src="https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-15-pro-finish-select-202309-6-7inch-naturaltitanium?wid=800&hei=800&fmt=jpeg&qlt=90" alt="iPhone 15 Pro Max 256GB" style="max-width:85%;max-height:85%;object-fit:contain;transition:transform 0.3s ease">
+            <img src="https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=400&q=80" alt="iPhone 15 Pro Max 256GB" style="max-width:85%;max-height:85%;object-fit:contain;transition:transform 0.3s ease">
           </div>
           <div style="font:700 13px/1.3 var(--font-heading);color:var(--color-text);min-height:34px;margin-top:8px">iPhone 15 Pro Max<br>256GB</div>
         </div>
@@ -268,7 +268,7 @@ def get_home_view():
         <div>
           <div class="product-card-img-wrap" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc;display:flex;align-items:center;justify-content:center">
             <span class="badge-floating badge-new">SERIES 9</span>
-            <img src="https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/watch-s9-select-202309_GEO_US?wid=800&hei=800&fmt=jpeg&qlt=90" alt="Apple Watch Series 9 GPS 45mm" style="max-width:85%;max-height:85%;object-fit:contain;transition:transform 0.3s ease">
+            <img src="https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=400&q=80" alt="Apple Watch Series 9 GPS 45mm" style="max-width:85%;max-height:85%;object-fit:contain;transition:transform 0.3s ease">
           </div>
           <div style="font:700 13px/1.3 var(--font-heading);color:var(--color-text);min-height:34px;margin-top:8px">Apple Watch Series 9<br>GPS 45mm</div>
         </div>
@@ -280,7 +280,7 @@ def get_home_view():
         <div>
           <div class="product-card-img-wrap" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc;display:flex;align-items:center;justify-content:center">
             <span class="badge-floating badge-blue">LIQUID RETINA</span>
-            <img src="https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/macbook-air-midnight-select-20220606?wid=800&hei=800&fmt=jpeg&qlt=90" alt="MacBook Air M2 15-inch" style="max-width:85%;max-height:85%;object-fit:contain;transition:transform 0.3s ease">
+            <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80" alt="MacBook Air M2 15-inch" style="max-width:85%;max-height:85%;object-fit:contain;transition:transform 0.3s ease">
           </div>
           <div style="font:700 13px/1.3 var(--font-heading);color:var(--color-text);min-height:34px;margin-top:8px">MacBook Air M2<br>15-inch</div>
         </div>
@@ -443,11 +443,14 @@ def get_home_view():
       <button onClick="{{ () => openCategory('electronics') }}" class="shop-cat-card-apple" aria-label="Shop iPhone Category">
         <div>
           <div style="font:800 17px/1 var(--font-heading);color:var(--color-text)">iPhone</div>
-          <div style="font:500 11.5px/1.2 var(--font-body);color:var(--color-text-secondary);margin-top:4px">Titanium Pro models.</div>
+          <div style="font:500 11.5px/1.2 var(--font-body);color:var(--color-text-secondary);margin-top:4px">Latest models.</div>
           <div style="font:700 11.5px/1 var(--font-heading);color:var(--color-accent);margin-top:16px">Shop now →</div>
         </div>
-        <div style="display:flex;justify-content:center;align-items:center;width:72px;height:72px;flex-shrink:0">
-          <img src="https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-15-pro-finish-select-202309-6-7inch-naturaltitanium?wid=300&hei=300&fmt=png-alpha" alt="iPhone 15 Pro Max" style="max-width:100%;max-height:100%;object-fit:contain;filter:drop-shadow(0 8px 16px rgba(0,0,0,0.15))">
+        <div style="display:flex;justify-content:center;align-items:center">
+          <svg width="56" height="70" viewBox="0 0 56 70" fill="none">
+            <rect x="8" y="2" width="40" height="66" rx="8" fill="#292e38" stroke="#64748b" stroke-width="1.2"/>
+            <circle cx="28" cy="8" r="2" fill="#0f172a"/>
+          </svg>
         </div>
       </button>
 
@@ -455,11 +458,15 @@ def get_home_view():
       <button onClick="{{ () => openCategory('electronics') }}" class="shop-cat-card-apple" aria-label="Shop Mac Category">
         <div>
           <div style="font:800 17px/1 var(--font-heading);color:var(--color-text)">Mac</div>
-          <div style="font:500 11.5px/1.2 var(--font-body);color:var(--color-text-secondary);margin-top:4px">M3 Pro &amp; M3 Max.</div>
+          <div style="font:500 11.5px/1.2 var(--font-body);color:var(--color-text-secondary);margin-top:4px">Power to create.</div>
           <div style="font:700 11.5px/1 var(--font-heading);color:var(--color-accent);margin-top:16px">Shop now →</div>
         </div>
-        <div style="display:flex;justify-content:center;align-items:center;width:72px;height:72px;flex-shrink:0">
-          <img src="https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/mbp14-spaceblack-select-202310?wid=300&hei=300&fmt=png-alpha" alt="MacBook Pro Apple Silicon" style="max-width:100%;max-height:100%;object-fit:contain;filter:drop-shadow(0 8px 16px rgba(0,0,0,0.15))">
+        <div style="display:flex;justify-content:center;align-items:center">
+          <svg width="68" height="52" viewBox="0 0 68 52" fill="none">
+            <rect x="8" y="6" width="52" height="34" rx="4" fill="#1e232d" stroke="#64748b" stroke-width="1.2"/>
+            <rect x="11" y="9" width="46" height="28" fill="#0284c7" opacity="0.8"/>
+            <path d="M2 44 H66 L64 48 H4 Z" fill="#94a3b8"/>
+          </svg>
         </div>
       </button>
 
@@ -467,11 +474,14 @@ def get_home_view():
       <button onClick="{{ () => openCategory('electronics') }}" class="shop-cat-card-apple" aria-label="Shop Watch Category">
         <div>
           <div style="font:800 17px/1 var(--font-heading);color:var(--color-text)">Watch</div>
-          <div style="font:500 11.5px/1.2 var(--font-body);color:var(--color-text-secondary);margin-top:4px">Ultra 2 &amp; Series 9.</div>
+          <div style="font:500 11.5px/1.2 var(--font-body);color:var(--color-text-secondary);margin-top:4px">On your wrist. In your world.</div>
           <div style="font:700 11.5px/1 var(--font-heading);color:var(--color-accent);margin-top:16px">Shop now →</div>
         </div>
-        <div style="display:flex;justify-content:center;align-items:center;width:72px;height:72px;flex-shrink:0">
-          <img src="https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/watch-ultra2-select-202409_GEO_US?wid=300&hei=300&fmt=png-alpha" alt="Apple Watch Ultra 2" style="max-width:100%;max-height:100%;object-fit:contain;filter:drop-shadow(0 8px 16px rgba(0,0,0,0.15))">
+        <div style="display:flex;justify-content:center;align-items:center">
+          <svg width="48" height="64" viewBox="0 0 48 64" fill="none">
+            <rect x="18" y="2" width="12" height="60" rx="3" fill="#475569"/>
+            <rect x="10" y="16" width="28" height="32" rx="7" fill="#0f172a" stroke="#64748b" stroke-width="1.2"/>
+          </svg>
         </div>
       </button>
 
@@ -479,11 +489,14 @@ def get_home_view():
       <button onClick="{{ () => openCategory('electronics') }}" class="shop-cat-card-apple" aria-label="Shop AirPods Category">
         <div>
           <div style="font:800 17px/1 var(--font-heading);color:var(--color-text)">AirPods</div>
-          <div style="font:500 11.5px/1.2 var(--font-body);color:var(--color-text-secondary);margin-top:4px">Pro 2 &amp; Max ANC.</div>
+          <div style="font:500 11.5px/1.2 var(--font-body);color:var(--color-text-secondary);margin-top:4px">Sound that moves you.</div>
           <div style="font:700 11.5px/1 var(--font-heading);color:var(--color-accent);margin-top:16px">Shop now →</div>
         </div>
-        <div style="display:flex;justify-content:center;align-items:center;width:72px;height:72px;flex-shrink:0">
-          <img src="https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/MTJV3?wid=300&hei=300&fmt=png-alpha" alt="AirPods Pro 2" style="max-width:100%;max-height:100%;object-fit:contain;filter:drop-shadow(0 8px 16px rgba(0,0,0,0.15))">
+        <div style="display:flex;justify-content:center;align-items:center">
+          <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
+            <rect x="10" y="12" width="32" height="30" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+            <circle cx="26" cy="24" r="2" fill="#22c55e"/>
+          </svg>
         </div>
       </button>
 
@@ -491,11 +504,14 @@ def get_home_view():
       <button onClick="{{ () => openCategory('electronics') }}" class="shop-cat-card-apple" aria-label="Shop Accessories Category">
         <div>
           <div style="font:800 17px/1 var(--font-heading);color:var(--color-text)">Accessories</div>
-          <div style="font:500 11.5px/1.2 var(--font-body);color:var(--color-text-secondary);margin-top:4px">MagSafe &amp; 140W PD.</div>
+          <div style="font:500 11.5px/1.2 var(--font-body);color:var(--color-text-secondary);margin-top:4px">Essentials that complete.</div>
           <div style="font:700 11.5px/1 var(--font-heading);color:var(--color-accent);margin-top:16px">Shop now →</div>
         </div>
-        <div style="display:flex;justify-content:center;align-items:center;width:72px;height:72px;flex-shrink:0">
-          <img src="https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/MHXH3?wid=300&hei=300&fmt=png-alpha" alt="Apple MagSafe Accessories" style="max-width:100%;max-height:100%;object-fit:contain;filter:drop-shadow(0 8px 16px rgba(0,0,0,0.15))">
+        <div style="display:flex;justify-content:center;align-items:center">
+          <svg width="48" height="60" viewBox="0 0 48 60" fill="none">
+            <rect x="10" y="4" width="28" height="52" rx="6" fill="#334155" stroke="#64748b" stroke-width="1.2"/>
+            <circle cx="24" cy="28" r="8" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3 2"/>
+          </svg>
         </div>
       </button>
     </div>
@@ -939,7 +955,7 @@ def get_home_view():
           <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('ipad-air-m2', 'iPad Air M2'); } }}" class="wishlist-float-btn" aria-label="Save iPad Air M2 to wishlist">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('ipad-air-m2') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('ipad-air-m2') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
           </button>
-          <img src="https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/ipad-air-storage-select-202405-11inch-spacegray?wid=800&hei=800&fmt=jpeg&qlt=90" alt="iPad Air M2" style="width:100%;height:100%;object-fit:contain;padding:12px;transition:transform 0.3s ease">
+          <img src="https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?auto=format&fit=crop&w=400&q=80" alt="iPad Air M2" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
         </div>
         <div class="disc-card-body">
           <div class="disc-card-name">iPad Air M2</div>
@@ -1118,7 +1134,7 @@ def get_home_view():
           <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('macbook-air-13', 'MacBook Air M2 13-inch'); } }}" class="wishlist-float-btn" aria-label="Save MacBook Air to wishlist">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('macbook-air-13') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('macbook-air-13') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
           </button>
-          <img src="https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/macbook-air-midnight-select-20220606?wid=800&hei=800&fmt=jpeg&qlt=90" alt="MacBook Air M2" style="width:100%;height:100%;object-fit:contain;padding:12px;transition:transform 0.3s ease">
+          <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80" alt="MacBook Air M2" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
         </div>
         <div class="disc-card-body">
           <div class="disc-card-name">MacBook Air M2</div>
@@ -1229,7 +1245,7 @@ def get_home_view():
           <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('insta360-x4-flagship', 'Insta360 X4 8K'); } }}" class="wishlist-float-btn" aria-label="Save Insta360 X4 to wishlist">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('insta360-x4-flagship') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('insta360-x4-flagship') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
           </button>
-          <img src="https://res.insta360.com/static/c212314bdffc00af1dd1bbb5a475846f/%E5%BC%80%E5%9C%BA%E5%8A%A8%E7%94%BB3480-2270_2%E5%80%8D_medium.jpg" alt="Insta360 X4 8K" style="width:100%;height:100%;object-fit:contain;padding:8px;transition:transform 0.3s ease">
+          <img src="https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80" alt="Insta360 X4 8K" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
         </div>
         <div class="disc-card-body">
           <div class="disc-card-name">Insta360 X4</div>
@@ -1558,6 +1574,93 @@ def get_home_view():
           <span>You're all caught up with today's LOUMOO discoveries</span>
         </div>
       </sc-if>
+    </div>
+
+    <!-- ── 10: LOUMOO UNIVERSAL ECOSYSTEM PANORAMA (BOTTOM DISCOVERY HUB) ── -->
+    <div style="margin:40px 0 20px;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-lg);padding:24px 20px;box-shadow:var(--shadow-sm)">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px">
+        <div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <span style="font:800 11px/1 var(--font-heading);letter-spacing:.12em;color:var(--color-accent);text-transform:uppercase">UNIVERSAL ECOSYSTEM</span>
+            <span class="tag tag-accent" style="min-height:16px;padding:1px 6px;font-size:9px;font-weight:800">CAMEROON &amp; CEMAC</span>
+          </div>
+          <h2 style="margin:4px 0 0;font-size:clamp(18px, 2.4vw, 24px);font-weight:800;letter-spacing:-.025em;color:var(--color-text)">One Platform. Specialized Experiences.</h2>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;font:700 11px/1 var(--font-body);color:var(--color-success);background:var(--color-success-100);padding:6px 12px;border-radius:var(--radius-pill)">
+          <span style="width:6px;height:6px;border-radius:50%;background:var(--color-success)"></span>
+          <span>2,400+ Verified Merchants · Tier-1 Escrow</span>
+        </div>
+      </div>
+
+      <!-- 6 Gateways Grid -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(160px, 1fr));gap:12px">
+        <!-- 1. Commerce -->
+        <button onClick="{{ on.bestpicks }}" class="card-premium" style="padding:14px;display:flex;flex-direction:column;gap:6px;text-align:left;cursor:pointer;border-color:var(--color-accent-200);background:linear-gradient(135deg,#ffffff,#f0f7ff)">
+          <div style="width:34px;height:34px;border-radius:8px;background:var(--color-accent-100);color:var(--color-accent);display:flex;align-items:center;justify-content:center">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+          </div>
+          <div style="font:800 13.5px/1.2 var(--font-heading);color:var(--color-text);margin-top:2px">Commerce</div>
+          <div style="font:400 11px/1.2 var(--font-body);color:var(--color-text-secondary)">Discover &amp; buy authentic hardware</div>
+        </button>
+
+        <!-- 2. Verified Stores -->
+        <button onClick="{{ on.store }}" class="card-premium" style="padding:14px;display:flex;flex-direction:column;gap:6px;text-align:left;cursor:pointer">
+          <div style="width:34px;height:34px;border-radius:8px;background:#fef3c7;color:#d97706;display:flex;align-items:center;justify-content:center">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h20l-2 10H4L2 3z"/><path d="M6 13v7a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-7"/></svg>
+          </div>
+          <div style="font:800 13.5px/1.2 var(--font-heading);color:var(--color-text);margin-top:2px">Stores &amp; Brands</div>
+          <div style="font:400 11px/1.2 var(--font-body);color:var(--color-text-secondary)">Official boutiques &amp; local shops</div>
+        </button>
+
+        <!-- 3. Travel & Mobility -->
+        <button onClick="{{ on.travel }}" class="card-premium" style="padding:14px;display:flex;flex-direction:column;gap:6px;text-align:left;cursor:pointer">
+          <div style="width:34px;height:34px;border-radius:8px;background:#dbeafe;color:#2563eb;display:flex;align-items:center;justify-content:center">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1z"/></svg>
+          </div>
+          <div style="font:800 13.5px/1.2 var(--font-heading);color:var(--color-text);margin-top:2px">Travel &amp; Flights</div>
+          <div style="font:400 11px/1.2 var(--font-body);color:var(--color-text-secondary)">Buses, Trains, Flights &amp; Taxis</div>
+        </button>
+
+        <!-- 4. Announce & Tenders -->
+        <button onClick="{{ on.announce }}" class="card-premium" style="padding:14px;display:flex;flex-direction:column;gap:6px;text-align:left;cursor:pointer">
+          <div style="width:34px;height:34px;border-radius:8px;background:#fae8ff;color:#a855f7;display:flex;align-items:center;justify-content:center">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
+          </div>
+          <div style="font:800 13.5px/1.2 var(--font-heading);color:var(--color-text);margin-top:2px">Announce Feed</div>
+          <div style="font:400 11px/1.2 var(--font-body);color:var(--color-text-secondary)">Flash drops, tenders &amp; jobs</div>
+        </button>
+
+        <!-- 5. VS Comparison Matrix -->
+        <button onClick="{{ on.vs }}" class="card-premium" style="padding:14px;display:flex;flex-direction:column;gap:6px;text-align:left;cursor:pointer">
+          <div style="width:34px;height:34px;border-radius:8px;background:#e0e7ff;color:#4f46e5;display:flex;align-items:center;justify-content:center">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="18" rx="1"/><rect x="14" y="3" width="7" height="18" rx="1"/></svg>
+          </div>
+          <div style="font:800 13.5px/1.2 var(--font-heading);color:var(--color-text);margin-top:2px">VS Matrix</div>
+          <div style="font:400 11px/1.2 var(--font-body);color:var(--color-text-secondary)">Head-to-head decision engine</div>
+        </button>
+
+        <!-- 6. Spatial AI Lens -->
+        <button onClick="{{ on.visual }}" class="card-premium" style="padding:14px;display:flex;flex-direction:column;gap:6px;text-align:left;cursor:pointer">
+          <div style="width:34px;height:34px;border-radius:8px;background:#ecfdf5;color:#059669;display:flex;align-items:center;justify-content:center">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+          </div>
+          <div style="font:800 13.5px/1.2 var(--font-heading);color:var(--color-text);margin-top:2px">Spatial AI Lens</div>
+          <div style="font:400 11px/1.2 var(--font-body);color:var(--color-text-secondary)">Visual search &amp; model match</div>
+        </button>
+      </div>
+
+      <!-- Real-time Trust Bar (Mobile Money & CEMAC Delivery) -->
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:16px;padding-top:14px;border-top:1px solid var(--color-divider);font-size:12px;color:var(--color-text-secondary)">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <span style="display:flex;align-items:center;gap:4px"><strong style="color:var(--color-text)">Payment:</strong> <span style="background:var(--color-momo-yellow);color:#111;font-weight:800;padding:2px 7px;border-radius:4px;font-size:10.5px">MTN MoMo</span> <span style="background:var(--color-om-orange);color:#fff;font-weight:800;padding:2px 7px;border-radius:4px;font-size:10.5px">Orange Money</span></span>
+          <span>·</span>
+          <span><strong style="color:var(--color-text)">Express Courier:</strong> Douala (Same-day) · Yaoundé (24h)</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:5px;color:var(--color-accent);font-weight:700">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <span>Tier-1 Escrow Guarantee</span>
+        </div>
+      </div>
     </div>
 
   </div>

@@ -106,7 +106,7 @@ def get_store_business_view():
     </button>
     <div style="flex:1;min-width:0">
       <h4 style="margin:0;font-size:16px">Store Setup &amp; Activation</h4>
-      <div style="font:400 11px/1.2 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Complete 4 steps to launch your official storefront</div>
+      <div style="font:400 11px/1.2 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Your storefront can go live now — verification is optional</div>
     </div>
   </div>
 
@@ -167,8 +167,11 @@ def get_store_business_view():
         <div style="display:flex;align-items:center;gap:12px">
           <div style="width:36px;height:36px;border-radius:50%;background:var(--color-accent-100);color:var(--color-accent);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px">4</div>
           <div>
-            <div style="font:700 14px/1.2 var(--font-heading);color:var(--color-text)">4. Official Verification (CNI / RCCM)</div>
-            <div style="font:400 12px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Unlock verified merchant trust badge &amp; MoMo escrow payouts</div>
+            <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">
+              <div style="font:700 14px/1.2 var(--font-heading);color:var(--color-text)">Official Verification (CNI / RCCM)</div>
+              <span class="tag tag-neutral" style="min-height:18px;padding:1px 8px;font-size:9.5px;font-weight:800;white-space:nowrap">OPTIONAL</span>
+            </div>
+            <div style="font:400 12px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Adds a verified trust badge later. Your storefront can go live without it.</div>
           </div>
         </div>
         <span style="color:var(--color-accent);font-weight:800">→</span>
@@ -177,9 +180,13 @@ def get_store_business_view():
     </div>
 
     <!-- Activation CTA -->
-    <button onClick="{{ activateStorefront }}" class="btn btn-primary btn-block" style="height:48px;font-size:14px;cursor:pointer">
-      ACTIVATE STOREFRONT &amp; GO LIVE <span>✓</span>
+    <button onClick="{{ activateStorefront }}" class="btn btn-primary btn-block" style="height:48px;font-size:14px;cursor:pointer" disabled="{{ storeActivating }}">
+      <sc-if value="{{ storeActivating }}"><span>ACTIVATING…</span></sc-if>
+      <sc-if value="{{ !storeActivating }}"><span>ACTIVATE STOREFRONT &amp; GO LIVE</span></sc-if>
     </button>
+    <sc-if value="{{ storeActivateError }}">
+      <div style="margin-top:10px;padding:10px 12px;border-radius:var(--radius-sm);background:var(--color-accent-sale-100);color:var(--color-accent-sale);font:600 12px/1.4 var(--font-body)">{{ storeActivateError }}</div>
+    </sc-if>
 
   </div>
 </div>

@@ -219,12 +219,25 @@ async function run() {
   });
   assert.strictEqual(badCategory.status, 400);
 
-  // A listing type the category does not support is rejected.
+  /*
+   * A listing type the boutique's vertical does not permit is refused.
+   *
+   * This expected 400. The store-vertical guard (Store.getAllowedListingTypes)
+   * now answers 403 instead, and that is the correct code: the request is
+   * well-formed, the caller is simply not authorized to publish that type from
+   * an electronics boutique. It also matches the documented gate ordering
+   * (authorization completes before validation) and the HTTP contract in
+   * docs/architecture/13 — 403 = "authenticated, not authorized".
+   */
   const badType = await harness.request('POST', '/api/v1/listings', {
     token, body: { categoryId: 'smartphones', title: 'A booking?', listingType: 'BOOKING' }
   });
-  assert.strictEqual(badType.status, 400,
-    'Smartphones do not support BOOKING listings');
+  assert.strictEqual(badType.status, 403,
+    'An electronics boutique is not authorized to publish BOOKING listings');
+  assert.ok(
+    JSON.stringify(badType.body).toLowerCase().includes('authorized'),
+    'The refusal must explain that the boutique vertical does not allow this type'
+  );
 
   /* ══════════════════════════════════════════════════════════════════════ */
   /* 7. CREATING THE DRAFT                                                  */

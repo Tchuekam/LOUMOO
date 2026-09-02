@@ -50,9 +50,24 @@ class StoreOnboardingUseCase {
       verificationSubmitted: verification ? verification.verification_status !== 'DRAFT' : false
     };
 
-    let completedCount = 0;
-    Object.values(completedRequirements).forEach(val => { if (val) completedCount++; });
-    const completionPercentage = Math.round((completedCount / Object.keys(completedRequirements).length) * 100);
+    /*
+     * Only the requirements that store creation itself guarantees can gate
+     * activation. `businessInfo` needs a phone number, which is optional at
+     * creation and empty for any seller who never supplied one - so gating on
+     * it left those accounts unable to ever go live, and every Sell press sent
+     * them back around the loop. Verification is a trust upgrade and is never
+     * required: nothing here forces a document upload.
+     */
+    const REQUIRED_FOR_ACTIVATION = ['profile', 'location'];
+    const isEligibleForActivation = REQUIRED_FOR_ACTIVATION.every(k => completedRequirements[k]);
+
+    // Progress reflects the required work only, so the bar can actually reach
+    // 100% without submitting documents.
+    const requiredKeys = ['profile', 'businessInfo', 'location'];
+    const requiredDone = requiredKeys.filter(k => completedRequirements[k]).length;
+    const completionPercentage = Math.round((requiredDone / requiredKeys.length) * 100);
+
+    const missingForActivation = REQUIRED_FOR_ACTIVATION.filter(k => !completedRequirements[k]);
 
     return {
       storeId: store.id,
@@ -61,7 +76,9 @@ class StoreOnboardingUseCase {
       isCompleted: store.onboardingCompleted,
       completionPercentage: completionPercentage,
       requirements: completedRequirements,
-      isEligibleForActivation: completedRequirements.profile && completedRequirements.businessInfo && completedRequirements.location
+      optionalRequirements: ['verificationSubmitted'],
+      missingForActivation,
+      isEligibleForActivation
     };
   }
 
@@ -82,7 +99,11 @@ class StoreOnboardingUseCase {
     if (stepName === 'ACTIVE') {
       const status = await this.getOnboardingStatus(store);
       if (!status.isEligibleForActivation) {
-        throw new ValidationError('Cannot activate store: Profile, business information, and location must be completed first.');
+        const LABELS = { profile: 'store name and category', location: 'store location' };
+        const missing = status.missingForActivation.map(k => LABELS[k] || k).join(' and ');
+        throw new ValidationError(`Add your ${missing} before going live.`, {
+          missing: status.missingForActivation
+        });
       }
       updates.status = 'ACTIVE';
       updates.onboarding_completed = true;

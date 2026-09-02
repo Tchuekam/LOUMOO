@@ -13,42 +13,43 @@ def get_merchant_view():
 <div style="padding-bottom:48px">
   
   <!-- Sticky Top Header -->
-  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
-    <div style="display:flex;align-items:center;gap:12px">
-      <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
+  <div class="page-head">
+    <div class="page-head-main">
+      <button onClick="{{ back }}" aria-label="Go back" class="icon-btn-round">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
       </button>
-      <div>
-        <h4 style="margin:0;font-size:16px">Verified Stores &amp; Official Brands</h4>
-        <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary)">Discover 2,400+ trusted merchants across Douala, Yaoundé &amp; Cameroon</div>
+      <div class="page-head-text">
+        <h4 class="page-head-title">Verified Stores &amp; Official Brands</h4>
+        <div class="page-head-sub">2,400+ trusted merchants across Douala, Yaoundé &amp; Cameroon</div>
       </div>
     </div>
-    <div style="display:flex;align-items:center;gap:8px">
-      <button onClick="{{ on.createStore }}" class="btn btn-primary" style="height:36px;padding:0 14px;font-size:12px;font-weight:700">
-        <span>+ OPEN STORE</span>
+    <div class="page-head-actions">
+      <button onClick="{{ on.createStore }}" class="btn btn-primary" aria-label="Open your store" style="height:40px;padding:0 15px;font-size:12px;font-weight:700;gap:6px">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        <span>OPEN STORE</span>
       </button>
     </div>
   </div>
 
-  <div style="padding:16px;max-width:1300px;margin:0 auto;display:flex;flex-direction:column;gap:24px">
+  <div class="page-body">
     
     <!-- ── SEARCH & FILTER HERO BAR ── -->
-    <div class="card-premium" style="padding:18px 20px;display:flex;flex-direction:column;gap:14px;background:var(--color-surface);border-radius:var(--radius-lg)">
-      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+    <div class="card-premium" style="padding:16px;display:flex;flex-direction:column;gap:14px;background:var(--color-surface);border-radius:var(--radius-lg)">
+      <div class="filter-bar">
         
         <!-- Search Input -->
-        <div style="flex:1;min-width:260px;position:relative;display:flex;align-items:center">
+        <div class="filter-grow" style="position:relative;display:flex;align-items:center">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position:absolute;left:14px;color:var(--color-text-muted)"><circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4 4"/></svg>
-          <input type="text" class="input" placeholder="Search stores, official brands, locations (e.g. Orca, Apple, Akwa, Bastos)…" value="{{ storeSearchQuery }}" onChange="{{ updateStoreSearch }}" style="padding-left:42px;padding-right:36px;height:44px;font-size:13.5px">
+          <input type="text" class="input" placeholder="Search stores, brands or locations…" value="{{ storeSearchQuery }}" onChange="{{ updateStoreSearch }}" style="padding-left:42px;padding-right:36px;height:44px;font-size:13.5px">
           <sc-if value="{{ storeSearchQuery }}">
-            <button onClick="{{ clearStoreSearch }}" aria-label="Clear search" style="position:absolute;right:10px;background:var(--color-neutral-200);border:none;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:800;font-size:13px;color:var(--color-text)">✕</button>
+            <button onClick="{{ clearStoreSearch }}" aria-label="Clear search" style="position:absolute;right:8px;background:var(--color-neutral-200);border:none;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--color-text-secondary)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
           </sc-if>
         </div>
 
         <!-- City Selector -->
-        <div style="min-width:160px">
+        <div class="filter-side">
           <select class="input" value="{{ storeCityFilter }}" onChange="{{ updateStoreCityFilter }}" style="height:44px;font-size:13px;font-weight:600;cursor:pointer">
-            <option value="all">📍 All Cities (Cameroon)</option>
+            <option value="all">All Cities (Cameroon)</option>
             <option value="douala">Douala (Akwa, Bonapriso, Bonanjo)</option>
             <option value="yaounde">Yaoundé (Bastos, Centre)</option>
             <option value="kribi">Kribi (Beach &amp; Resorts)</option>
@@ -57,8 +58,8 @@ def get_merchant_view():
         </div>
 
         <!-- Quick Badges -->
-        <div style="display:flex;gap:8px;align-items:center">
-          <button onClick="{{ toggleStoreVerifiedOnly }}" class="tag {{ storeVerifiedOnly ? 'tag-accent' : 'tag-neutral' }}" style="height:40px;padding:0 14px;cursor:pointer;font-size:12px">
+        <div class="filter-side" style="display:flex;gap:8px;align-items:center">
+          <button onClick="{{ toggleStoreVerifiedOnly }}" class="tag {{ storeVerifiedClass }}" aria-pressed="{{ storeVerifiedOnly }}" style="height:44px;padding:0 16px;cursor:pointer;font-size:12.5px;justify-content:center;width:100%">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
             <span>Verified Only</span>
           </button>
@@ -66,70 +67,71 @@ def get_merchant_view():
       </div>
 
       <!-- Category Filter Pills -->
-      <div class="hs" style="gap:8px;padding:2px 0">
-        <button onClick="{{ () => setStoreCategory('all') }}" class="tag {{ storeCategoryFilter === 'all' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">All Categories</button>
-        <button onClick="{{ () => setStoreCategory('tech') }}" class="tag {{ storeCategoryFilter === 'tech' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">💻 Electronics &amp; Tech</button>
-        <button onClick="{{ () => setStoreCategory('fashion') }}" class="tag {{ storeCategoryFilter === 'fashion' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">👗 Fashion &amp; Apparel</button>
-        <button onClick="{{ () => setStoreCategory('hospitality') }}" class="tag {{ storeCategoryFilter === 'hospitality' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">🏨 Hospitality &amp; Hotels</button>
-        <button onClick="{{ () => setStoreCategory('home') }}" class="tag {{ storeCategoryFilter === 'home' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">🛋️ Home &amp; Living</button>
-        <button onClick="{{ () => setStoreCategory('services') }}" class="tag {{ storeCategoryFilter === 'services' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">🛠️ Professional Services</button>
+      <div class="chip-row" role="group" aria-label="Filter stores by category">
+        <button onClick="{{ () => setStoreCategory('all') }}" class="tag {{ storeCatAllClass }}" style="cursor:pointer">All Categories</button>
+        <button onClick="{{ () => setStoreCategory('tech') }}" class="tag {{ storeCatTechClass }}" style="cursor:pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8"/></svg><span>Electronics &amp; Tech</span></button>
+        <button onClick="{{ () => setStoreCategory('fashion') }}" class="tag {{ storeCatFashionClass }}" style="cursor:pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3 3 7l2 3 2-1v11h10V9l2 1 2-3-6-4a3 3 0 0 1-6 0Z"/></svg><span>Fashion &amp; Apparel</span></button>
+        <button onClick="{{ () => setStoreCategory('hospitality') }}" class="tag {{ storeCatHospitalityClass }}" style="cursor:pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20V9l9-5 9 5v11"/><path d="M9 20v-6h6v6"/></svg><span>Hospitality &amp; Hotels</span></button>
+        <button onClick="{{ () => setStoreCategory('home') }}" class="tag {{ storeCatHomeClass }}" style="cursor:pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 18v-6a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v6"/><path d="M2 18h20M6 21v-3M18 21v-3"/></svg><span>Home &amp; Living</span></button>
+        <button onClick="{{ () => setStoreCategory('services') }}" class="tag {{ storeCatServicesClass }}" style="cursor:pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 1-5.4 5.4L4 17v3h3l5.3-5.3a4 4 0 0 1 5.4-5.4l-2.6 2.6 1.6 1.6 2.6-2.6"/></svg><span>Professional Services</span></button>
       </div>
     </div>
 
     <!-- ── SECTION 1: FEATURED FLAGSHIP STORES (DESKTOP ELEVATED CAROUSEL/GRID) ── -->
     <div>
-      <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px">
-        <div>
-          <h3 style="margin:0;font-size:18px;letter-spacing:-.02em">Featured Flagship Stores</h3>
-          <div style="font:400 12.5px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Verified authorized distributors &amp; top-rated merchants with warranty</div>
+      <div class="section-head">
+        <div class="section-head-text">
+          <h3 class="section-head-title">Featured Flagship Stores</h3>
+          <div class="section-head-sub">Verified authorized distributors &amp; top-rated merchants with warranty</div>
         </div>
-        <span class="tag tag-accent" style="font-size:11px;font-weight:700">★ 4.8+ TOP RATED</span>
+        <span class="tag tag-accent section-head-aside" style="font-size:11px;font-weight:700">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg>
+          4.8+ TOP RATED
+        </span>
       </div>
 
-      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));gap:16px">
+      <div class="entity-grid">
         
         <!-- Flagship Card 1: Orca Electronics -->
         <div class="card-premium" style="display:flex;flex-direction:column;justify-content:space-between;gap:16px;border:1.5px solid var(--color-divider);position:relative;overflow:hidden">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
-            <div style="display:flex;align-items:center;gap:14px">
-              <div style="width:54px;height:54px;border-radius:var(--radius-md);background:linear-gradient(135deg,var(--color-accent),#003d8a);color:#fff;display:flex;align-items:center;justify-content:center;font:800 22px/1 var(--font-heading);box-shadow:var(--shadow-md);flex-shrink:0">O</div>
-              <div>
-                <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-                  <span style="font:800 17px/1.2 var(--font-heading);color:var(--color-text)">Orca Electronics</span>
+          <div class="entity-head">
+            <div class="entity-id">
+              <div class="entity-logo" style="background:linear-gradient(135deg,var(--color-accent),#003d8a)">O</div>
+              <div class="entity-text">
+                <div class="entity-name-row">
+                  <span class="entity-name">Orca Electronics</span>
                   <span class="tag tag-accent" style="min-height:18px;padding:2px 7px;font-size:9.5px;font-weight:800">OFFICIAL PARTNER</span>
                 </div>
-                <div style="font:400 12px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:4px">
+                <div class="entity-sub">
                   Akwa Commercial Blvd, Douala · Certified Apple &amp; Dell Reseller
                 </div>
-                <div style="display:flex;align-items:center;gap:10px;margin-top:6px;font-size:11.5px;color:var(--color-text-secondary)">
+                <div class="meta-row">
                   <span style="color:#eab308;font-weight:700">★ 4.9 (1.2k)</span>
-                  <span>•</span>
                   <span>318 Products</span>
-                  <span>•</span>
                   <span style="color:var(--color-success);font-weight:600">Replies ~5m</span>
                 </div>
               </div>
             </div>
-            <button onClick="{{ toggleFollow }}" class="btn {{ following ? 'btn-secondary' : 'btn-primary' }}" style="height:34px;padding:0 14px;font-size:11.5px;font-weight:700;flex-shrink:0">
+            <button onClick="{{ toggleFollow }}" class="entity-action btn {{ following ? 'btn-secondary' : 'btn-primary' }}" style="height:36px;padding:0 15px;font-size:11.5px;font-weight:700">
               {{ followLabel }}
             </button>
           </div>
 
           <!-- Featured Products Preview Row -->
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;background:var(--color-neutral-100);padding:10px;border-radius:var(--radius-md);border:1px solid var(--color-divider)">
-            <button onClick="{{ on.product }}" aria-label="View MacBook Air M2" style="text-align:left;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-sm);padding:8px;cursor:pointer;display:flex;flex-direction:column;gap:4px">
+          <div class="mini-grid" style="background:var(--color-neutral-100);padding:10px;border-radius:var(--radius-md);border:1px solid var(--color-divider)">
+            <button onClick="{{ on.product }}" aria-label="View MacBook Air M2" class="mini-card">
               <div class="ph" style="aspect-ratio:16/9;border-radius:4px">
                 <span style="font-size:8px">APPLE SILICON</span>
               </div>
-              <div style="font:700 12px/1.2 var(--font-heading);color:var(--color-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">MacBook Air M2 13”</div>
-              <div style="font:800 12.5px/1 var(--font-heading);color:var(--color-accent)">XAF 745 000</div>
+              <div class="mini-card-title">MacBook Air M2 13”</div>
+              <div class="mini-card-price">XAF 745 000</div>
             </button>
-            <button onClick="{{ on.product }}" aria-label="View Anker 737 Power Bank" style="text-align:left;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-sm);padding:8px;cursor:pointer;display:flex;flex-direction:column;gap:4px">
+            <button onClick="{{ on.product }}" aria-label="View Anker 737 Power Bank" class="mini-card">
               <div class="ph" style="aspect-ratio:16/9;border-radius:4px">
                 <span style="font-size:8px">24k mAh POWER</span>
               </div>
-              <div style="font:700 12px/1.2 var(--font-heading);color:var(--color-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Anker 737 Bank</div>
-              <div style="font:800 12.5px/1 var(--font-heading);color:var(--color-accent)">XAF 62 000</div>
+              <div class="mini-card-title">Anker 737 Bank</div>
+              <div class="mini-card-price">XAF 62 000</div>
             </button>
           </div>
 
@@ -143,22 +145,20 @@ def get_merchant_view():
 
         <!-- Flagship Card 2: Digital Corner -->
         <div class="card-premium" style="display:flex;flex-direction:column;justify-content:space-between;gap:16px;border:1.5px solid var(--color-divider);position:relative;overflow:hidden">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
-            <div style="display:flex;align-items:center;gap:14px">
-              <div style="width:54px;height:54px;border-radius:var(--radius-md);background:linear-gradient(135deg,#111214,#2d313a);color:#fff;display:flex;align-items:center;justify-content:center;font:800 22px/1 var(--font-heading);box-shadow:var(--shadow-md);flex-shrink:0">D</div>
-              <div>
-                <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-                  <span style="font:800 17px/1.2 var(--font-heading);color:var(--color-text)">Digital Corner</span>
+          <div class="entity-head">
+            <div class="entity-id">
+              <div class="entity-logo" style="background:linear-gradient(135deg,#111214,#2d313a)">D</div>
+              <div class="entity-text">
+                <div class="entity-name-row">
+                  <span class="entity-name">Digital Corner</span>
                   <span class="tag tag-neutral" style="min-height:18px;padding:2px 7px;font-size:9.5px;font-weight:800">VERIFIED SELLER</span>
                 </div>
-                <div style="font:400 12px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:4px">
+                <div class="entity-sub">
                   Rue Joss, Bonapriso, Douala · Pro Audio, Gaming &amp; Mobile
                 </div>
-                <div style="display:flex;align-items:center;gap:10px;margin-top:6px;font-size:11.5px;color:var(--color-text-secondary)">
+                <div class="meta-row">
                   <span style="color:#eab308;font-weight:700">★ 4.7 (890)</span>
-                  <span>•</span>
                   <span>154 Products</span>
-                  <span>•</span>
                   <span style="color:var(--color-success);font-weight:600">Replies ~10m</span>
                 </div>
               </div>
@@ -168,20 +168,20 @@ def get_merchant_view():
             </button>
           </div>
 
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;background:var(--color-neutral-100);padding:10px;border-radius:var(--radius-md);border:1px solid var(--color-divider)">
-            <button onClick="{{ on.product }}" aria-label="View Sony WH-1000XM5" style="text-align:left;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-sm);padding:8px;cursor:pointer;display:flex;flex-direction:column;gap:4px">
+          <div class="mini-grid" style="background:var(--color-neutral-100);padding:10px;border-radius:var(--radius-md);border:1px solid var(--color-divider)">
+            <button onClick="{{ on.product }}" aria-label="View Sony WH-1000XM5" class="mini-card">
               <div class="ph" style="aspect-ratio:16/9;border-radius:4px">
                 <span style="font-size:8px">PRO NOISE CANCEL</span>
               </div>
-              <div style="font:700 12px/1.2 var(--font-heading);color:var(--color-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Sony WH-1000XM5</div>
-              <div style="font:800 12.5px/1 var(--font-heading);color:var(--color-accent)">XAF 189 000</div>
+              <div class="mini-card-title">Sony WH-1000XM5</div>
+              <div class="mini-card-price">XAF 189 000</div>
             </button>
-            <button onClick="{{ on.product }}" aria-label="View Samsung Galaxy A55" style="text-align:left;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-sm);padding:8px;cursor:pointer;display:flex;flex-direction:column;gap:4px">
+            <button onClick="{{ on.product }}" aria-label="View Samsung Galaxy A55" class="mini-card">
               <div class="ph" style="aspect-ratio:16/9;border-radius:4px">
                 <span style="font-size:8px">5G AMOLED 120Hz</span>
               </div>
-              <div style="font:700 12px/1.2 var(--font-heading);color:var(--color-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Samsung Galaxy A55</div>
-              <div style="font:800 12.5px/1 var(--font-heading);color:var(--color-accent)">XAF 245 000</div>
+              <div class="mini-card-title">Samsung Galaxy A55</div>
+              <div class="mini-card-price">XAF 245 000</div>
             </button>
           </div>
 
@@ -195,22 +195,20 @@ def get_merchant_view():
 
         <!-- Flagship Card 3: Sawa Luxury Hotel -->
         <div class="card-premium" style="display:flex;flex-direction:column;justify-content:space-between;gap:16px;border:1.5px solid var(--color-divider);position:relative;overflow:hidden">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
-            <div style="display:flex;align-items:center;gap:14px">
-              <div style="width:54px;height:54px;border-radius:var(--radius-md);background:linear-gradient(135deg,#007aff,#00c853);color:#fff;display:flex;align-items:center;justify-content:center;font:800 22px/1 var(--font-heading);box-shadow:var(--shadow-md);flex-shrink:0">S</div>
-              <div>
-                <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-                  <span style="font:800 17px/1.2 var(--font-heading);color:var(--color-text)">Sawa Luxury Hotel</span>
+          <div class="entity-head">
+            <div class="entity-id">
+              <div class="entity-logo" style="background:linear-gradient(135deg,#007aff,#00c853)">S</div>
+              <div class="entity-text">
+                <div class="entity-name-row">
+                  <span class="entity-name">Sawa Luxury Hotel</span>
                   <span class="tag tag-accent" style="min-height:18px;padding:2px 7px;font-size:9.5px;font-weight:800">5-STAR RESORT</span>
                 </div>
-                <div style="font:400 12px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:4px">
+                <div class="entity-sub">
                   Bonanjo Business District, Douala · Olympic Pool &amp; Ocean Suites
                 </div>
-                <div style="display:flex;align-items:center;gap:10px;margin-top:6px;font-size:11.5px;color:var(--color-text-secondary)">
+                <div class="meta-row">
                   <span style="color:#eab308;font-weight:700">★ 4.8 (2.1k)</span>
-                  <span>•</span>
                   <span>42 Suites</span>
-                  <span>•</span>
                   <span style="color:var(--color-success);font-weight:600">Instant Check-in</span>
                 </div>
               </div>
@@ -220,20 +218,20 @@ def get_merchant_view():
             </button>
           </div>
 
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;background:var(--color-neutral-100);padding:10px;border-radius:var(--radius-md);border:1px solid var(--color-divider)">
-            <button onClick="{{ on.hotelDetail }}" aria-label="View Executive Ocean Suite" style="text-align:left;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-sm);padding:8px;cursor:pointer;display:flex;flex-direction:column;gap:4px">
+          <div class="mini-grid" style="background:var(--color-neutral-100);padding:10px;border-radius:var(--radius-md);border:1px solid var(--color-divider)">
+            <button onClick="{{ on.hotelDetail }}" aria-label="View Executive Ocean Suite" class="mini-card">
               <div class="ph" style="aspect-ratio:16/9;border-radius:4px">
                 <span style="font-size:8px">OCEAN SUITE</span>
               </div>
-              <div style="font:700 12px/1.2 var(--font-heading);color:var(--color-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Executive Suite</div>
-              <div style="font:800 12.5px/1 var(--font-heading);color:var(--color-accent)">XAF 65 000/nt</div>
+              <div class="mini-card-title">Executive Suite</div>
+              <div class="mini-card-price">XAF 65 000/nt</div>
             </button>
-            <button onClick="{{ on.hotelDetail }}" aria-label="View Presidential King Suite" style="text-align:left;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-sm);padding:8px;cursor:pointer;display:flex;flex-direction:column;gap:4px">
+            <button onClick="{{ on.hotelDetail }}" aria-label="View Presidential King Suite" class="mini-card">
               <div class="ph" style="aspect-ratio:16/9;border-radius:4px">
                 <span style="font-size:8px">KING DUPLEX</span>
               </div>
-              <div style="font:700 12px/1.2 var(--font-heading);color:var(--color-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Presidential Duplex</div>
-              <div style="font:800 12.5px/1 var(--font-heading);color:var(--color-accent)">XAF 120 000/nt</div>
+              <div class="mini-card-title">Presidential Duplex</div>
+              <div class="mini-card-price">XAF 120 000/nt</div>
             </button>
           </div>
 
@@ -402,7 +400,7 @@ def get_merchant_view():
 <div style="padding-bottom:64px">
   
   <!-- Sticky Top Navigation Bar -->
-  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:30">
+  <div class="page-head" style="justify-content:space-between">
     <div style="display:flex;align-items:center;gap:12px">
       <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
@@ -456,11 +454,8 @@ def get_merchant_view():
                 <span style="color:#ffd100;font-weight:800">★ 4.9</span>
                 <span>(218 Ratings)</span>
               </span>
-              <span>•</span>
               <span><strong>1 240</strong> Followers</span>
-              <span>•</span>
               <span><strong>318</strong> Products In Stock</span>
-              <span>•</span>
               <span style="color:#57ff95;font-weight:700">Open Now (08:00 - 18:30)</span>
             </div>
           </div>
@@ -503,20 +498,20 @@ def get_merchant_view():
 
   <!-- ── STOREFRONT NAVIGATION SUB-TABS ── -->
   <div style="background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:60px;z-index:20">
-    <div style="max-width:1300px;margin:0 auto;padding:0 16px;display:flex;gap:8px;overflow-x:auto" class="hs">
-      <button onClick="{{ () => setStoreActiveTab('home') }}" class="tag {{ (storeActiveTab === 'home' || !storeActiveTab) ? 'tag-accent' : 'tag-neutral' }}" style="height:44px;border-radius:0;border-bottom:2.5px solid {{ (storeActiveTab === 'home' || !storeActiveTab) ? 'var(--color-accent)' : 'transparent' }};cursor:pointer;font-weight:700">
+    <div class="tab-strip" role="tablist">
+      <button onClick="{{ () => setStoreActiveTab('home') }}" class="tag {{ storeTabHomeClass }}" style="height:44px;border-radius:0;border-bottom:2.5px solid {{ storeTabHomeBorder }};cursor:pointer;font-weight:700">
         STORE HOME
       </button>
-      <button onClick="{{ () => setStoreActiveTab('products') }}" class="tag {{ storeActiveTab === 'products' ? 'tag-accent' : 'tag-neutral' }}" style="height:44px;border-radius:0;border-bottom:2.5px solid {{ storeActiveTab === 'products' ? 'var(--color-accent)' : 'transparent' }};cursor:pointer;font-weight:700">
+      <button onClick="{{ () => setStoreActiveTab('products') }}" class="tag {{ storeTabProductsClass }}" style="height:44px;border-radius:0;border-bottom:2.5px solid {{ storeTabProductsBorder }};cursor:pointer;font-weight:700">
         PRODUCTS (318)
       </button>
-      <button onClick="{{ () => setStoreActiveTab('collections') }}" class="tag {{ storeActiveTab === 'collections' ? 'tag-accent' : 'tag-neutral' }}" style="height:44px;border-radius:0;border-bottom:2.5px solid {{ storeActiveTab === 'collections' ? 'var(--color-accent)' : 'transparent' }};cursor:pointer;font-weight:700">
+      <button onClick="{{ () => setStoreActiveTab('collections') }}" class="tag {{ storeTabCollectionsClass }}" style="height:44px;border-radius:0;border-bottom:2.5px solid {{ storeTabCollectionsBorder }};cursor:pointer;font-weight:700">
         COLLECTIONS &amp; BUNDLES
       </button>
-      <button onClick="{{ () => setStoreActiveTab('about') }}" class="tag {{ storeActiveTab === 'about' ? 'tag-accent' : 'tag-neutral' }}" style="height:44px;border-radius:0;border-bottom:2.5px solid {{ storeActiveTab === 'about' ? 'var(--color-accent)' : 'transparent' }};cursor:pointer;font-weight:700">
+      <button onClick="{{ () => setStoreActiveTab('about') }}" class="tag {{ storeTabAboutClass }}" style="height:44px;border-radius:0;border-bottom:2.5px solid {{ storeTabAboutBorder }};cursor:pointer;font-weight:700">
         ABOUT &amp; LOCATION
       </button>
-      <button onClick="{{ () => setStoreActiveTab('reviews') }}" class="tag {{ storeActiveTab === 'reviews' ? 'tag-accent' : 'tag-neutral' }}" style="height:44px;border-radius:0;border-bottom:2.5px solid {{ storeActiveTab === 'reviews' ? 'var(--color-accent)' : 'transparent' }};cursor:pointer;font-weight:700">
+      <button onClick="{{ () => setStoreActiveTab('reviews') }}" class="tag {{ storeTabReviewsClass }}" style="height:44px;border-radius:0;border-bottom:2.5px solid {{ storeTabReviewsBorder }};cursor:pointer;font-weight:700">
         REVIEWS &amp; TRUST (218)
       </button>
     </div>
@@ -525,7 +520,7 @@ def get_merchant_view():
   <div style="padding:24px 16px;max-width:1300px;margin:0 auto">
 
     <!-- ── SUB-TAB 1: STORE HOME ── -->
-    <sc-if value="{{ storeActiveTab === 'home' || !storeActiveTab }}">
+    <sc-if value="{{ storeTabIsHome }}">
       <div style="display:flex;flex-direction:column;gap:28px">
         
         <!-- Hero Featured Merchandising Card -->
@@ -623,7 +618,7 @@ def get_merchant_view():
     </sc-if>
 
     <!-- ── SUB-TAB 2: PRODUCTS CATALOG ── -->
-    <sc-if value="{{ storeActiveTab === 'products' }}">
+    <sc-if value="{{ storeTabIsProducts }}">
       <div style="display:flex;flex-direction:column;gap:18px">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
           <div>
@@ -673,7 +668,7 @@ def get_merchant_view():
     </sc-if>
 
     <!-- ── SUB-TAB 3: COLLECTIONS & BUNDLES ── -->
-    <sc-if value="{{ storeActiveTab === 'collections' }}">
+    <sc-if value="{{ storeTabIsCollections }}">
       <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));gap:16px">
         <div class="card-premium" style="display:flex;flex-direction:column;gap:12px">
           <div class="ph" style="aspect-ratio:16/9;border-radius:var(--radius-md)">
@@ -708,7 +703,7 @@ def get_merchant_view():
     </sc-if>
 
     <!-- ── SUB-TAB 4: ABOUT & LOCATION ── -->
-    <sc-if value="{{ storeActiveTab === 'about' }}">
+    <sc-if value="{{ storeTabIsAbout }}">
       <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));gap:20px">
         
         <div class="card-premium" style="display:flex;flex-direction:column;gap:14px">
@@ -744,7 +739,7 @@ def get_merchant_view():
     </sc-if>
 
     <!-- ── SUB-TAB 5: REVIEWS & TRUST ── -->
-    <sc-if value="{{ storeActiveTab === 'reviews' }}">
+    <sc-if value="{{ storeTabIsReviews }}">
       <div style="display:flex;flex-direction:column;gap:20px">
         
         <!-- Scorecard Summary -->
@@ -832,7 +827,7 @@ def get_merchant_view():
 <div style="padding-bottom:64px">
 
   <!-- Sticky Top Navigation Bar -->
-  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:30">
+  <div class="page-head" style="justify-content:space-between">
     <div style="display:flex;align-items:center;gap:12px">
       <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
@@ -1084,7 +1079,7 @@ def get_merchant_view():
 <sc-if value="{{ is.seller }}">
 <div style="padding-bottom:32px">
   
-  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+  <div class="page-head" style="justify-content:space-between">
     <div style="display:flex;align-items:center;gap:12px">
       <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
@@ -1099,25 +1094,86 @@ def get_merchant_view():
 
   <div style="padding:16px;max-width:960px;margin:0 auto;display:flex;flex-direction:column;gap:16px">
     
-    <!-- Metrics Scorecard Grid -->
-    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px">
-      <div class="card-premium" style="padding:18px">
-        <div style="font:700 11px/1 var(--font-heading);color:var(--color-text-muted);text-transform:uppercase">MONTHLY REVENUE</div>
-        <div style="font:800 22px/1 var(--font-heading);color:var(--color-text);margin:8px 0 4px">{{ sellerRevenue || 'XAF 0' }}</div>
-        <div style="font:600 11px/1 var(--font-body);color:{{ sellerRevenueDeltaColor || 'var(--color-text-muted)' }}">{{ sellerRevenueDelta || 'No sales this month yet' }}</div>
+    <!-- Revenue leads; the rest supports it. -->
+    <div class="surface-raised" style="padding:20px 18px 18px">
+      <div class="eyebrow">This month</div>
+      <div class="metric-hero" style="margin-top:10px">
+        <div class="metric-hero-row">
+          <span class="metric-value">{{ sellerRevenue || 'XAF 0' }}</span>
+          <sc-if value="{{ sellerRevenueDelta }}">
+            <span class="delta delta-up">{{ sellerRevenueDelta }}</span>
+          </sc-if>
+        </div>
+        <div class="metric-label">Revenue</div>
+        <div class="metric-note">{{ sellerRevenueNote || 'No sales yet this month. Your first published listing starts the clock.' }}</div>
       </div>
 
-      <div class="card-premium" style="padding:18px">
-        <div style="font:700 11px/1 var(--font-heading);color:var(--color-text-muted);text-transform:uppercase">ACTIVE ORDERS</div>
-        <div style="font:800 22px/1 var(--font-heading);color:var(--color-accent);margin:8px 0 4px">{{ sellerActiveOrdersCount || 0 }} Pending</div>
-        <div style="font:500 11px/1 var(--font-body);color:var(--color-text-secondary)">{{ sellerActiveOrdersNote || '0 ready for dispatch' }}</div>
+      <div class="stat-grid" style="margin-top:18px">
+        <div class="stat-tile">
+          <div class="stat-tile-top">
+            <span class="stat-tile-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+            </span>
+          </div>
+          <div class="metric-value-sm">{{ sellerActiveOrdersCount || 0 }}</div>
+          <div class="stat-tile-label">Pending orders</div>
+        </div>
+
+        <div class="stat-tile">
+          <div class="stat-tile-top">
+            <span class="stat-tile-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+            </span>
+          </div>
+          <div class="metric-value-sm">{{ sellerStoreViewsCount || 0 }}</div>
+          <div class="stat-tile-label">Views</div>
+        </div>
+
+        <div class="stat-tile">
+          <div class="stat-tile-top">
+            <span class="stat-tile-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+            </span>
+          </div>
+          <div class="metric-value-sm">{{ sellerLiveCount || 0 }}</div>
+          <div class="stat-tile-label">Live</div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Performance: store analytics + campaign reporting, together -->
+    <div class="surface-raised" style="padding:18px 16px">
+      <div class="section-head" style="margin-bottom:4px">
+        <div class="section-head-text">
+          <div class="eyebrow">Performance</div>
+          <h4 class="section-head-title" style="font-size:16px;margin-top:6px">Reach &amp; results</h4>
+        </div>
       </div>
 
-      <div class="card-premium" style="padding:18px">
-        <div style="font:700 11px/1 var(--font-heading);color:var(--color-text-muted);text-transform:uppercase">STORE VIEWS</div>
-        <div style="font:800 22px/1 var(--font-heading);color:var(--color-text);margin:8px 0 4px">{{ sellerStoreViewsCount || 0 }}</div>
-        <div style="font:600 11px/1 var(--font-body);color:var(--color-text-secondary)">{{ sellerStoreViewsNote || '0 views this week' }}</div>
-      </div>
+      <button onClick="{{ on.storeAnalytics }}" class="quiet-row">
+        <span class="quiet-row-label">Storefront analytics</span>
+        <span class="quiet-row-value">
+          Views, conversion, revenue
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+        </span>
+      </button>
+
+      <button onClick="{{ on.announceCampaigns }}" class="quiet-row">
+        <span class="quiet-row-label">Campaigns &amp; analytics</span>
+        <span class="quiet-row-value">
+          Broadcast reach &amp; spend
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+        </span>
+      </button>
+
+      <button onClick="{{ openAnnounceStudioFromSell }}" class="quiet-row">
+        <span class="quiet-row-label">Publishing studio</span>
+        <span class="quiet-row-value">
+          Draft a broadcast
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+        </span>
+      </button>
     </div>
 
     <!-- Inventory Quick Actions -->
@@ -1154,81 +1210,81 @@ def get_merchant_view():
      ══════════════════════════════════════════════════════════════════════ -->
 <sc-if value="{{ is.upload }}">
 <div style="padding-bottom:32px">
-  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+  <div class="page-head">
     <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
     </button>
-    <div style="flex:1;min-width:0">
-      <h4 style="margin:0;font-size:16px">Publish to {{ currentStoreName || 'Marketplace' }}</h4>
-      <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">
-        Store Vertical: <span style="font-weight:700;color:var(--color-accent)">{{ currentStoreCategoryLabel || 'Physical Retail' }}</span>
-      </div>
+    <div class="page-head-text">
+      <h4 class="page-head-title">New listing</h4>
+      <div class="page-head-sub">{{ currentStoreName || 'Your boutique' }}</div>
     </div>
   </div>
 
-  <div style="padding:16px;max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:12px">
-    
-    <div style="font:700 12px/1 var(--font-heading);letter-spacing:.08em;color:var(--color-text-muted);text-transform:uppercase;margin-bottom:2px">
-      Authorized Content Formats
+  <div class="page-body" style="max-width:680px;--section-gap:22px">
+
+    <div>
+      <div class="eyebrow">Publishing to</div>
+      <h3 style="margin:8px 0 0;font:800 22px/1.2 var(--font-heading);letter-spacing:-.03em;color:var(--color-text)">{{ currentStoreName || 'Your boutique' }}</h3>
+      <p class="metric-note" style="margin-top:6px">Choose what you are putting in front of buyers. Your boutique's vertical decides which formats are available.</p>
     </div>
 
-    <!-- Physical Products / Retail Vertical -->
-    <sc-if value="{{ !storeCategory || storeCategory === 'electronics' || storeCategory === 'fashion' || storeCategory === 'home' || storeCategory === 'food' || storeCategory === 'beauty' || storeCategory === 'automotive' || storeCategory === 'general' }}">
-      <button onClick="{{ selectCategoryPhysical }}" class="card-premium" style="display:flex;align-items:center;gap:14px;padding:16px;text-align:left;cursor:pointer">
-        <div style="width:44px;height:44px;border-radius:var(--radius-sm);background:var(--color-accent-100);color:var(--color-accent);display:flex;align-items:center;justify-content:center;flex-shrink:0">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect width="18" height="12" x="3" y="4" rx="2"/><line x1="2" x2="22" y1="20" y2="20"/></svg>
-        </div>
-        <div style="flex:1">
-          <div style="font:800 15px/1.2 var(--font-heading);color:var(--color-text)">Physical Product / Inventory</div>
-          <div style="font:400 12px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Post items with price, condition, specifications, and escrow delivery</div>
-        </div>
-        <span style="color:var(--color-accent);font-weight:800">→</span>
-      </button>
-    </sc-if>
+    <div class="surface-raised" style="padding:4px 16px 6px">
+      <div class="rule-label" style="margin-top:12px"><span class="eyebrow">Listings</span></div>
 
-    <!-- Services Vertical -->
-    <sc-if value="{{ storeCategory === 'services' }}">
-      <button onClick="{{ selectCategoryService }}" class="card-premium" style="display:flex;align-items:center;gap:14px;padding:16px;text-align:left;cursor:pointer">
-        <div style="width:44px;height:44px;border-radius:var(--radius-sm);background:var(--color-accent-100);color:var(--color-accent);display:flex;align-items:center;justify-content:center;flex-shrink:0">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
-        </div>
-        <div style="flex:1">
-          <div style="font:800 15px/1.2 var(--font-heading);color:var(--color-text)">Professional Service / Gig</div>
-          <div style="font:400 12px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Photography, solar technicians, repair services, consulting</div>
-        </div>
-        <span style="color:var(--color-accent);font-weight:800">→</span>
+      <sc-if value="{{ storeSellsPhysical }}">
+      <button onClick="{{ selectCategoryPhysical }}" class="quiet-row" style="padding:15px 0">
+        <span style="display:flex;align-items:flex-start;gap:13px;min-width:0">
+          <span class="feature-row-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg></span>
+          <span class="feature-row-body">
+            <span class="feature-row-title" style="display:block">Product or inventory</span>
+            <span class="feature-row-sub" style="display:block">Price, condition, specifications and escrow delivery.</span>
+          </span>
+        </span>
+        <span class="quiet-row-value" style="color:var(--color-accent)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></span>
       </button>
-    </sc-if>
+      </sc-if>
 
-    <!-- Hospitality / Accommodations Vertical -->
-    <sc-if value="{{ storeCategory === 'hotels' || storeCategory === 'hospitality' }}">
-      <button onClick="{{ selectCategoryHospitality }}" class="card-premium" style="display:flex;align-items:center;gap:14px;padding:16px;text-align:left;cursor:pointer">
-        <div style="width:44px;height:44px;border-radius:var(--radius-sm);background:var(--color-accent-100);color:var(--color-accent);display:flex;align-items:center;justify-content:center;flex-shrink:0">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 22v-6.57"/><path d="M12 11h.01"/><path d="M12 7h.01"/><path d="M14 15.43V22"/><path d="M15 11h.01"/><path d="M15 7h.01"/><path d="M16 16h2a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/><path d="M18 22v-4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v4"/><path d="M8 22v-6.57"/><path d="M9 11h.01"/><path d="M9 7h.01"/></svg>
-        </div>
-        <div style="flex:1">
-          <div style="font:800 15px/1.2 var(--font-heading);color:var(--color-text)">Room, Suite &amp; Booking</div>
-          <div style="font:400 12px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Hotel rooms, furnished apartments, venue reservations</div>
-        </div>
-        <span style="color:var(--color-accent);font-weight:800">→</span>
+      <sc-if value="{{ storeSellsService }}">
+      <button onClick="{{ selectCategoryService }}" class="quiet-row" style="padding:15px 0">
+        <span style="display:flex;align-items:flex-start;gap:13px;min-width:0">
+          <span class="feature-row-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 1-5.4 5.4L4 17v3h3l5.3-5.3a4 4 0 0 1 5.4-5.4l-2.6 2.6 1.6 1.6Z"/></svg></span>
+          <span class="feature-row-body">
+            <span class="feature-row-title" style="display:block">Service or booking</span>
+            <span class="feature-row-sub" style="display:block">Scope, duration and how customers reach you.</span>
+          </span>
+        </span>
+        <span class="quiet-row-value" style="color:var(--color-accent)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></span>
       </button>
-    </sc-if>
+      </sc-if>
 
-    <!-- Universal Announcement / Broadcast -->
-    <div style="margin-top:8px;font:700 12px/1 var(--font-heading);letter-spacing:.08em;color:var(--color-text-muted);text-transform:uppercase">
-      Commercial Broadcast
+      <sc-if value="{{ storeSellsHospitality }}">
+      <button onClick="{{ selectCategoryHospitality }}" class="quiet-row" style="padding:15px 0">
+        <span style="display:flex;align-items:flex-start;gap:13px;min-width:0">
+          <span class="feature-row-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20V9l9-5 9 5v11"/><path d="M9 20v-6h6v6"/></svg></span>
+          <span class="feature-row-body">
+            <span class="feature-row-title" style="display:block">Room or stay</span>
+            <span class="feature-row-sub" style="display:block">Room type, guests, rates and availability.</span>
+          </span>
+        </span>
+        <span class="quiet-row-value" style="color:var(--color-accent)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></span>
+      </button>
+      </sc-if>
     </div>
 
-    <button onClick="{{ openAnnounceStudioFromSell }}" class="card-premium" style="display:flex;align-items:center;gap:14px;padding:16px;text-align:left;cursor:pointer">
-      <div style="width:44px;height:44px;border-radius:var(--radius-sm);background:var(--color-secondary-100,#fef3c7);color:var(--color-secondary-800,#92400e);display:flex;align-items:center;justify-content:center;flex-shrink:0">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
-      </div>
-      <div style="flex:1">
-        <div style="font:800 15px/1.2 var(--font-heading);color:var(--color-text)">Post Store Announcement / Deal</div>
-        <div style="font:400 12px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Broadcast flash promotions, stock arrivals, or business updates</div>
-      </div>
-      <span style="color:var(--color-accent);font-weight:800">→</span>
-    </button>
+    <div class="surface-raised" style="padding:4px 16px 6px">
+      <div class="rule-label" style="margin-top:12px"><span class="eyebrow">Broadcast</span></div>
+      <button onClick="{{ openAnnounceStudioFromSell }}" class="quiet-row" style="padding:15px 0">
+        <span style="display:flex;align-items:flex-start;gap:13px;min-width:0">
+          <span class="feature-row-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 11 18-5v12L3 13v-2Z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg></span>
+          <span class="feature-row-body">
+            <span class="feature-row-title" style="display:block">Store announcement or deal</span>
+            <span class="feature-row-sub" style="display:block">Publish a flash promotion, stock arrival or business update to Announce.</span>
+          </span>
+        </span>
+        <span class="quiet-row-value" style="color:var(--color-accent)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></span>
+      </button>
+    </div>
+
 
   </div>
 </div>
@@ -1239,7 +1295,7 @@ def get_merchant_view():
      ══════════════════════════════════════════════════════════════════════ -->
 <sc-if value="{{ is.uploadDetails }}">
 <div style="padding-bottom:32px">
-  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+  <div class="page-head">
     <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
     </button>
@@ -1297,7 +1353,7 @@ def get_merchant_view():
      ══════════════════════════════════════════════════════════════════════ -->
 <sc-if value="{{ is.uploadPrice }}">
 <div style="padding-bottom:32px">
-  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+  <div class="page-head">
     <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
     </button>
@@ -1364,7 +1420,7 @@ def get_merchant_view():
      ══════════════════════════════════════════════════════════════════════ -->
 <sc-if value="{{ is.myListings }}">
 <div style="padding-bottom:32px">
-  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+  <div class="page-head" style="justify-content:space-between">
     <div style="display:flex;align-items:center;gap:12px">
       <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>

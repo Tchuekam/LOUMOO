@@ -203,8 +203,7 @@ router.post('/signup', async (req, res, next) => {
       logger.warn(`[Auth] Resend email warning: ${emailErr.message}`);
     }
 
-    // In development mode, log OTP to terminal for instant debugging
-    console.log(`\n=======================================================\n  LOUMOO VERIFICATION OTP FOR [${cleanEmail}]: ${otpCode}\n=======================================================\n`);
+    logDevOtp('VERIFICATION OTP', cleanEmail, otpCode);
 
     res.json({
       status: 'success',
@@ -447,7 +446,7 @@ router.post('/resend-otp', async (req, res, next) => {
       });
     } catch (e) {}
 
-    console.log(`\n=======================================================\n  LOUMOO RESENT OTP FOR [${cleanEmail}]: ${otpCode}\n=======================================================\n`);
+    logDevOtp('RESENT OTP', cleanEmail, otpCode);
 
     res.json({
       status: 'success',

@@ -229,6 +229,341 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 .tag-neutral { background: var(--color-surface); color: var(--color-text-secondary); border-color: var(--color-divider); }
 .tag-neutral:hover { background: var(--color-surface-hover); color: var(--color-text); border-color: var(--color-neutral-400); }
 
+/* ==========================================================================
+   LOUMOO ECOSYSTEM PRIMITIVES
+   --------------------------------------------------------------------------
+   One page shell, one rhythm, one alignment grid - shared by every screen
+   outside the marketplace home (stores, storefront, comparison, announce,
+   profile). Each of those screens previously carried its own inline layout,
+   which is why gutters, heading sizes and header heights disagreed from
+   screen to screen, and why narrow viewports collided.
+
+   The rule that fixes most of the responsive damage: every flex child that
+   contains text declares `min-width:0`. Without it a flex item refuses to
+   shrink below its content width, so a long title shoves the adjacent action
+   off-screen or underneath itself.
+   ======================================================================== */
+
+/* -- Page header --------------------------------------------------------- */
+.page-head {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px; min-height: 60px;
+  background: var(--color-surface-glass);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid var(--color-divider);
+  position: sticky; top: 0; z-index: var(--z-sticky);
+}
+.page-head-main { display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1 1 auto; }
+.page-head-text { min-width: 0; }
+.page-head-title {
+  margin: 0; font: 800 16px/1.25 var(--font-heading); letter-spacing: -.022em;
+  color: var(--color-text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.page-head-sub {
+  font: 400 11.5px/1.35 var(--font-body); color: var(--color-text-secondary);
+  margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.page-head-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.page-head-actions .btn { white-space: nowrap; }
+.icon-btn-round {
+  width: 40px; height: 40px; flex-shrink: 0; border-radius: 50%;
+  border: 1px solid var(--color-divider); background: var(--color-surface);
+  color: var(--color-text); display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: background .18s var(--ease-smooth), border-color .18s var(--ease-smooth);
+}
+.icon-btn-round:hover { background: var(--color-surface-hover); border-color: var(--color-neutral-400); }
+/* Some headers wrap their own inner row rather than laying one out themselves;
+   they take the same sticky treatment without the flex row. */
+.page-head-block {
+  background: var(--color-surface-glass);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid var(--color-divider);
+  position: sticky; top: 0; z-index: var(--z-sticky);
+}
+/* Any direct flex row inside a header must let its text shrink. This single
+   declaration is what stops long titles from shoving actions off-screen. */
+.page-head > div, .page-head-block > div { min-width: 0; }
+/* Below 560px the subtitle is the first thing to go - the action must stay reachable. */
+@media (max-width: 559px) {
+  .page-head-sub { display: none; }
+  .page-head-title { font-size: 15px; }
+}
+
+/* -- Page body: the single gutter + vertical rhythm ----------------------- */
+.page-body {
+  --section-gap: 30px;
+  padding: 20px 16px 56px; max-width: 1300px; margin: 0 auto;
+  display: flex; flex-direction: column; gap: var(--section-gap);
+}
+@media (min-width: 1024px) { .page-body { --section-gap: 38px; padding: 26px 28px 64px; } }
+@media (max-width: 419px)  { .page-body { --section-gap: 24px; padding: 16px 14px 48px; } }
+
+/* -- Section header ------------------------------------------------------ */
+.section-head {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 10px 14px; margin-bottom: 14px; flex-wrap: wrap;
+}
+.section-head-text { min-width: 0; flex: 1 1 260px; }
+.section-head-title { margin: 0; font: 800 18px/1.25 var(--font-heading); letter-spacing: -.024em; color: var(--color-text); }
+.section-head-sub { font: 400 12.5px/1.45 var(--font-body); color: var(--color-text-secondary); margin-top: 3px; max-width: 62ch; }
+.section-head-aside { flex-shrink: 0; align-self: center; }
+@media (min-width: 1024px) { .section-head-title { font-size: 21px; } }
+
+/* -- Filter bar: inline on desktop, clean equal stack on mobile ----------- */
+.filter-bar { display: flex; flex-direction: column; align-items: stretch; gap: 8px; }
+.filter-bar > * { min-width: 0; width: 100%; }
+/* Mobile is the base case: one column, one left edge, one right edge. The
+   ragged mix of control widths was the most visible defect on this screen. */
+.filter-grow { min-width: 0; }
+@media (min-width: 720px) {
+  .filter-bar { flex-direction: row; align-items: center; flex-wrap: wrap; gap: 10px; }
+  .filter-bar > * { width: auto; }
+  /* Basis is only meaningful once the main axis is horizontal again. A basis
+     set while the bar was a column became a HEIGHT and inflated each control
+     into a tall empty block. */
+  .filter-grow { flex: 1 1 260px; }
+  .filter-side { flex: 0 1 210px; }
+}
+
+/* -- Chip row: scrollable, snapped, with a fade that says "there is more" - */
+.chip-row {
+  display: flex; gap: 8px; overflow-x: auto; overflow-y: hidden;
+  scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; padding: 2px 0;
+  -webkit-mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 28px), transparent 100%);
+          mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 28px), transparent 100%);
+}
+.chip-row::-webkit-scrollbar { height: 0; display: none; }
+.chip-row > * { flex: 0 0 auto; scroll-snap-align: start; }
+/* 44px is the accessible minimum for a thumb; these chips were 32px. */
+.chip-row .tag { min-height: 40px; padding: 0 15px; font-size: 12.5px; }
+@media (pointer: coarse) { .chip-row .tag { min-height: 44px; } }
+
+/* -- Tab strip: the same fade, so a scrollable row never reads as clipped --- */
+.tab-strip {
+  display: flex; gap: 8px; overflow-x: auto; overflow-y: hidden;
+  scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; max-width: 1300px; margin: 0 auto; padding: 0 16px;
+  -webkit-mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 32px), transparent 100%);
+          mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 32px), transparent 100%);
+}
+.tab-strip::-webkit-scrollbar { height: 0; display: none; }
+.tab-strip > * { flex: 0 0 auto; scroll-snap-align: start; }
+
+/* -- Entity header: logo + name + action, aligned at every width ---------- */
+.entity-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.entity-id { display: flex; align-items: flex-start; gap: 13px; min-width: 0; flex: 1 1 auto; }
+.entity-logo {
+  width: 52px; height: 52px; border-radius: var(--radius-md); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font: 800 21px/1 var(--font-heading); color: #fff; box-shadow: var(--shadow-sm);
+}
+.entity-text { min-width: 0; flex: 1 1 auto; }
+.entity-name-row { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; min-width: 0; }
+.entity-name { font: 800 16.5px/1.25 var(--font-heading); letter-spacing: -.02em; color: var(--color-text); }
+.entity-sub { font: 400 12px/1.45 var(--font-body); color: var(--color-text-secondary); margin-top: 4px; }
+.entity-action { flex-shrink: 0; }
+@media (max-width: 419px) {
+  .entity-logo { width: 46px; height: 46px; font-size: 18px; }
+  .entity-name { font-size: 15.5px; }
+}
+
+/* -- Meta row: separators that never orphan onto their own line ----------- */
+.meta-row {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 3px 16px;
+  font: 500 11.5px/1.45 var(--font-body); color: var(--color-text-secondary); margin-top: 7px;
+}
+.meta-row > span { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+/* Separation is carried by spacing alone - deliberately no bullet separators.
+
+   A separator drawn with ::before travels with its item when the row wraps, so
+   it lands at the START of the wrapped line as an orphaned dot. Tying the rule
+   to the viewport did not help either: the row wraps according to the CARD's
+   width, so a 768px viewport showing two ~330px cards still wrapped and
+   orphaned while the viewport rule said it should not. Spacing cannot orphan
+   at any width and reads as deliberate rather than as a stray mark. */
+.meta-strong { color: var(--color-text); font-weight: 700; }
+
+/* -- Entity grid: one column until there is genuinely room for two -------- */
+.entity-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+@media (min-width: 760px)  { .entity-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; } }
+@media (min-width: 1440px) { .entity-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.entity-grid > * { min-width: 0; }
+
+/* -- Mini product strip inside an entity card ---------------------------- */
+.mini-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.mini-grid > * { min-width: 0; }
+.mini-card {
+  text-align: left; background: var(--color-surface); border: 1px solid var(--color-divider);
+  border-radius: var(--radius-sm); padding: 8px; cursor: pointer;
+  display: flex; flex-direction: column; gap: 5px;
+  transition: border-color .18s var(--ease-smooth), transform .18s var(--ease-smooth);
+}
+.mini-card:hover { border-color: var(--color-neutral-400); transform: translateY(-2px); }
+.mini-card-title {
+  font: 700 12px/1.3 var(--font-heading); color: var(--color-text);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.mini-card-price { font: 800 12.5px/1 var(--font-heading); color: var(--color-accent); }
+
+/* Money must never break across lines - "XAF / 850,000" reads as two prices.
+   Applies to every price surface outside the marketplace home. */
+.price, .mini-card-price { white-space: nowrap; }
+/* Announce tab labels stayed on one line each rather than stacking into two. */
+.tab-strip button { white-space: nowrap; }
+/* A badge that only makes sense beside a title disappears before the title does. */
+@media (max-width: 519px) { .hide-tight { display: none !important; } }
+
+/* -- Empty state: says what is missing and what to do about it ----------- */
+.empty-state {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; padding: 48px 24px; gap: 6px;
+  border: 1px dashed var(--color-neutral-300); border-radius: var(--radius-lg);
+  background: var(--color-surface-subtle);
+}
+.empty-state-icon { color: var(--color-text-tertiary); margin-bottom: 6px; }
+.empty-state-title { font: 800 15px/1.3 var(--font-heading); color: var(--color-text); }
+.empty-state-sub { font: 400 12.5px/1.5 var(--font-body); color: var(--color-text-secondary); max-width: 46ch; }
+
+/* ==========================================================================
+   QUIET CONFIDENCE - the editorial data layer
+   --------------------------------------------------------------------------
+   Type carries the hierarchy; colour is spent on one thing at a time.
+   Eyebrow (11px tracked caps) -> numeral (clamped 34-44px, -0.04em) ->
+   semantic label -> one muted sentence.
+   ======================================================================== */
+
+/* -- Surfaces: grey on grey, not white floating on white ------------------ */
+.surface-quiet {
+  background: var(--color-neutral-100);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+}
+.surface-raised {
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xs);
+}
+
+/* -- Eyebrow: sets context without competing ------------------------------ */
+.eyebrow {
+  font: 800 10.5px/1 var(--font-heading);
+  letter-spacing: .13em; text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+/* -- The numeral is the hero --------------------------------------------- */
+.metric-value {
+  font: 800 clamp(30px, 8vw, 42px)/1 var(--font-heading);
+  letter-spacing: -.042em; color: var(--color-text);
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.metric-value-sm {
+  font: 800 clamp(22px, 6vw, 28px)/1 var(--font-heading);
+  letter-spacing: -.035em; color: var(--color-text);
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.metric-unit { font: 700 13px/1 var(--font-heading); color: var(--color-text-muted); margin-left: 3px; }
+.metric-label {
+  font: 700 13px/1.3 var(--font-heading); color: var(--color-text);
+  letter-spacing: -.01em; margin-top: 8px;
+}
+.metric-note {
+  font: 400 12px/1.5 var(--font-body); color: var(--color-text-secondary);
+  margin-top: 4px; max-width: 52ch;
+}
+
+/* -- Delta pill: rides beside the number, never shouts over it ----------- */
+.delta {
+  display: inline-flex; align-items: center; gap: 3px;
+  font: 800 10.5px/1 var(--font-heading); padding: 4px 7px;
+  border-radius: var(--radius-pill); white-space: nowrap; flex-shrink: 0;
+}
+.delta-up   { background: var(--color-success-100); color: #067a3a; }
+.delta-down { background: var(--color-accent-sale-100); color: var(--color-accent-sale); }
+.delta-flat { background: var(--color-neutral-200); color: var(--color-text-muted); }
+
+/* -- Stat tile: icon, delta, numeral, label ------------------------------ */
+.stat-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 479px) { .stat-grid { gap: 8px; } }
+.stat-tile {
+  background: var(--color-neutral-100);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  padding: 14px 13px 15px;
+  display: flex; flex-direction: column; gap: 10px; min-width: 0;
+}
+.stat-tile-top { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+.stat-tile-icon { color: var(--color-text-muted); display: flex; flex-shrink: 0; }
+.stat-tile-label {
+  font: 500 11.5px/1.25 var(--font-body); color: var(--color-text-secondary);
+  /* Wrap rather than truncate: "Pending orders" cut to "Orders pen..." tells
+     the seller nothing. Two short lines are better than a clipped one. */
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* -- Metric hero: the sheet headline from the reference ------------------ */
+.metric-hero { display: flex; flex-direction: column; }
+.metric-hero-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+/* -- Feature row: icon, title, quiet description ------------------------- */
+.feature-row { display: flex; align-items: flex-start; gap: 12px; padding: 11px 0; min-width: 0; }
+.feature-row + .feature-row { border-top: 1px solid var(--color-border-subtle); }
+.feature-row-icon { color: var(--color-text); flex-shrink: 0; margin-top: 1px; }
+.feature-row-body { min-width: 0; }
+.feature-row-title { font: 700 13.5px/1.3 var(--font-heading); color: var(--color-text); letter-spacing: -.01em; }
+.feature-row-sub { font: 400 12px/1.45 var(--font-body); color: var(--color-text-secondary); margin-top: 2px; }
+
+/* -- Activity strip: one blue cell, everything else neutral -------------- */
+.activity-strip { display: flex; flex-wrap: wrap; gap: 5px; }
+.activity-cell {
+  width: 26px; height: 15px; border-radius: var(--radius-pill);
+  background: var(--color-neutral-300); flex-shrink: 0;
+}
+.activity-cell.is-on    { background: var(--color-neutral-800); }
+.activity-cell.is-today { background: var(--color-accent); box-shadow: 0 0 0 3px var(--color-accent-100); }
+.activity-cell.is-empty { background: transparent; border: 1px dashed var(--color-neutral-400); }
+
+/* -- Quiet row link: label left, value + chevron right ------------------- */
+.quiet-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 13px 0; min-width: 0; width: 100%;
+  background: none; border: none; text-align: left; cursor: pointer;
+  font: inherit; color: inherit;
+}
+.quiet-row + .quiet-row { border-top: 1px solid var(--color-border-subtle); }
+.quiet-row-label { font: 600 13.5px/1.3 var(--font-heading); color: var(--color-text); min-width: 0; }
+.quiet-row-value {
+  display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0;
+  font: 500 12.5px/1 var(--font-body); color: var(--color-text-secondary);
+}
+.quiet-row:hover .quiet-row-label { color: var(--color-accent); }
+
+/* -- Section rule: an editorial divider with a label --------------------- */
+.rule-label {
+  display: flex; align-items: center; gap: 12px; margin: 4px 0 12px;
+}
+.rule-label::after {
+  content: ""; flex: 1; height: 1px; background: var(--color-divider);
+}
+
+
+/* -- Accessibility & motion baseline for every primitive above ----------- */
+.page-head :focus-visible, .page-body :focus-visible,
+.chip-row :focus-visible, .entity-head :focus-visible {
+  outline: 2px solid var(--color-border-focus); outline-offset: 2px; border-radius: var(--radius-xs);
+}
+@media (prefers-reduced-motion: reduce) {
+  .tag:hover, .mini-card:hover { transform: none; }
+  .chip-row { scroll-behavior: auto; }
+}
+
 .badge-floating {
   position: absolute; top: 10px; left: 10px; font: 800 9px/1 var(--font-heading);
   letter-spacing: .05em; padding: 4px 9px; border-radius: var(--radius-pill);
@@ -2858,7 +3193,9 @@ class Component extends DCLogic {
     regEmail: '',
     regCity: 'douala',
     regAddress: '',
-    regBusinessName: 'Orca Electronics Douala',
+    // Seeded with a demo merchant's name until now, which any seller
+    // without their own business name displayed as their storefront.
+    regBusinessName: '',
     regRccm: 'RC/DLA/2023/B/1842',
     legalForm: 'sarl',
     interestTech: true,
@@ -2940,6 +3277,7 @@ class Component extends DCLogic {
     // truth for every seller capability; nothing here is decided locally.
     sellerStatus: 'NONE',
     primaryStoreId: null,
+    store: null,
     deleteAccountConfirmText: '',
     deleteAccountReason: 'not_using',
     deleteAccountBusy: false,
@@ -3308,6 +3646,29 @@ class Component extends DCLogic {
         }).catch(() => {
           // Counts stay at their honest zero; never block the session on this.
           this._dashboardRequested = false;
+    this._loadedStoreId = null;
+        });
+      }
+    }
+
+    /* Load the seller's actual boutique.
+
+       Nothing ever assigned `this.state.store`, so every screen that shows the
+       store's name or vertical fell back to seeded demo values - the Sell
+       screen greeted sellers with another merchant's shop name and always
+       claimed the 'electronics' vertical. */
+    const ownStoreId = seller.storeId || user.primaryStoreId || null;
+    if (ownStoreId && this._loadedStoreId !== ownStoreId) {
+      this._loadedStoreId = ownStoreId;
+      const storeApi = getApi();
+      if (storeApi && typeof storeApi.getStore === 'function') {
+        storeApi.getStore(ownStoreId).then(st => {
+          if (this._unmounted || !st) return;
+          const store = st.store || st;
+          this.setState({ store: store });
+        }).catch(() => {
+          // Screens fall back to a neutral label rather than a wrong one.
+          this._loadedStoreId = null;
         });
       }
     }
@@ -3353,6 +3714,7 @@ class Component extends DCLogic {
       sessionUser: null,
       accountState: null,
       dashboard: null,
+      store: null,
       sellerStatus: 'NONE',
       primaryStoreId: null,
       capabilities: {},
@@ -4932,8 +5294,15 @@ class Component extends DCLogic {
       // ── Dedicated Selling & Upload Wizard Handlers ──
       handleSellClick,
       currentStoreName: (this.state.store && this.state.store.name) || this.state.regBusinessName || 'Your Boutique',
-      currentStoreCategoryLabel: (this.state.store && (this.state.store.category || this.state.store.category_id)) || 'Physical Retail',
-      storeCategory: (this.state.store && (this.state.store.category_id || this.state.store.category)) || 'electronics',
+      hasOwnStore: Boolean(this.state.primaryStoreId),
+      currentStoreCategoryLabel: (() => {
+        const LABELS = { electronics:'Electronics & Tech', fashion:'Fashion & Apparel', home:'Home & Living',
+          services:'Professional Services', hotels:'Hospitality', hospitality:'Hospitality', food:'Food & Grocery',
+          beauty:'Beauty & Care', automotive:'Automotive', travel:'Travel', general:'General Retail' };
+        const c = String(this.state.store && (this.state.store.categoryId || this.state.store.category_id || this.state.store.category) || '').toLowerCase();
+        return LABELS[c] || 'General Retail';
+      })(),
+      storeCategory: (this.state.store && (this.state.store.categoryId || this.state.store.category_id || this.state.store.category)) || 'general',
       openAnnounceStudioFromSell: () => { this.go('announceStudio'); },
       selectCategoryPhysical: () => {
         this.setState({ newListingCategory: 'electronics', newListingType: 'PHYSICAL_PRODUCT' });
@@ -4966,7 +5335,16 @@ class Component extends DCLogic {
 
       // ── Seller Studio Dynamic Metrics & Empty States ──
       sellerRevenue: this.state.sellerRevenue || 'XAF 0',
-      sellerRevenueDelta: this.state.sellerRevenueDelta || 'No sales this month yet',
+      /* A delta and a note are different things. 'No sales this month yet' was
+         being fed into the delta slot, so an empty month rendered as a green
+         pill beside the number - the visual language for good news. A delta is
+         shown only when there is a real movement to report; otherwise the
+         sentence goes underneath as a note, in muted grey. */
+      sellerRevenueDelta: /^[+\-]/.test(String(this.state.sellerRevenueDelta || '')) ? this.state.sellerRevenueDelta : '',
+      sellerRevenueNote: this.state.sellerRevenueNote
+        || (this.state.sellerRevenueDelta && !/^[+\-]/.test(String(this.state.sellerRevenueDelta))
+              ? this.state.sellerRevenueDelta
+              : 'No sales yet this month. Your first published listing starts the clock.'),
       sellerRevenueDeltaColor: this.state.sellerRevenueDeltaColor || 'var(--color-text-muted)',
       sellerActiveOrdersCount: Number(this.state.sellerActiveOrdersCount || 0),
       sellerActiveOrdersNote: this.state.sellerActiveOrdersNote || '0 ready for dispatch',
@@ -5872,8 +6250,12 @@ class Component extends DCLogic {
         this.setState({ createStoreBusy: true, createStoreError: '' });
         const api = getApi();
         const done = () => {
+          // Refresh the account so `primaryStoreId` is populated immediately.
+          // Without it the client still believed the user had no boutique and
+          // sent them back to create a second one.
+          this._syncAccountState(true);
           this.setState({ createStoreBusy: false });
-          this.toast('Storefront created! Starting onboarding...');
+          this.toast('Storefront created! Finish setup to go live.');
           this.go('storeOnboarding');
         };
         api.createStore({
@@ -5895,10 +6277,47 @@ class Component extends DCLogic {
         });
       },
       storeOnboardingPercentage: this.state.storeOnboardingPercentage,
+      storeActivating: Boolean(this.state.storeActivating),
+      storeActivateError: this.state.storeActivateError || '',
       activateStorefront: () => {
-        this.setState({ storeOnboardingPercentage: 100 });
-        this.toast('Your storefront is now LIVE on LOUMOO!');
-        this.go('seller');
+        /*
+         * This used to set a local percentage to 100, toast "LIVE" and walk
+         * away without calling anything. The store stayed DRAFT, the account
+         * stayed SELLER_VERIFICATION_REQUIRED, and pressing Sell bounced the
+         * user back to the seller-type question - for ever.
+         *
+         * Activation is the ONE transition that makes an account SELLER_READY,
+         * so it has to be a real request whose outcome is reported honestly.
+         * It never requires a verification document.
+         */
+        const api = getApi();
+        const storeId = this.state.primaryStoreId;
+        if (this.state.storeActivating) return;
+
+        const fail = (msg) => {
+          if (this._unmounted) return;
+          this.setState({ storeActivating: false, storeActivateError: msg });
+          this.toast(msg);
+        };
+
+        if (!storeId) { this.go('createStore'); return; }
+        if (!api) { fail('LOUMOO is unreachable. Your storefront was not activated.'); return; }
+
+        this.setState({ storeActivating: true, storeActivateError: '' });
+        api.updateStoreOnboarding(storeId, 'ACTIVE')
+          .then(() => this._syncAccountState(true))
+          .then(() => {
+            if (this._unmounted) return;
+            this.setState({ storeActivating: false, storeOnboardingPercentage: 100 });
+            this.toast('Your storefront is now LIVE on LOUMOO!');
+            this.go('seller');
+          })
+          .catch(err => {
+            // Name what is actually missing instead of bouncing the user to a
+            // screen that asks something they already answered.
+            const msg = (err && err.message) || 'Could not activate your storefront.';
+            fail(msg);
+          });
       },
       storeVerificationStatusLabel: this.state.storeVerificationStatusLabel,
       verLegalName: this.state.verLegalName,
@@ -5930,10 +6349,9 @@ class Component extends DCLogic {
           fail('Create your boutique before submitting verification documents.');
           return;
         }
-        if (!this.state.verDocUploadUrl && !this.state.docUploadUrl) {
-          fail('Attach your CNI or RCCM document before submitting.');
-          return;
-        }
+        // No document is required. Verification is an optional trust upgrade,
+        // never a gate on selling, so a seller may submit their legal details
+        // now and attach a document later.
         if (!api) {
           fail('LOUMOO is unreachable. Check your connection and try again.');
           return;
@@ -6021,10 +6439,54 @@ class Component extends DCLogic {
       storeCityFilter: this.state.storeCityFilter || 'all',
       updateStoreCityFilter: (e) => this.setState({ storeCityFilter: e && e.target ? e.target.value : e }),
       storeCategoryFilter: this.state.storeCategoryFilter || 'all',
+      /* Category chip classes, resolved here rather than as a ternary in the
+         template. The engine returns the comparison's BOOLEAN and discards the
+         branches, so every chip rendered `class="tag false"` - no selected
+         state was ever visible and the filter gave no feedback when tapped. */
+      storeCatAllClass: (this.state.storeCategoryFilter || 'all') === 'all' ? 'tag-accent' : 'tag-neutral',
+      storeCatTechClass: (this.state.storeCategoryFilter || 'all') === 'tech' ? 'tag-accent' : 'tag-neutral',
+      storeCatFashionClass: (this.state.storeCategoryFilter || 'all') === 'fashion' ? 'tag-accent' : 'tag-neutral',
+      storeCatHospitalityClass: (this.state.storeCategoryFilter || 'all') === 'hospitality' ? 'tag-accent' : 'tag-neutral',
+      storeCatHomeClass: (this.state.storeCategoryFilter || 'all') === 'home' ? 'tag-accent' : 'tag-neutral',
+      storeCatServicesClass: (this.state.storeCategoryFilter || 'all') === 'services' ? 'tag-accent' : 'tag-neutral',
       setStoreCategory: (cat) => this.setState({ storeCategoryFilter: cat }),
       storeVerifiedOnly: Boolean(this.state.storeVerifiedOnly),
       toggleStoreVerifiedOnly: () => this.setState(st => ({ storeVerifiedOnly: !st.storeVerifiedOnly })),
+      /* Storefront tabs, fully resolved in JS.
+
+         The template engine does not evaluate a ternary whose test is a
+         comparison: `{{ tab === 'products' ? 'tag-accent' : 'tag-neutral' }}`
+         rendered the literal string "false" as the class, and the matching
+         sc-if never opened - which is why STORE HOME was a blank page and the
+         inactive tabs had no styling at all. Booleans and finished class
+         strings cannot be misparsed. */
       storeActiveTab: this.state.storeActiveTab || 'home',
+      storeTabIsHome: (this.state.storeActiveTab || 'home') === 'home',
+      storeTabHomeClass: (this.state.storeActiveTab || 'home') === 'home' ? 'tag-accent' : 'tag-neutral',
+      storeTabHomeBorder: (this.state.storeActiveTab || 'home') === 'home' ? 'var(--color-accent)' : 'transparent',
+      storeTabIsProducts: (this.state.storeActiveTab || 'home') === 'products',
+      storeTabProductsClass: (this.state.storeActiveTab || 'home') === 'products' ? 'tag-accent' : 'tag-neutral',
+      storeTabProductsBorder: (this.state.storeActiveTab || 'home') === 'products' ? 'var(--color-accent)' : 'transparent',
+      storeTabIsCollections: (this.state.storeActiveTab || 'home') === 'collections',
+      storeTabCollectionsClass: (this.state.storeActiveTab || 'home') === 'collections' ? 'tag-accent' : 'tag-neutral',
+      storeTabCollectionsBorder: (this.state.storeActiveTab || 'home') === 'collections' ? 'var(--color-accent)' : 'transparent',
+      storeTabIsAbout: (this.state.storeActiveTab || 'home') === 'about',
+      storeTabAboutClass: (this.state.storeActiveTab || 'home') === 'about' ? 'tag-accent' : 'tag-neutral',
+      storeTabAboutBorder: (this.state.storeActiveTab || 'home') === 'about' ? 'var(--color-accent)' : 'transparent',
+      storeTabIsReviews: (this.state.storeActiveTab || 'home') === 'reviews',
+      storeTabReviewsClass: (this.state.storeActiveTab || 'home') === 'reviews' ? 'tag-accent' : 'tag-neutral',
+      storeTabReviewsBorder: (this.state.storeActiveTab || 'home') === 'reviews' ? 'var(--color-accent)' : 'transparent',
+      /* Vertical gates for the Sell wizard, computed here rather than as long
+         `a === x || a === y || ...` expressions inside sc-if. The template
+         parser mishandles a condition that mixes comparison with logical-or -
+         the storefront's default tab used one and rendered a blank page. A
+         plain boolean cannot misparse. */
+      storeSellsPhysical: ['', 'electronics', 'fashion', 'home', 'food', 'beauty', 'automotive', 'general']
+        .includes(String(this.state.store && (this.state.store.category_id || this.state.store.category) || 'electronics').toLowerCase()),
+      storeSellsService: ['services', 'education', 'professional']
+        .includes(String(this.state.store && (this.state.store.categoryId || this.state.store.category_id || this.state.store.category) || '').toLowerCase()),
+      storeSellsHospitality: ['hotels', 'hospitality']
+        .includes(String(this.state.store && (this.state.store.category_id || this.state.store.category) || '').toLowerCase()),
       setStoreActiveTab: (tab) => this.setState({ storeActiveTab: tab }),
       resetStoreFilters: () => { this.setState({ storeSearchQuery: '', storeCityFilter: 'all', storeCategoryFilter: 'all', storeVerifiedOnly: false }); this.toast('Store discovery filters reset'); },
       shareStore: () => { this.toast('Store link copied to clipboard!'); },
@@ -6496,6 +6958,12 @@ class Component extends DCLogic {
       addToVs: () => { this.setState(st => ({ vs: st.vs + 1 })); this.go('vsCompare'); },
       claimGift: () => this.toast('Gift claimed. The seller will message you shortly.'),
       toggleFollow: () => { const next = !this.state.following; this.setState({ following: next }); this.toast(next ? 'Following Orca Electronics' : 'Unfollowed'); },
+      // `following` is read directly by templates (e.g. the store card's
+      // follow button variant). It lived in state but was never exposed, so
+      // every `{{ following ? ... }}` resolved to an empty string and the
+      // button rendered with no variant class at all - transparent and
+      // indistinguishable from plain text.
+      following: Boolean(this.state.following),
       followLabel: this.state.following ? 'FOLLOWING' : 'FOLLOW',
       toggleSave: () => { const next = !this.state.saved; this.setState({ saved: next }); this.toast(next ? 'Saved to your list' : 'Removed from saved'); },
       payNow: () => { this.go('paying'); setTimeout(() => this.go('success'), 1800); },

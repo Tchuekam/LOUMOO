@@ -196,6 +196,341 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 .tag-neutral { background: var(--color-surface); color: var(--color-text-secondary); border-color: var(--color-divider); }
 .tag-neutral:hover { background: var(--color-surface-hover); color: var(--color-text); border-color: var(--color-neutral-400); }
 
+/* ==========================================================================
+   LOUMOO ECOSYSTEM PRIMITIVES
+   --------------------------------------------------------------------------
+   One page shell, one rhythm, one alignment grid - shared by every screen
+   outside the marketplace home (stores, storefront, comparison, announce,
+   profile). Each of those screens previously carried its own inline layout,
+   which is why gutters, heading sizes and header heights disagreed from
+   screen to screen, and why narrow viewports collided.
+
+   The rule that fixes most of the responsive damage: every flex child that
+   contains text declares `min-width:0`. Without it a flex item refuses to
+   shrink below its content width, so a long title shoves the adjacent action
+   off-screen or underneath itself.
+   ======================================================================== */
+
+/* -- Page header --------------------------------------------------------- */
+.page-head {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px; min-height: 60px;
+  background: var(--color-surface-glass);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid var(--color-divider);
+  position: sticky; top: 0; z-index: var(--z-sticky);
+}
+.page-head-main { display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1 1 auto; }
+.page-head-text { min-width: 0; }
+.page-head-title {
+  margin: 0; font: 800 16px/1.25 var(--font-heading); letter-spacing: -.022em;
+  color: var(--color-text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.page-head-sub {
+  font: 400 11.5px/1.35 var(--font-body); color: var(--color-text-secondary);
+  margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.page-head-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.page-head-actions .btn { white-space: nowrap; }
+.icon-btn-round {
+  width: 40px; height: 40px; flex-shrink: 0; border-radius: 50%;
+  border: 1px solid var(--color-divider); background: var(--color-surface);
+  color: var(--color-text); display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: background .18s var(--ease-smooth), border-color .18s var(--ease-smooth);
+}
+.icon-btn-round:hover { background: var(--color-surface-hover); border-color: var(--color-neutral-400); }
+/* Some headers wrap their own inner row rather than laying one out themselves;
+   they take the same sticky treatment without the flex row. */
+.page-head-block {
+  background: var(--color-surface-glass);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid var(--color-divider);
+  position: sticky; top: 0; z-index: var(--z-sticky);
+}
+/* Any direct flex row inside a header must let its text shrink. This single
+   declaration is what stops long titles from shoving actions off-screen. */
+.page-head > div, .page-head-block > div { min-width: 0; }
+/* Below 560px the subtitle is the first thing to go - the action must stay reachable. */
+@media (max-width: 559px) {
+  .page-head-sub { display: none; }
+  .page-head-title { font-size: 15px; }
+}
+
+/* -- Page body: the single gutter + vertical rhythm ----------------------- */
+.page-body {
+  --section-gap: 30px;
+  padding: 20px 16px 56px; max-width: 1300px; margin: 0 auto;
+  display: flex; flex-direction: column; gap: var(--section-gap);
+}
+@media (min-width: 1024px) { .page-body { --section-gap: 38px; padding: 26px 28px 64px; } }
+@media (max-width: 419px)  { .page-body { --section-gap: 24px; padding: 16px 14px 48px; } }
+
+/* -- Section header ------------------------------------------------------ */
+.section-head {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 10px 14px; margin-bottom: 14px; flex-wrap: wrap;
+}
+.section-head-text { min-width: 0; flex: 1 1 260px; }
+.section-head-title { margin: 0; font: 800 18px/1.25 var(--font-heading); letter-spacing: -.024em; color: var(--color-text); }
+.section-head-sub { font: 400 12.5px/1.45 var(--font-body); color: var(--color-text-secondary); margin-top: 3px; max-width: 62ch; }
+.section-head-aside { flex-shrink: 0; align-self: center; }
+@media (min-width: 1024px) { .section-head-title { font-size: 21px; } }
+
+/* -- Filter bar: inline on desktop, clean equal stack on mobile ----------- */
+.filter-bar { display: flex; flex-direction: column; align-items: stretch; gap: 8px; }
+.filter-bar > * { min-width: 0; width: 100%; }
+/* Mobile is the base case: one column, one left edge, one right edge. The
+   ragged mix of control widths was the most visible defect on this screen. */
+.filter-grow { min-width: 0; }
+@media (min-width: 720px) {
+  .filter-bar { flex-direction: row; align-items: center; flex-wrap: wrap; gap: 10px; }
+  .filter-bar > * { width: auto; }
+  /* Basis is only meaningful once the main axis is horizontal again. A basis
+     set while the bar was a column became a HEIGHT and inflated each control
+     into a tall empty block. */
+  .filter-grow { flex: 1 1 260px; }
+  .filter-side { flex: 0 1 210px; }
+}
+
+/* -- Chip row: scrollable, snapped, with a fade that says "there is more" - */
+.chip-row {
+  display: flex; gap: 8px; overflow-x: auto; overflow-y: hidden;
+  scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; padding: 2px 0;
+  -webkit-mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 28px), transparent 100%);
+          mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 28px), transparent 100%);
+}
+.chip-row::-webkit-scrollbar { height: 0; display: none; }
+.chip-row > * { flex: 0 0 auto; scroll-snap-align: start; }
+/* 44px is the accessible minimum for a thumb; these chips were 32px. */
+.chip-row .tag { min-height: 40px; padding: 0 15px; font-size: 12.5px; }
+@media (pointer: coarse) { .chip-row .tag { min-height: 44px; } }
+
+/* -- Tab strip: the same fade, so a scrollable row never reads as clipped --- */
+.tab-strip {
+  display: flex; gap: 8px; overflow-x: auto; overflow-y: hidden;
+  scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; max-width: 1300px; margin: 0 auto; padding: 0 16px;
+  -webkit-mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 32px), transparent 100%);
+          mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 32px), transparent 100%);
+}
+.tab-strip::-webkit-scrollbar { height: 0; display: none; }
+.tab-strip > * { flex: 0 0 auto; scroll-snap-align: start; }
+
+/* -- Entity header: logo + name + action, aligned at every width ---------- */
+.entity-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.entity-id { display: flex; align-items: flex-start; gap: 13px; min-width: 0; flex: 1 1 auto; }
+.entity-logo {
+  width: 52px; height: 52px; border-radius: var(--radius-md); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font: 800 21px/1 var(--font-heading); color: #fff; box-shadow: var(--shadow-sm);
+}
+.entity-text { min-width: 0; flex: 1 1 auto; }
+.entity-name-row { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; min-width: 0; }
+.entity-name { font: 800 16.5px/1.25 var(--font-heading); letter-spacing: -.02em; color: var(--color-text); }
+.entity-sub { font: 400 12px/1.45 var(--font-body); color: var(--color-text-secondary); margin-top: 4px; }
+.entity-action { flex-shrink: 0; }
+@media (max-width: 419px) {
+  .entity-logo { width: 46px; height: 46px; font-size: 18px; }
+  .entity-name { font-size: 15.5px; }
+}
+
+/* -- Meta row: separators that never orphan onto their own line ----------- */
+.meta-row {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 3px 16px;
+  font: 500 11.5px/1.45 var(--font-body); color: var(--color-text-secondary); margin-top: 7px;
+}
+.meta-row > span { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+/* Separation is carried by spacing alone - deliberately no bullet separators.
+
+   A separator drawn with ::before travels with its item when the row wraps, so
+   it lands at the START of the wrapped line as an orphaned dot. Tying the rule
+   to the viewport did not help either: the row wraps according to the CARD's
+   width, so a 768px viewport showing two ~330px cards still wrapped and
+   orphaned while the viewport rule said it should not. Spacing cannot orphan
+   at any width and reads as deliberate rather than as a stray mark. */
+.meta-strong { color: var(--color-text); font-weight: 700; }
+
+/* -- Entity grid: one column until there is genuinely room for two -------- */
+.entity-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+@media (min-width: 760px)  { .entity-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; } }
+@media (min-width: 1440px) { .entity-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.entity-grid > * { min-width: 0; }
+
+/* -- Mini product strip inside an entity card ---------------------------- */
+.mini-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.mini-grid > * { min-width: 0; }
+.mini-card {
+  text-align: left; background: var(--color-surface); border: 1px solid var(--color-divider);
+  border-radius: var(--radius-sm); padding: 8px; cursor: pointer;
+  display: flex; flex-direction: column; gap: 5px;
+  transition: border-color .18s var(--ease-smooth), transform .18s var(--ease-smooth);
+}
+.mini-card:hover { border-color: var(--color-neutral-400); transform: translateY(-2px); }
+.mini-card-title {
+  font: 700 12px/1.3 var(--font-heading); color: var(--color-text);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.mini-card-price { font: 800 12.5px/1 var(--font-heading); color: var(--color-accent); }
+
+/* Money must never break across lines - "XAF / 850,000" reads as two prices.
+   Applies to every price surface outside the marketplace home. */
+.price, .mini-card-price { white-space: nowrap; }
+/* Announce tab labels stayed on one line each rather than stacking into two. */
+.tab-strip button { white-space: nowrap; }
+/* A badge that only makes sense beside a title disappears before the title does. */
+@media (max-width: 519px) { .hide-tight { display: none !important; } }
+
+/* -- Empty state: says what is missing and what to do about it ----------- */
+.empty-state {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; padding: 48px 24px; gap: 6px;
+  border: 1px dashed var(--color-neutral-300); border-radius: var(--radius-lg);
+  background: var(--color-surface-subtle);
+}
+.empty-state-icon { color: var(--color-text-tertiary); margin-bottom: 6px; }
+.empty-state-title { font: 800 15px/1.3 var(--font-heading); color: var(--color-text); }
+.empty-state-sub { font: 400 12.5px/1.5 var(--font-body); color: var(--color-text-secondary); max-width: 46ch; }
+
+/* ==========================================================================
+   QUIET CONFIDENCE - the editorial data layer
+   --------------------------------------------------------------------------
+   Type carries the hierarchy; colour is spent on one thing at a time.
+   Eyebrow (11px tracked caps) -> numeral (clamped 34-44px, -0.04em) ->
+   semantic label -> one muted sentence.
+   ======================================================================== */
+
+/* -- Surfaces: grey on grey, not white floating on white ------------------ */
+.surface-quiet {
+  background: var(--color-neutral-100);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+}
+.surface-raised {
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xs);
+}
+
+/* -- Eyebrow: sets context without competing ------------------------------ */
+.eyebrow {
+  font: 800 10.5px/1 var(--font-heading);
+  letter-spacing: .13em; text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+/* -- The numeral is the hero --------------------------------------------- */
+.metric-value {
+  font: 800 clamp(30px, 8vw, 42px)/1 var(--font-heading);
+  letter-spacing: -.042em; color: var(--color-text);
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.metric-value-sm {
+  font: 800 clamp(22px, 6vw, 28px)/1 var(--font-heading);
+  letter-spacing: -.035em; color: var(--color-text);
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.metric-unit { font: 700 13px/1 var(--font-heading); color: var(--color-text-muted); margin-left: 3px; }
+.metric-label {
+  font: 700 13px/1.3 var(--font-heading); color: var(--color-text);
+  letter-spacing: -.01em; margin-top: 8px;
+}
+.metric-note {
+  font: 400 12px/1.5 var(--font-body); color: var(--color-text-secondary);
+  margin-top: 4px; max-width: 52ch;
+}
+
+/* -- Delta pill: rides beside the number, never shouts over it ----------- */
+.delta {
+  display: inline-flex; align-items: center; gap: 3px;
+  font: 800 10.5px/1 var(--font-heading); padding: 4px 7px;
+  border-radius: var(--radius-pill); white-space: nowrap; flex-shrink: 0;
+}
+.delta-up   { background: var(--color-success-100); color: #067a3a; }
+.delta-down { background: var(--color-accent-sale-100); color: var(--color-accent-sale); }
+.delta-flat { background: var(--color-neutral-200); color: var(--color-text-muted); }
+
+/* -- Stat tile: icon, delta, numeral, label ------------------------------ */
+.stat-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 479px) { .stat-grid { gap: 8px; } }
+.stat-tile {
+  background: var(--color-neutral-100);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  padding: 14px 13px 15px;
+  display: flex; flex-direction: column; gap: 10px; min-width: 0;
+}
+.stat-tile-top { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+.stat-tile-icon { color: var(--color-text-muted); display: flex; flex-shrink: 0; }
+.stat-tile-label {
+  font: 500 11.5px/1.25 var(--font-body); color: var(--color-text-secondary);
+  /* Wrap rather than truncate: "Pending orders" cut to "Orders pen..." tells
+     the seller nothing. Two short lines are better than a clipped one. */
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* -- Metric hero: the sheet headline from the reference ------------------ */
+.metric-hero { display: flex; flex-direction: column; }
+.metric-hero-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+/* -- Feature row: icon, title, quiet description ------------------------- */
+.feature-row { display: flex; align-items: flex-start; gap: 12px; padding: 11px 0; min-width: 0; }
+.feature-row + .feature-row { border-top: 1px solid var(--color-border-subtle); }
+.feature-row-icon { color: var(--color-text); flex-shrink: 0; margin-top: 1px; }
+.feature-row-body { min-width: 0; }
+.feature-row-title { font: 700 13.5px/1.3 var(--font-heading); color: var(--color-text); letter-spacing: -.01em; }
+.feature-row-sub { font: 400 12px/1.45 var(--font-body); color: var(--color-text-secondary); margin-top: 2px; }
+
+/* -- Activity strip: one blue cell, everything else neutral -------------- */
+.activity-strip { display: flex; flex-wrap: wrap; gap: 5px; }
+.activity-cell {
+  width: 26px; height: 15px; border-radius: var(--radius-pill);
+  background: var(--color-neutral-300); flex-shrink: 0;
+}
+.activity-cell.is-on    { background: var(--color-neutral-800); }
+.activity-cell.is-today { background: var(--color-accent); box-shadow: 0 0 0 3px var(--color-accent-100); }
+.activity-cell.is-empty { background: transparent; border: 1px dashed var(--color-neutral-400); }
+
+/* -- Quiet row link: label left, value + chevron right ------------------- */
+.quiet-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 13px 0; min-width: 0; width: 100%;
+  background: none; border: none; text-align: left; cursor: pointer;
+  font: inherit; color: inherit;
+}
+.quiet-row + .quiet-row { border-top: 1px solid var(--color-border-subtle); }
+.quiet-row-label { font: 600 13.5px/1.3 var(--font-heading); color: var(--color-text); min-width: 0; }
+.quiet-row-value {
+  display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0;
+  font: 500 12.5px/1 var(--font-body); color: var(--color-text-secondary);
+}
+.quiet-row:hover .quiet-row-label { color: var(--color-accent); }
+
+/* -- Section rule: an editorial divider with a label --------------------- */
+.rule-label {
+  display: flex; align-items: center; gap: 12px; margin: 4px 0 12px;
+}
+.rule-label::after {
+  content: ""; flex: 1; height: 1px; background: var(--color-divider);
+}
+
+
+/* -- Accessibility & motion baseline for every primitive above ----------- */
+.page-head :focus-visible, .page-body :focus-visible,
+.chip-row :focus-visible, .entity-head :focus-visible {
+  outline: 2px solid var(--color-border-focus); outline-offset: 2px; border-radius: var(--radius-xs);
+}
+@media (prefers-reduced-motion: reduce) {
+  .tag:hover, .mini-card:hover { transform: none; }
+  .chip-row { scroll-behavior: auto; }
+}
+
 .badge-floating {
   position: absolute; top: 10px; left: 10px; font: 800 9px/1 var(--font-heading);
   letter-spacing: .05em; padding: 4px 9px; border-radius: var(--radius-pill);
@@ -3770,6 +4105,93 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
       </sc-if>
     </div>
 
+    <!-- ── 10: LOUMOO UNIVERSAL ECOSYSTEM PANORAMA (BOTTOM DISCOVERY HUB) ── -->
+    <div style="margin:40px 0 20px;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-lg);padding:24px 20px;box-shadow:var(--shadow-sm)">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px">
+        <div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <span style="font:800 11px/1 var(--font-heading);letter-spacing:.12em;color:var(--color-accent);text-transform:uppercase">UNIVERSAL ECOSYSTEM</span>
+            <span class="tag tag-accent" style="min-height:16px;padding:1px 6px;font-size:9px;font-weight:800">CAMEROON &amp; CEMAC</span>
+          </div>
+          <h2 style="margin:4px 0 0;font-size:clamp(18px, 2.4vw, 24px);font-weight:800;letter-spacing:-.025em;color:var(--color-text)">One Platform. Specialized Experiences.</h2>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;font:700 11px/1 var(--font-body);color:var(--color-success);background:var(--color-success-100);padding:6px 12px;border-radius:var(--radius-pill)">
+          <span style="width:6px;height:6px;border-radius:50%;background:var(--color-success)"></span>
+          <span>2,400+ Verified Merchants · Tier-1 Escrow</span>
+        </div>
+      </div>
+
+      <!-- 6 Gateways Grid -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(160px, 1fr));gap:12px">
+        <!-- 1. Commerce -->
+        <button onClick="{{ on.bestpicks }}" class="card-premium" style="padding:14px;display:flex;flex-direction:column;gap:6px;text-align:left;cursor:pointer;border-color:var(--color-accent-200);background:linear-gradient(135deg,#ffffff,#f0f7ff)">
+          <div style="width:34px;height:34px;border-radius:8px;background:var(--color-accent-100);color:var(--color-accent);display:flex;align-items:center;justify-content:center">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+          </div>
+          <div style="font:800 13.5px/1.2 var(--font-heading);color:var(--color-text);margin-top:2px">Commerce</div>
+          <div style="font:400 11px/1.2 var(--font-body);color:var(--color-text-secondary)">Discover &amp; buy authentic hardware</div>
+        </button>
+
+        <!-- 2. Verified Stores -->
+        <button onClick="{{ on.store }}" class="card-premium" style="padding:14px;display:flex;flex-direction:column;gap:6px;text-align:left;cursor:pointer">
+          <div style="width:34px;height:34px;border-radius:8px;background:#fef3c7;color:#d97706;display:flex;align-items:center;justify-content:center">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h20l-2 10H4L2 3z"/><path d="M6 13v7a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-7"/></svg>
+          </div>
+          <div style="font:800 13.5px/1.2 var(--font-heading);color:var(--color-text);margin-top:2px">Stores &amp; Brands</div>
+          <div style="font:400 11px/1.2 var(--font-body);color:var(--color-text-secondary)">Official boutiques &amp; local shops</div>
+        </button>
+
+        <!-- 3. Travel & Mobility -->
+        <button onClick="{{ on.travel }}" class="card-premium" style="padding:14px;display:flex;flex-direction:column;gap:6px;text-align:left;cursor:pointer">
+          <div style="width:34px;height:34px;border-radius:8px;background:#dbeafe;color:#2563eb;display:flex;align-items:center;justify-content:center">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1z"/></svg>
+          </div>
+          <div style="font:800 13.5px/1.2 var(--font-heading);color:var(--color-text);margin-top:2px">Travel &amp; Flights</div>
+          <div style="font:400 11px/1.2 var(--font-body);color:var(--color-text-secondary)">Buses, Trains, Flights &amp; Taxis</div>
+        </button>
+
+        <!-- 4. Announce & Tenders -->
+        <button onClick="{{ on.announce }}" class="card-premium" style="padding:14px;display:flex;flex-direction:column;gap:6px;text-align:left;cursor:pointer">
+          <div style="width:34px;height:34px;border-radius:8px;background:#fae8ff;color:#a855f7;display:flex;align-items:center;justify-content:center">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
+          </div>
+          <div style="font:800 13.5px/1.2 var(--font-heading);color:var(--color-text);margin-top:2px">Announce Feed</div>
+          <div style="font:400 11px/1.2 var(--font-body);color:var(--color-text-secondary)">Flash drops, tenders &amp; jobs</div>
+        </button>
+
+        <!-- 5. VS Comparison Matrix -->
+        <button onClick="{{ on.vs }}" class="card-premium" style="padding:14px;display:flex;flex-direction:column;gap:6px;text-align:left;cursor:pointer">
+          <div style="width:34px;height:34px;border-radius:8px;background:#e0e7ff;color:#4f46e5;display:flex;align-items:center;justify-content:center">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="18" rx="1"/><rect x="14" y="3" width="7" height="18" rx="1"/></svg>
+          </div>
+          <div style="font:800 13.5px/1.2 var(--font-heading);color:var(--color-text);margin-top:2px">VS Matrix</div>
+          <div style="font:400 11px/1.2 var(--font-body);color:var(--color-text-secondary)">Head-to-head decision engine</div>
+        </button>
+
+        <!-- 6. Spatial AI Lens -->
+        <button onClick="{{ on.visual }}" class="card-premium" style="padding:14px;display:flex;flex-direction:column;gap:6px;text-align:left;cursor:pointer">
+          <div style="width:34px;height:34px;border-radius:8px;background:#ecfdf5;color:#059669;display:flex;align-items:center;justify-content:center">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+          </div>
+          <div style="font:800 13.5px/1.2 var(--font-heading);color:var(--color-text);margin-top:2px">Spatial AI Lens</div>
+          <div style="font:400 11px/1.2 var(--font-body);color:var(--color-text-secondary)">Visual search &amp; model match</div>
+        </button>
+      </div>
+
+      <!-- Real-time Trust Bar (Mobile Money & CEMAC Delivery) -->
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:16px;padding-top:14px;border-top:1px solid var(--color-divider);font-size:12px;color:var(--color-text-secondary)">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <span style="display:flex;align-items:center;gap:4px"><strong style="color:var(--color-text)">Payment:</strong> <span style="background:var(--color-momo-yellow);color:#111;font-weight:800;padding:2px 7px;border-radius:4px;font-size:10.5px">MTN MoMo</span> <span style="background:var(--color-om-orange);color:#fff;font-weight:800;padding:2px 7px;border-radius:4px;font-size:10.5px">Orange Money</span></span>
+          <span>·</span>
+          <span><strong style="color:var(--color-text)">Express Courier:</strong> Douala (Same-day) · Yaoundé (24h)</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:5px;color:var(--color-accent);font-weight:700">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <span>Tier-1 Escrow Guarantee</span>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 </sc-if>
@@ -4033,7 +4455,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 <sc-if value="{{ is.chat }}">
 <div style="padding-bottom:32px">
   
-  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+  <div class="page-head" style="justify-content:space-between">
     <div style="display:flex;align-items:center;gap:12px">
       <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
@@ -4187,7 +4609,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 <sc-if value="{{ is.threadAi }}">
 <div style="padding-bottom:32px">
   
-  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+  <div class="page-head">
     <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
     </button>
@@ -4230,7 +4652,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
      ══════════════════════════════════════════════════════════════════════ -->
 <sc-if value="{{ is.notifications }}">
 <div style="padding-bottom:32px">
-  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+  <div class="page-head">
     <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
     </button>
@@ -4260,7 +4682,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 <div style="padding-bottom:32px">
   
   <!-- Header -->
-  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+  <div class="page-head" style="justify-content:space-between">
     <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
     </button>
@@ -4359,7 +4781,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
      ══════════════════════════════════════════════════════════════════════ -->
 <sc-if value="{{ is.saved }}">
 <div style="padding-bottom:32px">
-  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+  <div class="page-head">
     <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
     </button>
@@ -4388,7 +4810,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
      ══════════════════════════════════════════════════════════════════════ -->
 <sc-if value="{{ is.settings }}">
 <div style="padding-bottom:32px">
-  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+  <div class="page-head">
     <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;flex-shrink:0">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
     </button>
@@ -5968,7 +6390,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 <div style="padding-bottom:32px">
 
   <!-- Sticky header -->
-  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+  <div class="page-head">
     <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;flex-shrink:0">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
     </button>
@@ -6196,7 +6618,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 <sc-if value="{{ is.editProfile }}">
 <div style="padding-bottom:32px">
 
-  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+  <div class="page-head">
     <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;flex-shrink:0">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
     </button>
@@ -6301,7 +6723,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 <sc-if value="{{ is.addresses }}">
 <div style="padding-bottom:32px">
 
-  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+  <div class="page-head">
     <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;flex-shrink:0">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
     </button>
@@ -6379,7 +6801,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 <sc-if value="{{ is.addAddress || is.editAddress }}">
 <div style="padding-bottom:32px">
 
-  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+  <div class="page-head">
     <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;flex-shrink:0">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
     </button>
@@ -6456,7 +6878,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 <sc-if value="{{ is.notificationPreferences }}">
 <div style="padding-bottom:32px">
 
-  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+  <div class="page-head">
     <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;flex-shrink:0">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
     </button>
@@ -6551,7 +6973,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 <sc-if value="{{ is.privacySettings }}">
 <div style="padding-bottom:32px">
 
-  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+  <div class="page-head">
     <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;flex-shrink:0">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
     </button>
@@ -6606,7 +7028,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 <sc-if value="{{ is.securitySettings }}">
 <div style="padding-bottom:32px">
 
-  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+  <div class="page-head">
     <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;flex-shrink:0">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
     </button>
@@ -6673,7 +7095,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 <sc-if value="{{ is.followedStores }}">
 <div style="padding-bottom:32px">
 
-  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+  <div class="page-head">
     <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;flex-shrink:0">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
     </button>
@@ -6737,7 +7159,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 <sc-if value="{{ is.userActivity }}">
 <div style="padding-bottom:32px">
 
-  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+  <div class="page-head">
     <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;flex-shrink:0">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
     </button>
@@ -6787,7 +7209,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 <sc-if value="{{ is.deleteAccount }}">
 <div style="padding-bottom:32px">
 
-  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+  <div class="page-head">
     <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;flex-shrink:0">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
     </button>
@@ -7810,7 +8232,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
     </div>
 
     <!-- Final Pay CTA Button -->
-    <button onClick="{{ payNow }}" class="btn {{ st.pay.om.w === '2px' ? 'btn-om' : 'btn-momo' }} btn-block" style="height:52px;font-size:15px;letter-spacing:.02em">
+    <button onClick="{{ payNow }}" class="btn btn-block {{ st.pay.om.w === '2px' ? 'btn-om' : 'btn-momo' }}" style="height:52px;font-size:15px;letter-spacing:.02em">
       <span>{{ payLabel }}</span>
       <span>🔒</span>
     </button>
@@ -8855,42 +9277,43 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 <div style="padding-bottom:48px">
   
   <!-- Sticky Top Header -->
-  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
-    <div style="display:flex;align-items:center;gap:12px">
-      <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
+  <div class="page-head">
+    <div class="page-head-main">
+      <button onClick="{{ back }}" aria-label="Go back" class="icon-btn-round">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
       </button>
-      <div>
-        <h4 style="margin:0;font-size:16px">Verified Stores &amp; Official Brands</h4>
-        <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary)">Discover 2,400+ trusted merchants across Douala, Yaoundé &amp; Cameroon</div>
+      <div class="page-head-text">
+        <h4 class="page-head-title">Verified Stores &amp; Official Brands</h4>
+        <div class="page-head-sub">2,400+ trusted merchants across Douala, Yaoundé &amp; Cameroon</div>
       </div>
     </div>
-    <div style="display:flex;align-items:center;gap:8px">
-      <button onClick="{{ on.createStore }}" class="btn btn-primary" style="height:36px;padding:0 14px;font-size:12px;font-weight:700">
-        <span>+ OPEN STORE</span>
+    <div class="page-head-actions">
+      <button onClick="{{ on.createStore }}" class="btn btn-primary" aria-label="Open your store" style="height:40px;padding:0 15px;font-size:12px;font-weight:700;gap:6px">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        <span>OPEN STORE</span>
       </button>
     </div>
   </div>
 
-  <div style="padding:16px;max-width:1300px;margin:0 auto;display:flex;flex-direction:column;gap:24px">
+  <div class="page-body">
     
     <!-- ── SEARCH & FILTER HERO BAR ── -->
-    <div class="card-premium" style="padding:18px 20px;display:flex;flex-direction:column;gap:14px;background:var(--color-surface);border-radius:var(--radius-lg)">
-      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+    <div class="card-premium" style="padding:16px;display:flex;flex-direction:column;gap:14px;background:var(--color-surface);border-radius:var(--radius-lg)">
+      <div class="filter-bar">
         
         <!-- Search Input -->
-        <div style="flex:1;min-width:260px;position:relative;display:flex;align-items:center">
+        <div class="filter-grow" style="position:relative;display:flex;align-items:center">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position:absolute;left:14px;color:var(--color-text-muted)"><circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4 4"/></svg>
-          <input type="text" class="input" placeholder="Search stores, official brands, locations (e.g. Orca, Apple, Akwa, Bastos)…" value="{{ storeSearchQuery }}" onChange="{{ updateStoreSearch }}" style="padding-left:42px;padding-right:36px;height:44px;font-size:13.5px">
+          <input type="text" class="input" placeholder="Search stores, brands or locations…" value="{{ storeSearchQuery }}" onChange="{{ updateStoreSearch }}" style="padding-left:42px;padding-right:36px;height:44px;font-size:13.5px">
           <sc-if value="{{ storeSearchQuery }}">
-            <button onClick="{{ clearStoreSearch }}" aria-label="Clear search" style="position:absolute;right:10px;background:var(--color-neutral-200);border:none;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:800;font-size:13px;color:var(--color-text)">✕</button>
+            <button onClick="{{ clearStoreSearch }}" aria-label="Clear search" style="position:absolute;right:8px;background:var(--color-neutral-200);border:none;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--color-text-secondary)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
           </sc-if>
         </div>
 
         <!-- City Selector -->
-        <div style="min-width:160px">
+        <div class="filter-side">
           <select class="input" value="{{ storeCityFilter }}" onChange="{{ updateStoreCityFilter }}" style="height:44px;font-size:13px;font-weight:600;cursor:pointer">
-            <option value="all">📍 All Cities (Cameroon)</option>
+            <option value="all">All Cities (Cameroon)</option>
             <option value="douala">Douala (Akwa, Bonapriso, Bonanjo)</option>
             <option value="yaounde">Yaoundé (Bastos, Centre)</option>
             <option value="kribi">Kribi (Beach &amp; Resorts)</option>
@@ -8899,8 +9322,8 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
         </div>
 
         <!-- Quick Badges -->
-        <div style="display:flex;gap:8px;align-items:center">
-          <button onClick="{{ toggleStoreVerifiedOnly }}" class="tag {{ storeVerifiedOnly ? 'tag-accent' : 'tag-neutral' }}" style="height:40px;padding:0 14px;cursor:pointer;font-size:12px">
+        <div class="filter-side" style="display:flex;gap:8px;align-items:center">
+          <button onClick="{{ toggleStoreVerifiedOnly }}" class="tag {{ storeVerifiedClass }}" aria-pressed="{{ storeVerifiedOnly }}" style="height:44px;padding:0 16px;cursor:pointer;font-size:12.5px;justify-content:center;width:100%">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
             <span>Verified Only</span>
           </button>
@@ -8908,70 +9331,71 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
       </div>
 
       <!-- Category Filter Pills -->
-      <div class="hs" style="gap:8px;padding:2px 0">
-        <button onClick="{{ () => setStoreCategory('all') }}" class="tag {{ storeCategoryFilter === 'all' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">All Categories</button>
-        <button onClick="{{ () => setStoreCategory('tech') }}" class="tag {{ storeCategoryFilter === 'tech' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">💻 Electronics &amp; Tech</button>
-        <button onClick="{{ () => setStoreCategory('fashion') }}" class="tag {{ storeCategoryFilter === 'fashion' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">👗 Fashion &amp; Apparel</button>
-        <button onClick="{{ () => setStoreCategory('hospitality') }}" class="tag {{ storeCategoryFilter === 'hospitality' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">🏨 Hospitality &amp; Hotels</button>
-        <button onClick="{{ () => setStoreCategory('home') }}" class="tag {{ storeCategoryFilter === 'home' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">🛋️ Home &amp; Living</button>
-        <button onClick="{{ () => setStoreCategory('services') }}" class="tag {{ storeCategoryFilter === 'services' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">🛠️ Professional Services</button>
+      <div class="chip-row" role="group" aria-label="Filter stores by category">
+        <button onClick="{{ () => setStoreCategory('all') }}" class="tag {{ storeCatAllClass }}" style="cursor:pointer">All Categories</button>
+        <button onClick="{{ () => setStoreCategory('tech') }}" class="tag {{ storeCatTechClass }}" style="cursor:pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8"/></svg><span>Electronics &amp; Tech</span></button>
+        <button onClick="{{ () => setStoreCategory('fashion') }}" class="tag {{ storeCatFashionClass }}" style="cursor:pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3 3 7l2 3 2-1v11h10V9l2 1 2-3-6-4a3 3 0 0 1-6 0Z"/></svg><span>Fashion &amp; Apparel</span></button>
+        <button onClick="{{ () => setStoreCategory('hospitality') }}" class="tag {{ storeCatHospitalityClass }}" style="cursor:pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20V9l9-5 9 5v11"/><path d="M9 20v-6h6v6"/></svg><span>Hospitality &amp; Hotels</span></button>
+        <button onClick="{{ () => setStoreCategory('home') }}" class="tag {{ storeCatHomeClass }}" style="cursor:pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 18v-6a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v6"/><path d="M2 18h20M6 21v-3M18 21v-3"/></svg><span>Home &amp; Living</span></button>
+        <button onClick="{{ () => setStoreCategory('services') }}" class="tag {{ storeCatServicesClass }}" style="cursor:pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 1-5.4 5.4L4 17v3h3l5.3-5.3a4 4 0 0 1 5.4-5.4l-2.6 2.6 1.6 1.6 2.6-2.6"/></svg><span>Professional Services</span></button>
       </div>
     </div>
 
     <!-- ── SECTION 1: FEATURED FLAGSHIP STORES (DESKTOP ELEVATED CAROUSEL/GRID) ── -->
     <div>
-      <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px">
-        <div>
-          <h3 style="margin:0;font-size:18px;letter-spacing:-.02em">Featured Flagship Stores</h3>
-          <div style="font:400 12.5px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Verified authorized distributors &amp; top-rated merchants with warranty</div>
+      <div class="section-head">
+        <div class="section-head-text">
+          <h3 class="section-head-title">Featured Flagship Stores</h3>
+          <div class="section-head-sub">Verified authorized distributors &amp; top-rated merchants with warranty</div>
         </div>
-        <span class="tag tag-accent" style="font-size:11px;font-weight:700">★ 4.8+ TOP RATED</span>
+        <span class="tag tag-accent section-head-aside" style="font-size:11px;font-weight:700">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg>
+          4.8+ TOP RATED
+        </span>
       </div>
 
-      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));gap:16px">
+      <div class="entity-grid">
         
         <!-- Flagship Card 1: Orca Electronics -->
         <div class="card-premium" style="display:flex;flex-direction:column;justify-content:space-between;gap:16px;border:1.5px solid var(--color-divider);position:relative;overflow:hidden">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
-            <div style="display:flex;align-items:center;gap:14px">
-              <div style="width:54px;height:54px;border-radius:var(--radius-md);background:linear-gradient(135deg,var(--color-accent),#003d8a);color:#fff;display:flex;align-items:center;justify-content:center;font:800 22px/1 var(--font-heading);box-shadow:var(--shadow-md);flex-shrink:0">O</div>
-              <div>
-                <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-                  <span style="font:800 17px/1.2 var(--font-heading);color:var(--color-text)">Orca Electronics</span>
+          <div class="entity-head">
+            <div class="entity-id">
+              <div class="entity-logo" style="background:linear-gradient(135deg,var(--color-accent),#003d8a)">O</div>
+              <div class="entity-text">
+                <div class="entity-name-row">
+                  <span class="entity-name">Orca Electronics</span>
                   <span class="tag tag-accent" style="min-height:18px;padding:2px 7px;font-size:9.5px;font-weight:800">OFFICIAL PARTNER</span>
                 </div>
-                <div style="font:400 12px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:4px">
+                <div class="entity-sub">
                   Akwa Commercial Blvd, Douala · Certified Apple &amp; Dell Reseller
                 </div>
-                <div style="display:flex;align-items:center;gap:10px;margin-top:6px;font-size:11.5px;color:var(--color-text-secondary)">
+                <div class="meta-row">
                   <span style="color:#eab308;font-weight:700">★ 4.9 (1.2k)</span>
-                  <span>•</span>
                   <span>318 Products</span>
-                  <span>•</span>
                   <span style="color:var(--color-success);font-weight:600">Replies ~5m</span>
                 </div>
               </div>
             </div>
-            <button onClick="{{ toggleFollow }}" class="btn {{ following ? 'btn-secondary' : 'btn-primary' }}" style="height:34px;padding:0 14px;font-size:11.5px;font-weight:700;flex-shrink:0">
+            <button onClick="{{ toggleFollow }}" class="entity-action btn {{ following ? 'btn-secondary' : 'btn-primary' }}" style="height:36px;padding:0 15px;font-size:11.5px;font-weight:700">
               {{ followLabel }}
             </button>
           </div>
 
           <!-- Featured Products Preview Row -->
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;background:var(--color-neutral-100);padding:10px;border-radius:var(--radius-md);border:1px solid var(--color-divider)">
-            <button onClick="{{ on.product }}" aria-label="View MacBook Air M2" style="text-align:left;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-sm);padding:8px;cursor:pointer;display:flex;flex-direction:column;gap:4px">
+          <div class="mini-grid" style="background:var(--color-neutral-100);padding:10px;border-radius:var(--radius-md);border:1px solid var(--color-divider)">
+            <button onClick="{{ on.product }}" aria-label="View MacBook Air M2" class="mini-card">
               <div class="ph" style="aspect-ratio:16/9;border-radius:4px">
                 <span style="font-size:8px">APPLE SILICON</span>
               </div>
-              <div style="font:700 12px/1.2 var(--font-heading);color:var(--color-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">MacBook Air M2 13”</div>
-              <div style="font:800 12.5px/1 var(--font-heading);color:var(--color-accent)">XAF 745 000</div>
+              <div class="mini-card-title">MacBook Air M2 13”</div>
+              <div class="mini-card-price">XAF 745 000</div>
             </button>
-            <button onClick="{{ on.product }}" aria-label="View Anker 737 Power Bank" style="text-align:left;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-sm);padding:8px;cursor:pointer;display:flex;flex-direction:column;gap:4px">
+            <button onClick="{{ on.product }}" aria-label="View Anker 737 Power Bank" class="mini-card">
               <div class="ph" style="aspect-ratio:16/9;border-radius:4px">
                 <span style="font-size:8px">24k mAh POWER</span>
               </div>
-              <div style="font:700 12px/1.2 var(--font-heading);color:var(--color-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Anker 737 Bank</div>
-              <div style="font:800 12.5px/1 var(--font-heading);color:var(--color-accent)">XAF 62 000</div>
+              <div class="mini-card-title">Anker 737 Bank</div>
+              <div class="mini-card-price">XAF 62 000</div>
             </button>
           </div>
 
@@ -8985,22 +9409,20 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 
         <!-- Flagship Card 2: Digital Corner -->
         <div class="card-premium" style="display:flex;flex-direction:column;justify-content:space-between;gap:16px;border:1.5px solid var(--color-divider);position:relative;overflow:hidden">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
-            <div style="display:flex;align-items:center;gap:14px">
-              <div style="width:54px;height:54px;border-radius:var(--radius-md);background:linear-gradient(135deg,#111214,#2d313a);color:#fff;display:flex;align-items:center;justify-content:center;font:800 22px/1 var(--font-heading);box-shadow:var(--shadow-md);flex-shrink:0">D</div>
-              <div>
-                <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-                  <span style="font:800 17px/1.2 var(--font-heading);color:var(--color-text)">Digital Corner</span>
+          <div class="entity-head">
+            <div class="entity-id">
+              <div class="entity-logo" style="background:linear-gradient(135deg,#111214,#2d313a)">D</div>
+              <div class="entity-text">
+                <div class="entity-name-row">
+                  <span class="entity-name">Digital Corner</span>
                   <span class="tag tag-neutral" style="min-height:18px;padding:2px 7px;font-size:9.5px;font-weight:800">VERIFIED SELLER</span>
                 </div>
-                <div style="font:400 12px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:4px">
+                <div class="entity-sub">
                   Rue Joss, Bonapriso, Douala · Pro Audio, Gaming &amp; Mobile
                 </div>
-                <div style="display:flex;align-items:center;gap:10px;margin-top:6px;font-size:11.5px;color:var(--color-text-secondary)">
+                <div class="meta-row">
                   <span style="color:#eab308;font-weight:700">★ 4.7 (890)</span>
-                  <span>•</span>
                   <span>154 Products</span>
-                  <span>•</span>
                   <span style="color:var(--color-success);font-weight:600">Replies ~10m</span>
                 </div>
               </div>
@@ -9010,20 +9432,20 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
             </button>
           </div>
 
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;background:var(--color-neutral-100);padding:10px;border-radius:var(--radius-md);border:1px solid var(--color-divider)">
-            <button onClick="{{ on.product }}" aria-label="View Sony WH-1000XM5" style="text-align:left;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-sm);padding:8px;cursor:pointer;display:flex;flex-direction:column;gap:4px">
+          <div class="mini-grid" style="background:var(--color-neutral-100);padding:10px;border-radius:var(--radius-md);border:1px solid var(--color-divider)">
+            <button onClick="{{ on.product }}" aria-label="View Sony WH-1000XM5" class="mini-card">
               <div class="ph" style="aspect-ratio:16/9;border-radius:4px">
                 <span style="font-size:8px">PRO NOISE CANCEL</span>
               </div>
-              <div style="font:700 12px/1.2 var(--font-heading);color:var(--color-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Sony WH-1000XM5</div>
-              <div style="font:800 12.5px/1 var(--font-heading);color:var(--color-accent)">XAF 189 000</div>
+              <div class="mini-card-title">Sony WH-1000XM5</div>
+              <div class="mini-card-price">XAF 189 000</div>
             </button>
-            <button onClick="{{ on.product }}" aria-label="View Samsung Galaxy A55" style="text-align:left;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-sm);padding:8px;cursor:pointer;display:flex;flex-direction:column;gap:4px">
+            <button onClick="{{ on.product }}" aria-label="View Samsung Galaxy A55" class="mini-card">
               <div class="ph" style="aspect-ratio:16/9;border-radius:4px">
                 <span style="font-size:8px">5G AMOLED 120Hz</span>
               </div>
-              <div style="font:700 12px/1.2 var(--font-heading);color:var(--color-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Samsung Galaxy A55</div>
-              <div style="font:800 12.5px/1 var(--font-heading);color:var(--color-accent)">XAF 245 000</div>
+              <div class="mini-card-title">Samsung Galaxy A55</div>
+              <div class="mini-card-price">XAF 245 000</div>
             </button>
           </div>
 
@@ -9037,22 +9459,20 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 
         <!-- Flagship Card 3: Sawa Luxury Hotel -->
         <div class="card-premium" style="display:flex;flex-direction:column;justify-content:space-between;gap:16px;border:1.5px solid var(--color-divider);position:relative;overflow:hidden">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
-            <div style="display:flex;align-items:center;gap:14px">
-              <div style="width:54px;height:54px;border-radius:var(--radius-md);background:linear-gradient(135deg,#007aff,#00c853);color:#fff;display:flex;align-items:center;justify-content:center;font:800 22px/1 var(--font-heading);box-shadow:var(--shadow-md);flex-shrink:0">S</div>
-              <div>
-                <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-                  <span style="font:800 17px/1.2 var(--font-heading);color:var(--color-text)">Sawa Luxury Hotel</span>
+          <div class="entity-head">
+            <div class="entity-id">
+              <div class="entity-logo" style="background:linear-gradient(135deg,#007aff,#00c853)">S</div>
+              <div class="entity-text">
+                <div class="entity-name-row">
+                  <span class="entity-name">Sawa Luxury Hotel</span>
                   <span class="tag tag-accent" style="min-height:18px;padding:2px 7px;font-size:9.5px;font-weight:800">5-STAR RESORT</span>
                 </div>
-                <div style="font:400 12px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:4px">
+                <div class="entity-sub">
                   Bonanjo Business District, Douala · Olympic Pool &amp; Ocean Suites
                 </div>
-                <div style="display:flex;align-items:center;gap:10px;margin-top:6px;font-size:11.5px;color:var(--color-text-secondary)">
+                <div class="meta-row">
                   <span style="color:#eab308;font-weight:700">★ 4.8 (2.1k)</span>
-                  <span>•</span>
                   <span>42 Suites</span>
-                  <span>•</span>
                   <span style="color:var(--color-success);font-weight:600">Instant Check-in</span>
                 </div>
               </div>
@@ -9062,20 +9482,20 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
             </button>
           </div>
 
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;background:var(--color-neutral-100);padding:10px;border-radius:var(--radius-md);border:1px solid var(--color-divider)">
-            <button onClick="{{ on.hotelDetail }}" aria-label="View Executive Ocean Suite" style="text-align:left;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-sm);padding:8px;cursor:pointer;display:flex;flex-direction:column;gap:4px">
+          <div class="mini-grid" style="background:var(--color-neutral-100);padding:10px;border-radius:var(--radius-md);border:1px solid var(--color-divider)">
+            <button onClick="{{ on.hotelDetail }}" aria-label="View Executive Ocean Suite" class="mini-card">
               <div class="ph" style="aspect-ratio:16/9;border-radius:4px">
                 <span style="font-size:8px">OCEAN SUITE</span>
               </div>
-              <div style="font:700 12px/1.2 var(--font-heading);color:var(--color-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Executive Suite</div>
-              <div style="font:800 12.5px/1 var(--font-heading);color:var(--color-accent)">XAF 65 000/nt</div>
+              <div class="mini-card-title">Executive Suite</div>
+              <div class="mini-card-price">XAF 65 000/nt</div>
             </button>
-            <button onClick="{{ on.hotelDetail }}" aria-label="View Presidential King Suite" style="text-align:left;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-sm);padding:8px;cursor:pointer;display:flex;flex-direction:column;gap:4px">
+            <button onClick="{{ on.hotelDetail }}" aria-label="View Presidential King Suite" class="mini-card">
               <div class="ph" style="aspect-ratio:16/9;border-radius:4px">
                 <span style="font-size:8px">KING DUPLEX</span>
               </div>
-              <div style="font:700 12px/1.2 var(--font-heading);color:var(--color-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Presidential Duplex</div>
-              <div style="font:800 12.5px/1 var(--font-heading);color:var(--color-accent)">XAF 120 000/nt</div>
+              <div class="mini-card-title">Presidential Duplex</div>
+              <div class="mini-card-price">XAF 120 000/nt</div>
             </button>
           </div>
 
@@ -9244,7 +9664,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 <div style="padding-bottom:64px">
   
   <!-- Sticky Top Navigation Bar -->
-  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:30">
+  <div class="page-head" style="justify-content:space-between">
     <div style="display:flex;align-items:center;gap:12px">
       <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
@@ -9298,11 +9718,8 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
                 <span style="color:#ffd100;font-weight:800">★ 4.9</span>
                 <span>(218 Ratings)</span>
               </span>
-              <span>•</span>
               <span><strong>1 240</strong> Followers</span>
-              <span>•</span>
               <span><strong>318</strong> Products In Stock</span>
-              <span>•</span>
               <span style="color:#57ff95;font-weight:700">Open Now (08:00 - 18:30)</span>
             </div>
           </div>
@@ -9345,20 +9762,20 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 
   <!-- ── STOREFRONT NAVIGATION SUB-TABS ── -->
   <div style="background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:60px;z-index:20">
-    <div style="max-width:1300px;margin:0 auto;padding:0 16px;display:flex;gap:8px;overflow-x:auto" class="hs">
-      <button onClick="{{ () => setStoreActiveTab('home') }}" class="tag {{ (storeActiveTab === 'home' || !storeActiveTab) ? 'tag-accent' : 'tag-neutral' }}" style="height:44px;border-radius:0;border-bottom:2.5px solid {{ (storeActiveTab === 'home' || !storeActiveTab) ? 'var(--color-accent)' : 'transparent' }};cursor:pointer;font-weight:700">
+    <div class="tab-strip" role="tablist">
+      <button onClick="{{ () => setStoreActiveTab('home') }}" class="tag {{ storeTabHomeClass }}" style="height:44px;border-radius:0;border-bottom:2.5px solid {{ storeTabHomeBorder }};cursor:pointer;font-weight:700">
         STORE HOME
       </button>
-      <button onClick="{{ () => setStoreActiveTab('products') }}" class="tag {{ storeActiveTab === 'products' ? 'tag-accent' : 'tag-neutral' }}" style="height:44px;border-radius:0;border-bottom:2.5px solid {{ storeActiveTab === 'products' ? 'var(--color-accent)' : 'transparent' }};cursor:pointer;font-weight:700">
+      <button onClick="{{ () => setStoreActiveTab('products') }}" class="tag {{ storeTabProductsClass }}" style="height:44px;border-radius:0;border-bottom:2.5px solid {{ storeTabProductsBorder }};cursor:pointer;font-weight:700">
         PRODUCTS (318)
       </button>
-      <button onClick="{{ () => setStoreActiveTab('collections') }}" class="tag {{ storeActiveTab === 'collections' ? 'tag-accent' : 'tag-neutral' }}" style="height:44px;border-radius:0;border-bottom:2.5px solid {{ storeActiveTab === 'collections' ? 'var(--color-accent)' : 'transparent' }};cursor:pointer;font-weight:700">
+      <button onClick="{{ () => setStoreActiveTab('collections') }}" class="tag {{ storeTabCollectionsClass }}" style="height:44px;border-radius:0;border-bottom:2.5px solid {{ storeTabCollectionsBorder }};cursor:pointer;font-weight:700">
         COLLECTIONS &amp; BUNDLES
       </button>
-      <button onClick="{{ () => setStoreActiveTab('about') }}" class="tag {{ storeActiveTab === 'about' ? 'tag-accent' : 'tag-neutral' }}" style="height:44px;border-radius:0;border-bottom:2.5px solid {{ storeActiveTab === 'about' ? 'var(--color-accent)' : 'transparent' }};cursor:pointer;font-weight:700">
+      <button onClick="{{ () => setStoreActiveTab('about') }}" class="tag {{ storeTabAboutClass }}" style="height:44px;border-radius:0;border-bottom:2.5px solid {{ storeTabAboutBorder }};cursor:pointer;font-weight:700">
         ABOUT &amp; LOCATION
       </button>
-      <button onClick="{{ () => setStoreActiveTab('reviews') }}" class="tag {{ storeActiveTab === 'reviews' ? 'tag-accent' : 'tag-neutral' }}" style="height:44px;border-radius:0;border-bottom:2.5px solid {{ storeActiveTab === 'reviews' ? 'var(--color-accent)' : 'transparent' }};cursor:pointer;font-weight:700">
+      <button onClick="{{ () => setStoreActiveTab('reviews') }}" class="tag {{ storeTabReviewsClass }}" style="height:44px;border-radius:0;border-bottom:2.5px solid {{ storeTabReviewsBorder }};cursor:pointer;font-weight:700">
         REVIEWS &amp; TRUST (218)
       </button>
     </div>
@@ -9367,7 +9784,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   <div style="padding:24px 16px;max-width:1300px;margin:0 auto">
 
     <!-- ── SUB-TAB 1: STORE HOME ── -->
-    <sc-if value="{{ storeActiveTab === 'home' || !storeActiveTab }}">
+    <sc-if value="{{ storeTabIsHome }}">
       <div style="display:flex;flex-direction:column;gap:28px">
         
         <!-- Hero Featured Merchandising Card -->
@@ -9465,7 +9882,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
     </sc-if>
 
     <!-- ── SUB-TAB 2: PRODUCTS CATALOG ── -->
-    <sc-if value="{{ storeActiveTab === 'products' }}">
+    <sc-if value="{{ storeTabIsProducts }}">
       <div style="display:flex;flex-direction:column;gap:18px">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
           <div>
@@ -9515,7 +9932,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
     </sc-if>
 
     <!-- ── SUB-TAB 3: COLLECTIONS & BUNDLES ── -->
-    <sc-if value="{{ storeActiveTab === 'collections' }}">
+    <sc-if value="{{ storeTabIsCollections }}">
       <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));gap:16px">
         <div class="card-premium" style="display:flex;flex-direction:column;gap:12px">
           <div class="ph" style="aspect-ratio:16/9;border-radius:var(--radius-md)">
@@ -9550,7 +9967,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
     </sc-if>
 
     <!-- ── SUB-TAB 4: ABOUT & LOCATION ── -->
-    <sc-if value="{{ storeActiveTab === 'about' }}">
+    <sc-if value="{{ storeTabIsAbout }}">
       <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));gap:20px">
         
         <div class="card-premium" style="display:flex;flex-direction:column;gap:14px">
@@ -9586,7 +10003,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
     </sc-if>
 
     <!-- ── SUB-TAB 5: REVIEWS & TRUST ── -->
-    <sc-if value="{{ storeActiveTab === 'reviews' }}">
+    <sc-if value="{{ storeTabIsReviews }}">
       <div style="display:flex;flex-direction:column;gap:20px">
         
         <!-- Scorecard Summary -->
@@ -9674,7 +10091,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 <div style="padding-bottom:64px">
 
   <!-- Sticky Top Navigation Bar -->
-  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:30">
+  <div class="page-head" style="justify-content:space-between">
     <div style="display:flex;align-items:center;gap:12px">
       <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
@@ -9926,7 +10343,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 <sc-if value="{{ is.seller }}">
 <div style="padding-bottom:32px">
   
-  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+  <div class="page-head" style="justify-content:space-between">
     <div style="display:flex;align-items:center;gap:12px">
       <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
@@ -9941,25 +10358,86 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 
   <div style="padding:16px;max-width:960px;margin:0 auto;display:flex;flex-direction:column;gap:16px">
     
-    <!-- Metrics Scorecard Grid -->
-    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px">
-      <div class="card-premium" style="padding:18px">
-        <div style="font:700 11px/1 var(--font-heading);color:var(--color-text-muted);text-transform:uppercase">MONTHLY REVENUE</div>
-        <div style="font:800 22px/1 var(--font-heading);color:var(--color-text);margin:8px 0 4px">{{ sellerRevenue || 'XAF 0' }}</div>
-        <div style="font:600 11px/1 var(--font-body);color:{{ sellerRevenueDeltaColor || 'var(--color-text-muted)' }}">{{ sellerRevenueDelta || 'No sales this month yet' }}</div>
+    <!-- Revenue leads; the rest supports it. -->
+    <div class="surface-raised" style="padding:20px 18px 18px">
+      <div class="eyebrow">This month</div>
+      <div class="metric-hero" style="margin-top:10px">
+        <div class="metric-hero-row">
+          <span class="metric-value">{{ sellerRevenue || 'XAF 0' }}</span>
+          <sc-if value="{{ sellerRevenueDelta }}">
+            <span class="delta delta-up">{{ sellerRevenueDelta }}</span>
+          </sc-if>
+        </div>
+        <div class="metric-label">Revenue</div>
+        <div class="metric-note">{{ sellerRevenueNote || 'No sales yet this month. Your first published listing starts the clock.' }}</div>
       </div>
 
-      <div class="card-premium" style="padding:18px">
-        <div style="font:700 11px/1 var(--font-heading);color:var(--color-text-muted);text-transform:uppercase">ACTIVE ORDERS</div>
-        <div style="font:800 22px/1 var(--font-heading);color:var(--color-accent);margin:8px 0 4px">{{ sellerActiveOrdersCount || 0 }} Pending</div>
-        <div style="font:500 11px/1 var(--font-body);color:var(--color-text-secondary)">{{ sellerActiveOrdersNote || '0 ready for dispatch' }}</div>
+      <div class="stat-grid" style="margin-top:18px">
+        <div class="stat-tile">
+          <div class="stat-tile-top">
+            <span class="stat-tile-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+            </span>
+          </div>
+          <div class="metric-value-sm">{{ sellerActiveOrdersCount || 0 }}</div>
+          <div class="stat-tile-label">Pending orders</div>
+        </div>
+
+        <div class="stat-tile">
+          <div class="stat-tile-top">
+            <span class="stat-tile-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+            </span>
+          </div>
+          <div class="metric-value-sm">{{ sellerStoreViewsCount || 0 }}</div>
+          <div class="stat-tile-label">Views</div>
+        </div>
+
+        <div class="stat-tile">
+          <div class="stat-tile-top">
+            <span class="stat-tile-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+            </span>
+          </div>
+          <div class="metric-value-sm">{{ sellerLiveCount || 0 }}</div>
+          <div class="stat-tile-label">Live</div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Performance: store analytics + campaign reporting, together -->
+    <div class="surface-raised" style="padding:18px 16px">
+      <div class="section-head" style="margin-bottom:4px">
+        <div class="section-head-text">
+          <div class="eyebrow">Performance</div>
+          <h4 class="section-head-title" style="font-size:16px;margin-top:6px">Reach &amp; results</h4>
+        </div>
       </div>
 
-      <div class="card-premium" style="padding:18px">
-        <div style="font:700 11px/1 var(--font-heading);color:var(--color-text-muted);text-transform:uppercase">STORE VIEWS</div>
-        <div style="font:800 22px/1 var(--font-heading);color:var(--color-text);margin:8px 0 4px">{{ sellerStoreViewsCount || 0 }}</div>
-        <div style="font:600 11px/1 var(--font-body);color:var(--color-text-secondary)">{{ sellerStoreViewsNote || '0 views this week' }}</div>
-      </div>
+      <button onClick="{{ on.storeAnalytics }}" class="quiet-row">
+        <span class="quiet-row-label">Storefront analytics</span>
+        <span class="quiet-row-value">
+          Views, conversion, revenue
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+        </span>
+      </button>
+
+      <button onClick="{{ on.announceCampaigns }}" class="quiet-row">
+        <span class="quiet-row-label">Campaigns &amp; analytics</span>
+        <span class="quiet-row-value">
+          Broadcast reach &amp; spend
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+        </span>
+      </button>
+
+      <button onClick="{{ openAnnounceStudioFromSell }}" class="quiet-row">
+        <span class="quiet-row-label">Publishing studio</span>
+        <span class="quiet-row-value">
+          Draft a broadcast
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+        </span>
+      </button>
     </div>
 
     <!-- Inventory Quick Actions -->
@@ -9996,81 +10474,81 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
      ══════════════════════════════════════════════════════════════════════ -->
 <sc-if value="{{ is.upload }}">
 <div style="padding-bottom:32px">
-  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+  <div class="page-head">
     <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
     </button>
-    <div style="flex:1;min-width:0">
-      <h4 style="margin:0;font-size:16px">Publish to {{ currentStoreName || 'Marketplace' }}</h4>
-      <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">
-        Store Vertical: <span style="font-weight:700;color:var(--color-accent)">{{ currentStoreCategoryLabel || 'Physical Retail' }}</span>
-      </div>
+    <div class="page-head-text">
+      <h4 class="page-head-title">New listing</h4>
+      <div class="page-head-sub">{{ currentStoreName || 'Your boutique' }}</div>
     </div>
   </div>
 
-  <div style="padding:16px;max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:12px">
-    
-    <div style="font:700 12px/1 var(--font-heading);letter-spacing:.08em;color:var(--color-text-muted);text-transform:uppercase;margin-bottom:2px">
-      Authorized Content Formats
+  <div class="page-body" style="max-width:680px;--section-gap:22px">
+
+    <div>
+      <div class="eyebrow">Publishing to</div>
+      <h3 style="margin:8px 0 0;font:800 22px/1.2 var(--font-heading);letter-spacing:-.03em;color:var(--color-text)">{{ currentStoreName || 'Your boutique' }}</h3>
+      <p class="metric-note" style="margin-top:6px">Choose what you are putting in front of buyers. Your boutique's vertical decides which formats are available.</p>
     </div>
 
-    <!-- Physical Products / Retail Vertical -->
-    <sc-if value="{{ !storeCategory || storeCategory === 'electronics' || storeCategory === 'fashion' || storeCategory === 'home' || storeCategory === 'food' || storeCategory === 'beauty' || storeCategory === 'automotive' || storeCategory === 'general' }}">
-      <button onClick="{{ selectCategoryPhysical }}" class="card-premium" style="display:flex;align-items:center;gap:14px;padding:16px;text-align:left;cursor:pointer">
-        <div style="width:44px;height:44px;border-radius:var(--radius-sm);background:var(--color-accent-100);color:var(--color-accent);display:flex;align-items:center;justify-content:center;flex-shrink:0">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect width="18" height="12" x="3" y="4" rx="2"/><line x1="2" x2="22" y1="20" y2="20"/></svg>
-        </div>
-        <div style="flex:1">
-          <div style="font:800 15px/1.2 var(--font-heading);color:var(--color-text)">Physical Product / Inventory</div>
-          <div style="font:400 12px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Post items with price, condition, specifications, and escrow delivery</div>
-        </div>
-        <span style="color:var(--color-accent);font-weight:800">→</span>
-      </button>
-    </sc-if>
+    <div class="surface-raised" style="padding:4px 16px 6px">
+      <div class="rule-label" style="margin-top:12px"><span class="eyebrow">Listings</span></div>
 
-    <!-- Services Vertical -->
-    <sc-if value="{{ storeCategory === 'services' }}">
-      <button onClick="{{ selectCategoryService }}" class="card-premium" style="display:flex;align-items:center;gap:14px;padding:16px;text-align:left;cursor:pointer">
-        <div style="width:44px;height:44px;border-radius:var(--radius-sm);background:var(--color-accent-100);color:var(--color-accent);display:flex;align-items:center;justify-content:center;flex-shrink:0">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
-        </div>
-        <div style="flex:1">
-          <div style="font:800 15px/1.2 var(--font-heading);color:var(--color-text)">Professional Service / Gig</div>
-          <div style="font:400 12px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Photography, solar technicians, repair services, consulting</div>
-        </div>
-        <span style="color:var(--color-accent);font-weight:800">→</span>
+      <sc-if value="{{ storeSellsPhysical }}">
+      <button onClick="{{ selectCategoryPhysical }}" class="quiet-row" style="padding:15px 0">
+        <span style="display:flex;align-items:flex-start;gap:13px;min-width:0">
+          <span class="feature-row-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg></span>
+          <span class="feature-row-body">
+            <span class="feature-row-title" style="display:block">Product or inventory</span>
+            <span class="feature-row-sub" style="display:block">Price, condition, specifications and escrow delivery.</span>
+          </span>
+        </span>
+        <span class="quiet-row-value" style="color:var(--color-accent)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></span>
       </button>
-    </sc-if>
+      </sc-if>
 
-    <!-- Hospitality / Accommodations Vertical -->
-    <sc-if value="{{ storeCategory === 'hotels' || storeCategory === 'hospitality' }}">
-      <button onClick="{{ selectCategoryHospitality }}" class="card-premium" style="display:flex;align-items:center;gap:14px;padding:16px;text-align:left;cursor:pointer">
-        <div style="width:44px;height:44px;border-radius:var(--radius-sm);background:var(--color-accent-100);color:var(--color-accent);display:flex;align-items:center;justify-content:center;flex-shrink:0">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 22v-6.57"/><path d="M12 11h.01"/><path d="M12 7h.01"/><path d="M14 15.43V22"/><path d="M15 11h.01"/><path d="M15 7h.01"/><path d="M16 16h2a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/><path d="M18 22v-4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v4"/><path d="M8 22v-6.57"/><path d="M9 11h.01"/><path d="M9 7h.01"/></svg>
-        </div>
-        <div style="flex:1">
-          <div style="font:800 15px/1.2 var(--font-heading);color:var(--color-text)">Room, Suite &amp; Booking</div>
-          <div style="font:400 12px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Hotel rooms, furnished apartments, venue reservations</div>
-        </div>
-        <span style="color:var(--color-accent);font-weight:800">→</span>
+      <sc-if value="{{ storeSellsService }}">
+      <button onClick="{{ selectCategoryService }}" class="quiet-row" style="padding:15px 0">
+        <span style="display:flex;align-items:flex-start;gap:13px;min-width:0">
+          <span class="feature-row-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 1-5.4 5.4L4 17v3h3l5.3-5.3a4 4 0 0 1 5.4-5.4l-2.6 2.6 1.6 1.6Z"/></svg></span>
+          <span class="feature-row-body">
+            <span class="feature-row-title" style="display:block">Service or booking</span>
+            <span class="feature-row-sub" style="display:block">Scope, duration and how customers reach you.</span>
+          </span>
+        </span>
+        <span class="quiet-row-value" style="color:var(--color-accent)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></span>
       </button>
-    </sc-if>
+      </sc-if>
 
-    <!-- Universal Announcement / Broadcast -->
-    <div style="margin-top:8px;font:700 12px/1 var(--font-heading);letter-spacing:.08em;color:var(--color-text-muted);text-transform:uppercase">
-      Commercial Broadcast
+      <sc-if value="{{ storeSellsHospitality }}">
+      <button onClick="{{ selectCategoryHospitality }}" class="quiet-row" style="padding:15px 0">
+        <span style="display:flex;align-items:flex-start;gap:13px;min-width:0">
+          <span class="feature-row-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20V9l9-5 9 5v11"/><path d="M9 20v-6h6v6"/></svg></span>
+          <span class="feature-row-body">
+            <span class="feature-row-title" style="display:block">Room or stay</span>
+            <span class="feature-row-sub" style="display:block">Room type, guests, rates and availability.</span>
+          </span>
+        </span>
+        <span class="quiet-row-value" style="color:var(--color-accent)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></span>
+      </button>
+      </sc-if>
     </div>
 
-    <button onClick="{{ openAnnounceStudioFromSell }}" class="card-premium" style="display:flex;align-items:center;gap:14px;padding:16px;text-align:left;cursor:pointer">
-      <div style="width:44px;height:44px;border-radius:var(--radius-sm);background:var(--color-secondary-100,#fef3c7);color:var(--color-secondary-800,#92400e);display:flex;align-items:center;justify-content:center;flex-shrink:0">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
-      </div>
-      <div style="flex:1">
-        <div style="font:800 15px/1.2 var(--font-heading);color:var(--color-text)">Post Store Announcement / Deal</div>
-        <div style="font:400 12px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Broadcast flash promotions, stock arrivals, or business updates</div>
-      </div>
-      <span style="color:var(--color-accent);font-weight:800">→</span>
-    </button>
+    <div class="surface-raised" style="padding:4px 16px 6px">
+      <div class="rule-label" style="margin-top:12px"><span class="eyebrow">Broadcast</span></div>
+      <button onClick="{{ openAnnounceStudioFromSell }}" class="quiet-row" style="padding:15px 0">
+        <span style="display:flex;align-items:flex-start;gap:13px;min-width:0">
+          <span class="feature-row-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 11 18-5v12L3 13v-2Z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg></span>
+          <span class="feature-row-body">
+            <span class="feature-row-title" style="display:block">Store announcement or deal</span>
+            <span class="feature-row-sub" style="display:block">Publish a flash promotion, stock arrival or business update to Announce.</span>
+          </span>
+        </span>
+        <span class="quiet-row-value" style="color:var(--color-accent)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></span>
+      </button>
+    </div>
+
 
   </div>
 </div>
@@ -10081,7 +10559,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
      ══════════════════════════════════════════════════════════════════════ -->
 <sc-if value="{{ is.uploadDetails }}">
 <div style="padding-bottom:32px">
-  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+  <div class="page-head">
     <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
     </button>
@@ -10139,7 +10617,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
      ══════════════════════════════════════════════════════════════════════ -->
 <sc-if value="{{ is.uploadPrice }}">
 <div style="padding-bottom:32px">
-  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+  <div class="page-head">
     <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
     </button>
@@ -10206,7 +10684,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
      ══════════════════════════════════════════════════════════════════════ -->
 <sc-if value="{{ is.myListings }}">
 <div style="padding-bottom:32px">
-  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+  <div class="page-head" style="justify-content:space-between">
     <div style="display:flex;align-items:center;gap:12px">
       <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
@@ -10259,44 +10737,30 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 <div style="padding-bottom:56px;background:var(--color-bg);min-height:100vh">
   
   <!-- Shared Contextual Announce Header -->
-  <div style="background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:30;box-shadow:0 1px 3px rgba(0,0,0,0.05)">
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;max-width:1200px;margin:0 auto">
-      <div style="display:flex;align-items:center;gap:12px">
+  <div class="page-head-block">
+    <div class="page-head" style="position:static;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;border-bottom:none;justify-content:space-between;max-width:1200px;margin:0 auto">
+      <div class="page-head-main">
         <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
         </button>
-        <div>
-          <div style="display:flex;align-items:center;gap:6px">
-            <h3 style="margin:0;font-size:17px;font-weight:800;letter-spacing:-0.3px">LOUMOO Announce</h3>
-            <span class="tag tag-accent" style="min-height:18px;padding:1px 6px;font-size:9.5px;font-weight:800">COMMERCIAL FEED</span>
+        <div class="page-head-text">
+          <div style="display:flex;align-items:center;gap:6px;min-width:0">
+            <h3 class="page-head-title">LOUMOO Announce</h3>
+            <span class="tag tag-accent hide-tight" style="min-height:18px;padding:1px 6px;font-size:9.5px;font-weight:800;white-space:nowrap;flex-shrink:0">COMMERCIAL FEED</span>
           </div>
-          <div style="font:400 11.5px/1.2 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Discover live promotions, flash drops, tenders &amp; verified services</div>
+          <div class="page-head-sub">Live promotions, flash drops, tenders &amp; verified services</div>
         </div>
       </div>
       
-      <div style="display:flex;align-items:center;gap:8px">
+      <div class="page-head-actions">
         <button onClick="{{ on.announceStudio }}" class="btn btn-primary" style="height:36px;padding:0 14px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-          <span>OPEN STUDIO</span>
+          <span style="white-space:nowrap">OPEN STUDIO</span>
         </button>
       </div>
     </div>
 
-    <!-- 3-Experience Dedicated Navigation Bar -->
-    <div style="display:flex;border-top:1px solid var(--color-divider);max-width:1200px;margin:0 auto;padding:0 16px;overflow-x:auto">
-      <button onClick="{{ on.announce }}" class="tab-item active" style="padding:10px 16px;font-size:12.5px;font-weight:700;color:var(--color-accent);border-bottom:2px solid var(--color-accent);background:none;border-top:none;border-left:none;border-right:none;display:flex;align-items:center;gap:6px;cursor:pointer">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
-        <span>Commercial Feed</span>
-      </button>
-      <button onClick="{{ on.announceStudio }}" class="tab-item" style="padding:10px 16px;font-size:12.5px;font-weight:600;color:var(--color-text-secondary);border:none;background:none;display:flex;align-items:center;gap:6px;cursor:pointer">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-        <span>Publishing Studio</span>
-      </button>
-      <button onClick="{{ on.announceCampaigns }}" class="tab-item" style="padding:10px 16px;font-size:12.5px;font-weight:600;color:var(--color-text-secondary);border:none;background:none;display:flex;align-items:center;gap:6px;cursor:pointer">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-        <span>Campaigns &amp; Analytics</span>
-      </button>
-    </div>
+    <!-- Announce is a feed. Authoring lives under Sell; reporting lives in Seller Studio. -->
   </div>
 
   <!-- Feed Content Workspace -->
@@ -10385,9 +10849,9 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
             <div class="ph" style="width:48px;height:48px;border-radius:6px;flex-shrink:0"></div>
             <div style="flex:1;min-width:0">
               <div style="font-size:12px;font-weight:700;color:var(--color-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">MacBook Air M3 Space Gray 16GB</div>
-              <div style="display:flex;align-items:baseline;gap:6px;margin-top:2px">
-                <span style="font-size:14px;font-weight:800;color:var(--color-accent)">XAF 850,000</span>
-                <span style="font-size:11px;color:var(--color-text-muted);text-decoration:line-through">XAF 900,000</span>
+              <div style="display:flex;align-items:baseline;gap:6px;margin-top:2px;flex-wrap:wrap;min-width:0">
+                <span style="font-size:14px;font-weight:800;color:var(--color-accent);white-space:nowrap">XAF 850,000</span>
+                <span style="font-size:11px;color:var(--color-text-muted);text-decoration:line-through;white-space:nowrap">XAF 900,000</span>
               </div>
             </div>
             <button class="btn btn-primary" style="height:30px;padding:0 10px;font-size:11px;font-weight:700">BUY NOW</button>
@@ -10490,7 +10954,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 <div style="padding-bottom:56px;background:var(--color-bg);min-height:100vh">
 
   <!-- Shared Contextual Announce Header -->
-  <div style="background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:30;box-shadow:0 1px 3px rgba(0,0,0,0.05)">
+  <div class="page-head-block">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;max-width:1200px;margin:0 auto">
       <div style="display:flex;align-items:center;gap:12px">
         <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
@@ -10514,20 +10978,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
     </div>
 
     <!-- 3-Experience Dedicated Navigation Bar -->
-    <div style="display:flex;border-top:1px solid var(--color-divider);max-width:1200px;margin:0 auto;padding:0 16px;overflow-x:auto">
-      <button onClick="{{ on.announce }}" class="tab-item" style="padding:10px 16px;font-size:12.5px;font-weight:600;color:var(--color-text-secondary);border:none;background:none;display:flex;align-items:center;gap:6px;cursor:pointer">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
-        <span>Commercial Feed</span>
-      </button>
-      <button onClick="{{ on.announceStudio }}" class="tab-item active" style="padding:10px 16px;font-size:12.5px;font-weight:700;color:var(--color-accent);border-bottom:2px solid var(--color-accent);background:none;border-top:none;border-left:none;border-right:none;display:flex;align-items:center;gap:6px;cursor:pointer">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-        <span>Publishing Studio</span>
-      </button>
-      <button onClick="{{ on.announceCampaigns }}" class="tab-item" style="padding:10px 16px;font-size:12.5px;font-weight:600;color:var(--color-text-secondary);border:none;background:none;display:flex;align-items:center;gap:6px;cursor:pointer">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-        <span>Campaigns &amp; Analytics</span>
-      </button>
-    </div>
+      <!-- Reached from Sell (studio) and Seller Studio (campaigns); no sibling tabs. -->
   </div>
 
   <div style="padding:18px 16px;max-width:1200px;margin:0 auto">
@@ -10725,8 +11176,8 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
               <div style="flex:1;min-width:0">
                 <div style="font-size:12px;font-weight:700;color:var(--color-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">MacBook Air M3 Space Gray 16GB</div>
                 <div style="display:flex;align-items:baseline;gap:6px;margin-top:2px">
-                  <span style="font-size:14px;font-weight:800;color:var(--color-accent)">XAF 850,000</span>
-                  <span style="font-size:11px;color:var(--color-text-muted);text-decoration:line-through">XAF 900,000</span>
+                  <span style="font-size:14px;font-weight:800;color:var(--color-accent);white-space:nowrap">XAF 850,000</span>
+                  <span style="font-size:11px;color:var(--color-text-muted);text-decoration:line-through;white-space:nowrap">XAF 900,000</span>
                 </div>
               </div>
               <button class="btn btn-primary" style="height:30px;padding:0 10px;font-size:11px;font-weight:700">BUY NOW</button>
@@ -10792,7 +11243,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 <div style="padding-bottom:56px;background:var(--color-bg);min-height:100vh">
 
   <!-- Shared Contextual Announce Header -->
-  <div style="background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:30;box-shadow:0 1px 3px rgba(0,0,0,0.05)">
+  <div class="page-head-block">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;max-width:1200px;margin:0 auto">
       <div style="display:flex;align-items:center;gap:12px">
         <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
@@ -10816,20 +11267,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
     </div>
 
     <!-- 3-Experience Dedicated Navigation Bar -->
-    <div style="display:flex;border-top:1px solid var(--color-divider);max-width:1200px;margin:0 auto;padding:0 16px;overflow-x:auto">
-      <button onClick="{{ on.announce }}" class="tab-item" style="padding:10px 16px;font-size:12.5px;font-weight:600;color:var(--color-text-secondary);border:none;background:none;display:flex;align-items:center;gap:6px;cursor:pointer">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
-        <span>Commercial Feed</span>
-      </button>
-      <button onClick="{{ on.announceStudio }}" class="tab-item" style="padding:10px 16px;font-size:12.5px;font-weight:600;color:var(--color-text-secondary);border:none;background:none;display:flex;align-items:center;gap:6px;cursor:pointer">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-        <span>Publishing Studio</span>
-      </button>
-      <button onClick="{{ on.announceCampaigns }}" class="tab-item active" style="padding:10px 16px;font-size:12.5px;font-weight:700;color:var(--color-accent);border-bottom:2px solid var(--color-accent);background:none;border-top:none;border-left:none;border-right:none;display:flex;align-items:center;gap:6px;cursor:pointer">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-        <span>Campaigns &amp; Analytics</span>
-      </button>
-    </div>
+      <!-- Reached from Sell (studio) and Seller Studio (campaigns); no sibling tabs. -->
   </div>
 
   <!-- Analytics Dashboard Workspace -->
@@ -11025,7 +11463,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 <div style="padding-bottom:56px;background:var(--color-bg);min-height:100vh">
 
   <!-- Header with Back -->
-  <div style="background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:30">
+  <div class="page-head-block">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;max-width:800px;margin:0 auto">
       <div style="display:flex;align-items:center;gap:12px">
         <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
@@ -11102,8 +11540,8 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
           <div style="flex:1;min-width:0">
             <h4 style="margin:0 0 4px;font-size:15px;font-weight:800;color:var(--color-text)">Apple MacBook Air 13.6" M3 Chip 16GB / 512GB SSD Space Gray</h4>
             <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:6px">
-              <span style="font-size:18px;font-weight:800;color:var(--color-accent)">XAF 850,000</span>
-              <span style="font-size:12px;color:var(--color-text-muted);text-decoration:line-through">XAF 900,000</span>
+              <span style="font-size:18px;font-weight:800;color:var(--color-accent);white-space:nowrap">XAF 850,000</span>
+              <span style="font-size:12px;color:var(--color-text-muted);text-decoration:line-through;white-space:nowrap">XAF 900,000</span>
             </div>
             <div style="font-size:11.5px;color:var(--color-success);font-weight:600">● 4 Units In Stock at Akwa Showroom</div>
           </div>
@@ -11146,23 +11584,23 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   
   <!-- Sticky Glassmorphic Header -->
   <div class="compare-sticky-header">
-    <div style="display:flex;align-items:center;gap:14px">
-      <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;transition:all 0.2s">
+    <div class="page-head-main">
+      <button onClick="{{ back }}" aria-label="Go back" class="icon-btn-round">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
       </button>
-      <div>
-        <div style="display:flex;align-items:center;gap:8px">
-          <h2 style="margin:0;font:800 18px/1.2 var(--font-heading);color:var(--color-text);letter-spacing:-0.02em">Compare Products</h2>
+      <div class="page-head-text">
+        <div style="display:flex;align-items:center;gap:8px;min-width:0">
+          <h2 class="page-head-title" style="font-size:18px">Compare Products</h2>
           <span style="background:var(--color-accent-100);color:var(--color-accent);font:800 11px/1 var(--font-heading);padding:3px 8px;border-radius:var(--radius-pill)">{{ vsCount }} / 4 SELECTED</span>
         </div>
-        <p style="margin:2px 0 0;font:400 12px/1.3 var(--font-body);color:var(--color-text-secondary)">See what actually separates them before you buy.</p>
+        <p class="page-head-sub" style="margin:2px 0 0">See what actually separates them before you buy.</p>
       </div>
     </div>
     
-    <div style="display:flex;align-items:center;gap:10px">
-      <button onClick="{{ clearVsAll }}" style="border:none;background:transparent;color:var(--color-text-muted);font:600 12px/1 var(--font-heading);cursor:pointer;padding:8px 12px;min-height:44px">Clear All</button>
-      <button onClick="{{ resetVsDefaults }}" style="border:1px solid var(--color-divider);background:var(--color-surface);color:var(--color-text);font:700 12px/1 var(--font-heading);cursor:pointer;padding:8px 12px;border-radius:var(--radius-pill);min-height:44px">Restore Defaults</button>
-      <button onClick="{{ on.vsCompare }}" class="btn btn-primary" style="height:42px;padding:0 18px;font-size:12.5px;font-weight:700;box-shadow:0 4px 14px rgba(0,122,255,0.25);border-radius:var(--radius-pill)">
+    <div class="page-head-actions" style="overflow-x:auto;scrollbar-width:none">
+      <button onClick="{{ clearVsAll }}" style="white-space:nowrap;flex-shrink:0;border:none;background:transparent;color:var(--color-text-muted);font:600 12px/1 var(--font-heading);cursor:pointer;padding:8px 12px;min-height:44px">Clear All</button>
+      <button onClick="{{ resetVsDefaults }}" style="white-space:nowrap;flex-shrink:0;border:1px solid var(--color-divider);background:var(--color-surface);color:var(--color-text);font:700 12px/1 var(--font-heading);cursor:pointer;padding:8px 12px;border-radius:var(--radius-pill);min-height:44px">Restore Defaults</button>
+      <button onClick="{{ on.vsCompare }}" class="btn btn-primary" style="white-space:nowrap;flex-shrink:0;height:42px;padding:0 18px;font-size:12.5px;font-weight:700;box-shadow:0 4px 14px rgba(0,122,255,0.25);border-radius:var(--radius-pill)">
         <span>Compare Now ({{ vsCount }})</span>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="margin-left:4px"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
       </button>
@@ -11173,14 +11611,14 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
     
     <!-- Compatibility Banner -->
     <div style="background:rgba(0,122,255,0.05);border:1px solid rgba(0,122,255,0.2);border-radius:var(--radius-md);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
-      <div style="display:flex;align-items:center;gap:10px">
-        <div style="width:28px;height:28px;border-radius:50%;background:var(--color-accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800">✓</div>
-        <div>
-          <span style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Category Compatible: Laptops &amp; Computers</span>
-          <span style="font:400 12px/1.2 var(--font-body);color:var(--color-text-secondary);margin-left:6px">· Full Apple Silicon &amp; PC architecture comparison matrix active.</span>
+      <div style="display:flex;align-items:flex-start;gap:10px;min-width:0;flex:1 1 260px">
+        <div style="width:28px;height:28px;min-width:28px;flex-shrink:0;align-self:flex-start;border-radius:50%;background:var(--color-accent);color:#fff;display:flex;align-items:center;justify-content:center">✓</div>
+        <div style="min-width:0">
+          <div style="font:700 13px/1.35 var(--font-heading);color:var(--color-text)">Category Compatible: Laptops &amp; Computers</div>
+          <div style="font:400 12px/1.4 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Full Apple Silicon &amp; PC architecture comparison matrix active.</div>
         </div>
       </div>
-      <span style="font:700 11px/1 var(--font-heading);color:var(--color-accent);background:#fff;padding:4px 10px;border-radius:var(--radius-pill);border:1px solid rgba(0,122,255,0.2)">ELECTRONICS</span>
+      <span style="font:700 11px/1 var(--font-heading);color:var(--color-accent);background:#fff;padding:4px 10px;border-radius:var(--radius-pill);border:1px solid rgba(0,122,255,0.2);flex-shrink:0;white-space:nowrap">ELECTRONICS</span>
     </div>
 
     <!-- Product Selection Grid (2 to 4 Slots) -->
@@ -11201,7 +11639,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
           <h3 style="margin:4px 0 6px;font:800 16px/1.3 var(--font-heading);color:var(--color-text)">Apple MacBook Air 13” (M2)</h3>
           
           <div style="display:flex;align-items:baseline;justify-content:center;gap:8px;margin-bottom:8px">
-            <span style="font:800 20px/1 var(--font-heading);color:var(--color-accent)">XAF 745 000</span>
+            <span style="font:800 20px/1 var(--font-heading);color:var(--color-accent);white-space:nowrap">XAF 745 000</span>
             <span style="font:500 13px/1 var(--font-body);text-decoration:line-through;color:var(--color-text-muted)">829 000</span>
             <span style="font:800 10px/1 var(--font-heading);background:var(--color-accent-sale-100);color:var(--color-accent-sale);padding:2px 6px;border-radius:var(--radius-pill)">-10%</span>
           </div>
@@ -11246,7 +11684,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
           <h3 style="margin:4px 0 6px;font:800 16px/1.3 var(--font-heading);color:var(--color-text)">Apple MacBook Pro 14” (M3 Pro)</h3>
           
           <div style="display:flex;align-items:baseline;justify-content:center;gap:8px;margin-bottom:8px">
-            <span style="font:800 20px/1 var(--font-heading);color:var(--color-accent)">XAF 1 250 000</span>
+            <span style="font:800 20px/1 var(--font-heading);color:var(--color-accent);white-space:nowrap">XAF 1 250 000</span>
             <span style="font:500 13px/1 var(--font-body);text-decoration:line-through;color:var(--color-text-muted)">1 380 000</span>
             <span style="font:800 10px/1 var(--font-heading);background:var(--color-accent-sale-100);color:var(--color-accent-sale);padding:2px 6px;border-radius:var(--radius-pill)">-9%</span>
           </div>
@@ -11291,7 +11729,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
           <h3 style="margin:4px 0 6px;font:800 16px/1.3 var(--font-heading);color:var(--color-text)">Lenovo ThinkPad X1 Carbon Gen 11</h3>
           
           <div style="display:flex;align-items:baseline;justify-content:center;gap:8px;margin-bottom:8px">
-            <span style="font:800 20px/1 var(--font-heading);color:var(--color-accent)">XAF 890 000</span>
+            <span style="font:800 20px/1 var(--font-heading);color:var(--color-accent);white-space:nowrap">XAF 890 000</span>
             <span style="font:500 13px/1 var(--font-body);text-decoration:line-through;color:var(--color-text-muted)">980 000</span>
             <span style="font:800 10px/1 var(--font-heading);background:var(--color-accent-sale-100);color:var(--color-accent-sale);padding:2px 6px;border-radius:var(--radius-pill)">-9%</span>
           </div>
@@ -11347,7 +11785,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
           <h3 style="margin:4px 0 6px;font:800 16px/1.3 var(--font-heading);color:var(--color-text)">Dell XPS 15 (RTX 4060)</h3>
           
           <div style="display:flex;align-items:baseline;justify-content:center;gap:8px;margin-bottom:8px">
-            <span style="font:800 20px/1 var(--font-heading);color:var(--color-accent)">XAF 1 180 000</span>
+            <span style="font:800 20px/1 var(--font-heading);color:var(--color-accent);white-space:nowrap">XAF 1 180 000</span>
             <span style="font:500 13px/1 var(--font-body);text-decoration:line-through;color:var(--color-text-muted)">1 290 000</span>
             <span style="font:800 10px/1 var(--font-heading);background:var(--color-accent-sale-100);color:var(--color-accent-sale);padding:2px 6px;border-radius:var(--radius-pill)">-8%</span>
           </div>
@@ -11525,7 +11963,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
           <h3 style="margin:4px 0 8px;font:800 19px/1.2 var(--font-heading);color:var(--color-text)">Apple MacBook Air 13” (M2)</h3>
           
           <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:8px">
-            <span style="font:800 24px/1 var(--font-heading);color:var(--color-accent)">XAF 745 000</span>
+            <span style="font:800 24px/1 var(--font-heading);color:var(--color-accent);white-space:nowrap">XAF 745 000</span>
             <span style="font:500 14px/1 var(--font-body);text-decoration:line-through;color:var(--color-text-muted)">829 000</span>
             <span style="font:800 11px/1 var(--font-heading);background:var(--color-accent-sale-100);color:var(--color-accent-sale);padding:2px 8px;border-radius:var(--radius-pill)">SAVE XAF 84K</span>
           </div>
@@ -11582,7 +12020,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
           <h3 style="margin:4px 0 8px;font:800 19px/1.2 var(--font-heading);color:var(--color-text)">Apple MacBook Pro 14” (M3 Pro)</h3>
           
           <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:8px">
-            <span style="font:800 24px/1 var(--font-heading);color:var(--color-accent)">XAF 1 250 000</span>
+            <span style="font:800 24px/1 var(--font-heading);color:var(--color-accent);white-space:nowrap">XAF 1 250 000</span>
             <span style="font:500 14px/1 var(--font-body);text-decoration:line-through;color:var(--color-text-muted)">1 380 000</span>
             <span style="font:800 11px/1 var(--font-heading);background:var(--color-accent-sale-100);color:var(--color-accent-sale);padding:2px 8px;border-radius:var(--radius-pill)">SAVE XAF 130K</span>
           </div>
@@ -13137,7 +13575,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
     </button>
     <div style="flex:1;min-width:0">
       <h4 style="margin:0;font-size:16px">Store Setup &amp; Activation</h4>
-      <div style="font:400 11px/1.2 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Complete 4 steps to launch your official storefront</div>
+      <div style="font:400 11px/1.2 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Your storefront can go live now — verification is optional</div>
     </div>
   </div>
 
@@ -13198,8 +13636,11 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
         <div style="display:flex;align-items:center;gap:12px">
           <div style="width:36px;height:36px;border-radius:50%;background:var(--color-accent-100);color:var(--color-accent);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px">4</div>
           <div>
-            <div style="font:700 14px/1.2 var(--font-heading);color:var(--color-text)">4. Official Verification (CNI / RCCM)</div>
-            <div style="font:400 12px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Unlock verified merchant trust badge &amp; MoMo escrow payouts</div>
+            <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">
+              <div style="font:700 14px/1.2 var(--font-heading);color:var(--color-text)">Official Verification (CNI / RCCM)</div>
+              <span class="tag tag-neutral" style="min-height:18px;padding:1px 8px;font-size:9.5px;font-weight:800;white-space:nowrap">OPTIONAL</span>
+            </div>
+            <div style="font:400 12px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Adds a verified trust badge later. Your storefront can go live without it.</div>
           </div>
         </div>
         <span style="color:var(--color-accent);font-weight:800">→</span>
@@ -13208,9 +13649,13 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
     </div>
 
     <!-- Activation CTA -->
-    <button onClick="{{ activateStorefront }}" class="btn btn-primary btn-block" style="height:48px;font-size:14px;cursor:pointer">
-      ACTIVATE STOREFRONT &amp; GO LIVE <span>✓</span>
+    <button onClick="{{ activateStorefront }}" class="btn btn-primary btn-block" style="height:48px;font-size:14px;cursor:pointer" disabled="{{ storeActivating }}">
+      <sc-if value="{{ storeActivating }}"><span>ACTIVATING…</span></sc-if>
+      <sc-if value="{{ !storeActivating }}"><span>ACTIVATE STOREFRONT &amp; GO LIVE</span></sc-if>
     </button>
+    <sc-if value="{{ storeActivateError }}">
+      <div style="margin-top:10px;padding:10px 12px;border-radius:var(--radius-sm);background:var(--color-accent-sale-100);color:var(--color-accent-sale);font:600 12px/1.4 var(--font-body)">{{ storeActivateError }}</div>
+    </sc-if>
 
   </div>
 </div>
@@ -13630,7 +14075,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 <div style="padding-bottom:64px;min-height:100vh;background:var(--color-background)">
 
   <!-- Sticky navigation bar -->
-  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:30">
+  <div class="page-head">
     <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;flex-shrink:0">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
     </button>
@@ -13810,7 +14255,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 <div style="padding-bottom:64px;min-height:100vh;background:var(--color-background)">
 
   <!-- Sticky top bar -->
-  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:30">
+  <div class="page-head">
     <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;flex-shrink:0">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
     </button>
@@ -14664,7 +15109,9 @@ class Component extends DCLogic {
     regEmail: '',
     regCity: 'douala',
     regAddress: '',
-    regBusinessName: 'Orca Electronics Douala',
+    // Seeded with a demo merchant's name until now, which any seller
+    // without their own business name displayed as their storefront.
+    regBusinessName: '',
     regRccm: 'RC/DLA/2023/B/1842',
     legalForm: 'sarl',
     interestTech: true,
@@ -14746,6 +15193,7 @@ class Component extends DCLogic {
     // truth for every seller capability; nothing here is decided locally.
     sellerStatus: 'NONE',
     primaryStoreId: null,
+    store: null,
     deleteAccountConfirmText: '',
     deleteAccountReason: 'not_using',
     deleteAccountBusy: false,
@@ -15114,6 +15562,29 @@ class Component extends DCLogic {
         }).catch(() => {
           // Counts stay at their honest zero; never block the session on this.
           this._dashboardRequested = false;
+    this._loadedStoreId = null;
+        });
+      }
+    }
+
+    /* Load the seller's actual boutique.
+
+       Nothing ever assigned `this.state.store`, so every screen that shows the
+       store's name or vertical fell back to seeded demo values - the Sell
+       screen greeted sellers with another merchant's shop name and always
+       claimed the 'electronics' vertical. */
+    const ownStoreId = seller.storeId || user.primaryStoreId || null;
+    if (ownStoreId && this._loadedStoreId !== ownStoreId) {
+      this._loadedStoreId = ownStoreId;
+      const storeApi = getApi();
+      if (storeApi && typeof storeApi.getStore === 'function') {
+        storeApi.getStore(ownStoreId).then(st => {
+          if (this._unmounted || !st) return;
+          const store = st.store || st;
+          this.setState({ store: store });
+        }).catch(() => {
+          // Screens fall back to a neutral label rather than a wrong one.
+          this._loadedStoreId = null;
         });
       }
     }
@@ -15159,6 +15630,7 @@ class Component extends DCLogic {
       sessionUser: null,
       accountState: null,
       dashboard: null,
+      store: null,
       sellerStatus: 'NONE',
       primaryStoreId: null,
       capabilities: {},
@@ -16738,8 +17210,15 @@ class Component extends DCLogic {
       // ── Dedicated Selling & Upload Wizard Handlers ──
       handleSellClick,
       currentStoreName: (this.state.store && this.state.store.name) || this.state.regBusinessName || 'Your Boutique',
-      currentStoreCategoryLabel: (this.state.store && (this.state.store.category || this.state.store.category_id)) || 'Physical Retail',
-      storeCategory: (this.state.store && (this.state.store.category_id || this.state.store.category)) || 'electronics',
+      hasOwnStore: Boolean(this.state.primaryStoreId),
+      currentStoreCategoryLabel: (() => {
+        const LABELS = { electronics:'Electronics & Tech', fashion:'Fashion & Apparel', home:'Home & Living',
+          services:'Professional Services', hotels:'Hospitality', hospitality:'Hospitality', food:'Food & Grocery',
+          beauty:'Beauty & Care', automotive:'Automotive', travel:'Travel', general:'General Retail' };
+        const c = String(this.state.store && (this.state.store.categoryId || this.state.store.category_id || this.state.store.category) || '').toLowerCase();
+        return LABELS[c] || 'General Retail';
+      })(),
+      storeCategory: (this.state.store && (this.state.store.categoryId || this.state.store.category_id || this.state.store.category)) || 'general',
       openAnnounceStudioFromSell: () => { this.go('announceStudio'); },
       selectCategoryPhysical: () => {
         this.setState({ newListingCategory: 'electronics', newListingType: 'PHYSICAL_PRODUCT' });
@@ -16772,7 +17251,16 @@ class Component extends DCLogic {
 
       // ── Seller Studio Dynamic Metrics & Empty States ──
       sellerRevenue: this.state.sellerRevenue || 'XAF 0',
-      sellerRevenueDelta: this.state.sellerRevenueDelta || 'No sales this month yet',
+      /* A delta and a note are different things. 'No sales this month yet' was
+         being fed into the delta slot, so an empty month rendered as a green
+         pill beside the number - the visual language for good news. A delta is
+         shown only when there is a real movement to report; otherwise the
+         sentence goes underneath as a note, in muted grey. */
+      sellerRevenueDelta: /^[+\-]/.test(String(this.state.sellerRevenueDelta || '')) ? this.state.sellerRevenueDelta : '',
+      sellerRevenueNote: this.state.sellerRevenueNote
+        || (this.state.sellerRevenueDelta && !/^[+\-]/.test(String(this.state.sellerRevenueDelta))
+              ? this.state.sellerRevenueDelta
+              : 'No sales yet this month. Your first published listing starts the clock.'),
       sellerRevenueDeltaColor: this.state.sellerRevenueDeltaColor || 'var(--color-text-muted)',
       sellerActiveOrdersCount: Number(this.state.sellerActiveOrdersCount || 0),
       sellerActiveOrdersNote: this.state.sellerActiveOrdersNote || '0 ready for dispatch',
@@ -17678,8 +18166,12 @@ class Component extends DCLogic {
         this.setState({ createStoreBusy: true, createStoreError: '' });
         const api = getApi();
         const done = () => {
+          // Refresh the account so `primaryStoreId` is populated immediately.
+          // Without it the client still believed the user had no boutique and
+          // sent them back to create a second one.
+          this._syncAccountState(true);
           this.setState({ createStoreBusy: false });
-          this.toast('Storefront created! Starting onboarding...');
+          this.toast('Storefront created! Finish setup to go live.');
           this.go('storeOnboarding');
         };
         api.createStore({
@@ -17701,10 +18193,47 @@ class Component extends DCLogic {
         });
       },
       storeOnboardingPercentage: this.state.storeOnboardingPercentage,
+      storeActivating: Boolean(this.state.storeActivating),
+      storeActivateError: this.state.storeActivateError || '',
       activateStorefront: () => {
-        this.setState({ storeOnboardingPercentage: 100 });
-        this.toast('Your storefront is now LIVE on LOUMOO!');
-        this.go('seller');
+        /*
+         * This used to set a local percentage to 100, toast "LIVE" and walk
+         * away without calling anything. The store stayed DRAFT, the account
+         * stayed SELLER_VERIFICATION_REQUIRED, and pressing Sell bounced the
+         * user back to the seller-type question - for ever.
+         *
+         * Activation is the ONE transition that makes an account SELLER_READY,
+         * so it has to be a real request whose outcome is reported honestly.
+         * It never requires a verification document.
+         */
+        const api = getApi();
+        const storeId = this.state.primaryStoreId;
+        if (this.state.storeActivating) return;
+
+        const fail = (msg) => {
+          if (this._unmounted) return;
+          this.setState({ storeActivating: false, storeActivateError: msg });
+          this.toast(msg);
+        };
+
+        if (!storeId) { this.go('createStore'); return; }
+        if (!api) { fail('LOUMOO is unreachable. Your storefront was not activated.'); return; }
+
+        this.setState({ storeActivating: true, storeActivateError: '' });
+        api.updateStoreOnboarding(storeId, 'ACTIVE')
+          .then(() => this._syncAccountState(true))
+          .then(() => {
+            if (this._unmounted) return;
+            this.setState({ storeActivating: false, storeOnboardingPercentage: 100 });
+            this.toast('Your storefront is now LIVE on LOUMOO!');
+            this.go('seller');
+          })
+          .catch(err => {
+            // Name what is actually missing instead of bouncing the user to a
+            // screen that asks something they already answered.
+            const msg = (err && err.message) || 'Could not activate your storefront.';
+            fail(msg);
+          });
       },
       storeVerificationStatusLabel: this.state.storeVerificationStatusLabel,
       verLegalName: this.state.verLegalName,
@@ -17736,10 +18265,9 @@ class Component extends DCLogic {
           fail('Create your boutique before submitting verification documents.');
           return;
         }
-        if (!this.state.verDocUploadUrl && !this.state.docUploadUrl) {
-          fail('Attach your CNI or RCCM document before submitting.');
-          return;
-        }
+        // No document is required. Verification is an optional trust upgrade,
+        // never a gate on selling, so a seller may submit their legal details
+        // now and attach a document later.
         if (!api) {
           fail('LOUMOO is unreachable. Check your connection and try again.');
           return;
@@ -17827,10 +18355,54 @@ class Component extends DCLogic {
       storeCityFilter: this.state.storeCityFilter || 'all',
       updateStoreCityFilter: (e) => this.setState({ storeCityFilter: e && e.target ? e.target.value : e }),
       storeCategoryFilter: this.state.storeCategoryFilter || 'all',
+      /* Category chip classes, resolved here rather than as a ternary in the
+         template. The engine returns the comparison's BOOLEAN and discards the
+         branches, so every chip rendered `class="tag false"` - no selected
+         state was ever visible and the filter gave no feedback when tapped. */
+      storeCatAllClass: (this.state.storeCategoryFilter || 'all') === 'all' ? 'tag-accent' : 'tag-neutral',
+      storeCatTechClass: (this.state.storeCategoryFilter || 'all') === 'tech' ? 'tag-accent' : 'tag-neutral',
+      storeCatFashionClass: (this.state.storeCategoryFilter || 'all') === 'fashion' ? 'tag-accent' : 'tag-neutral',
+      storeCatHospitalityClass: (this.state.storeCategoryFilter || 'all') === 'hospitality' ? 'tag-accent' : 'tag-neutral',
+      storeCatHomeClass: (this.state.storeCategoryFilter || 'all') === 'home' ? 'tag-accent' : 'tag-neutral',
+      storeCatServicesClass: (this.state.storeCategoryFilter || 'all') === 'services' ? 'tag-accent' : 'tag-neutral',
       setStoreCategory: (cat) => this.setState({ storeCategoryFilter: cat }),
       storeVerifiedOnly: Boolean(this.state.storeVerifiedOnly),
       toggleStoreVerifiedOnly: () => this.setState(st => ({ storeVerifiedOnly: !st.storeVerifiedOnly })),
+      /* Storefront tabs, fully resolved in JS.
+
+         The template engine does not evaluate a ternary whose test is a
+         comparison: `{{ tab === 'products' ? 'tag-accent' : 'tag-neutral' }}`
+         rendered the literal string "false" as the class, and the matching
+         sc-if never opened - which is why STORE HOME was a blank page and the
+         inactive tabs had no styling at all. Booleans and finished class
+         strings cannot be misparsed. */
       storeActiveTab: this.state.storeActiveTab || 'home',
+      storeTabIsHome: (this.state.storeActiveTab || 'home') === 'home',
+      storeTabHomeClass: (this.state.storeActiveTab || 'home') === 'home' ? 'tag-accent' : 'tag-neutral',
+      storeTabHomeBorder: (this.state.storeActiveTab || 'home') === 'home' ? 'var(--color-accent)' : 'transparent',
+      storeTabIsProducts: (this.state.storeActiveTab || 'home') === 'products',
+      storeTabProductsClass: (this.state.storeActiveTab || 'home') === 'products' ? 'tag-accent' : 'tag-neutral',
+      storeTabProductsBorder: (this.state.storeActiveTab || 'home') === 'products' ? 'var(--color-accent)' : 'transparent',
+      storeTabIsCollections: (this.state.storeActiveTab || 'home') === 'collections',
+      storeTabCollectionsClass: (this.state.storeActiveTab || 'home') === 'collections' ? 'tag-accent' : 'tag-neutral',
+      storeTabCollectionsBorder: (this.state.storeActiveTab || 'home') === 'collections' ? 'var(--color-accent)' : 'transparent',
+      storeTabIsAbout: (this.state.storeActiveTab || 'home') === 'about',
+      storeTabAboutClass: (this.state.storeActiveTab || 'home') === 'about' ? 'tag-accent' : 'tag-neutral',
+      storeTabAboutBorder: (this.state.storeActiveTab || 'home') === 'about' ? 'var(--color-accent)' : 'transparent',
+      storeTabIsReviews: (this.state.storeActiveTab || 'home') === 'reviews',
+      storeTabReviewsClass: (this.state.storeActiveTab || 'home') === 'reviews' ? 'tag-accent' : 'tag-neutral',
+      storeTabReviewsBorder: (this.state.storeActiveTab || 'home') === 'reviews' ? 'var(--color-accent)' : 'transparent',
+      /* Vertical gates for the Sell wizard, computed here rather than as long
+         `a === x || a === y || ...` expressions inside sc-if. The template
+         parser mishandles a condition that mixes comparison with logical-or -
+         the storefront's default tab used one and rendered a blank page. A
+         plain boolean cannot misparse. */
+      storeSellsPhysical: ['', 'electronics', 'fashion', 'home', 'food', 'beauty', 'automotive', 'general']
+        .includes(String(this.state.store && (this.state.store.category_id || this.state.store.category) || 'electronics').toLowerCase()),
+      storeSellsService: ['services', 'education', 'professional']
+        .includes(String(this.state.store && (this.state.store.categoryId || this.state.store.category_id || this.state.store.category) || '').toLowerCase()),
+      storeSellsHospitality: ['hotels', 'hospitality']
+        .includes(String(this.state.store && (this.state.store.category_id || this.state.store.category) || '').toLowerCase()),
       setStoreActiveTab: (tab) => this.setState({ storeActiveTab: tab }),
       resetStoreFilters: () => { this.setState({ storeSearchQuery: '', storeCityFilter: 'all', storeCategoryFilter: 'all', storeVerifiedOnly: false }); this.toast('Store discovery filters reset'); },
       shareStore: () => { this.toast('Store link copied to clipboard!'); },
@@ -18302,6 +18874,12 @@ class Component extends DCLogic {
       addToVs: () => { this.setState(st => ({ vs: st.vs + 1 })); this.go('vsCompare'); },
       claimGift: () => this.toast('Gift claimed. The seller will message you shortly.'),
       toggleFollow: () => { const next = !this.state.following; this.setState({ following: next }); this.toast(next ? 'Following Orca Electronics' : 'Unfollowed'); },
+      // `following` is read directly by templates (e.g. the store card's
+      // follow button variant). It lived in state but was never exposed, so
+      // every `{{ following ? ... }}` resolved to an empty string and the
+      // button rendered with no variant class at all - transparent and
+      // indistinguishable from plain text.
+      following: Boolean(this.state.following),
       followLabel: this.state.following ? 'FOLLOWING' : 'FOLLOW',
       toggleSave: () => { const next = !this.state.saved; this.setState({ saved: next }); this.toast(next ? 'Saved to your list' : 'Removed from saved'); },
       payNow: () => { this.go('paying'); setTimeout(() => this.go('success'), 1800); },

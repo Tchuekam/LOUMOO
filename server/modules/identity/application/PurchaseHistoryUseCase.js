@@ -12,83 +12,9 @@ const logger = require('../../../shared/logging/logger');
 
 class PurchaseHistoryUseCase {
   constructor() {
-    this._memoryOrders = new Map();
+    // No in-memory order store. Orders live in iam.orders or they do not exist.
   }
 
-  /**
-   * Seed demonstration orders for user if none exist
-   */
-  _ensureDemoOrders(userId) {
-    if (!this._memoryOrders.has(userId)) {
-      this._memoryOrders.set(userId, [
-        {
-          id: `ord_${userId}_101`,
-          buyerId: userId,
-          sellerId: 'usr_seller_orca',
-          orderNumber: 'LM-2026-98124',
-          totalAmountXaf: 748000,
-          items: [
-            {
-              productId: 'p_iphone16pro',
-              title: 'Apple iPhone 16 Pro Max 256GB Desert Titanium',
-              quantity: 1,
-              unitPriceXaf: 745000,
-              imageUrl: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=300',
-              sellerName: 'Orca Electronics Douala'
-            }
-          ],
-          shippingAddress: {
-            recipientName: 'Rostand Tchuekam',
-            phoneNumber: '+237 690 12 34 56',
-            city: 'Douala',
-            quarter: 'Akwa',
-            streetAddress: 'Boulevard de la Liberté'
-          },
-          paymentStatus: 'paid',
-          fulfillmentStatus: 'in_transit',
-          tracking: {
-            carrier: 'LOUMOO Express Courier',
-            trackingNumber: 'LM-EXP-DLA-8412',
-            estimatedDelivery: 'Tomorrow, 14:00'
-          },
-          createdAt: new Date(Date.now() - 3600000 * 18).toISOString(),
-          updatedAt: new Date().toISOString()
-        },
-        {
-          id: `ord_${userId}_102`,
-          buyerId: userId,
-          sellerId: 'usr_seller_orca',
-          orderNumber: 'LM-2026-89410',
-          totalAmountXaf: 185000,
-          items: [
-            {
-              productId: 'p_airpods_pro2',
-              title: 'Apple AirPods Pro 2 (USB-C ANC)',
-              quantity: 1,
-              unitPriceXaf: 185000,
-              imageUrl: 'https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?w=300',
-              sellerName: 'Orca Electronics Douala'
-            }
-          ],
-          shippingAddress: {
-            recipientName: 'Rostand Tchuekam',
-            phoneNumber: '+237 690 12 34 56',
-            city: 'Douala',
-            quarter: 'Akwa',
-            streetAddress: 'Boulevard de la Liberté'
-          },
-          paymentStatus: 'paid',
-          fulfillmentStatus: 'delivered',
-          createdAt: new Date(Date.now() - 86400000 * 14).toISOString(),
-          updatedAt: new Date(Date.now() - 86400000 * 13).toISOString()
-        }
-      ]);
-    }
-  }
-
-  /**
-   * Get purchase history for authenticated buyer
-   */
   async getPurchaseHistory(userId, { status = 'all', limit = 20, offset = 0 } = {}) {
     if (!userId) throw new ValidationError('User ID is required');
 
@@ -115,21 +41,26 @@ class PurchaseHistoryUseCase {
         .range(offset, offset + limit - 1);
 
       if (error) { handleDatabaseFailure(error, 'PurchaseHistoryUseCase'); }
-      if (!error && data && data.length > 0) {
-        orders = data.map(this._mapRow);
-        total = count || orders.length;
-      } else {
-        throw error || new Error('No orders found');
-      }
+
+      /*
+       * "This buyer has no orders" is an ANSWER, not a failure.
+       *
+       * An empty result used to be re-thrown as `new Error('No orders found')`
+       * so the catch below would serve _ensureDemoOrders() — two fabricated
+       * purchases including a 748,000 XAF iPhone with a tracking number and an
+       * escrow state. Every new account was shown a delivery in progress for a
+       * transaction that never happened, and the account dashboard counted it
+       * as a real "active delivery".
+       */
+      orders = (data || []).map(this._mapRow);
+      total = count || orders.length;
     } catch (err) {
+      // Reached only when the database itself is unreachable. In production
+      // handleDatabaseFailure rethrows; there is no invented order history.
       handleDatabaseFailure(err, 'Supabase query');
-      this._ensureDemoOrders(userId);
-      let userOrders = this._memoryOrders.get(userId) || [];
-      if (status && status !== 'all') {
-        userOrders = userOrders.filter(o => o.fulfillmentStatus === status);
-      }
-      total = userOrders.length;
-      orders = userOrders.slice(offset, offset + limit);
+      logger.error(`[PurchaseHistory] Could not read orders for ${userId}: ${err.message}`);
+      orders = [];
+      total = 0;
     }
 
     const result = { orders, total, limit, offset };
@@ -164,12 +95,9 @@ class PurchaseHistoryUseCase {
       handleDatabaseFailure(err, 'Supabase getOrderDetails');
     }
 
-    if (!order) {
-      this._ensureDemoOrders(userId);
-      const userOrders = this._memoryOrders.get(userId) || [];
-      order = userOrders.find(o => o.id === orderId || o.orderNumber === orderId);
-      if (!order) throw new NotFoundError('Order not found');
-    }
+    // An order that does not exist is a 404, never a demonstration order
+    // conjured under the requested id.
+    if (!order) throw new NotFoundError('Order not found');
 
     return order;
   }
