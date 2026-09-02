@@ -1,24 +1,83 @@
-<!-- Frosted Glass Mobile Bottom Navigation (<1024px) -->
-<sc-if value="{{ showNav }}">
+<!-- LOUMOO Liquid Glass Mobile Bottom Navigation (<1024px) -->
+<sc-if value="{{ showNav }}" hint-placeholder-val="{{ true }}">
 <div class="bottom-nav-mobile">
-  <button onClick="{{ on.home }}" class="{{ navHome }}">
-    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-    <span>Home</span>
+  <!-- 1. Home -->
+  <button onClick="{{ on.home }}" aria-label="Go to Home" class="lm-nav-item {{ isNavHome ? 'is-active' : '' }}" style="color:{{ navHome }}">
+    <div class="lm-nav-icon-wrap">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="{{ isNavHome ? 'currentColor' : 'none' }}" stroke="currentColor" stroke-width="{{ isNavHome ? '0' : '1.8' }}" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 10.5L12 3l9 7.5V20a2 2 0 0 1-2 2h-4a1 1 0 0 1-1-1v-4a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v4a1 1 0 0 1-1 1H5a2 2 0 0 1-2-2v-9.5z"/>
+      </svg>
+    </div>
+    <span class="lm-nav-label">Home</span>
+    <span class="lm-nav-indicator" style="opacity:{{ isNavHome ? 1 : 0 }}"></span>
   </button>
-  <button onClick="{{ on.store }}" class="{{ navStore }}">
-    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h20l-2 10H4L2 3z"/><path d="M6 13v7a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-7"/></svg>
-    <span>Store</span>
+
+  <!-- 2. Store -->
+  <button onClick="{{ on.store }}" aria-label="Go to Stores" class="lm-nav-item {{ isNavStore ? 'is-active' : '' }}" style="color:{{ navStore }}">
+    <div class="lm-nav-icon-wrap">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 8h12l1.5 12H4.5L6 8Z"/>
+        <path d="M9 10V6a3 3 0 0 1 6 0v4"/>
+      </svg>
+    </div>
+    <span class="lm-nav-label">Store</span>
+    <span class="lm-nav-indicator" style="opacity:{{ isNavStore ? 1 : 0 }}"></span>
   </button>
-  <button onClick="{{ on.upload }}" aria-label="Post a listing" class="nav-upload-btn {{ navUpload }}">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M12 5v14M5 12h14"/></svg>
+
+  <!-- 3. Compare -->
+  <button onClick="{{ on.vs }}" aria-label="Go to Compare" class="lm-nav-item {{ isNavVs ? 'is-active' : '' }}" style="color:{{ navVs }}">
+    <div class="lm-nav-icon-wrap">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 3v17M6 21h12M4 7l8-2 8 2"/>
+        <path d="M1 14h6L4 7 1 14Z"/>
+        <path d="M17 14h6l-3-7-3 7Z"/>
+      </svg>
+    </div>
+    <span class="lm-nav-label">Compare</span>
+    <span class="lm-nav-indicator" style="opacity:{{ isNavVs ? 1 : 0 }}"></span>
   </button>
-  <button onClick="{{ on.travel }}" class="{{ navTravel }}">
-    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1z"/></svg>
-    <span>Travel</span>
+
+  <!-- 4. Center Elevated Floating Action Button (+) -->
+  <button onClick="{{ navUploadAction }}" aria-label="{{ navUploadLabel }}" class="nav-upload-btn">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
   </button>
-  <button onClick="{{ on.profile }}" class="{{ navProfile }}">
-    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-    <span>Profile</span>
+
+  <!-- 5. Travel -->
+  <button onClick="{{ on.travel }}" aria-label="Go to Travel" class="lm-nav-item {{ isNavTravel ? 'is-active' : '' }}" style="color:{{ navTravel }}">
+    <div class="lm-nav-icon-wrap">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="12" r="8"/>
+        <path d="M3 12h16M11 4a12 12 0 0 0 0 16M11 4a12 12 0 0 1 0 16"/>
+        <path d="m18 7 3-1-1 3-1.5-.5L17 10l-.5-.5.5-1.5-1.5-.5 2.5-.5Z" fill="currentColor"/>
+      </svg>
+    </div>
+    <span class="lm-nav-label">Travel</span>
+    <span class="lm-nav-indicator" style="opacity:{{ isNavTravel ? 1 : 0 }}"></span>
+  </button>
+
+  <!-- 6. Announce -->
+  <button onClick="{{ on.announce }}" aria-label="Go to Announcements" class="lm-nav-item {{ isNavAnnounce ? 'is-active' : '' }}" style="color:{{ navAnnounce }}">
+    <div class="lm-nav-icon-wrap">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>
+        <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+      </svg>
+    </div>
+    <span class="lm-nav-label">Announce</span>
+    <span class="lm-nav-indicator" style="opacity:{{ isNavAnnounce ? 1 : 0 }}"></span>
+  </button>
+
+  <!-- 7. Profile -->
+  <button onClick="{{ on.profile }}" aria-label="Go to Profile" class="lm-nav-item {{ isNavProfile ? 'is-active' : '' }}" style="color:{{ navProfile }}">
+    <div class="lm-nav-icon-wrap">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="9"/>
+        <circle cx="12" cy="9" r="3"/>
+        <path d="M6.5 18.5a7 7 0 0 1 11 0"/>
+      </svg>
+    </div>
+    <span class="lm-nav-label">Profile</span>
+    <span class="lm-nav-indicator" style="opacity:{{ isNavProfile ? 1 : 0 }}"></span>
   </button>
 </div>
 </sc-if>

@@ -8,6 +8,7 @@ const { SupabaseClient } = require('../../../infrastructure/database/SupabaseCli
 const { Announcement, ANNOUNCEMENT_STATUSES } = require('../domain/Announcement');
 const { NotFoundError, AuthorizationError, ValidationError, ConflictError } = require('../../../shared/errors/AppError');
 const logger = require('../../../shared/logging/logger');
+const MediaStorageService = require('../../../infrastructure/storage/MediaStorageService');
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -67,6 +68,10 @@ class AnnouncementService {
       attachedEntity = listing;
     }
 
+    // Broadcast images are staged through the same authorized upload route
+    // listings use, so the client never gets to name a URL for us to trust.
+    const mediaUrls = await this._resolveMediaUrls(principal, input);
+
     const slug = input.slug ? String(input.slug).toLowerCase().trim() : Announcement.slugify(input.title);
 
     let status = input.status || ANNOUNCEMENT_STATUSES.DRAFT;
@@ -88,7 +93,7 @@ class AnnouncementService {
       slug,
       type: (input.type || 'ANNOUNCEMENT').toUpperCase(),
       body: input.body ? input.body.trim() : '',
-      media_urls: Array.isArray(input.mediaUrls) ? input.mediaUrls : [],
+      media_urls: mediaUrls,
       status,
       highlights: Array.isArray(input.highlights) ? input.highlights : [],
       attachment_type: (input.attachmentType || 'NONE').toUpperCase(),
@@ -173,7 +178,9 @@ class AnnouncementService {
     }
     if (input.type !== undefined) updates.type = String(input.type).toUpperCase();
     if (input.body !== undefined) updates.body = String(input.body).trim();
-    if (input.mediaUrls !== undefined) updates.media_urls = Array.isArray(input.mediaUrls) ? input.mediaUrls : [];
+    if (input.mediaUrls !== undefined || input.mediaUploadIds !== undefined) {
+      updates.media_urls = await this._resolveMediaUrls(principal, input);
+    }
     if (input.highlights !== undefined) updates.highlights = Array.isArray(input.highlights) ? input.highlights : [];
     if (input.attachmentType !== undefined) updates.attachment_type = String(input.attachmentType).toUpperCase();
     if (input.attachmentId !== undefined) updates.attachment_id = input.attachmentId;
@@ -186,6 +193,23 @@ class AnnouncementService {
     if (input.isPinned !== undefined) updates.is_pinned = Boolean(input.isPinned);
     if (input.metadata !== undefined) updates.metadata = input.metadata;
     updates.updated_at = new Date().toISOString();
+
+    // Validate the WHOLE announcement after the patch, not the patch alone —
+    // otherwise an edit can walk a published broadcast into a state creation
+    // would have refused, one field at a time.
+    Announcement.validate({
+      title: updates.title ?? existing.title,
+      type: updates.type ?? existing.type,
+      body: updates.body ?? existing.body,
+      highlights: updates.highlights ?? existing.highlights,
+      mediaUrls: updates.media_urls ?? existing.media_urls,
+      attachmentType: updates.attachment_type ?? existing.attachment_type,
+      ctaType: updates.cta_type ?? existing.cta_type,
+      ctaUrl: updates.cta_url ?? existing.cta_url,
+      scheduledFor: updates.scheduled_for !== undefined ? updates.scheduled_for : existing.scheduled_for,
+      expiresAt: updates.expires_at !== undefined ? updates.expires_at : existing.expires_at,
+      metadata: updates.metadata ?? existing.metadata
+    }, existing.status === ANNOUNCEMENT_STATUSES.PUBLISHED);
 
     const { data: updated, error: updateErr } = await adminDb
       .from('announcements')
@@ -228,9 +252,22 @@ class AnnouncementService {
       throw new ConflictError("Cannot publish an announcement currently in '" + existing.status + "' status.");
     }
 
-    if (!existing.body || existing.body.length < 10) {
-      throw new ValidationError('Announcement must have at least 10 characters in body before publishing.');
-    }
+    // Everything is re-checked at the moment of publication, from storage: a
+    // draft that was complete when saved but has since been emptied must not
+    // reach the feed.
+    Announcement.validate({
+      title: existing.title,
+      type: existing.type,
+      body: existing.body,
+      highlights: existing.highlights,
+      mediaUrls: existing.media_urls,
+      attachmentType: existing.attachment_type,
+      ctaType: existing.cta_type,
+      ctaUrl: existing.cta_url,
+      scheduledFor: existing.scheduled_for,
+      expiresAt: existing.expires_at,
+      metadata: existing.metadata
+    }, true);
 
     const { data: updated, error } = await adminDb
       .from('announcements')
@@ -408,7 +445,9 @@ class AnnouncementService {
     });
 
     const isAuthor = principal && (principal.id === announcement.author_id);
-    return isAuthor ? model.toAuthorJSON() : model.toPublicJSON();
+    const json = isAuthor ? model.toAuthorJSON() : model.toPublicJSON();
+    json.mediaUrls = await MediaStorageService.refreshSignedUrls(json.mediaUrls);
+    return json;
   }
 
   static async listSellerAnnouncements(principal, storeIdOrSlug, options = {}) {
@@ -455,8 +494,30 @@ class AnnouncementService {
       total: count || 0,
       limit,
       offset,
-      announcements: (items || []).map(row => new Announcement(row).toAuthorJSON())
+      announcements: await Promise.all((items || []).map(async row => {
+        const json = new Announcement(row).toAuthorJSON();
+        json.mediaUrls = await MediaStorageService.refreshSignedUrls(json.mediaUrls);
+        return json;
+      }))
     };
+  }
+
+  /**
+   * Turns staged upload ids into signed URLs, keeping any URLs the caller
+   * already holds. Ownership is checked by `loadOwnedStaged`, so a client
+   * cannot attach someone else's photo by guessing its id.
+   */
+  static async _resolveMediaUrls(principal, input = {}) {
+    const existing = Array.isArray(input.mediaUrls) ? input.mediaUrls.filter(Boolean) : [];
+    const uploadIds = Array.isArray(input.mediaUploadIds) ? input.mediaUploadIds.filter(Boolean) : [];
+    if (uploadIds.length === 0) return existing.slice(0, 8);
+
+    const staged = await MediaStorageService.loadOwnedStaged(uploadIds, principal.id);
+    const fresh = await Promise.all(
+      staged.map(u => MediaStorageService.createSignedUrl(u.storage_path))
+    );
+
+    return existing.concat(fresh.filter(Boolean)).slice(0, 8);
   }
 }
 

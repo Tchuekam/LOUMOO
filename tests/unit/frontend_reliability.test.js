@@ -24,7 +24,7 @@ function testHtmlScreensAndTags() {
     'home', 'search', 'filters', 'voice', 'visual', 'visualScan', 'visualResults',
     'product', 'cart', 'checkout', 'paying', 'success', 'payFailed', 'orders',
     'store', 'business', 'createStore', 'storeOnboarding', 'storeSettings', 'storeVerification', 'storeAnalytics',
-    'upload', 'uploadDetails', 'listingAttributes', 'uploadPrice', 'listingPreview', 'uploadSuccess', 'myListings',
+    'publishIntent', 'publishStudio', 'publishReview', 'publishSuccess', 'myListings',
     'profile', 'accountDashboard', 'editProfile', 'addresses', 'addAddress', 'editAddress',
     'notificationPreferences', 'privacySettings', 'securitySettings', 'followedStores', 'userActivity', 'deleteAccount',
     'signIn', 'forgotPassword', 'resetPassword', 'verifyEmail',
@@ -180,11 +180,22 @@ function testDoubleSubmissionAndValidationGuards() {
   vals.submitSignIn();
   assert.strictEqual(instance.state.signInBusy, true, 'Must ignore submit while busy');
 
-  // 4. Publishing a listing is guarded against double submission
-  instance.setState({ publishBusy: true });
-  instance.publishListing();
-  assert.strictEqual(instance.state.publishBusy, true,
+  // 4. Publishing is guarded against double submission.
+  //    `pubLifecycle` is the in-flight flag; a click arriving while it is set
+  //    must return without touching anything, so a double-tap cannot publish
+  //    twice. (The server's submission fingerprint is the real defence; this
+  //    is the one that stops the second request being sent at all.)
+  instance.setState({ pubLifecycle: 'Publishing to LOUMOO…', pubServerError: 'untouched' });
+  instance.publishNow();
+  assert.strictEqual(instance.state.pubLifecycle, 'Publishing to LOUMOO…',
     'A second publish click while one is in flight must be ignored');
+  assert.strictEqual(instance.state.pubServerError, 'untouched',
+    'The guarded call must not clear or rewrite any publishing state');
+
+  // 5. And with no draft in progress it is a no-op rather than a crash.
+  instance.setState({ pubLifecycle: '', pubDraft: null });
+  instance.publishNow();
+  assert.strictEqual(instance.state.pubLifecycle, '', 'Publishing without a draft must do nothing');
 
   // 3. Address form validation
   instance.setState({ addressFormName: '', addressFormPhone: '', addressFormStreet: '' });

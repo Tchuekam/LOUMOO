@@ -792,6 +792,15 @@
   /* server/modules/announcement/presentation/routes/announcementRoutes.js   */
   /* ====================================================================== */
 
+  /** The broadcast type catalogue — the studio renders its fields from it. */
+  LoumooApiClient.prototype.getAnnouncementSchema = function () {
+    return this.request('/api/v1/announcements/schema');
+  };
+
+  LoumooApiClient.prototype.getListingVariants = function (id) {
+    return this.request('/api/v1/listings/' + encodeURIComponent(id) + '/variants');
+  };
+
   LoumooApiClient.prototype.getAnnouncementFeed = function (params) {
     return this.request('/api/v1/announcements' + qs(params));
   };

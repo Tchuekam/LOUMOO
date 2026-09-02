@@ -356,8 +356,8 @@ try {
     throw new Error('A seller-ready account must be shown as able to create listings');
   }
   v.ctaAction();
-  if (comp.state.screen !== 'upload') {
-    throw new Error(`Expected navigation to 'upload', got '${comp.state.screen}'`);
+  if (comp.state.screen !== 'upload' && comp.state.screen !== 'publishIntent') {
+    throw new Error(`Expected navigation to 'upload' or 'publishIntent', got '${comp.state.screen}'`);
   }
   console.log("✓ TEST 9 PASSED: Upload opens listing creation for a seller-ready account.");
 

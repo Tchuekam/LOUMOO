@@ -7,6 +7,7 @@
 const express = require('express');
 const router = express.Router();
 const AnnouncementService = require('../../application/AnnouncementService');
+const { Announcement } = require('../../domain/Announcement');
 const AnnouncementDistributionService = require('../../application/AnnouncementDistributionService');
 const AnnouncementAnalyticsService = require('../../application/AnnouncementAnalyticsService');
 const { requireAuth, optionalAuth } = require('../../../identity/presentation/guards/authGuard');
@@ -27,6 +28,13 @@ router.get('/', optionalAuth, async (req, res, next) => {
   } catch (err) {
     next(err);
   }
+});
+
+// GET /api/v1/announcements/schema
+// One definition of what each broadcast type needs; the studio renders from
+// it and the server validates against it.
+router.get('/schema', (req, res) => {
+  res.json({ status: 'success', data: Announcement.describe() });
 });
 
 router.get('/seller/:storeId/campaigns-overview', requireAuth, async (req, res, next) => {

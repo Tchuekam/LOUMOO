@@ -192,8 +192,13 @@ router.patch('/:id',
     } catch (err) { next(err); }
   });
 
+// GET /api/v1/listings/:id/preview
+// The buyer-facing projection of an unpublished listing, assembled by the same
+// code that assembles the published one. `resolveOwnStore` runs so the preview
+// carries the real boutique identity rather than a placeholder.
 router.get('/:id/preview',
   requireAuth,
+  resolveOwnStore(),
   requireListingOwnership({ permission: 'listing.view' }),
   async (req, res, next) => {
     try {
@@ -260,17 +265,34 @@ router.delete('/:id',
 /* 7. VARIANTS & INVENTORY                                                   */
 /* ════════════════════════════════════════════════════════════════════════ */
 
+// POST /api/v1/listings/:id/variants
+// Regenerates the whole option matrix. The previous revision mutated a
+// hydrated in-memory object and returned it, so the seller saw variants that
+// were never written and had vanished by the next request.
 router.post('/:id/variants',
   requireAuth,
   requireCapability('canCreateListing'),
   requireListingOwnership({ permission: 'listing.edit' }),
   async (req, res, next) => {
     try {
-      const hydrated = await CreateListingUseCase.hydrate(req.listingRow);
-      const variants = await ListingVariantsUseCase.generateVariants(
-        hydrated, req.body.optionsMap, req.body.basePriceMinor
-      );
+      const variants = await ListingVariantsUseCase.regenerate({
+        listingRow: req.listingRow,
+        optionsMap: req.body.optionsMap,
+        basePriceMinor: req.body.basePriceMinor
+      });
       res.status(201).json({ status: 'success', data: variants });
+    } catch (err) { next(err); }
+  });
+
+router.get('/:id/variants',
+  requireAuth,
+  requireListingOwnership({ permission: 'listing.view' }),
+  async (req, res, next) => {
+    try {
+      res.json({
+        status: 'success',
+        data: { variants: await ListingVariantsUseCase.list(req.listingRow.id) }
+      });
     } catch (err) { next(err); }
   });
 
@@ -280,8 +302,9 @@ router.patch('/:id/variants/:variantId',
   requireListingOwnership({ permission: 'listing.edit' }),
   async (req, res, next) => {
     try {
-      const hydrated = await CreateListingUseCase.hydrate(req.listingRow);
-      const variant = await ListingVariantsUseCase.updateVariant(hydrated, req.params.variantId, req.body);
+      const variant = await ListingVariantsUseCase.updateVariant(
+        req.listingRow.id, req.params.variantId, req.body
+      );
       res.json({ status: 'success', data: variant });
     } catch (err) { next(err); }
   });
@@ -292,8 +315,14 @@ router.patch('/:id/inventory',
   requireListingOwnership({ permission: 'inventory.manage' }),
   async (req, res, next) => {
     try {
-      const hydrated = await CreateListingUseCase.hydrate(req.listingRow);
-      const inv = await ListingInventoryUseCase.adjustStock(hydrated, req.body.onHand, req.body.variantId);
+      const inv = await ListingInventoryUseCase.adjustStock({
+        listingRow: req.listingRow,
+        onHand: req.body.onHand,
+        variantId: req.body.variantId,
+        lowStockThreshold: req.body.lowStockThreshold,
+        allowBackorder: req.body.allowBackorder,
+        trackInventory: req.body.trackInventory
+      });
       res.json({ status: 'success', data: inv });
     } catch (err) { next(err); }
   });
@@ -347,6 +376,18 @@ router.get('/:id', optionalAuth, async (req, res, next) => {
         const { NotFoundError } = require('../../../../shared/errors/AppError');
         throw new NotFoundError('Listing', req.params.id);
       }
+    }
+
+    // The owner gets the OWNER projection, because that is what the editor
+    // reloads a listing from. Serving them the buyer-facing shape would drop
+    // stock, fulfilment, service and trust on every edit — the listing would
+    // quietly lose a section each time it was reopened.
+    const isOwner = req.principal && req.principal.id === listing.seller_id;
+    const isAdmin = req.principal && ['admin', 'super_admin'].includes(req.principal.primaryRole);
+
+    if (isOwner || isAdmin) {
+      const owned = await CreateListingUseCase.hydrate(listing);
+      return res.json({ status: 'success', data: owned });
     }
 
     const detail = await PublicListingUseCase.getListingDetail(

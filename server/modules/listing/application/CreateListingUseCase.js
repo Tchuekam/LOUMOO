@@ -18,6 +18,7 @@
 const crypto = require('crypto');
 const ListingRepository = require('../infrastructure/ListingRepository');
 const ListingValidationService = require('./ListingValidationService');
+const ListingCompositionService = require('./ListingCompositionService');
 const MediaStorageService = require('../../../infrastructure/storage/MediaStorageService');
 const AnalyticsService = require('../../../infrastructure/analytics/AnalyticsService');
 const BehavioralSignalService = require('../../adaptive/application/BehavioralSignalService');
@@ -86,7 +87,7 @@ class CreateListingUseCase {
     }
 
     // ── 3. VALIDATE ────────────────────────────────────────────────────────
-    const { value } = await ListingValidationService.validate(input, {
+    const { value, schema: categorySchema } = await ListingValidationService.validate(input, {
       forPublish: false,
       mediaCount: 0
     });
@@ -150,12 +151,10 @@ class CreateListingUseCase {
         compare_at_price_minor: value.compareAtPriceMinor ?? null,
         fulfillment_model: value.fulfillmentModel,
         creation_fingerprint: fingerprint,
-        metadata: {
-          createdVia: 'web_listing_wizard',
-          city: value.city || null,
-          neighbourhood: value.neighbourhood || null,
-          contactPhone: value.contactPhone || null
-        }
+        metadata: ListingCompositionService.mergeMetadata(
+          { createdVia: 'web_publishing_studio' },
+          value
+        )
       });
     } catch (err) {
       // 23505 on the fingerprint index = the concurrent twin won the race.
@@ -186,6 +185,8 @@ class CreateListingUseCase {
       if (Object.keys(value.attributes).length > 0) {
         await ListingRepository.replaceAttributes(row.id, value.categoryId, value.attributes);
       }
+
+      await ListingCompositionService.persistBlocks(row.id, value, { categorySchema });
 
       if (staged.length > 0) {
         await this._attachMedia(row.id, staged, principal.id);
@@ -244,9 +245,10 @@ class CreateListingUseCase {
 
   /** Returns the owner-facing view with its media and attributes resolved. */
   static async hydrate(row) {
-    const [media, attributes] = await Promise.all([
+    const [media, attributes, blocks] = await Promise.all([
       ListingRepository.listMedia(row.id),
-      ListingRepository.listAttributes(row.id)
+      ListingRepository.listAttributes(row.id),
+      ListingCompositionService.loadBlocks(row)
     ]);
 
     const listing = new Listing(row);
@@ -254,6 +256,16 @@ class CreateListingUseCase {
     return {
       ...json,
       attributes,
+      // The structured blocks, in exactly the shape the publishing payload
+      // uses, so opening a listing for editing round-trips without a mapper.
+      pricingOptions: blocks.pricing,
+      fulfillment: blocks.fulfillment,
+      trust: blocks.trust,
+      service: blocks.service,
+      stock: blocks.inventory,
+      variantOptions: blocks.variantOptions,
+      variants: blocks.variants,
+      metadata: row.metadata || {},
       media: media.map(m => ({
         id: m.id,
         url: m.url,

@@ -1,4 +1,12 @@
 // GENERATED from dc-runtime/src/*.ts — do not edit. Rebuild with `cd dc-runtime && bun run build`.
+//
+// LOCAL PATCH (keep on regeneration): `resolve()` sends any expression with a
+// top-level && or || straight to JavaScript. The hand-rolled `!` and equality
+// branches below it do not implement operator precedence, so `!a && b` was
+// evaluated as !(a && b) and `!a && b !== "x"` as (!a && b) !== "x". Roughly
+// two dozen sc-if conditions across the app depended on those being right —
+// loading/empty/content states were rendering simultaneously. See
+// `hasTopLevelLogical`.
 "use strict";
 (() => {
   var __defProp = Object.defineProperty;
@@ -208,6 +216,20 @@
     if (expr[0] === "(" && expr[expr.length - 1] === ")" && parensWrapWhole(expr)) {
       return resolve(vals, expr.slice(1, -1));
     }
+    // An expression joined by && or || must be evaluated by JavaScript, with
+    // JavaScript's precedence. The hand-rolled paths below understand neither:
+    //   `!a && b`            -> the `!` branch computed !(a && b)
+    //   `!a && b !== "x"`    -> findTopLevelEquality split at the !==, giving
+    //                           (!a && b) !== "x"
+    // Both silently returned the wrong boolean, which is why "empty state" and
+    // "content" sc-ifs could render at the same time.
+    if (hasTopLevelLogical(expr)) {
+      try {
+        return new Function('vals', 'with(vals || {}) { return (' + expr + '); }')(vals);
+      } catch (_) {
+        return void 0;
+      }
+    }
     const eq = findTopLevelEquality(expr);
     if (eq) {
       const lv = resolve(vals, expr.slice(0, eq.index));
@@ -240,6 +262,25 @@
       return void 0;
     }
   }
+  /** True when && or || appears outside every bracket, brace and string. */
+  function hasTopLevelLogical(expr) {
+    let depth = 0;
+    let quote = null;
+    for (let i = 0; i < expr.length - 1; i++) {
+      const c = expr[i];
+      if (quote) {
+        if (c === "\\") i++;
+        else if (c === quote) quote = null;
+        continue;
+      }
+      if (c === '"' || c === "'" || c === "`") { quote = c; continue; }
+      if (c === "(" || c === "[" || c === "{") depth++;
+      else if (c === ")" || c === "]" || c === "}") depth--;
+      else if (depth === 0 && (c === "&" || c === "|") && expr[i + 1] === c) return true;
+    }
+    return false;
+  }
+
   function parensWrapWhole(expr) {
     let depth = 0;
     for (let i = 0; i < expr.length - 1; i++) {

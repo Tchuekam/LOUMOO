@@ -27,6 +27,89 @@ const FULFILLMENT_MODELS = [
 const VISIBILITIES = ['PUBLIC', 'PRIVATE', 'UNLISTED'];
 
 /**
+ * How the headline number should be read. A listing has exactly ONE of these,
+ * which is what stops a card from claiming to be free, 25 000 XAF and "price
+ * on request" at the same time.
+ */
+const PRICE_MODES = ['FIXED', 'FROM', 'HOURLY', 'DAILY', 'PER_PERSON', 'QUOTE', 'FREE'];
+
+/** Where a service is performed. Drives which location fields are asked for. */
+const SERVICE_LOCATION_MODES = ['AT_SELLER', 'AT_CUSTOMER', 'REMOTE', 'HYBRID'];
+
+/** How a service is transacted. Drives scheduling, capacity and approval. */
+const SERVICE_FORMATS = ['ONE_TIME', 'APPOINTMENT', 'BOOKING', 'RECURRING', 'QUOTE', 'ON_DEMAND'];
+
+const BOOKING_MODES = ['INSTANT', 'REQUEST', 'ENQUIRY'];
+
+const DELIVERY_SCOPES = ['LOCAL', 'CITY', 'REGIONAL', 'NATIONWIDE', 'CROSS_BORDER'];
+
+const RETURN_POLICIES = ['NONE', 'EXCHANGE_ONLY', 'DAYS_3', 'DAYS_7', 'DAYS_14', 'DAYS_30'];
+
+const PAYMENT_METHODS = ['MOMO', 'ORANGE_MONEY', 'CARD', 'CASH_ON_DELIVERY', 'BANK_TRANSFER', 'ESCROW'];
+
+const WEEKDAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+
+const HHMM = /^([01]\d|2[0-3]):[0-5]\d$/;
+
+const TimeWindowSchema = z.object({
+  start: z.string().regex(HHMM, 'Use a 24-hour time like 08:30'),
+  end: z.string().regex(HHMM, 'Use a 24-hour time like 18:00')
+}).strict();
+
+const WeeklyScheduleSchema = z.object(
+  WEEKDAYS.reduce((shape, day) => {
+    shape[day] = z.array(TimeWindowSchema).max(4).optional();
+    return shape;
+  }, {})
+).strict();
+
+/** Stock. Absent entirely for listing types that have no shelf. */
+const InventorySchema = z.object({
+  trackInventory: z.boolean().default(true),
+  quantity: z.coerce.number().int().min(0).max(1_000_000).default(0),
+  lowStockThreshold: z.coerce.number().int().min(0).max(10_000).default(3),
+  allowBackorder: z.boolean().default(false)
+}).strict();
+
+/** How a buyer physically receives a product. */
+const FulfillmentSchema = z.object({
+  delivery: z.boolean().default(false),
+  pickup: z.boolean().default(false),
+  deliveryScope: z.enum(DELIVERY_SCOPES).optional().nullable(),
+  deliveryZones: z.array(z.string().trim().min(1).max(64)).max(30).default([]),
+  etaText: z.string().trim().max(120).optional().nullable(),
+  deliveryFeeMinor: z.coerce.number().int().min(0).max(9_999_999).optional().nullable(),
+  freeDeliveryOverMinor: z.coerce.number().int().min(0).max(9_999_999_999).optional().nullable(),
+  pickupAddress: z.string().trim().max(240).optional().nullable()
+}).strict();
+
+/** Everything that makes a service bookable rather than buyable. */
+const ServiceSchema = z.object({
+  format: z.enum(SERVICE_FORMATS).default('APPOINTMENT'),
+  durationMinutes: z.coerce.number().int().min(5).max(60 * 24 * 30).optional().nullable(),
+  locationMode: z.enum(SERVICE_LOCATION_MODES).default('AT_SELLER'),
+  serviceAreas: z.array(z.string().trim().min(1).max(64)).max(30).default([]),
+  includes: z.array(z.string().trim().min(1).max(160)).max(12).default([]),
+  excludes: z.array(z.string().trim().min(1).max(160)).max(12).default([]),
+  bookingMode: z.enum(BOOKING_MODES).default('REQUEST'),
+  capacity: z.coerce.number().int().min(1).max(10_000).optional().nullable(),
+  minParticipants: z.coerce.number().int().min(1).max(10_000).optional().nullable(),
+  leadTimeHours: z.coerce.number().int().min(0).max(24 * 365).default(2),
+  weeklySchedule: WeeklyScheduleSchema.optional(),
+  blackoutDates: z.array(z.string().trim().max(32)).max(60).default([]),
+  cancellationPolicy: z.string().trim().max(500).optional().nullable()
+}).strict();
+
+/** The promises attached to a purchase. */
+const TrustSchema = z.object({
+  warranty: z.string().trim().max(160).optional().nullable(),
+  returnPolicy: z.enum(RETURN_POLICIES).optional().nullable(),
+  authenticity: z.string().trim().max(160).optional().nullable(),
+  paymentMethods: z.array(z.enum(PAYMENT_METHODS)).max(6).default([]),
+  availableFrom: z.string().trim().max(32).optional().nullable()
+}).strict();
+
+/**
  * Draft schema — deliberately permissive so a wizard can save progress after
  * the first field. Publishing applies the strict schema below.
  */
@@ -53,7 +136,22 @@ const ListingDraftSchema = z.object({
   city: z.string().trim().max(64).optional().nullable(),
   neighbourhood: z.string().trim().max(120).optional().nullable(),
   contactPhone: z.string().trim().max(32).optional().nullable(),
-  uploadIds: z.array(z.string().trim().min(1)).max(12).default([])
+  uploadIds: z.array(z.string().trim().min(1)).max(12).default([]),
+
+  // ── Structured blocks, all optional at draft time ──────────────────────
+  priceMode: z.enum(PRICE_MODES).default('FIXED'),
+  negotiable: z.boolean().default(false),
+  minOrderQuantity: z.coerce.number().int().min(1).max(100_000).optional().nullable(),
+  wholesalePriceMinor: z.coerce.number().int().min(0).max(9_999_999_999).optional().nullable(),
+  taxIncluded: z.boolean().default(true),
+  inventory: InventorySchema.optional(),
+  variantOptions: z.record(
+    z.string().trim().min(1).max(48),
+    z.array(z.string().trim().min(1).max(64)).max(20)
+  ).optional(),
+  fulfillment: FulfillmentSchema.optional(),
+  service: ServiceSchema.optional(),
+  trust: TrustSchema.optional()
 }).strict();   // <- unknown keys are an error, never dropped
 
 /** Rules a listing must satisfy to become PUBLISHED. */
@@ -146,6 +244,183 @@ class ListingValidationService {
       });
     }
 
+    // A listing carries ONE price story. QUOTE and FREE do not get to also
+    // quote a number, and every other mode needs one.
+    if (value.priceMode === 'QUOTE' || value.priceMode === 'FREE') {
+      if (value.basePriceMinor > 0) {
+        errors.push({
+          field: 'basePriceMinor',
+          message: value.priceMode === 'FREE'
+            ? 'A free listing cannot also carry a price. Remove the price or change the pricing mode.'
+            : 'A quote-on-request listing cannot also show a fixed price. Remove the price or change the pricing mode.'
+        });
+      }
+      if (value.salePriceMinor) {
+        errors.push({
+          field: 'salePriceMinor',
+          message: 'A quote or free listing cannot be on sale.'
+        });
+      }
+    }
+    if (value.wholesalePriceMinor != null && value.basePriceMinor > 0
+        && value.wholesalePriceMinor > value.basePriceMinor) {
+      errors.push({
+        field: 'wholesalePriceMinor',
+        message: 'The wholesale price cannot be higher than the retail price.'
+      });
+    }
+
+    const caps = ListingType.getCapabilities(value.listingType);
+
+    // ── Blocks that do not belong to this listing type ─────────────────────
+    if (value.service && !(caps.hasServiceSchedule || caps.hasBookingDates)) {
+      errors.push({
+        field: 'service',
+        message: `${value.listingType} listings do not take service or booking details.`
+      });
+    }
+    if (value.inventory && !caps.hasInventory && value.inventory.trackInventory) {
+      errors.push({
+        field: 'inventory.trackInventory',
+        message: `${value.listingType} listings do not hold stock.`
+      });
+    }
+    if (value.fulfillment && (value.fulfillment.delivery || value.fulfillment.pickup) && !caps.hasShipping) {
+      errors.push({
+        field: 'fulfillment',
+        message: `${value.listingType} listings are not delivered or collected.`
+      });
+    }
+
+    // ── Conditional requirements ───────────────────────────────────────────
+    // Each one is a promise the buyer-facing card would otherwise make without
+    // the information needed to keep it.
+    const f = value.fulfillment;
+    if (f) {
+      if (f.delivery && f.deliveryZones.length === 0 && !f.deliveryScope) {
+        errors.push({
+          field: 'fulfillment.deliveryZones',
+          message: 'You offer delivery — say where you deliver to.'
+        });
+      }
+      if (f.pickup && !f.pickupAddress) {
+        errors.push({
+          field: 'fulfillment.pickupAddress',
+          message: 'You offer pickup — buyers need the address to collect from.'
+        });
+      }
+      if (f.freeDeliveryOverMinor != null && !f.delivery) {
+        errors.push({
+          field: 'fulfillment.freeDeliveryOverMinor',
+          message: 'A free-delivery threshold only makes sense when delivery is offered.'
+        });
+      }
+      if (options.forPublish && caps.hasShipping && !f.delivery && !f.pickup) {
+        errors.push({
+          field: 'fulfillment',
+          message: 'Choose at least one way buyers can receive this: delivery, pickup, or both.'
+        });
+      }
+    } else if (options.forPublish && caps.hasShipping) {
+      errors.push({
+        field: 'fulfillment',
+        message: 'Tell buyers how they will receive this item.'
+      });
+    }
+
+    const s = value.service;
+    if (s) {
+      const needsSchedule = s.format === 'APPOINTMENT' || s.format === 'BOOKING' || s.format === 'RECURRING';
+      const scheduledDays = Object.values(s.weeklySchedule || {})
+        .filter(windows => Array.isArray(windows) && windows.length > 0);
+
+      if (options.forPublish && needsSchedule && scheduledDays.length === 0) {
+        errors.push({
+          field: 'service.weeklySchedule',
+          message: 'A bookable service needs the days and hours you are available.'
+        });
+      }
+      for (const [day, windows] of Object.entries(s.weeklySchedule || {})) {
+        for (const w of windows || []) {
+          if (w.end <= w.start) {
+            errors.push({
+              field: `service.weeklySchedule.${day}`,
+              message: `${day.charAt(0).toUpperCase()}${day.slice(1)} closes at or before it opens.`
+            });
+          }
+        }
+      }
+      if ((s.locationMode === 'AT_CUSTOMER' || s.locationMode === 'HYBRID')
+          && options.forPublish && s.serviceAreas.length === 0) {
+        errors.push({
+          field: 'service.serviceAreas',
+          message: 'You travel to the customer — say which areas you cover.'
+        });
+      }
+      if (s.minParticipants != null && s.capacity != null && s.minParticipants > s.capacity) {
+        errors.push({
+          field: 'service.minParticipants',
+          message: 'The minimum number of participants cannot exceed the capacity.'
+        });
+      }
+      if (options.forPublish && needsSchedule && !s.durationMinutes) {
+        errors.push({
+          field: 'service.durationMinutes',
+          message: 'How long does one booking last?'
+        });
+      }
+    } else if (options.forPublish && caps.hasServiceSchedule) {
+      errors.push({
+        field: 'service',
+        message: 'Tell buyers how this service is delivered and when you are available.'
+      });
+    }
+
+    const inv = value.inventory;
+    if (inv && inv.trackInventory && options.forPublish && caps.hasInventory) {
+      if (inv.quantity <= 0 && !inv.allowBackorder) {
+        errors.push({
+          field: 'inventory.quantity',
+          message: 'Stock is tracked but the quantity is zero. Add stock, allow backorders, or turn tracking off.'
+        });
+      }
+      if (inv.lowStockThreshold > inv.quantity && inv.quantity > 0) {
+        errors.push({
+          field: 'inventory.lowStockThreshold',
+          message: 'The low-stock warning level is higher than the stock you have.'
+        });
+      }
+    }
+
+    // ── Variant options must be attributes the category marks as variant-able
+    if (value.variantOptions) {
+      const variantable = new Set(
+        (categorySchema.attributes || []).filter(a => a.isVariantOption).map(a => a.slug)
+      );
+      for (const [slug, values] of Object.entries(value.variantOptions)) {
+        if (!variantable.has(slug)) {
+          errors.push({
+            field: `variantOptions.${slug}`,
+            message: `"${slug}" cannot be used to build variants in "${categorySchema.categoryName}".`
+          });
+        }
+        if (!values.length) {
+          errors.push({
+            field: `variantOptions.${slug}`,
+            message: `Choose at least one "${slug}" value, or remove it from the variant options.`
+          });
+        }
+      }
+      const total = Object.values(value.variantOptions)
+        .reduce((n, vals) => n * Math.max(1, vals.length), 1);
+      if (total > 100) {
+        errors.push({
+          field: 'variantOptions',
+          message: `Those options would create ${total} variants. Keep it to 100 or fewer.`
+        });
+      }
+    }
+
     // ── Media rules ────────────────────────────────────────────────────────
     const totalMedia = (options.mediaCount || 0) + (value.uploadIds ? value.uploadIds.length : 0);
     if (options.forPublish && totalMedia < 1) {
@@ -183,8 +458,28 @@ class ListingValidationService {
         city: { type: 'string', required: 'publish', maxLength: 64 },
         tags: { type: 'string[]', required: false, maxItems: 20 },
         attributes: { type: 'category-schema', required: 'publish', note: 'Validated against GET /api/v1/listings/taxonomy/:categoryId/schema' },
-        uploadIds: { type: 'string[]', required: 'publish', maxItems: 12, note: 'Ids returned by POST /api/v1/uploads/listing-media' }
+        uploadIds: { type: 'string[]', required: 'publish', maxItems: 12, note: 'Ids returned by POST /api/v1/uploads/listing-media' },
+        priceMode: { type: 'enum', required: false, values: PRICE_MODES, default: 'FIXED' },
+        negotiable: { type: 'boolean', required: false, default: false },
+        minOrderQuantity: { type: 'integer', required: false, min: 1 },
+        wholesalePriceMinor: { type: 'integer', required: false, mustNotExceed: 'basePriceMinor' },
+        inventory: { type: 'block', required: false, appliesWhen: 'capabilities.hasInventory', fields: ['trackInventory', 'quantity', 'lowStockThreshold', 'allowBackorder'] },
+        variantOptions: { type: 'map<string,string[]>', required: false, note: 'Keys must be category attributes flagged isVariantOption; at most 100 combinations' },
+        fulfillment: { type: 'block', required: 'publish', appliesWhen: 'capabilities.hasShipping', fields: ['delivery', 'pickup', 'deliveryScope', 'deliveryZones', 'etaText', 'deliveryFeeMinor', 'freeDeliveryOverMinor', 'pickupAddress'] },
+        service: { type: 'block', required: 'publish', appliesWhen: 'capabilities.hasServiceSchedule', fields: ['format', 'durationMinutes', 'locationMode', 'serviceAreas', 'includes', 'excludes', 'bookingMode', 'capacity', 'minParticipants', 'leadTimeHours', 'weeklySchedule', 'blackoutDates', 'cancellationPolicy'] },
+        trust: { type: 'block', required: false, fields: ['warranty', 'returnPolicy', 'authenticity', 'paymentMethods', 'availableFrom'] }
       },
+      enums: {
+        priceModes: PRICE_MODES,
+        serviceFormats: SERVICE_FORMATS,
+        serviceLocationModes: SERVICE_LOCATION_MODES,
+        bookingModes: BOOKING_MODES,
+        deliveryScopes: DELIVERY_SCOPES,
+        returnPolicies: RETURN_POLICIES,
+        paymentMethods: PAYMENT_METHODS,
+        weekdays: WEEKDAYS
+      },
+      listingTypes: ListingType.getAllTypesWithMetadata(),
       media: {
         maxImages: 12,
         minImagesToPublish: 1,
@@ -203,3 +498,11 @@ module.exports.ListingPublishSchema = ListingPublishSchema;
 module.exports.CONDITIONS = CONDITIONS;
 module.exports.CURRENCIES = CURRENCIES;
 module.exports.FULFILLMENT_MODELS = FULFILLMENT_MODELS;
+module.exports.PRICE_MODES = PRICE_MODES;
+module.exports.SERVICE_FORMATS = SERVICE_FORMATS;
+module.exports.SERVICE_LOCATION_MODES = SERVICE_LOCATION_MODES;
+module.exports.BOOKING_MODES = BOOKING_MODES;
+module.exports.DELIVERY_SCOPES = DELIVERY_SCOPES;
+module.exports.RETURN_POLICIES = RETURN_POLICIES;
+module.exports.PAYMENT_METHODS = PAYMENT_METHODS;
+module.exports.WEEKDAYS = WEEKDAYS;

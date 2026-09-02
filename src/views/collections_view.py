@@ -577,143 +577,273 @@ def get_collections_view():
           <span style="font:500 12px/1 var(--font-body);color:var(--color-text-secondary)">All covered by LOUMOO Escrow Protection</span>
         </div>
 
-        <div class="home-grid">
+        <div class="home-grid" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:20px;margin-top:16px">
           
           <!-- Electronics Product Grid -->
           <sc-if value="{{ isCategoryElectronics }}">
             <sc-if value="{{ isSubcatAll || activeSubcategorySlug === 'laptops' }}">
-              <button onClick="{{ () => openProduct('macbook_m2') }}" aria-label="View MacBook Air M2" style="background:none;border:none;text-align:left;cursor:pointer;padding:0">
-                <div style="position:relative;aspect-ratio:4/3;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
-                  <span class="badge-floating badge-sale">-10%</span>
-                  <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=600&q=85" alt="MacBook Air M2" style="width:100%;height:100%;object-fit:cover">
+              <div onClick="{{ () => openProduct('macbook_m2') }}" class="loumoo-media-card" aria-label="View MacBook Air M2 13">
+                <div class="loumoo-card-media-cutout">
+                  <span class="loumoo-card-badge badge-pill-sale">Save 10%</span>
+                  <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('macbook_m2', 'MacBook Air M2 13'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('macbook_m2') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('macbook_m2') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                  </button>
+                  <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=500&q=85" alt="MacBook Air M2 13">
                 </div>
-                <div style="padding:10px 4px 4px">
-                  <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">MacBook Air M2 13”</div>
-                  <div style="font:400 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:4px">Orca Electronics · Akwa</div>
-                  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:8px">
-                    <span style="font:800 14px/1 var(--font-heading);color:var(--color-accent)">XAF 745 000</span>
-                    <span style="font:700 11px/1 var(--font-heading);color:#eab308">★ 4.9</span>
+                <div class="loumoo-card-body">
+                  <h4 class="loumoo-card-title">MacBook Air M2 13”</h4>
+                  <div class="loumoo-card-tagline">Orca Electronics · Akwa, Douala</div>
+                  <div class="loumoo-card-rating-row">
+                    <span>★ 4.9</span>
+                    <span class="loumoo-card-rating-text">(34) · Verified</span>
+                  </div>
+                  <div class="loumoo-card-bottom-row">
+                    <div class="loumoo-card-pricing-block">
+                      <span class="loumoo-card-price-prefix">From</span>
+                      <div class="loumoo-card-price-main">
+                        <span class="loumoo-card-price-val">745.000 FCFA</span>
+                        <span class="loumoo-card-price-strike">820.000 FCFA</span>
+                      </div>
+                      <div class="loumoo-card-trust-pill">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        <span>✓ Escrow options available</span>
+                      </div>
+                    </div>
+                    <button class="loumoo-card-pill-btn" aria-label="Buy MacBook Air M2">Buy now</button>
                   </div>
                 </div>
-              </button>
+              </div>
             </sc-if>
 
             <sc-if value="{{ isSubcatAll || activeSubcategorySlug === 'audio' }}">
-              <button onClick="{{ () => openProduct('sony_xm5') }}" aria-label="View Sony WH-1000XM5" style="background:none;border:none;text-align:left;cursor:pointer;padding:0">
-                <div style="position:relative;aspect-ratio:4/3;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
-                  <span class="badge-floating badge-new">NEW</span>
-                  <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=85" alt="Sony WH-1000XM5" style="width:100%;height:100%;object-fit:cover">
+              <div onClick="{{ () => openProduct('sony_xm5') }}" class="loumoo-media-card" aria-label="View Sony WH-1000XM5">
+                <div class="loumoo-card-media-cutout">
+                  <span class="loumoo-card-badge badge-pill-new">New</span>
+                  <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('sony_xm5', 'Sony WH-1000XM5'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('sony_xm5') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('sony_xm5') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                  </button>
+                  <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=500&q=85" alt="Sony WH-1000XM5">
                 </div>
-                <div style="padding:10px 4px 4px">
-                  <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Sony WH-1000XM5</div>
-                  <div style="font:400 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:4px">Digital Corner · Bonapriso</div>
-                  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:8px">
-                    <span style="font:800 14px/1 var(--font-heading);color:var(--color-accent)">XAF 189 000</span>
-                    <span style="font:700 11px/1 var(--font-heading);color:#eab308">★ 4.7</span>
+                <div class="loumoo-card-body">
+                  <h4 class="loumoo-card-title">Sony WH-1000XM5</h4>
+                  <div class="loumoo-card-tagline">Digital Corner · Bonapriso, Douala</div>
+                  <div class="loumoo-card-rating-row">
+                    <span>★ 4.7</span>
+                    <span class="loumoo-card-rating-text">(28) · Verified</span>
+                  </div>
+                  <div class="loumoo-card-bottom-row">
+                    <div class="loumoo-card-pricing-block">
+                      <span class="loumoo-card-price-prefix">From</span>
+                      <div class="loumoo-card-price-main">
+                        <span class="loumoo-card-price-val">189.000 FCFA</span>
+                        <span class="loumoo-card-price-strike">210.000 FCFA</span>
+                      </div>
+                      <div class="loumoo-card-trust-pill">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        <span>✓ Escrow options available</span>
+                      </div>
+                    </div>
+                    <button class="loumoo-card-pill-btn" aria-label="Buy Sony WH-1000XM5">Buy now</button>
                   </div>
                 </div>
-              </button>
+              </div>
             </sc-if>
 
             <sc-if value="{{ isSubcatAll || activeSubcategorySlug === 'smartphones' }}">
-              <button onClick="{{ () => openProduct('galaxy_s24_ultra') }}" aria-label="View Samsung Galaxy A55" style="background:none;border:none;text-align:left;cursor:pointer;padding:0">
-                <div style="position:relative;aspect-ratio:4/3;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
-                  <img src="https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=600&q=85" alt="Samsung Galaxy A55 5G" style="width:100%;height:100%;object-fit:cover">
+              <div onClick="{{ () => openProduct('galaxy_s24_ultra') }}" class="loumoo-media-card" aria-label="View Samsung Galaxy A55">
+                <div class="loumoo-card-media-cutout">
+                  <span class="loumoo-card-badge badge-pill-sale">Save 15%</span>
+                  <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('samsung-a55', 'Samsung Galaxy A55'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('samsung-a55') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('samsung-a55') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                  </button>
+                  <img src="https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=500&q=85" alt="Samsung Galaxy A55 5G">
                 </div>
-                <div style="padding:10px 4px 4px">
-                  <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Samsung Galaxy A55 5G</div>
-                  <div style="font:400 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:4px">Mboppi Mobile · Douala</div>
-                  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:8px">
-                    <span style="font:800 14px/1 var(--font-heading);color:var(--color-accent)">XAF 245 000</span>
-                    <span style="font:700 11px/1 var(--font-heading);color:#eab308">★ 4.4</span>
+                <div class="loumoo-card-body">
+                  <h4 class="loumoo-card-title">Samsung Galaxy A55 5G</h4>
+                  <div class="loumoo-card-tagline">Mboppi Mobile · Douala</div>
+                  <div class="loumoo-card-rating-row">
+                    <span>★ 4.4</span>
+                    <span class="loumoo-card-rating-text">(19) · In Stock</span>
+                  </div>
+                  <div class="loumoo-card-bottom-row">
+                    <div class="loumoo-card-pricing-block">
+                      <span class="loumoo-card-price-prefix">From</span>
+                      <div class="loumoo-card-price-main">
+                        <span class="loumoo-card-price-val">245.000 FCFA</span>
+                        <span class="loumoo-card-price-strike">275.000 FCFA</span>
+                      </div>
+                      <div class="loumoo-card-trust-pill">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        <span>✓ Escrow options available</span>
+                      </div>
+                    </div>
+                    <button class="loumoo-card-pill-btn" aria-label="Buy Samsung Galaxy A55">Buy now</button>
                   </div>
                 </div>
-              </button>
+              </div>
             </sc-if>
 
             <sc-if value="{{ isSubcatAll || activeSubcategorySlug === 'power_accessories' }}">
-              <button onClick="{{ () => openProduct('anker_737') }}" aria-label="View Anker 737 Power Bank" style="background:none;border:none;text-align:left;cursor:pointer;padding:0">
-                <div style="position:relative;aspect-ratio:4/3;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
-                  <img src="https://images.unsplash.com/photo-1609592424364-704337b51b3f?auto=format&fit=crop&w=600&q=85" alt="Anker 737 Power Bank" style="width:100%;height:100%;object-fit:cover">
+              <div onClick="{{ () => openProduct('anker_737') }}" class="loumoo-media-card" aria-label="View Anker 737 Power Bank">
+                <div class="loumoo-card-media-cutout">
+                  <span class="loumoo-card-badge badge-pill-new">140W GaN</span>
+                  <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('anker_737', 'Anker 737 Power Bank'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('anker_737') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('anker_737') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                  </button>
+                  <img src="https://images.unsplash.com/photo-1609592424364-704337b51b3f?auto=format&fit=crop&w=500&q=85" alt="Anker 737 Power Bank">
                 </div>
-                <div style="padding:10px 4px 4px">
-                  <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Anker 737 Power Bank 24k</div>
-                  <div style="font:400 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:4px">Orca Electronics · Akwa</div>
-                  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:8px">
-                    <span style="font:800 14px/1 var(--font-heading);color:var(--color-accent)">XAF 62 000</span>
-                    <span style="font:700 11px/1 var(--font-heading);color:#eab308">★ 4.6</span>
+                <div class="loumoo-card-body">
+                  <h4 class="loumoo-card-title">Anker 737 Power Bank 24k</h4>
+                  <div class="loumoo-card-tagline">Orca Electronics · Akwa, Douala</div>
+                  <div class="loumoo-card-rating-row">
+                    <span>★ 4.6</span>
+                    <span class="loumoo-card-rating-text">(42) · Verified</span>
+                  </div>
+                  <div class="loumoo-card-bottom-row">
+                    <div class="loumoo-card-pricing-block">
+                      <span class="loumoo-card-price-prefix">From</span>
+                      <div class="loumoo-card-price-main">
+                        <span class="loumoo-card-price-val">62.000 FCFA</span>
+                        <span class="loumoo-card-price-strike">70.000 FCFA</span>
+                      </div>
+                      <div class="loumoo-card-trust-pill">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        <span>✓ Escrow options available</span>
+                      </div>
+                    </div>
+                    <button class="loumoo-card-pill-btn" aria-label="Buy Anker 737">Buy now</button>
                   </div>
                 </div>
-              </button>
+              </div>
             </sc-if>
           </sc-if>
 
-          <!-- Hospitality / Hotels Listings -->
+          <!-- Hospitality / Hotels Listings (Scenario B: Lifestyle presentation) -->
           <sc-if value="{{ isCategoryHotels }}">
-            <button onClick="{{ on.hotelDetail }}" aria-label="View Sawa Luxury Hotel" style="background:none;border:none;text-align:left;cursor:pointer;padding:0">
-              <div style="position:relative;aspect-ratio:4/3;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
-                <span class="badge-floating badge-sale">5-STAR</span>
-                <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=600&q=85" alt="Sawa Luxury Suite" style="width:100%;height:100%;object-fit:cover">
+            <div onClick="{{ on.hotelDetail }}" class="loumoo-media-card" aria-label="View Sawa Luxury Hotel">
+              <div class="loumoo-card-media-lifestyle">
+                <span class="loumoo-card-badge badge-pill-sale">5-Star Luxury</span>
+                <div class="loumoo-media-overlay"></div>
+                <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=600&q=85" alt="Sawa Luxury Suite">
               </div>
-              <div style="padding:10px 4px 4px">
-                <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Sawa Luxury Suite</div>
-                <div style="font:400 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:4px">Bonanjo, Douala · Ocean View</div>
-                <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:8px">
-                  <span style="font:800 14px/1 var(--font-heading);color:var(--color-accent)">XAF 65 000<span style="font-size:10px;font-weight:400">/night</span></span>
-                  <span style="font:700 11px/1 var(--font-heading);color:#eab308">★ 4.8</span>
+              <div class="loumoo-card-body">
+                <h4 class="loumoo-card-title">Sawa Luxury Suite</h4>
+                <div class="loumoo-card-tagline">Bonanjo, Douala · Ocean View & Spa Access</div>
+                <div class="loumoo-card-rating-row">
+                  <span>★ 4.8</span>
+                  <span class="loumoo-card-rating-text">(118 reviews) · Hotel Sawa</span>
+                </div>
+                <div class="loumoo-card-bottom-row">
+                  <div class="loumoo-card-pricing-block">
+                    <span class="loumoo-card-price-prefix">Per night</span>
+                    <div class="loumoo-card-price-main">
+                      <span class="loumoo-card-price-val">65.000 FCFA</span>
+                      <span class="loumoo-card-price-strike">85.000 FCFA</span>
+                    </div>
+                    <div class="loumoo-card-trust-pill">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                      <span>✓ Instant Confirmation</span>
+                    </div>
+                  </div>
+                  <button class="loumoo-card-pill-btn" aria-label="Book Sawa Suite">Book now</button>
                 </div>
               </div>
-            </button>
+            </div>
 
-            <button onClick="{{ on.hotelDetail }}" aria-label="View Résidence Akwa Palm" style="background:none;border:none;text-align:left;cursor:pointer;padding:0">
-              <div style="position:relative;aspect-ratio:4/3;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
-                <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=600&q=85" alt="Résidence Akwa Palm" style="width:100%;height:100%;object-fit:cover">
+            <div onClick="{{ on.hotelDetail }}" class="loumoo-media-card" aria-label="View Résidence Akwa Palm">
+              <div class="loumoo-card-media-lifestyle">
+                <span class="loumoo-card-badge badge-pill-new">Top Host</span>
+                <div class="loumoo-media-overlay"></div>
+                <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=600&q=85" alt="Résidence Akwa Palm">
               </div>
-              <div style="padding:10px 4px 4px">
-                <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Résidence Akwa Palm</div>
-                <div style="font:400 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:4px">Akwa, Douala · Furnished Studio</div>
-                <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:8px">
-                  <span style="font:800 14px/1 var(--font-heading);color:var(--color-accent)">XAF 38 500<span style="font-size:10px;font-weight:400">/night</span></span>
-                  <span style="font:700 11px/1 var(--font-heading);color:#eab308">★ 4.5</span>
+              <div class="loumoo-card-body">
+                <h4 class="loumoo-card-title">Résidence Akwa Palm</h4>
+                <div class="loumoo-card-tagline">Akwa, Douala · Furnished Studio & High-Speed WiFi</div>
+                <div class="loumoo-card-rating-row">
+                  <span>★ 4.5</span>
+                  <span class="loumoo-card-rating-text">(47 reviews) · Verified Host</span>
+                </div>
+                <div class="loumoo-card-bottom-row">
+                  <div class="loumoo-card-pricing-block">
+                    <span class="loumoo-card-price-prefix">Per night</span>
+                    <div class="loumoo-card-price-main">
+                      <span class="loumoo-card-price-val">38.500 FCFA</span>
+                      <span class="loumoo-card-price-strike">45.000 FCFA</span>
+                    </div>
+                    <div class="loumoo-card-trust-pill">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                      <span>✓ Instant Confirmation</span>
+                    </div>
+                  </div>
+                  <button class="loumoo-card-pill-btn" aria-label="Book Akwa Palm">Book now</button>
                 </div>
               </div>
-            </button>
+            </div>
           </sc-if>
 
-          <!-- Travel & Intercity Mobility Listings -->
+          <!-- Travel & Intercity Mobility Listings (Scenario B: Lifestyle presentation) -->
           <sc-if value="{{ isCategoryTravel }}">
-            <button onClick="{{ on.travelBus }}" aria-label="Book Finexs VIP Bus" style="background:none;border:none;text-align:left;cursor:pointer;padding:0">
-              <div style="position:relative;aspect-ratio:4/3;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
-                <span class="badge-floating badge-new">VIP CLASS</span>
-                <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=600&q=85" alt="Finexs VIP Bus" style="width:100%;height:100%;object-fit:cover">
+            <div onClick="{{ on.travelBus }}" class="loumoo-media-card" aria-label="Book Finexs VIP Bus">
+              <div class="loumoo-card-media-lifestyle">
+                <span class="loumoo-card-badge badge-pill-new">VIP Class</span>
+                <div class="loumoo-media-overlay"></div>
+                <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=600&q=85" alt="Finexs VIP Bus">
               </div>
-              <div style="padding:10px 4px 4px">
-                <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Douala ⇄ Yaoundé Express</div>
-                <div style="font:400 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:4px">Finexs Voyages · Akwa Terminal</div>
-                <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:8px">
-                  <span style="font:800 14px/1 var(--font-heading);color:var(--color-accent)">XAF 8 000</span>
-                  <span style="font:700 11px/1 var(--font-heading);color:#eab308">★ 4.9</span>
+              <div class="loumoo-card-body">
+                <h4 class="loumoo-card-title">Douala ⇄ Yaoundé Express</h4>
+                <div class="loumoo-card-tagline">Finexs Voyages · Akwa VIP Terminal · AC & WiFi</div>
+                <div class="loumoo-card-rating-row">
+                  <span>★ 4.9</span>
+                  <span class="loumoo-card-rating-text">(310 reviews) · Guaranteed Seat</span>
+                </div>
+                <div class="loumoo-card-bottom-row">
+                  <div class="loumoo-card-pricing-block">
+                    <span class="loumoo-card-price-prefix">One way</span>
+                    <div class="loumoo-card-price-main">
+                      <span class="loumoo-card-price-val">8.000 FCFA</span>
+                      <span class="loumoo-card-price-strike">10.000 FCFA</span>
+                    </div>
+                    <div class="loumoo-card-trust-pill">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                      <span>✓ E-Ticket Instant SMS</span>
+                    </div>
+                  </div>
+                  <button class="loumoo-card-pill-btn" aria-label="Book Finexs Express">Reserve seat</button>
                 </div>
               </div>
-            </button>
+            </div>
           </sc-if>
 
           <!-- Services Listings -->
           <sc-if value="{{ isCategoryServices }}">
-            <button onClick="{{ () => openProduct('iphone_15_pro') }}" aria-label="Book Screen Replacement" style="background:none;border:none;text-align:left;cursor:pointer;padding:0">
-              <div style="position:relative;aspect-ratio:4/3;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
-                <span class="badge-floating badge-sale">SAME DAY</span>
-                <img src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&q=85" alt="iPhone Screen Replacement" style="width:100%;height:100%;object-fit:cover">
+            <div onClick="{{ () => openProduct('iphone_15_pro') }}" class="loumoo-media-card" aria-label="Book Screen Replacement">
+              <div class="loumoo-card-media-cutout">
+                <span class="loumoo-card-badge badge-pill-sale">Same Day Repair</span>
+                <img src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=500&q=85" alt="iPhone Screen Replacement">
               </div>
-              <div style="padding:10px 4px 4px">
-                <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">iPhone Screen Replacement</div>
-                <div style="font:400 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:4px">KamerFix Pro · Akwa Dropoff</div>
-                <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:8px">
-                  <span style="font:800 14px/1 var(--font-heading);color:var(--color-accent)">XAF 25 000</span>
-                  <span style="font:700 11px/1 var(--font-heading);color:#eab308">★ 4.9</span>
+              <div class="loumoo-card-body">
+                <h4 class="loumoo-card-title">iPhone Screen Replacement</h4>
+                <div class="loumoo-card-tagline">KamerFix Pro · Akwa Dropoff · 6-Month Warranty</div>
+                <div class="loumoo-card-rating-row">
+                  <span>★ 4.9</span>
+                  <span class="loumoo-card-rating-text">(52 reviews) · Certified Tech</span>
+                </div>
+                <div class="loumoo-card-bottom-row">
+                  <div class="loumoo-card-pricing-block">
+                    <span class="loumoo-card-price-prefix">Fixed quote</span>
+                    <div class="loumoo-card-price-main">
+                      <span class="loumoo-card-price-val">25.000 FCFA</span>
+                      <span class="loumoo-card-price-strike">30.000 FCFA</span>
+                    </div>
+                    <div class="loumoo-card-trust-pill">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                      <span>✓ Escrow Repair Guarantee</span>
+                    </div>
+                  </div>
+                  <button class="loumoo-card-pill-btn" aria-label="Book Screen Repair">Book repair</button>
                 </div>
               </div>
-            </button>
+            </div>
           </sc-if>
 
         </div>

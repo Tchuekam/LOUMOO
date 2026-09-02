@@ -226,98 +226,229 @@ def get_home_view():
       <button onClick="{{ on.bestpicks }}" class="editorial-see-all">See all →</button>
     </div>
 
-    <div class="new-arrivals-rail">
-      <!-- Item 1: Insta360 X4 -->
-      <button onClick="{{ () => openProduct('insta360_x4') }}" class="product-card-elevated" aria-label="View Insta360 X4 8K 360 Action Camera">
-        <div>
-          <div class="product-card-img-wrap" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc;display:flex;align-items:center;justify-content:center">
-            <span class="badge-floating badge-new">NEW</span>
-            <img src="https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80" alt="Insta360 X4 8K 360 Action Camera" style="max-width:85%;max-height:85%;object-fit:contain;transition:transform 0.3s ease">
-          </div>
-          <div style="font:700 13px/1.3 var(--font-heading);color:var(--color-text);min-height:34px;margin-top:8px">Insta360 X4 8K 360°<br>Action Camera</div>
+    <div class="new-arrivals-rail" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:20px;margin-bottom:32px">
+      <!-- Item 1: Insta360 X4 / X6 -->
+      <div onClick="{{ () => openProduct('insta360_x4') }}" class="loumoo-media-card" aria-label="View Insta360 X4 8K 360 Action Camera">
+        <div class="loumoo-card-media-cutout">
+          <span class="loumoo-card-badge badge-pill-sale">Save up to 81.000 FCFA</span>
+          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('insta360_x4', 'Insta360 X4'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('insta360_x4') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('insta360_x4') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          </button>
+          <img src="https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=500&q=85" alt="Insta360 X4 8K 360 Action Camera">
         </div>
-        <div style="font:800 14px/1 var(--font-heading);color:var(--color-text);margin-top:10px">499.000 FCFA</div>
-      </button>
+        <div class="loumoo-card-body">
+          <h4 class="loumoo-card-title">Insta360 X4 8K 360°</h4>
+          <div class="loumoo-card-tagline">Magic in action. Unstoppable 8K 360°.</div>
+          <div class="loumoo-card-rating-row">
+            <span>★ 4.9</span>
+            <span class="loumoo-card-rating-text">(48) · Official Store</span>
+          </div>
+          <div class="loumoo-card-bottom-row">
+            <div class="loumoo-card-pricing-block">
+              <span class="loumoo-card-price-prefix">From</span>
+              <div class="loumoo-card-price-main">
+                <span class="loumoo-card-price-val">499.000 FCFA</span>
+                <span class="loumoo-card-price-strike">580.000 FCFA</span>
+              </div>
+              <div class="loumoo-card-trust-pill">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <span>✓ Escrow options available</span>
+              </div>
+            </div>
+            <button class="loumoo-card-pill-btn" aria-label="Buy Insta360 X4">Buy now</button>
+          </div>
+        </div>
+      </div>
 
       <!-- Item 2: iPhone 15 Pro Max -->
-      <button onClick="{{ () => openProduct('iphone_15_pro') }}" class="product-card-elevated" aria-label="View iPhone 15 Pro Max 256GB">
-        <div>
-          <div class="product-card-img-wrap" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc;display:flex;align-items:center;justify-content:center">
-            <span class="badge-floating badge-blue">TITANIUM</span>
-            <img src="https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=400&q=80" alt="iPhone 15 Pro Max 256GB" style="max-width:85%;max-height:85%;object-fit:contain;transition:transform 0.3s ease">
-          </div>
-          <div style="font:700 13px/1.3 var(--font-heading);color:var(--color-text);min-height:34px;margin-top:8px">iPhone 15 Pro Max<br>256GB</div>
+      <div onClick="{{ () => openProduct('iphone_15_pro') }}" class="loumoo-media-card" aria-label="View iPhone 15 Pro Max 256GB">
+        <div class="loumoo-card-media-cutout">
+          <span class="loumoo-card-badge badge-pill-new">New · Natural Titanium</span>
+          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('iphone_15_pro', 'iPhone 15 Pro Max'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('iphone_15_pro') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('iphone_15_pro') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          </button>
+          <img src="https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=500&q=85" alt="iPhone 15 Pro Max 256GB">
         </div>
-        <div style="font:800 14px/1 var(--font-heading);color:var(--color-text);margin-top:10px">1.150.000 FCFA</div>
-      </button>
+        <div class="loumoo-card-body">
+          <h4 class="loumoo-card-title">iPhone 15 Pro Max</h4>
+          <div class="loumoo-card-tagline">Forged in titanium. A17 Pro powerhouse.</div>
+          <div class="loumoo-card-rating-row">
+            <span>★ 5.0</span>
+            <span class="loumoo-card-rating-text">(112) · Apple Authorized</span>
+          </div>
+          <div class="loumoo-card-bottom-row">
+            <div class="loumoo-card-pricing-block">
+              <span class="loumoo-card-price-prefix">From</span>
+              <div class="loumoo-card-price-main">
+                <span class="loumoo-card-price-val">1.150.000 FCFA</span>
+                <span class="loumoo-card-price-strike">1.250.000 FCFA</span>
+              </div>
+              <div class="loumoo-card-trust-pill">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <span>✓ Escrow options available</span>
+              </div>
+            </div>
+            <button class="loumoo-card-pill-btn" aria-label="Buy iPhone 15 Pro Max">Buy now</button>
+          </div>
+        </div>
+      </div>
 
       <!-- Item 3: Sony WH-1000XM5 -->
-      <button onClick="{{ () => openProduct('sony_xm5') }}" class="product-card-elevated" aria-label="View Sony WH-1000XM5 Wireless Headphones">
-        <div>
-          <div class="product-card-img-wrap" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc;display:flex;align-items:center;justify-content:center">
-            <span class="badge-floating badge-sale">ANC PRO</span>
-            <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=400&q=80" alt="Sony WH-1000XM5 Wireless Headphones" style="max-width:85%;max-height:85%;object-fit:contain;transition:transform 0.3s ease">
-          </div>
-          <div style="font:700 13px/1.3 var(--font-heading);color:var(--color-text);min-height:34px;margin-top:8px">Sony WH-1000XM5<br>Wireless Headphones</div>
+      <div onClick="{{ () => openProduct('sony_xm5') }}" class="loumoo-media-card" aria-label="View Sony WH-1000XM5 Wireless Headphones">
+        <div class="loumoo-card-media-cutout">
+          <span class="loumoo-card-badge badge-pill-sale">Save 35.000 FCFA</span>
+          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('sony_xm5', 'Sony WH-1000XM5'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('sony_xm5') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('sony_xm5') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          </button>
+          <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=500&q=85" alt="Sony WH-1000XM5 Wireless Headphones">
         </div>
-        <div style="font:800 14px/1 var(--font-heading);color:var(--color-text);margin-top:10px">215.000 FCFA</div>
-      </button>
+        <div class="loumoo-card-body">
+          <h4 class="loumoo-card-title">Sony WH-1000XM5</h4>
+          <div class="loumoo-card-tagline">Industry-leading noise cancellation master.</div>
+          <div class="loumoo-card-rating-row">
+            <span>★ 4.8</span>
+            <span class="loumoo-card-rating-text">(89) · Verified Sound</span>
+          </div>
+          <div class="loumoo-card-bottom-row">
+            <div class="loumoo-card-pricing-block">
+              <span class="loumoo-card-price-prefix">From</span>
+              <div class="loumoo-card-price-main">
+                <span class="loumoo-card-price-val">215.000 FCFA</span>
+                <span class="loumoo-card-price-strike">250.000 FCFA</span>
+              </div>
+              <div class="loumoo-card-trust-pill">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <span>✓ Escrow options available</span>
+              </div>
+            </div>
+            <button class="loumoo-card-pill-btn" aria-label="Buy Sony WH-1000XM5">Buy now</button>
+          </div>
+        </div>
+      </div>
 
       <!-- Item 4: Apple Watch Series 9 -->
-      <button onClick="{{ () => openProduct('apple_watch_s9') }}" class="product-card-elevated" aria-label="View Apple Watch Series 9 GPS 45mm">
-        <div>
-          <div class="product-card-img-wrap" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc;display:flex;align-items:center;justify-content:center">
-            <span class="badge-floating badge-new">SERIES 9</span>
-            <img src="https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=400&q=80" alt="Apple Watch Series 9 GPS 45mm" style="max-width:85%;max-height:85%;object-fit:contain;transition:transform 0.3s ease">
-          </div>
-          <div style="font:700 13px/1.3 var(--font-heading);color:var(--color-text);min-height:34px;margin-top:8px">Apple Watch Series 9<br>GPS 45mm</div>
+      <div onClick="{{ () => openProduct('apple_watch_s9') }}" class="loumoo-media-card" aria-label="View Apple Watch Series 9 GPS 45mm">
+        <div class="loumoo-card-media-cutout">
+          <span class="loumoo-card-badge badge-pill-new">New · Series 9</span>
+          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('apple_watch_s9', 'Apple Watch Series 9'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('apple_watch_s9') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('apple_watch_s9') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          </button>
+          <img src="https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=500&q=85" alt="Apple Watch Series 9 GPS 45mm">
         </div>
-        <div style="font:800 14px/1 var(--font-heading);color:var(--color-text);margin-top:10px">265.000 FCFA</div>
-      </button>
+        <div class="loumoo-card-body">
+          <h4 class="loumoo-card-title">Apple Watch Series 9</h4>
+          <div class="loumoo-card-tagline">Smarter. Brighter. Mightier.</div>
+          <div class="loumoo-card-rating-row">
+            <span>★ 4.9</span>
+            <span class="loumoo-card-rating-text">(64) · Verified Seller</span>
+          </div>
+          <div class="loumoo-card-bottom-row">
+            <div class="loumoo-card-pricing-block">
+              <span class="loumoo-card-price-prefix">From</span>
+              <div class="loumoo-card-price-main">
+                <span class="loumoo-card-price-val">265.000 FCFA</span>
+                <span class="loumoo-card-price-strike">290.000 FCFA</span>
+              </div>
+              <div class="loumoo-card-trust-pill">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <span>✓ Escrow options available</span>
+              </div>
+            </div>
+            <button class="loumoo-card-pill-btn" aria-label="Buy Apple Watch Series 9">Buy now</button>
+          </div>
+        </div>
+      </div>
 
       <!-- Item 5: MacBook Air M2 -->
-      <button onClick="{{ () => openProduct('macbook_m2') }}" class="product-card-elevated" aria-label="View MacBook Air M2 15-inch">
-        <div>
-          <div class="product-card-img-wrap" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc;display:flex;align-items:center;justify-content:center">
-            <span class="badge-floating badge-blue">LIQUID RETINA</span>
-            <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80" alt="MacBook Air M2 15-inch" style="max-width:85%;max-height:85%;object-fit:contain;transition:transform 0.3s ease">
-          </div>
-          <div style="font:700 13px/1.3 var(--font-heading);color:var(--color-text);min-height:34px;margin-top:8px">MacBook Air M2<br>15-inch</div>
+      <div onClick="{{ () => openProduct('macbook_m2') }}" class="loumoo-media-card" aria-label="View MacBook Air M2 15-inch">
+        <div class="loumoo-card-media-cutout">
+          <span class="loumoo-card-badge badge-pill-sale">Save 55.000 FCFA</span>
+          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('macbook_m2', 'MacBook Air M2'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('macbook_m2') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('macbook_m2') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          </button>
+          <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=500&q=85" alt="MacBook Air M2 15-inch">
         </div>
-        <div style="font:800 14px/1 var(--font-heading);color:var(--color-text);margin-top:10px">745.000 FCFA</div>
-      </button>
+        <div class="loumoo-card-body">
+          <h4 class="loumoo-card-title">MacBook Air M2 15"</h4>
+          <div class="loumoo-card-tagline">Impressively big. Impossibly thin.</div>
+          <div class="loumoo-card-rating-row">
+            <span>★ 4.9</span>
+            <span class="loumoo-card-rating-text">(78) · Apple Store</span>
+          </div>
+          <div class="loumoo-card-bottom-row">
+            <div class="loumoo-card-pricing-block">
+              <span class="loumoo-card-price-prefix">From</span>
+              <div class="loumoo-card-price-main">
+                <span class="loumoo-card-price-val">745.000 FCFA</span>
+                <span class="loumoo-card-price-strike">800.000 FCFA</span>
+              </div>
+              <div class="loumoo-card-trust-pill">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <span>✓ Escrow options available</span>
+              </div>
+            </div>
+            <button class="loumoo-card-pill-btn" aria-label="Buy MacBook Air M2">Buy now</button>
+          </div>
+        </div>
+      </div>
 
       <!-- Item 6: Nike Air Force 1 -->
-      <button onClick="{{ () => openProduct('nike_air_force_1') }}" class="product-card-elevated" aria-label="View Nike Air Force 1 07 White">
-        <div>
-          <div class="product-card-img-wrap" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc;display:flex;align-items:center;justify-content:center">
-            <span class="badge-floating badge-new">CLASSIC</span>
-            <img src="https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=400&q=80" alt="Nike Air Force 1 07 White" style="max-width:85%;max-height:85%;object-fit:contain;transition:transform 0.3s ease">
-          </div>
-          <div style="font:700 13px/1.3 var(--font-heading);color:var(--color-text);min-height:34px;margin-top:8px">Nike Air Force 1 '07<br>White</div>
+      <div onClick="{{ () => openProduct('nike_air_force_1') }}" class="loumoo-media-card" aria-label="View Nike Air Force 1 07 White">
+        <div class="loumoo-card-media-cutout">
+          <span class="loumoo-card-badge badge-pill-new">Classic Edition</span>
+          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('nike_air_force_1', 'Nike Air Force 1'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('nike_air_force_1') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('nike_air_force_1') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          </button>
+          <img src="https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=500&q=85" alt="Nike Air Force 1 07 White">
         </div>
-        <div style="font:800 14px/1 var(--font-heading);color:var(--color-text);margin-top:10px">65.000 FCFA</div>
-      </button>
+        <div class="loumoo-card-body">
+          <h4 class="loumoo-card-title">Nike Air Force 1 '07</h4>
+          <div class="loumoo-card-tagline">Iconic hardwood style for the street.</div>
+          <div class="loumoo-card-rating-row">
+            <span>★ 4.8</span>
+            <span class="loumoo-card-rating-text">(142) · Verified Sneaker</span>
+          </div>
+          <div class="loumoo-card-bottom-row">
+            <div class="loumoo-card-pricing-block">
+              <span class="loumoo-card-price-prefix">From</span>
+              <div class="loumoo-card-price-main">
+                <span class="loumoo-card-price-val">65.000 FCFA</span>
+                <span class="loumoo-card-price-strike">75.000 FCFA</span>
+              </div>
+              <div class="loumoo-card-trust-pill">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <span>✓ Escrow options available</span>
+              </div>
+            </div>
+            <button class="loumoo-card-pill-btn" aria-label="Buy Nike Air Force 1">Buy now</button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- ── 05: EDITORIAL & VIDEO STORYTELLING (Insta360. Think bold.) ── -->
-    <!-- ── 05: EDITORIAL & VIDEO STORYTELLING (Official Insta360 Bento Showcase Grid) ── -->
-    <div class="editorial-section-header">
-      <h2 class="editorial-section-title">Insta360. Think bold.</h2>
-      <button onClick="{{ () => openVideoModal('Insta360 Creator Showcase', 'All 8K 360° and Action Video Stories', 'INSTA360 ALL') }}" class="editorial-see-all">See more →</button>
+    <!-- ── 05: EDITORIAL & VIDEO STORYTELLING (Official Insta360 Bento Showcase Rail) ── -->
+    <div class="loumoo-rail-header">
+      <div class="loumoo-rail-title-wrap">
+        <span class="loumoo-rail-kicker">INSTA360 OFFICIAL SHOWCASE</span>
+        <h2 class="loumoo-rail-title">Insta360. Think bold.</h2>
+        <p class="loumoo-rail-subtitle">Curated 8K 360° and action creator moments</p>
+      </div>
+      <div class="loumoo-rail-controls">
+        <button onClick="{{ () => openVideoModal('Insta360 Creator Showcase', 'All 8K 360° and Action Video Stories', 'INSTA360 ALL') }}" class="loumoo-rail-action-link">Watch all →</button>
+        <button onClick="{{ () => scrollRail('instaVideoBentoRail', -340) }}" class="loumoo-rail-nav-btn" aria-label="Previous slide">‹</button>
+        <button onClick="{{ () => scrollRail('instaVideoBentoRail', 340) }}" class="loumoo-rail-nav-btn" aria-label="Next slide">›</button>
+      </div>
     </div>
 
-    <!-- Official Insta360 5-Card Bento Showcase Grid -->
+    <!-- Official Insta360 5-Card Bento Showcase Grid (Media-First Hover-to-Play Standard) -->
     <div class="insta360-bento-video-grid" id="instaVideoBentoRail">
-      <!-- 1. Left Tall Card: Catching waves (By Tikanuismith · Insta360 X5) -->
-      <div onClick="{{ () => openVideoModal('Catching waves', 'By Tikanuismith · Shot on Insta360 X4 in 8K 360°', 'INSTA360 X4', 'https://assets.mixkit.co/videos/preview/mixkit-surfer-riding-a-wave-in-the-sea-1224-large.mp4') }}" class="insta-video-card-tall" style="position:relative;overflow:hidden;border-radius:var(--radius-lg);cursor:pointer" aria-label="Play Catching waves by Tikanuismith">
-        <img src="https://images.unsplash.com/photo-1502680390469-be75c86b636f?auto=format&fit=crop&w=600&q=85" alt="Catching Waves Surfer" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 0.4s ease">
-        <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.75) 100%)"></div>
+      <!-- 1. Left Tall Card: Catching waves (By Tikanuismith · Insta360 X4) -->
+      <div onClick="{{ () => openVideoModal('Catching waves', 'By Tikanuismith · Shot on Insta360 X4 in 8K 360°', 'INSTA360 X4', 'https://assets.mixkit.co/videos/preview/mixkit-surfer-riding-a-wave-in-the-sea-1224-large.mp4') }}" data-hover-video="true" class="insta-video-card-tall" style="position:relative;overflow:hidden;border-radius:var(--radius-lg);cursor:pointer;background:#0b0d14" aria-label="Explore Catching waves by Tikanuismith">
+        <video src="https://assets.mixkit.co/videos/preview/mixkit-surfer-riding-a-wave-in-the-sea-1224-large.mp4" poster="https://images.unsplash.com/photo-1502680390469-be75c86b636f?auto=format&fit=crop&w=600&q=85" muted loop playsinline preload="none" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
+        <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0) 35%, rgba(0,0,0,0.2) 60%, rgba(0,0,0,0.85) 100%);pointer-events:none"></div>
 
-        <!-- Center Frosted Play Button -->
-        <div class="insta-play-btn" style="position:relative;z-index:2">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="#ffffff" style="margin-left:2px"><polygon points="6 4 20 12 6 20 6 4"/></svg>
-        </div>
+        <div class="loumoo-card-video-pill" style="top:14px;right:14px"><span class="live-dot"></span>8K 360°</div>
 
         <!-- Bottom Metadata Bar -->
         <div class="insta-card-bottom-bar" style="position:relative;z-index:2">
@@ -335,14 +466,11 @@ def get_home_view():
       <!-- 2. Middle Column: Split Top Wide + Bottom Duo -->
       <div class="insta-video-middle-col">
         <!-- Top Wide Card: Parachute drift (By Nick Durham · Insta360 Ace Pro 2) -->
-        <div onClick="{{ () => openVideoModal('Parachute drift', 'By Nick Durham · Shot on Insta360 Ace Pro 2 in 8K', 'ACE PRO 2', 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-clouds-from-an-airplane-window-4186-large.mp4') }}" class="insta-video-card-wide" style="position:relative;overflow:hidden;border-radius:var(--radius-lg);cursor:pointer" aria-label="Play Parachute drift by Nick Durham">
-          <img src="https://images.unsplash.com/photo-1508614589041-895b88991e3e?auto=format&fit=crop&w=800&q=85" alt="Parachute Aerial" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 0.4s ease">
-          <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.75) 100%)"></div>
+        <div onClick="{{ () => openVideoModal('Parachute drift', 'By Nick Durham · Shot on Insta360 Ace Pro 2 in 8K', 'ACE PRO 2', 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-clouds-from-an-airplane-window-4186-large.mp4') }}" data-hover-video="true" class="insta-video-card-wide" style="position:relative;overflow:hidden;border-radius:var(--radius-lg);cursor:pointer;background:#0b0d14" aria-label="Explore Parachute drift by Nick Durham">
+          <video src="https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-clouds-from-an-airplane-window-4186-large.mp4" poster="https://images.unsplash.com/photo-1508614589041-895b88991e3e?auto=format&fit=crop&w=800&q=85" muted loop playsinline preload="none" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0) 35%, rgba(0,0,0,0.2) 60%, rgba(0,0,0,0.85) 100%);pointer-events:none"></div>
 
-          <!-- Center Frosted Play Button -->
-          <div class="insta-play-btn" style="position:relative;z-index:2">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="#ffffff" style="margin-left:2px"><polygon points="6 4 20 12 6 20 6 4"/></svg>
-          </div>
+          <div class="loumoo-card-video-pill" style="top:14px;right:14px"><span class="live-dot"></span>8K HDR</div>
 
           <!-- Bottom Metadata Bar -->
           <div class="insta-card-bottom-bar" style="position:relative;z-index:2">
@@ -359,15 +487,12 @@ def get_home_view():
 
         <!-- Bottom Duo Row -->
         <div class="insta-video-middle-bottom-row">
-          <!-- 3. Middle Bottom-Left: Wing view (By Doug Payne · Insta360 X5) -->
-          <div onClick="{{ () => openVideoModal('Wing view', 'By Doug Payne · Shot on Insta360 Aerial Horizon', 'INSTA360 X4', 'https://assets.mixkit.co/videos/preview/mixkit-snowy-mountain-peaks-in-a-sunny-day-41680-large.mp4') }}" class="insta-video-card-compact" style="position:relative;overflow:hidden;border-radius:var(--radius-lg);cursor:pointer" aria-label="Play Wing view by Doug Payne">
-            <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=85" alt="Mountain Wing View" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 0.4s ease">
-            <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.75) 100%)"></div>
+          <!-- 3. Middle Bottom-Left: Wing view (By Doug Payne · Insta360 X4) -->
+          <div onClick="{{ () => openVideoModal('Wing view', 'By Doug Payne · Shot on Insta360 Aerial Horizon', 'INSTA360 X4', 'https://assets.mixkit.co/videos/preview/mixkit-snowy-mountain-peaks-in-a-sunny-day-41680-large.mp4') }}" data-hover-video="true" class="insta-video-card-compact" style="position:relative;overflow:hidden;border-radius:var(--radius-lg);cursor:pointer;background:#0b0d14" aria-label="Explore Wing view by Doug Payne">
+            <video src="https://assets.mixkit.co/videos/preview/mixkit-snowy-mountain-peaks-in-a-sunny-day-41680-large.mp4" poster="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=85" muted loop playsinline preload="none" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
+            <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0) 35%, rgba(0,0,0,0.2) 60%, rgba(0,0,0,0.85) 100%);pointer-events:none"></div>
 
-            <!-- Center Frosted Play Button -->
-            <div class="insta-play-btn" style="position:relative;z-index:2;width:40px;height:40px">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="#ffffff" style="margin-left:2px"><polygon points="6 4 20 12 6 20 6 4"/></svg>
-            </div>
+            <div class="loumoo-card-video-pill" style="top:10px;right:10px;padding:3px 6px;font-size:9.5px"><span class="live-dot"></span>AERIAL</div>
 
             <!-- Bottom Metadata Bar -->
             <div class="insta-card-bottom-bar" style="position:relative;z-index:2;padding:14px 12px 10px">
@@ -383,14 +508,11 @@ def get_home_view():
           </div>
 
           <!-- 4. Middle Bottom-Right: River glide (By Daniel Falcão Correia Lima · Insta360 GO 3S) -->
-          <div onClick="{{ () => openVideoModal('River glide', 'By Daniel Falcão · Shot on Insta360 GO 3S', 'GO 3S', 'https://assets.mixkit.co/videos/preview/mixkit-waterfall-in-forest-2213-large.mp4') }}" class="insta-video-card-compact" style="position:relative;overflow:hidden;border-radius:var(--radius-lg);cursor:pointer" aria-label="Play River glide by Daniel Falcão Correia Lima">
-            <img src="https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?auto=format&fit=crop&w=600&q=85" alt="River Waterfall" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 0.4s ease">
-            <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.75) 100%)"></div>
+          <div onClick="{{ () => openVideoModal('River glide', 'By Daniel Falcão · Shot on Insta360 GO 3S', 'GO 3S', 'https://assets.mixkit.co/videos/preview/mixkit-waterfall-in-forest-2213-large.mp4') }}" data-hover-video="true" class="insta-video-card-compact" style="position:relative;overflow:hidden;border-radius:var(--radius-lg);cursor:pointer;background:#0b0d14" aria-label="Explore River glide by Daniel Falcão Correia Lima">
+            <video src="https://assets.mixkit.co/videos/preview/mixkit-waterfall-in-forest-2213-large.mp4" poster="https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?auto=format&fit=crop&w=600&q=85" muted loop playsinline preload="none" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
+            <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0) 35%, rgba(0,0,0,0.2) 60%, rgba(0,0,0,0.85) 100%);pointer-events:none"></div>
 
-            <!-- Center Frosted Play Button -->
-            <div class="insta-play-btn" style="position:relative;z-index:2;width:40px;height:40px">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="#ffffff" style="margin-left:2px"><polygon points="6 4 20 12 6 20 6 4"/></svg>
-            </div>
+            <div class="loumoo-card-video-pill" style="top:10px;right:10px;padding:3px 6px;font-size:9.5px"><span class="live-dot"></span>4K ACTION</div>
 
             <!-- Bottom Metadata Bar -->
             <div class="insta-card-bottom-bar" style="position:relative;z-index:2;padding:14px 12px 10px">
@@ -408,14 +530,11 @@ def get_home_view():
       </div>
 
       <!-- 5. Right Tall Card: City shift (By Asenseofhuber · Insta360 Flow) -->
-      <div onClick="{{ () => openVideoModal('City shift', 'By Asenseofhuber · Shot on Insta360 Flow Smart Gimbal', 'INSTA360 FLOW', 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4') }}" class="insta-video-card-tall" style="position:relative;overflow:hidden;border-radius:var(--radius-lg);cursor:pointer" aria-label="Play City shift by Asenseofhuber">
-        <img src="https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&w=600&q=85" alt="City Night Skyline" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 0.4s ease">
-        <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.75) 100%)"></div>
+      <div onClick="{{ () => openVideoModal('City shift', 'By Asenseofhuber · Shot on Insta360 Flow Smart Gimbal', 'INSTA360 FLOW', 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4') }}" data-hover-video="true" class="insta-video-card-tall" style="position:relative;overflow:hidden;border-radius:var(--radius-lg);cursor:pointer;background:#0b0d14" aria-label="Explore City shift by Asenseofhuber">
+        <video src="https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4" poster="https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&w=600&q=85" muted loop playsinline preload="none" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
+        <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0) 35%, rgba(0,0,0,0.2) 60%, rgba(0,0,0,0.85) 100%);pointer-events:none"></div>
 
-        <!-- Center Frosted Play Button -->
-        <div class="insta-play-btn" style="position:relative;z-index:2">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="#ffffff" style="margin-left:2px"><polygon points="6 4 20 12 6 20 6 4"/></svg>
-        </div>
+        <div class="loumoo-card-video-pill" style="top:14px;right:14px"><span class="live-dot"></span>AI TRACKING</div>
 
         <!-- Bottom Metadata Bar -->
         <div class="insta-card-bottom-bar" style="position:relative;z-index:2">
@@ -707,363 +826,586 @@ def get_home_view():
          POST-BLACK FRIDAY: MOBILE-FIRST MARKETPLACE DISCOVERY ENGINE (V2)
          ══════════════════════════════════════════════════════════════════════ -->
 
-    <!-- ── SECTION A: TOP FLAGSHIP DISCOVERY (2-col mobile / 4-col desktop) ── -->
-    <div class="discovery-product-grid" style="margin-bottom:32px">
-      <!-- 1. Beats Studio Pro -->
-      <div class="discovery-product-card" onClick="{{ on.product }}">
-        <div class="disc-card-img-box">
-          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('beats-studio-pro', 'Beats Studio Pro'); } }}" class="wishlist-float-btn" aria-label="Save Beats Studio Pro to wishlist">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('beats-studio-pro') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('beats-studio-pro') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-          </button>
-          <img src="https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&w=400&q=80" alt="Beats Studio Pro" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+    <!-- ── SECTION A: NEW ARRIVALS & LATEST FLAGSHIP DROPS (Horizontal Native Content Rail) ── -->
+    <div class="loumoo-rail-section">
+      <div class="loumoo-rail-header">
+        <div class="loumoo-rail-title-wrap">
+          <span class="loumoo-rail-kicker">NEW ARRIVALS & TRENDING</span>
+          <h2 class="loumoo-rail-title">Latest Flagship Drops</h2>
+          <p class="loumoo-rail-subtitle">Verified devices, audio & fashion arrivals with escrow protection</p>
         </div>
-        <div class="disc-card-body">
-          <div class="disc-card-name">Beats Studio Pro</div>
-          <div class="disc-card-sub">Wireless Headphones</div>
-          <div class="disc-card-price">195.000 FCFA</div>
+        <div class="loumoo-rail-controls">
+          <button onClick="{{ () => openCategory('electronics') }}" class="loumoo-rail-action-link">View all →</button>
+          <button onClick="{{ () => scrollRail('newArrivalsRail', -300) }}" class="loumoo-rail-nav-btn" aria-label="Previous products">‹</button>
+          <button onClick="{{ () => scrollRail('newArrivalsRail', 300) }}" class="loumoo-rail-nav-btn" aria-label="Next products">›</button>
         </div>
       </div>
 
-      <!-- 2. Jordan 4 Retro Thunder -->
-      <div class="discovery-product-card" onClick="{{ () => openProduct('nike_air_force_1') }}" style="cursor:pointer">
-        <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f1f5f9">
-          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('jordan-4-thunder', 'Jordan 4 Retro Thunder'); } }}" class="wishlist-float-btn" aria-label="Save Jordan 4 Retro Thunder to wishlist">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('jordan-4-thunder') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('jordan-4-thunder') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-          </button>
-          <img src="https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?auto=format&fit=crop&w=400&q=80" alt="Jordan 4 Retro Thunder" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+      <div class="loumoo-rail-track" id="newArrivalsRail">
+        <!-- 1. Beats Studio Pro (Cutout) -->
+        <div class="loumoo-media-card" onClick="{{ () => openProduct('sony_xm5') }}" aria-label="View Beats Studio Pro">
+          <div class="loumoo-card-media-cutout">
+            <span class="loumoo-card-badge badge-pill-sale">Save 30.000 FCFA</span>
+            <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('beats-studio-pro', 'Beats Studio Pro'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save Beats Studio Pro to wishlist">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('beats-studio-pro') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('beats-studio-pro') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            </button>
+            <img src="https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&w=500&q=85" alt="Beats Studio Pro" loading="lazy">
+          </div>
+          <div class="loumoo-card-body">
+            <h4 class="loumoo-card-title">Beats Studio Pro</h4>
+            <div class="loumoo-card-tagline">Iconic sound. Active Noise Cancelling & Spatial Audio.</div>
+            <div class="loumoo-card-rating-row">
+              <span>★ 4.8</span>
+              <span class="loumoo-card-rating-text">(56) · Beats Official</span>
+            </div>
+            <div class="loumoo-card-bottom-row">
+              <div class="loumoo-card-pricing-block">
+                <span class="loumoo-card-price-prefix">From</span>
+                <div class="loumoo-card-price-main">
+                  <span class="loumoo-card-price-val">195.000 FCFA</span>
+                  <span class="loumoo-card-price-strike">225.000 FCFA</span>
+                </div>
+                <div class="loumoo-card-trust-pill">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                  <span>✓ Escrow options available</span>
+                </div>
+              </div>
+              <button class="loumoo-card-pill-btn" aria-label="Buy Beats Studio Pro">Buy now</button>
+            </div>
+          </div>
         </div>
-        <div class="disc-card-body">
-          <div class="disc-card-name">Jordan 4 Retro</div>
-          <div class="disc-card-sub">Thunder Edition</div>
-          <div class="disc-card-price">220.000 FCFA</div>
-        </div>
-      </div>
 
-      <!-- 3. Dyson Supersonic Hair Dryer -->
-      <div class="discovery-product-card" onClick="{{ () => openProduct('insta360_x4') }}" style="cursor:pointer">
-        <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f1f5f9">
-          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('dyson-supersonic', 'Dyson Supersonic'); } }}" class="wishlist-float-btn" aria-label="Save Dyson Supersonic to wishlist">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('dyson-supersonic') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('dyson-supersonic') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-          </button>
-          <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=400&q=80" alt="Dyson Supersonic" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+        <!-- 2. Jordan 4 Retro Thunder (Cutout) -->
+        <div class="loumoo-media-card" onClick="{{ () => openProduct('nike_air_force_1') }}" aria-label="View Jordan 4 Retro Thunder">
+          <div class="loumoo-card-media-cutout">
+            <span class="loumoo-card-badge badge-pill-new">New Release</span>
+            <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('jordan-4-thunder', 'Jordan 4 Retro Thunder'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save Jordan 4 Retro Thunder to wishlist">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('jordan-4-thunder') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('jordan-4-thunder') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            </button>
+            <img src="https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?auto=format&fit=crop&w=500&q=85" alt="Jordan 4 Retro Thunder" loading="lazy">
+          </div>
+          <div class="loumoo-card-body">
+            <h4 class="loumoo-card-title">Air Jordan 4 Retro</h4>
+            <div class="loumoo-card-tagline">Thunder Edition. Premium nubuck leather.</div>
+            <div class="loumoo-card-rating-row">
+              <span>★ 4.9</span>
+              <span class="loumoo-card-rating-text">(92) · Certified Vault</span>
+            </div>
+            <div class="loumoo-card-bottom-row">
+              <div class="loumoo-card-pricing-block">
+                <span class="loumoo-card-price-prefix">From</span>
+                <div class="loumoo-card-price-main">
+                  <span class="loumoo-card-price-val">220.000 FCFA</span>
+                  <span class="loumoo-card-price-strike">250.000 FCFA</span>
+                </div>
+                <div class="loumoo-card-trust-pill">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                  <span>✓ Escrow options available</span>
+                </div>
+              </div>
+              <button class="loumoo-card-pill-btn" aria-label="Buy Air Jordan 4 Retro">Buy now</button>
+            </div>
+          </div>
         </div>
-        <div class="disc-card-body">
-          <div class="disc-card-name">Dyson Supersonic</div>
-          <div class="disc-card-sub">Hair Dryer Pro</div>
-          <div class="disc-card-price">299.000 FCFA</div>
-        </div>
-      </div>
 
-      <!-- 4. Galaxy S24 Ultra 512GB -->
-      <div class="discovery-product-card" onClick="{{ () => openProduct('galaxy_s24_ultra') }}" style="cursor:pointer">
-        <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f1f5f9">
-          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('galaxy-s24-ultra', 'Galaxy S24 Ultra 512GB'); } }}" class="wishlist-float-btn" aria-label="Save Galaxy S24 Ultra to wishlist">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('galaxy-s24-ultra') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('galaxy-s24-ultra') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-          </button>
-          <img src="https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=400&q=80" alt="Galaxy S24 Ultra" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+        <!-- 3. Dyson Supersonic Hair Dryer (Cutout) -->
+        <div class="loumoo-media-card" onClick="{{ () => openProduct('insta360_x4') }}" aria-label="View Dyson Supersonic Hair Dryer Pro">
+          <div class="loumoo-card-media-cutout">
+            <span class="loumoo-card-badge badge-pill-sale">Save 40.000 FCFA</span>
+            <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('dyson-supersonic', 'Dyson Supersonic'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save Dyson Supersonic to wishlist">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('dyson-supersonic') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('dyson-supersonic') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            </button>
+            <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=500&q=85" alt="Dyson Supersonic" loading="lazy">
+          </div>
+          <div class="loumoo-card-body">
+            <h4 class="loumoo-card-title">Dyson Supersonic Pro</h4>
+            <div class="loumoo-card-tagline">Fast drying. No extreme heat. Salon finish.</div>
+            <div class="loumoo-card-rating-row">
+              <span>★ 5.0</span>
+              <span class="loumoo-card-rating-text">(41) · Dyson Official</span>
+            </div>
+            <div class="loumoo-card-bottom-row">
+              <div class="loumoo-card-pricing-block">
+                <span class="loumoo-card-price-prefix">From</span>
+                <div class="loumoo-card-price-main">
+                  <span class="loumoo-card-price-val">299.000 FCFA</span>
+                  <span class="loumoo-card-price-strike">339.000 FCFA</span>
+                </div>
+                <div class="loumoo-card-trust-pill">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                  <span>✓ Escrow options available</span>
+                </div>
+              </div>
+              <button class="loumoo-card-pill-btn" aria-label="Buy Dyson Supersonic">Buy now</button>
+            </div>
+          </div>
         </div>
-        <div class="disc-card-body">
-          <div class="disc-card-name">Galaxy S24 Ultra</div>
-          <div class="disc-card-sub">512GB Titanium Gray</div>
-          <div class="disc-card-price">890.000 FCFA</div>
-        </div>
-      </div>
-    </div>
 
-    <!-- ── SECTION B: LIFE IN 360° (Asymmetric Spatial Video Storytelling) ── -->
-    <!-- ── SECTION B: LIFESTYLE VIDEO STORIES ── -->
-    <div class="editorial-section-header">
-      <h2 class="editorial-section-title">Life in Motion</h2>
-      <button onClick="{{ () => openVideoModal('Life in Motion Showcase', 'Creator Stories & 4K Cinema Shots', 'STORIES', 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4') }}" class="editorial-see-all">Watch all →</button>
-    </div>
+        <!-- 4. Galaxy S24 Ultra (Cutout) -->
+        <div class="loumoo-media-card" onClick="{{ () => openProduct('galaxy_s24_ultra') }}" aria-label="View Galaxy S24 Ultra 512GB">
+          <div class="loumoo-card-media-cutout">
+            <span class="loumoo-card-badge badge-pill-new">Galaxy AI Inside</span>
+            <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('galaxy-s24-ultra', 'Galaxy S24 Ultra 512GB'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save Galaxy S24 Ultra to wishlist">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('galaxy-s24-ultra') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('galaxy-s24-ultra') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            </button>
+            <img src="https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=500&q=85" alt="Galaxy S24 Ultra" loading="lazy">
+          </div>
+          <div class="loumoo-card-body">
+            <h4 class="loumoo-card-title">Galaxy S24 Ultra</h4>
+            <div class="loumoo-card-tagline">512GB Titanium Gray · 200MP Nightography.</div>
+            <div class="loumoo-card-rating-row">
+              <span>★ 4.9</span>
+              <span class="loumoo-card-rating-text">(88) · Samsung Hub</span>
+            </div>
+            <div class="loumoo-card-bottom-row">
+              <div class="loumoo-card-pricing-block">
+                <span class="loumoo-card-price-prefix">From</span>
+                <div class="loumoo-card-price-main">
+                  <span class="loumoo-card-price-val">890.000 FCFA</span>
+                  <span class="loumoo-card-price-strike">970.000 FCFA</span>
+                </div>
+                <div class="loumoo-card-trust-pill">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                  <span>✓ Escrow options available</span>
+                </div>
+              </div>
+              <button class="loumoo-card-pill-btn" aria-label="Buy Galaxy S24 Ultra">Buy now</button>
+            </div>
+          </div>
+        </div>
 
-    <div class="stories-reel-row" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:16px;margin-bottom:32px">
-      <!-- Story 1: City Lights -->
-      <div onClick="{{ () => openVideoModal('City Lights at Midnight', 'Urban exploration captured in 4K HDR', 'CITY', 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4') }}" style="position:relative;height:260px;border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;box-shadow:var(--shadow-sm);transition:transform 0.3s ease">
-        <img src="https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&w=500&q=80" alt="City Lights" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
-        <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.8) 100%)"></div>
-        <div style="position:absolute;top:12px;left:12px;background:rgba(239,68,68,0.9);color:#fff;font:700 10px var(--font-heading);padding:4px 8px;border-radius:100px;letter-spacing:0.05em">LIVE STORY</div>
-        <div class="insta-play-btn" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:44px;height:44px;background:rgba(255,255,255,0.25);backdrop-filter:blur(8px);border-radius:50%;display:flex;align-items:center;justify-content:center">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="#ffffff" style="margin-left:2px"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+        <!-- 5. Apple MacBook Air 13" M2 -->
+        <div class="loumoo-media-card" onClick="{{ () => openProduct('macbook_m2') }}" aria-label="View MacBook Air 13 M2">
+          <div class="loumoo-card-media-cutout">
+            <span class="loumoo-card-badge badge-pill-sale">Save 55.000 FCFA</span>
+            <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('macbook-air-m2', 'Apple MacBook Air 13 M2'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save MacBook Air to wishlist">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('macbook-air-m2') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('macbook-air-m2') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            </button>
+            <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=500&q=85" alt="MacBook Air M2" loading="lazy">
+          </div>
+          <div class="loumoo-card-body">
+            <h4 class="loumoo-card-title">MacBook Air 13” M2</h4>
+            <div class="loumoo-card-tagline">Apple Silicon M2 · 8GB / 256GB SSD · Starlight.</div>
+            <div class="loumoo-card-rating-row">
+              <span>★ 4.9</span>
+              <span class="loumoo-card-rating-text">(142) · Apple Authorized</span>
+            </div>
+            <div class="loumoo-card-bottom-row">
+              <div class="loumoo-card-pricing-block">
+                <span class="loumoo-card-price-prefix">From</span>
+                <div class="loumoo-card-price-main">
+                  <span class="loumoo-card-price-val">745.000 FCFA</span>
+                  <span class="loumoo-card-price-strike">800.000 FCFA</span>
+                </div>
+                <div class="loumoo-card-trust-pill">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                  <span>✓ Escrow options available</span>
+                </div>
+              </div>
+              <button class="loumoo-card-pill-btn" aria-label="Buy MacBook Air M2">Buy now</button>
+            </div>
+          </div>
         </div>
-        <div style="position:absolute;bottom:12px;left:12px;right:12px">
-          <div style="font:700 14px/1.2 var(--font-heading);color:#fff">City Lights</div>
-          <div style="font:400 11px var(--font-body);color:rgba(255,255,255,0.8);margin-top:2px">4K Night Drive</div>
-        </div>
-      </div>
 
-      <!-- Story 2: Alpine Wings -->
-      <div onClick="{{ () => openVideoModal('Alpine Ridge Flight', 'Gliding over snow-capped mountains', 'ADVENTURE', 'https://assets.mixkit.co/videos/preview/mixkit-snowy-mountain-peaks-in-a-sunny-day-41680-large.mp4') }}" style="position:relative;height:260px;border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;box-shadow:var(--shadow-sm);transition:transform 0.3s ease">
-        <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=500&q=80" alt="Snow Peaks" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
-        <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.8) 100%)"></div>
-        <div style="position:absolute;top:12px;left:12px;background:rgba(14,165,233,0.9);color:#fff;font:700 10px var(--font-heading);padding:4px 8px;border-radius:100px;letter-spacing:0.05em">AERIAL</div>
-        <div class="insta-play-btn" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:44px;height:44px;background:rgba(255,255,255,0.25);backdrop-filter:blur(8px);border-radius:50%;display:flex;align-items:center;justify-content:center">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="#ffffff" style="margin-left:2px"><polygon points="6 4 20 12 6 20 6 4"/></svg>
-        </div>
-        <div style="position:absolute;bottom:12px;left:12px;right:12px">
-          <div style="font:700 14px/1.2 var(--font-heading);color:#fff">Alpine Flight</div>
-          <div style="font:400 11px var(--font-body);color:rgba(255,255,255,0.8);margin-top:2px">Glacier Horizon</div>
-        </div>
-      </div>
-
-      <!-- Story 3: Ocean Waves -->
-      <div onClick="{{ () => openVideoModal('Ocean Swell & Surf', 'Crystal turquoise waves and break lines', 'NATURE', 'https://assets.mixkit.co/videos/preview/mixkit-sea-water-movement-under-the-sun-41544-large.mp4') }}" style="position:relative;height:260px;border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;box-shadow:var(--shadow-sm);transition:transform 0.3s ease">
-        <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=500&q=80" alt="Ocean Waves" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
-        <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.8) 100%)"></div>
-        <div style="position:absolute;top:12px;left:12px;background:rgba(16,185,129,0.9);color:#fff;font:700 10px var(--font-heading);padding:4px 8px;border-radius:100px;letter-spacing:0.05em">COASTAL</div>
-        <div class="insta-play-btn" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:44px;height:44px;background:rgba(255,255,255,0.25);backdrop-filter:blur(8px);border-radius:50%;display:flex;align-items:center;justify-content:center">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="#ffffff" style="margin-left:2px"><polygon points="6 4 20 12 6 20 6 4"/></svg>
-        </div>
-        <div style="position:absolute;bottom:12px;left:12px;right:12px">
-          <div style="font:700 14px/1.2 var(--font-heading);color:#fff">Ocean Swell</div>
-          <div style="font:400 11px var(--font-body);color:rgba(255,255,255,0.8);margin-top:2px">Kribi Coastline</div>
-        </div>
-      </div>
-
-      <!-- Story 4: Rainforest Cascade -->
-      <div onClick="{{ () => openVideoModal('Lobe Falls Cascade', 'Deep equatorial falls and mist canopy', 'DISCOVER', 'https://assets.mixkit.co/videos/preview/mixkit-waterfall-in-forest-2213-large.mp4') }}" style="position:relative;height:260px;border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;box-shadow:var(--shadow-sm);transition:transform 0.3s ease">
-        <img src="https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?auto=format&fit=crop&w=500&q=80" alt="Waterfall Forest" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
-        <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.8) 100%)"></div>
-        <div style="position:absolute;top:12px;left:12px;background:rgba(168,85,247,0.9);color:#fff;font:700 10px var(--font-heading);padding:4px 8px;border-radius:100px;letter-spacing:0.05em">DISCOVERY</div>
-        <div class="insta-play-btn" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:44px;height:44px;background:rgba(255,255,255,0.25);backdrop-filter:blur(8px);border-radius:50%;display:flex;align-items:center;justify-content:center">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="#ffffff" style="margin-left:2px"><polygon points="6 4 20 12 6 20 6 4"/></svg>
-        </div>
-        <div style="position:absolute;bottom:12px;left:12px;right:12px">
-          <div style="font:700 14px/1.2 var(--font-heading);color:#fff">Lobe Falls</div>
-          <div style="font:400 11px var(--font-body);color:rgba(255,255,255,0.8);margin-top:2px">Rainforest Mist</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── SECTION C: COLLECTIONS FOR YOU (Warm Editorial Visual Cards) ── -->
-    <div class="editorial-section-header">
-      <h2 class="editorial-section-title">Collections for you</h2>
-      <button onClick="{{ on.bestpicks }}" class="editorial-see-all">See all →</button>
-    </div>
-
-    <div class="collections-v2-grid">
-      <!-- 1. Weekend Essentials -->
-      <div onClick="{{ on.bestpicks }}" class="collection-v2-card coll-weekend" aria-label="Explore Weekend Essentials Collection">
-        <div class="coll-card-icon-play">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="#ffffff"><polygon points="6 4 20 12 6 20 6 4"/></svg>
-        </div>
-        <div class="coll-card-content">
-          <div class="coll-card-title">Weekend<br>Essentials</div>
-        </div>
-      </div>
-
-      <!-- 2. Back to School Essentials -->
-      <div onClick="{{ on.bestpicks }}" class="collection-v2-card coll-school" aria-label="Explore Back to School Essentials Collection">
-        <div class="coll-card-content">
-          <div class="coll-card-title">Back to School<br>Essentials</div>
-        </div>
-      </div>
-
-      <!-- 3. Creator Gear -->
-      <div onClick="{{ on.bestpicks }}" class="collection-v2-card coll-creator" aria-label="Explore Creator Gear Collection">
-        <div class="coll-card-content">
-          <div class="coll-card-title">Creator<br>Gear</div>
-        </div>
-      </div>
-
-      <!-- 4. Gift Ideas - For Everyone -->
-      <div onClick="{{ on.bestpicks }}" class="collection-v2-card coll-gifts" aria-label="Explore Gift Ideas Collection">
-        <div class="coll-card-content">
-          <div class="coll-card-title">Gift Ideas<br><span style="font-weight:500;font-size:12px;opacity:0.9">For Everyone</span></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── SECTION D: BEST OF FASHION (2-col mobile / 4-col desktop) ── -->
-    <div class="editorial-section-header">
-      <h2 class="editorial-section-title">Best of fashion</h2>
-      <button onClick="{{ () => openCategory('fashion') }}" class="editorial-see-all">See all →</button>
-    </div>
-
-    <div class="discovery-product-grid">
-      <!-- 1. Denim Jacket -->
-      <div class="discovery-product-card" onClick="{{ () => openProduct('bazin_boubou') }}" style="cursor:pointer">
-        <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
-          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('denim-jacket', 'Denim Jacket Oversized'); } }}" class="wishlist-float-btn" aria-label="Save Denim Jacket to wishlist">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('denim-jacket') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('denim-jacket') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-          </button>
-          <img src="https://images.unsplash.com/photo-1576995853123-5a10305d93c0?auto=format&fit=crop&w=400&q=80" alt="Denim Jacket Oversized" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
-        </div>
-        <div class="disc-card-body">
-          <div class="disc-card-name">Denim Jacket</div>
-          <div class="disc-card-sub">Oversized Indigo</div>
-          <div class="disc-card-price">45.000 FCFA</div>
-        </div>
-      </div>
-
-      <!-- 2. Cargo Pants -->
-      <div class="discovery-product-card" onClick="{{ () => openProduct('nike_air_force_1') }}" style="cursor:pointer">
-        <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
-          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('cargo-pants', 'Cargo Pants Relaxed Fit'); } }}" class="wishlist-float-btn" aria-label="Save Cargo Pants to wishlist">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('cargo-pants') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('cargo-pants') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-          </button>
-          <img src="https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?auto=format&fit=crop&w=400&q=80" alt="Cargo Pants Olive" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
-        </div>
-        <div class="disc-card-body">
-          <div class="disc-card-name">Cargo Pants</div>
-          <div class="disc-card-sub">Relaxed Olive Fit</div>
-          <div class="disc-card-price">35.000 FCFA</div>
-        </div>
-      </div>
-
-      <!-- 3. Hoodie Heavyweight -->
-      <div class="discovery-product-card" onClick="{{ () => openProduct('bazin_boubou') }}" style="cursor:pointer">
-        <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
-          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('hoodie-heavyweight', 'Hoodie Heavyweight'); } }}" class="wishlist-float-btn" aria-label="Save Hoodie Heavyweight to wishlist">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('hoodie-heavyweight') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('hoodie-heavyweight') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-          </button>
-          <img src="https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=400&q=80" alt="Hoodie Heavyweight" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
-        </div>
-        <div class="disc-card-body">
-          <div class="disc-card-name">Hoodie Heavyweight</div>
-          <div class="disc-card-sub">Oatmeal Edition</div>
-          <div class="disc-card-price">39.000 FCFA</div>
-        </div>
-      </div>
-
-      <!-- 4. Watch Minimal Silver -->
-      <div class="discovery-product-card" onClick="{{ () => openProduct('rolex_submariner') }}" style="cursor:pointer">
-        <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
-          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('watch-minimal-silver', 'Watch Minimal Silver'); } }}" class="wishlist-float-btn" aria-label="Save Watch to wishlist">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('watch-minimal-silver') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('watch-minimal-silver') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-          </button>
-          <img src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=400&q=80" alt="Rolex Minimalist Silver" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
-        </div>
-        <div class="disc-card-body">
-          <div class="disc-card-name">Rolex Oyster</div>
-          <div class="disc-card-sub">Submariner Date</div>
-          <div class="disc-card-price">6.850.000 FCFA</div>
+        <!-- 6. Insta360 X4 8K Edition -->
+        <div class="loumoo-media-card" onClick="{{ () => openProduct('insta360_x4') }}" aria-label="View Insta360 X4">
+          <div class="loumoo-card-media-cutout">
+            <span class="loumoo-card-badge badge-pill-new">8K 360° Flagship</span>
+            <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('insta360-x4', 'Insta360 X4 8K'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save Insta360 X4 to wishlist">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('insta360-x4') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('insta360-x4') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            </button>
+            <img src="https://images.unsplash.com/photo-1502680390469-be75c86b636f?auto=format&fit=crop&w=500&q=85" alt="Insta360 X4" loading="lazy">
+          </div>
+          <div class="loumoo-card-body">
+            <h4 class="loumoo-card-title">Insta360 X4 8K</h4>
+            <div class="loumoo-card-tagline">8K 30fps 360° Video · Invisible Selfie Stick AI.</div>
+            <div class="loumoo-card-rating-row">
+              <span>★ 5.0</span>
+              <span class="loumoo-card-rating-text">(64) · Insta360 Official</span>
+            </div>
+            <div class="loumoo-card-bottom-row">
+              <div class="loumoo-card-pricing-block">
+                <span class="loumoo-card-price-prefix">From</span>
+                <div class="loumoo-card-price-main">
+                  <span class="loumoo-card-price-val">349.000 FCFA</span>
+                  <span class="loumoo-card-price-strike">389.000 FCFA</span>
+                </div>
+                <div class="loumoo-card-trust-pill">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                  <span>✓ Escrow options available</span>
+                </div>
+              </div>
+              <button class="loumoo-card-pill-btn" aria-label="Buy Insta360 X4">Buy now</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- ── SECTION E: TECH YOU'LL LOVE (2-col mobile / 4-col desktop) ── -->
-    <div class="editorial-section-header">
-      <h2 class="editorial-section-title">Tech you'll love</h2>
-      <button onClick="{{ () => openCategory('electronics') }}" class="editorial-see-all">See all →</button>
+    <!-- ── 06: LIFE IN MOTION — STORIES REEL (Horizontal Native Content Rail) ── -->
+    <div class="loumoo-rail-section">
+      <div class="loumoo-rail-header">
+        <div class="loumoo-rail-title-wrap">
+          <span class="loumoo-rail-kicker">STORIES IN MOTION</span>
+          <h2 class="loumoo-rail-title">Life in motion</h2>
+          <p class="loumoo-rail-subtitle">Real action clips and creator moments across Cameroon and beyond</p>
+        </div>
+        <div class="loumoo-rail-controls">
+          <button onClick="{{ () => openVideoModal('Life in Motion Stories', 'Curated Video Showcase', 'STORIES') }}" class="loumoo-rail-action-link">Watch all →</button>
+          <button onClick="{{ () => scrollRail('storiesMotionRail', -260) }}" class="loumoo-rail-nav-btn" aria-label="Previous stories">‹</button>
+          <button onClick="{{ () => scrollRail('storiesMotionRail', 260) }}" class="loumoo-rail-nav-btn" aria-label="Next stories">›</button>
+        </div>
+      </div>
+
+      <div class="loumoo-rail-track" id="storiesMotionRail">
+        <!-- Story 1: City Lights -->
+        <div class="loumoo-rail-card-story" onClick="{{ () => openVideoModal('City Lights at Midnight', 'Urban exploration captured in 4K HDR', 'CITY', 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4') }}" data-hover-video="true" style="position:relative;border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;box-shadow:var(--shadow-sm);transition:transform 0.3s ease;background:#0b0d14" aria-label="Play City Lights story">
+          <video src="https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4" poster="https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&w=500&q=80" muted loop playsinline preload="none" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.85) 100%);pointer-events:none"></div>
+          <div style="position:absolute;top:12px;left:12px;background:rgba(239,68,68,0.9);color:#fff;font:700 10px var(--font-heading);padding:4px 8px;border-radius:100px;letter-spacing:0.05em">LIVE STORY</div>
+          <div style="position:absolute;bottom:12px;left:12px;right:12px;pointer-events:none">
+            <div style="font:700 14px/1.2 var(--font-heading);color:#fff">City Lights</div>
+            <div style="font:400 11px var(--font-body);color:rgba(255,255,255,0.8);margin-top:2px">4K Night Drive</div>
+          </div>
+        </div>
+
+        <!-- Story 2: Alpine Wings -->
+        <div class="loumoo-rail-card-story" onClick="{{ () => openVideoModal('Alpine Ridge Flight', 'Gliding over snow-capped mountains', 'ADVENTURE', 'https://assets.mixkit.co/videos/preview/mixkit-snowy-mountain-peaks-in-a-sunny-day-41680-large.mp4') }}" data-hover-video="true" style="position:relative;border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;box-shadow:var(--shadow-sm);transition:transform 0.3s ease;background:#0b0d14" aria-label="Play Alpine Ridge story">
+          <video src="https://assets.mixkit.co/videos/preview/mixkit-snowy-mountain-peaks-in-a-sunny-day-41680-large.mp4" poster="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=500&q=80" muted loop playsinline preload="none" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.85) 100%);pointer-events:none"></div>
+          <div style="position:absolute;top:12px;left:12px;background:rgba(14,165,233,0.9);color:#fff;font:700 10px var(--font-heading);padding:4px 8px;border-radius:100px;letter-spacing:0.05em">AERIAL</div>
+          <div style="position:absolute;bottom:12px;left:12px;right:12px;pointer-events:none">
+            <div style="font:700 14px/1.2 var(--font-heading);color:#fff">Alpine Flight</div>
+            <div style="font:400 11px var(--font-body);color:rgba(255,255,255,0.8);margin-top:2px">Glacier Horizon</div>
+          </div>
+        </div>
+
+        <!-- Story 3: Ocean Waves -->
+        <div class="loumoo-rail-card-story" onClick="{{ () => openVideoModal('Ocean Swell & Surf', 'Crystal turquoise waves and break lines', 'NATURE', 'https://assets.mixkit.co/videos/preview/mixkit-sea-water-movement-under-the-sun-41544-large.mp4') }}" data-hover-video="true" style="position:relative;border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;box-shadow:var(--shadow-sm);transition:transform 0.3s ease;background:#0b0d14" aria-label="Play Ocean Swell story">
+          <video src="https://assets.mixkit.co/videos/preview/mixkit-sea-water-movement-under-the-sun-41544-large.mp4" poster="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=500&q=80" muted loop playsinline preload="none" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.85) 100%);pointer-events:none"></div>
+          <div style="position:absolute;top:12px;left:12px;background:rgba(16,185,129,0.9);color:#fff;font:700 10px var(--font-heading);padding:4px 8px;border-radius:100px;letter-spacing:0.05em">COASTAL</div>
+          <div style="position:absolute;bottom:12px;left:12px;right:12px;pointer-events:none">
+            <div style="font:700 14px/1.2 var(--font-heading);color:#fff">Ocean Swell</div>
+            <div style="font:400 11px var(--font-body);color:rgba(255,255,255,0.8);margin-top:2px">Kribi Coastline</div>
+          </div>
+        </div>
+
+        <!-- Story 4: Rainforest Cascade -->
+        <div class="loumoo-rail-card-story" onClick="{{ () => openVideoModal('Lobe Falls Cascade', 'Deep equatorial falls and mist canopy', 'DISCOVER', 'https://assets.mixkit.co/videos/preview/mixkit-waterfall-in-forest-2213-large.mp4') }}" data-hover-video="true" style="position:relative;border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;box-shadow:var(--shadow-sm);transition:transform 0.3s ease;background:#0b0d14" aria-label="Play Lobe Falls story">
+          <video src="https://assets.mixkit.co/videos/preview/mixkit-waterfall-in-forest-2213-large.mp4" poster="https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?auto=format&fit=crop&w=500&q=80" muted loop playsinline preload="none" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.85) 100%);pointer-events:none"></div>
+          <div style="position:absolute;top:12px;left:12px;background:rgba(168,85,247,0.9);color:#fff;font:700 10px var(--font-heading);padding:4px 8px;border-radius:100px;letter-spacing:0.05em">DISCOVERY</div>
+          <div style="position:absolute;bottom:12px;left:12px;right:12px;pointer-events:none">
+            <div style="font:700 14px/1.2 var(--font-heading);color:#fff">Lobe Falls</div>
+            <div style="font:400 11px var(--font-body);color:rgba(255,255,255,0.8);margin-top:2px">Rainforest Mist</div>
+          </div>
+        </div>
+
+        <!-- Story 5: Mount Cameroon Ascent -->
+        <div class="loumoo-rail-card-story" onClick="{{ () => openVideoModal('Mount Cameroon Ascent', 'Trekking through volcanic cloud forest at 4000m', 'TREK', 'https://assets.mixkit.co/videos/preview/mixkit-snowy-mountain-peaks-in-a-sunny-day-41680-large.mp4') }}" data-hover-video="true" style="position:relative;border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;box-shadow:var(--shadow-sm);transition:transform 0.3s ease;background:#0b0d14" aria-label="Play Mount Cameroon story">
+          <video src="https://assets.mixkit.co/videos/preview/mixkit-snowy-mountain-peaks-in-a-sunny-day-41680-large.mp4" poster="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=500&q=80" muted loop playsinline preload="none" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.85) 100%);pointer-events:none"></div>
+          <div style="position:absolute;top:12px;left:12px;background:rgba(234,88,12,0.9);color:#fff;font:700 10px var(--font-heading);padding:4px 8px;border-radius:100px;letter-spacing:0.05em">EXPEDITION</div>
+          <div style="position:absolute;bottom:12px;left:12px;right:12px;pointer-events:none">
+            <div style="font:700 14px/1.2 var(--font-heading);color:#fff">Mount Fako</div>
+            <div style="font:400 11px var(--font-body);color:rgba(255,255,255,0.8);margin-top:2px">Volcanic Trail</div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="discovery-product-grid">
-      <!-- 1. iPad Air M2 -->
-      <div class="discovery-product-card" onClick="{{ () => openProduct('macbook_m2') }}" style="cursor:pointer">
-        <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
-          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('ipad-air-m2', 'iPad Air M2'); } }}" class="wishlist-float-btn" aria-label="Save iPad Air M2 to wishlist">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('ipad-air-m2') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('ipad-air-m2') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-          </button>
-          <img src="https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?auto=format&fit=crop&w=400&q=80" alt="iPad Air M2" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+    <!-- ── SECTION C: COLLECTIONS FOR YOU (Horizontal Native Content Rail) ── -->
+    <div class="loumoo-rail-section">
+      <div class="loumoo-rail-header">
+        <div class="loumoo-rail-title-wrap">
+          <span class="loumoo-rail-kicker">CURATED THEMES</span>
+          <h2 class="loumoo-rail-title">Collections for you</h2>
+          <p class="loumoo-rail-subtitle">Editor-picked essentials and thematic shopping experiences</p>
         </div>
-        <div class="disc-card-body">
-          <div class="disc-card-name">iPad Air M2</div>
-          <div class="disc-card-sub">11-inch Liquid Retina</div>
-          <div class="disc-card-price">499.000 FCFA</div>
-        </div>
-      </div>
-
-      <!-- 2. Sony WH-CH720N -->
-      <div class="discovery-product-card" onClick="{{ () => openProduct('sony_xm5') }}" style="cursor:pointer">
-        <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
-          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('sony-wh-ch720n', 'Sony WH-CH720N'); } }}" class="wishlist-float-btn" aria-label="Save Sony WH-CH720N to wishlist">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('sony-wh-ch720n') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('sony-wh-ch720n') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-          </button>
-          <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=400&q=80" alt="Sony Headphones" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
-        </div>
-        <div class="disc-card-body">
-          <div class="disc-card-name">Sony WH-CH720N</div>
-          <div class="disc-card-sub">Noise Canceling ANC</div>
-          <div class="disc-card-price">89.000 FCFA</div>
+        <div class="loumoo-rail-controls">
+          <button onClick="{{ on.bestpicks }}" class="loumoo-rail-action-link">See all →</button>
+          <button onClick="{{ () => scrollRail('collectionsForYouRail', -240) }}" class="loumoo-rail-nav-btn" aria-label="Previous collections">‹</button>
+          <button onClick="{{ () => scrollRail('collectionsForYouRail', 240) }}" class="loumoo-rail-nav-btn" aria-label="Next collections">›</button>
         </div>
       </div>
 
-      <!-- 3. Anker PowerCore 20K -->
-      <div class="discovery-product-card" onClick="{{ () => openProduct('anker_737') }}" style="cursor:pointer">
-        <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
-          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('anker-powercore-20k', 'Anker PowerCore 20K'); } }}" class="wishlist-float-btn" aria-label="Save Anker PowerCore 20K to wishlist">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('anker-powercore-20k') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('anker-powercore-20k') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-          </button>
-          <img src="https://images.unsplash.com/photo-1609592424364-704337b51b3f?auto=format&fit=crop&w=400&q=80" alt="Anker 737 Power Bank" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+      <div class="loumoo-rail-track" id="collectionsForYouRail">
+        <!-- 1. Weekend Essentials -->
+        <div onClick="{{ on.bestpicks }}" class="collection-v2-card coll-weekend" aria-label="Explore Weekend Essentials Collection">
+          <div class="coll-card-icon-play">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#ffffff"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+          </div>
+          <div class="coll-card-content">
+            <div class="coll-card-title">Weekend<br>Essentials</div>
+          </div>
         </div>
-        <div class="disc-card-body">
-          <div class="disc-card-name">Anker 737 PowerBank</div>
-          <div class="disc-card-sub">140W Fast Charge 24K</div>
-          <div class="disc-card-price">69.000 FCFA</div>
-        </div>
-      </div>
 
-      <!-- 4. Dell XPS 13 Ultra 7 -->
-      <div class="discovery-product-card" onClick="{{ () => openProduct('macbook_m2') }}" style="cursor:pointer">
-        <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
-          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('dell-xps-13', 'Dell XPS 13 Ultra 7'); } }}" class="wishlist-float-btn" aria-label="Save Dell XPS 13 to wishlist">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('dell-xps-13') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('dell-xps-13') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-          </button>
-          <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80" alt="Dell XPS 13 OLED" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+        <!-- 2. Back to School Essentials -->
+        <div onClick="{{ on.bestpicks }}" class="collection-v2-card coll-school" aria-label="Explore Back to School Essentials Collection">
+          <div class="coll-card-content">
+            <div class="coll-card-title">Back to School<br>Essentials</div>
+          </div>
         </div>
-        <div class="disc-card-body">
-          <div class="disc-card-name">Dell XPS 13 OLED</div>
-          <div class="disc-card-sub">Intel Core Ultra 7 1TB</div>
-          <div class="disc-card-price">1.450.000 FCFA</div>
+
+        <!-- 3. Creator Gear -->
+        <div onClick="{{ on.bestpicks }}" class="collection-v2-card coll-creator" aria-label="Explore Creator Gear Collection">
+          <div class="coll-card-content">
+            <div class="coll-card-title">Creator<br>Gear</div>
+          </div>
+        </div>
+
+        <!-- 4. Gift Ideas - For Everyone -->
+        <div onClick="{{ on.bestpicks }}" class="collection-v2-card coll-gifts" aria-label="Explore Gift Ideas Collection">
+          <div class="coll-card-content">
+            <div class="coll-card-title">Gift Ideas<br><span style="font-weight:500;font-size:12px;opacity:0.9">For Everyone</span></div>
+          </div>
+        </div>
+
+        <!-- 5. Luxury Vault -->
+        <div onClick="{{ on.bestpicks }}" class="collection-v2-card coll-weekend" style="background:linear-gradient(135deg, #1e1b4b 0%, #312e81 100%)" aria-label="Explore Luxury Vault Collection">
+          <div class="coll-card-content">
+            <div class="coll-card-title">Luxury<br>Vault</div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- ── SECTION F: TRAVEL THE WORLD (Mobility Squircles) ── -->
-    <div class="editorial-section-header">
-      <h2 class="editorial-section-title">Travel the world</h2>
-      <button onClick="{{ on.travel }}" class="editorial-see-all">See all →</button>
+    <!-- ── SECTION D: BEST OF FASHION (Horizontal Native Content Rail) ── -->
+    <div class="loumoo-rail-section">
+      <div class="loumoo-rail-header">
+        <div class="loumoo-rail-title-wrap">
+          <span class="loumoo-rail-kicker">STREETWEAR & LUXURY</span>
+          <h2 class="loumoo-rail-title">Best of fashion</h2>
+          <p class="loumoo-rail-subtitle">Trending streetwear, heritage tailoring and luxury accessories</p>
+        </div>
+        <div class="loumoo-rail-controls">
+          <button onClick="{{ () => openCategory('fashion') }}" class="loumoo-rail-action-link">See all →</button>
+          <button onClick="{{ () => scrollRail('fashionRail', -285) }}" class="loumoo-rail-nav-btn" aria-label="Previous fashion items">‹</button>
+          <button onClick="{{ () => scrollRail('fashionRail', 285) }}" class="loumoo-rail-nav-btn" aria-label="Next fashion items">›</button>
+        </div>
+      </div>
+
+      <div class="loumoo-rail-track" id="fashionRail">
+        <!-- 1. Denim Jacket -->
+        <div class="discovery-product-card" onClick="{{ () => openProduct('bazin_boubou') }}" style="cursor:pointer">
+          <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
+            <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('denim-jacket', 'Denim Jacket Oversized'); } }}" class="wishlist-float-btn" aria-label="Save Denim Jacket to wishlist">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('denim-jacket') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('denim-jacket') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            </button>
+            <img src="https://images.unsplash.com/photo-1576995853123-5a10305d93c0?auto=format&fit=crop&w=400&q=80" alt="Denim Jacket Oversized" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+          </div>
+          <div class="disc-card-body">
+            <div class="disc-card-name">Denim Jacket</div>
+            <div class="disc-card-sub">Oversized Indigo</div>
+            <div class="disc-card-price">45.000 FCFA</div>
+          </div>
+        </div>
+
+        <!-- 2. Cargo Pants -->
+        <div class="discovery-product-card" onClick="{{ () => openProduct('nike_air_force_1') }}" style="cursor:pointer">
+          <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
+            <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('cargo-pants', 'Cargo Pants Relaxed Fit'); } }}" class="wishlist-float-btn" aria-label="Save Cargo Pants to wishlist">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('cargo-pants') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('cargo-pants') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            </button>
+            <img src="https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?auto=format&fit=crop&w=400&q=80" alt="Cargo Pants Olive" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+          </div>
+          <div class="disc-card-body">
+            <div class="disc-card-name">Cargo Pants</div>
+            <div class="disc-card-sub">Relaxed Olive Fit</div>
+            <div class="disc-card-price">35.000 FCFA</div>
+          </div>
+        </div>
+
+        <!-- 3. Hoodie Heavyweight -->
+        <div class="discovery-product-card" onClick="{{ () => openProduct('bazin_boubou') }}" style="cursor:pointer">
+          <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
+            <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('hoodie-heavyweight', 'Hoodie Heavyweight'); } }}" class="wishlist-float-btn" aria-label="Save Hoodie Heavyweight to wishlist">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('hoodie-heavyweight') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('hoodie-heavyweight') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            </button>
+            <img src="https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=400&q=80" alt="Hoodie Heavyweight" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+          </div>
+          <div class="disc-card-body">
+            <div class="disc-card-name">Hoodie Heavyweight</div>
+            <div class="disc-card-sub">Oatmeal Edition</div>
+            <div class="disc-card-price">39.000 FCFA</div>
+          </div>
+        </div>
+
+        <!-- 4. Watch Minimal Silver -->
+        <div class="discovery-product-card" onClick="{{ () => openProduct('rolex_submariner') }}" style="cursor:pointer">
+          <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
+            <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('watch-minimal-silver', 'Watch Minimal Silver'); } }}" class="wishlist-float-btn" aria-label="Save Watch to wishlist">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('watch-minimal-silver') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('watch-minimal-silver') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            </button>
+            <img src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=400&q=80" alt="Rolex Minimalist Silver" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+          </div>
+          <div class="disc-card-body">
+            <div class="disc-card-name">Rolex Oyster</div>
+            <div class="disc-card-sub">Submariner Date</div>
+            <div class="disc-card-price">6.850.000 FCFA</div>
+          </div>
+        </div>
+
+        <!-- 5. Nike Air Force 1 '07 -->
+        <div class="discovery-product-card" onClick="{{ () => openProduct('nike_air_force_1') }}" style="cursor:pointer">
+          <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
+            <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('nike-af1', 'Nike Air Force 1 07'); } }}" class="wishlist-float-btn" aria-label="Save Nike AF1 to wishlist">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('nike-af1') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('nike-af1') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            </button>
+            <img src="https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=400&q=80" alt="Nike Air Force 1" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+          </div>
+          <div class="disc-card-body">
+            <div class="disc-card-name">Nike Air Force 1</div>
+            <div class="disc-card-sub">Triple White '07</div>
+            <div class="disc-card-price">65.000 FCFA</div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="travel-world-grid">
-      <!-- 1. Hotels -->
-      <button onClick="{{ () => openCategory('hotels') }}" class="travel-squircle-card" aria-label="Travel Hotels">
-        <div class="travel-squircle-icon-wrap" style="background:#e0f2fe;color:#0284c7">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 22v-6.57"/><path d="M12 11h.01"/><path d="M12 7h.01"/><path d="M14 15.43V22"/><path d="M15 11h.01"/><path d="M15 7h.01"/><path d="M16 16h2a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/><path d="M18 22v-4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v4"/><path d="M8 22v-6.57"/><path d="M9 11h.01"/><path d="M9 7h.01"/></svg>
+    <!-- ── SECTION E: TECH YOU'LL LOVE (Horizontal Native Content Rail) ── -->
+    <div class="loumoo-rail-section">
+      <div class="loumoo-rail-header">
+        <div class="loumoo-rail-title-wrap">
+          <span class="loumoo-rail-kicker">SMART HARDWARE</span>
+          <h2 class="loumoo-rail-title">Tech you'll love</h2>
+          <p class="loumoo-rail-subtitle">High-performance tablets, chargers, and studio audio gear</p>
         </div>
-        <span class="travel-squircle-label">Hotels</span>
-      </button>
+        <div class="loumoo-rail-controls">
+          <button onClick="{{ () => openCategory('electronics') }}" class="loumoo-rail-action-link">See all →</button>
+          <button onClick="{{ () => scrollRail('techRail', -285) }}" class="loumoo-rail-nav-btn" aria-label="Previous tech items">‹</button>
+          <button onClick="{{ () => scrollRail('techRail', 285) }}" class="loumoo-rail-nav-btn" aria-label="Next tech items">›</button>
+        </div>
+      </div>
 
-      <!-- 2. Flights -->
-      <button onClick="{{ () => { setTravelTabFlight(); on.travel(); } }}" class="travel-squircle-card" aria-label="Travel Flights">
-        <div class="travel-squircle-icon-wrap" style="background:#f3e8ff;color:#9333ea">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1z"/></svg>
+      <div class="loumoo-rail-track" id="techRail">
+        <!-- 1. iPad Air M2 -->
+        <div class="discovery-product-card" onClick="{{ () => openProduct('macbook_m2') }}" style="cursor:pointer">
+          <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
+            <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('ipad-air-m2', 'iPad Air M2'); } }}" class="wishlist-float-btn" aria-label="Save iPad Air M2 to wishlist">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('ipad-air-m2') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('ipad-air-m2') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            </button>
+            <img src="https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?auto=format&fit=crop&w=400&q=80" alt="iPad Air M2" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+          </div>
+          <div class="disc-card-body">
+            <div class="disc-card-name">iPad Air M2</div>
+            <div class="disc-card-sub">11-inch Liquid Retina</div>
+            <div class="disc-card-price">499.000 FCFA</div>
+          </div>
         </div>
-        <span class="travel-squircle-label">Flights</span>
-      </button>
 
-      <!-- 3. Buses -->
-      <button onClick="{{ () => { setTravelTabBus(); on.travel(); } }}" class="travel-squircle-card" aria-label="Travel Buses">
-        <div class="travel-squircle-icon-wrap" style="background:#e0e7ff;color:#4f46e5">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 6v6"/><path d="M15 6v6"/><path d="M2 12h19.6"/><path d="M18 18h3s.5-1.7.8-2.8c.1-.4.2-.8.2-1.2 0-.4-.1-.8-.2-1.2l-1.4-5C20 6.3 18.7 5 17.2 5H6.8C5.3 5 4 6.3 3.6 7.8L2.2 12.8c-.1.4-.2.8-.2 1.2 0 .4.1.8.2 1.2.3 1.1.8 2.8.8 2.8h3"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>
+        <!-- 2. Sony WH-CH720N -->
+        <div class="discovery-product-card" onClick="{{ () => openProduct('sony_xm5') }}" style="cursor:pointer">
+          <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
+            <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('sony-wh-ch720n', 'Sony WH-CH720N'); } }}" class="wishlist-float-btn" aria-label="Save Sony WH-CH720N to wishlist">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('sony-wh-ch720n') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('sony-wh-ch720n') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            </button>
+            <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=400&q=80" alt="Sony Headphones" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+          </div>
+          <div class="disc-card-body">
+            <div class="disc-card-name">Sony WH-CH720N</div>
+            <div class="disc-card-sub">Noise Canceling ANC</div>
+            <div class="disc-card-price">89.000 FCFA</div>
+          </div>
         </div>
-        <span class="travel-squircle-label">Buses</span>
-      </button>
 
-      <!-- 4. Trains -->
-      <button onClick="{{ () => { setTravelTabTrain(); on.travel(); } }}" class="travel-squircle-card" aria-label="Travel Trains">
-        <div class="travel-squircle-icon-wrap" style="background:#ffe4e6;color:#e11d48">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect width="16" height="16" x="4" y="3" rx="2"/><path d="M4 11h16"/><path d="M12 3v8"/><path d="m8 19-2 3"/><path d="m18 22-2-3"/><circle cx="8" cy="15" r="1"/><circle cx="16" cy="15" r="1"/></svg>
+        <!-- 3. Anker PowerCore 20K -->
+        <div class="discovery-product-card" onClick="{{ () => openProduct('anker_737') }}" style="cursor:pointer">
+          <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
+            <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('anker-powercore-20k', 'Anker PowerCore 20K'); } }}" class="wishlist-float-btn" aria-label="Save Anker PowerCore 20K to wishlist">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('anker-powercore-20k') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('anker-powercore-20k') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            </button>
+            <img src="https://images.unsplash.com/photo-1609592424364-704337b51b3f?auto=format&fit=crop&w=400&q=80" alt="Anker 737 Power Bank" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+          </div>
+          <div class="disc-card-body">
+            <div class="disc-card-name">Anker 737 PowerBank</div>
+            <div class="disc-card-sub">140W Fast Charge 24K</div>
+            <div class="disc-card-price">69.000 FCFA</div>
+          </div>
         </div>
-        <span class="travel-squircle-label">Trains</span>
-      </button>
 
-      <!-- 5. Taxi -->
-      <button onClick="{{ () => { setTravelTabTaxi(); on.travel(); } }}" class="travel-squircle-card" aria-label="Travel Taxi">
-        <div class="travel-squircle-icon-wrap" style="background:#fef3c7;color:#d97706">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H10L8 6H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-4L14 2Z"/><circle cx="7" cy="15" r="2"/><circle cx="17" cy="15" r="2"/></svg>
+        <!-- 4. Dell XPS 13 Ultra 7 -->
+        <div class="discovery-product-card" onClick="{{ () => openProduct('macbook_m2') }}" style="cursor:pointer">
+          <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
+            <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('dell-xps-13', 'Dell XPS 13 Ultra 7'); } }}" class="wishlist-float-btn" aria-label="Save Dell XPS 13 to wishlist">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('dell-xps-13') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('dell-xps-13') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            </button>
+            <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80" alt="Dell XPS 13 OLED" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+          </div>
+          <div class="disc-card-body">
+            <div class="disc-card-name">Dell XPS 13 OLED</div>
+            <div class="disc-card-sub">Intel Core Ultra 7 1TB</div>
+            <div class="disc-card-price">1.450.000 FCFA</div>
+          </div>
         </div>
-        <span class="travel-squircle-label">Taxi</span>
-      </button>
+      </div>
+    </div>
 
-      <!-- 6. Car Rental -->
-      <button onClick="{{ on.travel }}" class="travel-squircle-card" aria-label="Travel Car Rental">
-        <div class="travel-squircle-icon-wrap" style="background:#dcfce7;color:#16a34a">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C2 11 2 11.4 2 11.8V16c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+    <!-- ── SECTION F: TRAVEL THE WORLD (Horizontal Native Content Rail) ── -->
+    <div class="loumoo-rail-section">
+      <div class="loumoo-rail-header">
+        <div class="loumoo-rail-title-wrap">
+          <span class="loumoo-rail-kicker">MOBILITY & STAYS</span>
+          <h2 class="loumoo-rail-title">Travel the world</h2>
+          <p class="loumoo-rail-subtitle">Instant bookings for VIP intercity buses, luxury hotel suites, and flights</p>
         </div>
-        <span class="travel-squircle-label">Car Rental</span>
-      </button>
+        <div class="loumoo-rail-controls">
+          <button onClick="{{ on.travel }}" class="loumoo-rail-action-link">See all →</button>
+          <button onClick="{{ () => scrollRail('travelWorldRail', -200) }}" class="loumoo-rail-nav-btn" aria-label="Previous mobility options">‹</button>
+          <button onClick="{{ () => scrollRail('travelWorldRail', 200) }}" class="loumoo-rail-nav-btn" aria-label="Next mobility options">›</button>
+        </div>
+      </div>
+
+      <div class="loumoo-rail-track" id="travelWorldRail">
+        <!-- 1. Hotels -->
+        <button onClick="{{ () => openCategory('hotels') }}" class="travel-squircle-card" aria-label="Travel Hotels">
+          <div class="travel-squircle-icon-wrap" style="background:#e0f2fe;color:#0284c7">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 22v-6.57"/><path d="M12 11h.01"/><path d="M12 7h.01"/><path d="M14 15.43V22"/><path d="M15 11h.01"/><path d="M15 7h.01"/><path d="M16 16h2a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/><path d="M18 22v-4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v4"/><path d="M8 22v-6.57"/><path d="M9 11h.01"/><path d="M9 7h.01"/></svg>
+          </div>
+          <span class="travel-squircle-label">Hotels</span>
+        </button>
+
+        <!-- 2. Flights -->
+        <button onClick="{{ () => { setTravelTabFlight(); on.travel(); } }}" class="travel-squircle-card" aria-label="Travel Flights">
+          <div class="travel-squircle-icon-wrap" style="background:#f3e8ff;color:#9333ea">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1z"/></svg>
+          </div>
+          <span class="travel-squircle-label">Flights</span>
+        </button>
+
+        <!-- 3. Buses -->
+        <button onClick="{{ () => { setTravelTabBus(); on.travel(); } }}" class="travel-squircle-card" aria-label="Travel Buses">
+          <div class="travel-squircle-icon-wrap" style="background:#e0e7ff;color:#4f46e5">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 6v6"/><path d="M15 6v6"/><path d="M2 12h19.6"/><path d="M18 18h3s.5-1.7.8-2.8c.1-.4.2-.8.2-1.2 0-.4-.1-.8-.2-1.2l-1.4-5C20 6.3 18.7 5 17.2 5H6.8C5.3 5 4 6.3 3.6 7.8L2.2 12.8c-.1.4-.2.8-.2 1.2 0 .4.1.8.2 1.2.3 1.1.8 2.8.8 2.8h3"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>
+          </div>
+          <span class="travel-squircle-label">Buses</span>
+        </button>
+
+        <!-- 4. Trains -->
+        <button onClick="{{ () => { setTravelTabTrain(); on.travel(); } }}" class="travel-squircle-card" aria-label="Travel Trains">
+          <div class="travel-squircle-icon-wrap" style="background:#ffe4e6;color:#e11d48">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect width="16" height="16" x="4" y="3" rx="2"/><path d="M4 11h16"/><path d="M12 3v8"/><path d="m8 19-2 3"/><path d="m18 22-2-3"/><circle cx="8" cy="15" r="1"/><circle cx="16" cy="15" r="1"/></svg>
+          </div>
+          <span class="travel-squircle-label">Trains</span>
+        </button>
+
+        <!-- 5. Taxi -->
+        <button onClick="{{ () => { setTravelTabTaxi(); on.travel(); } }}" class="travel-squircle-card" aria-label="Travel Taxi">
+          <div class="travel-squircle-icon-wrap" style="background:#fef3c7;color:#d97706">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H10L8 6H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-4L14 2Z"/><circle cx="7" cy="15" r="2"/><circle cx="17" cy="15" r="2"/></svg>
+          </div>
+          <span class="travel-squircle-label">Taxi</span>
+        </button>
+
+        <!-- 6. Car Rental -->
+        <button onClick="{{ on.travel }}" class="travel-squircle-card" aria-label="Travel Car Rental">
+          <div class="travel-squircle-icon-wrap" style="background:#dcfce7;color:#16a34a">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C2 11 2 11.4 2 11.8V16c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+          </div>
+          <span class="travel-squircle-label">Car Rental</span>
+        </button>
+      </div>
     </div>
 
     <!-- ── SECTION G: EDITORIAL BANNER (LOUMOO Marketplace for Africa) ── -->

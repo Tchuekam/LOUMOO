@@ -247,6 +247,192 @@ class ListingRepository {
       return acc;
     }, {});
   }
+
+  /* ------------------------------------------------------------ inventory */
+
+  /**
+   * Upserts the listing-level (variant_id IS NULL) stock record.
+   *
+   * Supabase's `upsert` needs a real unique constraint to resolve the conflict
+   * target, and `UNIQUE(listing_id, variant_id)` does not match rows where
+   * variant_id IS NULL in PostgreSQL. So the listing-level row is read first
+   * and updated by primary key.
+   */
+  static async upsertInventory(listingId, patch = {}) {
+    const row = {
+      on_hand: Math.max(0, Number(patch.onHand ?? 0)),
+      low_stock_threshold: Math.max(0, Number(patch.lowStockThreshold ?? 3)),
+      allow_backorder: Boolean(patch.allowBackorder),
+      track_inventory: patch.trackInventory !== false,
+      updated_at: new Date().toISOString()
+    };
+    // `reserved` is order-held stock, not a seller-editable field, so it is
+    // only written when a caller explicitly moves it.
+    if (patch.reserved !== undefined) row.reserved = Math.max(0, Number(patch.reserved));
+
+    const existing = await this.getInventory(listingId);
+
+    if (existing) {
+      const { data, error } = await this.db
+        .from('listing_inventory')
+        .update(row)
+        .eq('id', existing.id)
+        .select('*')
+        .single();
+      if (error) throw new InfrastructureError('Supabase', `inventory update failed: ${error.message}`, error);
+      return data;
+    }
+
+    const { data, error } = await this.db
+      .from('listing_inventory')
+      .insert({ ...row, listing_id: listingId, variant_id: null })
+      .select('*')
+      .single();
+    if (error) throw new InfrastructureError('Supabase', `inventory write failed: ${error.message}`, error);
+    return data;
+  }
+
+  static async getInventory(listingId) {
+    const { data, error } = await this.db
+      .from('listing_inventory')
+      .select('*')
+      .eq('listing_id', listingId)
+      .is('variant_id', null)
+      .maybeSingle();
+    if (error) throw new InfrastructureError('Supabase', `inventory read failed: ${error.message}`, error);
+    return data || null;
+  }
+
+  /* --------------------------------------------------------- availability */
+
+  static async upsertAvailability(listingId, patch = {}) {
+    const row = {
+      availability_strategy: patch.strategy || 'STOCK',
+      timezone: patch.timezone || 'Africa/Douala',
+      lead_time_hours: Math.max(0, Number(patch.leadTimeHours ?? 2)),
+      cutoff_time_hours: Math.max(0, Number(patch.cutoffTimeHours ?? 1)),
+      min_duration_units: Math.max(1, Number(patch.minDurationUnits ?? 1)),
+      max_duration_units: Math.max(1, Number(patch.maxDurationUnits ?? 30)),
+      capacity_per_slot: Math.max(1, Number(patch.capacityPerSlot ?? 1)),
+      weekly_schedule: patch.weeklySchedule || {},
+      blackout_dates: Array.isArray(patch.blackoutDates) ? patch.blackoutDates : [],
+      updated_at: new Date().toISOString()
+    };
+
+    const existing = await this.getAvailability(listingId);
+
+    if (existing) {
+      const { data, error } = await this.db
+        .from('listing_availability')
+        .update(row)
+        .eq('id', existing.id)
+        .select('*')
+        .single();
+      if (error) throw new InfrastructureError('Supabase', `availability update failed: ${error.message}`, error);
+      return data;
+    }
+
+    const { data, error } = await this.db
+      .from('listing_availability')
+      .insert({ ...row, listing_id: listingId })
+      .select('*')
+      .single();
+    if (error) throw new InfrastructureError('Supabase', `availability write failed: ${error.message}`, error);
+    return data;
+  }
+
+  static async getAvailability(listingId) {
+    const { data, error } = await this.db
+      .from('listing_availability')
+      .select('*')
+      .eq('listing_id', listingId)
+      .maybeSingle();
+    if (error) throw new InfrastructureError('Supabase', `availability read failed: ${error.message}`, error);
+    return data || null;
+  }
+
+  /* -------------------------------------------------------------- variants */
+
+  /**
+   * Replaces the whole variant matrix in one shot.
+   *
+   * Regenerating is the only sane semantic for an option matrix: change
+   * "storage" from two values to three and the old rows describe a matrix that
+   * no longer exists. Stock already recorded against a surviving combination is
+   * carried over so a reorder of the options does not silently zero the shelf.
+   */
+  static async replaceVariants(listingId, variants = []) {
+    const previous = await this.listVariants(listingId);
+    const carriedStock = new Map(
+      previous.map(v => [JSON.stringify(v.options_summary || {}), v.stock_quantity])
+    );
+
+    const { error: delError } = await this.db
+      .from('listing_variants')
+      .delete()
+      .eq('listing_id', listingId);
+    if (delError) {
+      throw new InfrastructureError('Supabase', `variant reset failed: ${delError.message}`, delError);
+    }
+
+    if (!variants.length) return [];
+
+    const rows = variants.map(v => {
+      const key = JSON.stringify(v.optionsSummary || {});
+      return {
+        listing_id: listingId,
+        sku: v.sku || null,
+        title: v.title,
+        options_summary: v.optionsSummary || {},
+        price_minor: Math.max(0, Number(v.priceMinor ?? 0)),
+        currency: v.currency || 'XAF',
+        compare_at_price_minor: v.compareAtPriceMinor ?? null,
+        stock_quantity: Number(v.stockQuantity ?? carriedStock.get(key) ?? 0),
+        image_url: v.imageUrl || null,
+        is_active: v.isActive !== false
+      };
+    });
+
+    const { data, error } = await this.db
+      .from('listing_variants')
+      .insert(rows)
+      .select('*');
+    if (error) {
+      throw new InfrastructureError('Supabase', `variant write failed: ${error.message}`, error);
+    }
+    return data || [];
+  }
+
+  static async listVariants(listingId) {
+    const { data, error } = await this.db
+      .from('listing_variants')
+      .select('*')
+      .eq('listing_id', listingId)
+      .order('created_at', { ascending: true });
+    if (error) throw new InfrastructureError('Supabase', `variant read failed: ${error.message}`, error);
+    return data || [];
+  }
+
+  static async updateVariant(listingId, variantId, patch = {}) {
+    const columns = {};
+    if (patch.priceMinor !== undefined) columns.price_minor = Math.max(0, Number(patch.priceMinor));
+    if (patch.compareAtPriceMinor !== undefined) columns.compare_at_price_minor = patch.compareAtPriceMinor;
+    if (patch.stockQuantity !== undefined) columns.stock_quantity = Math.max(0, Number(patch.stockQuantity));
+    if (patch.sku !== undefined) columns.sku = patch.sku;
+    if (patch.imageUrl !== undefined) columns.image_url = patch.imageUrl;
+    if (patch.isActive !== undefined) columns.is_active = Boolean(patch.isActive);
+    columns.updated_at = new Date().toISOString();
+
+    const { data, error } = await this.db
+      .from('listing_variants')
+      .update(columns)
+      .eq('id', variantId)
+      .eq('listing_id', listingId)
+      .select('*')
+      .maybeSingle();
+    if (error) throw new InfrastructureError('Supabase', `variant update failed: ${error.message}`, error);
+    return data || null;
+  }
 }
 
 function isFiniteNumeric(v) {

@@ -5,19 +5,36 @@ Three dedicated Announce experiences (Commercial Feed, Publishing Studio, Campai
 Conversion Detail View, and VS Side-by-Side Comparison Matrix with Lucide SVG Icons.
 """
 
+from src.views.publishing_view import publication_card
+
+
 def get_community_view():
-    return """
+    """The Announce feed and its analytics.
+
+    Authoring moved to the publishing studio; what remains here is discovery
+    and reporting. The feed card is  — the very component the
+    studio renders as its live preview, so a seller who liked what they saw in
+    the preview sees exactly that here.
+    """
+    return _TEMPLATE.replace(
+        '__CARD__',
+        publication_card('card', clickable='() => openAnnouncement(card.id)')
+    )
+
+
+_TEMPLATE = """
 <!-- ══════════════════════════════════════════════════════════════════════════
      1. LOUMOO ANNOUNCE — COMMERCIAL DISCOVERY FEED (is.announce)
+     Real broadcasts from GET /api/v1/announcements, rendered through the same
+     publication card the publishing studio previews.
      ══════════════════════════════════════════════════════════════════════ -->
 <sc-if value="{{ is.announce }}">
 <div style="padding-bottom:56px;background:var(--color-bg);min-height:100vh">
-  
-  <!-- Shared Contextual Announce Header -->
+
   <div class="page-head-block">
     <div class="page-head" style="position:static;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;border-bottom:none;justify-content:space-between;max-width:1200px;margin:0 auto">
       <div class="page-head-main">
-        <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
+        <button onClick="{{ back }}" aria-label="Go back" class="pub-iconbtn">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
         </button>
         <div class="page-head-text">
@@ -25,488 +42,87 @@ def get_community_view():
             <h3 class="page-head-title">LOUMOO Announce</h3>
             <span class="tag tag-accent hide-tight" style="min-height:18px;padding:1px 6px;font-size:9.5px;font-weight:800;white-space:nowrap;flex-shrink:0">COMMERCIAL FEED</span>
           </div>
-          <div class="page-head-sub">Live promotions, flash drops, tenders &amp; verified services</div>
+          <div class="page-head-sub">Live promotions, drops, events, tenders &amp; jobs</div>
         </div>
       </div>
-      
+
       <div class="page-head-actions">
         <button onClick="{{ on.announceStudio }}" class="btn btn-primary" style="height:36px;padding:0 14px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-          <span style="white-space:nowrap">OPEN STUDIO</span>
+          <span style="white-space:nowrap">BROADCAST</span>
         </button>
       </div>
     </div>
-
-    <!-- Announce is a feed. Authoring lives under Sell; reporting lives in Seller Studio. -->
   </div>
 
-  <!-- Feed Content Workspace -->
   <div style="padding:18px 16px;max-width:1200px;margin:0 auto">
-    
-    <!-- Filter Bar: Search + Cameroon City Selector -->
+
     <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px;align-items:center">
       <div style="flex:1;min-width:240px;position:relative">
-        <input type="text" placeholder="Search promotions, product drops, tenders, jobs..." style="width:100%;height:40px;padding:0 12px 0 36px;border-radius:var(--radius-sm);border:1px solid var(--color-divider);background:var(--color-surface);font-size:12.5px;color:var(--color-text)">
-        <div style="position:absolute;left:11px;top:11px;color:var(--color-text-muted)">
+        <input type="text" class="pub-input" style="padding-left:36px"
+               placeholder="Search promotions, drops, tenders, jobs…"
+               value="{{ announceSearch }}"
+               onChange="{{ (e) => setAnnounceSearch(e && e.target ? e.target.value : e) }}">
+        <div style="position:absolute;left:11px;top:15px;color:var(--color-text-muted)">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         </div>
       </div>
-      
-      <div style="display:flex;align-items:center;gap:6px;background:var(--color-surface);border:1px solid var(--color-divider);padding:4px 10px;border-radius:var(--radius-sm)">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-        <span style="font-size:12px;font-weight:700;color:var(--color-text)">All Cameroon</span>
-      </div>
     </div>
 
-    <!-- Opportunity Type Chips (Lucide SVG Icons) -->
-    <div class="hs" style="gap:8px;margin-bottom:20px;padding-bottom:4px">
-      <button class="tag tag-accent" style="cursor:pointer;font-weight:700">All Broadcasts (142)</button>
-      <button class="tag tag-neutral" style="cursor:pointer;display:flex;align-items:center;gap:5px">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-        <span>Flash Deals &amp; Drops (54)</span>
-      </button>
-      <button class="tag tag-neutral" style="cursor:pointer;display:flex;align-items:center;gap:5px">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-        <span>Tech &amp; Pro Jobs (38)</span>
-      </button>
-      <button class="tag tag-neutral" style="cursor:pointer;display:flex;align-items:center;gap:5px">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/></svg>
-        <span>Public Tenders (18)</span>
-      </button>
-      <button class="tag tag-neutral" style="cursor:pointer;display:flex;align-items:center;gap:5px">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
-        <span>Verified Services (22)</span>
-      </button>
-      <button class="tag tag-neutral" style="cursor:pointer;display:flex;align-items:center;gap:5px">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        <span>Urgent Alerts (10)</span>
-      </button>
-    </div>
-
-    <!-- Commercial Feed Grid -->
-    <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(360px, 1fr));gap:16px;margin-bottom:32px">
-      
-      <!-- Card 1: Commercial Flash Deal with Attached Canonical Product -->
-      <div onClick="{{ on.announceDetail }}" class="card-premium" style="cursor:pointer;display:flex;flex-direction:column;justify-content:space-between;border-top:3px solid var(--color-accent);position:relative">
-        <div style="position:absolute;top:12px;right:14px;background:rgba(235,94,40,0.12);color:var(--color-accent);padding:2px 8px;border-radius:12px;font-size:10.5px;font-weight:800">
-          PROMOTION · -15% OFF
-        </div>
-        
-        <div>
-          <!-- Merchant Header -->
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-            <div style="width:38px;height:38px;border-radius:50%;background:var(--color-surface-subtle);border:1px solid var(--color-divider);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:var(--color-accent)">
-              KT
-            </div>
-            <div>
-              <div style="display:flex;align-items:center;gap:4px">
-                <span style="font-weight:800;font-size:13.5px;color:var(--color-text)">Kamer Tech Solutions</span>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="var(--color-accent)" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-              </div>
-              <div style="font-size:11px;color:var(--color-text-secondary)">Akwa Showroom · Douala · ★ 4.9 (128)</div>
-            </div>
-          </div>
-
-          <h4 style="margin:0 0 6px;font-size:16px;font-weight:800;line-height:1.3;color:var(--color-text)">
-            Weekend Flash Drop: MacBook Air M3 Space Gray in Stock!
-          </h4>
-          <p style="font-size:12.5px;color:var(--color-text-secondary);line-height:1.45;margin:0 0 12px">
-            Get XAF 50,000 off this weekend only at our Akwa showroom or order online with free express doorstep delivery anywhere in Douala &amp; Yaoundé.
-          </p>
-
-          <!-- Highlights Pills -->
-          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px">
-            <span style="background:var(--color-neutral-100);color:var(--color-text);font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:4px">✓ Free Express Delivery</span>
-            <span style="background:var(--color-neutral-100);color:var(--color-text);font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:4px">✓ 1-Year Apple Care</span>
-            <span style="background:var(--color-neutral-100);color:var(--color-text);font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:4px">✓ Sealed Box</span>
-          </div>
-
-          <!-- Attached Canonical Listing Snapshot Box -->
-          <div style="background:var(--color-surface-subtle);border:1px solid var(--color-divider);border-radius:var(--radius-sm);padding:10px;display:flex;align-items:center;gap:12px;margin-bottom:14px">
-            <div class="ph" style="width:48px;height:48px;border-radius:6px;flex-shrink:0"></div>
-            <div style="flex:1;min-width:0">
-              <div style="font-size:12px;font-weight:700;color:var(--color-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">MacBook Air M3 Space Gray 16GB</div>
-              <div style="display:flex;align-items:baseline;gap:6px;margin-top:2px;flex-wrap:wrap;min-width:0">
-                <span style="font-size:14px;font-weight:800;color:var(--color-accent);white-space:nowrap">XAF 850,000</span>
-                <span style="font-size:11px;color:var(--color-text-muted);text-decoration:line-through;white-space:nowrap">XAF 900,000</span>
-              </div>
-            </div>
-            <button class="btn btn-primary" style="height:30px;padding:0 10px;font-size:11px;font-weight:700">BUY NOW</button>
-          </div>
-        </div>
-
-        <!-- Footer Metric & Action Bar -->
-        <div style="display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--color-divider);padding-top:10px;font-size:11px;color:var(--color-text-muted)">
-          <div style="display:flex;align-items:center;gap:10px">
-            <span>2.4k Views</span>
-            <span>·</span>
-            <span>Ends in 36h</span>
-          </div>
-          <span style="font-weight:700;color:var(--color-accent)">View Deal Details →</span>
-        </div>
-      </div>
-
-      <!-- Card 2: Job Announcement -->
-      <div onClick="{{ on.announceDetail }}" class="card-premium" style="cursor:pointer;display:flex;flex-direction:column;justify-content:space-between;border-top:3px solid var(--color-success)">
-        <div>
-          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
-            <span class="tag tag-accent" style="min-height:20px;padding:2px 6px;font-size:10px">FULL-TIME · TECH</span>
-            <div style="text-align:right">
-              <div style="font:800 15px/1 var(--font-heading);color:var(--color-accent)">XAF 650k - 900k</div>
-              <span style="font:600 10.5px/1 var(--font-body);color:var(--color-success)">Verified Recruiter</span>
-            </div>
-          </div>
-
-          <h4 style="margin:0 0 4px;font-size:16px;font-weight:800;color:var(--color-text)">Senior React &amp; Mobile Engineer</h4>
-          <div style="font:500 12px/1 var(--font-body);color:var(--color-text-secondary);margin-bottom:10px">KamerPay Fintech Sarl · Bonapriso, Douala</div>
-
-          <p style="font-size:12.5px;color:var(--color-text-secondary);line-height:1.45;margin:0 0 12px">
-            Looking for an experienced frontend/mobile developer to lead our mobile commerce and fintech wallet applications across Central Africa.
-          </p>
-
-          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">
-            <span style="background:var(--color-neutral-100);font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:4px">React Native / TypeScript</span>
-            <span style="background:var(--color-neutral-100);font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:4px">3+ Yrs Exp</span>
-            <span style="background:var(--color-neutral-100);font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:4px">Hybrid (Douala)</span>
-          </div>
-        </div>
-
-        <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--color-divider);padding-top:10px;font-size:11px;color:var(--color-text-muted)">
-          <span>Posted 2 hours ago · 14 Applicants</span>
-          <span style="font-weight:700;color:var(--color-accent)">View &amp; Apply Now →</span>
-        </div>
-      </div>
-
-      <!-- Card 3: Public Commercial Tender -->
-      <div onClick="{{ on.announceDetail }}" class="card-premium" style="cursor:pointer;display:flex;flex-direction:column;justify-content:space-between;border-top:3px solid var(--color-neutral-800)">
-        <div>
-          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
-            <span class="tag tag-neutral" style="min-height:20px;padding:2px 6px;font-size:10px">PUBLIC TENDER</span>
-            <div style="text-align:right">
-              <div style="font:800 15px/1 var(--font-heading);color:var(--color-text)">Budget: XAF 14.5M</div>
-              <span style="font:600 10.5px/1 var(--font-body);color:var(--color-text-muted)">Ref: PAD-2026-089</span>
-            </div>
-          </div>
-
-          <h4 style="margin:0 0 4px;font-size:16px;font-weight:800;color:var(--color-text)">Solar Power Equipment Supply &amp; Installation</h4>
-          <div style="font:500 12px/1 var(--font-body);color:var(--color-text-secondary);margin-bottom:10px">Port Authority of Douala · Bonanjo, Douala</div>
-
-          <p style="font-size:12.5px;color:var(--color-text-secondary);line-height:1.45;margin:0 0 12px">
-            Supply, mounting, and commissioning of commercial solar photovoltaic backup systems for terminal administration building.
-          </p>
-
-          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">
-            <span style="background:var(--color-neutral-100);font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:4px">CEMAC Certified Suppliers</span>
-            <span style="background:var(--color-neutral-100);font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:4px">Tender Dossier Included</span>
-          </div>
-        </div>
-
-        <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--color-divider);padding-top:10px;font-size:11px;color:var(--color-text-muted)">
-          <span>Submission Deadline: 28 Oct 2026</span>
-          <span style="font-weight:700;color:var(--color-accent)">View Tender Spec →</span>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Bottom Pagination & Feed Actions -->
-    <div style="display:flex;align-items:center;justify-content:space-between;background:var(--color-surface);border:1px solid var(--color-divider);padding:14px 18px;border-radius:var(--radius-md)">
-      <div style="font-size:12px;color:var(--color-text-secondary)">
-        Showing 3 of 142 live commercial broadcasts across Cameroon
-      </div>
-      <button class="btn btn-outline" style="height:36px;padding:0 16px;font-size:12px;font-weight:700">
-        Load More Broadcasts
-      </button>
-    </div>
-
-  </div>
-</div>
-</sc-if>
-
-
-<!-- ══════════════════════════════════════════════════════════════════════════
-     2. LOUMOO ANNOUNCE — PUBLISHING STUDIO (is.announceStudio)
-     ══════════════════════════════════════════════════════════════════════ -->
-<sc-if value="{{ is.announceStudio }}">
-<div style="padding-bottom:56px;background:var(--color-bg);min-height:100vh">
-
-  <!-- Shared Contextual Announce Header -->
-  <div class="page-head-block">
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;max-width:1200px;margin:0 auto">
-      <div style="display:flex;align-items:center;gap:12px">
-        <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+    <div class="pub-tabs" role="tablist" aria-label="Broadcast type">
+      <sc-for list="{{ announceFilters }}" as="chip">
+        <button class="pub-tab {{ chip.active ? 'is-active' : '' }}"
+                onClick="{{ () => setAnnounceFilter(chip.key) }}">
+          <span>{{ chip.label }}</span>
         </button>
-        <div>
-          <div style="display:flex;align-items:center;gap:6px">
-            <h3 style="margin:0;font-size:17px;font-weight:800;letter-spacing:-0.3px">LOUMOO Announce</h3>
-            <span class="tag tag-accent" style="min-height:18px;padding:1px 6px;font-size:9.5px;font-weight:800">PUBLISHING STUDIO</span>
-          </div>
-          <div style="font:400 11.5px/1.2 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Create, target, schedule &amp; publish commercial broadcasts</div>
-        </div>
+      </sc-for>
+    </div>
+
+    <sc-if value="{{ announceLoading }}">
+      <div class="pub-banner is-busy" role="status">
+        <span class="pub-spinner" aria-hidden="true"></span>
+        <span>Loading broadcasts…</span>
       </div>
-      
-      <div style="display:flex;align-items:center;gap:8px">
-        <button onClick="{{ on.announceCampaigns }}" class="btn btn-outline" style="height:36px;padding:0 12px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-          <span>PERFORMANCE</span>
+    </sc-if>
+
+    <sc-if value="{{ announceError }}">
+      <div class="pub-banner is-error" role="alert">
+        <span>{{ announceError }}</span>
+        <button class="pub-linkbtn" onClick="{{ reloadAnnouncements }}">Try again</button>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ !announceLoading && !announceCards.length }}">
+      <div class="pub-empty">
+        <div class="pub-empty-mark" aria-hidden="true">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m3 11 18-5v12L3 13v-2Z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
+        </div>
+        <h4>Nothing here yet</h4>
+        <p>{{ announceEmptyBlurb }}</p>
+        <button onClick="{{ on.announceStudio }}" class="btn btn-primary">Publish a broadcast</button>
+      </div>
+    </sc-if>
+
+    <div class="pub-grid">
+      <sc-for list="{{ announceCards }}" as="card">
+        __CARD__
+      </sc-for>
+    </div>
+
+    <sc-if value="{{ announceHasMore }}">
+      <div style="display:flex;justify-content:center;margin-top:24px">
+        <button class="btn btn-secondary" onClick="{{ loadMoreAnnouncements }}"
+                disabled="{{ announceLoading }}">
+          {{ announceLoading ? 'Loading…' : 'Load more broadcasts' }}
         </button>
       </div>
-    </div>
+    </sc-if>
 
-    <!-- 3-Experience Dedicated Navigation Bar -->
-      <!-- Reached from Sell (studio) and Seller Studio (campaigns); no sibling tabs. -->
-  </div>
-
-  <div style="padding:18px 16px;max-width:1200px;margin:0 auto">
-
-    <!-- Studio Header & Subtitle -->
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
-      <div>
-        <h3 style="margin:0;font-size:20px;font-weight:800">Commercial Broadcast Composer</h3>
-        <div style="font-size:12px;color:var(--color-text-secondary);margin-top:2px">Author commercial content, attach live catalog items, target buyer segments &amp; schedule broadcasts</div>
+    <sc-if value="{{ announceCards.length }}">
+      <div style="margin-top:18px;text-align:center;font:400 11.5px/1.5 var(--font-body);color:var(--color-text-muted)">
+        Showing {{ announceCards.length }} of {{ announceTotal }} live broadcasts across Cameroon
       </div>
-      <span class="tag tag-accent" style="font-weight:700">PRO MERCHANT STUDIO</span>
-    </div>
-
-    <!-- 2-Column Desktop Grid / 1-Column Mobile Stack -->
-    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(340px, 1fr));gap:24px;margin-bottom:36px">
-      
-      <!-- Left: Progressive Disclosure Composer -->
-      <div style="display:flex;flex-direction:column;gap:18px">
-        
-        <!-- Step 1: Content & Proposition -->
-        <div class="card-premium">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
-            <span style="width:24px;height:24px;border-radius:50%;background:var(--color-accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800">1</span>
-            <h4 style="margin:0;font-size:15px;font-weight:800">Commercial Message &amp; Type</h4>
-          </div>
-
-          <div style="margin-bottom:12px">
-            <label style="display:block;font-size:11.5px;font-weight:700;color:var(--color-text-secondary);margin-bottom:5px">ANNOUNCEMENT TITLE</label>
-            <input type="text" value="Weekend Flash Drop: MacBook Air M3 Space Gray in Stock!" style="width:100%;height:38px;padding:0 12px;border:1px solid var(--color-divider);border-radius:var(--radius-sm);font-size:13px;font-weight:600">
-          </div>
-
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
-            <div>
-              <label style="display:block;font-size:11.5px;font-weight:700;color:var(--color-text-secondary);margin-bottom:5px">BROADCAST TYPE</label>
-              <select style="width:100%;height:38px;padding:0 10px;border:1px solid var(--color-divider);border-radius:var(--radius-sm);font-size:12px">
-                <option selected>Flash Deals &amp; Drops</option>
-                <option>Promotions &amp; Discounts</option>
-                <option>New Product Drop</option>
-                <option>Professional Service</option>
-                <option>Job / Recruitment</option>
-                <option>Commercial Tender</option>
-                <option>Urgent Alert</option>
-              </select>
-            </div>
-            <div>
-              <label style="display:block;font-size:11.5px;font-weight:700;color:var(--color-text-secondary);margin-bottom:5px">TARGET AUDIENCE</label>
-              <select style="width:100%;height:38px;padding:0 10px;border:1px solid var(--color-divider);border-radius:var(--radius-sm);font-size:12px">
-                <option selected>All Cameroon (National)</option>
-                <option>Douala &amp; Littoral Only</option>
-                <option>Yaoundé &amp; Centre Only</option>
-                <option>Store Followers Only</option>
-                <option>Previous Buyers</option>
-              </select>
-            </div>
-          </div>
-
-          <div style="margin-bottom:12px">
-            <label style="display:block;font-size:11.5px;font-weight:700;color:var(--color-text-secondary);margin-bottom:5px">COMMERCIAL BODY</label>
-            <textarea rows="3" style="width:100%;padding:8px 12px;border:1px solid var(--color-divider);border-radius:var(--radius-sm);font-size:12.5px;line-height:1.4">Get XAF 50,000 off this weekend only at our Akwa showroom or order online with free express doorstep delivery anywhere in Douala &amp; Yaoundé.</textarea>
-          </div>
-
-          <div>
-            <label style="display:block;font-size:11.5px;font-weight:700;color:var(--color-text-secondary);margin-bottom:5px">KEY HIGHLIGHTS (PILLS)</label>
-            <input type="text" value="Free Express Delivery, 1-Year Apple Care, Sealed Box" style="width:100%;height:38px;padding:0 12px;border:1px solid var(--color-divider);border-radius:var(--radius-sm);font-size:12px">
-            <span style="font-size:10.5px;color:var(--color-text-muted)">Comma separated highlights shown as trust tags</span>
-          </div>
-        </div>
-
-        <!-- Step 2: Canonical Attachment & Structured Action CTA -->
-        <div class="card-premium">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
-            <span style="width:24px;height:24px;border-radius:50%;background:var(--color-accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800">2</span>
-            <h4 style="margin:0;font-size:15px;font-weight:800">Canonical Attachment &amp; Action CTA</h4>
-          </div>
-
-          <div style="margin-bottom:12px">
-            <label style="display:block;font-size:11.5px;font-weight:700;color:var(--color-text-secondary);margin-bottom:5px">ATTACH PRODUCT OR SERVICE (OPTIONAL)</label>
-            <div style="display:flex;gap:8px">
-              <select style="flex:1;height:38px;padding:0 10px;border:1px solid var(--color-divider);border-radius:var(--radius-sm);font-size:12px">
-                <option selected>MacBook Air M3 Space Gray (XAF 850,000)</option>
-                <option>Sony WH-1000XM5 Headphones (XAF 220,000)</option>
-                <option>iPhone 15 Pro Max 256GB (XAF 950,000)</option>
-                <option>Custom Solar Installation Service</option>
-              </select>
-              <button class="btn btn-outline" style="height:38px;padding:0 12px;font-size:11.5px;font-weight:700">Attach</button>
-            </div>
-            <span style="font-size:10.5px;color:var(--color-text-muted)">Pulls live inventory, price, and media directly from your store</span>
-          </div>
-
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-            <div>
-              <label style="display:block;font-size:11.5px;font-weight:700;color:var(--color-text-secondary);margin-bottom:5px">CALL TO ACTION BUTTON</label>
-              <select style="width:100%;height:38px;padding:0 10px;border:1px solid var(--color-divider);border-radius:var(--radius-sm);font-size:12px">
-                <option selected>BUY NOW (Direct Checkout)</option>
-                <option>VIEW PRODUCT</option>
-                <option>CONTACT VIA WHATSAPP</option>
-                <option>BOOK SERVICE</option>
-                <option>APPLY FOR JOB</option>
-                <option>VIEW TENDER SPEC</option>
-              </select>
-            </div>
-            <div>
-              <label style="display:block;font-size:11.5px;font-weight:700;color:var(--color-text-secondary);margin-bottom:5px">EXPIRATION WINDOW</label>
-              <select style="width:100%;height:38px;padding:0 10px;border:1px solid var(--color-divider);border-radius:var(--radius-sm);font-size:12px">
-                <option selected>Active for 48 Hours (Flash Deal)</option>
-                <option>Active for 7 Days</option>
-                <option>Active for 30 Days</option>
-                <option>No Expiration</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <!-- Step 3: Distribution & Publishing Mode -->
-        <div class="card-premium">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
-            <span style="width:24px;height:24px;border-radius:50%;background:var(--color-accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800">3</span>
-            <h4 style="margin:0;font-size:15px;font-weight:800">Publishing Mode &amp; Channels</h4>
-          </div>
-
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
-            <label style="display:flex;align-items:center;gap:8px;padding:10px;border:1px solid var(--color-accent);background:var(--color-accent-100);border-radius:var(--radius-sm);cursor:pointer">
-              <input type="radio" name="p_mode" checked>
-              <div>
-                <div style="font-size:12px;font-weight:800;color:var(--color-text)">Publish Immediately</div>
-                <div style="font-size:10.5px;color:var(--color-text-secondary)">Goes live right now across Cameroon</div>
-              </div>
-            </label>
-            <label style="display:flex;align-items:center;gap:8px;padding:10px;border:1px solid var(--color-divider);border-radius:var(--radius-sm);cursor:pointer">
-              <input type="radio" name="p_mode">
-              <div>
-                <div style="font-size:12px;font-weight:800;color:var(--color-text)">Schedule for Later</div>
-                <div style="font-size:10.5px;color:var(--color-text-secondary)">Specify exact date and hour</div>
-              </div>
-            </label>
-          </div>
-
-          <div style="display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--color-divider);padding-top:14px">
-            <button class="btn btn-outline" style="height:40px;padding:0 16px;font-size:12.5px;font-weight:700">Save Draft</button>
-            <div style="display:flex;gap:8px">
-              <button class="btn btn-primary" style="height:40px;padding:0 20px;font-size:12.5px;font-weight:800;display:flex;align-items:center;gap:6px">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
-                <span>PUBLISH ANNOUNCEMENT NOW</span>
-              </button>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- Right: Real-time Live Interactive Preview -->
-      <div>
-        <div style="position:sticky;top:80px">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-            <span style="font-size:12px;font-weight:800;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:0.5px">LIVE BUYER PREVIEW</span>
-            <span class="tag tag-neutral" style="font-size:10px;font-weight:700">SIMULATED FEED CARD</span>
-          </div>
-
-          <div class="card-premium" style="border:2px solid var(--color-accent);box-shadow:0 8px 24px rgba(235,94,40,0.12);position:relative">
-            <div style="position:absolute;top:12px;right:14px;background:rgba(235,94,40,0.12);color:var(--color-accent);padding:2px 8px;border-radius:12px;font-size:10.5px;font-weight:800">
-              PROMOTION · -15% OFF
-            </div>
-
-            <!-- Merchant Header -->
-            <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
-              <div style="width:38px;height:38px;border-radius:50%;background:var(--color-surface-subtle);border:1px solid var(--color-divider);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:var(--color-accent)">
-                KT
-              </div>
-              <div>
-                <div style="display:flex;align-items:center;gap:4px">
-                  <span style="font-weight:800;font-size:13.5px;color:var(--color-text)">Kamer Tech Solutions</span>
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="var(--color-accent)" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                </div>
-                <div style="font-size:11px;color:var(--color-text-secondary)">Akwa Showroom · Douala · ★ 4.9 (128)</div>
-              </div>
-            </div>
-
-            <h4 style="margin:0 0 6px;font-size:16px;font-weight:800;line-height:1.3;color:var(--color-text)">
-              Weekend Flash Drop: MacBook Air M3 Space Gray in Stock!
-            </h4>
-            <p style="font-size:12.5px;color:var(--color-text-secondary);line-height:1.45;margin:0 0 12px">
-              Get XAF 50,000 off this weekend only at our Akwa showroom or order online with free express doorstep delivery anywhere in Douala &amp; Yaoundé.
-            </p>
-
-            <!-- Highlights -->
-            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px">
-              <span style="background:var(--color-neutral-100);color:var(--color-text);font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:4px">✓ Free Express Delivery</span>
-              <span style="background:var(--color-neutral-100);color:var(--color-text);font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:4px">✓ 1-Year Apple Care</span>
-              <span style="background:var(--color-neutral-100);color:var(--color-text);font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:4px">✓ Sealed Box</span>
-            </div>
-
-            <!-- Attached Product Preview Card -->
-            <div style="background:var(--color-surface-subtle);border:1px solid var(--color-divider);border-radius:var(--radius-sm);padding:10px;display:flex;align-items:center;gap:12px;margin-bottom:14px">
-              <div class="ph" style="width:48px;height:48px;border-radius:6px;flex-shrink:0"></div>
-              <div style="flex:1;min-width:0">
-                <div style="font-size:12px;font-weight:700;color:var(--color-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">MacBook Air M3 Space Gray 16GB</div>
-                <div style="display:flex;align-items:baseline;gap:6px;margin-top:2px">
-                  <span style="font-size:14px;font-weight:800;color:var(--color-accent);white-space:nowrap">XAF 850,000</span>
-                  <span style="font-size:11px;color:var(--color-text-muted);text-decoration:line-through;white-space:nowrap">XAF 900,000</span>
-                </div>
-              </div>
-              <button class="btn btn-primary" style="height:30px;padding:0 10px;font-size:11px;font-weight:700">BUY NOW</button>
-            </div>
-
-            <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--color-divider);padding-top:10px;font-size:11px;color:var(--color-text-muted)">
-              <span>Audience: National (Cameroon)</span>
-              <span style="color:var(--color-accent);font-weight:700">Ends in 48h</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Bottom Management Table: Active Drafts & Scheduled Broadcasts -->
-    <div class="card-premium">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-        <h4 style="margin:0;font-size:16px;font-weight:800">Your Drafts &amp; Scheduled Broadcasts</h4>
-        <span style="font-size:11.5px;color:var(--color-text-muted)">2 Drafts · 1 Scheduled</span>
-      </div>
-
-      <div style="display:flex;flex-direction:column;gap:10px">
-        <div style="display:flex;align-items:center;justify-content:space-between;background:var(--color-surface-subtle);border:1px solid var(--color-divider);padding:10px 14px;border-radius:var(--radius-sm)">
-          <div>
-            <div style="display:flex;align-items:center;gap:6px">
-              <span class="tag tag-neutral" style="font-size:10px;font-weight:800">DRAFT</span>
-              <span style="font-size:13px;font-weight:700;color:var(--color-text)">New Arrival: PlayStation 5 Slim Disc Edition</span>
-            </div>
-            <div style="font-size:11px;color:var(--color-text-muted);margin-top:2px">Saved today at 10:15 AM · Audience: Douala Only</div>
-          </div>
-          <div style="display:flex;gap:6px">
-            <button class="btn btn-outline" style="height:30px;padding:0 10px;font-size:11px;font-weight:700">Edit Draft</button>
-            <button class="btn btn-primary" style="height:30px;padding:0 10px;font-size:11px;font-weight:700">Publish</button>
-          </div>
-        </div>
-
-        <div style="display:flex;align-items:center;justify-content:space-between;background:var(--color-surface-subtle);border:1px solid var(--color-divider);padding:10px 14px;border-radius:var(--radius-sm)">
-          <div>
-            <div style="display:flex;align-items:center;gap:6px">
-              <span class="tag tag-accent" style="font-size:10px;font-weight:800">SCHEDULED</span>
-              <span style="font-size:13px;font-weight:700;color:var(--color-text)">Tech Job Opening: Junior DevOps Engineer</span>
-            </div>
-            <div style="font-size:11px;color:var(--color-text-muted);margin-top:2px">Scheduled for 04 Sep 2026 at 09:00 AM</div>
-          </div>
-          <div style="display:flex;gap:6px">
-            <button class="btn btn-outline" style="height:30px;padding:0 10px;font-size:11px;font-weight:700">Cancel Schedule</button>
-            <button class="btn btn-outline" style="height:30px;padding:0 10px;font-size:11px;font-weight:700">Edit</button>
-          </div>
-        </div>
-      </div>
-    </div>
+    </sc-if>
 
   </div>
 </div>

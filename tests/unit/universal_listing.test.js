@@ -154,26 +154,45 @@ function testListingInventory() {
 
 function testListingVariantsUseCase() {
   const ListingVariantsUseCase = require('../../server/modules/listing/application/ListingVariantsUseCase');
-  const Listing = require('../../server/modules/listing/domain/Listing');
+  const ListingCompositionService = require('../../server/modules/listing/application/ListingCompositionService');
 
-  const listing = new Listing({
-    id: 'lst_test_phone',
-    brand: 'Apple',
-    model: 'iPhone 15',
-    base_price_minor: 650000
-  });
-
+  // The Cartesian expansion is pure and can be checked on its own.
   const optionsMap = {
     color: ['Natural Titanium', 'Blue Titanium'],
     storage: ['128GB', '256GB']
   };
 
-  return ListingVariantsUseCase.generateVariants(listing, optionsMap, 650000).then(variants => {
-    assert.strictEqual(variants.length, 4, '2 colors x 2 storages = 4 variants');
-    assert.strictEqual(listing.hasVariants, true);
-    assert.ok(variants[0].sku.includes('APPLE-IPHONE 15-1'));
-    console.log('  ✓ ListingVariantsUseCase: 4-way Cartesian product variant generation');
+  const combos = ListingVariantsUseCase.generateCartesianCombinations(optionsMap);
+  assert.strictEqual(combos.length, 4, '2 colors x 2 storages = 4 combinations');
+  assert.ok(combos.some(c => c.color === 'Blue Titanium' && c.storage === '256GB'),
+    'Every pairing must appear exactly once');
+
+  // An empty dimension contributes nothing rather than collapsing the matrix.
+  assert.strictEqual(
+    ListingVariantsUseCase.generateCartesianCombinations({ color: ['Black'], storage: [] }).length,
+    1, 'A dimension with no chosen values is skipped, not multiplied by zero');
+  assert.strictEqual(ListingVariantsUseCase.generateCartesianCombinations({}).length, 0);
+
+  // The rows that would be written carry a price, a currency and a stable SKU.
+  const rows = ListingCompositionService.buildVariantMatrix({
+    variantOptions: optionsMap,
+    brand: 'Apple',
+    currency: 'XAF',
+    basePriceMinor: 650000
   });
+
+  assert.strictEqual(rows.length, 4);
+  assert.strictEqual(rows[0].priceMinor, 650000, 'Variants start at the listing price');
+  assert.strictEqual(rows[0].currency, 'XAF');
+  assert.ok(/^APPLE-\d{3}$/.test(rows[0].sku), `SKU should be derived from the brand, got ${rows[0].sku}`);
+  assert.ok(rows[0].title.includes('Titanium'), 'The title names the combination');
+  assert.strictEqual(rows[0].stockQuantity, undefined,
+    'A fresh combination starts with no stock rather than pretending to be available');
+
+  // The ceiling is enforced before anything reaches the database.
+  assert.strictEqual(ListingVariantsUseCase.MAX_COMBINATIONS, 100);
+
+  console.log('  ✓ ListingVariantsUseCase: Cartesian expansion, SKUs and the combination ceiling');
 }
 
 // ── 6. Availability Strategies Tests ──
@@ -295,8 +314,7 @@ function testHtmlScreens() {
   const html = fs.readFileSync('Commerce App.dc.html', 'utf8');
 
   const requiredScreens = [
-    'upload', 'uploadDetails', 'uploadPrice', 'uploadSuccess', 'myListings',
-    'listingAttributes', 'listingPreview'
+    'publishIntent', 'publishStudio', 'publishReview', 'publishSuccess', 'myListings'
   ];
 
   requiredScreens.forEach(screen => {
@@ -307,7 +325,14 @@ function testHtmlScreens() {
   const closes = (html.match(/<\/sc-if>/g) || []).length;
   assert.strictEqual(opens, closes, `sc-if tags must be balanced: ${opens} open vs ${closes} close`);
 
-  console.log(`  ✓ Commerce App.dc.html: ${requiredScreens.length} listing screens present, ${opens} sc-if balanced`);
+  // The publishing studio renders every field from a definition, so the same
+  // markup serves every category. What must be present is the ONE card and the
+  // ONE field renderer, not a screen per listing type.
+  assert.ok(html.includes('class="pub-card'), 'The shared publication card must be compiled in');
+  assert.ok(html.includes('pubBasicFields'), 'The studio must render fields from the engine');
+  assert.ok(html.includes('pubPreviewCard'), 'The live preview must bind to the card projection');
+
+  console.log(`  ✓ Commerce App.dc.html: ${requiredScreens.length} publishing screens present, ${opens} sc-if balanced`);
 }
 
 // ── Test Runner ──

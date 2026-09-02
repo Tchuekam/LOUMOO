@@ -1,11 +1,27 @@
 # -*- coding: utf-8 -*-
 """
 LOUMOO STORE & MERCHANT STUDIO VIEWS
-Verified store directory, flagship brand storefront, seller analytics studio, 3-step listing creation wizard, and inventory management with Lucide SVG icons.
+
+Verified store directory, flagship brand storefront, seller analytics studio,
+and the seller's own catalogue.
+
+Publishing itself lives in `publishing_view.py`. My Listings renders the same
+`publication_card` the studio previews and the buyer feed shows, so what a
+seller sees in their catalogue is literally what a buyer sees in the feed.
 """
 
+from src.views.publishing_view import publication_card
+
+
 def get_merchant_view():
-    return """
+    return _TEMPLATE.replace(
+        '__CARD__',
+        publication_card('card', compact=True, show_status=True,
+                         clickable='() => openPublication(card)')
+    )
+
+
+_TEMPLATE = """
 <!-- ══════════════════════════════════════════════════════════════════════════
      STORE & BRAND DISCOVERY DIRECTORY (is.store)
      ══════════════════════════════════════════════════════════════════════ -->
@@ -1206,263 +1222,85 @@ def get_merchant_view():
 </sc-if>
 
 <!-- ══════════════════════════════════════════════════════════════════════════
-     LISTING WIZARD STEP 1: CONTEXTUAL STORE PUBLISHING (is.upload)
-     ══════════════════════════════════════════════════════════════════════ -->
-<sc-if value="{{ is.upload }}">
-<div style="padding-bottom:32px">
-  <div class="page-head">
-    <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
-    </button>
-    <div class="page-head-text">
-      <h4 class="page-head-title">New listing</h4>
-      <div class="page-head-sub">{{ currentStoreName || 'Your boutique' }}</div>
-    </div>
-  </div>
-
-  <div class="page-body" style="max-width:680px;--section-gap:22px">
-
-    <div>
-      <div class="eyebrow">Publishing to</div>
-      <h3 style="margin:8px 0 0;font:800 22px/1.2 var(--font-heading);letter-spacing:-.03em;color:var(--color-text)">{{ currentStoreName || 'Your boutique' }}</h3>
-      <p class="metric-note" style="margin-top:6px">Choose what you are putting in front of buyers. Your boutique's vertical decides which formats are available.</p>
-    </div>
-
-    <div class="surface-raised" style="padding:4px 16px 6px">
-      <div class="rule-label" style="margin-top:12px"><span class="eyebrow">Listings</span></div>
-
-      <sc-if value="{{ storeSellsPhysical }}">
-      <button onClick="{{ selectCategoryPhysical }}" class="quiet-row" style="padding:15px 0">
-        <span style="display:flex;align-items:flex-start;gap:13px;min-width:0">
-          <span class="feature-row-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg></span>
-          <span class="feature-row-body">
-            <span class="feature-row-title" style="display:block">Product or inventory</span>
-            <span class="feature-row-sub" style="display:block">Price, condition, specifications and escrow delivery.</span>
-          </span>
-        </span>
-        <span class="quiet-row-value" style="color:var(--color-accent)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></span>
-      </button>
-      </sc-if>
-
-      <sc-if value="{{ storeSellsService }}">
-      <button onClick="{{ selectCategoryService }}" class="quiet-row" style="padding:15px 0">
-        <span style="display:flex;align-items:flex-start;gap:13px;min-width:0">
-          <span class="feature-row-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 1-5.4 5.4L4 17v3h3l5.3-5.3a4 4 0 0 1 5.4-5.4l-2.6 2.6 1.6 1.6Z"/></svg></span>
-          <span class="feature-row-body">
-            <span class="feature-row-title" style="display:block">Service or booking</span>
-            <span class="feature-row-sub" style="display:block">Scope, duration and how customers reach you.</span>
-          </span>
-        </span>
-        <span class="quiet-row-value" style="color:var(--color-accent)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></span>
-      </button>
-      </sc-if>
-
-      <sc-if value="{{ storeSellsHospitality }}">
-      <button onClick="{{ selectCategoryHospitality }}" class="quiet-row" style="padding:15px 0">
-        <span style="display:flex;align-items:flex-start;gap:13px;min-width:0">
-          <span class="feature-row-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20V9l9-5 9 5v11"/><path d="M9 20v-6h6v6"/></svg></span>
-          <span class="feature-row-body">
-            <span class="feature-row-title" style="display:block">Room or stay</span>
-            <span class="feature-row-sub" style="display:block">Room type, guests, rates and availability.</span>
-          </span>
-        </span>
-        <span class="quiet-row-value" style="color:var(--color-accent)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></span>
-      </button>
-      </sc-if>
-    </div>
-
-    <div class="surface-raised" style="padding:4px 16px 6px">
-      <div class="rule-label" style="margin-top:12px"><span class="eyebrow">Broadcast</span></div>
-      <button onClick="{{ openAnnounceStudioFromSell }}" class="quiet-row" style="padding:15px 0">
-        <span style="display:flex;align-items:flex-start;gap:13px;min-width:0">
-          <span class="feature-row-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 11 18-5v12L3 13v-2Z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg></span>
-          <span class="feature-row-body">
-            <span class="feature-row-title" style="display:block">Store announcement or deal</span>
-            <span class="feature-row-sub" style="display:block">Publish a flash promotion, stock arrival or business update to Announce.</span>
-          </span>
-        </span>
-        <span class="quiet-row-value" style="color:var(--color-accent)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></span>
-      </button>
-    </div>
-
-
-  </div>
-</div>
-</sc-if>
-
-<!-- ══════════════════════════════════════════════════════════════════════════
-     LISTING WIZARD STEP 2: DETAILS & PHOTOS (is.uploadDetails)
-     ══════════════════════════════════════════════════════════════════════ -->
-<sc-if value="{{ is.uploadDetails }}">
-<div style="padding-bottom:32px">
-  <div class="page-head">
-    <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
-    </button>
-    <div>
-      <h4 style="margin:0;font-size:16px">Listing Details · Step 2 of 3</h4>
-      <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary)">Title, photos &amp; specifications</div>
-    </div>
-  </div>
-
-  <div style="padding:16px;max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:14px">
-    
-    <!-- Photo Upload Area -->
-    <div class="card-premium" style="text-align:center;border:2px dashed var(--color-accent-300);background:var(--color-surface-subtle);padding:24px">
-      <div style="width:48px;height:48px;border-radius:50%;background:var(--color-accent-100);color:var(--color-accent);display:flex;align-items:center;justify-content:center;margin:0 auto 10px">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
-      </div>
-      <div style="font:800 14px/1 var(--font-heading);color:var(--color-text)">Upload Listing Photos</div>
-      <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:4px">Upload high-resolution photos representing your listing</div>
-      <button onClick="{{ say.mainImg }}" class="btn btn-secondary" style="margin-top:12px;height:36px;font-size:12px;cursor:pointer">+ CHOOSE FILES</button>
-    </div>
-
-    <!-- Form Inputs -->
-    <div class="card-premium" style="display:flex;flex-direction:column;gap:12px">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);display:block">LISTING TITLE *</label>
-      </div>
-      <input type="text" class="input" placeholder="e.g. Apple MacBook Air M2 13” 256GB" value="{{ newListingTitle }}" onChange="{{ updateNewListingTitle }}">
-
-      <div>
-        <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:4px;display:block">DESCRIPTION &amp; KEY SPECS</label>
-        <textarea class="input" style="min-height:90px;padding:10px 14px;resize:vertical" placeholder="Describe the item condition, accessories, warranty, and features..." value="{{ newListingDescription }}" onChange="{{ updateNewListingDescription }}"></textarea>
-      </div>
-
-      <div>
-        <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:4px;display:block">LOCATION / CITY</label>
-        <select class="input" value="{{ newListingCity }}" onChange="{{ updateNewListingCity }}" style="cursor:pointer">
-          <option value="Douala">Douala (Akwa, Bonapriso, Bonanjo)</option>
-          <option value="Yaoundé">Yaoundé (Bastos, Centre)</option>
-          <option value="Bafoussam">Bafoussam</option>
-          <option value="Kribi">Kribi</option>
-          <option value="Limbé">Limbé</option>
-        </select>
-      </div>
-    </div>
-
-    <button onClick="{{ continueToUploadPrice }}" class="btn btn-primary btn-block" style="height:48px;font-size:14px;cursor:pointer">
-      CONTINUE TO PRICING &amp; LOGISTICS <span>→</span>
-    </button>
-  </div>
-</div>
-</sc-if>
-
-<!-- ══════════════════════════════════════════════════════════════════════════
-     LISTING WIZARD STEP 3: PRICING & LOGISTICS (is.uploadPrice)
-     ══════════════════════════════════════════════════════════════════════ -->
-<sc-if value="{{ is.uploadPrice }}">
-<div style="padding-bottom:32px">
-  <div class="page-head">
-    <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
-    </button>
-    <div>
-      <h4 style="margin:0;font-size:16px">Price &amp; Publishing · Step 3 of 3</h4>
-      <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary)">Set price and publish listing</div>
-    </div>
-  </div>
-
-  <div style="padding:16px;max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:14px">
-    
-    <div class="card-premium" style="display:flex;flex-direction:column;gap:12px">
-      <div>
-        <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:4px;display:block">PRICE (XAF) *</label>
-        <input type="number" class="input" placeholder="e.g. 745000" value="{{ newListingPrice }}" onChange="{{ updateNewListingPrice }}" style="font-weight:800;font-size:18px">
-      </div>
-      <div style="font:500 11.5px/1 var(--font-body);color:var(--color-text-muted)">
-        Specify the total price in Central African CFA Franc (XAF).
-      </div>
-    </div>
-
-    <!-- Escrow Toggle -->
-    <div class="card-premium">
-      <div style="display:flex;align-items:center;gap:8px;font:800 13px/1 var(--font-heading);color:var(--color-text);margin-bottom:6px">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        <span>LOUMOO Escrow Protection</span>
-      </div>
-      <div style="font:400 12px/1.4 var(--font-body);color:var(--color-text-secondary)">
-        Funds are securely held in escrow and disbursed directly to your Mobile Money / Orange Money account upon buyer confirmation.
-      </div>
-    </div>
-
-    <button onClick="{{ submitPublishListing }}" disabled="{{ uploadPublishBusy }}" class="btn btn-primary btn-block" style="height:48px;font-size:14px;cursor:pointer">
-      {{ uploadPublishBusy ? 'PUBLISHING LISTING...' : 'PUBLISH LISTING TO MARKETPLACE 🚀' }}
-    </button>
-  </div>
-</div>
-</sc-if>
-
-<!-- ══════════════════════════════════════════════════════════════════════════
-     LISTING PUBLISHED CELEBRATION (is.uploadSuccess)
-     ══════════════════════════════════════════════════════════════════════ -->
-<sc-if value="{{ is.uploadSuccess }}">
-<div style="padding:48px 16px;max-width:540px;margin:0 auto;text-align:center">
-  <div class="success-check-badge">
-    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><polyline points="20 6 9 17 4 12"/></svg>
-  </div>
-
-  <h2 style="margin:0 0 8px;font-size:24px">Listing Is Live!</h2>
-  <p style="font-size:13.5px;color:var(--color-text-secondary);line-height:1.5;margin:0 auto 20px">
-    <strong>{{ newListingTitle || 'Your listing' }}</strong> is now published across Douala, Yaoundé, and Cameroon.
-  </p>
-
-  <div style="display:flex;flex-direction:column;gap:10px">
-    <button onClick="{{ on.product }}" class="btn btn-primary btn-block" style="height:46px;cursor:pointer">VIEW LIVE LISTING</button>
-    <button onClick="{{ on.myListings }}" class="btn btn-secondary btn-block" style="height:44px;cursor:pointer">MANAGE INVENTORY</button>
-    <button onClick="{{ on.home }}" style="border:none;background:transparent;padding:8px;font:700 12px/1 var(--font-heading);color:var(--color-text-secondary);cursor:pointer">Back to Marketplace</button>
-  </div>
-</div>
-</sc-if>
-
-<!-- ══════════════════════════════════════════════════════════════════════════
-     MY LISTINGS INVENTORY (is.myListings)
+     MY LISTINGS (is.myListings)
+     Real listings from GET /api/v1/listings/seller, rendered through the SAME
+     publication card the studio previewed and the buyer feed uses.
      ══════════════════════════════════════════════════════════════════════ -->
 <sc-if value="{{ is.myListings }}">
-<div style="padding-bottom:32px">
+<div style="padding-bottom:48px">
   <div class="page-head" style="justify-content:space-between">
-    <div style="display:flex;align-items:center;gap:12px">
-      <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
+    <div style="display:flex;align-items:center;gap:12px;min-width:0">
+      <button onClick="{{ back }}" aria-label="Go back" class="pub-iconbtn">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
       </button>
-      <div>
-        <h4 style="margin:0;font-size:16px">My Inventory</h4>
-        <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary)">Manage your active &amp; draft listings</div>
+      <div class="page-head-text">
+        <h4 class="page-head-title">What you have published</h4>
+        <div class="page-head-sub">{{ currentStoreName }}</div>
       </div>
     </div>
-    <button onClick="{{ handleSellClick }}" class="btn btn-primary" style="height:36px;padding:0 14px;font-size:12px;cursor:pointer">+ POST</button>
+    <button onClick="{{ handleSellClick }}" class="btn btn-primary" style="height:38px;padding:0 16px;font-size:12.5px;flex:none">+ Publish</button>
   </div>
 
-  <div style="padding:16px;max-width:900px;margin:0 auto">
-    <div class="hs" style="gap:8px;margin-bottom:16px">
-      <button class="tag tag-accent">Live ({{ sellerLiveCount || 0 }})</button>
-      <button class="tag tag-neutral">Drafts ({{ sellerDraftCount || 0 }})</button>
-      <button class="tag tag-neutral">Sold ({{ sellerSoldCount || 0 }})</button>
+  <div class="page-body" style="max-width:1100px">
+
+    <div class="pub-tabs" role="tablist" aria-label="Publication status">
+      <sc-for list="{{ sellerTabs }}" as="tab">
+        <button class="pub-tab {{ tab.active ? 'is-active' : '' }}"
+                onClick="{{ () => setSellerTab(tab.key) }}">
+          <span>{{ tab.label }} ({{ tab.count }})</span>
+        </button>
+      </sc-for>
     </div>
 
-    <sc-if value="{{ sellerLiveCount > 0 }}">
-      <div class="card-premium">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div style="display:flex;gap:12px;align-items:center">
-            <div class="ph" style="width:60px;height:60px;border-radius:var(--radius-sm)"></div>
-            <div>
-              <div style="font:700 13.5px/1.2 var(--font-heading);color:var(--color-text)">{{ currentProductTitle || 'Active Listing' }}</div>
-              <div style="font:800 13.5px/1 var(--font-heading);color:var(--color-accent);margin-top:3px">XAF {{ newListingPrice || '745 000' }}</div>
-            </div>
-          </div>
-          <button onClick="{{ on.product }}" class="btn btn-secondary" style="height:34px;padding:0 12px;font-size:11.5px;cursor:pointer">VIEW</button>
-        </div>
+    <sc-if value="{{ sellerListingsLoading }}">
+      <div class="pub-banner is-busy" role="status">
+        <span class="pub-spinner" aria-hidden="true"></span>
+        <span>Loading what you have published…</span>
       </div>
     </sc-if>
 
-    <sc-if value="{{ !sellerLiveCount }}">
-      <div style="padding:32px 16px;text-align:center;background:var(--color-surface);border-radius:var(--radius-md);border:1px dashed var(--color-divider)">
-        <div style="font:700 14px/1.2 var(--font-heading);color:var(--color-text);margin-bottom:6px">No active inventory</div>
-        <div style="font:400 12px/1.4 var(--font-body);color:var(--color-text-secondary);margin-bottom:14px">Your inventory is currently empty. Post a new listing to start selling across Cameroon.</div>
-        <button onClick="{{ handleSellClick }}" class="btn btn-primary" style="height:36px;padding:0 16px;font-size:12px;cursor:pointer">+ POST NEW LISTING</button>
+    <sc-if value="{{ sellerListingsError }}">
+      <div class="pub-banner is-error" role="alert">
+        <span>{{ sellerListingsError }}</span>
+        <button class="pub-linkbtn" onClick="{{ reloadSellerListings }}">Try again</button>
       </div>
     </sc-if>
+
+    <sc-if value="{{ !sellerListingsLoading && !sellerListingCards.length }}">
+      <div class="pub-empty">
+        <div class="pub-empty-mark" aria-hidden="true">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+        </div>
+        <h4>{{ sellerEmptyTitle }}</h4>
+        <p>{{ sellerEmptyBlurb }}</p>
+        <button onClick="{{ handleSellClick }}" class="btn btn-primary">Publish something</button>
+      </div>
+    </sc-if>
+
+    <div class="pub-grid">
+      <sc-for list="{{ sellerListingCards }}" as="card">
+        <div class="pub-manage">
+          __CARD__
+          <div class="pub-manage-actions">
+            <button class="pub-manage-btn" onClick="{{ () => editListing(card.id) }}">Edit</button>
+            <sc-if value="{{ card.canPublish }}">
+              <button class="pub-manage-btn is-primary" onClick="{{ () => publishExisting(card.id) }}">Publish</button>
+            </sc-if>
+            <sc-if value="{{ card.canPause }}">
+              <button class="pub-manage-btn" onClick="{{ () => pauseListing(card.id) }}">Pause</button>
+            </sc-if>
+            <sc-if value="{{ card.canResume }}">
+              <button class="pub-manage-btn is-primary" onClick="{{ () => publishExisting(card.id) }}">Resume</button>
+            </sc-if>
+            <button class="pub-manage-btn" onClick="{{ () => shareListing(card.id, card.title) }}">Share</button>
+            <button class="pub-manage-btn is-danger" onClick="{{ () => archiveListing(card.id, card.title) }}">Delete</button>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+
   </div>
 </div>
 </sc-if>
+
 """

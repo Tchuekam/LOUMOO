@@ -20,6 +20,7 @@ const crypto = require('crypto');
 const config = require('../../config/env');
 const { SupabaseDatabase } = require('../database/SupabaseClient');
 const { inspect } = require('./ImageInspector');
+const { ImageBackgroundService, BACKGROUND_TYPES, PROCESSING_STATUS } = require('./ImageBackgroundService');
 const logger = require('../../shared/logging/logger');
 const {
   ValidationError,
@@ -295,6 +296,7 @@ class MediaStorageService {
     }
 
     const signedUrl = await this.createSignedUrl(storagePath);
+    const classification = ImageBackgroundService.classify(buffer, probe);
 
     logger.info('[MediaStorage] Staged upload', {
       uploadId: session.id,
@@ -302,10 +304,17 @@ class MediaStorageService {
       storeId: store.id,
       listingId,
       format: probe.format,
-      bytes: probe.sizeBytes
+      bytes: probe.sizeBytes,
+      backgroundType: classification.backgroundType
     });
 
-    return { ...session, public_url: signedUrl || `/media-fallback/${storagePath}`, signedUrl: signedUrl || `/media-fallback/${storagePath}` };
+    return {
+      ...session,
+      background_type: classification.backgroundType,
+      processing_status: classification.processingStatus,
+      public_url: signedUrl || `/media-fallback/${storagePath}`,
+      signedUrl: signedUrl || `/media-fallback/${storagePath}`
+    };
   }
 
   static async createSignedUrl(storagePath, ttlSeconds = LIMITS.signedUrlTtlSeconds) {
@@ -322,6 +331,38 @@ class MediaStorageService {
     } catch (err) {
       return null;
     }
+  }
+
+
+  /**
+   * Re-signs a previously issued signed URL.
+   *
+   * The media bucket is private, so every URL LOUMOO hands out expires. Rows
+   * that store a URL rather than a storage path (broadcast images) would show
+   * as broken pictures a week after publication; this recovers the path from
+   * the URL itself and mints a fresh token.
+   *
+   * Anything that is not one of our own signed URLs is returned untouched, so
+   * an external image or a relative path passes through unharmed.
+   */
+  static async refreshSignedUrl(url) {
+    if (!url || typeof url !== 'string') return url;
+
+    const marker = `/object/sign/${this.bucket}/`;
+    const at = url.indexOf(marker);
+    if (at === -1) return url;
+
+    const storagePath = decodeURIComponent(url.slice(at + marker.length).split('?')[0]);
+    if (!storagePath) return url;
+
+    const fresh = await this.createSignedUrl(storagePath);
+    return fresh || url;
+  }
+
+  /** refreshSignedUrl over a list, preserving order and never dropping one. */
+  static async refreshSignedUrls(urls) {
+    if (!Array.isArray(urls) || urls.length === 0) return [];
+    return Promise.all(urls.map(u => this.refreshSignedUrl(u).catch(() => u)));
   }
 
   /**

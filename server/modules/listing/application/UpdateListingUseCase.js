@@ -12,6 +12,7 @@
 const ListingRepository = require('../infrastructure/ListingRepository');
 const ListingValidationService = require('./ListingValidationService');
 const CreateListingUseCase = require('./CreateListingUseCase');
+const ListingCompositionService = require('./ListingCompositionService');
 const AnalyticsService = require('../../../infrastructure/analytics/AnalyticsService');
 const CacheService = require('../../../infrastructure/cache/CacheService');
 const logger = require('../../../shared/logging/logger');
@@ -52,38 +53,21 @@ class UpdateListingUseCase {
     // Merge the submitted patch over the stored state, then validate the WHOLE
     // resulting listing. Validating only the patch would let a listing drift
     // into an invalid combination one field at a time.
-    const existingAttributes = await ListingRepository.listAttributes(listingRow.id);
-    const media = await ListingRepository.listMedia(listingRow.id);
+    const [existingAttributes, media, existingBlocks] = await Promise.all([
+      ListingRepository.listAttributes(listingRow.id),
+      ListingRepository.listMedia(listingRow.id),
+      ListingCompositionService.loadBlocks(listingRow)
+    ]);
 
     const merged = {
-      listingType: listingRow.listing_type,
-      categoryId: listingRow.category_id,
-      title: listingRow.title,
-      shortDescription: listingRow.short_description,
-      description: listingRow.description,
-      brand: listingRow.brand,
-      model: listingRow.model,
-      sku: listingRow.sku,
-      condition: listingRow.condition,
-      currency: listingRow.currency,
-      basePriceMinor: listingRow.base_price_minor,
-      salePriceMinor: listingRow.sale_price_minor,
-      compareAtPriceMinor: listingRow.compare_at_price_minor,
-      fulfillmentModel: listingRow.fulfillment_model,
-      visibility: listingRow.visibility,
-      tags: listingRow.tags || [],
-      attributes: existingAttributes,
-      city: (listingRow.metadata && listingRow.metadata.city) || null,
-      neighbourhood: (listingRow.metadata && listingRow.metadata.neighbourhood) || null,
-      contactPhone: (listingRow.metadata && listingRow.metadata.contactPhone) || null,
-      uploadIds: [],
+      ...ListingCompositionService.toValidationPayload(listingRow, existingBlocks, existingAttributes),
       ...stripUndefined(input)
     };
 
     // A published listing must stay valid for publication after every edit.
     const forPublish = listingRow.status === 'PUBLISHED';
 
-    const { value } = await ListingValidationService.validate(merged, {
+    const { value, schema: categorySchema } = await ListingValidationService.validate(merged, {
       forPublish,
       mediaCount: media.length
     });
@@ -93,19 +77,28 @@ class UpdateListingUseCase {
       if (value[clientField] !== undefined) patch[column] = value[clientField];
     }
 
-    patch.metadata = {
-      ...(listingRow.metadata || {}),
-      city: value.city ?? (listingRow.metadata || {}).city ?? null,
-      neighbourhood: value.neighbourhood ?? (listingRow.metadata || {}).neighbourhood ?? null,
-      contactPhone: value.contactPhone ?? (listingRow.metadata || {}).contactPhone ?? null,
-      lastEditedAt: new Date().toISOString()
-    };
+    patch.metadata = ListingCompositionService.mergeMetadata(listingRow.metadata, value);
 
     const updated = await ListingRepository.update(listingRow.id, patch);
 
     if (input.attributes !== undefined) {
       await ListingRepository.replaceAttributes(updated.id, value.categoryId, value.attributes);
     }
+
+    // Only the blocks this request actually carried are rewritten, so an
+    // autosave of one section cannot erase another.
+    await ListingCompositionService.persistBlocks(updated.id, {
+      listingType: value.listingType,
+      sku: value.sku,
+      brand: value.brand,
+      currency: value.currency,
+      basePriceMinor: value.basePriceMinor,
+      salePriceMinor: value.salePriceMinor,
+      compareAtPriceMinor: value.compareAtPriceMinor,
+      ...(input.inventory !== undefined ? { inventory: value.inventory } : {}),
+      ...(input.service !== undefined ? { service: value.service } : {}),
+      ...(input.variantOptions !== undefined ? { variantOptions: value.variantOptions } : {})
+    }, { categorySchema });
 
     await CacheService.delete(`listing:${updated.id}`, 'catalog').catch(() => null);
 

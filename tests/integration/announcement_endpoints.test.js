@@ -66,7 +66,17 @@ async function run() {
       ctaLabel: 'Order Online Now',
       ctaUrl: `/p/${listing.id}`,
       audienceScope: 'EVERYONE',
-      targetCities: ['Douala', 'Yaoundé']
+      targetCities: ['Douala', 'Yaoundé'],
+      // A promotion is time-limited by definition, so it carries a window and
+      // the offer it is actually making.
+      expiresAt: new Date(Date.now() + 48 * 3600 * 1000).toISOString(),
+      metadata: {
+        offer: 'XAF 50 000 off',
+        discountPercent: 6,
+        originalPriceMinor: 900000,
+        promoPriceMinor: 850000,
+        promoCode: 'M3DOUALA'
+      }
     }
   });
 
@@ -103,6 +113,89 @@ async function run() {
   assert.strictEqual(pubRes.status, 200);
   assert.strictEqual(pubRes.body.data.announcement.status, 'PUBLISHED');
   assert.ok(pubRes.body.data.announcement.publishedAt);
+
+
+  /* ── Type-specific rules: each broadcast answers its own questions ────── */
+
+  // A promotion is a time-limited offer, so publishing one with no end date
+  // is refused — a "flash sale" that never closes is not a flash sale.
+  const noWindow = await harness.request('POST', '/api/v1/announcements', {
+    token: merchant.token,
+    body: {
+      storeId: store.id,
+      title: 'Endless discount that never closes',
+      type: 'PROMOTION',
+      body: 'This offer has no stated end, which is exactly what the rule below rejects.',
+      metadata: { offer: '10% off' }
+    }
+  });
+  assert.strictEqual(noWindow.status, 201, 'A draft may be incomplete');
+
+  const noWindowPublish = await harness.request(
+    'POST', `/api/v1/announcements/${noWindow.body.data.announcement.id}/publish`,
+    { token: merchant.token });
+  assert.strictEqual(noWindowPublish.status, 400,
+    'A time-limited broadcast cannot be published without an end date');
+  assert.ok(/end date/i.test(JSON.stringify(noWindowPublish.body)),
+    'The refusal must say what is missing');
+
+  // An event needs its date and venue, and they are named individually.
+  const badEvent = await harness.request('POST', '/api/v1/announcements', {
+    token: merchant.token,
+    body: {
+      storeId: store.id,
+      title: 'Repair clinic this weekend',
+      type: 'EVENT',
+      body: 'Bring any device for a free diagnostic at our Akwa workshop this Saturday morning.',
+      status: 'PUBLISHED',
+      metadata: { eventName: 'Repair Clinic' }
+    }
+  });
+  assert.strictEqual(badEvent.status, 400, 'An event published without a date must be refused');
+  const eventFields = JSON.stringify(badEvent.body);
+  assert.ok(/eventDate/.test(eventFields), 'The missing event date must be named');
+  assert.ok(/venue/.test(eventFields), 'The missing venue must be named');
+
+  // Fields the type does not define are rejected, never silently stored.
+  const junk = await harness.request('POST', '/api/v1/announcements', {
+    token: merchant.token,
+    body: {
+      storeId: store.id,
+      title: 'A broadcast carrying an invented field',
+      type: 'ANNOUNCEMENT',
+      body: 'The metadata below names a field no broadcast type defines.',
+      metadata: { announcementKind: 'HOURS', isFeatured: true }
+    }
+  });
+  assert.strictEqual(junk.status, 400, 'Unknown metadata keys must be rejected');
+  assert.ok(/isFeatured/.test(JSON.stringify(junk.body)),
+    'The unrecognised field must be named in the error');
+
+  // A promotion whose "discount" costs more than the original price is
+  // contradictory, and the contradiction is caught across the two fields.
+  const badPrices = await harness.request('POST', '/api/v1/announcements', {
+    token: merchant.token,
+    body: {
+      storeId: store.id,
+      title: 'Our promotional price is higher than usual',
+      type: 'PROMOTION',
+      body: 'The promotional price below is above the usual price, which cannot be an offer.',
+      metadata: { offer: '2 for 1', originalPriceMinor: 500000, promoPriceMinor: 600000 }
+    }
+  });
+  assert.strictEqual(badPrices.status, 400);
+  assert.ok(/promoPriceMinor/.test(JSON.stringify(badPrices.body)));
+
+  // The type catalogue the studio renders from is public and complete.
+  const schemaRes = await harness.request('GET', '/api/v1/announcements/schema');
+  assert.strictEqual(schemaRes.status, 200);
+  const schema = schemaRes.body.data;
+  assert.strictEqual(schema.types.length, 7, 'Every broadcast type must be described');
+  const promo = schema.types.find(t => t.type === 'PROMOTION');
+  assert.ok(promo.short, 'Each type carries a short badge label for the feed card');
+  assert.ok(promo.fields.some(f => f.key === 'offer' && f.required),
+    'The studio must know which type-specific fields are required');
+  assert.ok(schema.ctaTypes.includes('BUY_NOW'));
 
   // 8. Public Feed retrieval (Commercial Feed Screen data boundary)
   const feedRes = await harness.request('GET', '/api/v1/announcements?type=PROMOTION');

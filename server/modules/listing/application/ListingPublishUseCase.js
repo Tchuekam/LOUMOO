@@ -13,6 +13,7 @@
 const ListingRepository = require('../infrastructure/ListingRepository');
 const ListingValidationService = require('./ListingValidationService');
 const CreateListingUseCase = require('./CreateListingUseCase');
+const ListingCompositionService = require('./ListingCompositionService');
 const AnalyticsService = require('../../../infrastructure/analytics/AnalyticsService');
 const OutboxService = require('../../../infrastructure/events/OutboxService');
 const CacheService = require('../../../infrastructure/cache/CacheService');
@@ -75,34 +76,18 @@ class ListingPublishUseCase {
     this.assertTransition(listingRow.status, 'PUBLISHED');
 
     // 2. Re-validate the complete listing against the strict publish rules.
-    const [attributes, media] = await Promise.all([
+    //    Everything is re-read from storage: a draft that was valid when it
+    //    was saved but has since been emptied out must not slip through.
+    const [attributes, media, blocks] = await Promise.all([
       ListingRepository.listAttributes(listingRow.id),
-      ListingRepository.listMedia(listingRow.id)
+      ListingRepository.listMedia(listingRow.id),
+      ListingCompositionService.loadBlocks(listingRow)
     ]);
 
-    await ListingValidationService.validate({
-      listingType: listingRow.listing_type,
-      categoryId: listingRow.category_id,
-      title: listingRow.title,
-      shortDescription: listingRow.short_description,
-      description: listingRow.description,
-      brand: listingRow.brand,
-      model: listingRow.model,
-      sku: listingRow.sku,
-      condition: listingRow.condition,
-      currency: listingRow.currency,
-      basePriceMinor: listingRow.base_price_minor,
-      salePriceMinor: listingRow.sale_price_minor,
-      compareAtPriceMinor: listingRow.compare_at_price_minor,
-      fulfillmentModel: listingRow.fulfillment_model,
-      visibility: listingRow.visibility,
-      tags: listingRow.tags || [],
-      attributes,
-      city: (listingRow.metadata || {}).city || null,
-      neighbourhood: (listingRow.metadata || {}).neighbourhood || null,
-      contactPhone: (listingRow.metadata || {}).contactPhone || null,
-      uploadIds: []
-    }, { forPublish: true, mediaCount: media.length });
+    await ListingValidationService.validate(
+      ListingCompositionService.toValidationPayload(listingRow, blocks, attributes),
+      { forPublish: true, mediaCount: media.length }
+    );
 
     const updated = await ListingRepository.update(listingRow.id, {
       status: 'PUBLISHED',

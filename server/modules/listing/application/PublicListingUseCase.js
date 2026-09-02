@@ -16,6 +16,7 @@ const StoreRepository = require('../../store/infrastructure/StoreRepository');
 const MediaStorageService = require('../../../infrastructure/storage/MediaStorageService');
 const { NotFoundError } = require('../../../shared/errors/AppError');
 const Listing = require('../domain/Listing');
+const ListingCompositionService = require('./ListingCompositionService');
 
 class PublicListingUseCase {
   /**
@@ -33,10 +34,11 @@ class PublicListingUseCase {
     }
 
     const detail = await CacheService.remember(`listing:public:${row.id}`, 120, async () => {
-      const [media, attributes, store] = await Promise.all([
+      const [media, attributes, store, blocks] = await Promise.all([
         ListingRepository.listMedia(row.id),
         ListingRepository.listAttributes(row.id),
-        StoreRepository.findByIdOrSlug(row.store_id)
+        StoreRepository.findByIdOrSlug(row.store_id),
+        ListingCompositionService.loadBlocks(row)
       ]);
 
       const listing = new Listing(row);
@@ -53,11 +55,39 @@ class PublicListingUseCase {
         altText: m.alt_text
       })));
 
+      const metadata = row.metadata || {};
+
       return {
         ...listing.toPublicJSON(),
         attributes,
         media: images,
         coverImage: images.find(i => i.isCover) || images[0] || null,
+
+        // The blocks a buyer needs in order to decide: how it reaches them,
+        // what is promised with it, when it can be booked, whether it is in
+        // stock. These are the same structures the seller filled in, so the
+        // card a seller previewed is the card a buyer gets.
+        pricingOptions: blocks.pricing,
+        fulfillment: blocks.fulfillment,
+        trust: blocks.trust,
+        service: blocks.service,
+        availability: blocks.inventory
+          ? {
+            inStock: !blocks.inventory.trackInventory
+              || blocks.inventory.allowBackorder
+              || (blocks.inventory.quantity - (blocks.inventory.reserved || 0)) > 0,
+            // The exact count is the seller's business; buyers get the signal.
+            lowStock: blocks.inventory.trackInventory
+              && (blocks.inventory.quantity - (blocks.inventory.reserved || 0)) > 0
+              && (blocks.inventory.quantity - (blocks.inventory.reserved || 0)) <= blocks.inventory.lowStockThreshold
+          }
+          : null,
+        variants: (blocks.variants || []).filter(v => v.isActive).map(v => ({
+          id: v.id, title: v.title, options: v.options,
+          priceMinor: v.priceMinor, currency: v.currency,
+          inStock: v.stockQuantity > 0, imageUrl: v.imageUrl
+        })),
+        location: { city: metadata.city || null, neighbourhood: metadata.neighbourhood || null },
         // A public storefront card only — never the merchant's private contact
         // details or verification internals.
         store: store
