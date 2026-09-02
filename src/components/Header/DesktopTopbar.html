@@ -1,37 +1,31 @@
 <!-- Desktop Topbar (≥1024px) -->
 <div class="desktop-topbar">
-  <div style="display:flex;align-items:center;gap:12px">
-    <button onClick="{{ back }}" style="border:none;background:transparent;padding:6px;cursor:pointer;color:var(--color-text-secondary);font-size:16px;border-radius:var(--radius-sm)">←</button>
-    <div style="font:800 16px/1 var(--font-heading);letter-spacing:-.02em;color:var(--color-text)">LOUMOO</div>
-  </div>
-
-  <!-- Search pill input -->
-  <div style="flex:1;max-width:540px;position:relative">
-    <div onClick="{{ on.search }}" style="display:flex;align-items:center;gap:10px;height:40px;padding:0 16px;border-radius:var(--radius-pill);background:var(--color-neutral-100);border:1px solid var(--color-divider);cursor:pointer;transition:border-color .15s ease">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--color-text-muted)"><circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4 4"/></svg>
-      <span style="font:400 13px/1 var(--font-body);color:var(--color-text-muted)">Search products, stores, hotels, flights, services…</span>
-    </div>
+  <div style="display:flex;align-items:center;gap:10px">
+    <button onClick="{{ toggleSidebar }}" aria-label="Toggle sidebar navigation" title="{{ sidebarCollapsed ? 'Expand full sidebar' : 'Collapse to icon rail' }}" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--color-text);transition:all .15s ease">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 3v18"/></svg>
+    </button>
+    <button onClick="{{ back }}" aria-label="Go back" title="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--color-text)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
   </div>
 
   <!-- Right actions -->
   <div style="display:flex;align-items:center;gap:10px">
-    <button onClick="{{ on.themeToggle }}" title="Toggle Dark/Light Mode" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--color-text)">
+    <button onClick="{{ toggleDark }}" aria-label="Toggle dark and light mode" title="Toggle Dark/Light Mode" style="border:1px solid var(--color-divider);background:var(--color-surface);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--color-text)">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
     </button>
-    <button onClick="{{ on.notifications }}" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--color-text);position:relative">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-      <span style="position:absolute;top:6px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--color-accent-sale)"></span>
-    </button>
-    <button onClick="{{ on.chat }}" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--color-text)">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-    </button>
-    <button onClick="{{ on.cart }}" style="display:flex;align-items:center;gap:7px;background:var(--color-accent);color:#fff;border:none;border-radius:var(--radius-pill);padding:0 16px;height:38px;font:700 12.5px/1 var(--font-heading);cursor:pointer;box-shadow:var(--shadow-glow-blue)">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
-      <span>Cart ({{ cartCount }})</span>
-    </button>
-    <button onClick="{{ on.profile }}" style="border:1px solid var(--color-divider);background:var(--color-surface);height:38px;padding:0 12px;border-radius:var(--radius-pill);display:flex;align-items:center;gap:8px;cursor:pointer;color:var(--color-text)">
-      <div style="width:24px;height:24px;border-radius:50%;background:var(--color-accent);color:#fff;display:flex;align-items:center;justify-content:center;font:800 10px/1 var(--font-heading)">T</div>
-      <span style="font:600 12.5px/1 var(--font-body)">{{ userName }}</span>
+    <sc-if value="{{ isLoggedIn }}">
+      <button onClick="{{ on.notifications }}" aria-label="Notifications" title="Notifications" style="border:1px solid var(--color-divider);background:var(--color-surface);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--color-text);position:relative">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span style="position:absolute;top:7px;right:7px;width:7px;height:7px;border-radius:50%;background:var(--color-accent-sale)"></span>
+      </button>
+    </sc-if>
+    <sc-if value="{{ !isLoggedIn }}">
+      <button onClick="{{ on.signIn }}" class="btn btn-secondary" style="height:38px;padding:0 14px;font-size:12px;font-weight:700">SIGN IN</button>
+    </sc-if>
+    <button onClick="{{ on.cart }}" aria-label="View bag" style="display:flex;align-items:center;gap:8px;background:var(--color-accent);color:#fff;border:none;border-radius:var(--radius-pill);padding:0 18px;height:40px;font:700 13px/1 var(--font-heading);cursor:pointer;box-shadow:var(--shadow-glow-blue)">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+      <span>Bag ({{ cartCount }})</span>
     </button>
   </div>
 </div>
