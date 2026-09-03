@@ -70,79 +70,148 @@ def get_home_view():
     <!-- ── 02: CINEMATIC HERO / FEATURED PRODUCT SHOWCASE ── -->
     <div class="hero-cinematic-banner">
       <!-- Background Ambient Glow & Cinematic Scene Elements -->
-      <div style="position:absolute;top:-40px;right:-40px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle, rgba(0,122,255,0.12) 0%, transparent 70%);pointer-events:none"></div>
-      <div style="position:absolute;bottom:-60px;left:10%;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle, rgba(255,209,0,0.08) 0%, transparent 70%);pointer-events:none"></div>
+      <div style="position:absolute;top:-40px;right:-40px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle, rgba(0,122,255,0.08) 0%, transparent 70%);pointer-events:none"></div>
+      <div style="position:absolute;bottom:-60px;left:10%;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle, rgba(255,209,0,0.06) 0%, transparent 70%);pointer-events:none"></div>
 
-      <!-- Slide 0: Insta360 X4 Flagship -->
+      <!-- Slide 0: Samsung Galaxy S24 Ultra (Video) -->
       <sc-if value="{{ isHeroSlide0 }}" hint-placeholder-val="{{ true }}">
-        <div class="hero-grid-layout">
-          <div style="z-index:2">
-            <div style="font:800 16px/1 var(--font-heading);letter-spacing:-.01em;color:var(--color-text);margin-bottom:6px">Insta360 X4</div>
-            <h1 style="margin:0 0 8px;font-size:clamp(28px, 4.2vw, 46px);font-weight:800;letter-spacing:-.035em;line-height:1.05;color:var(--color-text)">Magic in action.</h1>
-            <div style="font:500 clamp(13px, 1.8vw, 16px)/1.4 var(--font-body);color:var(--color-text-secondary);margin-bottom:20px;max-width:380px">8K 360° Capture. No limits. Unbeatable FlowState stabilization.</div>
-            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-              <button onClick="{{ () => openProduct('insta360_x4') }}" class="hero-btn-pill">Explore Insta360 X4</button>
-              <button onClick="{{ () => openVideoModal('DJI Osmo Pocket 3 Masterclass', '4K 120fps ActiveTrack 6.0 · Ultra-Stabilized Cinematic Storytelling', 'FLAGSHIP 4K', './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2010%20Aesthetic%20holiday%20table%20setting%20ideas%20that%20bring%20together%20comfort%20beauty%20and%20useful%20ideas%20you%20will%20actually%20try%20for%20people%20w.mp4') }}" style="display:inline-flex;align-items:center;gap:6px;background:transparent;border:none;color:var(--color-text);font:700 13px/1 var(--font-heading);cursor:pointer;padding:8px 12px">
-                <div style="width:26px;height:26px;border-radius:50%;background:var(--color-accent-100);color:var(--color-accent);display:flex;align-items:center;justify-content:center"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg></div>
-                <span>Watch Film</span>
-              </button>
+        <div class="hero-slide-pane" style="background:#f4f4f6" data-hero-slide="0">
+          <div class="hero-grid-layout">
+            <div class="hero-text-wrap">
+              <div style="font:800 13px/1 var(--font-heading);letter-spacing:0.06em;text-transform:uppercase;color:#007aff;margin-bottom:8px">Samsung Galaxy Flagship</div>
+              <h1 style="margin:0 0 10px;font-size:clamp(28px, 4.2vw, 44px);font-weight:800;letter-spacing:-.035em;line-height:1.06;color:#111214">Galaxy S24 Ultra.</h1>
+              <div style="font:500 clamp(13px, 1.8vw, 15.5px)/1.45 var(--font-body);color:#475569;margin-bottom:22px;max-width:400px">Titanium elegance. 200MP Quad Telephoto and built-in Galaxy AI. Peak mobile performance in Cameroon.</div>
+              <div class="hero-actions-row">
+                <button onClick="{{ () => openProduct('samsung_s24_ultra') }}" class="hero-btn-pill" style="background:#111214;color:#fff">Explore Galaxy S24 →</button>
+                <button onClick="{{ on.store }}" class="hero-btn-subtle" style="border:1px solid rgba(0,0,0,0.15);color:#111214">Official Store</button>
+              </div>
+            </div>
+
+            <div class="hero-media-wrap" style="background:transparent">
+              <video src="./Assets/LOUMOO%20VIDEOS/HeroBanner/From%20Klickpin.com-%20Aesthetic%20Stretching%20Routine%20Ideas%20for%20This%20Year-pin-id-958000151963779036.mp4" poster="./Assets/_processed/herobanner_stretching.jpg" autoplay muted playsinline onended="window.heroNextSlide && window.heroNextSlide()"></video>
             </div>
           </div>
-
-          <div style="display:flex;justify-content:center;align-items:center;position:relative;z-index:2">
-            <div style="position:relative;width:100%;max-width:340px;height:220px;display:flex;align-items:center;justify-content:center;border-radius:24px;overflow:hidden;background:radial-gradient(circle, rgba(0,122,255,0.08) 0%, rgba(15,23,42,0.04) 100%)">
-              <img src="./Assets/acessories&gadgets/DJI%20Osmo%20Pocket%203.jfif" alt="DJI Osmo Pocket 3 Creator Combo" style="max-width:85%;max-height:85%;object-fit:contain;filter:drop-shadow(0 14px 28px rgba(0,0,0,0.25));transition:transform 0.4s ease">
-            </div>
+          <div class="hero-dots-row">
+            <button onClick="{{ setHeroSlide0 }}" class="hero-dot active" aria-label="Slide 1 — Galaxy S24 Ultra"></button>
+            <button onClick="{{ setHeroSlide1 }}" class="hero-dot" aria-label="Slide 2 — Royal Gele Couture"></button>
+            <button onClick="{{ setHeroSlide2 }}" class="hero-dot" aria-label="Slide 3 — Botanical Radiance Serum"></button>
+            <button onClick="{{ setHeroSlide3 }}" class="hero-dot" aria-label="Slide 4 — Urban Striker Kit"></button>
+            <button onClick="{{ setHeroSlide4 }}" class="hero-dot" aria-label="Slide 5 — Heavyweight Cotton Tee"></button>
           </div>
         </div>
       </sc-if>
 
-      <!-- Slide 1: iPhone 15 Pro Max -->
+      <!-- Slide 1: Royal Gele & Silk Couture (Image) -->
       <sc-if value="{{ isHeroSlide1 }}">
-        <div class="hero-grid-layout">
-          <div style="z-index:2">
-            <div style="font:800 16px/1 var(--font-heading);letter-spacing:-.01em;color:var(--color-accent);margin-bottom:6px"> Apple Flagship</div>
-            <h1 style="margin:0 0 8px;font-size:clamp(28px, 4.2vw, 46px);font-weight:800;letter-spacing:-.035em;line-height:1.05;color:var(--color-text)">Titanium Pro.</h1>
-            <div style="font:500 clamp(13px, 1.8vw, 16px)/1.4 var(--font-body);color:var(--color-text-secondary);margin-bottom:20px;max-width:380px">Forged in titanium. A17 Pro game-changing chip. 48MP Pro camera.</div>
-            <div style="display:flex;align-items:center;gap:12px">
-              <button onClick="{{ () => openProduct('iphone_15_pro') }}" class="hero-btn-pill">Explore iPhone 15 Pro</button>
-              <button onClick="{{ () => openCategory('electronics') }}" class="btn btn-secondary" style="height:42px;border-radius:var(--radius-pill);padding:0 16px;font-size:12.5px;font-weight:700">All Apple Models →</button>
+        <div class="hero-slide-pane" style="background:#161113" data-hero-slide="1">
+          <div class="hero-grid-layout">
+            <div class="hero-text-wrap">
+              <div style="font:800 13px/1 var(--font-heading);letter-spacing:0.06em;text-transform:uppercase;color:#e5a93c;margin-bottom:8px">Haute Couture Cameroun</div>
+              <h1 style="margin:0 0 10px;font-size:clamp(28px, 4.2vw, 44px);font-weight:800;letter-spacing:-.035em;line-height:1.06;color:#ffffff">Royal Gele & Silk.</h1>
+              <div style="font:500 clamp(13px, 1.8vw, 15.5px)/1.45 var(--font-body);color:rgba(255,255,255,0.82);margin-bottom:22px;max-width:400px">Bespoke ceremonial Gele headwear and celebratory silk attire handcrafted by Douala master artisans.</div>
+              <div class="hero-actions-row">
+                <button onClick="{{ () => openCategory('fashion') }}" class="hero-btn-pill" style="background:#ffffff;color:#111214">Discover Collection →</button>
+                <button onClick="{{ () => openCategory('fashion') }}" class="hero-btn-subtle" style="border:1px solid rgba(255,255,255,0.3);color:#ffffff">Bespoke Designers</button>
+              </div>
+            </div>
+
+            <div class="hero-media-wrap" style="background:transparent">
+              <img src="./Assets/LOUMOO%20VIDEOS/HeroBanner/316377942597787941.jfif" alt="Royal African Gele & Silk Couture" loading="lazy" />
             </div>
           </div>
-          <div style="display:flex;justify-content:center;align-items:center">
-            <div style="width:100%;max-width:280px;height:200px;background:radial-gradient(circle, #e2e8f0 0%, #cbd5e1 100%);border-radius:24px;display:flex;align-items:center;justify-content:center;overflow:hidden">
-              <img src="./Assets/telephone&PC/iphone%2015%20Pro%20Max%20-%20Best%20Features%20in%202025.jfif" alt="iPhone 15 Pro Max Titanium" style="max-width:85%;max-height:85%;object-fit:contain;filter:drop-shadow(0 12px 24px rgba(0,0,0,0.2))">
-            </div>
+          <div class="hero-dots-row hero-dots-light">
+            <button onClick="{{ setHeroSlide0 }}" class="hero-dot" aria-label="Slide 1 — Galaxy S24 Ultra"></button>
+            <button onClick="{{ setHeroSlide1 }}" class="hero-dot active" aria-label="Slide 2 — Royal Gele Couture"></button>
+            <button onClick="{{ setHeroSlide2 }}" class="hero-dot" aria-label="Slide 3 — Botanical Radiance Serum"></button>
+            <button onClick="{{ setHeroSlide3 }}" class="hero-dot" aria-label="Slide 4 — Urban Striker Kit"></button>
+            <button onClick="{{ setHeroSlide4 }}" class="hero-dot" aria-label="Slide 5 — Heavyweight Cotton Tee"></button>
           </div>
         </div>
       </sc-if>
 
-      <!-- Slide 2: MacBook Air M2 -->
+      <!-- Slide 2: Botanical Radiance Skincare Serum (Video) -->
       <sc-if value="{{ isHeroSlide2 }}">
-        <div class="hero-grid-layout">
-          <div style="z-index:2">
-            <div style="font:800 16px/1 var(--font-heading);letter-spacing:-.01em;color:var(--color-accent);margin-bottom:6px">Apple Silicon</div>
-            <h1 style="margin:0 0 8px;font-size:clamp(28px, 4.2vw, 46px);font-weight:800;letter-spacing:-.035em;line-height:1.05;color:var(--color-text)">Power to create.</h1>
-            <div style="font:500 clamp(13px, 1.8vw, 16px)/1.4 var(--font-body);color:var(--color-text-secondary);margin-bottom:20px;max-width:380px">MacBook Air 15" with M2. Impossibly thin. 18-hour battery life.</div>
-            <div style="display:flex;align-items:center;gap:12px">
-              <button onClick="{{ () => openProduct('macbook_m2') }}" class="hero-btn-pill">Explore MacBook Air</button>
-              <button onClick="{{ () => openCategory('electronics') }}" class="btn btn-secondary" style="height:42px;border-radius:var(--radius-pill);padding:0 16px;font-size:12.5px;font-weight:700">View Tech →</button>
+        <div class="hero-slide-pane" style="background:#c5bbae" data-hero-slide="2">
+          <div class="hero-grid-layout">
+            <div class="hero-text-wrap">
+              <div style="font:800 13px/1 var(--font-heading);letter-spacing:0.06em;text-transform:uppercase;color:#5c432d;margin-bottom:8px">Glow & Botanical Wellness</div>
+              <h1 style="margin:0 0 10px;font-size:clamp(28px, 4.2vw, 44px);font-weight:800;letter-spacing:-.035em;line-height:1.06;color:#231812">Botanical Radiance.</h1>
+              <div style="font:500 clamp(13px, 1.8vw, 15.5px)/1.45 var(--font-body);color:#524338;margin-bottom:22px;max-width:400px">Cold-pressed organic elixir with pure active botanicals. Deep cellular hydration and natural luminous glow.</div>
+              <div class="hero-actions-row">
+                <button onClick="{{ () => openCategory('supermarket') }}" class="hero-btn-pill" style="background:#231812;color:#ffffff">Shop Beauty Elixir →</button>
+                <button onClick="{{ () => openCategory('supermarket') }}" class="hero-btn-subtle" style="border:1px solid rgba(35,24,18,0.25);color:#231812">Organic Routine</button>
+              </div>
+            </div>
+
+            <div class="hero-media-wrap" style="background:transparent">
+              <video src="./Assets/LOUMOO%20VIDEOS/HeroBanner/From%20Klickpin.com-%2093%20Trending%20Passive%20Income%20Ideas%20for%20Right%20Now-pin-id-1142084786777854743.mp4" poster="./Assets/_processed/herobanner_passive_income.jpg" autoplay muted playsinline onended="window.heroNextSlide && window.heroNextSlide()"></video>
             </div>
           </div>
-          <div style="display:flex;justify-content:center;align-items:center">
-            <div style="width:100%;max-width:280px;height:200px;background:radial-gradient(circle, #e2e8f0 0%, #cbd5e1 100%);border-radius:24px;display:flex;align-items:center;justify-content:center;overflow:hidden">
-              <img src="./Assets/telephone&PC/Macbook.jfif" alt="MacBook Air M2" style="max-width:85%;max-height:85%;object-fit:contain;filter:drop-shadow(0 12px 24px rgba(0,0,0,0.2))">
-            </div>
+          <div class="hero-dots-row">
+            <button onClick="{{ setHeroSlide0 }}" class="hero-dot" aria-label="Slide 1 — Galaxy S24 Ultra"></button>
+            <button onClick="{{ setHeroSlide1 }}" class="hero-dot" aria-label="Slide 2 — Royal Gele Couture"></button>
+            <button onClick="{{ setHeroSlide2 }}" class="hero-dot active" aria-label="Slide 3 — Botanical Radiance Serum"></button>
+            <button onClick="{{ setHeroSlide3 }}" class="hero-dot" aria-label="Slide 4 — Urban Striker Kit"></button>
+            <button onClick="{{ setHeroSlide4 }}" class="hero-dot" aria-label="Slide 5 — Heavyweight Cotton Tee"></button>
           </div>
         </div>
       </sc-if>
 
-      <!-- Interactive Carousel Pagination Indicators -->
-      <div class="hero-dots-row">
-        <button onClick="{{ setHeroSlide0 }}" class="hero-dot {{ isHeroSlide0 ? 'active' : '' }}" aria-label="Hero Slide 1 — Insta360 X4"></button>
-        <button onClick="{{ setHeroSlide1 }}" class="hero-dot {{ isHeroSlide1 ? 'active' : '' }}" aria-label="Hero Slide 2 — iPhone 15 Pro"></button>
-        <button onClick="{{ setHeroSlide2 }}" class="hero-dot {{ isHeroSlide2 ? 'active' : '' }}" aria-label="Hero Slide 3 — MacBook Air"></button>
-      </div>
+      <!-- Slide 3: Urban Striker Jersey & Retro Shades (Image) -->
+      <sc-if value="{{ isHeroSlide3 }}">
+        <div class="hero-slide-pane" style="background:#4a5258" data-hero-slide="3">
+          <div class="hero-grid-layout">
+            <div class="hero-text-wrap">
+              <div style="font:800 13px/1 var(--font-heading);letter-spacing:0.06em;text-transform:uppercase;color:#fbbf24;margin-bottom:8px">Streetwear Culture Drop</div>
+              <h1 style="margin:0 0 10px;font-size:clamp(28px, 4.2vw, 44px);font-weight:800;letter-spacing:-.035em;line-height:1.06;color:#ffffff">Urban Striker Kit.</h1>
+              <div style="font:500 clamp(13px, 1.8vw, 15.5px)/1.45 var(--font-body);color:rgba(255,255,255,0.88);margin-bottom:22px;max-width:400px">Limited-edition striped heritage football jersey paired with tinted retro frames. Street-ready statement piece.</div>
+              <div class="hero-actions-row">
+                <button onClick="{{ () => openCategory('fashion') }}" class="hero-btn-pill" style="background:#ffffff;color:#111214">Shop Streetwear Drop →</button>
+                <button onClick="{{ () => openCategory('fashion') }}" class="hero-btn-subtle" style="border:1px solid rgba(255,255,255,0.3);color:#ffffff">View Lookbook</button>
+              </div>
+            </div>
+
+            <div class="hero-media-wrap" style="background:transparent">
+              <img src="./Assets/LOUMOO%20VIDEOS/HeroBanner/593278950954729077.jfif" alt="Urban Striker Jersey & Retro Shades" loading="lazy" />
+            </div>
+          </div>
+          <div class="hero-dots-row hero-dots-light">
+            <button onClick="{{ setHeroSlide0 }}" class="hero-dot" aria-label="Slide 1 — Galaxy S24 Ultra"></button>
+            <button onClick="{{ setHeroSlide1 }}" class="hero-dot" aria-label="Slide 2 — Royal Gele Couture"></button>
+            <button onClick="{{ setHeroSlide2 }}" class="hero-dot" aria-label="Slide 3 — Botanical Radiance Serum"></button>
+            <button onClick="{{ setHeroSlide3 }}" class="hero-dot active" aria-label="Slide 4 — Urban Striker Kit"></button>
+            <button onClick="{{ setHeroSlide4 }}" class="hero-dot" aria-label="Slide 5 — Heavyweight Cotton Tee"></button>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- Slide 4: Heavyweight Minimalist Cotton Tee (Video) -->
+      <sc-if value="{{ isHeroSlide4 }}">
+        <div class="hero-slide-pane" style="background:#eeedec" data-hero-slide="4">
+          <div class="hero-grid-layout">
+            <div class="hero-text-wrap">
+              <div style="font:800 13px/1 var(--font-heading);letter-spacing:0.06em;text-transform:uppercase;color:#059669;margin-bottom:8px">Minimalist Essentials</div>
+              <h1 style="margin:0 0 10px;font-size:clamp(28px, 4.2vw, 44px);font-weight:800;letter-spacing:-.035em;line-height:1.06;color:#111214">Heavyweight Cotton Tee.</h1>
+              <div style="font:500 clamp(13px, 1.8vw, 15.5px)/1.45 var(--font-body);color:#475569;margin-bottom:22px;max-width:400px">300 GSM combed organic cotton. Impeccable drape, reinforced neckline, and breathable softness for everyday luxury.</div>
+              <div class="hero-actions-row">
+                <button onClick="{{ () => openCategory('fashion') }}" class="hero-btn-pill" style="background:#111214;color:#ffffff">Explore Essentials →</button>
+                <button onClick="{{ () => openCategory('fashion') }}" class="hero-btn-subtle" style="border:1px solid rgba(0,0,0,0.15);color:#111214">Size & Fit Guide</button>
+              </div>
+            </div>
+
+            <div class="hero-media-wrap" style="background:transparent">
+              <video src="./Assets/LOUMOO%20VIDEOS/HeroBanner/From%20Klickpin.com-%20Discover%20Unique%20rustic%20wedding%20decor%20for%20your%20next%20Pinterest%20save%20built%20around%20ideas%20that%20are%20easy%20to%20save%20and%20revisit%20later-pi.mp4" poster="./Assets/_processed/herobanner_rustic_wedding.jpg" autoplay muted playsinline onended="window.heroNextSlide && window.heroNextSlide()"></video>
+            </div>
+          </div>
+          <div class="hero-dots-row">
+            <button onClick="{{ setHeroSlide0 }}" class="hero-dot" aria-label="Slide 1 — Galaxy S24 Ultra"></button>
+            <button onClick="{{ setHeroSlide1 }}" class="hero-dot" aria-label="Slide 2 — Royal Gele Couture"></button>
+            <button onClick="{{ setHeroSlide2 }}" class="hero-dot" aria-label="Slide 3 — Botanical Radiance Serum"></button>
+            <button onClick="{{ setHeroSlide3 }}" class="hero-dot" aria-label="Slide 4 — Urban Striker Kit"></button>
+            <button onClick="{{ setHeroSlide4 }}" class="hero-dot active" aria-label="Slide 5 — Heavyweight Cotton Tee"></button>
+          </div>
+        </div>
+      </sc-if>
     </div>
 
     <!-- ── 03: CATEGORY QUICK-DISCOVERY LAYER (Apple-Style Squircles) ── -->

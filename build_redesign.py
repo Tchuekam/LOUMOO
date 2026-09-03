@@ -1388,38 +1388,119 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 
 /* Hero Cinematic Banner */
 .hero-cinematic-banner {
-  background: linear-gradient(135deg, #f0f4f9 0%, #e2ebf5 50%, #d8e5f3 100%);
-  border-radius: 28px;
-  padding: 36px 40px 28px;
   position: relative;
+  border-radius: 28px;
   overflow: hidden;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
   margin-bottom: 24px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: background-color 0.45s ease;
+  padding: 0;
 }
 [data-theme="dark"] .hero-cinematic-banner {
-  background: linear-gradient(135deg, #131722 0%, #1a2030 50%, #151926 100%);
   border-color: rgba(255, 255, 255, 0.08);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4);
+}
+
+.hero-slide-pane {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 38px 48px 28px;
+  transition: background 0.45s ease;
+  min-height: 350px;
 }
 
 .hero-grid-layout {
   display: grid;
-  grid-template-columns: 1.1fr 1fr;
+  grid-template-columns: 1.15fr 0.85fr;
   align-items: center;
-  gap: 32px;
-  min-height: 280px;
+  gap: 40px;
+  width: 100%;
 }
 
+.hero-text-wrap {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  z-index: 2;
+  text-align: left;
+}
+
+.hero-media-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 380px;
+  height: 290px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  z-index: 2;
+}
+.hero-media-wrap video,
+.hero-media-wrap img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 20px;
+  filter: drop-shadow(0 14px 28px rgba(0, 0, 0, 0.16));
+  transition: transform 0.4s var(--ease-spring);
+}
+.hero-cinematic-banner:hover .hero-media-wrap video,
+.hero-cinematic-banner:hover .hero-media-wrap img {
+  transform: scale(1.025);
+}
+
+.hero-actions-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Mobile-First Responsive Layout */
 @media (max-width: 768px) {
   .hero-cinematic-banner {
-    padding: 24px 20px 22px;
-    border-radius: 20px;
+    border-radius: 22px;
     margin-bottom: 20px;
   }
+  .hero-slide-pane {
+    padding: 24px 18px 22px;
+    min-height: auto;
+  }
   .hero-grid-layout {
-    grid-template-columns: 1fr;
-    gap: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 18px;
+  }
+  .hero-text-wrap {
+    align-items: center;
+    text-align: center;
+    width: 100%;
+  }
+  .hero-media-wrap {
+    height: 230px;
+    max-width: 280px;
+  }
+  .hero-actions-row {
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+    gap: 10px;
+  }
+  .hero-btn-pill,
+  .hero-btn-subtle {
+    width: 100%;
+    max-width: 290px;
+    justify-content: center;
+    min-height: 44px;
   }
 }
 
@@ -1430,7 +1511,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   background: #111214;
   color: #ffffff;
   border-radius: 9999px;
-  padding: 12px 24px;
+  padding: 12px 26px;
   font: 700 13.5px/1 var(--font-heading);
   border: none;
   cursor: pointer;
@@ -1440,14 +1521,23 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 .hero-btn-pill:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
-  background: #000000;
+  filter: brightness(1.12);
 }
-[data-theme="dark"] .hero-btn-pill {
-  background: #ffffff;
-  color: #111214;
+
+.hero-btn-subtle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 9999px;
+  padding: 10px 20px;
+  font: 700 12.5px/1 var(--font-heading);
+  cursor: pointer;
+  background: transparent;
+  transition: all 0.2s ease;
 }
-[data-theme="dark"] .hero-btn-pill:hover {
-  background: #f0f0f0;
+.hero-btn-subtle:hover {
+  transform: translateY(-2px);
+  background: rgba(0, 0, 0, 0.06);
 }
 
 .hero-dots-row {
@@ -1455,27 +1545,31 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   justify-content: center;
   align-items: center;
   gap: 8px;
-  margin-top: 18px;
+  margin-top: 20px;
+  position: relative;
+  z-index: 5;
 }
 .hero-dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.22);
   border: none;
   padding: 0;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
 }
 .hero-dot.active {
-  width: 22px;
-  border-radius: 4px;
+  width: 24px;
+  border-radius: 6px;
   background: #111214;
 }
-[data-theme="dark"] .hero-dot {
-  background: rgba(255, 255, 255, 0.25);
+
+/* Light dots for dark slides */
+.hero-dots-light .hero-dot {
+  background: rgba(255, 255, 255, 0.35);
 }
-[data-theme="dark"] .hero-dot.active {
+.hero-dots-light .hero-dot.active {
   background: #ffffff;
 }
 
@@ -5400,6 +5494,15 @@ class Component extends DCLogic {
   componentDidMount() {
     this._restoreOnboardingDraft();
     this._bootAuth();
+    if (typeof window !== 'undefined') {
+      window._loumooHeroComponent = this;
+      window.heroNextSlide = () => {
+        if (window._loumooHeroComponent) {
+          window._loumooHeroComponent.heroNextSlide();
+        }
+      };
+    }
+    this._startHeroSlideAutoAdvance();
     this._handleKeyDown = (e) => {
       if (e && e.key === 'Escape') {
         if (this.state.toast) { this.setState({ toast: '' }); return; }
@@ -5420,6 +5523,7 @@ class Component extends DCLogic {
   componentWillUnmount() {
     clearTimeout(this._t);
     clearTimeout(this._searchTimer);
+    clearTimeout(this._heroSlideTimer);
     clearInterval(this._resetTimer);
     clearInterval(this._emailTimer);
     if (typeof window !== 'undefined' && this._handleKeyDown) {
@@ -6837,6 +6941,60 @@ class Component extends DCLogic {
       this.toast('Draft saved — pick it up from Sell whenever you like');
     }
     this.back();
+  }
+
+  setHeroSlide(slideIndex) {
+    const nextIdx = ((slideIndex % 5) + 5) % 5;
+    this.setState({ heroSlide: nextIdx });
+    clearTimeout(this._heroSlideTimer);
+    if (typeof window !== 'undefined') {
+      setTimeout(() => {
+        const banner = document.querySelector('.hero-cinematic-banner');
+        if (banner) {
+          const vids = banner.querySelectorAll('video');
+          vids.forEach(v => {
+            const slideEl = v.closest('[data-hero-slide]');
+            if (slideEl && parseInt(slideEl.getAttribute('data-hero-slide'), 10) === nextIdx) {
+              v.currentTime = 0;
+              v.play().catch(() => {});
+            } else {
+              v.pause();
+            }
+          });
+        }
+      }, 60);
+    }
+    this._startHeroSlideAutoAdvance();
+  }
+
+  heroNextSlide() {
+    const next = (((this.state.heroSlide || 0) + 1) % 5);
+    this.setHeroSlide(next);
+  }
+
+  heroPrevSlide() {
+    const prev = (((this.state.heroSlide || 0) - 1 + 5) % 5);
+    this.setHeroSlide(prev);
+  }
+
+  _startHeroSlideAutoAdvance() {
+    clearTimeout(this._heroSlideTimer);
+    const curSlide = this.state.heroSlide || 0;
+    // Slides 0, 2, 4 are videos with onended callbacks; Slides 1 and 3 are static images
+    if (curSlide === 1 || curSlide === 3) {
+      this._heroSlideTimer = setTimeout(() => {
+        if (!this._unmounted && (!this.state.screen || this.state.screen === 'home')) {
+          this.heroNextSlide();
+        }
+      }, 6500);
+    } else {
+      // Safety fallback timer for videos in case autoplay or onended is blocked
+      this._heroSlideTimer = setTimeout(() => {
+        if (!this._unmounted && (!this.state.screen || this.state.screen === 'home')) {
+          this.heroNextSlide();
+        }
+      }, 19000);
+    }
   }
 
   /**
@@ -10249,13 +10407,19 @@ class Component extends DCLogic {
       bookTravelItem: () => { this.go('paying'); setTimeout(() => this.go('travelTicket'), 1200); },
       bookFlight: () => { this.go('travelTicket'); },
 
-      // ── Homepage Master Hub (Apple & Insta360 Cinematic Hub) ──
-      isHeroSlide0: this.state.heroSlide === 0,
+      // ── Homepage Master Hub (HeroBanner Cinema & Editorial Suite) ──
+      isHeroSlide0: (this.state.heroSlide || 0) === 0,
       isHeroSlide1: this.state.heroSlide === 1,
       isHeroSlide2: this.state.heroSlide === 2,
-      setHeroSlide0: () => this.setState({ heroSlide: 0 }),
-      setHeroSlide1: () => this.setState({ heroSlide: 1 }),
-      setHeroSlide2: () => this.setState({ heroSlide: 2 }),
+      isHeroSlide3: this.state.heroSlide === 3,
+      isHeroSlide4: this.state.heroSlide === 4,
+      setHeroSlide0: () => this.setHeroSlide(0),
+      setHeroSlide1: () => this.setHeroSlide(1),
+      setHeroSlide2: () => this.setHeroSlide(2),
+      setHeroSlide3: () => this.setHeroSlide(3),
+      setHeroSlide4: () => this.setHeroSlide(4),
+      heroNextSlide: () => this.heroNextSlide(),
+      heroPrevSlide: () => this.heroPrevSlide(),
 
       // ── Dynamic PDP Product Details Bindings ──
       currentProduct: this.state.currentProduct,
