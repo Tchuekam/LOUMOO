@@ -53,46 +53,82 @@ def get_hotel_vertical_view():
       </div>
     </div>
 
-    <!-- Hotel Results List -->
-    <div style="display:flex;flex-direction:column;gap:14px">
-      <!-- Hotel 1 -->
-      <div onClick="{{ openHotelDetail }}" class="card-premium" style="padding:0;overflow:hidden;cursor:pointer;border-radius:var(--radius-md)">
-        <div style="height:140px;background:linear-gradient(135deg,#003d8a 0%,#007aff 100%);display:flex;align-items:flex-end;padding:14px;color:#fff;position:relative">
-          <span style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.45);backdrop-filter:blur(6px);padding:4px 8px;border-radius:4px;font:700 11px/1 var(--font-heading)">⭐ 4.9 (184 reviews)</span>
-          <div>
-            <div style="font:800 18px/1.2 var(--font-heading)">Hôtel Les Cascades du Tara</div>
-            <div style="font:400 12px/1.3 var(--font-body);opacity:0.9">Kribi Beach Front · Ocean View &amp; Pool</div>
+    <!-- Hotel Results List with Real Assets & Cameroonian Pricing -->
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <!-- Hotel 1: Krystal Palace Hotel Douala -->
+      <div onClick="{{ openHotelDetail }}" class="card-premium" style="padding:0;overflow:hidden;cursor:pointer;border-radius:var(--radius-md);position:relative">
+        <div style="height:180px;position:relative;display:flex;align-items:flex-end;padding:16px;color:#fff;overflow:hidden">
+          <img src="./Assets/Travel%26Hotel/Krystal%20Palace%20Hotel%20Douala.jfif" alt="Krystal Palace Hotel Douala" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.85) 100%)"></div>
+          <span style="position:absolute;top:12px;right:12px;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);padding:4px 10px;border-radius:var(--radius-pill);font:700 11px/1 var(--font-heading);z-index:2">⭐ 4.9 (312 reviews)</span>
+          <span style="position:absolute;top:12px;left:12px;background:var(--color-accent);color:#fff;padding:4px 10px;border-radius:var(--radius-pill);font:800 10px/1 var(--font-heading);letter-spacing:.05em;z-index:2">5-STAR LUXURY</span>
+          <div style="position:relative;z-index:2">
+            <div style="font:800 20px/1.2 var(--font-heading);text-shadow:0 2px 4px rgba(0,0,0,0.5)">Krystal Palace Hotel Douala</div>
+            <div style="font:500 12px/1.3 var(--font-body);opacity:0.95;margin-top:3px;text-shadow:0 1px 2px rgba(0,0,0,0.5)">Douala Akwa / Bonanjo · Executive Harbor View Suite</div>
           </div>
         </div>
-        <div style="padding:14px;display:flex;align-items:center;justify-content:space-between">
-          <div style="display:flex;gap:6px">
-            <span class="tag tag-accent" style="font-size:10px">Free Breakfast</span>
-            <span class="tag tag-accent" style="font-size:10px">High-Speed Wi-Fi</span>
+        <div style="padding:14px 16px;display:flex;align-items:center;justify-content:space-between;background:var(--color-surface)">
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <span class="tag tag-accent" style="font-size:10px">Infinity Pool</span>
+            <span class="tag tag-accent" style="font-size:10px">Michelin Dining</span>
+            <span class="tag tag-accent" style="font-size:10px">Airport Shuttle</span>
           </div>
           <div style="text-align:right">
-            <div style="font:800 16px/1 var(--font-heading);color:var(--color-text)">XAF 65 000</div>
-            <div style="font:400 11px/1 var(--font-body);color:var(--color-text-secondary)">per night · incl. taxes</div>
+            <div style="font:500 10.5px/1 var(--font-body);color:var(--color-text-muted);text-decoration:line-through">Booking: XAF 165 000</div>
+            <div style="font:800 17px/1 var(--font-heading);color:var(--color-accent);margin-top:3px">XAF 145 000</div>
+            <div style="font:500 10.5px/1 var(--font-body);color:var(--color-success)">Loumoo Direct · Save XAF 20 000</div>
           </div>
         </div>
       </div>
 
-      <!-- Hotel 2 -->
-      <div onClick="{{ openHotelDetail }}" class="card-premium" style="padding:0;overflow:hidden;cursor:pointer;border-radius:var(--radius-md)">
-        <div style="height:140px;background:linear-gradient(135deg,#1b2838 0%,#2a475e 100%);display:flex;align-items:flex-end;padding:14px;color:#fff;position:relative">
-          <span style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.45);backdrop-filter:blur(6px);padding:4px 8px;border-radius:4px;font:700 11px/1 var(--font-heading)">⭐ 4.8 (320 reviews)</span>
-          <div>
-            <div style="font:800 18px/1.2 var(--font-heading)">Starland Hotel Bonapriso</div>
-            <div style="font:400 12px/1.3 var(--font-body);opacity:0.9">Douala Bonapriso · Rooftop Pool &amp; Spa</div>
+      <!-- Hotel 2: Hôtel du Phare Kribi -->
+      <div onClick="{{ openHotelDetail }}" class="card-premium" style="padding:0;overflow:hidden;cursor:pointer;border-radius:var(--radius-md);position:relative">
+        <div style="height:180px;position:relative;display:flex;align-items:flex-end;padding:16px;color:#fff;overflow:hidden">
+          <img src="./Assets/Travel%26Hotel/Hotel%20du%20Phare%20(Kribi%2C%20Cameroun)%20_%20tarifs%202019%20mis%E2%80%A6.jfif" alt="Hôtel du Phare Kribi" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.85) 100%)"></div>
+          <span style="position:absolute;top:12px;right:12px;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);padding:4px 10px;border-radius:var(--radius-pill);font:700 11px/1 var(--font-heading);z-index:2">⭐ 4.8 (218 reviews)</span>
+          <span style="position:absolute;top:12px;left:12px;background:#059669;color:#fff;padding:4px 10px;border-radius:var(--radius-pill);font:800 10px/1 var(--font-heading);letter-spacing:.05em;z-index:2">BEACHFRONT BUNGALOW</span>
+          <div style="position:relative;z-index:2">
+            <div style="font:800 20px/1.2 var(--font-heading);text-shadow:0 2px 4px rgba(0,0,0,0.5)">Hôtel du Phare (Kribi Oceanfront)</div>
+            <div style="font:500 12px/1.3 var(--font-body);opacity:0.95;margin-top:3px;text-shadow:0 1px 2px rgba(0,0,0,0.5)">Kribi Atlantic Shore · Private Beach &amp; Seafood Terrace</div>
           </div>
         </div>
-        <div style="padding:14px;display:flex;align-items:center;justify-content:space-between">
-          <div style="display:flex;gap:6px">
-            <span class="tag tag-accent" style="font-size:10px">Airport Shuttle</span>
-            <span class="tag tag-accent" style="font-size:10px">Gym &amp; Spa</span>
+        <div style="padding:14px 16px;display:flex;align-items:center;justify-content:space-between;background:var(--color-surface)">
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <span class="tag tag-accent" style="font-size:10px">Free Breakfast</span>
+            <span class="tag tag-accent" style="font-size:10px">Private Balcony</span>
+            <span class="tag tag-accent" style="font-size:10px">Ocean View</span>
           </div>
           <div style="text-align:right">
-            <div style="font:800 16px/1 var(--font-heading);color:var(--color-text)">XAF 85 000</div>
-            <div style="font:400 11px/1 var(--font-body);color:var(--color-text-secondary)">per night · incl. taxes</div>
+            <div style="font:500 10.5px/1 var(--font-body);color:var(--color-text-muted);text-decoration:line-through">Standard: XAF 55 000</div>
+            <div style="font:800 17px/1 var(--font-heading);color:var(--color-accent);margin-top:3px">XAF 45 000</div>
+            <div style="font:500 10.5px/1 var(--font-body);color:var(--color-success)">Save XAF 10 000 / night</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hotel 3: Résidence Jully Kribi -->
+      <div onClick="{{ openHotelDetail }}" class="card-premium" style="padding:0;overflow:hidden;cursor:pointer;border-radius:var(--radius-md);position:relative">
+        <div style="height:180px;position:relative;display:flex;align-items:flex-end;padding:16px;color:#fff;overflow:hidden">
+          <img src="./Assets/Travel%26Hotel/Residence%20JULLY%20Kribi.jfif" alt="Résidence Jully Kribi" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.85) 100%)"></div>
+          <span style="position:absolute;top:12px;right:12px;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);padding:4px 10px;border-radius:var(--radius-pill);font:700 11px/1 var(--font-heading);z-index:2">⭐ 4.7 (140 reviews)</span>
+          <span style="position:absolute;top:12px;left:12px;background:#d97706;color:#fff;padding:4px 10px;border-radius:var(--radius-pill);font:800 10px/1 var(--font-heading);letter-spacing:.05em;z-index:2">SEASIDE VILLA</span>
+          <div style="position:relative;z-index:2">
+            <div style="font:800 20px/1.2 var(--font-heading);text-shadow:0 2px 4px rgba(0,0,0,0.5)">Résidence JULLY Kribi</div>
+            <div style="font:500 12px/1.3 var(--font-body);opacity:0.95;margin-top:3px;text-shadow:0 1px 2px rgba(0,0,0,0.5)">Kribi Lobé Falls Coast · Palm Grove Luxury Suites</div>
+          </div>
+        </div>
+        <div style="padding:14px 16px;display:flex;align-items:center;justify-content:space-between;background:var(--color-surface)">
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <span class="tag tag-accent" style="font-size:10px">Kitchenette</span>
+            <span class="tag tag-accent" style="font-size:10px">Fiber Wi-Fi</span>
+            <span class="tag tag-accent" style="font-size:10px">Generator 24/7</span>
+          </div>
+          <div style="text-align:right">
+            <div style="font:500 10.5px/1 var(--font-body);color:var(--color-text-muted);text-decoration:line-through">Official: XAF 48 000</div>
+            <div style="font:800 17px/1 var(--font-heading);color:var(--color-accent);margin-top:3px">XAF 38 000</div>
+            <div style="font:500 10.5px/1 var(--font-body);color:var(--color-success)">Save XAF 10 000 / night</div>
           </div>
         </div>
       </div>
@@ -112,22 +148,27 @@ def get_hotel_vertical_view():
     <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;flex-shrink:0">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
     </button>
-    <h4 style="margin:0;font-size:16px">Hôtel Les Cascades du Tara</h4>
+    <h4 style="margin:0;font-size:16px">Krystal Palace Hotel Douala</h4>
   </div>
 
   <div style="padding:16px;max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:14px">
 
-    <div style="height:180px;border-radius:var(--radius-md);background:linear-gradient(135deg,#003d8a 0%,#007aff 100%);display:flex;align-items:center;justify-content:center;color:#fff;font-size:48px">
-      🏖️
+    <div style="height:220px;border-radius:var(--radius-md);overflow:hidden;position:relative">
+      <img src="./Assets/Travel%26Hotel/Krystal%20Palace%20Hotel%20Douala.jfif" alt="Krystal Palace Douala" style="width:100%;height:100%;object-fit:cover">
+      <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0) 50%, rgba(0,0,0,0.8) 100%)"></div>
+      <div style="position:absolute;bottom:14px;left:16px;color:#fff;z-index:2">
+        <span class="tag tag-accent" style="margin-bottom:6px;display:inline-block">5-STAR OFFICIAL</span>
+        <div style="font:800 22px/1.2 var(--font-heading)">Krystal Palace Hotel Douala</div>
+      </div>
     </div>
 
     <div class="card-premium" style="display:flex;flex-direction:column;gap:8px">
       <div style="display:flex;align-items:center;justify-content:space-between">
-        <span style="font:800 18px/1.2 var(--font-heading);color:var(--color-text)">Hôtel Les Cascades du Tara</span>
-        <span class="tag tag-accent">⭐ 4.9 (184)</span>
+        <span style="font:800 18px/1.2 var(--font-heading);color:var(--color-text)">Krystal Palace Executive Suites</span>
+        <span class="tag tag-accent">⭐ 4.9 (312 reviews)</span>
       </div>
       <div style="font:400 13px/1.4 var(--font-body);color:var(--color-text-secondary)">
-        Route des Chutes de la Lobé, Kribi, Cameroon. Premium beachfront rooms with private ocean balcony, swimming pool, and seafood restaurant.
+        Boulevard de la Liberté, Akwa / Bonanjo, Douala, Cameroon. Premier luxury destination with panoramic port views, Clarins spa, fine dining, and instant escrow check-in.
       </div>
     </div>
 
@@ -137,10 +178,13 @@ def get_hotel_vertical_view():
 
       <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;border-radius:var(--radius-sm);border:2px solid var(--color-accent);background:var(--color-accent-100)">
         <div>
-          <div style="font:700 14px/1.2 var(--font-heading);color:var(--color-text)">Ocean Deluxe King Room</div>
-          <div style="font:400 12px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">1 King Bed · Balcony · Free Breakfast</div>
+          <div style="font:700 14px/1.2 var(--font-heading);color:var(--color-text)">Executive Harbor View Suite</div>
+          <div style="font:400 12px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">1 King Bed · Skyline Balcony · Breakfast &amp; Spa Included</div>
         </div>
-        <div style="font:800 15px/1 var(--font-heading);color:var(--color-accent)">XAF 65 000</div>
+        <div style="text-align:right">
+          <div style="font:500 11px/1 var(--font-body);color:var(--color-text-muted);text-decoration:line-through">XAF 165 000</div>
+          <div style="font:800 16px/1 var(--font-heading);color:var(--color-accent);margin-top:2px">XAF 145 000</div>
+        </div>
       </div>
     </div>
 

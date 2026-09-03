@@ -3467,6 +3467,15 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 }
 .pub-category-empty { padding: 18px 12px; font: 400 12px/1.5 var(--font-body); color: var(--color-text-muted); }
 
+/* On a phone the two category columns are ~150px each, which wraps every
+   name onto two lines and leaves the subcategory column empty until a parent
+   is picked. Stacking them gives each list the full width. */
+@media (max-width: 639px) {
+  .pub-category { grid-template-columns: 1fr; }
+  .pub-category-col { max-height: 232px; }
+  .pub-category-col + .pub-category-col { border-top: 1px solid var(--color-divider); }
+}
+
 /* Media */
 .pub-media { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 9px; }
 .pub-media-item {
@@ -3685,6 +3694,23 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 .pub-tab:hover { border-color: var(--color-neutral-400); color: var(--color-text); }
 .pub-tab.is-active { background: var(--color-accent); border-color: var(--color-accent); color: #fff; }
 .pub-tab:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+
+/* A publication with no photo should not reserve a full 4:3 well: for a
+   broadcast the message is the content, and the empty frame just pushes it
+   below the fold. */
+.loumoo-media-card .pub-card-media-empty {
+  aspect-ratio: auto; min-height: 108px; gap: 4px;
+  font: 500 11px/1.3 var(--font-body); color: var(--color-text-tertiary);
+}
+.loumoo-media-card .loumoo-card-text {
+  margin: 0; font: 400 12.5px/1.5 var(--font-body); color: var(--color-text-secondary);
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
+.loumoo-media-card .pub-card-meta {
+  display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px;
+  padding-top: 8px; border-top: 1px solid var(--color-divider);
+  font: 500 10.5px/1.3 var(--font-body); color: var(--color-text-muted);
+}
 
 /* ── Discovery grids, empty states and seller controls ──────────────────── */
 .pub-grid {
@@ -4154,7 +4180,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
             <div style="font:500 clamp(13px, 1.8vw, 16px)/1.4 var(--font-body);color:var(--color-text-secondary);margin-bottom:20px;max-width:380px">8K 360° Capture. No limits. Unbeatable FlowState stabilization.</div>
             <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
               <button onClick="{{ () => openProduct('insta360_x4') }}" class="hero-btn-pill">Explore Insta360 X4</button>
-              <button onClick="{{ () => openVideoModal('Insta360 X4: Magic in Action', '8K 360° Action Masterclass · FlowState Stabilization', 'FLAGSHIP 8K', 'https://assets.mixkit.co/videos/preview/mixkit-surfer-riding-a-wave-in-the-sea-1224-large.mp4') }}" style="display:inline-flex;align-items:center;gap:6px;background:transparent;border:none;color:var(--color-text);font:700 13px/1 var(--font-heading);cursor:pointer;padding:8px 12px">
+              <button onClick="{{ () => openVideoModal('DJI Osmo Pocket 3 Masterclass', '4K 120fps ActiveTrack 6.0 · Ultra-Stabilized Cinematic Storytelling', 'FLAGSHIP 4K', './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2010%20Aesthetic%20holiday%20table%20setting%20ideas%20that%20bring%20together%20comfort%20beauty%20and%20useful%20ideas%20you%20will%20actually%20try%20for%20people%20w.mp4') }}" style="display:inline-flex;align-items:center;gap:6px;background:transparent;border:none;color:var(--color-text);font:700 13px/1 var(--font-heading);cursor:pointer;padding:8px 12px">
                 <div style="width:26px;height:26px;border-radius:50%;background:var(--color-accent-100);color:var(--color-accent);display:flex;align-items:center;justify-content:center"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg></div>
                 <span>Watch Film</span>
               </button>
@@ -4163,7 +4189,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 
           <div style="display:flex;justify-content:center;align-items:center;position:relative;z-index:2">
             <div style="position:relative;width:100%;max-width:340px;height:220px;display:flex;align-items:center;justify-content:center;border-radius:24px;overflow:hidden;background:radial-gradient(circle, rgba(0,122,255,0.08) 0%, rgba(15,23,42,0.04) 100%)">
-              <img src="https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=600&q=85" alt="Insta360 X4 8K Camera" style="max-width:85%;max-height:85%;object-fit:contain;filter:drop-shadow(0 14px 28px rgba(0,0,0,0.25));transition:transform 0.4s ease">
+              <img src="./Assets/acessories&gadgets/DJI%20Osmo%20Pocket%203.jfif" alt="DJI Osmo Pocket 3 Creator Combo" style="max-width:85%;max-height:85%;object-fit:contain;filter:drop-shadow(0 14px 28px rgba(0,0,0,0.25));transition:transform 0.4s ease">
             </div>
           </div>
         </div>
@@ -4183,7 +4209,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
           </div>
           <div style="display:flex;justify-content:center;align-items:center">
             <div style="width:100%;max-width:280px;height:200px;background:radial-gradient(circle, #e2e8f0 0%, #cbd5e1 100%);border-radius:24px;display:flex;align-items:center;justify-content:center;overflow:hidden">
-              <img src="https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=600&q=85" alt="iPhone 15 Pro Max Titanium" style="max-width:85%;max-height:85%;object-fit:contain;filter:drop-shadow(0 12px 24px rgba(0,0,0,0.2))">
+              <img src="./Assets/telephone&PC/iphone%2015%20Pro%20Max%20-%20Best%20Features%20in%202025.jfif" alt="iPhone 15 Pro Max Titanium" style="max-width:85%;max-height:85%;object-fit:contain;filter:drop-shadow(0 12px 24px rgba(0,0,0,0.2))">
             </div>
           </div>
         </div>
@@ -4203,7 +4229,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
           </div>
           <div style="display:flex;justify-content:center;align-items:center">
             <div style="width:100%;max-width:280px;height:200px;background:radial-gradient(circle, #e2e8f0 0%, #cbd5e1 100%);border-radius:24px;display:flex;align-items:center;justify-content:center;overflow:hidden">
-              <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=600&q=85" alt="MacBook Air M2" style="max-width:85%;max-height:85%;object-fit:contain;filter:drop-shadow(0 12px 24px rgba(0,0,0,0.2))">
+              <img src="./Assets/telephone&PC/Macbook.jfif" alt="MacBook Air M2" style="max-width:85%;max-height:85%;object-fit:contain;filter:drop-shadow(0 12px 24px rgba(0,0,0,0.2))">
             </div>
           </div>
         </div>
@@ -4220,64 +4246,72 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
     <!-- ── 03: CATEGORY QUICK-DISCOVERY LAYER (Apple-Style Squircles) ── -->
     <div class="cat-discovery-rail">
       <!-- 1. Hotels -->
-      <button onClick="{{ () => openCategory('hotels') }}" class="cat-squircle-card" aria-label="Category Hotels & Accommodations">
-        <div class="cat-squircle-icon-wrap" style="background:#ffeef0;color:#e11d48">
+      <button onClick="{ () => openCategory('hotels') }" class="cat-squircle-card" aria-label="Category Hotels & Accommodations">
+        <div class="cat-squircle-icon-wrap" style="background:#fff;border:1px solid rgba(0,0,0,0.06);overflow:hidden;padding:2px">
+          <img src="./Assets/Travel&Hotel/Krystal%20Palace%20Hotel%20Douala.jfif" alt="Hotels" style="width:100%;height:100%;object-fit:cover;border-radius:12px">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 22v-6.57"/><path d="M12 11h.01"/><path d="M12 7h.01"/><path d="M14 15.43V22"/><path d="M15 11h.01"/><path d="M15 7h.01"/><path d="M16 16h2a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/><path d="M18 22v-4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v4"/><path d="M8 22v-6.57"/><path d="M9 11h.01"/><path d="M9 7h.01"/></svg>
         </div>
         <span class="cat-squircle-label">Hotels</span>
       </button>
 
       <!-- 2. Banks / Finance -->
-      <button onClick="{{ () => openCategory('banks') }}" class="cat-squircle-card" aria-label="Category Banks & Real Estate">
-        <div class="cat-squircle-icon-wrap" style="background:#fef6e7;color:#d97706">
+      <button onClick="{ () => openCategory('banks') }" class="cat-squircle-card" aria-label="Category Banks & Real Estate">
+        <div class="cat-squircle-icon-wrap" style="background:#fff;border:1px solid rgba(0,0,0,0.06);overflow:hidden;padding:4px">
+          <img src="./Assets/LOGO%20icons/Bank%20Icon%20stock%20vector_%20Illustration%20of%20savings,%20symbol%20-%2031873148.jfif" alt="Banks" style="width:100%;height:100%;object-fit:contain">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/><path d="M6 14h2"/><path d="M12 14h6"/></svg>
         </div>
         <span class="cat-squircle-label">Banks</span>
       </button>
 
       <!-- 3. Fashion -->
-      <button onClick="{{ () => openCategory('fashion') }}" class="cat-squircle-card" aria-label="Category Fashion & Luxury">
-        <div class="cat-squircle-icon-wrap" style="background:#faf0e6;color:#b45309">
+      <button onClick="{ () => openCategory('fashion') }" class="cat-squircle-card" aria-label="Category Fashion & Luxury">
+        <div class="cat-squircle-icon-wrap" style="background:#fff;border:1px solid rgba(0,0,0,0.06);overflow:hidden;padding:4px">
+          <img src="./Assets/LOGO%20icons/women%27s%20fashion%20logo%20vector%20design.jfif" alt="Fashion" style="width:100%;height:100%;object-fit:contain">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/></svg>
         </div>
         <span class="cat-squircle-label">Fashion</span>
       </button>
 
       <!-- 4. Shoes -->
-      <button onClick="{{ () => openCategory('fashion') }}" class="cat-squircle-card" aria-label="Category Shoes & Sneakers">
-        <div class="cat-squircle-icon-wrap" style="background:#f3e8ff;color:#9333ea">
+      <button onClick="{ () => openCategory('fashion') }" class="cat-squircle-card" aria-label="Category Shoes & Sneakers">
+        <div class="cat-squircle-icon-wrap" style="background:#fff;border:1px solid rgba(0,0,0,0.06);overflow:hidden;padding:4px">
+          <img src="./Assets/LOGO%20icons/Men%27s%20shoes%20logo%20icon%20design%20illustration%20_%20Premium%20Vector.jfif" alt="Shoes" style="width:100%;height:100%;object-fit:contain">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 17h20v2H2zM4 17l2-6 5-1 4 4 5-1 2 4"/></svg>
         </div>
         <span class="cat-squircle-label">Shoes</span>
       </button>
 
       <!-- 5. Tech -->
-      <button onClick="{{ () => openCategory('electronics') }}" class="cat-squircle-card" aria-label="Category Technology & Gadgets">
-        <div class="cat-squircle-icon-wrap" style="background:#e0f2fe;color:#0284c7">
+      <button onClick="{ () => openCategory('electronics') }" class="cat-squircle-card" aria-label="Category Technology & Gadgets">
+        <div class="cat-squircle-icon-wrap" style="background:#fff;border:1px solid rgba(0,0,0,0.06);overflow:hidden;padding:4px">
+          <img src="./Assets/_processed/logo_icons_itel_42.png" alt="Tech" style="width:100%;height:100%;object-fit:contain">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect width="18" height="12" x="3" y="4" rx="2"/><line x1="2" x2="22" y1="20" y2="20"/></svg>
         </div>
         <span class="cat-squircle-label">Tech</span>
       </button>
 
       <!-- 6. Markets -->
-      <button onClick="{{ () => openCategory('store') }}" class="cat-squircle-card" aria-label="Category Markets & Stores">
-        <div class="cat-squircle-icon-wrap" style="background:#ffedd5;color:#ea580c">
+      <button onClick="{ () => openCategory('store') }" class="cat-squircle-card" aria-label="Category Markets & Stores">
+        <div class="cat-squircle-icon-wrap" style="background:#fff;border:1px solid rgba(0,0,0,0.06);overflow:hidden;padding:4px">
+          <img src="./Assets/LOGO%20icons/Market%20Logo%20Design%20_#logo%20#logodesigner%20#marketing.jfif" alt="Markets" style="width:100%;height:100%;object-fit:contain">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
         </div>
         <span class="cat-squircle-label">Markets</span>
       </button>
 
       <!-- 7. Travel -->
-      <button onClick="{{ on.travel }}" class="cat-squircle-card" aria-label="Category Travel & Flights">
-        <div class="cat-squircle-icon-wrap" style="background:#e0f2fe;color:#2563eb">
+      <button onClick="{ on.travel }" class="cat-squircle-card" aria-label="Category Travel & Flights">
+        <div class="cat-squircle-icon-wrap" style="background:#fff;border:1px solid rgba(0,0,0,0.06);overflow:hidden;padding:4px">
+          <img src="./Assets/LOGO%20icons/Travel%20logo%20image%20_%20Premium%20Vector.jfif" alt="Travel" style="width:100%;height:100%;object-fit:contain">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1z"/></svg>
         </div>
         <span class="cat-squircle-label">Travel</span>
       </button>
 
       <!-- 8. Services -->
-      <button onClick="{{ () => openCategory('services') }}" class="cat-squircle-card" aria-label="Category Professional Services">
-        <div class="cat-squircle-icon-wrap" style="background:#ede9fe;color:#7c3aed">
+      <button onClick="{ () => openCategory('services') }" class="cat-squircle-card" aria-label="Category Professional Services">
+        <div class="cat-squircle-icon-wrap" style="background:#fff;border:1px solid rgba(0,0,0,0.06);overflow:hidden;padding:4px">
+          <img src="./Assets/_processed/logo_icons_lettering_service_screwdriver_and_wrench_45.png" alt="Services" style="width:100%;height:100%;object-fit:contain">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg>
         </div>
         <span class="cat-squircle-label">Services</span>
@@ -4306,7 +4340,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
           <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('insta360_x4', 'Insta360 X4'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('insta360_x4') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('insta360_x4') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
           </button>
-          <img src="https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=500&q=85" alt="Insta360 X4 8K 360 Action Camera">
+          <img src="./Assets/acessories&gadgets/DJI%20Osmo%20Pocket%203.jfif" alt="DJI Osmo Pocket 3 Creator Combo">
         </div>
         <div class="loumoo-card-body">
           <h4 class="loumoo-card-title">Insta360 X4 8K 360°</h4>
@@ -4324,10 +4358,10 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
               </div>
               <div class="loumoo-card-trust-pill">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                <span>✓ Escrow options available</span>
+                <span>✓ Glotelho: 540.000 FCFA</span>
               </div>
             </div>
-            <button class="loumoo-card-pill-btn" aria-label="Buy Insta360 X4">Buy now</button>
+            <button class="loumoo-card-pill-btn" aria-label="Buy DJI Osmo Pocket 3">Buy now</button>
           </div>
         </div>
       </div>
@@ -4339,7 +4373,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
           <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('iphone_15_pro', 'iPhone 15 Pro Max'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('iphone_15_pro') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('iphone_15_pro') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
           </button>
-          <img src="https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=500&q=85" alt="iPhone 15 Pro Max 256GB">
+          <img src="./Assets/telephone&PC/iphone%2015%20Pro%20Max%20-%20Best%20Features%20in%202025.jfif" alt="iPhone 15 Pro Max 256GB">
         </div>
         <div class="loumoo-card-body">
           <h4 class="loumoo-card-title">iPhone 15 Pro Max</h4>
@@ -4372,7 +4406,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
           <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('sony_xm5', 'Sony WH-1000XM5'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('sony_xm5') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('sony_xm5') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
           </button>
-          <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=500&q=85" alt="Sony WH-1000XM5 Wireless Headphones">
+          <img src="./Assets/_processed/acessories_gadgets_apple_air_pod_max_airpodmax_apple_keysho_16.png" alt="Apple AirPods Max Studio ANC">
         </div>
         <div class="loumoo-card-body">
           <h4 class="loumoo-card-title">Sony WH-1000XM5</h4>
@@ -4390,10 +4424,10 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
               </div>
               <div class="loumoo-card-trust-pill">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                <span>✓ Escrow options available</span>
+                <span>✓ Glotelho: 450.000 FCFA</span>
               </div>
             </div>
-            <button class="loumoo-card-pill-btn" aria-label="Buy Sony WH-1000XM5">Buy now</button>
+            <button class="loumoo-card-pill-btn" aria-label="Buy Apple AirPods Max">Buy now</button>
           </div>
         </div>
       </div>
@@ -4405,7 +4439,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
           <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('apple_watch_s9', 'Apple Watch Series 9'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('apple_watch_s9') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('apple_watch_s9') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
           </button>
-          <img src="https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=500&q=85" alt="Apple Watch Series 9 GPS 45mm">
+          <img src="./Assets/watch/Classic%20Rolex%20SeaDweller.jfif" alt="Rolex Sea-Dweller 43mm Oystersteel">
         </div>
         <div class="loumoo-card-body">
           <h4 class="loumoo-card-title">Apple Watch Series 9</h4>
@@ -4423,10 +4457,10 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
               </div>
               <div class="loumoo-card-trust-pill">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                <span>✓ Escrow options available</span>
+                <span>✓ Horlogerie Akwa: 8.500.000 FCFA</span>
               </div>
             </div>
-            <button class="loumoo-card-pill-btn" aria-label="Buy Apple Watch Series 9">Buy now</button>
+            <button class="loumoo-card-pill-btn" aria-label="Buy Rolex Sea-Dweller">Buy now</button>
           </div>
         </div>
       </div>
@@ -4438,7 +4472,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
           <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('macbook_m2', 'MacBook Air M2'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('macbook_m2') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('macbook_m2') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
           </button>
-          <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=500&q=85" alt="MacBook Air M2 15-inch">
+          <img src="./Assets/telephone&PC/Macbook.jfif" alt="MacBook Air M2 13-inch Space Grey">
         </div>
         <div class="loumoo-card-body">
           <h4 class="loumoo-card-title">MacBook Air M2 15"</h4>
@@ -4456,7 +4490,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
               </div>
               <div class="loumoo-card-trust-pill">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                <span>✓ Escrow options available</span>
+                <span>✓ Glotelho: 820.000 FCFA</span>
               </div>
             </div>
             <button class="loumoo-card-pill-btn" aria-label="Buy MacBook Air M2">Buy now</button>
@@ -4471,7 +4505,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
           <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('nike_air_force_1', 'Nike Air Force 1'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('nike_air_force_1') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('nike_air_force_1') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
           </button>
-          <img src="https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=500&q=85" alt="Nike Air Force 1 07 White">
+          <img src="./Assets/ElectroMenage/ACOQOOS%20Juicer%20Machines,%20Juicers%20Whole%20Fruit%20and%E2%80%A6.jfif" alt="ACOQOOS Cold Press Extractor Machine">
         </div>
         <div class="loumoo-card-body">
           <h4 class="loumoo-card-title">Nike Air Force 1 '07</h4>
@@ -4489,10 +4523,10 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
               </div>
               <div class="loumoo-card-trust-pill">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                <span>✓ Escrow options available</span>
+                <span>✓ Arno Cameroun: 45.000 FCFA</span>
               </div>
             </div>
-            <button class="loumoo-card-pill-btn" aria-label="Buy Nike Air Force 1">Buy now</button>
+            <button class="loumoo-card-pill-btn" aria-label="Buy ACOQOOS Juicer">Buy now</button>
           </div>
         </div>
       </div>
@@ -4516,8 +4550,8 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
     <!-- Official Insta360 5-Card Bento Showcase Grid (Media-First Hover-to-Play Standard) -->
     <div class="insta360-bento-video-grid" id="instaVideoBentoRail">
       <!-- 1. Left Tall Card: Catching waves (By Tikanuismith · Insta360 X4) -->
-      <div onClick="{{ () => openVideoModal('Catching waves', 'By Tikanuismith · Shot on Insta360 X4 in 8K 360°', 'INSTA360 X4', 'https://assets.mixkit.co/videos/preview/mixkit-surfer-riding-a-wave-in-the-sea-1224-large.mp4') }}" data-hover-video="true" class="insta-video-card-tall" style="position:relative;overflow:hidden;border-radius:var(--radius-lg);cursor:pointer;background:#0b0d14" aria-label="Explore Catching waves by Tikanuismith">
-        <video src="https://assets.mixkit.co/videos/preview/mixkit-surfer-riding-a-wave-in-the-sea-1224-large.mp4" poster="https://images.unsplash.com/photo-1502680390469-be75c86b636f?auto=format&fit=crop&w=600&q=85" muted loop playsinline preload="none" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
+      <div onClick="{{ () => openVideoModal('Holiday Aesthetics & Living', 'Luxury Interior & Decor Showcase · Loumoo Lifestyle', 'LOUMOO LIVING', './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2010%20Aesthetic%20holiday%20table%20setting%20ideas%20that%20bring%20together%20comfort%20beauty%20and%20useful%20ideas%20you%20will%20actually%20try%20for%20people%20w.mp4') }}" data-hover-video="true" class="insta-video-card-tall" style="position:relative;overflow:hidden;border-radius:var(--radius-lg);cursor:pointer;background:#0b0d14" aria-label="Explore Catching waves by Tikanuismith">
+        <video src="./Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2010%20Aesthetic%20holiday%20table%20setting%20ideas%20that%20bring%20together%20comfort%20beauty%20and%20useful%20ideas%20you%20will%20actually%20try%20for%20people%20w.mp4" poster="./Assets/Travel&Hotel/1995%20Luxury%20Hotel%20Suite%20Wallpaper.jfif" muted loop playsinline preload="none" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
         <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0) 35%, rgba(0,0,0,0.2) 60%, rgba(0,0,0,0.85) 100%);pointer-events:none"></div>
 
         <div class="loumoo-card-video-pill" style="top:14px;right:14px"><span class="live-dot"></span>8K 360°</div>
@@ -4538,8 +4572,8 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
       <!-- 2. Middle Column: Split Top Wide + Bottom Duo -->
       <div class="insta-video-middle-col">
         <!-- Top Wide Card: Parachute drift (By Nick Durham · Insta360 Ace Pro 2) -->
-        <div onClick="{{ () => openVideoModal('Parachute drift', 'By Nick Durham · Shot on Insta360 Ace Pro 2 in 8K', 'ACE PRO 2', 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-clouds-from-an-airplane-window-4186-large.mp4') }}" data-hover-video="true" class="insta-video-card-wide" style="position:relative;overflow:hidden;border-radius:var(--radius-lg);cursor:pointer;background:#0b0d14" aria-label="Explore Parachute drift by Nick Durham">
-          <video src="https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-clouds-from-an-airplane-window-4186-large.mp4" poster="https://images.unsplash.com/photo-1508614589041-895b88991e3e?auto=format&fit=crop&w=800&q=85" muted loop playsinline preload="none" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
+        <div onClick="{{ () => openVideoModal('Timeless Interior Elegance', 'Modern Organic Retreat Design · Loumoo Living', 'WARM LUXURY', './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2016%20Timeless%20entryway%20organization%20ideas%20that%20look%20expensive%20while%20staying%20practical%20realistic%20and%20beginner%20friendly%20for%20busy%20pe.mp4') }}" data-hover-video="true" class="insta-video-card-wide" style="position:relative;overflow:hidden;border-radius:var(--radius-lg);cursor:pointer;background:#0b0d14" aria-label="Explore Parachute drift by Nick Durham">
+          <video src="./Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2016%20Timeless%20entryway%20organization%20ideas%20that%20look%20expensive%20while%20staying%20practical%20realistic%20and%20beginner%20friendly%20for%20busy%20pe.mp4" poster="./Assets/Travel&Hotel/Golden%20Haven%20Retreat%20_%20Warm%20Luxury%20Hotel%20Bedroom%20Design%20with%20Modern%20Organic%20Elegance.jfif" muted loop playsinline preload="none" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
           <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0) 35%, rgba(0,0,0,0.2) 60%, rgba(0,0,0,0.85) 100%);pointer-events:none"></div>
 
           <div class="loumoo-card-video-pill" style="top:14px;right:14px"><span class="live-dot"></span>8K HDR</div>
@@ -4560,8 +4594,8 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
         <!-- Bottom Duo Row -->
         <div class="insta-video-middle-bottom-row">
           <!-- 3. Middle Bottom-Left: Wing view (By Doug Payne · Insta360 X4) -->
-          <div onClick="{{ () => openVideoModal('Wing view', 'By Doug Payne · Shot on Insta360 Aerial Horizon', 'INSTA360 X4', 'https://assets.mixkit.co/videos/preview/mixkit-snowy-mountain-peaks-in-a-sunny-day-41680-large.mp4') }}" data-hover-video="true" class="insta-video-card-compact" style="position:relative;overflow:hidden;border-radius:var(--radius-lg);cursor:pointer;background:#0b0d14" aria-label="Explore Wing view by Doug Payne">
-            <video src="https://assets.mixkit.co/videos/preview/mixkit-snowy-mountain-peaks-in-a-sunny-day-41680-large.mp4" poster="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=85" muted loop playsinline preload="none" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
+          <div onClick="{{ () => openVideoModal('Luxury Suite Architecture', 'Hotel Room Sourcing & Interiors · Douala & Kribi', 'SUITE ARCHITECTURE', './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2049%20Genius%20Guest%20Room%20Ideas-pin-id-1127588825467750602.mp4') }}" data-hover-video="true" class="insta-video-card-compact" style="position:relative;overflow:hidden;border-radius:var(--radius-lg);cursor:pointer;background:#0b0d14" aria-label="Explore Wing view by Doug Payne">
+            <video src="./Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2049%20Genius%20Guest%20Room%20Ideas-pin-id-1127588825467750602.mp4" poster="./Assets/Travel&Hotel/Luxury%20Hotel%20Room%20Interiors%20at%20This%20Level%20Come%20Down%20to%20Who%20You%20Source%20With.jfif" muted loop playsinline preload="none" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
             <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0) 35%, rgba(0,0,0,0.2) 60%, rgba(0,0,0,0.85) 100%);pointer-events:none"></div>
 
             <div class="loumoo-card-video-pill" style="top:10px;right:10px;padding:3px 6px;font-size:9.5px"><span class="live-dot"></span>AERIAL</div>
@@ -4580,8 +4614,8 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
           </div>
 
           <!-- 4. Middle Bottom-Right: River glide (By Daniel Falcão Correia Lima · Insta360 GO 3S) -->
-          <div onClick="{{ () => openVideoModal('River glide', 'By Daniel Falcão · Shot on Insta360 GO 3S', 'GO 3S', 'https://assets.mixkit.co/videos/preview/mixkit-waterfall-in-forest-2213-large.mp4') }}" data-hover-video="true" class="insta-video-card-compact" style="position:relative;overflow:hidden;border-radius:var(--radius-lg);cursor:pointer;background:#0b0d14" aria-label="Explore River glide by Daniel Falcão Correia Lima">
-            <video src="https://assets.mixkit.co/videos/preview/mixkit-waterfall-in-forest-2213-large.mp4" poster="https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?auto=format&fit=crop&w=600&q=85" muted loop playsinline preload="none" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
+          <div onClick="{{ () => openVideoModal('Smart Morning Routine', 'Wellness & Smart Lifestyle Devices · Loumoo Lifestyle', 'SMART ROUTINE', './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2094%20Clever%20Morning%20Routine%20Ideas-pin-id-641833384412737958.mp4') }}" data-hover-video="true" class="insta-video-card-compact" style="position:relative;overflow:hidden;border-radius:var(--radius-lg);cursor:pointer;background:#0b0d14" aria-label="Explore River glide by Daniel Falcão Correia Lima">
+            <video src="./Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2094%20Clever%20Morning%20Routine%20Ideas-pin-id-641833384412737958.mp4" poster="./Assets/Travel&Hotel/City%20View%20from%20Room.jfif" muted loop playsinline preload="none" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
             <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0) 35%, rgba(0,0,0,0.2) 60%, rgba(0,0,0,0.85) 100%);pointer-events:none"></div>
 
             <div class="loumoo-card-video-pill" style="top:10px;right:10px;padding:3px 6px;font-size:9.5px"><span class="live-dot"></span>4K ACTION</div>
@@ -4602,8 +4636,8 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
       </div>
 
       <!-- 5. Right Tall Card: City shift (By Asenseofhuber · Insta360 Flow) -->
-      <div onClick="{{ () => openVideoModal('City shift', 'By Asenseofhuber · Shot on Insta360 Flow Smart Gimbal', 'INSTA360 FLOW', 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4') }}" data-hover-video="true" class="insta-video-card-tall" style="position:relative;overflow:hidden;border-radius:var(--radius-lg);cursor:pointer;background:#0b0d14" aria-label="Explore City shift by Asenseofhuber">
-        <video src="https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4" poster="https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&w=600&q=85" muted loop playsinline preload="none" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
+      <div onClick="{{ () => openVideoModal('Kribi Coastal Serenity', 'Beachfront Leisure & Resort Inspiration · Cameroon', 'KRIBI COAST', './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%20Beachy%20beach%20picnic%20thoughts%20and%20clever%20inspiration%20with%20timeless%20style%20to%20brighten%20your%20feed-pin-id-958000151964999370.mp4') }}" data-hover-video="true" class="insta-video-card-tall" style="position:relative;overflow:hidden;border-radius:var(--radius-lg);cursor:pointer;background:#0b0d14" aria-label="Explore City shift by Asenseofhuber">
+        <video src="./Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%20Beachy%20beach%20picnic%20thoughts%20and%20clever%20inspiration%20with%20timeless%20style%20to%20brighten%20your%20feed-pin-id-958000151964999370.mp4" poster="./Assets/Travel&Hotel/Kribi%20Hotel.jfif" muted loop playsinline preload="none" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
         <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0) 35%, rgba(0,0,0,0.2) 60%, rgba(0,0,0,0.85) 100%);pointer-events:none"></div>
 
         <div class="loumoo-card-video-pill" style="top:14px;right:14px"><span class="live-dot"></span>AI TRACKING</div>
@@ -4921,7 +4955,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
             <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('beats-studio-pro', 'Beats Studio Pro'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save Beats Studio Pro to wishlist">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('beats-studio-pro') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('beats-studio-pro') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
             </button>
-            <img src="https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&w=500&q=85" alt="Beats Studio Pro" loading="lazy">
+            <img src="./Assets/acessories&gadgets/Created%20a%20Poster%20Ad%20of%20@oraimoclub%20SpaceBuds%20%F0%9F%92%9A%E2%80%A6.jfif" alt="Oraimo SpaceBuds Hybrid ANC" loading="lazy">
           </div>
           <div class="loumoo-card-body">
             <h4 class="loumoo-card-title">Beats Studio Pro</h4>
@@ -4954,7 +4988,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
             <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('jordan-4-thunder', 'Jordan 4 Retro Thunder'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save Jordan 4 Retro Thunder to wishlist">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('jordan-4-thunder') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('jordan-4-thunder') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
             </button>
-            <img src="https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?auto=format&fit=crop&w=500&q=85" alt="Jordan 4 Retro Thunder" loading="lazy">
+            <img src="./Assets/fashion/#MenStyle%20#MensFashion%20#CorporateStyle%20#MensShoe%E2%80%A6.jfif" alt="Italian Tailored Executive Suit" loading="lazy">
           </div>
           <div class="loumoo-card-body">
             <h4 class="loumoo-card-title">Air Jordan 4 Retro</h4>
@@ -4987,7 +5021,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
             <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('dyson-supersonic', 'Dyson Supersonic'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save Dyson Supersonic to wishlist">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('dyson-supersonic') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('dyson-supersonic') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
             </button>
-            <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=500&q=85" alt="Dyson Supersonic" loading="lazy">
+            <img src="./Assets/perfume&lotion/Boss%20Bottled%20Night%20by%20Hugo%20Boss%20_%20100ml%20EDT%20_%20Woody%20Aromatic%20Fragrance%20_%20Gift%20for%20him,%20Fathers%20day.jfif" alt="Hugo Boss Bottled Night 100ml EDT" loading="lazy">
           </div>
           <div class="loumoo-card-body">
             <h4 class="loumoo-card-title">Dyson Supersonic Pro</h4>
@@ -5020,7 +5054,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
             <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('galaxy-s24-ultra', 'Galaxy S24 Ultra 512GB'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save Galaxy S24 Ultra to wishlist">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('galaxy-s24-ultra') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('galaxy-s24-ultra') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
             </button>
-            <img src="https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=500&q=85" alt="Galaxy S24 Ultra" loading="lazy">
+            <img src="./Assets/telephone&PC/SAMSUNG%20S26%20ULTRA%20%F0%9F%94%A5%20BUY%20IT%20FOR%20YOU%20%F0%9F%91%87.jfif" alt="Samsung Galaxy S26 Ultra 5G" loading="lazy">
           </div>
           <div class="loumoo-card-body">
             <h4 class="loumoo-card-title">Galaxy S24 Ultra</h4>
@@ -5053,7 +5087,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
             <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('macbook-air-m2', 'Apple MacBook Air 13 M2'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save MacBook Air to wishlist">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('macbook-air-m2') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('macbook-air-m2') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
             </button>
-            <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=500&q=85" alt="MacBook Air M2" loading="lazy">
+            <img src="./Assets/telephone&PC/TECNO%20CAMON%2040%20Series_%20Redefining%20Imagery%20with%20%C2%A0TECNO%C2%A0AI.jfif" alt="TECNO Camon 40 Premier AI" loading="lazy">
           </div>
           <div class="loumoo-card-body">
             <h4 class="loumoo-card-title">MacBook Air 13” M2</h4>
@@ -5086,7 +5120,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
             <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('insta360-x4', 'Insta360 X4 8K'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save Insta360 X4 to wishlist">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('insta360-x4') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('insta360-x4') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
             </button>
-            <img src="https://images.unsplash.com/photo-1502680390469-be75c86b636f?auto=format&fit=crop&w=500&q=85" alt="Insta360 X4" loading="lazy">
+            <img src="./Assets/necklace&ring/Aquamarine%20and%20Simulated%20Diamond%20Necklace%20&%20Earrings%20Set%20-%20925%20Sterling%20Silver,%20Elegant%20Bridal%20arm%20Jewelry_.jfif" alt="Aquamarine & Diamond 925 Bridal Set" loading="lazy">
           </div>
           <div class="loumoo-card-body">
             <h4 class="loumoo-card-title">Insta360 X4 8K</h4>
@@ -5131,8 +5165,8 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 
       <div class="loumoo-rail-track" id="storiesMotionRail">
         <!-- Story 1: City Lights -->
-        <div class="loumoo-rail-card-story" onClick="{{ () => openVideoModal('City Lights at Midnight', 'Urban exploration captured in 4K HDR', 'CITY', 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4') }}" data-hover-video="true" style="position:relative;border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;box-shadow:var(--shadow-sm);transition:transform 0.3s ease;background:#0b0d14" aria-label="Play City Lights story">
-          <video src="https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4" poster="https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&w=500&q=80" muted loop playsinline preload="none" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
+        <div class="loumoo-rail-card-story" onClick="{{ () => openVideoModal('City Lights at Midnight', 'Douala & Yaoundé Urban Life · Loumoo Stories', 'URBAN', './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2010%20Aesthetic%20holiday%20table%20setting%20ideas%20that%20bring%20together%20comfort%20beauty%20and%20useful%20ideas%20you%20will%20actually%20try%20for%20people%20w.mp4') }}" data-hover-video="true" style="position:relative;border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;box-shadow:var(--shadow-sm);transition:transform 0.3s ease;background:#0b0d14" aria-label="Play City Lights story">
+          <video src="./Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2010%20Aesthetic%20holiday%20table%20setting%20ideas%20that%20bring%20together%20comfort%20beauty%20and%20useful%20ideas%20you%20will%20actually%20try%20for%20people%20w.mp4" poster="./Assets/Travel&Hotel/Krystal%20Palace%20Hotel%20Douala.jfif" muted loop playsinline preload="none" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
           <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.85) 100%);pointer-events:none"></div>
           <div style="position:absolute;top:12px;left:12px;background:rgba(239,68,68,0.9);color:#fff;font:700 10px var(--font-heading);padding:4px 8px;border-radius:100px;letter-spacing:0.05em">LIVE STORY</div>
           <div style="position:absolute;bottom:12px;left:12px;right:12px;pointer-events:none">
@@ -5142,8 +5176,8 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
         </div>
 
         <!-- Story 2: Alpine Wings -->
-        <div class="loumoo-rail-card-story" onClick="{{ () => openVideoModal('Alpine Ridge Flight', 'Gliding over snow-capped mountains', 'ADVENTURE', 'https://assets.mixkit.co/videos/preview/mixkit-snowy-mountain-peaks-in-a-sunny-day-41680-large.mp4') }}" data-hover-video="true" style="position:relative;border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;box-shadow:var(--shadow-sm);transition:transform 0.3s ease;background:#0b0d14" aria-label="Play Alpine Ridge story">
-          <video src="https://assets.mixkit.co/videos/preview/mixkit-snowy-mountain-peaks-in-a-sunny-day-41680-large.mp4" poster="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=500&q=80" muted loop playsinline preload="none" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
+        <div class="loumoo-rail-card-story" onClick="{{ () => openVideoModal('Seaside Villa Walkthrough', 'Kribi Oceanfront Relaxation · Loumoo Escapes', 'GETAWAY', './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2016%20Timeless%20entryway%20organization%20ideas%20that%20look%20expensive%20while%20staying%20practical%20realistic%20and%20beginner%20friendly%20for%20busy%20pe.mp4') }}" data-hover-video="true" style="position:relative;border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;box-shadow:var(--shadow-sm);transition:transform 0.3s ease;background:#0b0d14" aria-label="Play Alpine Ridge story">
+          <video src="./Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2016%20Timeless%20entryway%20organization%20ideas%20that%20look%20expensive%20while%20staying%20practical%20realistic%20and%20beginner%20friendly%20for%20busy%20pe.mp4" poster="./Assets/Travel&Hotel/Hotel%20du%20Phare%20%28Kribi,%20Cameroun%29%20_%20tarifs%202019%20mis%E2%80%A6.jfif" muted loop playsinline preload="none" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
           <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.85) 100%);pointer-events:none"></div>
           <div style="position:absolute;top:12px;left:12px;background:rgba(14,165,233,0.9);color:#fff;font:700 10px var(--font-heading);padding:4px 8px;border-radius:100px;letter-spacing:0.05em">AERIAL</div>
           <div style="position:absolute;bottom:12px;left:12px;right:12px;pointer-events:none">
@@ -5153,8 +5187,8 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
         </div>
 
         <!-- Story 3: Ocean Waves -->
-        <div class="loumoo-rail-card-story" onClick="{{ () => openVideoModal('Ocean Swell & Surf', 'Crystal turquoise waves and break lines', 'NATURE', 'https://assets.mixkit.co/videos/preview/mixkit-sea-water-movement-under-the-sun-41544-large.mp4') }}" data-hover-video="true" style="position:relative;border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;box-shadow:var(--shadow-sm);transition:transform 0.3s ease;background:#0b0d14" aria-label="Play Ocean Swell story">
-          <video src="https://assets.mixkit.co/videos/preview/mixkit-sea-water-movement-under-the-sun-41544-large.mp4" poster="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=500&q=80" muted loop playsinline preload="none" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
+        <div class="loumoo-rail-card-story" onClick="{{ () => openVideoModal('Ocean Swell & Surf', 'Atlantic Waves & Atlantic Coast · Loumoo Coast', 'COASTAL', './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%20Beachy%20beach%20picnic%20thoughts%20and%20clever%20inspiration%20with%20timeless%20style%20to%20brighten%20your%20feed-pin-id-958000151964999370.mp4') }}" data-hover-video="true" style="position:relative;border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;box-shadow:var(--shadow-sm);transition:transform 0.3s ease;background:#0b0d14" aria-label="Play Ocean Swell story">
+          <video src="./Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%20Beachy%20beach%20picnic%20thoughts%20and%20clever%20inspiration%20with%20timeless%20style%20to%20brighten%20your%20feed-pin-id-958000151964999370.mp4" poster="./Assets/Travel&Hotel/Residence%20JULLY%20Kribi.jfif" muted loop playsinline preload="none" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
           <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.85) 100%);pointer-events:none"></div>
           <div style="position:absolute;top:12px;left:12px;background:rgba(16,185,129,0.9);color:#fff;font:700 10px var(--font-heading);padding:4px 8px;border-radius:100px;letter-spacing:0.05em">COASTAL</div>
           <div style="position:absolute;bottom:12px;left:12px;right:12px;pointer-events:none">
@@ -5164,8 +5198,8 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
         </div>
 
         <!-- Story 4: Rainforest Cascade -->
-        <div class="loumoo-rail-card-story" onClick="{{ () => openVideoModal('Lobe Falls Cascade', 'Deep equatorial falls and mist canopy', 'DISCOVER', 'https://assets.mixkit.co/videos/preview/mixkit-waterfall-in-forest-2213-large.mp4') }}" data-hover-video="true" style="position:relative;border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;box-shadow:var(--shadow-sm);transition:transform 0.3s ease;background:#0b0d14" aria-label="Play Lobe Falls story">
-          <video src="https://assets.mixkit.co/videos/preview/mixkit-waterfall-in-forest-2213-large.mp4" poster="https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?auto=format&fit=crop&w=500&q=80" muted loop playsinline preload="none" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
+        <div class="loumoo-rail-card-story" onClick="{{ () => openVideoModal('Lobe Falls Cascade', 'Deep Equatorial Wonders · Cameroon Tourism', 'NATURE', './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2049%20Genius%20Guest%20Room%20Ideas-pin-id-1127588825467750602.mp4') }}" data-hover-video="true" style="position:relative;border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;box-shadow:var(--shadow-sm);transition:transform 0.3s ease;background:#0b0d14" aria-label="Play Lobe Falls story">
+          <video src="./Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2049%20Genius%20Guest%20Room%20Ideas-pin-id-1127588825467750602.mp4" poster="./Assets/Travel&Hotel/Yaounde,%20Cameroon.jfif" muted loop playsinline preload="none" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
           <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.85) 100%);pointer-events:none"></div>
           <div style="position:absolute;top:12px;left:12px;background:rgba(168,85,247,0.9);color:#fff;font:700 10px var(--font-heading);padding:4px 8px;border-radius:100px;letter-spacing:0.05em">DISCOVERY</div>
           <div style="position:absolute;bottom:12px;left:12px;right:12px;pointer-events:none">
@@ -5175,8 +5209,8 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
         </div>
 
         <!-- Story 5: Mount Cameroon Ascent -->
-        <div class="loumoo-rail-card-story" onClick="{{ () => openVideoModal('Mount Cameroon Ascent', 'Trekking through volcanic cloud forest at 4000m', 'TREK', 'https://assets.mixkit.co/videos/preview/mixkit-snowy-mountain-peaks-in-a-sunny-day-41680-large.mp4') }}" data-hover-video="true" style="position:relative;border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;box-shadow:var(--shadow-sm);transition:transform 0.3s ease;background:#0b0d14" aria-label="Play Mount Cameroon story">
-          <video src="https://assets.mixkit.co/videos/preview/mixkit-snowy-mountain-peaks-in-a-sunny-day-41680-large.mp4" poster="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=500&q=80" muted loop playsinline preload="none" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
+        <div class="loumoo-rail-card-story" onClick="{{ () => openVideoModal('Mount Cameroon Summit', 'Trekking the Chariot of the Gods · Buea', 'SUMMIT', './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2094%20Clever%20Morning%20Routine%20Ideas-pin-id-641833384412737958.mp4') }}" data-hover-video="true" style="position:relative;border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;box-shadow:var(--shadow-sm);transition:transform 0.3s ease;background:#0b0d14" aria-label="Play Mount Cameroon story">
+          <video src="./Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2016%20Timeless%20entryway%20organization%20ideas%20that%20look%20expensive%20while%20staying%20practical%20realistic%20and%20beginner%20friendly%20for%20busy%20pe.mp4" poster="./Assets/Travel&Hotel/Hotel%20du%20Phare%20%28Kribi,%20Cameroun%29%20_%20tarifs%202019%20mis%E2%80%A6.jfif" muted loop playsinline preload="none" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
           <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.85) 100%);pointer-events:none"></div>
           <div style="position:absolute;top:12px;left:12px;background:rgba(234,88,12,0.9);color:#fff;font:700 10px var(--font-heading);padding:4px 8px;border-radius:100px;letter-spacing:0.05em">EXPEDITION</div>
           <div style="position:absolute;bottom:12px;left:12px;right:12px;pointer-events:none">
@@ -5265,7 +5299,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
             <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('denim-jacket', 'Denim Jacket Oversized'); } }}" class="wishlist-float-btn" aria-label="Save Denim Jacket to wishlist">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('denim-jacket') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('denim-jacket') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
             </button>
-            <img src="https://images.unsplash.com/photo-1576995853123-5a10305d93c0?auto=format&fit=crop&w=400&q=80" alt="Denim Jacket Oversized" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+            <img src="./Assets/fashion/100%25%20Cotton%20Ankara%20Palazzo%20Pants.jfif" alt="100% Cotton Ankara Palazzo Pants" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
           </div>
           <div class="disc-card-body">
             <div class="disc-card-name">Denim Jacket</div>
@@ -5280,7 +5314,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
             <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('cargo-pants', 'Cargo Pants Relaxed Fit'); } }}" class="wishlist-float-btn" aria-label="Save Cargo Pants to wishlist">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('cargo-pants') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('cargo-pants') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
             </button>
-            <img src="https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?auto=format&fit=crop&w=400&q=80" alt="Cargo Pants Olive" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+            <img src="./Assets/fashion/11%20sandalias%20planas%20de%20Mango%20que%20vamos%20a%20repetir%20sin%20parar%20porque%20quedan%20genial%20con%20vestidos%20midi.jfif" alt="Mango Artisanal Leather Sandals" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
           </div>
           <div class="disc-card-body">
             <div class="disc-card-name">Cargo Pants</div>
@@ -5295,7 +5329,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
             <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('hoodie-heavyweight', 'Hoodie Heavyweight'); } }}" class="wishlist-float-btn" aria-label="Save Hoodie Heavyweight to wishlist">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('hoodie-heavyweight') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('hoodie-heavyweight') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
             </button>
-            <img src="https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=400&q=80" alt="Hoodie Heavyweight" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+            <img src="./Assets/fashion/#MenStyle%20#MensFashion%20#CorporateStyle%20#MensShoe%E2%80%A6.jfif" alt="Italian Executive Corporate Suit" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
           </div>
           <div class="disc-card-body">
             <div class="disc-card-name">Hoodie Heavyweight</div>
@@ -5310,7 +5344,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
             <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('watch-minimal-silver', 'Watch Minimal Silver'); } }}" class="wishlist-float-btn" aria-label="Save Watch to wishlist">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('watch-minimal-silver') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('watch-minimal-silver') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
             </button>
-            <img src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=400&q=80" alt="Rolex Minimalist Silver" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+            <img src="./Assets/watch/Rolex%20Datejust%2041%20watch_%20Oystersteel%20and%20white%E2%80%A6.jfif" alt="Rolex Datejust 41 Oystersteel" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
           </div>
           <div class="disc-card-body">
             <div class="disc-card-name">Rolex Oyster</div>
@@ -5325,7 +5359,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
             <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('nike-af1', 'Nike Air Force 1 07'); } }}" class="wishlist-float-btn" aria-label="Save Nike AF1 to wishlist">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('nike-af1') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('nike-af1') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
             </button>
-            <img src="https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=400&q=80" alt="Nike Air Force 1" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+            <img src="./Assets/necklace&ring/Anillo%20de%20compromiso%20con%20coraz%C3%B3n%20y%20halo%20de%20oro.jfif" alt="18K Gold Solitaire Heart Halo Ring" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
           </div>
           <div class="disc-card-body">
             <div class="disc-card-name">Nike Air Force 1</div>
@@ -5358,7 +5392,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
             <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('ipad-air-m2', 'iPad Air M2'); } }}" class="wishlist-float-btn" aria-label="Save iPad Air M2 to wishlist">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('ipad-air-m2') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('ipad-air-m2') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
             </button>
-            <img src="https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?auto=format&fit=crop&w=400&q=80" alt="iPad Air M2" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+            <img src="./Assets/telephone&PC/iPhone%2017%20Pro%20Max%20Colors%20%E2%80%93%20Every%20Stunning%20Finish%20in%20One%20Premium%20Look%20%F0%9F%93%B1%E2%9C%A8.jfif" alt="Apple iPhone 17 Pro Max" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
           </div>
           <div class="disc-card-body">
             <div class="disc-card-name">iPad Air M2</div>
@@ -5373,7 +5407,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
             <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('sony-wh-ch720n', 'Sony WH-CH720N'); } }}" class="wishlist-float-btn" aria-label="Save Sony WH-CH720N to wishlist">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('sony-wh-ch720n') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('sony-wh-ch720n') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
             </button>
-            <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=400&q=80" alt="Sony Headphones" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+            <img src="./Assets/_processed/acessories_gadgets_apple_air_pod_max_airpodmax_apple_keysho_16.png" alt="Apple AirPods Max" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
           </div>
           <div class="disc-card-body">
             <div class="disc-card-name">Sony WH-CH720N</div>
@@ -5388,7 +5422,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
             <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('anker-powercore-20k', 'Anker PowerCore 20K'); } }}" class="wishlist-float-btn" aria-label="Save Anker PowerCore 20K to wishlist">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('anker-powercore-20k') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('anker-powercore-20k') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
             </button>
-            <img src="https://images.unsplash.com/photo-1609592424364-704337b51b3f?auto=format&fit=crop&w=400&q=80" alt="Anker 737 Power Bank" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+            <img src="./Assets/telephone&PC/Best%20Selling%20Apple%20AirTag%21.jfif" alt="Apple AirTag 4-Pack" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
           </div>
           <div class="disc-card-body">
             <div class="disc-card-name">Anker 737 PowerBank</div>
@@ -5403,7 +5437,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
             <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('dell-xps-13', 'Dell XPS 13 Ultra 7'); } }}" class="wishlist-float-btn" aria-label="Save Dell XPS 13 to wishlist">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('dell-xps-13') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('dell-xps-13') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
             </button>
-            <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80" alt="Dell XPS 13 OLED" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+            <img src="./Assets/telephone&PC/Microsoft%20Surface%20Laptop_%20Overview.jfif" alt="Microsoft Surface Laptop Touchscreen" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
           </div>
           <div class="disc-card-body">
             <div class="disc-card-name">Dell XPS 13 OLED</div>
@@ -5533,7 +5567,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
           <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('nike-dunk-low', 'Nike Dunk Low Retro'); } }}" class="wishlist-float-btn" aria-label="Save Nike Dunk Low to wishlist">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('nike-dunk-low') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('nike-dunk-low') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
           </button>
-          <img src="https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=400&q=80" alt="Nike Dunk Low Retro" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+          <img src="./Assets/ElectroMenage/ACOQOOS%20Juicer%20Machines,%20Juicers%20Whole%20Fruit%20and%E2%80%A6.jfif" alt="ACOQOOS Centrifugal Juicer" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
         </div>
         <div class="disc-card-body">
           <div class="disc-card-name">Nike Dunk Low</div>
@@ -5548,7 +5582,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
           <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('macbook-air-13', 'MacBook Air M2 13-inch'); } }}" class="wishlist-float-btn" aria-label="Save MacBook Air to wishlist">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('macbook-air-13') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('macbook-air-13') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
           </button>
-          <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80" alt="MacBook Air M2" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+          <img src="./Assets/telephone&PC/Macbook.jfif" alt="MacBook Air M2 Deal" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
         </div>
         <div class="disc-card-body">
           <div class="disc-card-name">MacBook Air M2</div>
@@ -5563,7 +5597,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
           <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('fossil-gen-6', 'Fossil Gen 6 Smartwatch'); } }}" class="wishlist-float-btn" aria-label="Save Fossil Gen 6 to wishlist">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('fossil-gen-6') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('fossil-gen-6') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
           </button>
-          <img src="https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=400&q=80" alt="Fossil Gen 6 Smartwatch" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+          <img src="./Assets/perfume&lotion/The%20Scent%20of%20Success_%20Jean%20Paul%20Gaultier%20Le%20Beau%20Le%20Parfum%20_%20Men%E2%80%99s%20Luxury%20Lifestyle.jfif" alt="Jean Paul Gaultier Le Beau Le Parfum" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
         </div>
         <div class="disc-card-body">
           <div class="disc-card-name">Fossil Gen 6</div>
@@ -5578,7 +5612,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
           <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('samsung-65-tv', 'Samsung 65 Crystal UHD TV'); } }}" class="wishlist-float-btn" aria-label="Save Samsung 65 TV to wishlist">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('samsung-65-tv') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('samsung-65-tv') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
           </button>
-          <img src="https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?auto=format&fit=crop&w=400&q=80" alt="Samsung 65 UHD TV" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+          <img src="./Assets/Travel&Hotel/Krystal%20Palace%20Hotel%20Douala.jfif" alt="Krystal Palace Suite Deal" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
         </div>
         <div class="disc-card-body">
           <div class="disc-card-name">Samsung 65"</div>
@@ -5644,7 +5678,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
           <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('air-jordan-1-bred', 'Air Jordan 1 Mid Bred'); } }}" class="wishlist-float-btn" aria-label="Save Air Jordan 1 to wishlist">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('air-jordan-1-bred') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('air-jordan-1-bred') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
           </button>
-          <img src="https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?auto=format&fit=crop&w=400&q=80" alt="Air Jordan 1 Mid Bred" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+          <img src="./Assets/perfume&lotion/MEET%20THE%204%20AFRICAN-OWNED%20BRANDS%20BRIDGING%20THE%20GAP%20IN%20THE%20SKINCARE%20MARKET%20FOR%20DARKER%20CONSUMERS.jfif" alt="African Shea & Baobab Body Lotion" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
         </div>
         <div class="disc-card-body">
           <div class="disc-card-name">Air Jordan 1</div>
@@ -5659,7 +5693,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
           <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('insta360-x4-flagship', 'Insta360 X4 8K'); } }}" class="wishlist-float-btn" aria-label="Save Insta360 X4 to wishlist">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('insta360-x4-flagship') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('insta360-x4-flagship') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
           </button>
-          <img src="https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80" alt="Insta360 X4 8K" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+          <img src="./Assets/acessories&gadgets/DJI%20Osmo%20Pocket%203.jfif" alt="DJI Osmo Pocket 3 Combo" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
         </div>
         <div class="disc-card-body">
           <div class="disc-card-name">Insta360 X4</div>
@@ -5674,7 +5708,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
           <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('ray-ban-wayfarer', 'Ray-Ban Wayfarer'); } }}" class="wishlist-float-btn" aria-label="Save Ray-Ban to wishlist">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('ray-ban-wayfarer') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('ray-ban-wayfarer') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
           </button>
-          <img src="https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=400&q=80" alt="Ray-Ban Wayfarer" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+          <img src="./Assets/necklace&ring/Black%20Agate%20Bracelet,%20Energy%20Balancing%20Men%27s%20Bracelet,%20Stainless%20Steel%20Men%27s%20Jewelry,%20Gift%20for%20Father_Husband.jfif" alt="Natural Black Agate Men's Bracelet" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
         </div>
         <div class="disc-card-body">
           <div class="disc-card-name">Ray-Ban Wayfarer</div>
@@ -5689,7 +5723,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
           <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('playstation-5', 'PlayStation 5 Console'); } }}" class="wishlist-float-btn" aria-label="Save PlayStation 5 to wishlist">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('playstation-5') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('playstation-5') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
           </button>
-          <img src="https://images.unsplash.com/photo-1606813907291-d86efa9b94db?auto=format&fit=crop&w=400&q=80" alt="PlayStation 5 Console" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+          <img src="./Assets/telephone&PC/316800155055565523.jfif" alt="Sony PlayStation 5 Slim" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
         </div>
         <div class="disc-card-body">
           <div class="disc-card-name">PlayStation 5</div>
@@ -9521,46 +9555,82 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
       </div>
     </div>
 
-    <!-- Hotel Results List -->
-    <div style="display:flex;flex-direction:column;gap:14px">
-      <!-- Hotel 1 -->
-      <div onClick="{{ openHotelDetail }}" class="card-premium" style="padding:0;overflow:hidden;cursor:pointer;border-radius:var(--radius-md)">
-        <div style="height:140px;background:linear-gradient(135deg,#003d8a 0%,#007aff 100%);display:flex;align-items:flex-end;padding:14px;color:#fff;position:relative">
-          <span style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.45);backdrop-filter:blur(6px);padding:4px 8px;border-radius:4px;font:700 11px/1 var(--font-heading)">⭐ 4.9 (184 reviews)</span>
-          <div>
-            <div style="font:800 18px/1.2 var(--font-heading)">Hôtel Les Cascades du Tara</div>
-            <div style="font:400 12px/1.3 var(--font-body);opacity:0.9">Kribi Beach Front · Ocean View &amp; Pool</div>
+    <!-- Hotel Results List with Real Assets & Cameroonian Pricing -->
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <!-- Hotel 1: Krystal Palace Hotel Douala -->
+      <div onClick="{{ openHotelDetail }}" class="card-premium" style="padding:0;overflow:hidden;cursor:pointer;border-radius:var(--radius-md);position:relative">
+        <div style="height:180px;position:relative;display:flex;align-items:flex-end;padding:16px;color:#fff;overflow:hidden">
+          <img src="./Assets/Travel%26Hotel/Krystal%20Palace%20Hotel%20Douala.jfif" alt="Krystal Palace Hotel Douala" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.85) 100%)"></div>
+          <span style="position:absolute;top:12px;right:12px;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);padding:4px 10px;border-radius:var(--radius-pill);font:700 11px/1 var(--font-heading);z-index:2">⭐ 4.9 (312 reviews)</span>
+          <span style="position:absolute;top:12px;left:12px;background:var(--color-accent);color:#fff;padding:4px 10px;border-radius:var(--radius-pill);font:800 10px/1 var(--font-heading);letter-spacing:.05em;z-index:2">5-STAR LUXURY</span>
+          <div style="position:relative;z-index:2">
+            <div style="font:800 20px/1.2 var(--font-heading);text-shadow:0 2px 4px rgba(0,0,0,0.5)">Krystal Palace Hotel Douala</div>
+            <div style="font:500 12px/1.3 var(--font-body);opacity:0.95;margin-top:3px;text-shadow:0 1px 2px rgba(0,0,0,0.5)">Douala Akwa / Bonanjo · Executive Harbor View Suite</div>
           </div>
         </div>
-        <div style="padding:14px;display:flex;align-items:center;justify-content:space-between">
-          <div style="display:flex;gap:6px">
-            <span class="tag tag-accent" style="font-size:10px">Free Breakfast</span>
-            <span class="tag tag-accent" style="font-size:10px">High-Speed Wi-Fi</span>
+        <div style="padding:14px 16px;display:flex;align-items:center;justify-content:space-between;background:var(--color-surface)">
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <span class="tag tag-accent" style="font-size:10px">Infinity Pool</span>
+            <span class="tag tag-accent" style="font-size:10px">Michelin Dining</span>
+            <span class="tag tag-accent" style="font-size:10px">Airport Shuttle</span>
           </div>
           <div style="text-align:right">
-            <div style="font:800 16px/1 var(--font-heading);color:var(--color-text)">XAF 65 000</div>
-            <div style="font:400 11px/1 var(--font-body);color:var(--color-text-secondary)">per night · incl. taxes</div>
+            <div style="font:500 10.5px/1 var(--font-body);color:var(--color-text-muted);text-decoration:line-through">Booking: XAF 165 000</div>
+            <div style="font:800 17px/1 var(--font-heading);color:var(--color-accent);margin-top:3px">XAF 145 000</div>
+            <div style="font:500 10.5px/1 var(--font-body);color:var(--color-success)">Loumoo Direct · Save XAF 20 000</div>
           </div>
         </div>
       </div>
 
-      <!-- Hotel 2 -->
-      <div onClick="{{ openHotelDetail }}" class="card-premium" style="padding:0;overflow:hidden;cursor:pointer;border-radius:var(--radius-md)">
-        <div style="height:140px;background:linear-gradient(135deg,#1b2838 0%,#2a475e 100%);display:flex;align-items:flex-end;padding:14px;color:#fff;position:relative">
-          <span style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.45);backdrop-filter:blur(6px);padding:4px 8px;border-radius:4px;font:700 11px/1 var(--font-heading)">⭐ 4.8 (320 reviews)</span>
-          <div>
-            <div style="font:800 18px/1.2 var(--font-heading)">Starland Hotel Bonapriso</div>
-            <div style="font:400 12px/1.3 var(--font-body);opacity:0.9">Douala Bonapriso · Rooftop Pool &amp; Spa</div>
+      <!-- Hotel 2: Hôtel du Phare Kribi -->
+      <div onClick="{{ openHotelDetail }}" class="card-premium" style="padding:0;overflow:hidden;cursor:pointer;border-radius:var(--radius-md);position:relative">
+        <div style="height:180px;position:relative;display:flex;align-items:flex-end;padding:16px;color:#fff;overflow:hidden">
+          <img src="./Assets/Travel%26Hotel/Hotel%20du%20Phare%20(Kribi%2C%20Cameroun)%20_%20tarifs%202019%20mis%E2%80%A6.jfif" alt="Hôtel du Phare Kribi" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.85) 100%)"></div>
+          <span style="position:absolute;top:12px;right:12px;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);padding:4px 10px;border-radius:var(--radius-pill);font:700 11px/1 var(--font-heading);z-index:2">⭐ 4.8 (218 reviews)</span>
+          <span style="position:absolute;top:12px;left:12px;background:#059669;color:#fff;padding:4px 10px;border-radius:var(--radius-pill);font:800 10px/1 var(--font-heading);letter-spacing:.05em;z-index:2">BEACHFRONT BUNGALOW</span>
+          <div style="position:relative;z-index:2">
+            <div style="font:800 20px/1.2 var(--font-heading);text-shadow:0 2px 4px rgba(0,0,0,0.5)">Hôtel du Phare (Kribi Oceanfront)</div>
+            <div style="font:500 12px/1.3 var(--font-body);opacity:0.95;margin-top:3px;text-shadow:0 1px 2px rgba(0,0,0,0.5)">Kribi Atlantic Shore · Private Beach &amp; Seafood Terrace</div>
           </div>
         </div>
-        <div style="padding:14px;display:flex;align-items:center;justify-content:space-between">
-          <div style="display:flex;gap:6px">
-            <span class="tag tag-accent" style="font-size:10px">Airport Shuttle</span>
-            <span class="tag tag-accent" style="font-size:10px">Gym &amp; Spa</span>
+        <div style="padding:14px 16px;display:flex;align-items:center;justify-content:space-between;background:var(--color-surface)">
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <span class="tag tag-accent" style="font-size:10px">Free Breakfast</span>
+            <span class="tag tag-accent" style="font-size:10px">Private Balcony</span>
+            <span class="tag tag-accent" style="font-size:10px">Ocean View</span>
           </div>
           <div style="text-align:right">
-            <div style="font:800 16px/1 var(--font-heading);color:var(--color-text)">XAF 85 000</div>
-            <div style="font:400 11px/1 var(--font-body);color:var(--color-text-secondary)">per night · incl. taxes</div>
+            <div style="font:500 10.5px/1 var(--font-body);color:var(--color-text-muted);text-decoration:line-through">Standard: XAF 55 000</div>
+            <div style="font:800 17px/1 var(--font-heading);color:var(--color-accent);margin-top:3px">XAF 45 000</div>
+            <div style="font:500 10.5px/1 var(--font-body);color:var(--color-success)">Save XAF 10 000 / night</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hotel 3: Résidence Jully Kribi -->
+      <div onClick="{{ openHotelDetail }}" class="card-premium" style="padding:0;overflow:hidden;cursor:pointer;border-radius:var(--radius-md);position:relative">
+        <div style="height:180px;position:relative;display:flex;align-items:flex-end;padding:16px;color:#fff;overflow:hidden">
+          <img src="./Assets/Travel%26Hotel/Residence%20JULLY%20Kribi.jfif" alt="Résidence Jully Kribi" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.85) 100%)"></div>
+          <span style="position:absolute;top:12px;right:12px;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);padding:4px 10px;border-radius:var(--radius-pill);font:700 11px/1 var(--font-heading);z-index:2">⭐ 4.7 (140 reviews)</span>
+          <span style="position:absolute;top:12px;left:12px;background:#d97706;color:#fff;padding:4px 10px;border-radius:var(--radius-pill);font:800 10px/1 var(--font-heading);letter-spacing:.05em;z-index:2">SEASIDE VILLA</span>
+          <div style="position:relative;z-index:2">
+            <div style="font:800 20px/1.2 var(--font-heading);text-shadow:0 2px 4px rgba(0,0,0,0.5)">Résidence JULLY Kribi</div>
+            <div style="font:500 12px/1.3 var(--font-body);opacity:0.95;margin-top:3px;text-shadow:0 1px 2px rgba(0,0,0,0.5)">Kribi Lobé Falls Coast · Palm Grove Luxury Suites</div>
+          </div>
+        </div>
+        <div style="padding:14px 16px;display:flex;align-items:center;justify-content:space-between;background:var(--color-surface)">
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <span class="tag tag-accent" style="font-size:10px">Kitchenette</span>
+            <span class="tag tag-accent" style="font-size:10px">Fiber Wi-Fi</span>
+            <span class="tag tag-accent" style="font-size:10px">Generator 24/7</span>
+          </div>
+          <div style="text-align:right">
+            <div style="font:500 10.5px/1 var(--font-body);color:var(--color-text-muted);text-decoration:line-through">Official: XAF 48 000</div>
+            <div style="font:800 17px/1 var(--font-heading);color:var(--color-accent);margin-top:3px">XAF 38 000</div>
+            <div style="font:500 10.5px/1 var(--font-body);color:var(--color-success)">Save XAF 10 000 / night</div>
           </div>
         </div>
       </div>
@@ -9580,22 +9650,27 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
     <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;flex-shrink:0">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
     </button>
-    <h4 style="margin:0;font-size:16px">Hôtel Les Cascades du Tara</h4>
+    <h4 style="margin:0;font-size:16px">Krystal Palace Hotel Douala</h4>
   </div>
 
   <div style="padding:16px;max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:14px">
 
-    <div style="height:180px;border-radius:var(--radius-md);background:linear-gradient(135deg,#003d8a 0%,#007aff 100%);display:flex;align-items:center;justify-content:center;color:#fff;font-size:48px">
-      🏖️
+    <div style="height:220px;border-radius:var(--radius-md);overflow:hidden;position:relative">
+      <img src="./Assets/Travel%26Hotel/Krystal%20Palace%20Hotel%20Douala.jfif" alt="Krystal Palace Douala" style="width:100%;height:100%;object-fit:cover">
+      <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0) 50%, rgba(0,0,0,0.8) 100%)"></div>
+      <div style="position:absolute;bottom:14px;left:16px;color:#fff;z-index:2">
+        <span class="tag tag-accent" style="margin-bottom:6px;display:inline-block">5-STAR OFFICIAL</span>
+        <div style="font:800 22px/1.2 var(--font-heading)">Krystal Palace Hotel Douala</div>
+      </div>
     </div>
 
     <div class="card-premium" style="display:flex;flex-direction:column;gap:8px">
       <div style="display:flex;align-items:center;justify-content:space-between">
-        <span style="font:800 18px/1.2 var(--font-heading);color:var(--color-text)">Hôtel Les Cascades du Tara</span>
-        <span class="tag tag-accent">⭐ 4.9 (184)</span>
+        <span style="font:800 18px/1.2 var(--font-heading);color:var(--color-text)">Krystal Palace Executive Suites</span>
+        <span class="tag tag-accent">⭐ 4.9 (312 reviews)</span>
       </div>
       <div style="font:400 13px/1.4 var(--font-body);color:var(--color-text-secondary)">
-        Route des Chutes de la Lobé, Kribi, Cameroon. Premium beachfront rooms with private ocean balcony, swimming pool, and seafood restaurant.
+        Boulevard de la Liberté, Akwa / Bonanjo, Douala, Cameroon. Premier luxury destination with panoramic port views, Clarins spa, fine dining, and instant escrow check-in.
       </div>
     </div>
 
@@ -9605,10 +9680,13 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 
       <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;border-radius:var(--radius-sm);border:2px solid var(--color-accent);background:var(--color-accent-100)">
         <div>
-          <div style="font:700 14px/1.2 var(--font-heading);color:var(--color-text)">Ocean Deluxe King Room</div>
-          <div style="font:400 12px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">1 King Bed · Balcony · Free Breakfast</div>
+          <div style="font:700 14px/1.2 var(--font-heading);color:var(--color-text)">Executive Harbor View Suite</div>
+          <div style="font:400 12px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">1 King Bed · Skyline Balcony · Breakfast &amp; Spa Included</div>
         </div>
-        <div style="font:800 15px/1 var(--font-heading);color:var(--color-accent)">XAF 65 000</div>
+        <div style="text-align:right">
+          <div style="font:500 11px/1 var(--font-body);color:var(--color-text-muted);text-decoration:line-through">XAF 165 000</div>
+          <div style="font:800 16px/1 var(--font-heading);color:var(--color-accent);margin-top:2px">XAF 145 000</div>
+        </div>
       </div>
     </div>
 
@@ -10982,18 +11060,18 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
             <sc-if value="{{ isSubcatAll || activeSubcategorySlug === 'laptops' }}">
               <div onClick="{{ () => openProduct('macbook_m2') }}" class="loumoo-media-card" aria-label="View MacBook Air M2 13">
                 <div class="loumoo-card-media-cutout">
-                  <span class="loumoo-card-badge badge-pill-sale">Save 10%</span>
+                  <span class="loumoo-card-badge badge-pill-sale">Save 75.000 FCFA</span>
                   <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('macbook_m2', 'MacBook Air M2 13'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('macbook_m2') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('macbook_m2') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
                   </button>
-                  <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=500&q=85" alt="MacBook Air M2 13">
+                  <img src="./Assets/telephone%26PC/Macbook.jfif" alt="MacBook Air M2 13">
                 </div>
                 <div class="loumoo-card-body">
-                  <h4 class="loumoo-card-title">MacBook Air M2 13”</h4>
-                  <div class="loumoo-card-tagline">Orca Electronics · Akwa, Douala</div>
+                  <h4 class="loumoo-card-title">MacBook Air 13” M2 (Space Grey)</h4>
+                  <div class="loumoo-card-tagline">Orca Electronics · Akwa Tech Corridor, Douala</div>
                   <div class="loumoo-card-rating-row">
                     <span>★ 4.9</span>
-                    <span class="loumoo-card-rating-text">(34) · Verified</span>
+                    <span class="loumoo-card-rating-text">(94 reviews) · Official Apple 1-Yr</span>
                   </div>
                   <div class="loumoo-card-bottom-row">
                     <div class="loumoo-card-pricing-block">
@@ -11004,7 +11082,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
                       </div>
                       <div class="loumoo-card-trust-pill">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                        <span>✓ Escrow options available</span>
+                        <span>✓ Glotelho Ref: 820.000 FCFA</span>
                       </div>
                     </div>
                     <button class="loumoo-card-pill-btn" aria-label="Buy MacBook Air M2">Buy now</button>
@@ -11014,102 +11092,102 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
             </sc-if>
 
             <sc-if value="{{ isSubcatAll || activeSubcategorySlug === 'audio' }}">
-              <div onClick="{{ () => openProduct('sony_xm5') }}" class="loumoo-media-card" aria-label="View Sony WH-1000XM5">
+              <div onClick="{{ () => openProduct('sony_xm5') }}" class="loumoo-media-card" aria-label="View Apple AirPods Max">
                 <div class="loumoo-card-media-cutout">
-                  <span class="loumoo-card-badge badge-pill-new">New</span>
-                  <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('sony_xm5', 'Sony WH-1000XM5'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
+                  <span class="loumoo-card-badge badge-pill-new">Studio Hi-Fi</span>
+                  <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('sony_xm5', 'Apple AirPods Max'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('sony_xm5') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('sony_xm5') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
                   </button>
-                  <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=500&q=85" alt="Sony WH-1000XM5">
+                  <img src="./Assets/_processed/acessories_gadgets_apple_air_pod_max_airpodmax_apple_keysho_16.png" alt="Apple AirPods Max">
                 </div>
                 <div class="loumoo-card-body">
-                  <h4 class="loumoo-card-title">Sony WH-1000XM5</h4>
+                  <h4 class="loumoo-card-title">Apple AirPods Max (Space Gray)</h4>
                   <div class="loumoo-card-tagline">Digital Corner · Bonapriso, Douala</div>
                   <div class="loumoo-card-rating-row">
-                    <span>★ 4.7</span>
-                    <span class="loumoo-card-rating-text">(28) · Verified</span>
+                    <span>★ 4.9</span>
+                    <span class="loumoo-card-rating-text">(78 reviews) · Authentic Apple</span>
                   </div>
                   <div class="loumoo-card-bottom-row">
                     <div class="loumoo-card-pricing-block">
                       <span class="loumoo-card-price-prefix">From</span>
                       <div class="loumoo-card-price-main">
-                        <span class="loumoo-card-price-val">189.000 FCFA</span>
-                        <span class="loumoo-card-price-strike">210.000 FCFA</span>
+                        <span class="loumoo-card-price-val">395.000 FCFA</span>
+                        <span class="loumoo-card-price-strike">450.000 FCFA</span>
                       </div>
                       <div class="loumoo-card-trust-pill">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                        <span>✓ Escrow options available</span>
+                        <span>✓ Glotelho Ref: 450.000 FCFA</span>
                       </div>
                     </div>
-                    <button class="loumoo-card-pill-btn" aria-label="Buy Sony WH-1000XM5">Buy now</button>
+                    <button class="loumoo-card-pill-btn" aria-label="Buy Apple AirPods Max">Buy now</button>
                   </div>
                 </div>
               </div>
             </sc-if>
 
             <sc-if value="{{ isSubcatAll || activeSubcategorySlug === 'smartphones' }}">
-              <div onClick="{{ () => openProduct('galaxy_s24_ultra') }}" class="loumoo-media-card" aria-label="View Samsung Galaxy A55">
+              <div onClick="{{ () => openProduct('galaxy_s24_ultra') }}" class="loumoo-media-card" aria-label="View Samsung Galaxy S26 Ultra">
                 <div class="loumoo-card-media-cutout">
-                  <span class="loumoo-card-badge badge-pill-sale">Save 15%</span>
-                  <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('samsung-a55', 'Samsung Galaxy A55'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('samsung-a55') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('samsung-a55') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                  <span class="loumoo-card-badge badge-pill-sale">Save 110.000 FCFA</span>
+                  <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('galaxy_s24_ultra', 'Samsung Galaxy S26 Ultra'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('galaxy_s24_ultra') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('galaxy_s24_ultra') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
                   </button>
-                  <img src="https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=500&q=85" alt="Samsung Galaxy A55 5G">
+                  <img src="./Assets/telephone%26PC/SAMSUNG%20S26%20ULTRA%20%F0%9F%94%A5%20BUY%20IT%20FOR%20YOU%20%F0%9F%91%87.jfif" alt="Samsung Galaxy S26 Ultra">
                 </div>
                 <div class="loumoo-card-body">
-                  <h4 class="loumoo-card-title">Samsung Galaxy A55 5G</h4>
-                  <div class="loumoo-card-tagline">Mboppi Mobile · Douala</div>
+                  <h4 class="loumoo-card-title">Samsung Galaxy S26 Ultra (512GB)</h4>
+                  <div class="loumoo-card-tagline">Mboppi Mobile Hub · Douala</div>
                   <div class="loumoo-card-rating-row">
-                    <span>★ 4.4</span>
-                    <span class="loumoo-card-rating-text">(19) · In Stock</span>
+                    <span>★ 4.9</span>
+                    <span class="loumoo-card-rating-text">(165 reviews) · Galaxy AI</span>
                   </div>
                   <div class="loumoo-card-bottom-row">
                     <div class="loumoo-card-pricing-block">
                       <span class="loumoo-card-price-prefix">From</span>
                       <div class="loumoo-card-price-main">
-                        <span class="loumoo-card-price-val">245.000 FCFA</span>
-                        <span class="loumoo-card-price-strike">275.000 FCFA</span>
+                        <span class="loumoo-card-price-val">810.000 FCFA</span>
+                        <span class="loumoo-card-price-strike">920.000 FCFA</span>
                       </div>
                       <div class="loumoo-card-trust-pill">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                        <span>✓ Escrow options available</span>
+                        <span>✓ Glotelho Ref: 920.000 FCFA</span>
                       </div>
                     </div>
-                    <button class="loumoo-card-pill-btn" aria-label="Buy Samsung Galaxy A55">Buy now</button>
+                    <button class="loumoo-card-pill-btn" aria-label="Buy Samsung Galaxy S26 Ultra">Buy now</button>
                   </div>
                 </div>
               </div>
             </sc-if>
 
             <sc-if value="{{ isSubcatAll || activeSubcategorySlug === 'power_accessories' }}">
-              <div onClick="{{ () => openProduct('anker_737') }}" class="loumoo-media-card" aria-label="View Anker 737 Power Bank">
+              <div onClick="{{ () => openProduct('anker_737') }}" class="loumoo-media-card" aria-label="View Oraimo SpaceBuds">
                 <div class="loumoo-card-media-cutout">
-                  <span class="loumoo-card-badge badge-pill-new">140W GaN</span>
-                  <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('anker_737', 'Anker 737 Power Bank'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
+                  <span class="loumoo-card-badge badge-pill-new">Hot Gadget</span>
+                  <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('anker_737', 'Oraimo SpaceBuds'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('anker_737') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('anker_737') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
                   </button>
-                  <img src="https://images.unsplash.com/photo-1609592424364-704337b51b3f?auto=format&fit=crop&w=500&q=85" alt="Anker 737 Power Bank">
+                  <img src="./Assets/acessories%26gadgets/Created%20a%20Poster%20Ad%20of%20%40oraimoclub%20SpaceBuds%20%F0%9F%92%9A%E2%80%A6.jfif" alt="Oraimo SpaceBuds">
                 </div>
                 <div class="loumoo-card-body">
-                  <h4 class="loumoo-card-title">Anker 737 Power Bank 24k</h4>
-                  <div class="loumoo-card-tagline">Orca Electronics · Akwa, Douala</div>
+                  <h4 class="loumoo-card-title">Oraimo SpaceBuds Hybrid ANC</h4>
+                  <div class="loumoo-card-tagline">Oraimo Official Store · Akwa, Douala</div>
                   <div class="loumoo-card-rating-row">
-                    <span>★ 4.6</span>
-                    <span class="loumoo-card-rating-text">(42) · Verified</span>
+                    <span>★ 4.8</span>
+                    <span class="loumoo-card-rating-text">(214 reviews) · 50dB Hybrid ANC</span>
                   </div>
                   <div class="loumoo-card-bottom-row">
                     <div class="loumoo-card-pricing-block">
                       <span class="loumoo-card-price-prefix">From</span>
                       <div class="loumoo-card-price-main">
-                        <span class="loumoo-card-price-val">62.000 FCFA</span>
-                        <span class="loumoo-card-price-strike">70.000 FCFA</span>
+                        <span class="loumoo-card-price-val">21.500 FCFA</span>
+                        <span class="loumoo-card-price-strike">26.500 FCFA</span>
                       </div>
                       <div class="loumoo-card-trust-pill">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                        <span>✓ Escrow options available</span>
+                        <span>✓ Oraimo CM Ref: 26.500 FCFA</span>
                       </div>
                     </div>
-                    <button class="loumoo-card-pill-btn" aria-label="Buy Anker 737">Buy now</button>
+                    <button class="loumoo-card-pill-btn" aria-label="Buy Oraimo SpaceBuds">Buy now</button>
                   </div>
                 </div>
               </div>
@@ -11118,62 +11196,62 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 
           <!-- Hospitality / Hotels Listings (Scenario B: Lifestyle presentation) -->
           <sc-if value="{{ isCategoryHotels }}">
-            <div onClick="{{ on.hotelDetail }}" class="loumoo-media-card" aria-label="View Sawa Luxury Hotel">
+            <div onClick="{{ on.hotelDetail }}" class="loumoo-media-card" aria-label="View Krystal Palace Hotel Douala">
               <div class="loumoo-card-media-lifestyle">
                 <span class="loumoo-card-badge badge-pill-sale">5-Star Luxury</span>
                 <div class="loumoo-media-overlay"></div>
-                <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=600&q=85" alt="Sawa Luxury Suite">
+                <img src="./Assets/Travel%26Hotel/Krystal%20Palace%20Hotel%20Douala.jfif" alt="Krystal Palace Douala">
               </div>
               <div class="loumoo-card-body">
-                <h4 class="loumoo-card-title">Sawa Luxury Suite</h4>
-                <div class="loumoo-card-tagline">Bonanjo, Douala · Ocean View & Spa Access</div>
+                <h4 class="loumoo-card-title">Krystal Palace Hotel Douala</h4>
+                <div class="loumoo-card-tagline">Bonanjo / Akwa · Panoramic Port View Suite & Spa</div>
                 <div class="loumoo-card-rating-row">
-                  <span>★ 4.8</span>
-                  <span class="loumoo-card-rating-text">(118 reviews) · Hotel Sawa</span>
+                  <span>★ 4.9</span>
+                  <span class="loumoo-card-rating-text">(312 reviews) · Krystal Palace Official</span>
                 </div>
                 <div class="loumoo-card-bottom-row">
                   <div class="loumoo-card-pricing-block">
                     <span class="loumoo-card-price-prefix">Per night</span>
                     <div class="loumoo-card-price-main">
-                      <span class="loumoo-card-price-val">65.000 FCFA</span>
-                      <span class="loumoo-card-price-strike">85.000 FCFA</span>
+                      <span class="loumoo-card-price-val">145.000 FCFA</span>
+                      <span class="loumoo-card-price-strike">165.000 FCFA</span>
                     </div>
                     <div class="loumoo-card-trust-pill">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                      <span>✓ Instant Confirmation</span>
+                      <span>✓ Booking Ref: 165.000 FCFA</span>
                     </div>
                   </div>
-                  <button class="loumoo-card-pill-btn" aria-label="Book Sawa Suite">Book now</button>
+                  <button class="loumoo-card-pill-btn" aria-label="Book Krystal Palace">Book now</button>
                 </div>
               </div>
             </div>
 
-            <div onClick="{{ on.hotelDetail }}" class="loumoo-media-card" aria-label="View Résidence Akwa Palm">
+            <div onClick="{{ on.hotelDetail }}" class="loumoo-media-card" aria-label="View Résidence Jully Kribi">
               <div class="loumoo-card-media-lifestyle">
-                <span class="loumoo-card-badge badge-pill-new">Top Host</span>
+                <span class="loumoo-card-badge badge-pill-new">Beachfront</span>
                 <div class="loumoo-media-overlay"></div>
-                <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=600&q=85" alt="Résidence Akwa Palm">
+                <img src="./Assets/Travel%26Hotel/Residence%20JULLY%20Kribi.jfif" alt="Résidence Jully Kribi">
               </div>
               <div class="loumoo-card-body">
-                <h4 class="loumoo-card-title">Résidence Akwa Palm</h4>
-                <div class="loumoo-card-tagline">Akwa, Douala · Furnished Studio & High-Speed WiFi</div>
+                <h4 class="loumoo-card-title">Résidence JULLY Kribi</h4>
+                <div class="loumoo-card-tagline">Kribi Coast · Seaside Palm Grove Luxury Suites</div>
                 <div class="loumoo-card-rating-row">
-                  <span>★ 4.5</span>
-                  <span class="loumoo-card-rating-text">(47 reviews) · Verified Host</span>
+                  <span>★ 4.7</span>
+                  <span class="loumoo-card-rating-text">(140 reviews) · Verified Host</span>
                 </div>
                 <div class="loumoo-card-bottom-row">
                   <div class="loumoo-card-pricing-block">
                     <span class="loumoo-card-price-prefix">Per night</span>
                     <div class="loumoo-card-price-main">
-                      <span class="loumoo-card-price-val">38.500 FCFA</span>
-                      <span class="loumoo-card-price-strike">45.000 FCFA</span>
+                      <span class="loumoo-card-price-val">38.000 FCFA</span>
+                      <span class="loumoo-card-price-strike">48.000 FCFA</span>
                     </div>
                     <div class="loumoo-card-trust-pill">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                      <span>✓ Instant Confirmation</span>
+                      <span>✓ Direct Escrow · Save 10k</span>
                     </div>
                   </div>
-                  <button class="loumoo-card-pill-btn" aria-label="Book Akwa Palm">Book now</button>
+                  <button class="loumoo-card-pill-btn" aria-label="Book Résidence Jully">Book now</button>
                 </div>
               </div>
             </div>
@@ -11185,25 +11263,25 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
               <div class="loumoo-card-media-lifestyle">
                 <span class="loumoo-card-badge badge-pill-new">VIP Class</span>
                 <div class="loumoo-media-overlay"></div>
-                <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=600&q=85" alt="Finexs VIP Bus">
+                <img src="./Assets/Travel%26Hotel/Cameroon%20(%20Cameroun%20)_%20A%20voyage%20to%20Cameroon%2C%20Africa%20-%20Douala%2C%20Yaound%C3%A9%2C%20Garoua%2C%20Maroua%2C%20Bafoussam%2C%20Bamenda%2C%20Ngaound%C3%A9r%C3%A9%2C%20%20Nkongsamba%2C%20Ka%C3%A9l%C3%A9%2C%20%20Kumba___.jfif" alt="Finexs VIP Bus">
               </div>
               <div class="loumoo-card-body">
-                <h4 class="loumoo-card-title">Douala ⇄ Yaoundé Express</h4>
-                <div class="loumoo-card-tagline">Finexs Voyages · Akwa VIP Terminal · AC & WiFi</div>
+                <h4 class="loumoo-card-title">Douala ⇄ Yaoundé VIP Express</h4>
+                <div class="loumoo-card-tagline">Finexs Voyages · Akwa VIP Agency · Reclining Leather & WiFi</div>
                 <div class="loumoo-card-rating-row">
                   <span>★ 4.9</span>
-                  <span class="loumoo-card-rating-text">(310 reviews) · Guaranteed Seat</span>
+                  <span class="loumoo-card-rating-text">(512 reviews) · Guaranteed Seat</span>
                 </div>
                 <div class="loumoo-card-bottom-row">
                   <div class="loumoo-card-pricing-block">
                     <span class="loumoo-card-price-prefix">One way</span>
                     <div class="loumoo-card-price-main">
-                      <span class="loumoo-card-price-val">8.000 FCFA</span>
-                      <span class="loumoo-card-price-strike">10.000 FCFA</span>
+                      <span class="loumoo-card-price-val">10.000 FCFA</span>
+                      <span class="loumoo-card-price-strike">12.000 FCFA</span>
                     </div>
                     <div class="loumoo-card-trust-pill">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                      <span>✓ E-Ticket Instant SMS</span>
+                      <span>✓ Official Terminal Ticket</span>
                     </div>
                   </div>
                   <button class="loumoo-card-pill-btn" aria-label="Book Finexs Express">Reserve seat</button>
@@ -11217,14 +11295,14 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
             <div onClick="{{ () => openProduct('iphone_15_pro') }}" class="loumoo-media-card" aria-label="Book Screen Replacement">
               <div class="loumoo-card-media-cutout">
                 <span class="loumoo-card-badge badge-pill-sale">Same Day Repair</span>
-                <img src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=500&q=85" alt="iPhone Screen Replacement">
+                <img src="./Assets/LOGO%20icons/Lettering%20service%20screwdriver%20and%20wrench%20symbol%20for%20repair%20and%20service%20_%20Premium%20Vector.jfif" alt="iPhone Screen Replacement">
               </div>
               <div class="loumoo-card-body">
-                <h4 class="loumoo-card-title">iPhone Screen Replacement</h4>
+                <h4 class="loumoo-card-title">Certified Smartphone & Tech Repairs</h4>
                 <div class="loumoo-card-tagline">KamerFix Pro · Akwa Dropoff · 6-Month Warranty</div>
                 <div class="loumoo-card-rating-row">
                   <span>★ 4.9</span>
-                  <span class="loumoo-card-rating-text">(52 reviews) · Certified Tech</span>
+                  <span class="loumoo-card-rating-text">(88 reviews) · Certified Tech</span>
                 </div>
                 <div class="loumoo-card-bottom-row">
                   <div class="loumoo-card-pricing-block">
@@ -12722,20 +12800,45 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
     <!-- Product Title -->
     <h4 class="loumoo-card-title {{ card.isPlaceholder ? 'is-placeholder' : '' }}">{{ card.title }}</h4>
 
-    <!-- Tagline / Subtitle -->
-    <div class="loumoo-card-tagline">{{ card.tagline || card.subtitle || 'Built for the moment.' }}</div>
+    <!-- Tagline / Subtitle. Shown only when the seller has written one: an
+         invented strapline is not what the buyer would actually see. -->
+    <sc-if value="{{ card.tagline }}">
+      <div class="loumoo-card-tagline">{{ card.tagline }}</div>
+    </sc-if>
 
-    <!-- Rating & Social Proof -->
-    <div class="loumoo-card-rating-row">
-      <span>★ {{ card.rating || '4.9' }}</span>
-      <span class="loumoo-card-rating-text">({{ card.reviewCount || '24' }}) · Verified</span>
-    </div>
+    <!-- Social proof, and ONLY when it exists. A new listing has no rating and
+         no reviews; claiming otherwise would mislead the buyer. -->
+    <sc-if value="{{ card.hasRating }}">
+      <div class="loumoo-card-rating-row">
+        <span>★ {{ card.rating }}</span>
+        <span class="loumoo-card-rating-text">({{ card.reviewCount }} reviews)</span>
+        <sc-if value="{{ card.soldCount }}">
+          <span class="loumoo-card-rating-text">· {{ card.soldCount }} sold</span>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <!-- The message itself. A broadcast is mostly its body text, so a card
+         that renders only the headline is showing half the publication. -->
+    <sc-if value="{{ card.body }}">
+      <p class="loumoo-card-text">{{ card.body }}</p>
+    </sc-if>
 
     <!-- Highlights & Chips -->
     <sc-if value="{{ card.highlights && card.highlights.length }}">
       <div class="pub-card-highlights" style="margin-top:2px">
         <sc-for list="{{ card.highlights }}" as="hl">
           <span class="pub-card-highlight">✓ {{ hl.label }}</span>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <!-- The facts a buyer scans: condition, brand, how it reaches them, how
+         long a booking lasts. Built by the engine per publication kind. -->
+    <sc-if value="{{ card.chips && card.chips.length }}">
+      <div class="pub-card-chips">
+        <sc-for list="{{ card.chips }}" as="chip">
+          <span class="pub-card-chip">{{ chip.label }}</span>
         </sc-for>
       </div>
     </sc-if>
@@ -12749,16 +12852,26 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
             <span class="loumoo-card-price-strike">{{ card.comparePrice }}</span>
           </sc-if>
         </div>
-        <div class="loumoo-card-trust-pill">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          <span>{{ card.trustNote || '✓ Escrow options available' }}</span>
-        </div>
+        <sc-if value="{{ card.trustNote }}">
+          <div class="loumoo-card-trust-pill">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>{{ card.trustNote }}</span>
+          </div>
+        </sc-if>
       </div>
 
-      <button class="loumoo-card-pill-btn" aria-label="Purchase {{ card.title }}">
-        {{ card.ctaLabel || 'Buy now' }}
+      <button class="loumoo-card-pill-btn" aria-label="{{ card.ctaLabel }}: {{ card.title }}">
+        {{ card.ctaLabel }}
       </button>
     </div>
+
+    <sc-if value="{{ card.meta && card.meta.length }}">
+      <div class="pub-card-meta">
+        <sc-for list="{{ card.meta }}" as="m">
+          <span>{{ m.label }}</span>
+        </sc-for>
+      </div>
+    </sc-if>
 
   </div>
 </div>
@@ -12949,20 +13062,45 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
     <!-- Product Title -->
     <h4 class="loumoo-card-title {{ card.isPlaceholder ? 'is-placeholder' : '' }}">{{ card.title }}</h4>
 
-    <!-- Tagline / Subtitle -->
-    <div class="loumoo-card-tagline">{{ card.tagline || card.subtitle || 'Built for the moment.' }}</div>
+    <!-- Tagline / Subtitle. Shown only when the seller has written one: an
+         invented strapline is not what the buyer would actually see. -->
+    <sc-if value="{{ card.tagline }}">
+      <div class="loumoo-card-tagline">{{ card.tagline }}</div>
+    </sc-if>
 
-    <!-- Rating & Social Proof -->
-    <div class="loumoo-card-rating-row">
-      <span>★ {{ card.rating || '4.9' }}</span>
-      <span class="loumoo-card-rating-text">({{ card.reviewCount || '24' }}) · Verified</span>
-    </div>
+    <!-- Social proof, and ONLY when it exists. A new listing has no rating and
+         no reviews; claiming otherwise would mislead the buyer. -->
+    <sc-if value="{{ card.hasRating }}">
+      <div class="loumoo-card-rating-row">
+        <span>★ {{ card.rating }}</span>
+        <span class="loumoo-card-rating-text">({{ card.reviewCount }} reviews)</span>
+        <sc-if value="{{ card.soldCount }}">
+          <span class="loumoo-card-rating-text">· {{ card.soldCount }} sold</span>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <!-- The message itself. A broadcast is mostly its body text, so a card
+         that renders only the headline is showing half the publication. -->
+    <sc-if value="{{ card.body }}">
+      <p class="loumoo-card-text">{{ card.body }}</p>
+    </sc-if>
 
     <!-- Highlights & Chips -->
     <sc-if value="{{ card.highlights && card.highlights.length }}">
       <div class="pub-card-highlights" style="margin-top:2px">
         <sc-for list="{{ card.highlights }}" as="hl">
           <span class="pub-card-highlight">✓ {{ hl.label }}</span>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <!-- The facts a buyer scans: condition, brand, how it reaches them, how
+         long a booking lasts. Built by the engine per publication kind. -->
+    <sc-if value="{{ card.chips && card.chips.length }}">
+      <div class="pub-card-chips">
+        <sc-for list="{{ card.chips }}" as="chip">
+          <span class="pub-card-chip">{{ chip.label }}</span>
         </sc-for>
       </div>
     </sc-if>
@@ -12976,16 +13114,26 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
             <span class="loumoo-card-price-strike">{{ card.comparePrice }}</span>
           </sc-if>
         </div>
-        <div class="loumoo-card-trust-pill">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          <span>{{ card.trustNote || '✓ Escrow options available' }}</span>
-        </div>
+        <sc-if value="{{ card.trustNote }}">
+          <div class="loumoo-card-trust-pill">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>{{ card.trustNote }}</span>
+          </div>
+        </sc-if>
       </div>
 
-      <button class="loumoo-card-pill-btn" aria-label="Purchase {{ card.title }}">
-        {{ card.ctaLabel || 'Buy now' }}
+      <button class="loumoo-card-pill-btn" aria-label="{{ card.ctaLabel }}: {{ card.title }}">
+        {{ card.ctaLabel }}
       </button>
     </div>
+
+    <sc-if value="{{ card.meta && card.meta.length }}">
+      <div class="pub-card-meta">
+        <sc-for list="{{ card.meta }}" as="m">
+          <span>{{ m.label }}</span>
+        </sc-for>
+      </div>
+    </sc-if>
 
   </div>
 </div>
@@ -16662,20 +16810,45 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
     <!-- Product Title -->
     <h4 class="loumoo-card-title {{ pubPreviewCard.isPlaceholder ? 'is-placeholder' : '' }}">{{ pubPreviewCard.title }}</h4>
 
-    <!-- Tagline / Subtitle -->
-    <div class="loumoo-card-tagline">{{ pubPreviewCard.tagline || pubPreviewCard.subtitle || 'Built for the moment.' }}</div>
+    <!-- Tagline / Subtitle. Shown only when the seller has written one: an
+         invented strapline is not what the buyer would actually see. -->
+    <sc-if value="{{ pubPreviewCard.tagline }}">
+      <div class="loumoo-card-tagline">{{ pubPreviewCard.tagline }}</div>
+    </sc-if>
 
-    <!-- Rating & Social Proof -->
-    <div class="loumoo-card-rating-row">
-      <span>★ {{ pubPreviewCard.rating || '4.9' }}</span>
-      <span class="loumoo-card-rating-text">({{ pubPreviewCard.reviewCount || '24' }}) · Verified</span>
-    </div>
+    <!-- Social proof, and ONLY when it exists. A new listing has no rating and
+         no reviews; claiming otherwise would mislead the buyer. -->
+    <sc-if value="{{ pubPreviewCard.hasRating }}">
+      <div class="loumoo-card-rating-row">
+        <span>★ {{ pubPreviewCard.rating }}</span>
+        <span class="loumoo-card-rating-text">({{ pubPreviewCard.reviewCount }} reviews)</span>
+        <sc-if value="{{ pubPreviewCard.soldCount }}">
+          <span class="loumoo-card-rating-text">· {{ pubPreviewCard.soldCount }} sold</span>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <!-- The message itself. A broadcast is mostly its body text, so a card
+         that renders only the headline is showing half the publication. -->
+    <sc-if value="{{ pubPreviewCard.body }}">
+      <p class="loumoo-card-text">{{ pubPreviewCard.body }}</p>
+    </sc-if>
 
     <!-- Highlights & Chips -->
     <sc-if value="{{ pubPreviewCard.highlights && pubPreviewCard.highlights.length }}">
       <div class="pub-card-highlights" style="margin-top:2px">
         <sc-for list="{{ pubPreviewCard.highlights }}" as="hl">
           <span class="pub-card-highlight">✓ {{ hl.label }}</span>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <!-- The facts a buyer scans: condition, brand, how it reaches them, how
+         long a booking lasts. Built by the engine per publication kind. -->
+    <sc-if value="{{ pubPreviewCard.chips && pubPreviewCard.chips.length }}">
+      <div class="pub-card-chips">
+        <sc-for list="{{ pubPreviewCard.chips }}" as="chip">
+          <span class="pub-card-chip">{{ chip.label }}</span>
         </sc-for>
       </div>
     </sc-if>
@@ -16689,16 +16862,26 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
             <span class="loumoo-card-price-strike">{{ pubPreviewCard.comparePrice }}</span>
           </sc-if>
         </div>
-        <div class="loumoo-card-trust-pill">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          <span>{{ pubPreviewCard.trustNote || '✓ Escrow options available' }}</span>
-        </div>
+        <sc-if value="{{ pubPreviewCard.trustNote }}">
+          <div class="loumoo-card-trust-pill">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>{{ pubPreviewCard.trustNote }}</span>
+          </div>
+        </sc-if>
       </div>
 
-      <button class="loumoo-card-pill-btn" aria-label="Purchase {{ pubPreviewCard.title }}">
-        {{ pubPreviewCard.ctaLabel || 'Buy now' }}
+      <button class="loumoo-card-pill-btn" aria-label="{{ pubPreviewCard.ctaLabel }}: {{ pubPreviewCard.title }}">
+        {{ pubPreviewCard.ctaLabel }}
       </button>
     </div>
+
+    <sc-if value="{{ pubPreviewCard.meta && pubPreviewCard.meta.length }}">
+      <div class="pub-card-meta">
+        <sc-for list="{{ pubPreviewCard.meta }}" as="m">
+          <span>{{ m.label }}</span>
+        </sc-for>
+      </div>
+    </sc-if>
 
   </div>
 </div>
@@ -16926,20 +17109,45 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
     <!-- Product Title -->
     <h4 class="loumoo-card-title {{ pubPreviewCard.isPlaceholder ? 'is-placeholder' : '' }}">{{ pubPreviewCard.title }}</h4>
 
-    <!-- Tagline / Subtitle -->
-    <div class="loumoo-card-tagline">{{ pubPreviewCard.tagline || pubPreviewCard.subtitle || 'Built for the moment.' }}</div>
+    <!-- Tagline / Subtitle. Shown only when the seller has written one: an
+         invented strapline is not what the buyer would actually see. -->
+    <sc-if value="{{ pubPreviewCard.tagline }}">
+      <div class="loumoo-card-tagline">{{ pubPreviewCard.tagline }}</div>
+    </sc-if>
 
-    <!-- Rating & Social Proof -->
-    <div class="loumoo-card-rating-row">
-      <span>★ {{ pubPreviewCard.rating || '4.9' }}</span>
-      <span class="loumoo-card-rating-text">({{ pubPreviewCard.reviewCount || '24' }}) · Verified</span>
-    </div>
+    <!-- Social proof, and ONLY when it exists. A new listing has no rating and
+         no reviews; claiming otherwise would mislead the buyer. -->
+    <sc-if value="{{ pubPreviewCard.hasRating }}">
+      <div class="loumoo-card-rating-row">
+        <span>★ {{ pubPreviewCard.rating }}</span>
+        <span class="loumoo-card-rating-text">({{ pubPreviewCard.reviewCount }} reviews)</span>
+        <sc-if value="{{ pubPreviewCard.soldCount }}">
+          <span class="loumoo-card-rating-text">· {{ pubPreviewCard.soldCount }} sold</span>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <!-- The message itself. A broadcast is mostly its body text, so a card
+         that renders only the headline is showing half the publication. -->
+    <sc-if value="{{ pubPreviewCard.body }}">
+      <p class="loumoo-card-text">{{ pubPreviewCard.body }}</p>
+    </sc-if>
 
     <!-- Highlights & Chips -->
     <sc-if value="{{ pubPreviewCard.highlights && pubPreviewCard.highlights.length }}">
       <div class="pub-card-highlights" style="margin-top:2px">
         <sc-for list="{{ pubPreviewCard.highlights }}" as="hl">
           <span class="pub-card-highlight">✓ {{ hl.label }}</span>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <!-- The facts a buyer scans: condition, brand, how it reaches them, how
+         long a booking lasts. Built by the engine per publication kind. -->
+    <sc-if value="{{ pubPreviewCard.chips && pubPreviewCard.chips.length }}">
+      <div class="pub-card-chips">
+        <sc-for list="{{ pubPreviewCard.chips }}" as="chip">
+          <span class="pub-card-chip">{{ chip.label }}</span>
         </sc-for>
       </div>
     </sc-if>
@@ -16953,16 +17161,26 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
             <span class="loumoo-card-price-strike">{{ pubPreviewCard.comparePrice }}</span>
           </sc-if>
         </div>
-        <div class="loumoo-card-trust-pill">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          <span>{{ pubPreviewCard.trustNote || '✓ Escrow options available' }}</span>
-        </div>
+        <sc-if value="{{ pubPreviewCard.trustNote }}">
+          <div class="loumoo-card-trust-pill">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>{{ pubPreviewCard.trustNote }}</span>
+          </div>
+        </sc-if>
       </div>
 
-      <button class="loumoo-card-pill-btn" aria-label="Purchase {{ pubPreviewCard.title }}">
-        {{ pubPreviewCard.ctaLabel || 'Buy now' }}
+      <button class="loumoo-card-pill-btn" aria-label="{{ pubPreviewCard.ctaLabel }}: {{ pubPreviewCard.title }}">
+        {{ pubPreviewCard.ctaLabel }}
       </button>
     </div>
+
+    <sc-if value="{{ pubPreviewCard.meta && pubPreviewCard.meta.length }}">
+      <div class="pub-card-meta">
+        <sc-for list="{{ pubPreviewCard.meta }}" as="m">
+          <span>{{ m.label }}</span>
+        </sc-for>
+      </div>
+    </sc-if>
 
   </div>
 </div>
@@ -17079,20 +17297,45 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
     <!-- Product Title -->
     <h4 class="loumoo-card-title {{ pubPreviewCard.isPlaceholder ? 'is-placeholder' : '' }}">{{ pubPreviewCard.title }}</h4>
 
-    <!-- Tagline / Subtitle -->
-    <div class="loumoo-card-tagline">{{ pubPreviewCard.tagline || pubPreviewCard.subtitle || 'Built for the moment.' }}</div>
+    <!-- Tagline / Subtitle. Shown only when the seller has written one: an
+         invented strapline is not what the buyer would actually see. -->
+    <sc-if value="{{ pubPreviewCard.tagline }}">
+      <div class="loumoo-card-tagline">{{ pubPreviewCard.tagline }}</div>
+    </sc-if>
 
-    <!-- Rating & Social Proof -->
-    <div class="loumoo-card-rating-row">
-      <span>★ {{ pubPreviewCard.rating || '4.9' }}</span>
-      <span class="loumoo-card-rating-text">({{ pubPreviewCard.reviewCount || '24' }}) · Verified</span>
-    </div>
+    <!-- Social proof, and ONLY when it exists. A new listing has no rating and
+         no reviews; claiming otherwise would mislead the buyer. -->
+    <sc-if value="{{ pubPreviewCard.hasRating }}">
+      <div class="loumoo-card-rating-row">
+        <span>★ {{ pubPreviewCard.rating }}</span>
+        <span class="loumoo-card-rating-text">({{ pubPreviewCard.reviewCount }} reviews)</span>
+        <sc-if value="{{ pubPreviewCard.soldCount }}">
+          <span class="loumoo-card-rating-text">· {{ pubPreviewCard.soldCount }} sold</span>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <!-- The message itself. A broadcast is mostly its body text, so a card
+         that renders only the headline is showing half the publication. -->
+    <sc-if value="{{ pubPreviewCard.body }}">
+      <p class="loumoo-card-text">{{ pubPreviewCard.body }}</p>
+    </sc-if>
 
     <!-- Highlights & Chips -->
     <sc-if value="{{ pubPreviewCard.highlights && pubPreviewCard.highlights.length }}">
       <div class="pub-card-highlights" style="margin-top:2px">
         <sc-for list="{{ pubPreviewCard.highlights }}" as="hl">
           <span class="pub-card-highlight">✓ {{ hl.label }}</span>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <!-- The facts a buyer scans: condition, brand, how it reaches them, how
+         long a booking lasts. Built by the engine per publication kind. -->
+    <sc-if value="{{ pubPreviewCard.chips && pubPreviewCard.chips.length }}">
+      <div class="pub-card-chips">
+        <sc-for list="{{ pubPreviewCard.chips }}" as="chip">
+          <span class="pub-card-chip">{{ chip.label }}</span>
         </sc-for>
       </div>
     </sc-if>
@@ -17106,16 +17349,26 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
             <span class="loumoo-card-price-strike">{{ pubPreviewCard.comparePrice }}</span>
           </sc-if>
         </div>
-        <div class="loumoo-card-trust-pill">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          <span>{{ pubPreviewCard.trustNote || '✓ Escrow options available' }}</span>
-        </div>
+        <sc-if value="{{ pubPreviewCard.trustNote }}">
+          <div class="loumoo-card-trust-pill">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>{{ pubPreviewCard.trustNote }}</span>
+          </div>
+        </sc-if>
       </div>
 
-      <button class="loumoo-card-pill-btn" aria-label="Purchase {{ pubPreviewCard.title }}">
-        {{ pubPreviewCard.ctaLabel || 'Buy now' }}
+      <button class="loumoo-card-pill-btn" aria-label="{{ pubPreviewCard.ctaLabel }}: {{ pubPreviewCard.title }}">
+        {{ pubPreviewCard.ctaLabel }}
       </button>
     </div>
+
+    <sc-if value="{{ pubPreviewCard.meta && pubPreviewCard.meta.length }}">
+      <div class="pub-card-meta">
+        <sc-for list="{{ pubPreviewCard.meta }}" as="m">
+          <span>{{ m.label }}</span>
+        </sc-for>
+      </div>
+    </sc-if>
 
   </div>
 </div>
@@ -17934,13 +18187,13 @@ const PRODUCTS_DATA = {
     storeCity: 'Douala, Akwa',
     storeRating: '4.9',
     storeVerified: true,
-    coverImage: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=800&q=85',
+    coverImage: './Assets/acessories&gadgets/DJI%20Osmo%20Pocket%203.jfif',
     images: [
-      'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?auto=format&fit=crop&w=800&q=85'
+      './Assets/acessories&gadgets/DJI%20Osmo%20Pocket%203.jfif',
+      './Assets/acessories&gadgets/Dji%20_%20_%20Osmo%20Pocket%203%20Creator%20Combo%203-Axis%20Stabilized%204K%20Handheld%20Camera%20with%20Rotatable%20Touchscreen%20_%20Gray%20_%20Best%20Buy.jfif',
+      './Assets/acessories&gadgets/Insta360%20Flow%20Pro.jfif'
     ],
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-surfer-riding-a-wave-in-the-sea-1224-large.mp4',
+    videoUrl: './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2010%20Aesthetic%20holiday%20table%20setting%20ideas%20that%20bring%20together%20comfort%20beauty%20and%20useful%20ideas%20you%20will%20actually%20try%20for%20people%20w.mp4',
     attributes: [
       { key: 'Resolution', val: '8K 360° Video @ 30fps / 5.7K @ 60fps' },
       { key: 'Stabilization', val: 'FlowState 6-Axis Gimbal + 360° Horizon Lock' },
@@ -17969,13 +18222,13 @@ const PRODUCTS_DATA = {
     storeCity: 'Douala, Akwa Commercial',
     storeRating: '4.9',
     storeVerified: true,
-    coverImage: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=800&q=85',
+    coverImage: './Assets/telephone&PC/iphone%2015%20Pro%20Max%20-%20Best%20Features%20in%202025.jfif',
     images: [
-      'https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?auto=format&fit=crop&w=800&q=85'
+      './Assets/telephone&PC/iphone%2015%20Pro%20Max%20-%20Best%20Features%20in%202025.jfif',
+      './Assets/telephone&PC/iPhone%2017%20Pro%20Max%20Colors%20%E2%80%93%20Every%20Stunning%20Finish%20in%20One%20Premium%20Look%20%F0%9F%93%B1%E2%9C%A8.jfif',
+      './Assets/telephone&PC/iPhone%2016%20Pro%20Max%20Desert%20Titanium.jfif'
     ],
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
+    videoUrl: './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2016%20Timeless%20entryway%20organization%20ideas%20that%20look%20expensive%20while%20staying%20practical%20realistic%20and%20beginner%20friendly%20for%20busy%20pe.mp4',
     attributes: [
       { key: 'Processor', val: 'Apple A17 Pro (3nm Pro GPU)' },
       { key: 'Camera', val: '48MP Main + 5x Optical Periscope Telephoto' },
@@ -18004,13 +18257,13 @@ const PRODUCTS_DATA = {
     storeCity: 'Douala, Akwa',
     storeRating: '4.9',
     storeVerified: true,
-    coverImage: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=85',
+    coverImage: './Assets/telephone&PC/Macbook.jfif',
     images: [
-      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1541807084-5c52b6b3adef?auto=format&fit=crop&w=800&q=85'
+      './Assets/telephone&PC/Macbook.jfif',
+      './Assets/telephone&PC/Top%20MacBook%20&%20Laptop%20Aesthetic%20Ideas%202026%20%E2%9C%A8%20Cute%20Desk%20Setup,%20Productivity%20&%20Tech%20Inspiration.jfif',
+      './Assets/telephone&PC/Microsoft%20Surface%20Laptop_%20Overview.jfif'
     ],
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
+    videoUrl: './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2049%20Genius%20Guest%20Room%20Ideas-pin-id-1127588825467750602.mp4',
     attributes: [
       { key: 'Chipset', val: 'Apple M2 (8-core CPU / 8-core GPU)' },
       { key: 'Unified Memory', val: '8GB High-Bandwidth Unified RAM' },
@@ -18039,13 +18292,13 @@ const PRODUCTS_DATA = {
     storeCity: 'Douala, Bonapriso',
     storeRating: '4.8',
     storeVerified: true,
-    coverImage: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=85',
+    coverImage: './Assets/_processed/acessories_gadgets_apple_air_pod_max_airpodmax_apple_keysho_16.png',
     images: [
-      'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1484704849700-f032a568e944?auto=format&fit=crop&w=800&q=85'
+      './Assets/_processed/acessories_gadgets_apple_air_pod_max_airpodmax_apple_keysho_16.png',
+      './Assets/acessories&gadgets/Apple%20AirPods%204%20%F0%9F%8E%A7%20Active%20Noise%20Cancellation%20_%20Premium%20Sound%20for%20Less%21%20%F0%9F%8D%8E.jfif',
+      './Assets/acessories&gadgets/Created%20a%20Poster%20Ad%20of%20@oraimoclub%20SpaceBuds%20%F0%9F%92%9A%E2%80%A6.jfif'
     ],
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
+    videoUrl: './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2094%20Clever%20Morning%20Routine%20Ideas-pin-id-641833384412737958.mp4',
     attributes: [
       { key: 'Noise Canceling', val: 'Auto NC Optimizer with 8 Microphones & 2 Processors' },
       { key: 'Driver Unit', val: '30mm Carbon Fiber Specially Engineered Driver' },
@@ -18073,12 +18326,13 @@ const PRODUCTS_DATA = {
     storeCity: 'Douala, Akwa',
     storeRating: '4.9',
     storeVerified: true,
-    coverImage: 'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=800&q=85',
+    coverImage: './Assets/watch/Classic%20Rolex%20SeaDweller.jfif',
     images: [
-      'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=85'
+      './Assets/watch/Classic%20Rolex%20SeaDweller.jfif',
+      './Assets/watch/Rolex%20Datejust%2041%20watch_%20Oystersteel%20and%20white%E2%80%A6.jfif',
+      './Assets/watch/Men%20Watch.jfif'
     ],
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
+    videoUrl: './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%20Beachy%20beach%20picnic%20thoughts%20and%20clever%20inspiration%20with%20timeless%20style%20to%20brighten%20your%20feed-pin-id-958000151964999370.mp4',
     attributes: [
       { key: 'Processor', val: 'Apple S9 SiP (64-bit Dual Core + 4-core Neural Engine)' },
       { key: 'Gesture', val: 'Double Tap Touchless Gesture Control' },
@@ -18105,12 +18359,13 @@ const PRODUCTS_DATA = {
     storeCity: 'Douala, Bonamoussadi',
     storeRating: '4.8',
     storeVerified: true,
-    coverImage: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=800&q=85',
+    coverImage: './Assets/ElectroMenage/ACOQOOS%20Juicer%20Machines,%20Juicers%20Whole%20Fruit%20and%E2%80%A6.jfif',
     images: [
-      'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=85'
+      './Assets/ElectroMenage/ACOQOOS%20Juicer%20Machines,%20Juicers%20Whole%20Fruit%20and%E2%80%A6.jfif',
+      './Assets/ElectroMenage/Air%20fryer.jfif',
+      './Assets/_processed/electromenage_air_fryer_philips_series_3000_double_panier_9l__0.png'
     ],
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
+    videoUrl: './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2010%20Aesthetic%20holiday%20table%20setting%20ideas%20that%20bring%20together%20comfort%20beauty%20and%20useful%20ideas%20you%20will%20actually%20try%20for%20people%20w.mp4',
     attributes: [
       { key: 'Material', val: '100% Genuine Full-Grain Leather Upper' },
       { key: 'Cushioning', val: 'Encapsulated Nike Air-Sole Cushioning Unit' },
@@ -18136,12 +18391,13 @@ const PRODUCTS_DATA = {
     storeCity: 'Douala, Mboppi',
     storeRating: '4.7',
     storeVerified: true,
-    coverImage: 'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=800&q=85',
+    coverImage: './Assets/telephone&PC/SAMSUNG%20S26%20ULTRA%20%F0%9F%94%A5%20BUY%20IT%20FOR%20YOU%20%F0%9F%91%87.jfif',
     images: [
-      'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=800&q=85'
+      './Assets/telephone&PC/SAMSUNG%20S26%20ULTRA%20%F0%9F%94%A5%20BUY%20IT%20FOR%20YOU%20%F0%9F%91%87.jfif',
+      './Assets/telephone&PC/TECNO%20CAMON%2040%20Series_%20Redefining%20Imagery%20with%20%C2%A0TECNO%C2%A0AI.jfif',
+      './Assets/telephone&PC/Galaxy%20Ai.jfif'
     ],
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
+    videoUrl: './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2016%20Timeless%20entryway%20organization%20ideas%20that%20look%20expensive%20while%20staying%20practical%20realistic%20and%20beginner%20friendly%20for%20busy%20pe.mp4',
     attributes: [
       { key: 'Processor', val: 'Snapdragon 8 Gen 3 for Galaxy (4nm)' },
       { key: 'Camera', val: '200MP Quad Tele System with ProVisual AI' },
@@ -18168,12 +18424,12 @@ const PRODUCTS_DATA = {
     storeCity: 'Douala, Bonapriso',
     storeRating: '4.8',
     storeVerified: true,
-    coverImage: 'https://images.unsplash.com/photo-1606813907291-d86efa9b94db?auto=format&fit=crop&w=800&q=85',
+    coverImage: './Assets/telephone&PC/316800155055565523.jfif',
     images: [
-      'https://images.unsplash.com/photo-1606813907291-d86efa9b94db?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1592840496073-b50c590b979e?auto=format&fit=crop&w=800&q=85'
+      './Assets/telephone&PC/316800155055565523.jfif',
+      './Assets/telephone&PC/PS5%20Slim.jfif'
     ],
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
+    videoUrl: './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2049%20Genius%20Guest%20Room%20Ideas-pin-id-1127588825467750602.mp4',
     attributes: [
       { key: 'Storage', val: '1TB Ultra-Fast Custom NVMe SSD' },
       { key: 'Graphics', val: 'Custom AMD RDNA 2 GPU with Ray Tracing (4K 120Hz)' },
@@ -18199,12 +18455,12 @@ const PRODUCTS_DATA = {
     storeCity: 'Douala, Akwa',
     storeRating: '5.0',
     storeVerified: true,
-    coverImage: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=800&q=85',
+    coverImage: './Assets/watch/Rolex%20Datejust%2041%20watch_%20Oystersteel%20and%20white%E2%80%A6.jfif',
     images: [
-      'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1547996160-71dfabb1c4f5?auto=format&fit=crop&w=800&q=85'
+      './Assets/watch/Rolex%20Datejust%2041%20watch_%20Oystersteel%20and%20white%E2%80%A6.jfif',
+      './Assets/watch/Classic%20Rolex%20SeaDweller.jfif'
     ],
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
+    videoUrl: './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2094%20Clever%20Morning%20Routine%20Ideas-pin-id-641833384412737958.mp4',
     attributes: [
       { key: 'Movement', val: 'Calibre 3235 Perpetual Mechanical Self-Winding' },
       { key: 'Case Diameter', val: '41mm Oystersteel with Cerachrom Ceramic Bezel' },
@@ -18230,12 +18486,12 @@ const PRODUCTS_DATA = {
     storeCity: 'Yaoundé, Bastos',
     storeRating: '4.9',
     storeVerified: true,
-    coverImage: 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=800&q=85',
+    coverImage: './Assets/fashion/100%25%20Cotton%20Ankara%20Palazzo%20Pants.jfif',
     images: [
-      'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1576995853123-5a10305d93c0?auto=format&fit=crop&w=800&q=85'
+      './Assets/fashion/100%25%20Cotton%20Ankara%20Palazzo%20Pants.jfif',
+      './Assets/fashion/#MenStyle%20#MensFashion%20#CorporateStyle%20#MensShoe%E2%80%A6.jfif'
     ],
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
+    videoUrl: './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%20Beachy%20beach%20picnic%20thoughts%20and%20clever%20inspiration%20with%20timeless%20style%20to%20brighten%20your%20feed-pin-id-958000151964999370.mp4',
     attributes: [
       { key: 'Fabric', val: '100% Genuine Getzner Superior Cotton Damask' },
       { key: 'Embroidery', val: 'Intricate Geometric Gold Metallic Thread' },
@@ -18261,12 +18517,12 @@ const PRODUCTS_DATA = {
     storeCity: 'Douala, Akwa',
     storeRating: '4.9',
     storeVerified: true,
-    coverImage: 'https://images.unsplash.com/photo-1609592424364-704337b51b3f?auto=format&fit=crop&w=800&q=85',
+    coverImage: './Assets/acessories&gadgets/Created%20a%20Poster%20Ad%20of%20@oraimoclub%20SpaceBuds%20%F0%9F%92%9A%E2%80%A6.jfif',
     images: [
-      'https://images.unsplash.com/photo-1609592424364-704337b51b3f?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1585338107529-13afc5f02586?auto=format&fit=crop&w=800&q=85'
+      './Assets/acessories&gadgets/Created%20a%20Poster%20Ad%20of%20@oraimoclub%20SpaceBuds%20%F0%9F%92%9A%E2%80%A6.jfif',
+      './Assets/telephone&PC/Best%20Selling%20Apple%20AirTag%21.jfif'
     ],
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
+    videoUrl: './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2010%20Aesthetic%20holiday%20table%20setting%20ideas%20that%20bring%20together%20comfort%20beauty%20and%20useful%20ideas%20you%20will%20actually%20try%20for%20people%20w.mp4',
     attributes: [
       { key: 'Capacity', val: '24,000 mAh Ultra-High Capacity' },
       { key: 'Output Power', val: '140W Two-Way High-Speed Fast Charging' },
@@ -18292,13 +18548,13 @@ const PRODUCTS_DATA = {
     storeCity: 'Douala, Bonanjo',
     storeRating: '4.9',
     storeVerified: true,
-    coverImage: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=800&q=85',
+    coverImage: './Assets/Travel&Hotel/Krystal%20Palace%20Hotel%20Douala.jfif',
     images: [
-      'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=800&q=85'
+      './Assets/Travel&Hotel/Krystal%20Palace%20Hotel%20Douala.jfif',
+      './Assets/Travel&Hotel/Hotel%20du%20Phare%20%28Kribi,%20Cameroun%29%20_%20tarifs%202019%20mis%E2%80%A6.jfif',
+      './Assets/Travel&Hotel/Residence%20JULLY%20Kribi.jfif'
     ],
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
+    videoUrl: './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2016%20Timeless%20entryway%20organization%20ideas%20that%20look%20expensive%20while%20staying%20practical%20realistic%20and%20beginner%20friendly%20for%20busy%20pe.mp4',
     attributes: [
       { key: 'Surface Area', val: '68 m² Master Bedroom + Private Living Suite' },
       { key: 'Bedding', val: 'King Size Ergonomic Pillowtop Bed (200x200cm)' },
@@ -18326,12 +18582,12 @@ const PRODUCTS_DATA = {
     storeCity: 'Douala, Akwa & Yaoundé',
     storeRating: '4.8',
     storeVerified: true,
-    coverImage: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=800&q=85',
+    coverImage: './Assets/Travel&Hotel/Cameroon%20%28%20Cameroun%20%29_%20A%20voyage%20to%20Cameroon,%20Africa%20-%20Douala,%20Yaound%C3%A9,%20Garoua,%20Maroua,%20Bafoussam,%20Bamenda,%20Ngaound%C3%A9r%C3%A9,%20%20Nkongsamba,%20Ka%C3%A9l%C3%A9,%20%20Kumba___.jfif',
     images: [
-      'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1570125909232-eb263c188f7e?auto=format&fit=crop&w=800&q=85'
+      './Assets/Travel&Hotel/Cameroon%20%28%20Cameroun%20%29_%20A%20voyage%20to%20Cameroon,%20Africa%20-%20Douala,%20Yaound%C3%A9,%20Garoua,%20Maroua,%20Bafoussam,%20Bamenda,%20Ngaound%C3%A9r%C3%A9,%20%20Nkongsamba,%20Ka%C3%A9l%C3%A9,%20%20Kumba___.jfif',
+      './Assets/Travel&Hotel/Yaounde,%20Cameroon.jfif'
     ],
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
+    videoUrl: './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2049%20Genius%20Guest%20Room%20Ideas-pin-id-1127588825467750602.mp4',
     attributes: [
       { key: 'Origin & Terminal', val: 'Douala Akwa Agency (Opposite Pharmacie du Centre)' },
       { key: 'Destination', val: 'Yaoundé Mvan VIP Terminal' },
@@ -18359,12 +18615,12 @@ const PRODUCTS_DATA = {
     storeCity: 'Douala, Bonapriso',
     storeRating: '5.0',
     storeVerified: true,
-    coverImage: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=85',
+    coverImage: './Assets/LOGO%20icons/Lettering%20service%20screwdriver%20and%20wrench%20symbol%20for%20repair%20and%20service%20_%20Premium%20Vector.jfif',
     images: [
-      'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=85'
+      './Assets/LOGO%20icons/Lettering%20service%20screwdriver%20and%20wrench%20symbol%20for%20repair%20and%20service%20_%20Premium%20Vector.jfif',
+      './Assets/telephone&PC/Starlink%20Mini%20Is%20A%20Backpack-Sized%20Satellite%20Internet%20Kit.jfif'
     ],
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
+    videoUrl: './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2094%20Clever%20Morning%20Routine%20Ideas-pin-id-641833384412737958.mp4',
     attributes: [
       { key: 'Engagement Format', val: 'Hybrid (On-Site Douala/Yaoundé or Remote via Google Meet)' },
       { key: 'Scope', val: 'Cloud Migration, Kubernetes, Microservices & Cyber Audit' },
@@ -23623,9 +23879,9 @@ class Component extends DCLogic {
       currentProductPrice: (this.state.currentProduct && (this.state.currentProduct.priceFormatted || this.state.currentProduct.price)) || 'XAF 745 000',
       currentProductSalePrice: (this.state.currentProduct && this.state.currentProduct.salePrice) || '',
       currentProductImages: (this.state.currentProduct && (this.state.currentProduct.images || (this.state.currentProduct.media && this.state.currentProduct.media.map(m => m.url)))) || [
-        'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=85',
-        'https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?auto=format&fit=crop&w=800&q=85',
-        'https://images.unsplash.com/photo-1541807084-5c52b6b3adef?auto=format&fit=crop&w=800&q=85'
+        './Assets/telephone&PC/Macbook.jfif',
+        './Assets/telephone&PC/Top%20MacBook%20&%20Laptop%20Aesthetic%20Ideas%202026%20%E2%9C%A8%20Cute%20Desk%20Setup,%20Productivity%20&%20Tech%20Inspiration.jfif',
+        './Assets/telephone&PC/Microsoft%20Surface%20Laptop_%20Overview.jfif'
       ],
       currentProductAttributesList: (this.state.currentProduct && this.state.currentProduct.attributes) || [
         { key: 'Brand', val: 'Apple' },
@@ -23645,9 +23901,9 @@ class Component extends DCLogic {
       videoModalTitle: this.state.activeVideoModal ? this.state.activeVideoModal.title : '',
       videoModalSubtitle: this.state.activeVideoModal ? this.state.activeVideoModal.subtitle : '',
       videoModalTag: this.state.activeVideoModal ? this.state.activeVideoModal.tag : '',
-      videoModalUrl: this.state.activeVideoModal ? this.state.activeVideoModal.url || 'https://assets.mixkit.co/videos/preview/mixkit-surfer-riding-a-wave-in-the-sea-1224-large.mp4' : '',
+      videoModalUrl: this.state.activeVideoModal ? this.state.activeVideoModal.url || './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2010%20Aesthetic%20holiday%20table%20setting%20ideas%20that%20bring%20together%20comfort%20beauty%20and%20useful%20ideas%20you%20will%20actually%20try%20for%20people%20w.mp4' : '',
       openVideoModal: (title, subtitle, tag, url) => {
-        this.setState({ activeVideoModal: { title: title || 'Insta360 Cinematic Action', subtitle: subtitle || 'Shot on Insta360 X4 in 8K 360°', tag: tag || 'INSTA360 8K', url: url || 'https://assets.mixkit.co/videos/preview/mixkit-surfer-riding-a-wave-in-the-sea-1224-large.mp4' } });
+        this.setState({ activeVideoModal: { title: title || 'Insta360 Cinematic Action', subtitle: subtitle || 'Shot on Insta360 X4 in 8K 360°', tag: tag || 'INSTA360 8K', url: url || './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2010%20Aesthetic%20holiday%20table%20setting%20ideas%20that%20bring%20together%20comfort%20beauty%20and%20useful%20ideas%20you%20will%20actually%20try%20for%20people%20w.mp4' } });
       },
       closeVideoModal: () => this.setState({ activeVideoModal: null }),
       quickExploreInsta360: () => {

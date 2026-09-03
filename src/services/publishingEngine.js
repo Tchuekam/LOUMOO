@@ -345,6 +345,23 @@
     next.touched[path] = true;
     next.updatedAt = new Date().toISOString();
 
+    // Changing the category (or the broadcast type) changes which fields EXIST.
+    // Answers to the old set are not merely stale, they are rejected outright:
+    // the server refuses an attribute the new category does not define, and a
+    // metadata key the new broadcast type does not define. Clearing them here
+    // is what stops a seller who reconsiders their category from being unable
+    // to save at all.
+    if (path === 'categoryId' && value !== draft.values.categoryId) {
+      next.values.attributes = {};
+      next.values.variantOptions = {};
+    }
+    if (path === 'broadcastType' && value !== draft.values.broadcastType) {
+      next.values.broadcastFields = {};
+      // The CTA defaults per type, so a CTA the seller never chose should not
+      // survive into a type where it makes no sense.
+      next.values.ctaType = '';
+    }
+
     var dot = path.indexOf('.');
     if (dot === -1) {
       next.values[path] = value;
@@ -1248,11 +1265,10 @@
     var payload = {
       listingType: v.listingType,
       categoryId: v.categoryId,
-      title: trim(v.title),
       description: trim(v.description),
       condition: v.condition || 'new',
       currency: v.currency || 'XAF',
-      basePriceMinor: hasPrice ? (toNumber(v.basePrice) || 0) : 0,
+      basePriceMinor: hasPrice ? (toInt(v.basePrice) || 0) : 0,
       visibility: v.visibility || 'PUBLIC',
       tags: (v.tags || []).slice(0, 20),
       attributes: pruneEmpty(v.attributes),
@@ -1262,6 +1278,10 @@
       fulfillmentModel: fulfillmentModelFor(draft)
     };
 
+    // The draft schema types title as .min(1).optional(), so an empty string is
+    // a hard 400 — which is exactly what the first autosave sends before the
+    // seller has typed anything. Omit it until there is one.
+    if (trim(v.title)) payload.title = trim(v.title);
     if (trim(v.shortDescription)) payload.shortDescription = trim(v.shortDescription);
     if (trim(v.brand)) payload.brand = trim(v.brand);
     if (trim(v.model)) payload.model = trim(v.model);
@@ -1270,17 +1290,17 @@
     if (trim(v.contactPhone)) payload.contactPhone = trim(v.contactPhone);
 
     if (hasPrice) {
-      if (toNumber(v.salePrice)) payload.salePriceMinor = toNumber(v.salePrice);
-      if (toNumber(v.compareAtPrice)) payload.compareAtPriceMinor = toNumber(v.compareAtPrice);
-      if (toNumber(v.wholesalePrice)) payload.wholesalePriceMinor = toNumber(v.wholesalePrice);
+      if (toInt(v.salePrice)) payload.salePriceMinor = toInt(v.salePrice);
+      if (toInt(v.compareAtPrice)) payload.compareAtPriceMinor = toInt(v.compareAtPrice);
+      if (toInt(v.wholesalePrice)) payload.wholesalePriceMinor = toInt(v.wholesalePrice);
     }
-    if (toNumber(v.minOrderQuantity)) payload.minOrderQuantity = toNumber(v.minOrderQuantity);
+    if (toInt(v.minOrderQuantity)) payload.minOrderQuantity = toInt(v.minOrderQuantity);
 
     if (draft.intent === 'PRODUCT' && !isDigital) {
       payload.inventory = {
         trackInventory: Boolean(v.trackInventory),
-        quantity: toNumber(v.quantity) || 0,
-        lowStockThreshold: toNumber(v.lowStockThreshold) || 0,
+        quantity: toInt(v.quantity) || 0,
+        lowStockThreshold: toInt(v.lowStockThreshold) || 0,
         allowBackorder: Boolean(v.allowBackorder)
       };
       payload.fulfillment = {
@@ -1289,29 +1309,42 @@
         deliveryScope: v.delivery ? (v.deliveryScope || null) : null,
         deliveryZones: v.delivery ? (v.deliveryZones || []) : [],
         etaText: trim(v.etaText) || null,
-        deliveryFeeMinor: v.delivery ? (toNumber(v.deliveryFee) || 0) : null,
-        freeDeliveryOverMinor: v.delivery && toNumber(v.freeDeliveryOver) ? toNumber(v.freeDeliveryOver) : null,
+        deliveryFeeMinor: v.delivery ? (toInt(v.deliveryFee) || 0) : null,
+        freeDeliveryOverMinor: v.delivery && toInt(v.freeDeliveryOver) ? toInt(v.freeDeliveryOver) : null,
         pickupAddress: v.pickup ? (trim(v.pickupAddress) || null) : null
       };
-      var variantOptions = pruneEmptyArrays(v.variantOptions);
-      if (Object.keys(variantOptions).length) payload.variantOptions = variantOptions;
+      // Always sent, even when empty: the server rewrites variants only when the
+      // key is present, so omitting it makes "I removed every variant"
+      // indistinguishable from "I did not touch variants".
+      payload.variantOptions = pruneEmptyArrays(v.variantOptions);
     }
 
-    if (isService) {
+    // Gated on the listing TYPE, not the intent: the SERVICE intent also covers
+    // SUBSCRIPTION, and the server refuses a service block on a type whose
+    // capabilities carry neither a schedule nor booking dates.
+    var takesServiceBlock = v.listingType === 'SERVICE'
+      || v.listingType === 'BOOKING'
+      || v.listingType === 'RENTAL';
+
+    if (isService && takesServiceBlock) {
       payload.service = {
         format: v.serviceFormat || 'APPOINTMENT',
-        durationMinutes: toNumber(v.durationMinutes),
+        durationMinutes: toInt(v.durationMinutes),
         locationMode: v.locationMode || 'AT_SELLER',
         serviceAreas: v.serviceAreas || [],
         includes: v.includes || [],
         excludes: v.excludes || [],
         bookingMode: v.bookingMode || 'REQUEST',
-        capacity: toNumber(v.capacity),
-        minParticipants: toNumber(v.minParticipants),
-        leadTimeHours: toNumber(v.leadTimeHours) || 0,
+        capacity: toInt(v.capacity),
+        minParticipants: toInt(v.minParticipants),
+        leadTimeHours: toInt(v.leadTimeHours) || 0,
         weeklySchedule: v.weeklySchedule || {},
         blackoutDates: v.blackoutDates || [],
-        cancellationPolicy: trim(v.cancellationPolicy) || null
+        cancellationPolicy: trim(v.cancellationPolicy) || null,
+        // Where customers come to you. Collected by the location section for
+        // AT_SELLER/HYBRID services; previously built only into the product
+        // fulfilment block, so for a service it was silently discarded.
+        locationAddress: trim(v.pickupAddress) || null
       };
     }
 
@@ -1322,10 +1355,9 @@
       paymentMethods: v.paymentMethods || [],
       availableFrom: v.availableFrom || null
     };
-    if (trust.warranty || trust.returnPolicy || trust.authenticity
-      || trust.paymentMethods.length || trust.availableFrom) {
-      payload.trust = trust;
-    }
+    // Same reasoning as variantOptions: always send it, so clearing warranty or
+    // payment methods actually clears them.
+    payload.trust = trust;
 
     return payload;
   }
@@ -1358,9 +1390,17 @@
       ctaType: v.ctaType || (def ? def.defaultCta : 'VIEW_STORE'),
       audienceScope: v.audienceScope || 'EVERYONE',
       targetCities: v.audienceScope === 'TARGETED' ? (v.targetCities || []) : [],
+      // Only ids the server actually staged. `fromAnnouncement` synthesises
+      // 'existing_N' placeholders for images already published, and an upload
+      // still in flight has a 'pending_…' id; sending either is a 404 from
+      // loadOwnedStaged. Already-published images travel as URLs instead, which
+      // is the shape `_resolveMediaUrls` keeps.
       mediaUploadIds: draft.media
-        .filter(function (m) { return m.status !== 'error'; })
-        .map(function (m) { return m.uploadId; })
+        .filter(function (m) { return m.status === 'ready'; })
+        .map(function (m) { return m.uploadId; }),
+      mediaUrls: draft.media
+        .filter(function (m) { return m.status === 'attached' && /^https?:/.test(m.url || ''); })
+        .map(function (m) { return m.url; })
     };
 
     if (trim(v.ctaLabel)) payload.ctaLabel = trim(v.ctaLabel);
@@ -1535,7 +1575,10 @@
       processingStatus: 'PROCESSED',
       title: '', subtitle: '', tagline: '', body: '',
       priceLine: '', comparePrice: '', priceNote: '',
-      rating: '4.9', reviewCount: '18', soldCount: '120', trustNote: '✓ Escrow options available',
+      // Social proof is only ever real. A brand-new listing has no rating and
+      // no reviews, and the card renders that row only when hasRating is true —
+      // inventing "★ 4.9 (18)" would be telling buyers something untrue.
+      rating: '', reviewCount: '', soldCount: '', hasRating: false, trustNote: '',
       chips: [], meta: [], highlights: [],
       specifications: [], attributes: [],
       ctaLabel: 'Buy now', href: '', statusLabel: '',
@@ -1661,7 +1704,9 @@
     if (toNumber(v.minOrderQuantity) > 1) meta.push('Min ' + toNumber(v.minOrderQuantity));
     card.meta = meta.map(toChip);
 
-    card.tagline = firstLine(v.shortDescription || v.description) || 'Built for the moment.';
+    // No invented strapline: an empty description shows nothing, which is what
+    // the seller will actually get until they write one.
+    card.tagline = firstLine(v.shortDescription || v.description);
     card.subtitle = card.tagline;
     card.ctaLabel = v.priceMode === 'QUOTE' ? 'Request a price' : 'Buy now';
     card.href = draft.remoteId ? '/listing/' + draft.remoteId : '';
@@ -1804,7 +1849,7 @@
     var store = listing.store || {};
     card.storeName = store.name || opts.storeName || '';
     card.storeInitials = initialsOf(card.storeName);
-    card.storeCity = titleCase((listing.metadata && listing.metadata.city) || store.city || '');
+    card.storeCity = titleCase((listing.metadata && listing.metadata.city) || store.city || opts.storeCity || '');
     card.storeVerified = Boolean(store.isVerified);
     card.storeRating = store.rating ? String(store.rating) : '';
 
@@ -1821,15 +1866,23 @@
     card.processingStatus = listing.processingStatus || 'PROCESSED';
 
     card.title = listing.title || '';
-    card.tagline = listing.tagline || firstLine(listing.shortDescription || listing.description || 'Built for the moment.');
+    card.tagline = listing.tagline || firstLine(listing.shortDescription || listing.short_description || listing.description || '');
     card.subtitle = card.tagline;
 
+    // Two shapes reach this function: the owner projection (camelCase, from
+    // CreateListingUseCase.hydrate) and raw catalogue rows (snake_case, from
+    // GET /listings/seller and the public product feed). Reading only camelCase
+    // left every card in the seller's studio with a blank price.
+    var pick = function (camel, snake) {
+      if (listing[camel] !== undefined && listing[camel] !== null) return listing[camel];
+      if (listing[snake] !== undefined && listing[snake] !== null) return listing[snake];
+      return (listing.pricing || {})[camel];
+    };
+
     var currency = listing.currency || 'XAF';
-    var base = listing.basePriceMinor != null ? listing.basePriceMinor
-      : (listing.pricing || {}).basePriceMinor;
-    var sale = listing.salePriceMinor != null ? listing.salePriceMinor
-      : (listing.pricing || {}).salePriceMinor;
-    var mode = (listing.pricingOptions || {}).priceMode || 'FIXED';
+    var base = pick('basePriceMinor', 'base_price_minor');
+    var sale = pick('salePriceMinor', 'sale_price_minor');
+    var mode = ((listing.pricingOptions || (listing.metadata || {}).pricing || {}).priceMode) || 'FIXED';
 
     if (mode === 'QUOTE') card.priceLine = 'Price on request';
     else if (mode === 'FREE') card.priceLine = 'Free';
@@ -1859,13 +1912,22 @@
 
     var meta = [];
     if (card.storeCity) meta.push(card.storeCity);
-    if (listing.viewCount) meta.push(listing.viewCount + ' views');
+    var views = listing.viewCount || listing.view_count || 0;
+    if (views) meta.push(views + ' views');
     card.meta = meta.map(toChip);
 
-    card.rating = listing.rating ? String(listing.rating) : '4.9';
-    card.reviewCount = listing.reviewCount ? String(listing.reviewCount) : '24';
-    card.soldCount = listing.soldCount ? String(listing.soldCount) : '150';
-    card.trustNote = '✓ Escrow options available';
+    // Ratings come from the listing's own counters. `rating` defaults to 5.00 in
+    // the database, so it means nothing until at least one person has rated —
+    // ratingCount is the gate, not the score.
+    var ratingCount = Number(listing.ratingCount || listing.rating_count || 0);
+    card.hasRating = ratingCount > 0;
+    card.rating = card.hasRating ? Number(listing.rating).toFixed(1) : '';
+    card.reviewCount = card.hasRating ? String(ratingCount) : '';
+    var sold = Number(listing.orderCount || listing.order_count || 0);
+    card.soldCount = sold > 0 ? String(sold) : '';
+    // The trust line reflects what this seller actually accepts.
+    var methods = (listing.trust && listing.trust.paymentMethods) || [];
+    card.trustNote = methods.indexOf('ESCROW') !== -1 ? 'Escrow protected' : '';
     card.ctaLabel = card.kind === 'SERVICE' ? 'Book now' : 'Buy now';
     card.href = '/listing/' + listing.id;
     card.statusLabel = listing.status || '';
@@ -2056,6 +2118,16 @@
     if (cleaned === '' || cleaned === '-') return null;
     var n = Number(cleaned);
     return Number.isFinite(n) ? n : null;
+  }
+
+  /**
+   * Every quantity, duration and minor-unit column on the server is an integer.
+   * A seller who types 1500.5 into a price should not be shown a raw schema
+   * error, so the value is rounded on the way out.
+   */
+  function toInt(value) {
+    var n = toNumber(value);
+    return n === null ? null : Math.round(n);
   }
 
   function trim(v) {

@@ -126,20 +126,45 @@ def publication_card(binding, *, compact=False, clickable=None, show_status=Fals
     <!-- Product Title -->
     <h4 class="loumoo-card-title {{{{ {c}.isPlaceholder ? 'is-placeholder' : '' }}}}">{{{{ {c}.title }}}}</h4>
 
-    <!-- Tagline / Subtitle -->
-    <div class="loumoo-card-tagline">{{{{ {c}.tagline || {c}.subtitle || 'Built for the moment.' }}}}</div>
+    <!-- Tagline / Subtitle. Shown only when the seller has written one: an
+         invented strapline is not what the buyer would actually see. -->
+    <sc-if value="{{{{ {c}.tagline }}}}">
+      <div class="loumoo-card-tagline">{{{{ {c}.tagline }}}}</div>
+    </sc-if>
 
-    <!-- Rating & Social Proof -->
-    <div class="loumoo-card-rating-row">
-      <span>★ {{{{ {c}.rating || '4.9' }}}}</span>
-      <span class="loumoo-card-rating-text">({{{{ {c}.reviewCount || '24' }}}}) · Verified</span>
-    </div>
+    <!-- Social proof, and ONLY when it exists. A new listing has no rating and
+         no reviews; claiming otherwise would mislead the buyer. -->
+    <sc-if value="{{{{ {c}.hasRating }}}}">
+      <div class="loumoo-card-rating-row">
+        <span>★ {{{{ {c}.rating }}}}</span>
+        <span class="loumoo-card-rating-text">({{{{ {c}.reviewCount }}}} reviews)</span>
+        <sc-if value="{{{{ {c}.soldCount }}}}">
+          <span class="loumoo-card-rating-text">· {{{{ {c}.soldCount }}}} sold</span>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <!-- The message itself. A broadcast is mostly its body text, so a card
+         that renders only the headline is showing half the publication. -->
+    <sc-if value="{{{{ {c}.body }}}}">
+      <p class="loumoo-card-text">{{{{ {c}.body }}}}</p>
+    </sc-if>
 
     <!-- Highlights & Chips -->
     <sc-if value="{{{{ {c}.highlights && {c}.highlights.length }}}}">
       <div class="pub-card-highlights" style="margin-top:2px">
         <sc-for list="{{{{ {c}.highlights }}}}" as="hl">
           <span class="pub-card-highlight">✓ {{{{ hl.label }}}}</span>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <!-- The facts a buyer scans: condition, brand, how it reaches them, how
+         long a booking lasts. Built by the engine per publication kind. -->
+    <sc-if value="{{{{ {c}.chips && {c}.chips.length }}}}">
+      <div class="pub-card-chips">
+        <sc-for list="{{{{ {c}.chips }}}}" as="chip">
+          <span class="pub-card-chip">{{{{ chip.label }}}}</span>
         </sc-for>
       </div>
     </sc-if>
@@ -153,16 +178,26 @@ def publication_card(binding, *, compact=False, clickable=None, show_status=Fals
             <span class="loumoo-card-price-strike">{{{{ {c}.comparePrice }}}}</span>
           </sc-if>
         </div>
-        <div class="loumoo-card-trust-pill">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          <span>{{{{ {c}.trustNote || '✓ Escrow options available' }}}}</span>
-        </div>
+        <sc-if value="{{{{ {c}.trustNote }}}}">
+          <div class="loumoo-card-trust-pill">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>{{{{ {c}.trustNote }}}}</span>
+          </div>
+        </sc-if>
       </div>
 
-      <button class="loumoo-card-pill-btn" aria-label="Purchase {{{{ {c}.title }}}}">
-        {{{{ {c}.ctaLabel || 'Buy now' }}}}
+      <button class="loumoo-card-pill-btn" aria-label="{{{{ {c}.ctaLabel }}}}: {{{{ {c}.title }}}}">
+        {{{{ {c}.ctaLabel }}}}
       </button>
     </div>
+
+    <sc-if value="{{{{ {c}.meta && {c}.meta.length }}}}">
+      <div class="pub-card-meta">
+        <sc-for list="{{{{ {c}.meta }}}}" as="m">
+          <span>{{{{ m.label }}}}</span>
+        </sc-for>
+      </div>
+    </sc-if>
 
   </div>
 </div>"""

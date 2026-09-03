@@ -3500,6 +3500,15 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 }
 .pub-category-empty { padding: 18px 12px; font: 400 12px/1.5 var(--font-body); color: var(--color-text-muted); }
 
+/* On a phone the two category columns are ~150px each, which wraps every
+   name onto two lines and leaves the subcategory column empty until a parent
+   is picked. Stacking them gives each list the full width. */
+@media (max-width: 639px) {
+  .pub-category { grid-template-columns: 1fr; }
+  .pub-category-col { max-height: 232px; }
+  .pub-category-col + .pub-category-col { border-top: 1px solid var(--color-divider); }
+}
+
 /* Media */
 .pub-media { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 9px; }
 .pub-media-item {
@@ -3718,6 +3727,23 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 .pub-tab:hover { border-color: var(--color-neutral-400); color: var(--color-text); }
 .pub-tab.is-active { background: var(--color-accent); border-color: var(--color-accent); color: #fff; }
 .pub-tab:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+
+/* A publication with no photo should not reserve a full 4:3 well: for a
+   broadcast the message is the content, and the empty frame just pushes it
+   below the fold. */
+.loumoo-media-card .pub-card-media-empty {
+  aspect-ratio: auto; min-height: 108px; gap: 4px;
+  font: 500 11px/1.3 var(--font-body); color: var(--color-text-tertiary);
+}
+.loumoo-media-card .loumoo-card-text {
+  margin: 0; font: 400 12.5px/1.5 var(--font-body); color: var(--color-text-secondary);
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
+.loumoo-media-card .pub-card-meta {
+  display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px;
+  padding-top: 8px; border-top: 1px solid var(--color-divider);
+  font: 500 10.5px/1.3 var(--font-body); color: var(--color-text-muted);
+}
 
 /* ── Discovery grids, empty states and seller controls ──────────────────── */
 .pub-grid {
@@ -4494,13 +4520,13 @@ const PRODUCTS_DATA = {
     storeCity: 'Douala, Akwa',
     storeRating: '4.9',
     storeVerified: true,
-    coverImage: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=800&q=85',
+    coverImage: './Assets/acessories&gadgets/DJI%20Osmo%20Pocket%203.jfif',
     images: [
-      'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?auto=format&fit=crop&w=800&q=85'
+      './Assets/acessories&gadgets/DJI%20Osmo%20Pocket%203.jfif',
+      './Assets/acessories&gadgets/Dji%20_%20_%20Osmo%20Pocket%203%20Creator%20Combo%203-Axis%20Stabilized%204K%20Handheld%20Camera%20with%20Rotatable%20Touchscreen%20_%20Gray%20_%20Best%20Buy.jfif',
+      './Assets/acessories&gadgets/Insta360%20Flow%20Pro.jfif'
     ],
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-surfer-riding-a-wave-in-the-sea-1224-large.mp4',
+    videoUrl: './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2010%20Aesthetic%20holiday%20table%20setting%20ideas%20that%20bring%20together%20comfort%20beauty%20and%20useful%20ideas%20you%20will%20actually%20try%20for%20people%20w.mp4',
     attributes: [
       { key: 'Resolution', val: '8K 360° Video @ 30fps / 5.7K @ 60fps' },
       { key: 'Stabilization', val: 'FlowState 6-Axis Gimbal + 360° Horizon Lock' },
@@ -4529,13 +4555,13 @@ const PRODUCTS_DATA = {
     storeCity: 'Douala, Akwa Commercial',
     storeRating: '4.9',
     storeVerified: true,
-    coverImage: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=800&q=85',
+    coverImage: './Assets/telephone&PC/iphone%2015%20Pro%20Max%20-%20Best%20Features%20in%202025.jfif',
     images: [
-      'https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?auto=format&fit=crop&w=800&q=85'
+      './Assets/telephone&PC/iphone%2015%20Pro%20Max%20-%20Best%20Features%20in%202025.jfif',
+      './Assets/telephone&PC/iPhone%2017%20Pro%20Max%20Colors%20%E2%80%93%20Every%20Stunning%20Finish%20in%20One%20Premium%20Look%20%F0%9F%93%B1%E2%9C%A8.jfif',
+      './Assets/telephone&PC/iPhone%2016%20Pro%20Max%20Desert%20Titanium.jfif'
     ],
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
+    videoUrl: './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2016%20Timeless%20entryway%20organization%20ideas%20that%20look%20expensive%20while%20staying%20practical%20realistic%20and%20beginner%20friendly%20for%20busy%20pe.mp4',
     attributes: [
       { key: 'Processor', val: 'Apple A17 Pro (3nm Pro GPU)' },
       { key: 'Camera', val: '48MP Main + 5x Optical Periscope Telephoto' },
@@ -4564,13 +4590,13 @@ const PRODUCTS_DATA = {
     storeCity: 'Douala, Akwa',
     storeRating: '4.9',
     storeVerified: true,
-    coverImage: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=85',
+    coverImage: './Assets/telephone&PC/Macbook.jfif',
     images: [
-      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1541807084-5c52b6b3adef?auto=format&fit=crop&w=800&q=85'
+      './Assets/telephone&PC/Macbook.jfif',
+      './Assets/telephone&PC/Top%20MacBook%20&%20Laptop%20Aesthetic%20Ideas%202026%20%E2%9C%A8%20Cute%20Desk%20Setup,%20Productivity%20&%20Tech%20Inspiration.jfif',
+      './Assets/telephone&PC/Microsoft%20Surface%20Laptop_%20Overview.jfif'
     ],
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
+    videoUrl: './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2049%20Genius%20Guest%20Room%20Ideas-pin-id-1127588825467750602.mp4',
     attributes: [
       { key: 'Chipset', val: 'Apple M2 (8-core CPU / 8-core GPU)' },
       { key: 'Unified Memory', val: '8GB High-Bandwidth Unified RAM' },
@@ -4599,13 +4625,13 @@ const PRODUCTS_DATA = {
     storeCity: 'Douala, Bonapriso',
     storeRating: '4.8',
     storeVerified: true,
-    coverImage: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=85',
+    coverImage: './Assets/_processed/acessories_gadgets_apple_air_pod_max_airpodmax_apple_keysho_16.png',
     images: [
-      'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1484704849700-f032a568e944?auto=format&fit=crop&w=800&q=85'
+      './Assets/_processed/acessories_gadgets_apple_air_pod_max_airpodmax_apple_keysho_16.png',
+      './Assets/acessories&gadgets/Apple%20AirPods%204%20%F0%9F%8E%A7%20Active%20Noise%20Cancellation%20_%20Premium%20Sound%20for%20Less%21%20%F0%9F%8D%8E.jfif',
+      './Assets/acessories&gadgets/Created%20a%20Poster%20Ad%20of%20@oraimoclub%20SpaceBuds%20%F0%9F%92%9A%E2%80%A6.jfif'
     ],
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
+    videoUrl: './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2094%20Clever%20Morning%20Routine%20Ideas-pin-id-641833384412737958.mp4',
     attributes: [
       { key: 'Noise Canceling', val: 'Auto NC Optimizer with 8 Microphones & 2 Processors' },
       { key: 'Driver Unit', val: '30mm Carbon Fiber Specially Engineered Driver' },
@@ -4633,12 +4659,13 @@ const PRODUCTS_DATA = {
     storeCity: 'Douala, Akwa',
     storeRating: '4.9',
     storeVerified: true,
-    coverImage: 'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=800&q=85',
+    coverImage: './Assets/watch/Classic%20Rolex%20SeaDweller.jfif',
     images: [
-      'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=85'
+      './Assets/watch/Classic%20Rolex%20SeaDweller.jfif',
+      './Assets/watch/Rolex%20Datejust%2041%20watch_%20Oystersteel%20and%20white%E2%80%A6.jfif',
+      './Assets/watch/Men%20Watch.jfif'
     ],
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
+    videoUrl: './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%20Beachy%20beach%20picnic%20thoughts%20and%20clever%20inspiration%20with%20timeless%20style%20to%20brighten%20your%20feed-pin-id-958000151964999370.mp4',
     attributes: [
       { key: 'Processor', val: 'Apple S9 SiP (64-bit Dual Core + 4-core Neural Engine)' },
       { key: 'Gesture', val: 'Double Tap Touchless Gesture Control' },
@@ -4665,12 +4692,13 @@ const PRODUCTS_DATA = {
     storeCity: 'Douala, Bonamoussadi',
     storeRating: '4.8',
     storeVerified: true,
-    coverImage: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=800&q=85',
+    coverImage: './Assets/ElectroMenage/ACOQOOS%20Juicer%20Machines,%20Juicers%20Whole%20Fruit%20and%E2%80%A6.jfif',
     images: [
-      'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=85'
+      './Assets/ElectroMenage/ACOQOOS%20Juicer%20Machines,%20Juicers%20Whole%20Fruit%20and%E2%80%A6.jfif',
+      './Assets/ElectroMenage/Air%20fryer.jfif',
+      './Assets/_processed/electromenage_air_fryer_philips_series_3000_double_panier_9l__0.png'
     ],
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
+    videoUrl: './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2010%20Aesthetic%20holiday%20table%20setting%20ideas%20that%20bring%20together%20comfort%20beauty%20and%20useful%20ideas%20you%20will%20actually%20try%20for%20people%20w.mp4',
     attributes: [
       { key: 'Material', val: '100% Genuine Full-Grain Leather Upper' },
       { key: 'Cushioning', val: 'Encapsulated Nike Air-Sole Cushioning Unit' },
@@ -4696,12 +4724,13 @@ const PRODUCTS_DATA = {
     storeCity: 'Douala, Mboppi',
     storeRating: '4.7',
     storeVerified: true,
-    coverImage: 'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=800&q=85',
+    coverImage: './Assets/telephone&PC/SAMSUNG%20S26%20ULTRA%20%F0%9F%94%A5%20BUY%20IT%20FOR%20YOU%20%F0%9F%91%87.jfif',
     images: [
-      'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=800&q=85'
+      './Assets/telephone&PC/SAMSUNG%20S26%20ULTRA%20%F0%9F%94%A5%20BUY%20IT%20FOR%20YOU%20%F0%9F%91%87.jfif',
+      './Assets/telephone&PC/TECNO%20CAMON%2040%20Series_%20Redefining%20Imagery%20with%20%C2%A0TECNO%C2%A0AI.jfif',
+      './Assets/telephone&PC/Galaxy%20Ai.jfif'
     ],
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
+    videoUrl: './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2016%20Timeless%20entryway%20organization%20ideas%20that%20look%20expensive%20while%20staying%20practical%20realistic%20and%20beginner%20friendly%20for%20busy%20pe.mp4',
     attributes: [
       { key: 'Processor', val: 'Snapdragon 8 Gen 3 for Galaxy (4nm)' },
       { key: 'Camera', val: '200MP Quad Tele System with ProVisual AI' },
@@ -4728,12 +4757,12 @@ const PRODUCTS_DATA = {
     storeCity: 'Douala, Bonapriso',
     storeRating: '4.8',
     storeVerified: true,
-    coverImage: 'https://images.unsplash.com/photo-1606813907291-d86efa9b94db?auto=format&fit=crop&w=800&q=85',
+    coverImage: './Assets/telephone&PC/316800155055565523.jfif',
     images: [
-      'https://images.unsplash.com/photo-1606813907291-d86efa9b94db?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1592840496073-b50c590b979e?auto=format&fit=crop&w=800&q=85'
+      './Assets/telephone&PC/316800155055565523.jfif',
+      './Assets/telephone&PC/PS5%20Slim.jfif'
     ],
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
+    videoUrl: './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2049%20Genius%20Guest%20Room%20Ideas-pin-id-1127588825467750602.mp4',
     attributes: [
       { key: 'Storage', val: '1TB Ultra-Fast Custom NVMe SSD' },
       { key: 'Graphics', val: 'Custom AMD RDNA 2 GPU with Ray Tracing (4K 120Hz)' },
@@ -4759,12 +4788,12 @@ const PRODUCTS_DATA = {
     storeCity: 'Douala, Akwa',
     storeRating: '5.0',
     storeVerified: true,
-    coverImage: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=800&q=85',
+    coverImage: './Assets/watch/Rolex%20Datejust%2041%20watch_%20Oystersteel%20and%20white%E2%80%A6.jfif',
     images: [
-      'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1547996160-71dfabb1c4f5?auto=format&fit=crop&w=800&q=85'
+      './Assets/watch/Rolex%20Datejust%2041%20watch_%20Oystersteel%20and%20white%E2%80%A6.jfif',
+      './Assets/watch/Classic%20Rolex%20SeaDweller.jfif'
     ],
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
+    videoUrl: './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2094%20Clever%20Morning%20Routine%20Ideas-pin-id-641833384412737958.mp4',
     attributes: [
       { key: 'Movement', val: 'Calibre 3235 Perpetual Mechanical Self-Winding' },
       { key: 'Case Diameter', val: '41mm Oystersteel with Cerachrom Ceramic Bezel' },
@@ -4790,12 +4819,12 @@ const PRODUCTS_DATA = {
     storeCity: 'Yaoundé, Bastos',
     storeRating: '4.9',
     storeVerified: true,
-    coverImage: 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=800&q=85',
+    coverImage: './Assets/fashion/100%25%20Cotton%20Ankara%20Palazzo%20Pants.jfif',
     images: [
-      'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1576995853123-5a10305d93c0?auto=format&fit=crop&w=800&q=85'
+      './Assets/fashion/100%25%20Cotton%20Ankara%20Palazzo%20Pants.jfif',
+      './Assets/fashion/#MenStyle%20#MensFashion%20#CorporateStyle%20#MensShoe%E2%80%A6.jfif'
     ],
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
+    videoUrl: './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%20Beachy%20beach%20picnic%20thoughts%20and%20clever%20inspiration%20with%20timeless%20style%20to%20brighten%20your%20feed-pin-id-958000151964999370.mp4',
     attributes: [
       { key: 'Fabric', val: '100% Genuine Getzner Superior Cotton Damask' },
       { key: 'Embroidery', val: 'Intricate Geometric Gold Metallic Thread' },
@@ -4821,12 +4850,12 @@ const PRODUCTS_DATA = {
     storeCity: 'Douala, Akwa',
     storeRating: '4.9',
     storeVerified: true,
-    coverImage: 'https://images.unsplash.com/photo-1609592424364-704337b51b3f?auto=format&fit=crop&w=800&q=85',
+    coverImage: './Assets/acessories&gadgets/Created%20a%20Poster%20Ad%20of%20@oraimoclub%20SpaceBuds%20%F0%9F%92%9A%E2%80%A6.jfif',
     images: [
-      'https://images.unsplash.com/photo-1609592424364-704337b51b3f?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1585338107529-13afc5f02586?auto=format&fit=crop&w=800&q=85'
+      './Assets/acessories&gadgets/Created%20a%20Poster%20Ad%20of%20@oraimoclub%20SpaceBuds%20%F0%9F%92%9A%E2%80%A6.jfif',
+      './Assets/telephone&PC/Best%20Selling%20Apple%20AirTag%21.jfif'
     ],
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
+    videoUrl: './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2010%20Aesthetic%20holiday%20table%20setting%20ideas%20that%20bring%20together%20comfort%20beauty%20and%20useful%20ideas%20you%20will%20actually%20try%20for%20people%20w.mp4',
     attributes: [
       { key: 'Capacity', val: '24,000 mAh Ultra-High Capacity' },
       { key: 'Output Power', val: '140W Two-Way High-Speed Fast Charging' },
@@ -4852,13 +4881,13 @@ const PRODUCTS_DATA = {
     storeCity: 'Douala, Bonanjo',
     storeRating: '4.9',
     storeVerified: true,
-    coverImage: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=800&q=85',
+    coverImage: './Assets/Travel&Hotel/Krystal%20Palace%20Hotel%20Douala.jfif',
     images: [
-      'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=800&q=85'
+      './Assets/Travel&Hotel/Krystal%20Palace%20Hotel%20Douala.jfif',
+      './Assets/Travel&Hotel/Hotel%20du%20Phare%20%28Kribi,%20Cameroun%29%20_%20tarifs%202019%20mis%E2%80%A6.jfif',
+      './Assets/Travel&Hotel/Residence%20JULLY%20Kribi.jfif'
     ],
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
+    videoUrl: './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2016%20Timeless%20entryway%20organization%20ideas%20that%20look%20expensive%20while%20staying%20practical%20realistic%20and%20beginner%20friendly%20for%20busy%20pe.mp4',
     attributes: [
       { key: 'Surface Area', val: '68 m² Master Bedroom + Private Living Suite' },
       { key: 'Bedding', val: 'King Size Ergonomic Pillowtop Bed (200x200cm)' },
@@ -4886,12 +4915,12 @@ const PRODUCTS_DATA = {
     storeCity: 'Douala, Akwa & Yaoundé',
     storeRating: '4.8',
     storeVerified: true,
-    coverImage: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=800&q=85',
+    coverImage: './Assets/Travel&Hotel/Cameroon%20%28%20Cameroun%20%29_%20A%20voyage%20to%20Cameroon,%20Africa%20-%20Douala,%20Yaound%C3%A9,%20Garoua,%20Maroua,%20Bafoussam,%20Bamenda,%20Ngaound%C3%A9r%C3%A9,%20%20Nkongsamba,%20Ka%C3%A9l%C3%A9,%20%20Kumba___.jfif',
     images: [
-      'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1570125909232-eb263c188f7e?auto=format&fit=crop&w=800&q=85'
+      './Assets/Travel&Hotel/Cameroon%20%28%20Cameroun%20%29_%20A%20voyage%20to%20Cameroon,%20Africa%20-%20Douala,%20Yaound%C3%A9,%20Garoua,%20Maroua,%20Bafoussam,%20Bamenda,%20Ngaound%C3%A9r%C3%A9,%20%20Nkongsamba,%20Ka%C3%A9l%C3%A9,%20%20Kumba___.jfif',
+      './Assets/Travel&Hotel/Yaounde,%20Cameroon.jfif'
     ],
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
+    videoUrl: './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2049%20Genius%20Guest%20Room%20Ideas-pin-id-1127588825467750602.mp4',
     attributes: [
       { key: 'Origin & Terminal', val: 'Douala Akwa Agency (Opposite Pharmacie du Centre)' },
       { key: 'Destination', val: 'Yaoundé Mvan VIP Terminal' },
@@ -4919,12 +4948,12 @@ const PRODUCTS_DATA = {
     storeCity: 'Douala, Bonapriso',
     storeRating: '5.0',
     storeVerified: true,
-    coverImage: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=85',
+    coverImage: './Assets/LOGO%20icons/Lettering%20service%20screwdriver%20and%20wrench%20symbol%20for%20repair%20and%20service%20_%20Premium%20Vector.jfif',
     images: [
-      'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=85',
-      'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=85'
+      './Assets/LOGO%20icons/Lettering%20service%20screwdriver%20and%20wrench%20symbol%20for%20repair%20and%20service%20_%20Premium%20Vector.jfif',
+      './Assets/telephone&PC/Starlink%20Mini%20Is%20A%20Backpack-Sized%20Satellite%20Internet%20Kit.jfif'
     ],
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41551-large.mp4',
+    videoUrl: './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2094%20Clever%20Morning%20Routine%20Ideas-pin-id-641833384412737958.mp4',
     attributes: [
       { key: 'Engagement Format', val: 'Hybrid (On-Site Douala/Yaoundé or Remote via Google Meet)' },
       { key: 'Scope', val: 'Cloud Migration, Kubernetes, Microservices & Cyber Audit' },
@@ -10183,9 +10212,9 @@ class Component extends DCLogic {
       currentProductPrice: (this.state.currentProduct && (this.state.currentProduct.priceFormatted || this.state.currentProduct.price)) || 'XAF 745 000',
       currentProductSalePrice: (this.state.currentProduct && this.state.currentProduct.salePrice) || '',
       currentProductImages: (this.state.currentProduct && (this.state.currentProduct.images || (this.state.currentProduct.media && this.state.currentProduct.media.map(m => m.url)))) || [
-        'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=85',
-        'https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?auto=format&fit=crop&w=800&q=85',
-        'https://images.unsplash.com/photo-1541807084-5c52b6b3adef?auto=format&fit=crop&w=800&q=85'
+        './Assets/telephone&PC/Macbook.jfif',
+        './Assets/telephone&PC/Top%20MacBook%20&%20Laptop%20Aesthetic%20Ideas%202026%20%E2%9C%A8%20Cute%20Desk%20Setup,%20Productivity%20&%20Tech%20Inspiration.jfif',
+        './Assets/telephone&PC/Microsoft%20Surface%20Laptop_%20Overview.jfif'
       ],
       currentProductAttributesList: (this.state.currentProduct && this.state.currentProduct.attributes) || [
         { key: 'Brand', val: 'Apple' },
@@ -10205,9 +10234,9 @@ class Component extends DCLogic {
       videoModalTitle: this.state.activeVideoModal ? this.state.activeVideoModal.title : '',
       videoModalSubtitle: this.state.activeVideoModal ? this.state.activeVideoModal.subtitle : '',
       videoModalTag: this.state.activeVideoModal ? this.state.activeVideoModal.tag : '',
-      videoModalUrl: this.state.activeVideoModal ? this.state.activeVideoModal.url || 'https://assets.mixkit.co/videos/preview/mixkit-surfer-riding-a-wave-in-the-sea-1224-large.mp4' : '',
+      videoModalUrl: this.state.activeVideoModal ? this.state.activeVideoModal.url || './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2010%20Aesthetic%20holiday%20table%20setting%20ideas%20that%20bring%20together%20comfort%20beauty%20and%20useful%20ideas%20you%20will%20actually%20try%20for%20people%20w.mp4' : '',
       openVideoModal: (title, subtitle, tag, url) => {
-        this.setState({ activeVideoModal: { title: title || 'Insta360 Cinematic Action', subtitle: subtitle || 'Shot on Insta360 X4 in 8K 360°', tag: tag || 'INSTA360 8K', url: url || 'https://assets.mixkit.co/videos/preview/mixkit-surfer-riding-a-wave-in-the-sea-1224-large.mp4' } });
+        this.setState({ activeVideoModal: { title: title || 'Insta360 Cinematic Action', subtitle: subtitle || 'Shot on Insta360 X4 in 8K 360°', tag: tag || 'INSTA360 8K', url: url || './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2010%20Aesthetic%20holiday%20table%20setting%20ideas%20that%20bring%20together%20comfort%20beauty%20and%20useful%20ideas%20you%20will%20actually%20try%20for%20people%20w.mp4' } });
       },
       closeVideoModal: () => this.setState({ activeVideoModal: null }),
       quickExploreInsta360: () => {

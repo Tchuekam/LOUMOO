@@ -1,7 +1,7 @@
 // GENERATED from dc-runtime/src/*.ts — do not edit. Rebuild with `cd dc-runtime && bun run build`.
 //
 // LOCAL PATCH (keep on regeneration): `resolve()` sends any expression with a
-// top-level && or || straight to JavaScript. The hand-rolled `!` and equality
+// top-level &&, || or ternary ?: straight to JavaScript. The hand-rolled `!` and equality
 // branches below it do not implement operator precedence, so `!a && b` was
 // evaluated as !(a && b) and `!a && b !== "x"` as (!a && b) !== "x". Roughly
 // two dozen sc-if conditions across the app depended on those being right —
@@ -216,13 +216,16 @@
     if (expr[0] === "(" && expr[expr.length - 1] === ")" && parensWrapWhole(expr)) {
       return resolve(vals, expr.slice(1, -1));
     }
-    // An expression joined by && or || must be evaluated by JavaScript, with
-    // JavaScript's precedence. The hand-rolled paths below understand neither:
-    //   `!a && b`            -> the `!` branch computed !(a && b)
-    //   `!a && b !== "x"`    -> findTopLevelEquality split at the !==, giving
-    //                           (!a && b) !== "x"
-    // Both silently returned the wrong boolean, which is why "empty state" and
-    // "content" sc-ifs could render at the same time.
+    // An expression with a top-level &&, ||, or ?: must be evaluated by
+    // JavaScript, with JavaScript's precedence. The hand-rolled paths below
+    // understand none of them:
+    //   `!a && b`                -> the `!` branch computed !(a && b)
+    //   `!a && b !== "x"`        -> findTopLevelEquality split at the !==,
+    //                               giving (!a && b) !== "x"
+    //   `a === "x" ? "p" : "q"`  -> split at the ===, so it returned the
+    //                               BOOLEAN a === ('x' ? 'p' : 'q') instead of
+    //                               either branch. Every `class="{{ cond ? 'on'
+    //                               : 'off' }}"` in the app rendered as "false".
     if (hasTopLevelLogical(expr)) {
       try {
         return new Function('vals', 'with(vals || {}) { return (' + expr + '); }')(vals);
@@ -262,11 +265,11 @@
       return void 0;
     }
   }
-  /** True when && or || appears outside every bracket, brace and string. */
+  /** True when &&, || or a ternary ? appears outside every bracket and string. */
   function hasTopLevelLogical(expr) {
     let depth = 0;
     let quote = null;
-    for (let i = 0; i < expr.length - 1; i++) {
+    for (let i = 0; i < expr.length; i++) {
       const c = expr[i];
       if (quote) {
         if (c === "\\") i++;
@@ -277,6 +280,10 @@
       if (c === "(" || c === "[" || c === "{") depth++;
       else if (c === ")" || c === "]" || c === "}") depth--;
       else if (depth === 0 && (c === "&" || c === "|") && expr[i + 1] === c) return true;
+      // `?` at depth zero is a conditional or a `??`; both need JavaScript's
+      // own evaluation. Optional chaining (`?.`) is just part of a path, so it
+      // stays on the fast path.
+      else if (depth === 0 && c === "?" && expr[i + 1] !== ".") return true;
     }
     return false;
   }

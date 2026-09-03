@@ -235,6 +235,12 @@ if (require.main === module) {
   }
   process.on('SIGTERM', () => shutdown('SIGTERM'));
   process.on('SIGINT', () => shutdown('SIGINT'));
+  process.on('unhandledRejection', (reason) => {
+    logger.warn(`[Process] Unhandled Rejection: ${reason && reason.message || reason}`);
+  });
+  process.on('uncaughtException', (err) => {
+    logger.error(`[Process] Uncaught Exception: ${err && err.message || err}`);
+  });
 }
 
 module.exports = app;

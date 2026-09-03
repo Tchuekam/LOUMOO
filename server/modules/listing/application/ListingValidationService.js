@@ -97,7 +97,11 @@ const ServiceSchema = z.object({
   leadTimeHours: z.coerce.number().int().min(0).max(24 * 365).default(2),
   weeklySchedule: WeeklyScheduleSchema.optional(),
   blackoutDates: z.array(z.string().trim().max(32)).max(60).default([]),
-  cancellationPolicy: z.string().trim().max(500).optional().nullable()
+  cancellationPolicy: z.string().trim().max(500).optional().nullable(),
+  // Where customers come to you, for AT_SELLER and HYBRID services. Products
+  // carry the equivalent as fulfillment.pickupAddress; a service has no
+  // fulfilment block, so it lives here.
+  locationAddress: z.string().trim().max(240).optional().nullable()
 }).strict();
 
 /** The promises attached to a purchase. */
@@ -466,7 +470,7 @@ class ListingValidationService {
         inventory: { type: 'block', required: false, appliesWhen: 'capabilities.hasInventory', fields: ['trackInventory', 'quantity', 'lowStockThreshold', 'allowBackorder'] },
         variantOptions: { type: 'map<string,string[]>', required: false, note: 'Keys must be category attributes flagged isVariantOption; at most 100 combinations' },
         fulfillment: { type: 'block', required: 'publish', appliesWhen: 'capabilities.hasShipping', fields: ['delivery', 'pickup', 'deliveryScope', 'deliveryZones', 'etaText', 'deliveryFeeMinor', 'freeDeliveryOverMinor', 'pickupAddress'] },
-        service: { type: 'block', required: 'publish', appliesWhen: 'capabilities.hasServiceSchedule', fields: ['format', 'durationMinutes', 'locationMode', 'serviceAreas', 'includes', 'excludes', 'bookingMode', 'capacity', 'minParticipants', 'leadTimeHours', 'weeklySchedule', 'blackoutDates', 'cancellationPolicy'] },
+        service: { type: 'block', required: 'publish', appliesWhen: 'capabilities.hasServiceSchedule', fields: ['format', 'durationMinutes', 'locationMode', 'serviceAreas', 'includes', 'excludes', 'bookingMode', 'capacity', 'minParticipants', 'leadTimeHours', 'weeklySchedule', 'blackoutDates', 'cancellationPolicy', 'locationAddress'] },
         trust: { type: 'block', required: false, fields: ['warranty', 'returnPolicy', 'authenticity', 'paymentMethods', 'availableFrom'] }
       },
       enums: {
