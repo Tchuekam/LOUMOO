@@ -651,97 +651,291 @@ def get_home_view():
     </div>
 
     <!-- ── 07: FEATURED STORES & BRANDS ── -->
-    <div class="editorial-section-header">
-      <h2 class="editorial-section-title">Featured stores</h2>
-      <button onClick="{{ on.store }}" class="editorial-see-all">See all →</button>
+    <div class="editorial-section-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <div>
+        <h2 class="editorial-section-title">Featured stores</h2>
+        <div style="font:500 12px/1.2 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Verified brand flagships & official retail partners</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <button onClick="{{ on.store }}" class="editorial-see-all">See all →</button>
+        <button onClick="{{ () => scrollRail('featuredStoresRail', -260) }}" class="loumoo-rail-nav-btn" aria-label="Previous stores">‹</button>
+        <button onClick="{{ () => scrollRail('featuredStoresRail', 260) }}" class="loumoo-rail-nav-btn" aria-label="Next stores">›</button>
+      </div>
     </div>
 
-    <div class="featured-stores-rail">
-      <!-- 1. Jumia -->
-      <button onClick="{{ on.store }}" class="brand-circle-btn" aria-label="Visit Jumia Official Store">
+    <div id="featuredStoresRail" class="featured-stores-rail">
+      <!-- 1. Apple -->
+      <button onClick="{{ on.store }}" class="brand-circle-btn" aria-label="Visit Apple Official Store">
         <div class="brand-circle-logo-wrap">
-          <div style="font:800 11px/1 var(--font-heading);color:#ea580c">JUMIA</div>
-        </div>
-        <div>
-          <div style="font:800 12px/1.1 var(--font-heading);color:var(--color-text)">Jumia</div>
-          <div style="font:500 9.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Official Store</div>
-        </div>
-      </button>
-
-      <!-- 2. Samsung -->
-      <button onClick="{{ on.store }}" class="brand-circle-btn" aria-label="Visit Samsung Official Store">
-        <div class="brand-circle-logo-wrap">
-          <div style="font:800 10.5px/1 var(--font-heading);color:#007aff;letter-spacing:-.02em">SAMSUNG</div>
-        </div>
-        <div>
-          <div style="font:800 12px/1.1 var(--font-heading);color:var(--color-text)">Samsung</div>
-          <div style="font:500 9.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Official Store</div>
-        </div>
-      </button>
-
-      <!-- 3. Apple -->
-      <button onClick="{{ on.store }}" class="brand-circle-btn" aria-label="Visit Apple Premium Reseller">
-        <div class="brand-circle-logo-wrap">
-          <div style="font:800 18px/1 var(--font-heading);color:#111214"></div>
+          <img src="./Assets/_processed/logo_icons_apple.png" alt="Apple" loading="lazy" />
         </div>
         <div>
           <div style="font:800 12px/1.1 var(--font-heading);color:var(--color-text)">Apple</div>
-          <div style="font:500 9.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Premium Reseller</div>
-        </div>
-      </button>
-
-      <!-- 4. Nike -->
-      <button onClick="{{ on.store }}" class="brand-circle-btn" aria-label="Visit Nike Official Store">
-        <div class="brand-circle-logo-wrap">
-          <svg width="28" height="16" viewBox="0 0 28 16" fill="#111214"><path d="M2.5 12.5 C7 14 16 11 26 2 C22 8 15 13 8 13.5 C5 13.5 3 13 2.5 12.5 Z"/></svg>
-        </div>
-        <div>
-          <div style="font:800 12px/1.1 var(--font-heading);color:var(--color-text)">Nike</div>
           <div style="font:500 9.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Official Store</div>
         </div>
       </button>
 
-      <!-- 5. Infinix -->
-      <button onClick="{{ on.store }}" class="brand-circle-btn" aria-label="Visit Infinix Official Store">
+      <!-- 2. Amazon -->
+      <button onClick="{{ on.store }}" class="brand-circle-btn" aria-label="Visit Amazon Global Store">
         <div class="brand-circle-logo-wrap">
-          <div style="font:800 11px/1 var(--font-heading);color:#16a34a">Infinix</div>
+          <img src="./Assets/_processed/logo_icons_amazon_modifie_son_logo_apr_s_des_compar_25.png" alt="Amazon" loading="lazy" />
         </div>
         <div>
-          <div style="font:800 12px/1.1 var(--font-heading);color:var(--color-text)">Infinix</div>
-          <div style="font:500 9.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Official Store</div>
+          <div style="font:800 12px/1.1 var(--font-heading);color:var(--color-text)">Amazon</div>
+          <div style="font:500 9.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Global Store</div>
         </div>
       </button>
 
-      <!-- 6. MTN -->
+      <!-- 3. MTN -->
       <button onClick="{{ on.store }}" class="brand-circle-btn" aria-label="Visit MTN Official Store">
-        <div class="brand-circle-logo-wrap" style="background:#ffcc00">
-          <div style="font:900 12px/1 var(--font-heading);color:#111214">MTN</div>
+        <div class="brand-circle-logo-wrap">
+          <img src="./Assets/_processed/logo_icons_mtn_logo_52.png" alt="MTN" loading="lazy" />
         </div>
         <div>
           <div style="font:800 12px/1.1 var(--font-heading);color:var(--color-text)">MTN</div>
-          <div style="font:500 9.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Official Store</div>
+          <div style="font:500 9.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">MoMo & Telco</div>
         </div>
       </button>
 
-      <!-- 7. Decathlon -->
-      <button onClick="{{ on.store }}" class="brand-circle-btn" aria-label="Visit Decathlon Official Store">
+      <!-- 4. HP -->
+      <button onClick="{{ on.store }}" class="brand-circle-btn" aria-label="Visit HP Official Store">
         <div class="brand-circle-logo-wrap">
-          <div style="font:800 9.5px/1 var(--font-heading);color:#0284c7">DECATHLON</div>
+          <img src="./Assets/_processed/logo_icons_hp_39.png" alt="HP" loading="lazy" />
         </div>
         <div>
-          <div style="font:800 12px/1.1 var(--font-heading);color:var(--color-text)">Decathlon</div>
-          <div style="font:500 9.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Official Store</div>
+          <div style="font:800 12px/1.1 var(--font-heading);color:var(--color-text)">HP</div>
+          <div style="font:500 9.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Laptops & PC</div>
         </div>
       </button>
 
-      <!-- 8. Orange -->
-      <button onClick="{{ on.store }}" class="brand-circle-btn" aria-label="Visit Orange Official Store">
-        <div class="brand-circle-logo-wrap" style="background:#ff6600">
-          <div style="font:900 11px/1 var(--font-heading);color:#ffffff">orange</div>
+      <!-- 5. LG -->
+      <button onClick="{{ on.store }}" class="brand-circle-btn" aria-label="Visit LG Official Store">
+        <div class="brand-circle-logo-wrap">
+          <img src="./Assets/_processed/logo_icons_lg_logo_2_46.png" alt="LG" loading="lazy" />
         </div>
         <div>
-          <div style="font:800 12px/1.1 var(--font-heading);color:var(--color-text)">Orange</div>
-          <div style="font:500 9.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Official Store</div>
+          <div style="font:800 12px/1.1 var(--font-heading);color:var(--color-text)">LG</div>
+          <div style="font:500 9.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Electronics</div>
+        </div>
+      </button>
+
+      <!-- 6. itel -->
+      <button onClick="{{ on.store }}" class="brand-circle-btn" aria-label="Visit itel Official Store">
+        <div class="brand-circle-logo-wrap">
+          <img src="./Assets/_processed/logo_icons_itel_42.png" alt="itel" loading="lazy" />
+        </div>
+        <div>
+          <div style="font:800 12px/1.1 var(--font-heading);color:var(--color-text)">itel</div>
+          <div style="font:500 9.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Smart Mobile</div>
+        </div>
+      </button>
+
+      <!-- 7. Shopify -->
+      <button onClick="{{ on.store }}" class="brand-circle-btn" aria-label="Visit Shopify Verified Brands">
+        <div class="brand-circle-logo-wrap">
+          <img src="./Assets/_processed/logo_icons_shopify_bag_icon_symbol_logo_56.png" alt="Shopify" loading="lazy" />
+        </div>
+        <div>
+          <div style="font:800 12px/1.1 var(--font-heading);color:var(--color-text)">Shopify</div>
+          <div style="font:500 9.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Partner Stores</div>
+        </div>
+      </button>
+
+      <!-- 8. McDonald's -->
+      <button onClick="{{ on.store }}" class="brand-circle-btn" aria-label="Visit McDonald's Store">
+        <div class="brand-circle-logo-wrap">
+          <img src="./Assets/_processed/logo_icons_mcdonalds.png" alt="McDonald's" loading="lazy" />
+        </div>
+        <div>
+          <div style="font:800 12px/1.1 var(--font-heading);color:var(--color-text)">McDonald's</div>
+          <div style="font:500 9.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Fast Food & Café</div>
+        </div>
+      </button>
+
+      <!-- 9. KFC -->
+      <button onClick="{{ on.store }}" class="brand-circle-btn" aria-label="Visit KFC Official Store">
+        <div class="brand-circle-logo-wrap">
+          <img src="./Assets/_processed/logo_icons_kfc_43.png" alt="KFC" loading="lazy" />
+        </div>
+        <div>
+          <div style="font:800 12px/1.1 var(--font-heading);color:var(--color-text)">KFC</div>
+          <div style="font:500 9.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Crispy Chicken</div>
+        </div>
+      </button>
+
+      <!-- 10. Burger King -->
+      <button onClick="{{ on.store }}" class="brand-circle-btn" aria-label="Visit Burger King Store">
+        <div class="brand-circle-logo-wrap">
+          <img src="./Assets/_processed/logo_icons_burger_king_change_de_logo_pour_revenir__28.png" alt="Burger King" loading="lazy" />
+        </div>
+        <div>
+          <div style="font:800 12px/1.1 var(--font-heading);color:var(--color-text)">Burger King</div>
+          <div style="font:500 9.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Flame Grilled</div>
+        </div>
+      </button>
+
+      <!-- 11. Starbucks -->
+      <button onClick="{{ on.store }}" class="brand-circle-btn" aria-label="Visit Starbucks Store">
+        <div class="brand-circle-logo-wrap">
+          <img src="./Assets/_processed/logo_icons_starbucks_60.png" alt="Starbucks" loading="lazy" />
+        </div>
+        <div>
+          <div style="font:800 12px/1.1 var(--font-heading);color:var(--color-text)">Starbucks</div>
+          <div style="font:500 9.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Coffee & Tea</div>
+        </div>
+      </button>
+
+      <!-- 12. Coca-Cola -->
+      <button onClick="{{ on.store }}" class="brand-circle-btn" aria-label="Visit Coca-Cola Official Store">
+        <div class="brand-circle-logo-wrap">
+          <img src="./Assets/_processed/logo_icons_ik_heb_dit_logo_gekozen_omdat_ik_cola_le_40.png" alt="Coca-Cola" loading="lazy" />
+        </div>
+        <div>
+          <div style="font:800 12px/1.1 var(--font-heading);color:var(--color-text)">Coca-Cola</div>
+          <div style="font:500 9.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Beverages</div>
+        </div>
+      </button>
+
+      <!-- 13. Mastercard -->
+      <button onClick="{{ on.store }}" class="brand-circle-btn" aria-label="Visit Mastercard Store">
+        <div class="brand-circle-logo-wrap">
+          <img src="./Assets/_processed/logo_icons_discover_the_new_mastercard_logo_31.png" alt="Mastercard" loading="lazy" />
+        </div>
+        <div>
+          <div style="font:800 12px/1.1 var(--font-heading);color:var(--color-text)">Mastercard</div>
+          <div style="font:500 9.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Verified Pay</div>
+        </div>
+      </button>
+
+      <!-- 14. Toyota -->
+      <button onClick="{{ on.store }}" class="brand-circle-btn" aria-label="Visit Toyota Official Store">
+        <div class="brand-circle-logo-wrap">
+          <img src="./Assets/_processed/logo_icons_la_toyota_es_considerada_como_una_de_la__44.png" alt="Toyota" loading="lazy" />
+        </div>
+        <div>
+          <div style="font:800 12px/1.1 var(--font-heading);color:var(--color-text)">Toyota</div>
+          <div style="font:500 9.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Auto & Fleet</div>
+        </div>
+      </button>
+
+      <!-- 15. Jeep -->
+      <button onClick="{{ on.store }}" class="brand-circle-btn" aria-label="Visit Jeep Store">
+        <div class="brand-circle-logo-wrap">
+          <img src="./Assets/_processed/logo_icons_jeep_0.png" alt="Jeep" loading="lazy" />
+        </div>
+        <div>
+          <div style="font:800 12px/1.1 var(--font-heading);color:var(--color-text)">Jeep</div>
+          <div style="font:500 9.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">4x4 & Offroad</div>
+        </div>
+      </button>
+
+      <!-- 16. Men's Kicks -->
+      <button onClick="{{ on.store }}" class="brand-circle-btn" aria-label="Visit Footwear Vault">
+        <div class="brand-circle-logo-wrap">
+          <img src="./Assets/_processed/logo_icons_men_s_shoes_logo_icon_design_illustratio_49.png" alt="Kicks & Shoes" loading="lazy" />
+        </div>
+        <div>
+          <div style="font:800 12px/1.1 var(--font-heading);color:var(--color-text)">Sneakers Vault</div>
+          <div style="font:500 9.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Footwear & Kicks</div>
+        </div>
+      </button>
+
+      <!-- 17. Supermarché -->
+      <button onClick="{{ on.store }}" class="brand-circle-btn" aria-label="Visit Supermarket Store">
+        <div class="brand-circle-logo-wrap">
+          <img src="./Assets/_processed/logo_icons_shopping_and_buying_products_at_grocery__57.png" alt="Supermarket" loading="lazy" />
+        </div>
+        <div>
+          <div style="font:800 12px/1.1 var(--font-heading);color:var(--color-text)">Supermarché</div>
+          <div style="font:500 9.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Fresh Groceries</div>
+        </div>
+      </button>
+
+      <!-- 18. Smart Electronics -->
+      <button onClick="{{ on.store }}" class="brand-circle-btn" aria-label="Visit Smart Electronics">
+        <div class="brand-circle-logo-wrap">
+          <img src="./Assets/_processed/logo_icons_smartphone_logo_modern_electronics_vecto_59.png" alt="Smart Tech" loading="lazy" />
+        </div>
+        <div>
+          <div style="font:800 12px/1.1 var(--font-heading);color:var(--color-text)">Smart Tech</div>
+          <div style="font:500 9.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Gadgets & Audio</div>
+        </div>
+      </button>
+
+      <!-- 19. Tech Repair -->
+      <button onClick="{{ on.store }}" class="brand-circle-btn" aria-label="Visit Tech Service">
+        <div class="brand-circle-logo-wrap">
+          <img src="./Assets/_processed/logo_icons_service_gear_icon_design_template_downlo_55.png" alt="Tech Repair" loading="lazy" />
+        </div>
+        <div>
+          <div style="font:800 12px/1.1 var(--font-heading);color:var(--color-text)">Tech Repair</div>
+          <div style="font:500 9.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Certified Care</div>
+        </div>
+      </button>
+
+      <!-- 20. Marché Douala -->
+      <button onClick="{{ on.store }}" class="brand-circle-btn" aria-label="Visit Marché Douala">
+        <div class="brand-circle-logo-wrap">
+          <img src="./Assets/_processed/logo_icons_market_logo_design_logo_logodesigner_mar_47.png" alt="Marché Douala" loading="lazy" />
+        </div>
+        <div>
+          <div style="font:800 12px/1.1 var(--font-heading);color:var(--color-text)">Marché Douala</div>
+          <div style="font:500 9.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Wholesale Hub</div>
+        </div>
+      </button>
+
+      <!-- 21. Swift Express -->
+      <button onClick="{{ on.store }}" class="brand-circle-btn" aria-label="Visit Swift Express">
+        <div class="brand-circle-logo-wrap">
+          <img src="./Assets/_processed/logo_icons_delivery_motorcycle_stock_photos_picture_30.png" alt="Swift Express" loading="lazy" />
+        </div>
+        <div>
+          <div style="font:800 12px/1.1 var(--font-heading);color:var(--color-text)">Swift Moto</div>
+          <div style="font:500 9.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Express Delivery</div>
+        </div>
+      </button>
+
+      <!-- 22. Laptop Depot -->
+      <button onClick="{{ on.store }}" class="brand-circle-btn" aria-label="Visit Laptop Depot">
+        <div class="brand-circle-logo-wrap">
+          <img src="./Assets/_processed/logo_icons_noutbook_icon_53.png" alt="Laptop Depot" loading="lazy" />
+        </div>
+        <div>
+          <div style="font:800 12px/1.1 var(--font-heading);color:var(--color-text)">Laptop Depot</div>
+          <div style="font:500 9.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">PC & Workstations</div>
+        </div>
+      </button>
+
+      <!-- 23. Loumoo Pay -->
+      <button onClick="{{ on.store }}" class="brand-circle-btn" aria-label="Visit Loumoo Pay">
+        <div class="brand-circle-logo-wrap">
+          <img src="./Assets/_processed/logo_icons_bank_icon_stock_vector_illustration_of_s_27.png" alt="Loumoo Pay" loading="lazy" />
+        </div>
+        <div>
+          <div style="font:800 12px/1.1 var(--font-heading);color:var(--color-text)">Loumoo Pay</div>
+          <div style="font:500 9.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Escrow Banking</div>
+        </div>
+      </button>
+
+      <!-- 24. Alfred Concierge -->
+      <button onClick="{{ on.store }}" class="brand-circle-btn" aria-label="Visit Alfred Concierge">
+        <div class="brand-circle-logo-wrap">
+          <img src="./Assets/_processed/logo_icons_alfred_logo_24.png" alt="Alfred" loading="lazy" />
+        </div>
+        <div>
+          <div style="font:800 12px/1.1 var(--font-heading);color:var(--color-text)">Alfred</div>
+          <div style="font:500 9.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">VIP Concierge</div>
+        </div>
+      </button>
+
+      <!-- 25. HashiCorp -->
+      <button onClick="{{ on.store }}" class="brand-circle-btn" aria-label="Visit HashiCorp">
+        <div class="brand-circle-logo-wrap">
+          <img src="./Assets/_processed/logo_icons_hashicorp_logo_united_states_38.png" alt="HashiCorp" loading="lazy" />
+        </div>
+        <div>
+          <div style="font:800 12px/1.1 var(--font-heading);color:var(--color-text)">HashiCorp</div>
+          <div style="font:500 9.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Dev & Cloud</div>
         </div>
       </button>
     </div>

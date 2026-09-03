@@ -2153,35 +2153,28 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   border-color: var(--color-neutral-300);
 }
 
-/* Featured Stores Brand Avatars */
+/* Featured Stores Brand Avatars & Horizontal Rail */
 .featured-stores-rail {
-  display: grid;
-  grid-template-columns: repeat(8, 1fr);
-  gap: 14px;
-  padding-bottom: 24px;
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  gap: 18px;
+  padding: 4px 4px 18px 4px;
 }
-@media (max-width: 1100px) {
-  .featured-stores-rail {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-@media (max-width: 640px) {
-  .featured-stores-rail {
-    display: flex;
-    overflow-x: auto;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
-    gap: 12px;
-    margin-inline: -16px;
-    padding-inline: 16px;
-  }
-  .featured-stores-rail > button {
-    flex: 0 0 84px;
-    width: 84px;
-  }
+.featured-stores-rail::-webkit-scrollbar {
+  display: none;
 }
 
 .brand-circle-btn {
+  flex: 0 0 88px !important;
+  width: 88px !important;
+  min-width: 88px !important;
+  max-width: 88px !important;
+  scroll-snap-align: start;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -2208,13 +2201,26 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   box-shadow: var(--shadow-xs);
   transition: all 0.2s ease;
   overflow: hidden;
+  padding: 10px;
 }
 .brand-circle-btn:hover .brand-circle-logo-wrap {
   border-color: var(--color-accent);
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  transform: scale(1.05);
 }
 [data-theme="dark"] .brand-circle-logo-wrap {
   background: #1a1e2a;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+.brand-circle-logo-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.06));
+  transition: transform 0.2s ease;
+}
+.brand-circle-btn:hover .brand-circle-logo-wrap img {
+  transform: scale(1.08);
 }
 
 /* Lifestyle Video Grid & Mobile Rail */
