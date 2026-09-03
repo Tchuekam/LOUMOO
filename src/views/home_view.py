@@ -1512,200 +1512,200 @@ def get_home_view():
       </div>
 
       <div class="loumoo-rail-track" id="newArrivalsRail">
-        <!-- 1. Beats Studio Pro (Cutout) -->
-        <div class="loumoo-media-card" onClick="{{ () => openProduct('sony_xm5') }}" aria-label="View Beats Studio Pro">
+        <!-- 1. Apple AirPods Max -->
+        <div class="loumoo-media-card" onClick="{{ () => openProduct('airpods_max') }}" aria-label="View Apple AirPods Max">
           <div class="loumoo-card-media-cutout">
-            <span class="loumoo-card-badge badge-pill-sale">Save 30.000 FCFA</span>
-            <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('beats-studio-pro', 'Beats Studio Pro'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save Beats Studio Pro to wishlist">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('beats-studio-pro') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('beats-studio-pro') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            <span class="loumoo-card-badge badge-pill-sale">Save 60.000 FCFA</span>
+            <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('airpods_max', 'Apple AirPods Max'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save Apple AirPods Max to wishlist">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('airpods_max') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('airpods_max') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
             </button>
-            <img src="./Assets/acessories&gadgets/Created%20a%20Poster%20Ad%20of%20@oraimoclub%20SpaceBuds%20%F0%9F%92%9A%E2%80%A6.jfif" alt="Oraimo SpaceBuds Hybrid ANC" loading="lazy">
+            <img src="./Assets/_processed/acessories_gadgets_apple_air_pod_max_airpodmax_apple_keysho_16.png" alt="Apple AirPods Max" loading="lazy">
           </div>
           <div class="loumoo-card-body">
-            <h4 class="loumoo-card-title">Beats Studio Pro</h4>
-            <div class="loumoo-card-tagline">Iconic sound. Active Noise Cancelling & Spatial Audio.</div>
+            <h4 class="loumoo-card-title">Apple AirPods Max</h4>
+            <div class="loumoo-card-tagline">High-fidelity over-ear with Active Noise Cancellation &amp; Spatial Audio.</div>
             <div class="loumoo-card-rating-row">
               <span>★ 4.8</span>
-              <span class="loumoo-card-rating-text">(56) · Beats Official</span>
+              <span class="loumoo-card-rating-text">(87) · iStore Cameroon</span>
             </div>
             <div class="loumoo-card-bottom-row">
               <div class="loumoo-card-pricing-block">
                 <span class="loumoo-card-price-prefix">From</span>
                 <div class="loumoo-card-price-main">
-                  <span class="loumoo-card-price-val">195.000 FCFA</span>
-                  <span class="loumoo-card-price-strike">225.000 FCFA</span>
+                  <span class="loumoo-card-price-val">230.000 FCFA</span>
+                  <span class="loumoo-card-price-strike">290.000 FCFA</span>
                 </div>
                 <div class="loumoo-card-trust-pill">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                   <span>✓ Escrow options available</span>
                 </div>
               </div>
-              <button class="loumoo-card-pill-btn" aria-label="Buy Beats Studio Pro">Buy now</button>
+              <button class="loumoo-card-pill-btn" aria-label="Buy Apple AirPods Max">Buy now</button>
             </div>
           </div>
         </div>
 
-        <!-- 2. Jordan 4 Retro Thunder (Cutout) -->
-        <div class="loumoo-media-card" onClick="{{ () => openProduct('nike_air_force_1') }}" aria-label="View Jordan 4 Retro Thunder">
+        <!-- 2. Nike Air Force 1 &#x27;07 -->
+        <div class="loumoo-media-card" onClick="{{ () => openProduct('nike_air_force_1') }}" aria-label="View Nike Air Force 1 &#x27;07">
           <div class="loumoo-card-media-cutout">
             <span class="loumoo-card-badge badge-pill-new">New Release</span>
-            <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('jordan-4-thunder', 'Jordan 4 Retro Thunder'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save Jordan 4 Retro Thunder to wishlist">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('jordan-4-thunder') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('jordan-4-thunder') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('nike_air_force_1', 'Nike Air Force 1 &#x27;07'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save Nike Air Force 1 &#x27;07 to wishlist">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('nike_air_force_1') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('nike_air_force_1') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
             </button>
-            <img src="./Assets/fashion/#MenStyle%20#MensFashion%20#CorporateStyle%20#MensShoe%E2%80%A6.jfif" alt="Italian Tailored Executive Suit" loading="lazy">
+            <img src="./Assets/fashion/Look%20at%20this%20new%20Nike%20Air%20Force.jfif" alt="Nike Air Force 1 &#x27;07" loading="lazy">
           </div>
           <div class="loumoo-card-body">
-            <h4 class="loumoo-card-title">Air Jordan 4 Retro</h4>
-            <div class="loumoo-card-tagline">Thunder Edition. Premium nubuck leather.</div>
+            <h4 class="loumoo-card-title">Nike Air Force 1 &#x27;07</h4>
+            <div class="loumoo-card-tagline">Triple White &#x27;07. The iconic AF1 leather silhouette.</div>
+            <div class="loumoo-card-rating-row">
+              <span>★ 4.8</span>
+              <span class="loumoo-card-rating-text">(240) · Urban Kicks Bonamoussadi</span>
+            </div>
+            <div class="loumoo-card-bottom-row">
+              <div class="loumoo-card-pricing-block">
+                <span class="loumoo-card-price-prefix">From</span>
+                <div class="loumoo-card-price-main">
+                  <span class="loumoo-card-price-val">65.000 FCFA</span>
+                  <span class="loumoo-card-price-strike">75.000 FCFA</span>
+                </div>
+                <div class="loumoo-card-trust-pill">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                  <span>✓ Escrow options available</span>
+                </div>
+              </div>
+              <button class="loumoo-card-pill-btn" aria-label="Buy Nike Air Force 1 &#x27;07">Buy now</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. DJI Osmo Pocket 3 -->
+        <div class="loumoo-media-card" onClick="{{ () => openProduct('dji_osmo_pocket3') }}" aria-label="View DJI Osmo Pocket 3">
+          <div class="loumoo-card-media-cutout">
+            <span class="loumoo-card-badge badge-pill-sale">Save 130.000 FCFA</span>
+            <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('dji_osmo_pocket3', 'DJI Osmo Pocket 3'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save DJI Osmo Pocket 3 to wishlist">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('dji_osmo_pocket3') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('dji_osmo_pocket3') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            </button>
+            <img src="./Assets/acessories&gadgets/DJI%20Osmo%20Pocket%203.jfif" alt="DJI Osmo Pocket 3" loading="lazy">
+          </div>
+          <div class="loumoo-card-body">
+            <h4 class="loumoo-card-title">DJI Osmo Pocket 3</h4>
+            <div class="loumoo-card-tagline">1-inch sensor. 4K/120fps. 3-axis gimbal stabilisation.</div>
             <div class="loumoo-card-rating-row">
               <span>★ 4.9</span>
-              <span class="loumoo-card-rating-text">(92) · Certified Vault</span>
+              <span class="loumoo-card-rating-text">(88) · Orca Electronics</span>
             </div>
             <div class="loumoo-card-bottom-row">
               <div class="loumoo-card-pricing-block">
                 <span class="loumoo-card-price-prefix">From</span>
                 <div class="loumoo-card-price-main">
-                  <span class="loumoo-card-price-val">220.000 FCFA</span>
-                  <span class="loumoo-card-price-strike">250.000 FCFA</span>
+                  <span class="loumoo-card-price-val">350.000 FCFA</span>
+                  <span class="loumoo-card-price-strike">480.000 FCFA</span>
                 </div>
                 <div class="loumoo-card-trust-pill">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                   <span>✓ Escrow options available</span>
                 </div>
               </div>
-              <button class="loumoo-card-pill-btn" aria-label="Buy Air Jordan 4 Retro">Buy now</button>
+              <button class="loumoo-card-pill-btn" aria-label="Buy DJI Osmo Pocket 3">Buy now</button>
             </div>
           </div>
         </div>
 
-        <!-- 3. Dyson Supersonic Hair Dryer (Cutout) -->
-        <div class="loumoo-media-card" onClick="{{ () => openProduct('insta360_x4') }}" aria-label="View Dyson Supersonic Hair Dryer Pro">
-          <div class="loumoo-card-media-cutout">
-            <span class="loumoo-card-badge badge-pill-sale">Save 40.000 FCFA</span>
-            <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('dyson-supersonic', 'Dyson Supersonic'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save Dyson Supersonic to wishlist">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('dyson-supersonic') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('dyson-supersonic') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-            </button>
-            <img src="./Assets/perfume&lotion/Boss%20Bottled%20Night%20by%20Hugo%20Boss%20_%20100ml%20EDT%20_%20Woody%20Aromatic%20Fragrance%20_%20Gift%20for%20him,%20Fathers%20day.jfif" alt="Hugo Boss Bottled Night 100ml EDT" loading="lazy">
-          </div>
-          <div class="loumoo-card-body">
-            <h4 class="loumoo-card-title">Dyson Supersonic Pro</h4>
-            <div class="loumoo-card-tagline">Fast drying. No extreme heat. Salon finish.</div>
-            <div class="loumoo-card-rating-row">
-              <span>★ 5.0</span>
-              <span class="loumoo-card-rating-text">(41) · Dyson Official</span>
-            </div>
-            <div class="loumoo-card-bottom-row">
-              <div class="loumoo-card-pricing-block">
-                <span class="loumoo-card-price-prefix">From</span>
-                <div class="loumoo-card-price-main">
-                  <span class="loumoo-card-price-val">299.000 FCFA</span>
-                  <span class="loumoo-card-price-strike">339.000 FCFA</span>
-                </div>
-                <div class="loumoo-card-trust-pill">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                  <span>✓ Escrow options available</span>
-                </div>
-              </div>
-              <button class="loumoo-card-pill-btn" aria-label="Buy Dyson Supersonic">Buy now</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- 4. Galaxy S24 Ultra (Cutout) -->
-        <div class="loumoo-media-card" onClick="{{ () => openProduct('galaxy_s24_ultra') }}" aria-label="View Galaxy S24 Ultra 512GB">
+        <!-- 4. Galaxy S26 Ultra -->
+        <div class="loumoo-media-card" onClick="{{ () => openProduct('galaxy_s26_ultra') }}" aria-label="View Galaxy S26 Ultra">
           <div class="loumoo-card-media-cutout">
             <span class="loumoo-card-badge badge-pill-new">Galaxy AI Inside</span>
-            <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('galaxy-s24-ultra', 'Galaxy S24 Ultra 512GB'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save Galaxy S24 Ultra to wishlist">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('galaxy-s24-ultra') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('galaxy-s24-ultra') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('galaxy_s26_ultra', 'Galaxy S26 Ultra'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save Galaxy S26 Ultra to wishlist">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('galaxy_s26_ultra') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('galaxy_s26_ultra') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
             </button>
-            <img src="./Assets/telephone&PC/SAMSUNG%20S26%20ULTRA%20%F0%9F%94%A5%20BUY%20IT%20FOR%20YOU%20%F0%9F%91%87.jfif" alt="Samsung Galaxy S26 Ultra 5G" loading="lazy">
+            <img src="./Assets/telephone&PC/Samsung%20Galaxy%20S26%20Ultra%2C.jfif" alt="Galaxy S26 Ultra" loading="lazy">
           </div>
           <div class="loumoo-card-body">
-            <h4 class="loumoo-card-title">Galaxy S24 Ultra</h4>
-            <div class="loumoo-card-tagline">512GB Titanium Gray · 200MP Nightography.</div>
+            <h4 class="loumoo-card-title">Galaxy S26 Ultra</h4>
+            <div class="loumoo-card-tagline">256GB Titanium · 200MP Galaxy AI camera &amp; built-in S Pen.</div>
             <div class="loumoo-card-rating-row">
               <span>★ 4.9</span>
-              <span class="loumoo-card-rating-text">(88) · Samsung Hub</span>
+              <span class="loumoo-card-rating-text">(118) · Samsung Experience Store</span>
             </div>
             <div class="loumoo-card-bottom-row">
               <div class="loumoo-card-pricing-block">
                 <span class="loumoo-card-price-prefix">From</span>
                 <div class="loumoo-card-price-main">
-                  <span class="loumoo-card-price-val">890.000 FCFA</span>
-                  <span class="loumoo-card-price-strike">970.000 FCFA</span>
+                  <span class="loumoo-card-price-val">899.000 FCFA</span>
+                  <span class="loumoo-card-price-strike">1.050.000 FCFA</span>
                 </div>
                 <div class="loumoo-card-trust-pill">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                   <span>✓ Escrow options available</span>
                 </div>
               </div>
-              <button class="loumoo-card-pill-btn" aria-label="Buy Galaxy S24 Ultra">Buy now</button>
+              <button class="loumoo-card-pill-btn" aria-label="Buy Galaxy S26 Ultra">Buy now</button>
             </div>
           </div>
         </div>
 
-        <!-- 5. Apple MacBook Air 13" M2 -->
-        <div class="loumoo-media-card" onClick="{{ () => openProduct('macbook_m2') }}" aria-label="View MacBook Air 13 M2">
+        <!-- 5. MacBook Air 13” M2 -->
+        <div class="loumoo-media-card" onClick="{{ () => openProduct('macbook_m2') }}" aria-label="View MacBook Air 13” M2">
           <div class="loumoo-card-media-cutout">
-            <span class="loumoo-card-badge badge-pill-sale">Save 55.000 FCFA</span>
-            <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('macbook-air-m2', 'Apple MacBook Air 13 M2'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save MacBook Air to wishlist">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('macbook-air-m2') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('macbook-air-m2') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            <span class="loumoo-card-badge badge-pill-sale">Save 75.000 FCFA</span>
+            <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('macbook_m2', 'MacBook Air 13” M2'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save MacBook Air 13” M2 to wishlist">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('macbook_m2') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('macbook_m2') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
             </button>
-            <img src="./Assets/telephone&PC/TECNO%20CAMON%2040%20Series_%20Redefining%20Imagery%20with%20%C2%A0TECNO%C2%A0AI.jfif" alt="TECNO Camon 40 Premier AI" loading="lazy">
+            <img src="./Assets/telephone&PC/Macbook.jfif" alt="MacBook Air 13” M2" loading="lazy">
           </div>
           <div class="loumoo-card-body">
             <h4 class="loumoo-card-title">MacBook Air 13” M2</h4>
-            <div class="loumoo-card-tagline">Apple Silicon M2 · 8GB / 256GB SSD · Starlight.</div>
+            <div class="loumoo-card-tagline">Apple Silicon M2 · 8GB / 256GB SSD · Space Grey.</div>
             <div class="loumoo-card-rating-row">
               <span>★ 4.9</span>
-              <span class="loumoo-card-rating-text">(142) · Apple Authorized</span>
+              <span class="loumoo-card-rating-text">(94) · Orca Electronics Douala</span>
             </div>
             <div class="loumoo-card-bottom-row">
               <div class="loumoo-card-pricing-block">
                 <span class="loumoo-card-price-prefix">From</span>
                 <div class="loumoo-card-price-main">
                   <span class="loumoo-card-price-val">745.000 FCFA</span>
-                  <span class="loumoo-card-price-strike">800.000 FCFA</span>
+                  <span class="loumoo-card-price-strike">820.000 FCFA</span>
                 </div>
                 <div class="loumoo-card-trust-pill">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                   <span>✓ Escrow options available</span>
                 </div>
               </div>
-              <button class="loumoo-card-pill-btn" aria-label="Buy MacBook Air M2">Buy now</button>
+              <button class="loumoo-card-pill-btn" aria-label="Buy MacBook Air 13” M2">Buy now</button>
             </div>
           </div>
         </div>
 
-        <!-- 6. Insta360 X4 8K Edition -->
-        <div class="loumoo-media-card" onClick="{{ () => openProduct('insta360_x4') }}" aria-label="View Insta360 X4">
+        <!-- 6. iPhone 17 Pro Max -->
+        <div class="loumoo-media-card" onClick="{{ () => openProduct('iphone_17_pro_max') }}" aria-label="View iPhone 17 Pro Max">
           <div class="loumoo-card-media-cutout">
-            <span class="loumoo-card-badge badge-pill-new">8K 360° Flagship</span>
-            <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('insta360-x4', 'Insta360 X4 8K'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save Insta360 X4 to wishlist">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('insta360-x4') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('insta360-x4') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            <span class="loumoo-card-badge badge-pill-new">New Flagship</span>
+            <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('iphone_17_pro_max', 'iPhone 17 Pro Max'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save iPhone 17 Pro Max to wishlist">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('iphone_17_pro_max') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('iphone_17_pro_max') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
             </button>
-            <img src="./Assets/necklace&ring/Aquamarine%20and%20Simulated%20Diamond%20Necklace%20&%20Earrings%20Set%20-%20925%20Sterling%20Silver,%20Elegant%20Bridal%20arm%20Jewelry_.jfif" alt="Aquamarine & Diamond 925 Bridal Set" loading="lazy">
+            <img src="./Assets/telephone&PC/iPhone%2017%20Pro%20Max%20Colors%20%E2%80%93%20Every%20Stunning%20Finish%20in%20One%20Premium%20Look%20%F0%9F%93%B1%E2%9C%A8.jfif" alt="iPhone 17 Pro Max" loading="lazy">
           </div>
           <div class="loumoo-card-body">
-            <h4 class="loumoo-card-title">Insta360 X4 8K</h4>
-            <div class="loumoo-card-tagline">8K 30fps 360° Video · Invisible Selfie Stick AI.</div>
+            <h4 class="loumoo-card-title">iPhone 17 Pro Max</h4>
+            <div class="loumoo-card-tagline">A19 Pro · 6.9-inch ProMotion · 48MP Pro triple camera.</div>
             <div class="loumoo-card-rating-row">
-              <span>★ 5.0</span>
-              <span class="loumoo-card-rating-text">(64) · Insta360 Official</span>
+              <span>★ 4.9</span>
+              <span class="loumoo-card-rating-text">(134) · iStore Cameroon</span>
             </div>
             <div class="loumoo-card-bottom-row">
               <div class="loumoo-card-pricing-block">
                 <span class="loumoo-card-price-prefix">From</span>
                 <div class="loumoo-card-price-main">
-                  <span class="loumoo-card-price-val">349.000 FCFA</span>
-                  <span class="loumoo-card-price-strike">389.000 FCFA</span>
+                  <span class="loumoo-card-price-val">925.000 FCFA</span>
+                  <span class="loumoo-card-price-strike">1.150.000 FCFA</span>
                 </div>
                 <div class="loumoo-card-trust-pill">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                   <span>✓ Escrow options available</span>
                 </div>
               </div>
-              <button class="loumoo-card-pill-btn" aria-label="Buy Insta360 X4">Buy now</button>
+              <button class="loumoo-card-pill-btn" aria-label="Buy iPhone 17 Pro Max">Buy now</button>
             </div>
           </div>
         </div>

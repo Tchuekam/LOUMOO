@@ -404,6 +404,71 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 @media (min-width: 1440px) { .entity-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 .entity-grid > * { min-width: 0; }
 
+/* -- Minimal store card (Apple-style, Featured Flagship Stores) ---------- */
+.store-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-lg);
+  padding: 22px 22px 18px;
+  display: flex; flex-direction: column; gap: 18px;
+  transition: border-color .2s var(--ease-smooth), box-shadow .2s var(--ease-smooth);
+}
+.store-card:hover { border-color: var(--color-neutral-400); box-shadow: var(--shadow-sm); }
+.store-card-head { display: flex; align-items: flex-start; gap: 14px; }
+.store-logo {
+  width: 52px; height: 52px; border-radius: 15px; color: #fff; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font: 600 22px/1 var(--font-heading);
+}
+.store-id { flex: 1; min-width: 0; }
+.store-name-row { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.store-name {
+  font: 600 17px/1.25 var(--font-heading); letter-spacing: -.02em; color: var(--color-text);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.store-verified { flex-shrink: 0; }
+.store-desc {
+  font: 400 13px/1.45 var(--font-body); color: var(--color-text-secondary); margin-top: 3px;
+}
+.store-meta {
+  display: flex; align-items: center; gap: 8px; margin-top: 9px;
+  font: 500 12.5px/1 var(--font-body); color: var(--color-text-muted);
+}
+.store-meta-strong { color: var(--color-text); font-weight: 600; }
+.store-meta-dot { opacity: .35; }
+.store-follow {
+  flex-shrink: 0; height: 32px; padding: 0 15px; border-radius: var(--radius-pill);
+  border: 1px solid var(--color-neutral-400); background: transparent; color: var(--color-text);
+  font: 600 12.5px/1 var(--font-heading); cursor: pointer;
+  transition: background .18s var(--ease-smooth), border-color .18s var(--ease-smooth);
+}
+.store-follow:hover { background: var(--color-surface-hover); }
+.store-follow.is-following { background: var(--color-neutral-100); color: var(--color-text-secondary); }
+.store-cta {
+  height: 44px; width: 100%; border-radius: var(--radius-md);
+  border: 1px solid var(--color-divider); background: var(--color-surface); color: var(--color-text);
+  font: 600 13.5px/1 var(--font-heading); cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  transition: background .18s var(--ease-smooth), border-color .18s var(--ease-smooth);
+}
+.store-cta:hover { background: var(--color-text); color: var(--color-surface); border-color: var(--color-text); }
+
+/* -- Minimal storefront sub-tabs ---------------------------------------- */
+.store-tabs {
+  display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none;
+  max-width: 1040px; margin: 0 auto; padding: 0 16px;
+}
+.store-tabs::-webkit-scrollbar { height: 0; display: none; }
+.store-tab {
+  height: 46px; padding: 0 16px; flex-shrink: 0;
+  background: transparent; border: none; border-bottom: 2px solid transparent;
+  color: var(--color-text-muted); font: 500 14px/1 var(--font-heading);
+  cursor: pointer; transition: color .18s var(--ease-smooth);
+}
+.store-tab:hover { color: var(--color-text); }
+.store-tab.tag-accent { color: var(--color-text); font-weight: 600; }
+.store-tab.tag-neutral { color: var(--color-text-muted); }
+
 /* -- Mini product strip inside an entity card ---------------------------- */
 .mini-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 .mini-grid > * { min-width: 0; }

@@ -107,156 +107,68 @@ _TEMPLATE = """
       </div>
 
       <div class="entity-grid">
-        
+
         <!-- Flagship Card 1: Orca Electronics -->
-        <div class="card-premium" style="display:flex;flex-direction:column;justify-content:space-between;gap:16px;border:1.5px solid var(--color-divider);position:relative;overflow:hidden">
-          <div class="entity-head">
-            <div class="entity-id">
-              <div class="entity-logo" style="background:linear-gradient(135deg,var(--color-accent),#003d8a)">O</div>
-              <div class="entity-text">
-                <div class="entity-name-row">
-                  <span class="entity-name">Orca Electronics</span>
-                  <span class="tag tag-accent" style="min-height:18px;padding:2px 7px;font-size:9.5px;font-weight:800">OFFICIAL PARTNER</span>
-                </div>
-                <div class="entity-sub">
-                  Akwa Commercial Blvd, Douala · Certified Apple &amp; Dell Reseller
-                </div>
-                <div class="meta-row">
-                  <span style="color:#eab308;font-weight:700">★ 4.9 (1.2k)</span>
-                  <span>318 Products</span>
-                  <span style="color:var(--color-success);font-weight:600">Replies ~5m</span>
-                </div>
+        <div class="store-card">
+          <div class="store-card-head">
+            <div class="store-logo" style="background:#0b0d14">O</div>
+            <div class="store-id">
+              <div class="store-name-row">
+                <span class="store-name">Orca Electronics</span>
+                <svg class="store-verified" width="15" height="15" viewBox="0 0 24 24" fill="var(--color-accent)" role="img" aria-label="Official partner"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-1.1 14.2-4-4L8.3 10.8l2.6 2.6 4.8-4.8 1.4 1.4z"/></svg>
+              </div>
+              <div class="store-desc">Certified Apple &amp; Dell reseller · Akwa, Douala</div>
+              <div class="store-meta">
+                <span class="store-meta-strong">★ 4.9</span>
+                <span class="store-meta-dot">·</span>
+                <span>318 products</span>
               </div>
             </div>
-            <button onClick="{{ toggleFollow }}" class="entity-action btn {{ following ? 'btn-secondary' : 'btn-primary' }}" style="height:36px;padding:0 15px;font-size:11.5px;font-weight:700">
-              {{ followLabel }}
-            </button>
+            <button onClick="{{ toggleFollow }}" class="store-follow {{ following ? 'is-following' : '' }}">{{ followLabel }}</button>
           </div>
-
-          <!-- Featured Products Preview Row -->
-          <div class="mini-grid" style="background:var(--color-neutral-100);padding:10px;border-radius:var(--radius-md);border:1px solid var(--color-divider)">
-            <button onClick="{{ on.product }}" aria-label="View MacBook Air M2" class="mini-card">
-              <div class="ph" style="aspect-ratio:16/9;border-radius:4px">
-                <span style="font-size:8px">APPLE SILICON</span>
-              </div>
-              <div class="mini-card-title">MacBook Air M2 13”</div>
-              <div class="mini-card-price">XAF 745 000</div>
-            </button>
-            <button onClick="{{ on.product }}" aria-label="View Anker 737 Power Bank" class="mini-card">
-              <div class="ph" style="aspect-ratio:16/9;border-radius:4px">
-                <span style="font-size:8px">24k mAh POWER</span>
-              </div>
-              <div class="mini-card-title">Anker 737 Bank</div>
-              <div class="mini-card-price">XAF 62 000</div>
-            </button>
-          </div>
-
-          <div style="display:flex;gap:10px;align-items:center">
-            <button onClick="{{ on.business }}" class="btn btn-secondary btn-block" style="height:40px;font-size:12.5px;font-weight:700">
-              <span>VISIT DIGITAL STOREFRONT</span>
-              <span>→</span>
-            </button>
-          </div>
+          <button onClick="{{ on.business }}" class="store-cta">Visit storefront <span aria-hidden="true">→</span></button>
         </div>
 
         <!-- Flagship Card 2: Digital Corner -->
-        <div class="card-premium" style="display:flex;flex-direction:column;justify-content:space-between;gap:16px;border:1.5px solid var(--color-divider);position:relative;overflow:hidden">
-          <div class="entity-head">
-            <div class="entity-id">
-              <div class="entity-logo" style="background:linear-gradient(135deg,#111214,#2d313a)">D</div>
-              <div class="entity-text">
-                <div class="entity-name-row">
-                  <span class="entity-name">Digital Corner</span>
-                  <span class="tag tag-neutral" style="min-height:18px;padding:2px 7px;font-size:9.5px;font-weight:800">VERIFIED SELLER</span>
-                </div>
-                <div class="entity-sub">
-                  Rue Joss, Bonapriso, Douala · Pro Audio, Gaming &amp; Mobile
-                </div>
-                <div class="meta-row">
-                  <span style="color:#eab308;font-weight:700">★ 4.7 (890)</span>
-                  <span>154 Products</span>
-                  <span style="color:var(--color-success);font-weight:600">Replies ~10m</span>
-                </div>
+        <div class="store-card">
+          <div class="store-card-head">
+            <div class="store-logo" style="background:#1a1e28">D</div>
+            <div class="store-id">
+              <div class="store-name-row">
+                <span class="store-name">Digital Corner</span>
+                <svg class="store-verified" width="15" height="15" viewBox="0 0 24 24" fill="var(--color-text-muted)" role="img" aria-label="Verified seller"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-1.1 14.2-4-4L8.3 10.8l2.6 2.6 4.8-4.8 1.4 1.4z"/></svg>
+              </div>
+              <div class="store-desc">Pro audio, gaming &amp; mobile · Bonapriso, Douala</div>
+              <div class="store-meta">
+                <span class="store-meta-strong">★ 4.7</span>
+                <span class="store-meta-dot">·</span>
+                <span>154 products</span>
               </div>
             </div>
-            <button onClick="{{ toggleFollow }}" class="btn btn-secondary" style="height:34px;padding:0 14px;font-size:11.5px;font-weight:700;flex-shrink:0">
-              FOLLOW
-            </button>
+            <button onClick="{{ toggleFollow }}" class="store-follow">Follow</button>
           </div>
-
-          <div class="mini-grid" style="background:var(--color-neutral-100);padding:10px;border-radius:var(--radius-md);border:1px solid var(--color-divider)">
-            <button onClick="{{ on.product }}" aria-label="View Sony WH-1000XM5" class="mini-card">
-              <div class="ph" style="aspect-ratio:16/9;border-radius:4px">
-                <span style="font-size:8px">PRO NOISE CANCEL</span>
-              </div>
-              <div class="mini-card-title">Sony WH-1000XM5</div>
-              <div class="mini-card-price">XAF 189 000</div>
-            </button>
-            <button onClick="{{ on.product }}" aria-label="View Samsung Galaxy A55" class="mini-card">
-              <div class="ph" style="aspect-ratio:16/9;border-radius:4px">
-                <span style="font-size:8px">5G AMOLED 120Hz</span>
-              </div>
-              <div class="mini-card-title">Samsung Galaxy A55</div>
-              <div class="mini-card-price">XAF 245 000</div>
-            </button>
-          </div>
-
-          <div style="display:flex;gap:10px;align-items:center">
-            <button onClick="{{ on.business }}" class="btn btn-secondary btn-block" style="height:40px;font-size:12.5px;font-weight:700">
-              <span>VISIT DIGITAL STOREFRONT</span>
-              <span>→</span>
-            </button>
-          </div>
+          <button onClick="{{ on.business }}" class="store-cta">Visit storefront <span aria-hidden="true">→</span></button>
         </div>
 
         <!-- Flagship Card 3: Sawa Luxury Hotel -->
-        <div class="card-premium" style="display:flex;flex-direction:column;justify-content:space-between;gap:16px;border:1.5px solid var(--color-divider);position:relative;overflow:hidden">
-          <div class="entity-head">
-            <div class="entity-id">
-              <div class="entity-logo" style="background:linear-gradient(135deg,#007aff,#00c853)">S</div>
-              <div class="entity-text">
-                <div class="entity-name-row">
-                  <span class="entity-name">Sawa Luxury Hotel</span>
-                  <span class="tag tag-accent" style="min-height:18px;padding:2px 7px;font-size:9.5px;font-weight:800">5-STAR RESORT</span>
-                </div>
-                <div class="entity-sub">
-                  Bonanjo Business District, Douala · Olympic Pool &amp; Ocean Suites
-                </div>
-                <div class="meta-row">
-                  <span style="color:#eab308;font-weight:700">★ 4.8 (2.1k)</span>
-                  <span>42 Suites</span>
-                  <span style="color:var(--color-success);font-weight:600">Instant Check-in</span>
-                </div>
+        <div class="store-card">
+          <div class="store-card-head">
+            <div class="store-logo" style="background:#0b3d66">S</div>
+            <div class="store-id">
+              <div class="store-name-row">
+                <span class="store-name">Sawa Luxury Hotel</span>
+                <svg class="store-verified" width="15" height="15" viewBox="0 0 24 24" fill="var(--color-accent)" role="img" aria-label="5-star resort"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-1.1 14.2-4-4L8.3 10.8l2.6 2.6 4.8-4.8 1.4 1.4z"/></svg>
+              </div>
+              <div class="store-desc">Ocean-view suites &amp; pool · Bonanjo, Douala</div>
+              <div class="store-meta">
+                <span class="store-meta-strong">★ 4.8</span>
+                <span class="store-meta-dot">·</span>
+                <span>42 suites</span>
               </div>
             </div>
-            <button onClick="{{ toggleFollow }}" class="btn btn-secondary" style="height:34px;padding:0 14px;font-size:11.5px;font-weight:700;flex-shrink:0">
-              FOLLOW
-            </button>
+            <button onClick="{{ toggleFollow }}" class="store-follow">Follow</button>
           </div>
-
-          <div class="mini-grid" style="background:var(--color-neutral-100);padding:10px;border-radius:var(--radius-md);border:1px solid var(--color-divider)">
-            <button onClick="{{ on.hotelDetail }}" aria-label="View Executive Ocean Suite" class="mini-card">
-              <div class="ph" style="aspect-ratio:16/9;border-radius:4px">
-                <span style="font-size:8px">OCEAN SUITE</span>
-              </div>
-              <div class="mini-card-title">Executive Suite</div>
-              <div class="mini-card-price">XAF 65 000/nt</div>
-            </button>
-            <button onClick="{{ on.hotelDetail }}" aria-label="View Presidential King Suite" class="mini-card">
-              <div class="ph" style="aspect-ratio:16/9;border-radius:4px">
-                <span style="font-size:8px">KING DUPLEX</span>
-              </div>
-              <div class="mini-card-title">Presidential Duplex</div>
-              <div class="mini-card-price">XAF 120 000/nt</div>
-            </button>
-          </div>
-
-          <div style="display:flex;gap:10px;align-items:center">
-            <button onClick="{{ on.hotelDetail }}" class="btn btn-secondary btn-block" style="height:40px;font-size:12.5px;font-weight:700">
-              <span>EXPLORE RESORT &amp; ROOMS</span>
-              <span>→</span>
-            </button>
-          </div>
+          <button onClick="{{ on.hotelDetail }}" class="store-cta">Explore rooms <span aria-hidden="true">→</span></button>
         </div>
 
       </div>
@@ -415,98 +327,69 @@ _TEMPLATE = """
 <sc-if value="{{ is.business }}">
 <div style="padding-bottom:64px">
   
-  <!-- Sticky Top Navigation Bar -->
-  <div class="page-head" style="justify-content:space-between">
-    <div style="display:flex;align-items:center;gap:12px">
-      <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
+  <!-- ── STOREFRONT IDENTITY HEADER (minimal) ── -->
+  <div style="background:var(--color-surface);border-bottom:1px solid var(--color-divider)">
+    <div style="max-width:1040px;margin:0 auto;padding:20px 20px 28px;display:flex;flex-direction:column;gap:20px">
+      <button onClick="{{ back }}" aria-label="Go back" style="align-self:flex-start;border:none;background:transparent;padding:0;display:flex;align-items:center;gap:6px;color:var(--color-text-secondary);font:500 13px/1 var(--font-body);cursor:pointer">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
+        <span>Back</span>
       </button>
-      <div>
-        <div style="font:800 15px/1.2 var(--font-heading);color:var(--color-text)">Orca Electronics Official Storefront</div>
-        <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary)">Akwa, Douala · Authorized Apple &amp; Tech Partner</div>
-      </div>
-    </div>
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:24px">
 
-    <!-- Quick Action Triggers -->
-    <div style="display:flex;gap:8px;align-items:center">
-      <button onClick="{{ on.threadSeller }}" class="btn btn-secondary" style="height:36px;font-size:12px;gap:6px">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        <span>CHAT</span>
-      </button>
-      <button onClick="{{ toggleFollow }}" class="btn {{ following ? 'btn-secondary' : 'btn-primary' }}" style="height:36px;padding:0 16px;font-size:12px;font-weight:700">
-        {{ followLabel }}
-      </button>
-    </div>
-  </div>
+        <div style="display:flex;align-items:center;gap:20px;min-width:0">
+          <!-- Logo Avatar -->
+          <div style="width:76px;height:76px;border-radius:20px;background:#0b0d14;color:#fff;display:flex;align-items:center;justify-content:center;font:600 30px/1 var(--font-heading);flex-shrink:0">O</div>
 
-  <!-- ── LUXURY STOREFRONT BANNER & IDENTITY HEADER ── -->
-  <div style="background:linear-gradient(135deg, #001a3d 0%, #003366 50%, #007aff 100%);color:#fff;position:relative;overflow:hidden">
-    <!-- Subtle luxury overlay geometry -->
-    <div style="position:absolute;inset:0;opacity:0.1;background-image:radial-gradient(#fff 1px, transparent 1px);background-size:20px 20px"></div>
-    
-    <div style="max-width:1300px;margin:0 auto;padding:36px 20px 28px;position:relative;z-index:2;display:flex;flex-direction:column;gap:18px">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:20px">
-        
-        <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap">
-          <!-- Big Logo Avatar -->
-          <div style="width:84px;height:84px;border-radius:var(--radius-lg);background:#ffffff;color:var(--color-accent);display:flex;align-items:center;justify-content:center;font:800 32px/1 var(--font-heading);box-shadow:var(--shadow-xl);border:3px solid rgba(255,255,255,0.25);flex-shrink:0">
-            O
-          </div>
-
-          <div>
-            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-              <h1 style="color:#fff;margin:0;font-size:clamp(22px, 3.2vw, 30px);font-weight:800;letter-spacing:-.03em">Orca Electronics Official</h1>
-              <span class="tag tag-accent" style="background:rgba(255,255,255,0.2);color:#fff;border-color:rgba(255,255,255,0.3);font-size:10px;font-weight:800">OFFICIAL PARTNER</span>
-              <span class="tag" style="background:rgba(0,200,83,0.25);color:#57ff95;border-color:rgba(0,200,83,0.4);font-size:10px;font-weight:800">VERIFIED RCCM</span>
+          <div style="min-width:0">
+            <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">
+              <h1 style="color:var(--color-text);margin:0;font-size:clamp(22px, 3.2vw, 30px);font-weight:700;letter-spacing:-.03em">Orca Electronics</h1>
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="var(--color-accent)" role="img" aria-label="Official partner"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-1.1 14.2-4-4L8.3 10.8l2.6 2.6 4.8-4.8 1.4 1.4z"/></svg>
             </div>
-            
-            <p style="color:rgba(255,255,255,0.85);margin:6px 0 10px;font-size:13.5px;max-width:640px">
-              Direct certified distributor for Apple, Dell, Sony, and Anker hardware in Central Africa. Dedicated technical warranty &amp; express escrow fulfillment.
+            <p style="color:var(--color-text-secondary);margin:6px 0 12px;font-size:14px;max-width:560px;line-height:1.5">
+              Authorized Apple &amp; Dell reseller · Akwa, Douala
             </p>
-
-            <!-- Store Stats Pill Bar -->
-            <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;font-size:12.5px;color:rgba(255,255,255,0.9)">
-              <span style="display:flex;align-items:center;gap:4px">
-                <span style="color:#ffd100;font-weight:800">★ 4.9</span>
-                <span>(218 Ratings)</span>
-              </span>
-              <span><strong>1 240</strong> Followers</span>
-              <span><strong>318</strong> Products In Stock</span>
-              <span style="color:#57ff95;font-weight:700">Open Now (08:00 - 18:30)</span>
+            <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;font:500 13px/1 var(--font-body);color:var(--color-text-muted)">
+              <span style="color:var(--color-text);font-weight:600">★ 4.9</span>
+              <span style="opacity:.35">·</span>
+              <span>1,240 followers</span>
+              <span style="opacity:.35">·</span>
+              <span>318 products</span>
+              <span style="opacity:.35">·</span>
+              <span style="color:var(--color-success);font-weight:600">Open now</span>
             </div>
           </div>
         </div>
 
-        <!-- Direct Actions Box -->
+        <!-- Direct Actions -->
         <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-          <button onClick="{{ toggleFollow }}" class="btn" style="background:#ffffff;color:#111214;height:42px;padding:0 22px;font-weight:800;border:none;box-shadow:var(--shadow-md)">
+          <button onClick="{{ toggleFollow }}" class="btn {{ following ? 'btn-secondary' : 'btn-primary' }}" style="height:42px;padding:0 24px;font-weight:600;border-radius:var(--radius-pill)">
             {{ followLabel }}
           </button>
-          <button onClick="{{ on.threadSeller }}" class="btn" style="background:rgba(255,255,255,0.15);color:#ffffff;border:1px solid rgba(255,255,255,0.3);height:42px;padding:0 18px;font-weight:700">
-            <span>MESSAGE</span>
+          <button onClick="{{ on.threadSeller }}" class="btn btn-secondary" style="height:42px;padding:0 20px;font-weight:600;border-radius:var(--radius-pill)">
+            <span>Message</span>
           </button>
         </div>
 
       </div>
 
-      <!-- ── TRUST & FULFILLMENT RIBBON ── -->
-      <div style="margin-top:10px;padding:12px 18px;background:rgba(0,0,0,0.25);backdrop-filter:blur(10px);border-radius:var(--radius-md);border:1px solid rgba(255,255,255,0.12);display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;font-size:12px">
-        <div style="display:flex;align-items:center;gap:8px">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#57ff95" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          <span><strong>LOUMOO Escrow</strong> 100% Protected</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:8px">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffd100" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          <span><strong>Express Delivery</strong> 2h Douala · 24h Yaoundé</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:8px">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#57ff95" stroke-width="2"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
-          <span><strong>12-Month</strong> Official Partner Warranty</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:8px">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6ebbff" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-          <span><strong>Showroom:</strong> Akwa Blvd, Douala</span>
-        </div>
+      <!-- ── TRUST LINE (minimal) ── -->
+      <div style="display:flex;align-items:center;gap:22px;flex-wrap:wrap;padding-top:20px;border-top:1px solid var(--color-divider);font:500 12.5px/1 var(--font-body);color:var(--color-text-secondary)">
+        <span style="display:flex;align-items:center;gap:7px">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <span>Escrow protected</span>
+        </span>
+        <span style="display:flex;align-items:center;gap:7px">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
+          <span>12-month warranty</span>
+        </span>
+        <span style="display:flex;align-items:center;gap:7px">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span>2h Douala · 24h Yaoundé</span>
+        </span>
+        <span style="display:flex;align-items:center;gap:7px">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span>Akwa showroom, Douala</span>
+        </span>
       </div>
 
     </div>
@@ -514,44 +397,34 @@ _TEMPLATE = """
 
   <!-- ── STOREFRONT NAVIGATION SUB-TABS ── -->
   <div style="background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:60px;z-index:20">
-    <div class="tab-strip" role="tablist">
-      <button onClick="{{ () => setStoreActiveTab('home') }}" class="tag {{ storeTabHomeClass }}" style="height:44px;border-radius:0;border-bottom:2.5px solid {{ storeTabHomeBorder }};cursor:pointer;font-weight:700">
-        STORE HOME
-      </button>
-      <button onClick="{{ () => setStoreActiveTab('products') }}" class="tag {{ storeTabProductsClass }}" style="height:44px;border-radius:0;border-bottom:2.5px solid {{ storeTabProductsBorder }};cursor:pointer;font-weight:700">
-        PRODUCTS (318)
-      </button>
-      <button onClick="{{ () => setStoreActiveTab('collections') }}" class="tag {{ storeTabCollectionsClass }}" style="height:44px;border-radius:0;border-bottom:2.5px solid {{ storeTabCollectionsBorder }};cursor:pointer;font-weight:700">
-        COLLECTIONS &amp; BUNDLES
-      </button>
-      <button onClick="{{ () => setStoreActiveTab('about') }}" class="tag {{ storeTabAboutClass }}" style="height:44px;border-radius:0;border-bottom:2.5px solid {{ storeTabAboutBorder }};cursor:pointer;font-weight:700">
-        ABOUT &amp; LOCATION
-      </button>
-      <button onClick="{{ () => setStoreActiveTab('reviews') }}" class="tag {{ storeTabReviewsClass }}" style="height:44px;border-radius:0;border-bottom:2.5px solid {{ storeTabReviewsBorder }};cursor:pointer;font-weight:700">
-        REVIEWS &amp; TRUST (218)
-      </button>
+    <div class="store-tabs" role="tablist">
+      <button onClick="{{ () => setStoreActiveTab('home') }}" class="store-tab {{ storeTabHomeClass }}" style="border-bottom-color:{{ storeTabHomeBorder }}">Overview</button>
+      <button onClick="{{ () => setStoreActiveTab('products') }}" class="store-tab {{ storeTabProductsClass }}" style="border-bottom-color:{{ storeTabProductsBorder }}">Products</button>
+      <button onClick="{{ () => setStoreActiveTab('collections') }}" class="store-tab {{ storeTabCollectionsClass }}" style="border-bottom-color:{{ storeTabCollectionsBorder }}">Collections</button>
+      <button onClick="{{ () => setStoreActiveTab('about') }}" class="store-tab {{ storeTabAboutClass }}" style="border-bottom-color:{{ storeTabAboutBorder }}">About</button>
+      <button onClick="{{ () => setStoreActiveTab('reviews') }}" class="store-tab {{ storeTabReviewsClass }}" style="border-bottom-color:{{ storeTabReviewsBorder }}">Reviews</button>
     </div>
   </div>
 
-  <div style="padding:24px 16px;max-width:1300px;margin:0 auto">
+  <div style="padding:32px 16px;max-width:1040px;margin:0 auto">
 
     <!-- ── SUB-TAB 1: STORE HOME ── -->
     <sc-if value="{{ storeTabIsHome }}">
-      <div style="display:flex;flex-direction:column;gap:28px">
-        
+      <div style="display:flex;flex-direction:column;gap:36px">
+
         <!-- Hero Featured Merchandising Card -->
-        <div class="card-premium" style="background:linear-gradient(135deg, #111214 0%, #1e2330 100%);color:#fff;border:none;padding:32px 28px;display:flex;flex-direction:column;gap:14px">
-          <span class="kicker" style="color:var(--color-accent-energy)">FEATURED COLLECTION · APPLE SILICON</span>
-          <h2 style="color:#fff;margin:0;font-size:clamp(22px, 3vw, 32px)">MacBook Air &amp; Pro Studio Power</h2>
-          <p style="color:rgba(255,255,255,0.75);max-width:600px;margin:0;font-size:13.5px;line-height:1.6">
-            Equip your creative studio or engineering workflow with M2 and M3 architecture. Sealed in box with local Douala warranty and free express setup.
+        <div style="background:var(--color-neutral-100);border:1px solid var(--color-divider);border-radius:var(--radius-lg);padding:44px 36px;display:flex;flex-direction:column;gap:16px;align-items:center;text-align:center">
+          <span style="font:600 12px/1 var(--font-heading);letter-spacing:.08em;text-transform:uppercase;color:var(--color-text-muted)">Featured · Apple Silicon</span>
+          <h2 style="color:var(--color-text);margin:0;font-size:clamp(26px, 4vw, 40px);font-weight:700;letter-spacing:-.03em;line-height:1.05">MacBook Air &amp; Pro.<br>Studio power, sealed in box.</h2>
+          <p style="color:var(--color-text-secondary);max-width:520px;margin:2px 0 4px;font-size:15px;line-height:1.5">
+            M2 and M3 architecture with local Douala warranty and free express setup.
           </p>
-          <div style="display:flex;gap:12px;margin-top:6px;align-items:center;flex-wrap:wrap">
-            <button onClick="{{ on.product }}" class="btn btn-primary" style="height:44px;padding:0 22px;font-weight:800">
-              EXPLORE MACBOOK AIR M2 · XAF 745 000
+          <div style="display:flex;gap:12px;margin-top:8px;align-items:center;flex-wrap:wrap;justify-content:center">
+            <button onClick="{{ on.product }}" class="btn btn-primary" style="height:46px;padding:0 26px;font-weight:600;border-radius:var(--radius-pill)">
+              Shop MacBook Air · XAF 745 000
             </button>
-            <button onClick="{{ () => setStoreActiveTab('products') }}" class="btn btn-secondary" style="height:44px;padding:0 18px;background:rgba(255,255,255,0.12);color:#fff;border-color:rgba(255,255,255,0.2)">
-              VIEW ALL LAPTOPS →
+            <button onClick="{{ () => setStoreActiveTab('products') }}" style="border:none;background:transparent;color:var(--color-accent);font:600 14px/1 var(--font-heading);cursor:pointer">
+              View all laptops →
             </button>
           </div>
         </div>
