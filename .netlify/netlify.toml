@@ -1,0 +1,64 @@
+functionsDirectory = "C:\\Users\\Rostand\\Downloads\\LOUMOO APP\\netlify\\functions"
+functionsDirectoryOrigin = "config-v1"
+headersOrigin = "config"
+redirectsOrigin = "config"
+plugins = []
+
+[build]
+publish = "C:\\Users\\Rostand\\Downloads\\LOUMOO APP\\public"
+publishOrigin = "config"
+commandOrigin = "config"
+command = "node scripts/assemble_public.js"
+functions = "C:\\Users\\Rostand\\Downloads\\LOUMOO APP\\netlify\\functions"
+
+[build.environment]
+NODE_VERSION = "22"
+SECRETS_SCAN_OMIT_KEYS = "SUPABASE_ANON_KEY,NEXT_PUBLIC_SUPABASE_ANON_KEY,SUPABASE_PUBLISHABLE_KEY,SUPABASE_URL,NEXT_PUBLIC_SUPABASE_URL,SUPABASE_PROJECT_REF,CLERK_PUBLISHABLE_KEY,NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,CLERK_APP_ID,POSTHOG_API_KEY,POSTHOG_HOST,SENTRY_DSN,APP_BASE_URL"
+
+[build.processing]
+
+[build.processing.css]
+
+[build.processing.html]
+
+[build.processing.images]
+
+[build.processing.js]
+
+[build.services]
+
+[functions]
+
+[functions."*"]
+included_files = ["src/data/**"]
+node_bundler = "esbuild"
+
+[[headers]]
+for = "/Assets/*"
+
+[headers.values]
+Cache-Control = "public, max-age=86400"
+
+[[redirects]]
+from = "/api/*"
+to = "/.netlify/functions/api/:splat"
+status = 200.0
+force = false
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
+
+[[redirects]]
+from = "/*"
+to = "/index.html"
+status = 200.0
+force = false
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]

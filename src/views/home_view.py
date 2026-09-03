@@ -1801,41 +1801,57 @@ def get_home_view():
       </div>
 
       <div class="loumoo-rail-track" id="collectionsForYouRail">
-        <!-- 1. Weekend Essentials -->
-        <div onClick="{{ on.bestpicks }}" class="collection-v2-card coll-weekend" aria-label="Explore Weekend Essentials Collection">
-          <div class="coll-card-icon-play">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="#ffffff"><polygon points="6 4 20 12 6 20 6 4"/></svg>
-          </div>
-          <div class="coll-card-content">
-            <div class="coll-card-title">Weekend<br>Essentials</div>
-          </div>
-        </div>
-
-        <!-- 2. Back to School Essentials -->
-        <div onClick="{{ on.bestpicks }}" class="collection-v2-card coll-school" aria-label="Explore Back to School Essentials Collection">
-          <div class="coll-card-content">
-            <div class="coll-card-title">Back to School<br>Essentials</div>
+        <!-- 1. Luxury Weekend Getaways -->
+        <div onClick="{{ on.bestpicks }}" class="collection-v2-card" style="background:#734738" aria-label="Explore Luxury Weekend Getaways Collection">
+          <video src="./Assets/LOUMOO%20VIDEOS/Collection/From%20Klickpin.com-%20Luxury%20weekend%20getaway%20ideas%20that%20are%20trending%20right%20now%20and%20still%20timeless%20enough%20to%20save%20for%20later%20for%20anyone%20planning%20a%20beau.mp4" data-ambient="true" muted loop playsinline preload="none" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.75) 100%);pointer-events:none"></div>
+          <div class="coll-card-content" style="position:relative;z-index:1">
+            <div class="coll-card-title">Luxury Weekend<br><span style="font-weight:500;font-size:12px;opacity:0.9">Getaway Ideas</span></div>
           </div>
         </div>
 
-        <!-- 3. Creator Gear -->
-        <div onClick="{{ on.bestpicks }}" class="collection-v2-card coll-creator" aria-label="Explore Creator Gear Collection">
-          <div class="coll-card-content">
-            <div class="coll-card-title">Creator<br>Gear</div>
+        <!-- 2. Back to School Ideas -->
+        <div onClick="{{ on.bestpicks }}" class="collection-v2-card" style="background:#b0acab" aria-label="Explore Back to School Ideas Collection">
+          <video src="./Assets/LOUMOO%20VIDEOS/Collection/From%20Klickpin.com-%20Recreate%20this%20guide%20to%20clever%20back-to-school%20ideas%20that%20look%20high-end%20but%20stay%20practical%20with%20smart%20steps%20cute%20details%20and%20cozy.mp4" data-ambient="true" muted loop playsinline preload="none" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.75) 100%);pointer-events:none"></div>
+          <div class="coll-card-content" style="position:relative;z-index:1">
+            <div class="coll-card-title">Back to School<br><span style="font-weight:500;font-size:12px;opacity:0.9">Clever &amp; Cozy</span></div>
           </div>
         </div>
 
-        <!-- 4. Gift Ideas - For Everyone -->
-        <div onClick="{{ on.bestpicks }}" class="collection-v2-card coll-gifts" aria-label="Explore Gift Ideas Collection">
-          <div class="coll-card-content">
-            <div class="coll-card-title">Gift Ideas<br><span style="font-weight:500;font-size:12px;opacity:0.9">For Everyone</span></div>
+        <!-- 3. Modern Healthy Lifestyle -->
+        <div onClick="{{ on.bestpicks }}" class="collection-v2-card" style="background:#4a4549" aria-label="Explore Modern Healthy Lifestyle Collection">
+          <video src="./Assets/LOUMOO%20VIDEOS/Collection/From%20Klickpin.com-%20Modern%20Healthy%20Lifestyle%20Tips%20Worth%20Trying-pin-id-1042020432508729854.mp4" data-ambient="true" muted loop playsinline preload="none" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.75) 100%);pointer-events:none"></div>
+          <div class="coll-card-content" style="position:relative;z-index:1">
+            <div class="coll-card-title">Healthy Lifestyle<br><span style="font-weight:500;font-size:12px;opacity:0.9">Wellness Tips</span></div>
           </div>
         </div>
 
-        <!-- 5. Luxury Vault -->
-        <div onClick="{{ on.bestpicks }}" class="collection-v2-card coll-weekend" style="background:linear-gradient(135deg, #1e1b4b 0%, #312e81 100%)" aria-label="Explore Luxury Vault Collection">
-          <div class="coll-card-content">
-            <div class="coll-card-title">Luxury<br>Vault</div>
+        <!-- 4. Fall Jacket Styling -->
+        <div onClick="{{ on.bestpicks }}" class="collection-v2-card" style="background:#9d8563" aria-label="Explore Fall Jacket Styling Collection">
+          <video src="./Assets/LOUMOO%20VIDEOS/Collection/From%20Klickpin.com-%20Need%20fresh%20inspiration%20Style%20these%20easy%20fall%20jacket%20ideas%20that%20turn%20ordinary%20ideas%20into%20scroll-stopping%20inspiration%20with%20realis%20%281%29.mp4" data-ambient="true" muted loop playsinline preload="none" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.75) 100%);pointer-events:none"></div>
+          <div class="coll-card-content" style="position:relative;z-index:1">
+            <div class="coll-card-title">Fall Jacket Style<br><span style="font-weight:500;font-size:12px;opacity:0.9">Easy Autumn Looks</span></div>
+          </div>
+        </div>
+
+        <!-- 5. Elegant Spring Garden -->
+        <div onClick="{{ on.bestpicks }}" class="collection-v2-card" style="background:#858992" aria-label="Explore Elegant Spring Garden Collection">
+          <video src="./Assets/LOUMOO%20VIDEOS/Collection/From%20Klickpin.com-%20Recreate%20this%20elegant%20spring%20garden%20roundup%20perfect%20for%20saving%20sharing%20and%20recreating%20later%20with%20beginner-friendly%20tips%20and%20eas.mp4" data-ambient="true" muted loop playsinline preload="none" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.75) 100%);pointer-events:none"></div>
+          <div class="coll-card-content" style="position:relative;z-index:1">
+            <div class="coll-card-title">Spring Garden<br><span style="font-weight:500;font-size:12px;opacity:0.9">Elegant Roundup</span></div>
+          </div>
+        </div>
+
+        <!-- 6. Trending Now -->
+        <div onClick="{{ on.bestpicks }}" class="collection-v2-card" style="background:#55595e" aria-label="Explore Trending Now Collection">
+          <video src="./Assets/LOUMOO%20VIDEOS/Collection/From%20Klickpin.com-%20962714857851057920-pin-id-962714857851057920.mp4" data-ambient="true" muted loop playsinline preload="none" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.75) 100%);pointer-events:none"></div>
+          <div class="coll-card-content" style="position:relative;z-index:1">
+            <div class="coll-card-title">Trending Now<br><span style="font-weight:500;font-size:12px;opacity:0.9">Fresh Daily Drops</span></div>
           </div>
         </div>
       </div>
@@ -1857,78 +1873,73 @@ def get_home_view():
       </div>
 
       <div class="loumoo-rail-track" id="fashionRail">
-        <!-- 1. Denim Jacket -->
-        <div class="discovery-product-card" onClick="{{ () => openProduct('bazin_boubou') }}" style="cursor:pointer">
-          <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
-            <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('denim-jacket', 'Denim Jacket Oversized'); } }}" class="wishlist-float-btn" aria-label="Save Denim Jacket to wishlist">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('denim-jacket') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('denim-jacket') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-            </button>
-            <img src="./Assets/fashion/100%25%20Cotton%20Ankara%20Palazzo%20Pants.jfif" alt="100% Cotton Ankara Palazzo Pants" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
-          </div>
-          <div class="disc-card-body">
-            <div class="disc-card-name">Denim Jacket</div>
-            <div class="disc-card-sub">Oversized Indigo</div>
-            <div class="disc-card-price">45.000 FCFA</div>
-          </div>
-        </div>
-
-        <!-- 2. Cargo Pants -->
         <div class="discovery-product-card" onClick="{{ () => openProduct('nike_air_force_1') }}" style="cursor:pointer">
           <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
-            <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('cargo-pants', 'Cargo Pants Relaxed Fit'); } }}" class="wishlist-float-btn" aria-label="Save Cargo Pants to wishlist">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('cargo-pants') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('cargo-pants') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('nike_air_force_1', 'Nike Air Force 1'); } }}" class="wishlist-float-btn" aria-label="Save Nike Air Force 1 to wishlist">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('nike_air_force_1') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('nike_air_force_1') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
             </button>
-            <img src="./Assets/fashion/11%20sandalias%20planas%20de%20Mango%20que%20vamos%20a%20repetir%20sin%20parar%20porque%20quedan%20genial%20con%20vestidos%20midi.jfif" alt="Mango Artisanal Leather Sandals" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
-          </div>
-          <div class="disc-card-body">
-            <div class="disc-card-name">Cargo Pants</div>
-            <div class="disc-card-sub">Relaxed Olive Fit</div>
-            <div class="disc-card-price">35.000 FCFA</div>
-          </div>
-        </div>
-
-        <!-- 3. Hoodie Heavyweight -->
-        <div class="discovery-product-card" onClick="{{ () => openProduct('bazin_boubou') }}" style="cursor:pointer">
-          <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
-            <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('hoodie-heavyweight', 'Hoodie Heavyweight'); } }}" class="wishlist-float-btn" aria-label="Save Hoodie Heavyweight to wishlist">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('hoodie-heavyweight') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('hoodie-heavyweight') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-            </button>
-            <img src="./Assets/fashion/#MenStyle%20#MensFashion%20#CorporateStyle%20#MensShoe%E2%80%A6.jfif" alt="Italian Executive Corporate Suit" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
-          </div>
-          <div class="disc-card-body">
-            <div class="disc-card-name">Hoodie Heavyweight</div>
-            <div class="disc-card-sub">Oatmeal Edition</div>
-            <div class="disc-card-price">39.000 FCFA</div>
-          </div>
-        </div>
-
-        <!-- 4. Watch Minimal Silver -->
-        <div class="discovery-product-card" onClick="{{ () => openProduct('rolex_submariner') }}" style="cursor:pointer">
-          <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
-            <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('watch-minimal-silver', 'Watch Minimal Silver'); } }}" class="wishlist-float-btn" aria-label="Save Watch to wishlist">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('watch-minimal-silver') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('watch-minimal-silver') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-            </button>
-            <img src="./Assets/watch/Rolex%20Datejust%2041%20watch_%20Oystersteel%20and%20white%E2%80%A6.jfif" alt="Rolex Datejust 41 Oystersteel" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
-          </div>
-          <div class="disc-card-body">
-            <div class="disc-card-name">Rolex Oyster</div>
-            <div class="disc-card-sub">Submariner Date</div>
-            <div class="disc-card-price">6.850.000 FCFA</div>
-          </div>
-        </div>
-
-        <!-- 5. Nike Air Force 1 '07 -->
-        <div class="discovery-product-card" onClick="{{ () => openProduct('nike_air_force_1') }}" style="cursor:pointer">
-          <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
-            <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('nike-af1', 'Nike Air Force 1 07'); } }}" class="wishlist-float-btn" aria-label="Save Nike AF1 to wishlist">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('nike-af1') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('nike-af1') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-            </button>
-            <img src="./Assets/necklace&ring/Anillo%20de%20compromiso%20con%20coraz%C3%B3n%20y%20halo%20de%20oro.jfif" alt="18K Gold Solitaire Heart Halo Ring" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+            <img src="./Assets/fashion/Look%20at%20this%20new%20Nike%20Air%20Force.jfif" alt="Nike Air Force 1 &#x27;07" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
           </div>
           <div class="disc-card-body">
             <div class="disc-card-name">Nike Air Force 1</div>
-            <div class="disc-card-sub">Triple White '07</div>
+            <div class="disc-card-sub">Triple White &#x27;07</div>
             <div class="disc-card-price">65.000 FCFA</div>
+          </div>
+        </div>
+
+        <div class="discovery-product-card" onClick="{{ () => openProduct('chelsea_boots') }}" style="cursor:pointer">
+          <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
+            <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('chelsea_boots', 'Chelsea Boots'); } }}" class="wishlist-float-btn" aria-label="Save Chelsea Boots to wishlist">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('chelsea_boots') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('chelsea_boots') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            </button>
+            <img src="./Assets/fashion/Kraasa%20Men%27s%20Slip%20On%20Fashion%20Chelsea%20Boots.jfif" alt="Kraasa Suede Chelsea Ankle Boots" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+          </div>
+          <div class="disc-card-body">
+            <div class="disc-card-name">Chelsea Boots</div>
+            <div class="disc-card-sub">Suede Slip-On</div>
+            <div class="disc-card-price">42.000 FCFA</div>
+          </div>
+        </div>
+
+        <div class="discovery-product-card" onClick="{{ () => openProduct('dress_loafers') }}" style="cursor:pointer">
+          <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
+            <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('dress_loafers', 'Dress Loafers'); } }}" class="wishlist-float-btn" aria-label="Save Dress Loafers to wishlist">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('dress_loafers') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('dress_loafers') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            </button>
+            <img src="./Assets/fashion/Timeless%20Elegance%20Luxury%20Black%20&%20White%20Dress%20Loafers.jfif" alt="Timeless Black &amp; White Dress Loafers" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+          </div>
+          <div class="disc-card-body">
+            <div class="disc-card-name">Dress Loafers</div>
+            <div class="disc-card-sub">Black &amp; White Spectator</div>
+            <div class="disc-card-price">48.000 FCFA</div>
+          </div>
+        </div>
+
+        <div class="discovery-product-card" onClick="{{ () => openProduct('leather_satchel') }}" style="cursor:pointer">
+          <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
+            <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('leather_satchel', 'Leather Satchel'); } }}" class="wishlist-float-btn" aria-label="Save Leather Satchel to wishlist">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('leather_satchel') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('leather_satchel') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            </button>
+            <img src="./Assets/fashion/Luxury%20Designer%20Leather%20Satchels%20&%20Monogram%20Clutches%20_%20Handbag%20Collection.jfif" alt="Designer Monogram Leather Satchel" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+          </div>
+          <div class="disc-card-body">
+            <div class="disc-card-name">Leather Satchel</div>
+            <div class="disc-card-sub">Monogram Structured</div>
+            <div class="disc-card-price">55.000 FCFA</div>
+          </div>
+        </div>
+
+        <div class="discovery-product-card" onClick="{{ () => openProduct('stiletto_heels') }}" style="cursor:pointer">
+          <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
+            <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('stiletto_heels', 'Banquet Stilettos'); } }}" class="wishlist-float-btn" aria-label="Save Banquet Stilettos to wishlist">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('stiletto_heels') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('stiletto_heels') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            </button>
+            <img src="./Assets/fashion/Shoes%20Women%2010%20Cm%20Metal%20Buckle%20Ladies%20Pumps%20Luxury%20Womens%20Banquet%20Shoes%20Stilettos%20High%20Heels%20Women%20Sexy%20Party%20Shoes.jfif" alt="Metal-Buckle Banquet Stiletto Heels" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+          </div>
+          <div class="disc-card-body">
+            <div class="disc-card-name">Banquet Stilettos</div>
+            <div class="disc-card-sub">10cm Metal Buckle</div>
+            <div class="disc-card-price">38.000 FCFA</div>
           </div>
         </div>
       </div>
@@ -1950,63 +1961,73 @@ def get_home_view():
       </div>
 
       <div class="loumoo-rail-track" id="techRail">
-        <!-- 1. iPad Air M2 -->
-        <div class="discovery-product-card" onClick="{{ () => openProduct('macbook_m2') }}" style="cursor:pointer">
+        <div class="discovery-product-card" onClick="{{ () => openProduct('iphone_17_pro_max') }}" style="cursor:pointer">
           <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
-            <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('ipad-air-m2', 'iPad Air M2'); } }}" class="wishlist-float-btn" aria-label="Save iPad Air M2 to wishlist">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('ipad-air-m2') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('ipad-air-m2') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('iphone_17_pro_max', 'iPhone 17 Pro Max'); } }}" class="wishlist-float-btn" aria-label="Save iPhone 17 Pro Max to wishlist">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('iphone_17_pro_max') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('iphone_17_pro_max') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
             </button>
-            <img src="./Assets/telephone&PC/iPhone%2017%20Pro%20Max%20Colors%20%E2%80%93%20Every%20Stunning%20Finish%20in%20One%20Premium%20Look%20%F0%9F%93%B1%E2%9C%A8.jfif" alt="Apple iPhone 17 Pro Max" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+            <img src="./Assets/telephone&PC/iPhone%2017%20Pro%20Max%20Colors%20%E2%80%93%20Every%20Stunning%20Finish%20in%20One%20Premium%20Look%20%F0%9F%93%B1%E2%9C%A8.jfif" alt="Apple iPhone 17 Pro Max 256GB" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
           </div>
           <div class="disc-card-body">
-            <div class="disc-card-name">iPad Air M2</div>
-            <div class="disc-card-sub">11-inch Liquid Retina</div>
-            <div class="disc-card-price">499.000 FCFA</div>
+            <div class="disc-card-name">iPhone 17 Pro Max</div>
+            <div class="disc-card-sub">256GB · Titanium</div>
+            <div class="disc-card-price">925.000 FCFA</div>
           </div>
         </div>
 
-        <!-- 2. Sony WH-CH720N -->
-        <div class="discovery-product-card" onClick="{{ () => openProduct('sony_xm5') }}" style="cursor:pointer">
+        <div class="discovery-product-card" onClick="{{ () => openProduct('na_pixel_10_pro_05') }}" style="cursor:pointer">
           <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
-            <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('sony-wh-ch720n', 'Sony WH-CH720N'); } }}" class="wishlist-float-btn" aria-label="Save Sony WH-CH720N to wishlist">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('sony-wh-ch720n') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('sony-wh-ch720n') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('na_pixel_10_pro_05', 'Pixel 10 Pro XL'); } }}" class="wishlist-float-btn" aria-label="Save Pixel 10 Pro XL to wishlist">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('na_pixel_10_pro_05') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('na_pixel_10_pro_05') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
             </button>
-            <img src="./Assets/_processed/acessories_gadgets_apple_air_pod_max_airpodmax_apple_keysho_16.png" alt="Apple AirPods Max" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+            <img src="./Assets/telephone&PC/Google%20Pixel%2010%20Pro%20XL%20_%20Latest%20Google%20Smartphone%20with%20Advanced%20Camera%20&%20AI%20Features.jfif" alt="Google Pixel 10 Pro XL" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
           </div>
           <div class="disc-card-body">
-            <div class="disc-card-name">Sony WH-CH720N</div>
-            <div class="disc-card-sub">Noise Canceling ANC</div>
-            <div class="disc-card-price">89.000 FCFA</div>
+            <div class="disc-card-name">Pixel 10 Pro XL</div>
+            <div class="disc-card-sub">256GB Google AI</div>
+            <div class="disc-card-price">650.000 FCFA</div>
           </div>
         </div>
 
-        <!-- 3. Anker PowerCore 20K -->
-        <div class="discovery-product-card" onClick="{{ () => openProduct('anker_737') }}" style="cursor:pointer">
+        <div class="discovery-product-card" onClick="{{ () => openProduct('surface_laptop') }}" style="cursor:pointer">
           <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
-            <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('anker-powercore-20k', 'Anker PowerCore 20K'); } }}" class="wishlist-float-btn" aria-label="Save Anker PowerCore 20K to wishlist">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('anker-powercore-20k') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('anker-powercore-20k') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('surface_laptop', 'Surface Laptop'); } }}" class="wishlist-float-btn" aria-label="Save Surface Laptop to wishlist">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('surface_laptop') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('surface_laptop') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
             </button>
-            <img src="./Assets/telephone&PC/Best%20Selling%20Apple%20AirTag%21.jfif" alt="Apple AirTag 4-Pack" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+            <img src="./Assets/telephone&PC/Microsoft%20Surface%20Laptop_%20Overview.jfif" alt="Microsoft Surface Laptop 13.8&quot;" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
           </div>
           <div class="disc-card-body">
-            <div class="disc-card-name">Anker 737 PowerBank</div>
-            <div class="disc-card-sub">140W Fast Charge 24K</div>
-            <div class="disc-card-price">69.000 FCFA</div>
+            <div class="disc-card-name">Surface Laptop</div>
+            <div class="disc-card-sub">13.8” Touch 512GB</div>
+            <div class="disc-card-price">685.000 FCFA</div>
           </div>
         </div>
 
-        <!-- 4. Dell XPS 13 Ultra 7 -->
-        <div class="discovery-product-card" onClick="{{ () => openProduct('macbook_m2') }}" style="cursor:pointer">
+        <div class="discovery-product-card" onClick="{{ () => openProduct('alexa_speaker') }}" style="cursor:pointer">
           <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
-            <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('dell-xps-13', 'Dell XPS 13 Ultra 7'); } }}" class="wishlist-float-btn" aria-label="Save Dell XPS 13 to wishlist">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('dell-xps-13') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('dell-xps-13') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('alexa_speaker', 'Alexa Smart Speaker'); } }}" class="wishlist-float-btn" aria-label="Save Alexa Smart Speaker to wishlist">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('alexa_speaker') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('alexa_speaker') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
             </button>
-            <img src="./Assets/telephone&PC/Microsoft%20Surface%20Laptop_%20Overview.jfif" alt="Microsoft Surface Laptop Touchscreen" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+            <img src="./Assets/acessories&gadgets/Alexa%20Smart%20Speaker%20with%20LED%20Light%20Ring%20%E2%80%93%20Compact%20Voice%20Assistant.jfif" alt="Alexa Smart Speaker with LED Ring" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
           </div>
           <div class="disc-card-body">
-            <div class="disc-card-name">Dell XPS 13 OLED</div>
-            <div class="disc-card-sub">Intel Core Ultra 7 1TB</div>
-            <div class="disc-card-price">1.450.000 FCFA</div>
+            <div class="disc-card-name">Alexa Smart Speaker</div>
+            <div class="disc-card-sub">LED Voice Assistant</div>
+            <div class="disc-card-price">32.000 FCFA</div>
+          </div>
+        </div>
+
+        <div class="discovery-product-card" onClick="{{ () => openProduct('apple_airtag') }}" style="cursor:pointer">
+          <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
+            <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('apple_airtag', 'Apple AirTag'); } }}" class="wishlist-float-btn" aria-label="Save Apple AirTag to wishlist">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('apple_airtag') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('apple_airtag') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            </button>
+            <img src="./Assets/telephone&PC/Best%20Selling%20Apple%20AirTag%21.jfif" alt="Apple AirTag Item Tracker" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+          </div>
+          <div class="disc-card-body">
+            <div class="disc-card-name">Apple AirTag</div>
+            <div class="disc-card-sub">Find My Tracker</div>
+            <div class="disc-card-price">18.000 FCFA</div>
           </div>
         </div>
       </div>
@@ -2103,63 +2124,59 @@ def get_home_view():
     </div>
 
     <div class="discovery-product-grid">
-      <!-- 1. Nike Dunk Low Retro -->
-      <div class="discovery-product-card" onClick="{{ () => openProduct('nike_air_force_1') }}" style="cursor:pointer">
-        <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
-          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('nike-dunk-low', 'Nike Dunk Low Retro'); } }}" class="wishlist-float-btn" aria-label="Save Nike Dunk Low to wishlist">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('nike-dunk-low') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('nike-dunk-low') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-          </button>
-          <img src="./Assets/ElectroMenage/ACOQOOS%20Juicer%20Machines,%20Juicers%20Whole%20Fruit%20and%E2%80%A6.jfif" alt="ACOQOOS Centrifugal Juicer" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
-        </div>
-        <div class="disc-card-body">
-          <div class="disc-card-name">Nike Dunk Low</div>
-          <div class="disc-card-sub">Retro White/Black</div>
-          <div class="disc-card-price">120.000 FCFA</div>
-        </div>
-      </div>
-
-      <!-- 2. MacBook Air M2 13-inch -->
       <div class="discovery-product-card" onClick="{{ () => openProduct('macbook_m2') }}" style="cursor:pointer">
         <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
-          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('macbook-air-13', 'MacBook Air M2 13-inch'); } }}" class="wishlist-float-btn" aria-label="Save MacBook Air to wishlist">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('macbook-air-13') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('macbook-air-13') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('macbook_m2', 'MacBook Air M2'); } }}" class="wishlist-float-btn" aria-label="Save MacBook Air M2 to wishlist">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('macbook_m2') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('macbook_m2') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
           </button>
-          <img src="./Assets/telephone&PC/Macbook.jfif" alt="MacBook Air M2 Deal" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+          <img src="./Assets/telephone&PC/Macbook.jfif" alt="Apple MacBook Air M2" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
         </div>
         <div class="disc-card-body">
           <div class="disc-card-name">MacBook Air M2</div>
-          <div class="disc-card-sub">13-inch Midnight 512GB</div>
-          <div class="disc-card-price">799.000 FCFA</div>
+          <div class="disc-card-sub">13-inch Midnight</div>
+          <div class="disc-card-price">745.000 FCFA</div>
         </div>
       </div>
 
-      <!-- 3. Fossil Gen 6 Smartwatch -->
-      <div class="discovery-product-card" onClick="{{ () => openProduct('apple_watch_s9') }}" style="cursor:pointer">
+      <div class="discovery-product-card" onClick="{{ () => openProduct('ps5_slim') }}" style="cursor:pointer">
         <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
-          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('fossil-gen-6', 'Fossil Gen 6 Smartwatch'); } }}" class="wishlist-float-btn" aria-label="Save Fossil Gen 6 to wishlist">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('fossil-gen-6') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('fossil-gen-6') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('ps5_slim', 'PlayStation 5'); } }}" class="wishlist-float-btn" aria-label="Save PlayStation 5 to wishlist">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('ps5_slim') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('ps5_slim') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
           </button>
-          <img src="./Assets/perfume&lotion/The%20Scent%20of%20Success_%20Jean%20Paul%20Gaultier%20Le%20Beau%20Le%20Parfum%20_%20Men%E2%80%99s%20Luxury%20Lifestyle.jfif" alt="Jean Paul Gaultier Le Beau Le Parfum" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+          <img src="./Assets/telephone&PC/316800155055565523.jfif" alt="Sony PlayStation 5 Slim" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
         </div>
         <div class="disc-card-body">
-          <div class="disc-card-name">Fossil Gen 6</div>
-          <div class="disc-card-sub">Touchscreen Smartwatch</div>
-          <div class="disc-card-price">155.000 FCFA</div>
+          <div class="disc-card-name">PlayStation 5</div>
+          <div class="disc-card-sub">Slim Edition 1TB</div>
+          <div class="disc-card-price">380.000 FCFA</div>
         </div>
       </div>
 
-      <!-- 4. Samsung 65" Crystal UHD TV -->
-      <div class="discovery-product-card" onClick="{{ () => openProduct('iphone_15_pro') }}" style="cursor:pointer">
+      <div class="discovery-product-card" onClick="{{ () => openProduct('airpods_4') }}" style="cursor:pointer">
         <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
-          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('samsung-65-tv', 'Samsung 65 Crystal UHD TV'); } }}" class="wishlist-float-btn" aria-label="Save Samsung 65 TV to wishlist">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('samsung-65-tv') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('samsung-65-tv') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('airpods_4', 'AirPods 4'); } }}" class="wishlist-float-btn" aria-label="Save AirPods 4 to wishlist">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('airpods_4') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('airpods_4') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
           </button>
-          <img src="./Assets/Travel&Hotel/Krystal%20Palace%20Hotel%20Douala.jfif" alt="Krystal Palace Suite Deal" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+          <img src="./Assets/acessories&gadgets/Apple%20AirPods%204%20%F0%9F%8E%A7%20Active%20Noise%20Cancellation%20_%20Premium%20Sound%20for%20Less%21%20%F0%9F%8D%8E.jfif" alt="Apple AirPods 4 (ANC)" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
         </div>
         <div class="disc-card-body">
-          <div class="disc-card-name">Samsung 65"</div>
-          <div class="disc-card-sub">Crystal UHD 4K Smart TV</div>
-          <div class="disc-card-price">550.000 FCFA</div>
+          <div class="disc-card-name">AirPods 4</div>
+          <div class="disc-card-sub">Active Noise Cancelling</div>
+          <div class="disc-card-price">95.000 FCFA</div>
+        </div>
+      </div>
+
+      <div class="discovery-product-card" onClick="{{ () => openProduct('galaxy_s26_ultra') }}" style="cursor:pointer">
+        <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
+          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('galaxy_s26_ultra', 'Galaxy S26 Ultra'); } }}" class="wishlist-float-btn" aria-label="Save Galaxy S26 Ultra to wishlist">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('galaxy_s26_ultra') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('galaxy_s26_ultra') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          </button>
+          <img src="./Assets/telephone&PC/Samsung%20Galaxy%20S26%20Ultra%2C.jfif" alt="Samsung Galaxy S26 Ultra 256GB" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+        </div>
+        <div class="disc-card-body">
+          <div class="disc-card-name">Galaxy S26 Ultra</div>
+          <div class="disc-card-sub">256GB · Titanium</div>
+          <div class="disc-card-price">899.000 FCFA</div>
         </div>
       </div>
     </div>
@@ -2214,63 +2231,59 @@ def get_home_view():
     </div>
 
     <div class="discovery-product-grid">
-      <!-- 1. Air Jordan 1 Mid Bred -->
-      <div class="discovery-product-card" onClick="{{ () => openProduct('nike_air_force_1') }}" style="cursor:pointer">
+      <div class="discovery-product-card" onClick="{{ () => openProduct('dji_osmo_pocket3') }}" style="cursor:pointer">
         <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
-          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('air-jordan-1-bred', 'Air Jordan 1 Mid Bred'); } }}" class="wishlist-float-btn" aria-label="Save Air Jordan 1 to wishlist">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('air-jordan-1-bred') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('air-jordan-1-bred') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('dji_osmo_pocket3', 'DJI Osmo Pocket 3'); } }}" class="wishlist-float-btn" aria-label="Save DJI Osmo Pocket 3 to wishlist">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('dji_osmo_pocket3') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('dji_osmo_pocket3') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
           </button>
-          <img src="./Assets/perfume&lotion/MEET%20THE%204%20AFRICAN-OWNED%20BRANDS%20BRIDGING%20THE%20GAP%20IN%20THE%20SKINCARE%20MARKET%20FOR%20DARKER%20CONSUMERS.jfif" alt="African Shea & Baobab Body Lotion" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+          <img src="./Assets/acessories&gadgets/DJI%20Osmo%20Pocket%203.jfif" alt="DJI Osmo Pocket 3 Creator Combo" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
         </div>
         <div class="disc-card-body">
-          <div class="disc-card-name">Air Jordan 1</div>
-          <div class="disc-card-sub">Mid Bred High-Top</div>
-          <div class="disc-card-price">180.000 FCFA</div>
+          <div class="disc-card-name">DJI Osmo Pocket 3</div>
+          <div class="disc-card-sub">1” 4K Gimbal Cam</div>
+          <div class="disc-card-price">350.000 FCFA</div>
         </div>
       </div>
 
-      <!-- 2. Insta360 X4 8K 360° Camera -->
-      <div class="discovery-product-card" onClick="{{ () => openProduct('insta360_x4') }}" style="cursor:pointer">
+      <div class="discovery-product-card" onClick="{{ () => openProduct('jbl_flip6') }}" style="cursor:pointer">
         <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
-          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('insta360-x4-flagship', 'Insta360 X4 8K'); } }}" class="wishlist-float-btn" aria-label="Save Insta360 X4 to wishlist">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('insta360-x4-flagship') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('insta360-x4-flagship') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('jbl_flip6', 'JBL Flip 6'); } }}" class="wishlist-float-btn" aria-label="Save JBL Flip 6 to wishlist">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('jbl_flip6') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('jbl_flip6') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
           </button>
-          <img src="./Assets/acessories&gadgets/DJI%20Osmo%20Pocket%203.jfif" alt="DJI Osmo Pocket 3 Combo" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+          <img src="./Assets/acessories&gadgets/JBL%20Flip%206%20-%20F%C4%B1rat%20T%C3%BCz%C3%BCnkan.jfif" alt="JBL Flip 6 Portable Speaker" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
         </div>
         <div class="disc-card-body">
-          <div class="disc-card-name">Insta360 X4</div>
-          <div class="disc-card-sub">8K 360° Action Cam</div>
-          <div class="disc-card-price">499.000 FCFA</div>
+          <div class="disc-card-name">JBL Flip 6</div>
+          <div class="disc-card-sub">30W IP67 Waterproof</div>
+          <div class="disc-card-price">89.000 FCFA</div>
         </div>
       </div>
 
-      <!-- 3. Ray-Ban Wayfarer Classic -->
-      <div class="discovery-product-card" onClick="{{ () => openProduct('bazin_boubou') }}" style="cursor:pointer">
+      <div class="discovery-product-card" onClick="{{ () => openProduct('tecno_camon40') }}" style="cursor:pointer">
         <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
-          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('ray-ban-wayfarer', 'Ray-Ban Wayfarer'); } }}" class="wishlist-float-btn" aria-label="Save Ray-Ban to wishlist">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('ray-ban-wayfarer') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('ray-ban-wayfarer') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('tecno_camon40', 'TECNO Camon 40'); } }}" class="wishlist-float-btn" aria-label="Save TECNO Camon 40 to wishlist">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('tecno_camon40') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('tecno_camon40') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
           </button>
-          <img src="./Assets/necklace&ring/Black%20Agate%20Bracelet,%20Energy%20Balancing%20Men%27s%20Bracelet,%20Stainless%20Steel%20Men%27s%20Jewelry,%20Gift%20for%20Father_Husband.jfif" alt="Natural Black Agate Men's Bracelet" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+          <img src="./Assets/telephone&PC/TECNO%20CAMON%2040%20Series_%20Redefining%20Imagery%20with%C2%A0TECNO%C2%A0AI.jfif" alt="TECNO Camon 40 Series 256GB" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
         </div>
         <div class="disc-card-body">
-          <div class="disc-card-name">Ray-Ban Wayfarer</div>
-          <div class="disc-card-sub">Classic Polarized</div>
-          <div class="disc-card-price">79.000 FCFA</div>
+          <div class="disc-card-name">TECNO Camon 40</div>
+          <div class="disc-card-sub">AI Camera 256GB</div>
+          <div class="disc-card-price">155.000 FCFA</div>
         </div>
       </div>
 
-      <!-- 4. PlayStation 5 Console -->
-      <div class="discovery-product-card" onClick="{{ () => openProduct('ps5_slim') }}" style="cursor:pointer">
+      <div class="discovery-product-card" onClick="{{ () => openProduct('na_pixel_10_pro_05') }}" style="cursor:pointer">
         <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
-          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('playstation-5', 'PlayStation 5 Console'); } }}" class="wishlist-float-btn" aria-label="Save PlayStation 5 to wishlist">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('playstation-5') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('playstation-5') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('na_pixel_10_pro_05', 'Pixel 10 Pro XL'); } }}" class="wishlist-float-btn" aria-label="Save Pixel 10 Pro XL to wishlist">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('na_pixel_10_pro_05') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('na_pixel_10_pro_05') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
           </button>
-          <img src="./Assets/telephone&PC/316800155055565523.jfif" alt="Sony PlayStation 5 Slim" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+          <img src="./Assets/telephone&PC/Google%20Pixel%2010%20Pro%20XL%20_%20Latest%20Google%20Smartphone%20with%20Advanced%20Camera%20&%20AI%20Features.jfif" alt="Google Pixel 10 Pro XL" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
         </div>
         <div class="disc-card-body">
-          <div class="disc-card-name">PlayStation 5</div>
-          <div class="disc-card-sub">Console Slim Edition</div>
-          <div class="disc-card-price">395.000 FCFA</div>
+          <div class="disc-card-name">Pixel 10 Pro XL</div>
+          <div class="disc-card-sub">256GB Google AI</div>
+          <div class="disc-card-price">650.000 FCFA</div>
         </div>
       </div>
     </div>
@@ -2288,79 +2301,59 @@ def get_home_view():
         </div>
 
         <div class="discovery-product-grid">
-          <!-- 1. Kente Bomber Jacket -->
-          <div class="discovery-product-card" onClick="{{ on.product }}">
-            <div class="disc-card-img-box">
-              <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('kente-bomber', 'Kente Bomber Jacket'); } }}" class="wishlist-float-btn" aria-label="Save Kente Bomber to wishlist">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('kente-bomber') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('kente-bomber') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          <div class="discovery-product-card" onClick="{{ () => openProduct('ankara_palazzo') }}" style="cursor:pointer">
+            <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
+              <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('ankara_palazzo', 'Ankara Palazzo'); } }}" class="wishlist-float-btn" aria-label="Save Ankara Palazzo to wishlist">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('ankara_palazzo') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('ankara_palazzo') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
               </button>
-              <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
-                <path d="M22 28 L36 22 L64 22 L78 28 L84 56 L72 58 L68 34 L68 82 L32 82 L32 34 L28 58 L16 56 Z" fill="#d97706" opacity="0.9" stroke="#78350f" stroke-width="1.5"/>
-                <line x1="32" y1="44" x2="68" y2="44" stroke="#15803d" stroke-width="2"/>
-                <line x1="32" y1="56" x2="68" y2="56" stroke="#b91c1c" stroke-width="2"/>
-                <line x1="32" y1="68" x2="68" y2="68" stroke="#1e3a8a" stroke-width="2"/>
-              </svg>
+              <img src="./Assets/fashion/100%25%20Cotton%20Ankara%20Palazzo%20Pants.jfif" alt="100% Cotton Ankara Palazzo Trousers" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
             </div>
             <div class="disc-card-body">
-              <div class="disc-card-name">Kente Bomber Jacket</div>
-              <div class="disc-card-sub">Handwoven Silk & Cotton</div>
-              <div class="disc-card-price">55.000 FCFA</div>
-            </div>
-          </div>
-
-          <!-- 2. Sahel Handcrafted Duffle Bag -->
-          <div class="discovery-product-card" onClick="{{ on.product }}">
-            <div class="disc-card-img-box">
-              <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('sahel-duffle', 'Sahel Leather Duffle'); } }}" class="wishlist-float-btn" aria-label="Save Sahel Duffle to wishlist">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('sahel-duffle') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('sahel-duffle') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-              </button>
-              <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
-                <rect x="18" y="36" width="64" height="42" rx="10" fill="#78350f" stroke="#451a03" stroke-width="1.5"/>
-                <path d="M34 36 C34 22 66 22 66 36" stroke="#92400e" stroke-width="3" fill="none"/>
-                <line x1="18" y1="56" x2="82" y2="56" stroke="#b45309" stroke-width="1.5"/>
-              </svg>
-            </div>
-            <div class="disc-card-body">
-              <div class="disc-card-name">Sahel Leather Duffle</div>
-              <div class="disc-card-sub">Full Grain Vegetable Tanned</div>
-              <div class="disc-card-price">78.000 FCFA</div>
-            </div>
-          </div>
-
-          <!-- 3. Afro-Futurist Graphic Tee -->
-          <div class="discovery-product-card" onClick="{{ on.product }}">
-            <div class="disc-card-img-box">
-              <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('afro-tee', 'Afro-Futurist Graphic Tee'); } }}" class="wishlist-float-btn" aria-label="Save Afro Tee to wishlist">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('afro-tee') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('afro-tee') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-              </button>
-              <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
-                <path d="M28 26 L40 22 L60 22 L72 26 L80 44 L70 48 L66 36 L66 82 L34 82 L34 36 L30 48 L20 44 Z" fill="#18181b" stroke="#27272a" stroke-width="1.5"/>
-                <circle cx="50" cy="50" r="10" fill="#f59e0b"/>
-                <path d="M44 54 Q50 44 56 54" stroke="#09090b" stroke-width="2"/>
-              </svg>
-            </div>
-            <div class="disc-card-body">
-              <div class="disc-card-name">Afro-Futurist Tee</div>
-              <div class="disc-card-sub">Heavy 240GSM Cotton</div>
+              <div class="disc-card-name">Ankara Palazzo</div>
+              <div class="disc-card-sub">100% Cotton Wax Print</div>
               <div class="disc-card-price">22.000 FCFA</div>
             </div>
           </div>
 
-          <!-- 4. Handcrafted Brass Bangle -->
-          <div class="discovery-product-card" onClick="{{ on.product }}">
-            <div class="disc-card-img-box">
-              <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('brass-bangle', 'Handcrafted Brass Bangle'); } }}" class="wishlist-float-btn" aria-label="Save Brass Bangle to wishlist">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('brass-bangle') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('brass-bangle') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          <div class="discovery-product-card" onClick="{{ () => openProduct('artisan_sandals') }}" style="cursor:pointer">
+            <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
+              <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('artisan_sandals', 'Woven Sandals'); } }}" class="wishlist-float-btn" aria-label="Save Woven Sandals to wishlist">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('artisan_sandals') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('artisan_sandals') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
               </button>
-              <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
-                <circle cx="50" cy="50" r="28" fill="none" stroke="#eab308" stroke-width="8" stroke-dasharray="160 20"/>
-                <circle cx="50" cy="50" r="24" fill="none" stroke="#ca8a04" stroke-width="1.5"/>
-              </svg>
+              <img src="./Assets/fashion/Men%20brown%20leather%20strap%20sandal%20handmade%20barefoot%20woven%20band%20summer%20footwear%20casual%20everyday%20comfort%20Arabian%20style%20Middle%20East%20men%20sandal.jfif" alt="Handmade Woven Leather Sandals" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
             </div>
             <div class="disc-card-body">
-              <div class="disc-card-name">Forged Brass Bangle</div>
-              <div class="disc-card-sub">Artisan Hammered Finish</div>
-              <div class="disc-card-price">18.500 FCFA</div>
+              <div class="disc-card-name">Woven Sandals</div>
+              <div class="disc-card-sub">Handmade Leather</div>
+              <div class="disc-card-price">15.000 FCFA</div>
+            </div>
+          </div>
+
+          <div class="discovery-product-card" onClick="{{ () => openProduct('beaded_bracelet') }}" style="cursor:pointer">
+            <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
+              <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('beaded_bracelet', 'Beaded Bracelet'); } }}" class="wishlist-float-btn" aria-label="Save Beaded Bracelet to wishlist">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('beaded_bracelet') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('beaded_bracelet') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+              </button>
+              <img src="./Assets/necklace&ring/Men%20Charm%20Black%20Spartan%20Helmet%20Beaded%20Natural%20Stone%20Adjustable%20Macrame%20Bracelets%20_%20eBay.jfif" alt="Natural Stone Beaded Warrior Bracelet" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+            </div>
+            <div class="disc-card-body">
+              <div class="disc-card-name">Beaded Bracelet</div>
+              <div class="disc-card-sub">Natural Stone &amp; Charm</div>
+              <div class="disc-card-price">12.000 FCFA</div>
+            </div>
+          </div>
+
+          <div class="discovery-product-card" onClick="{{ () => openProduct('shea_lotion') }}" style="cursor:pointer">
+            <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
+              <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('shea_lotion', 'Shea Body Lotion'); } }}" class="wishlist-float-btn" aria-label="Save Shea Body Lotion to wishlist">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('shea_lotion') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('shea_lotion') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+              </button>
+              <img src="./Assets/perfume&lotion/MEET%20THE%204%20AFRICAN-OWNED%20BRANDS%20BRIDGING%20THE%20GAP%20IN%20THE%20SKINCARE%20MARKET%20FOR%20DARKER%20CONSUMERS.jfif" alt="Shea &amp; Baobab Nourishing Body Lotion" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+            </div>
+            <div class="disc-card-body">
+              <div class="disc-card-name">Shea Body Lotion</div>
+              <div class="disc-card-sub">Shea &amp; Baobab</div>
+              <div class="disc-card-price">9.500 FCFA</div>
             </div>
           </div>
         </div>
@@ -2376,83 +2369,59 @@ def get_home_view():
         </div>
 
         <div class="discovery-product-grid">
-          <!-- 1. Solar Powerbank 30000mAh -->
-          <div class="discovery-product-card" onClick="{{ on.product }}">
-            <div class="disc-card-img-box">
-              <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('solar-powerbank', 'Solar Powerbank 30000mAh'); } }}" class="wishlist-float-btn" aria-label="Save Solar Powerbank to wishlist">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('solar-powerbank') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('solar-powerbank') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          <div class="discovery-product-card" onClick="{{ () => openProduct('power_bank') }}" style="cursor:pointer">
+            <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
+              <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('power_bank', 'Solar Power Bank 30K'); } }}" class="wishlist-float-btn" aria-label="Save Solar Power Bank 30K to wishlist">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('power_bank') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('power_bank') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
               </button>
-              <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
-                <rect x="26" y="16" width="48" height="68" rx="8" fill="#1e293b" stroke="#f59e0b" stroke-width="1.5"/>
-                <rect x="30" y="22" width="40" height="34" rx="2" fill="#0f172a" stroke="#334155"/>
-                <line x1="40" y1="22" x2="40" y2="56" stroke="#334155"/>
-                <line x1="50" y1="22" x2="50" y2="56" stroke="#334155"/>
-                <line x1="60" y1="22" x2="60" y2="56" stroke="#334155"/>
-                <circle cx="50" cy="70" r="4" fill="#22c55e"/>
-              </svg>
+              <img src="./Assets/acessories&gadgets/pawer%20bank%20with%204%20Data%20cables%20best%20power%20bank.jfif" alt="30000mAh Solar Power Bank + Cables" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
             </div>
             <div class="disc-card-body">
-              <div class="disc-card-name">Solar Powerbank 30K</div>
-              <div class="disc-card-sub">Rugged IP67 Water Resistant</div>
+              <div class="disc-card-name">Solar Power Bank 30K</div>
+              <div class="disc-card-sub">4 Cables · Solar</div>
+              <div class="disc-card-price">22.000 FCFA</div>
+            </div>
+          </div>
+
+          <div class="discovery-product-card" onClick="{{ () => openProduct('action_cam') }}" style="cursor:pointer">
+            <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
+              <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('action_cam', '4K POV Action Cam'); } }}" class="wishlist-float-btn" aria-label="Save 4K POV Action Cam to wishlist">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('action_cam') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('action_cam') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+              </button>
+              <img src="./Assets/acessories&gadgets/Ordro%20EP7%20YouTube%20Video%20Vlog%20Camera%204K%2060fps%20Head%20Wearable%20WiFi%20POV%20Digital%20Action%20Camcorder.jfif" alt="Ordro EP7 4K Wearable Action Camera" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+            </div>
+            <div class="disc-card-body">
+              <div class="disc-card-name">4K POV Action Cam</div>
+              <div class="disc-card-sub">Ordro EP7 Wearable</div>
+              <div class="disc-card-price">85.000 FCFA</div>
+            </div>
+          </div>
+
+          <div class="discovery-product-card" onClick="{{ () => openProduct('lapel_mic') }}" style="cursor:pointer">
+            <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
+              <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('lapel_mic', 'Wireless Lapel Mic'); } }}" class="wishlist-float-btn" aria-label="Save Wireless Lapel Mic to wishlist">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('lapel_mic') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('lapel_mic') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+              </button>
+              <img src="./Assets/acessories&gadgets/Microfone%20Lapela%20Sem%20Fio%20Profissional%20para%20Smartphone%2C%20Microfone%20Sem%20Fio%20Plug%20and%20Play%2C%20Microfone___.jfif" alt="Wireless Lapel Microphone (Plug &amp; Play)" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+            </div>
+            <div class="disc-card-body">
+              <div class="disc-card-name">Wireless Lapel Mic</div>
+              <div class="disc-card-sub">Plug &amp; Play Dual</div>
+              <div class="disc-card-price">18.000 FCFA</div>
+            </div>
+          </div>
+
+          <div class="discovery-product-card" onClick="{{ () => openProduct('mifa_a90') }}" style="cursor:pointer">
+            <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
+              <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('mifa_a90', 'Mifa A90 Speaker'); } }}" class="wishlist-float-btn" aria-label="Save Mifa A90 Speaker to wishlist">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('mifa_a90') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('mifa_a90') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+              </button>
+              <img src="./Assets/acessories&gadgets/mifa%20A90%20Bluetooth%20Speaker%2060W%20Output%20Power%20Bluetooth%20Speaker%20with%20Class%20D%20Amplifier%20Excellent%20Bass.jfif" alt="Mifa A90 60W Rugged Bluetooth Speaker" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+            </div>
+            <div class="disc-card-body">
+              <div class="disc-card-name">Mifa A90 Speaker</div>
+              <div class="disc-card-sub">60W Rugged Bass</div>
               <div class="disc-card-price">45.000 FCFA</div>
-            </div>
-          </div>
-
-          <!-- 2. Tactical Trail Backpack -->
-          <div class="discovery-product-card" onClick="{{ on.product }}">
-            <div class="disc-card-img-box">
-              <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('trail-backpack', 'Tactical Trail Backpack'); } }}" class="wishlist-float-btn" aria-label="Save Trail Backpack to wishlist">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('trail-backpack') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('trail-backpack') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-              </button>
-              <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
-                <path d="M30 30 C30 20 70 20 70 30 L74 84 L26 84 Z" fill="#334155" stroke="#1e293b" stroke-width="1.5"/>
-                <rect x="36" y="44" width="28" height="24" rx="4" fill="#475569"/>
-                <line x1="30" y1="40" x2="70" y2="40" stroke="#f59e0b" stroke-width="2"/>
-              </svg>
-            </div>
-            <div class="disc-card-body">
-              <div class="disc-card-name">Tactical Trail Pack</div>
-              <div class="disc-card-sub">40L Expedition Ready</div>
-              <div class="disc-card-price">32.000 FCFA</div>
-            </div>
-          </div>
-
-          <!-- 3. 3-Axis Gimbal Stabilizer -->
-          <div class="discovery-product-card" onClick="{{ on.product }}">
-            <div class="disc-card-img-box">
-              <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('gimbal-stabilizer', '3-Axis Gimbal Stabilizer'); } }}" class="wishlist-float-btn" aria-label="Save Gimbal Stabilizer to wishlist">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('gimbal-stabilizer') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('gimbal-stabilizer') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-              </button>
-              <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
-                <rect x="44" y="44" width="12" height="46" rx="6" fill="#1e293b" stroke="#475569" stroke-width="1.5"/>
-                <circle cx="50" cy="32" r="16" stroke="#007aff" stroke-width="3" fill="none"/>
-                <rect x="36" y="20" width="28" height="10" rx="3" fill="#334155"/>
-                <circle cx="50" cy="56" r="3" fill="#22c55e"/>
-              </svg>
-            </div>
-            <div class="disc-card-body">
-              <div class="disc-card-name">3-Axis Pro Gimbal</div>
-              <div class="disc-card-sub">AI Tracking & Wireless Mic</div>
-              <div class="disc-card-price">145.000 FCFA</div>
-            </div>
-          </div>
-
-          <!-- 4. Polarized UV Sport Sunglasses -->
-          <div class="discovery-product-card" onClick="{{ on.product }}">
-            <div class="disc-card-img-box">
-              <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('sport-sunglasses', 'Polarized UV Sunglasses'); } }}" class="wishlist-float-btn" aria-label="Save Sport Sunglasses to wishlist">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('sport-sunglasses') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('sport-sunglasses') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-              </button>
-              <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
-                <path d="M14 46 Q50 36 86 46 L82 64 C76 68 66 68 58 64 L50 52 L42 64 C34 68 24 68 18 64 Z" fill="#0f172a" stroke="#007aff" stroke-width="1.5"/>
-                <rect x="22" y="48" width="22" height="14" rx="4" fill="#0284c7" opacity="0.8"/>
-                <rect x="56" y="48" width="22" height="14" rx="4" fill="#0284c7" opacity="0.8"/>
-              </svg>
-            </div>
-            <div class="disc-card-body">
-              <div class="disc-card-name">Polarized Sport Glasses</div>
-              <div class="disc-card-sub">UV400 Shield Protection</div>
-              <div class="disc-card-price">28.000 FCFA</div>
             </div>
           </div>
         </div>
@@ -2468,83 +2437,59 @@ def get_home_view():
         </div>
 
         <div class="discovery-product-grid">
-          <!-- 1. Audio-Technica ATH-M50x -->
-          <div class="discovery-product-card" onClick="{{ on.product }}">
-            <div class="disc-card-img-box">
-              <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('ath-m50x', 'Audio-Technica ATH-M50x'); } }}" class="wishlist-float-btn" aria-label="Save ATH-M50x to wishlist">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('ath-m50x') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('ath-m50x') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          <div class="discovery-product-card" onClick="{{ () => openProduct('airpods_max') }}" style="cursor:pointer">
+            <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
+              <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('airpods_max', 'AirPods Max'); } }}" class="wishlist-float-btn" aria-label="Save AirPods Max to wishlist">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('airpods_max') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('airpods_max') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
               </button>
-              <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
-                <path d="M26 50 C26 26 74 26 74 50" stroke="#090a0f" stroke-width="6" stroke-linecap="round"/>
-                <rect x="18" y="44" width="16" height="28" rx="8" fill="#18181b" stroke="#71717a" stroke-width="1.5"/>
-                <circle cx="26" cy="58" r="4" fill="#a1a1aa"/>
-                <rect x="66" y="44" width="16" height="28" rx="8" fill="#18181b" stroke="#71717a" stroke-width="1.5"/>
-                <circle cx="74" cy="58" r="4" fill="#a1a1aa"/>
-              </svg>
+              <img src="./Assets/_processed/acessories_gadgets_apple_air_pod_max_airpodmax_apple_keysho_16.png" alt="Apple AirPods Max Over-Ear" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
             </div>
             <div class="disc-card-body">
-              <div class="disc-card-name">Audio-Technica M50x</div>
-              <div class="disc-card-sub">Studio Monitor Headphones</div>
-              <div class="disc-card-price">135.000 FCFA</div>
+              <div class="disc-card-name">AirPods Max</div>
+              <div class="disc-card-sub">Over-Ear ANC</div>
+              <div class="disc-card-price">230.000 FCFA</div>
             </div>
           </div>
 
-          <!-- 2. Marshall Emberton II -->
-          <div class="discovery-product-card" onClick="{{ on.product }}">
-            <div class="disc-card-img-box">
-              <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('marshall-emberton', 'Marshall Emberton II'); } }}" class="wishlist-float-btn" aria-label="Save Marshall Emberton to wishlist">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('marshall-emberton') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('marshall-emberton') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          <div class="discovery-product-card" onClick="{{ () => openProduct('oraimo_airfryer') }}" style="cursor:pointer">
+            <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
+              <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('oraimo_airfryer', 'Oraimo Air Fryer'); } }}" class="wishlist-float-btn" aria-label="Save Oraimo Air Fryer to wishlist">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('oraimo_airfryer') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('oraimo_airfryer') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
               </button>
-              <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
-                <rect x="20" y="32" width="60" height="38" rx="6" fill="#1c1917" stroke="#78716c" stroke-width="1.5"/>
-                <rect x="24" y="36" width="52" height="30" rx="3" fill="#292524"/>
-                <circle cx="50" cy="51" r="7" fill="#d97706"/>
-              </svg>
+              <img src="./Assets/acessories&gadgets/Oraimo%20Oraimo%20Smart%20Air%20Fryer%20OH-AF210N%201500W%205%20Liters%205%20L%201500%20W%20OH-AF210N%20Black%20_%20Best%20Price%20Egypt%20_%20Cairo%2C%20Giza.jfif" alt="Oraimo Smart Air Fryer 5L" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
             </div>
             <div class="disc-card-body">
-              <div class="disc-card-name">Marshall Emberton II</div>
-              <div class="disc-card-sub">30+ Hours Portable Speaker</div>
-              <div class="disc-card-price">165.000 FCFA</div>
+              <div class="disc-card-name">Oraimo Air Fryer</div>
+              <div class="disc-card-sub">5L Smart 1500W</div>
+              <div class="disc-card-price">62.000 FCFA</div>
             </div>
           </div>
 
-          <!-- 3. Smart Air Fryer Touch -->
-          <div class="discovery-product-card" onClick="{{ on.product }}">
-            <div class="disc-card-img-box">
-              <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('smart-air-fryer', 'Smart Air Fryer Touch'); } }}" class="wishlist-float-btn" aria-label="Save Smart Air Fryer to wishlist">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('smart-air-fryer') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('smart-air-fryer') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          <div class="discovery-product-card" onClick="{{ () => openProduct('cold_press_juicer') }}" style="cursor:pointer">
+            <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
+              <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('cold_press_juicer', 'Cold-Press Juicer'); } }}" class="wishlist-float-btn" aria-label="Save Cold-Press Juicer to wishlist">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('cold_press_juicer') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('cold_press_juicer') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
               </button>
-              <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
-                <rect x="26" y="18" width="48" height="66" rx="12" fill="#18181b" stroke="#3f3f46" stroke-width="1.5"/>
-                <rect x="32" y="26" width="36" height="16" rx="4" fill="#09090b" stroke="#22c55e" stroke-width="1"/>
-                <rect x="32" y="48" width="36" height="28" rx="6" fill="#27272a"/>
-                <line x1="44" y1="62" x2="56" y2="62" stroke="#71717a" stroke-width="3" stroke-linecap="round"/>
-              </svg>
+              <img src="./Assets/ElectroMenage/Cold%20Press%20Juicer%20Machine%20for%20Fresh%20Juice%20and%20Modern%20Kitchen%20Countertops.jfif" alt="Slow Cold-Press Juicer Extractor" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
             </div>
             <div class="disc-card-body">
-              <div class="disc-card-name">Smart Air Fryer Pro</div>
-              <div class="disc-card-sub">6.5L Digital Touchscreen</div>
-              <div class="disc-card-price">85.000 FCFA</div>
+              <div class="disc-card-name">Cold-Press Juicer</div>
+              <div class="disc-card-sub">Slow Masticating</div>
+              <div class="disc-card-price">48.000 FCFA</div>
             </div>
           </div>
 
-          <!-- 4. Espresso Barista Touch -->
-          <div class="discovery-product-card" onClick="{{ on.product }}">
-            <div class="disc-card-img-box">
-              <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('espresso-barista', 'Espresso Barista Touch'); } }}" class="wishlist-float-btn" aria-label="Save Espresso Barista to wishlist">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('espresso-barista') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('espresso-barista') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          <div class="discovery-product-card" onClick="{{ () => openProduct('espresso_maker') }}" style="cursor:pointer">
+            <div class="disc-card-img-box" style="position:relative;width:100%;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:#f8fafc">
+              <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('espresso_maker', 'Espresso Machine'); } }}" class="wishlist-float-btn" aria-label="Save Espresso Machine to wishlist">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('espresso_maker') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('espresso_maker') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
               </button>
-              <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
-                <rect x="24" y="16" width="52" height="70" rx="6" fill="#334155" stroke="#64748b" stroke-width="1.5"/>
-                <rect x="30" y="24" width="40" height="14" rx="2" fill="#0f172a"/>
-                <circle cx="50" cy="52" r="8" fill="#d97706"/>
-                <rect x="32" y="68" width="36" height="12" rx="2" fill="#1e293b"/>
-              </svg>
+              <img src="./Assets/ElectroMenage/Make%20Great%20Coffee%20at%20Home.jfif" alt="15-Bar Espresso Coffee Machine" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
             </div>
             <div class="disc-card-body">
-              <div class="disc-card-name">Espresso Barista Pro</div>
-              <div class="disc-card-sub">15 Bar Italian Pump</div>
-              <div class="disc-card-price">280.000 FCFA</div>
+              <div class="disc-card-name">Espresso Machine</div>
+              <div class="disc-card-sub">15-Bar Barista</div>
+              <div class="disc-card-price">95.000 FCFA</div>
             </div>
           </div>
         </div>

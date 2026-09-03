@@ -84,8 +84,15 @@ function skipRawBodyRoutes(parser) {
 app.use(skipRawBodyRoutes(express.json({ limit: '2mb' })));
 app.use(skipRawBodyRoutes(express.urlencoded({ extended: true, limit: '2mb' })));
 
-// 4. Global sliding-window rate limiting
-app.use(RateLimitService.middleware({ maxRequests: 120, windowSeconds: 60 }));
+// 4. Sliding-window rate limiting — scoped to the API surface.
+//
+// This must NOT guard static asset serving: a single page load of the
+// media-heavy SPA fires 100+ image/video requests, which would blow a
+// per-minute budget instantly and make the server 429 its own HTML shell and
+// assets. In production Netlify's CDN serves those static files and only
+// routes /api/* to this app, so limiting /api mirrors production exactly while
+// keeping local dev (which also serves the frontend here) usable.
+app.use('/api', RateLimitService.middleware({ maxRequests: 120, windowSeconds: 60 }));
 
 // 5. Idempotency support for mutating requests
 app.use(IdempotencyService.middleware());

@@ -5229,6 +5229,706 @@ function getClerk() {
 }
 
 const PRODUCTS_DATA = {
+  'chelsea_boots': {
+    id: 'chelsea_boots',
+    title: "Kraasa Suede Chelsea Ankle Boots",
+    brand: "Kraasa",
+    category: 'fashion',
+    categoryLabel: "Men's Boots",
+    conditionLabel: "Brand New · Boxed",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: "STREET LUXE",
+    rating: '4.7',
+    reviewCount: 61,
+    soldCount: 88,
+    price: 'XAF 42.000',
+    salePrice: 'XAF 56.000',
+    storeName: "Kraasa Official",
+    storeCity: "Akwa, Douala",
+    storeRating: '4.7',
+    storeVerified: true,
+    coverImage: './Assets/fashion/Kraasa%20Men%27s%20Slip%20On%20Fashion%20Chelsea%20Boots.jfif',
+    images: ['./Assets/fashion/Kraasa%20Men%27s%20Slip%20On%20Fashion%20Chelsea%20Boots.jfif'],
+    attributes: [
+      { key: "Upper", val: "Premium Micro-Suede" },
+      { key: "Sole", val: "Anti-Slip TPR Rubber" },
+      { key: "Fit", val: "Slip-On Elastic Gusset" },
+      { key: "Season", val: "All-Season" }
+    ],
+    description: "Slip-on Chelsea boots in soft micro-suede with elastic side gussets and a grippy rubber sole — an easy pairing for denim or tailored trousers."
+  },
+  'dress_loafers': {
+    id: 'dress_loafers',
+    title: "Timeless Black & White Dress Loafers",
+    brand: "Armonía Milano",
+    category: 'fashion',
+    categoryLabel: "Men's Formal Footwear",
+    conditionLabel: "Handcrafted",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: "EXECUTIVE",
+    rating: '4.8',
+    reviewCount: 44,
+    soldCount: 51,
+    price: 'XAF 48.000',
+    salePrice: 'XAF 62.000',
+    storeName: "Armonía Milano Boutique",
+    storeCity: "Bonapriso, Douala",
+    storeRating: '4.8',
+    storeVerified: true,
+    coverImage: './Assets/fashion/Timeless%20Elegance%20Luxury%20Black%20&%20White%20Dress%20Loafers.jfif',
+    images: ['./Assets/fashion/Timeless%20Elegance%20Luxury%20Black%20&%20White%20Dress%20Loafers.jfif'],
+    attributes: [
+      { key: "Material", val: "Two-Tone Patent Leather" },
+      { key: "Construction", val: "Blake-Stitched" },
+      { key: "Lining", val: "Full Leather" },
+      { key: "Occasion", val: "Black-Tie & Office" }
+    ],
+    description: "Two-tone spectator loafers in polished black-and-white leather, Blake-stitched with a leather sole. A statement of classic evening elegance."
+  },
+  'leather_satchel': {
+    id: 'leather_satchel',
+    title: "Designer Monogram Leather Satchel",
+    brand: "Maison Danbaoly",
+    category: 'fashion',
+    categoryLabel: "Women's Designer Bags",
+    conditionLabel: "Brand New · Dust Bag",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: "TRENDING",
+    rating: '4.8',
+    reviewCount: 73,
+    soldCount: 120,
+    price: 'XAF 55.000',
+    salePrice: 'XAF 72.000',
+    storeName: "Maison Danbaoly",
+    storeCity: "Akwa, Douala",
+    storeRating: '4.8',
+    storeVerified: true,
+    coverImage: './Assets/fashion/Luxury%20Designer%20Leather%20Satchels%20&%20Monogram%20Clutches%20_%20Handbag%20Collection.jfif',
+    images: ['./Assets/fashion/Luxury%20Designer%20Leather%20Satchels%20&%20Monogram%20Clutches%20_%20Handbag%20Collection.jfif'],
+    attributes: [
+      { key: "Material", val: "Structured Saffiano Leather" },
+      { key: "Hardware", val: "Gold-Tone" },
+      { key: "Strap", val: "Detachable Crossbody" },
+      { key: "Interior", val: "Suede-Lined Compartments" }
+    ],
+    description: "A structured monogram satchel in Saffiano leather with gold hardware, top handles and a detachable strap — refined enough for the boardroom, roomy enough for daily life."
+  },
+  'stiletto_heels': {
+    id: 'stiletto_heels',
+    title: "Metal-Buckle Banquet Stiletto Heels",
+    brand: "Bigtree",
+    category: 'fashion',
+    categoryLabel: "Women's Luxury Heels",
+    conditionLabel: "Brand New",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: "PARTY EDIT",
+    rating: '4.6',
+    reviewCount: 58,
+    soldCount: 96,
+    price: 'XAF 38.000',
+    salePrice: 'XAF 52.000',
+    storeName: "Bigtree Footwear",
+    storeCity: "Bonanjo, Douala",
+    storeRating: '4.6',
+    storeVerified: true,
+    coverImage: './Assets/fashion/Shoes%20Women%2010%20Cm%20Metal%20Buckle%20Ladies%20Pumps%20Luxury%20Womens%20Banquet%20Shoes%20Stilettos%20High%20Heels%20Women%20Sexy%20Party%20Shoes.jfif',
+    images: ['./Assets/fashion/Shoes%20Women%2010%20Cm%20Metal%20Buckle%20Ladies%20Pumps%20Luxury%20Womens%20Banquet%20Shoes%20Stilettos%20High%20Heels%20Women%20Sexy%20Party%20Shoes.jfif'],
+    attributes: [
+      { key: "Heel Height", val: "10 cm Stiletto" },
+      { key: "Upper", val: "Glossy Patent" },
+      { key: "Accent", val: "Metal Buckle" },
+      { key: "Padding", val: "Cushioned Insole" }
+    ],
+    description: "Glossy patent pumps on a 10 cm stiletto with a gold metal-buckle accent and a cushioned insole for all-night banquet wear."
+  },
+  'iphone_17_pro_max': {
+    id: 'iphone_17_pro_max',
+    title: "Apple iPhone 17 Pro Max 256GB",
+    brand: "Apple",
+    category: 'electronics',
+    categoryLabel: "Flagship Smartphone",
+    conditionLabel: "Sealed · 12-Mo Warranty",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: "NEW FLAGSHIP",
+    rating: '4.9',
+    reviewCount: 134,
+    soldCount: 210,
+    price: 'XAF 925.000',
+    salePrice: 'XAF 1.150.000',
+    storeName: "iStore Cameroon",
+    storeCity: "Bonapriso, Douala",
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/iPhone%2017%20Pro%20Max%20Colors%20%E2%80%93%20Every%20Stunning%20Finish%20in%20One%20Premium%20Look%20%F0%9F%93%B1%E2%9C%A8.jfif',
+    images: ['./Assets/telephone&PC/iPhone%2017%20Pro%20Max%20Colors%20%E2%80%93%20Every%20Stunning%20Finish%20in%20One%20Premium%20Look%20%F0%9F%93%B1%E2%9C%A8.jfif'],
+    attributes: [
+      { key: "Chip", val: "Apple A19 Pro" },
+      { key: "Display", val: "6.9” LTPO ProMotion" },
+      { key: "Camera", val: "48MP Triple + 18MP" },
+      { key: "Storage", val: "256GB · 12GB RAM" }
+    ],
+    description: "The most powerful iPhone yet: A19 Pro silicon, a 6.9-inch ProMotion display and a pro 48MP triple-camera system. Single physical SIM + eSIM, sealed with a 12-month local warranty."
+  },
+  'surface_laptop': {
+    id: 'surface_laptop',
+    title: "Microsoft Surface Laptop 13.8”",
+    brand: "Microsoft",
+    category: 'electronics',
+    categoryLabel: "Ultrabook",
+    conditionLabel: "Sealed · 12-Mo Warranty",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: "PRODUCTIVITY",
+    rating: '4.7',
+    reviewCount: 48,
+    soldCount: 39,
+    price: 'XAF 685.000',
+    salePrice: 'XAF 820.000',
+    storeName: "Digital Corner",
+    storeCity: "Bonapriso, Douala",
+    storeRating: '4.7',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/Microsoft%20Surface%20Laptop_%20Overview.jfif',
+    images: ['./Assets/telephone&PC/Microsoft%20Surface%20Laptop_%20Overview.jfif'],
+    attributes: [
+      { key: "Display", val: "13.8” PixelSense Touch" },
+      { key: "Memory", val: "16GB LPDDR5" },
+      { key: "Storage", val: "512GB SSD" },
+      { key: "Battery", val: "Up to 20h" }
+    ],
+    description: "A sleek aluminium ultrabook with a 13.8-inch PixelSense touchscreen, all-day battery and Copilot-ready performance for work and study."
+  },
+  'alexa_speaker': {
+    id: 'alexa_speaker',
+    title: "Alexa Smart Speaker with LED Ring",
+    brand: "Amazon",
+    category: 'electronics',
+    categoryLabel: "Smart Home",
+    conditionLabel: "Brand New",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: "SMART HOME",
+    rating: '4.6',
+    reviewCount: 97,
+    soldCount: 180,
+    price: 'XAF 32.000',
+    salePrice: 'XAF 45.000',
+    storeName: "SmartLiving CM",
+    storeCity: "Akwa, Douala",
+    storeRating: '4.6',
+    storeVerified: true,
+    coverImage: './Assets/acessories&gadgets/Alexa%20Smart%20Speaker%20with%20LED%20Light%20Ring%20%E2%80%93%20Compact%20Voice%20Assistant.jfif',
+    images: ['./Assets/acessories&gadgets/Alexa%20Smart%20Speaker%20with%20LED%20Light%20Ring%20%E2%80%93%20Compact%20Voice%20Assistant.jfif'],
+    attributes: [
+      { key: "Assistant", val: "Alexa Voice" },
+      { key: "Audio", val: "360° Room-Filling" },
+      { key: "Control", val: "Smart Home Hub" },
+      { key: "Design", val: "LED Light Ring" }
+    ],
+    description: "A compact voice assistant with a 360-degree speaker and an expressive LED ring — play music, set timers and control smart-home devices hands-free."
+  },
+  'apple_airtag': {
+    id: 'apple_airtag',
+    title: "Apple AirTag Item Tracker",
+    brand: "Apple",
+    category: 'electronics',
+    categoryLabel: "Accessories",
+    conditionLabel: "Sealed",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: "ESSENTIAL",
+    rating: '4.8',
+    reviewCount: 156,
+    soldCount: 340,
+    price: 'XAF 18.000',
+    salePrice: 'XAF 25.000',
+    storeName: "iStore Cameroon",
+    storeCity: "Bonapriso, Douala",
+    storeRating: '4.8',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/Best%20Selling%20Apple%20AirTag%21.jfif',
+    images: ['./Assets/telephone&PC/Best%20Selling%20Apple%20AirTag%21.jfif'],
+    attributes: [
+      { key: "Tracking", val: "Precision Find My" },
+      { key: "Battery", val: "1-Year Replaceable" },
+      { key: "Water Resistance", val: "IP67" },
+      { key: "Setup", val: "One-Tap" }
+    ],
+    description: "Keep track of keys, bags and luggage with precision Find My tracking, a year-long user-replaceable battery and IP67 water resistance."
+  },
+  'airpods_4': {
+    id: 'airpods_4',
+    title: "Apple AirPods 4 (ANC)",
+    brand: "Apple",
+    category: 'electronics',
+    categoryLabel: "Wireless Earbuds",
+    conditionLabel: "Sealed · 12-Mo Warranty",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: "POPULAR",
+    rating: '4.8',
+    reviewCount: 112,
+    soldCount: 265,
+    price: 'XAF 95.000',
+    salePrice: 'XAF 120.000',
+    storeName: "iStore Cameroon",
+    storeCity: "Bonapriso, Douala",
+    storeRating: '4.8',
+    storeVerified: true,
+    coverImage: './Assets/acessories&gadgets/Apple%20AirPods%204%20%F0%9F%8E%A7%20Active%20Noise%20Cancellation%20_%20Premium%20Sound%20for%20Less%21%20%F0%9F%8D%8E.jfif',
+    images: ['./Assets/acessories&gadgets/Apple%20AirPods%204%20%F0%9F%8E%A7%20Active%20Noise%20Cancellation%20_%20Premium%20Sound%20for%20Less%21%20%F0%9F%8D%8E.jfif'],
+    attributes: [
+      { key: "ANC", val: "Active Noise Cancellation" },
+      { key: "Chip", val: "Apple H2" },
+      { key: "Battery", val: "Up to 30h w/ Case" },
+      { key: "Fit", val: "Open-Ear" }
+    ],
+    description: "AirPods 4 bring Active Noise Cancellation, the H2 chip and personalised spatial audio to Apple's most comfortable open-ear design."
+  },
+  'galaxy_s26_ultra': {
+    id: 'galaxy_s26_ultra',
+    title: "Samsung Galaxy S26 Ultra 256GB",
+    brand: "Samsung",
+    category: 'electronics',
+    categoryLabel: "Flagship Smartphone",
+    conditionLabel: "Sealed · 12-Mo Warranty",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: "FLAGSHIP",
+    rating: '4.9',
+    reviewCount: 118,
+    soldCount: 176,
+    price: 'XAF 899.000',
+    salePrice: 'XAF 1.050.000',
+    storeName: "Samsung Experience Store",
+    storeCity: "Akwa, Douala",
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/Samsung%20Galaxy%20S26%20Ultra%2C.jfif',
+    images: ['./Assets/telephone&PC/Samsung%20Galaxy%20S26%20Ultra%2C.jfif'],
+    attributes: [
+      { key: "Display", val: "6.9” QHD+ AMOLED 120Hz" },
+      { key: "Camera", val: "200MP Quad + AI" },
+      { key: "S Pen", val: "Built-in" },
+      { key: "Storage", val: "256GB · 12GB RAM" }
+    ],
+    description: "Samsung's Galaxy AI flagship: a 200MP quad camera, a 6.9-inch QHD+ 120Hz display and the built-in S Pen. Sealed with a 12-month local warranty."
+  },
+  'dji_osmo_pocket3': {
+    id: 'dji_osmo_pocket3',
+    title: "DJI Osmo Pocket 3 Creator Combo",
+    brand: "DJI",
+    category: 'electronics',
+    categoryLabel: "Vlogging Camera",
+    conditionLabel: "Brand New",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: "CREATOR PICK",
+    rating: '4.9',
+    reviewCount: 88,
+    soldCount: 63,
+    price: 'XAF 350.000',
+    salePrice: 'XAF 480.000',
+    storeName: "Orca Electronics",
+    storeCity: "Akwa, Douala",
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/acessories&gadgets/DJI%20Osmo%20Pocket%203.jfif',
+    images: ['./Assets/acessories&gadgets/DJI%20Osmo%20Pocket%203.jfif'],
+    attributes: [
+      { key: "Sensor", val: "1” CMOS" },
+      { key: "Stabilisation", val: "3-Axis Gimbal" },
+      { key: "Video", val: "4K/120fps" },
+      { key: "Screen", val: "2” Rotatable OLED" }
+    ],
+    description: "A pocket cinema camera with a 1-inch sensor, 3-axis mechanical stabilisation and 4K/120fps — the Creator Combo adds a wireless mic and handle."
+  },
+  'jbl_flip6': {
+    id: 'jbl_flip6',
+    title: "JBL Flip 6 Portable Speaker",
+    brand: "JBL",
+    category: 'electronics',
+    categoryLabel: "Bluetooth Speaker",
+    conditionLabel: "Brand New · 12-Mo Warranty",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: "BEST SELLER",
+    rating: '4.8',
+    reviewCount: 204,
+    soldCount: 410,
+    price: 'XAF 89.000',
+    salePrice: 'XAF 110.000',
+    storeName: "Orca Electronics",
+    storeCity: "Akwa, Douala",
+    storeRating: '4.8',
+    storeVerified: true,
+    coverImage: './Assets/acessories&gadgets/JBL%20Flip%206%20-%20F%C4%B1rat%20T%C3%BCz%C3%BCnkan.jfif',
+    images: ['./Assets/acessories&gadgets/JBL%20Flip%206%20-%20F%C4%B1rat%20T%C3%BCz%C3%BCnkan.jfif'],
+    attributes: [
+      { key: "Power", val: "30W Output" },
+      { key: "Rating", val: "IP67 Waterproof" },
+      { key: "Battery", val: "12 Hours" },
+      { key: "Feature", val: "PartyBoost Pairing" }
+    ],
+    description: "Bold JBL Original Pro sound in a rugged IP67 waterproof body with 12-hour battery and PartyBoost multi-speaker pairing."
+  },
+  'tecno_camon40': {
+    id: 'tecno_camon40',
+    title: "TECNO Camon 40 Series 256GB",
+    brand: "TECNO",
+    category: 'electronics',
+    categoryLabel: "Smartphone",
+    conditionLabel: "Sealed · 12-Mo Warranty",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: "AI CAMERA",
+    rating: '4.6',
+    reviewCount: 142,
+    soldCount: 520,
+    price: 'XAF 155.000',
+    salePrice: 'XAF 195.000',
+    storeName: "TECNO Official",
+    storeCity: "Mvog-Mbi, Yaoundé",
+    storeRating: '4.6',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/TECNO%20CAMON%2040%20Series_%20Redefining%20Imagery%20with%C2%A0TECNO%C2%A0AI.jfif',
+    images: ['./Assets/telephone&PC/TECNO%20CAMON%2040%20Series_%20Redefining%20Imagery%20with%C2%A0TECNO%C2%A0AI.jfif'],
+    attributes: [
+      { key: "Camera", val: "50MP TECNO AI" },
+      { key: "Display", val: "6.8” AMOLED 120Hz" },
+      { key: "Battery", val: "5200mAh" },
+      { key: "Storage", val: "256GB · 8GB RAM" }
+    ],
+    description: "TECNO's imaging flagship pairs a 50MP AI camera with a bright 6.8-inch AMOLED 120Hz display and a long-life 5200mAh battery."
+  },
+  'ankara_palazzo': {
+    id: 'ankara_palazzo',
+    title: "100% Cotton Ankara Palazzo Trousers",
+    brand: "Loumoo Heritage",
+    category: 'fashion',
+    categoryLabel: "African Print Wear",
+    conditionLabel: "Handmade",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: "HERITAGE",
+    rating: '4.8',
+    reviewCount: 76,
+    soldCount: 143,
+    price: 'XAF 22.000',
+    salePrice: 'XAF 30.000',
+    storeName: "Douala Heritage Atelier",
+    storeCity: "New Bell, Douala",
+    storeRating: '4.8',
+    storeVerified: true,
+    coverImage: './Assets/fashion/100%25%20Cotton%20Ankara%20Palazzo%20Pants.jfif',
+    images: ['./Assets/fashion/100%25%20Cotton%20Ankara%20Palazzo%20Pants.jfif'],
+    attributes: [
+      { key: "Fabric", val: "100% Wax Cotton Ankara" },
+      { key: "Fit", val: "High-Waist Palazzo" },
+      { key: "Make", val: "Locally Tailored" },
+      { key: "Care", val: "Machine Wash Cold" }
+    ],
+    description: "Flowing high-waist palazzo trousers cut from genuine 100% cotton Ankara wax print, tailored locally for vivid colour and everyday comfort."
+  },
+  'artisan_sandals': {
+    id: 'artisan_sandals',
+    title: "Handmade Woven Leather Sandals",
+    brand: "Sahel Artisans",
+    category: 'fashion',
+    categoryLabel: "Artisan Footwear",
+    conditionLabel: "Handmade",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: "ARTISAN",
+    rating: '4.7',
+    reviewCount: 52,
+    soldCount: 97,
+    price: 'XAF 15.000',
+    salePrice: 'XAF 22.000',
+    storeName: "Sahel Leather Works",
+    storeCity: "Garoua",
+    storeRating: '4.7',
+    storeVerified: true,
+    coverImage: './Assets/fashion/Men%20brown%20leather%20strap%20sandal%20handmade%20barefoot%20woven%20band%20summer%20footwear%20casual%20everyday%20comfort%20Arabian%20style%20Middle%20East%20men%20sandal.jfif',
+    images: ['./Assets/fashion/Men%20brown%20leather%20strap%20sandal%20handmade%20barefoot%20woven%20band%20summer%20footwear%20casual%20everyday%20comfort%20Arabian%20style%20Middle%20East%20men%20sandal.jfif'],
+    attributes: [
+      { key: "Material", val: "Full-Grain Cowhide" },
+      { key: "Make", val: "Hand-Woven Band" },
+      { key: "Sole", val: "Stitched Leather" },
+      { key: "Style", val: "Barefoot Summer" }
+    ],
+    description: "Hand-woven full-grain leather sandals made by northern Cameroonian artisans — supple, breathable and built to last through seasons of wear."
+  },
+  'beaded_bracelet': {
+    id: 'beaded_bracelet',
+    title: "Natural Stone Beaded Warrior Bracelet",
+    brand: "Loumoo Heritage",
+    category: 'fashion',
+    categoryLabel: "Men's Jewelry",
+    conditionLabel: "Handmade",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: "HANDCRAFTED",
+    rating: '4.6',
+    reviewCount: 64,
+    soldCount: 128,
+    price: 'XAF 12.000',
+    salePrice: 'XAF 18.000',
+    storeName: "Douala Heritage Atelier",
+    storeCity: "New Bell, Douala",
+    storeRating: '4.6',
+    storeVerified: true,
+    coverImage: './Assets/necklace&ring/Men%20Charm%20Black%20Spartan%20Helmet%20Beaded%20Natural%20Stone%20Adjustable%20Macrame%20Bracelets%20_%20eBay.jfif',
+    images: ['./Assets/necklace&ring/Men%20Charm%20Black%20Spartan%20Helmet%20Beaded%20Natural%20Stone%20Adjustable%20Macrame%20Bracelets%20_%20eBay.jfif'],
+    attributes: [
+      { key: "Beads", val: "Natural Volcanic Stone" },
+      { key: "Charm", val: "Warrior Helmet" },
+      { key: "Clasp", val: "Adjustable Macramé" },
+      { key: "Fit", val: "One Size" }
+    ],
+    description: "An adjustable macramé bracelet strung with natural volcanic stone beads and a metal warrior-helmet charm — grounding, durable and easy to wear."
+  },
+  'shea_lotion': {
+    id: 'shea_lotion',
+    title: "Shea & Baobab Nourishing Body Lotion",
+    brand: "Nubian Glow",
+    category: 'beauty',
+    categoryLabel: "Skincare",
+    conditionLabel: "Brand New",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: "AFRICAN-OWNED",
+    rating: '4.9',
+    reviewCount: 188,
+    soldCount: 402,
+    price: 'XAF 9.500',
+    salePrice: 'XAF 14.000',
+    storeName: "Nubian Glow Beauty",
+    storeCity: "Bonapriso, Douala",
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/perfume&lotion/MEET%20THE%204%20AFRICAN-OWNED%20BRANDS%20BRIDGING%20THE%20GAP%20IN%20THE%20SKINCARE%20MARKET%20FOR%20DARKER%20CONSUMERS.jfif',
+    images: ['./Assets/perfume&lotion/MEET%20THE%204%20AFRICAN-OWNED%20BRANDS%20BRIDGING%20THE%20GAP%20IN%20THE%20SKINCARE%20MARKET%20FOR%20DARKER%20CONSUMERS.jfif'],
+    attributes: [
+      { key: "Key Actives", val: "Raw Shea & Baobab Oil" },
+      { key: "Skin Type", val: "Dry to Normal" },
+      { key: "Free From", val: "Parabens & Sulfates" },
+      { key: "Volume", val: "250ml" }
+    ],
+    description: "A rich shea-and-baobab body lotion from an African-owned label, formulated to deeply nourish and even melanin-rich skin without greasiness."
+  },
+  'power_bank': {
+    id: 'power_bank',
+    title: "30000mAh Solar Power Bank + Cables",
+    brand: "Oraimo",
+    category: 'electronics',
+    categoryLabel: "Charging",
+    conditionLabel: "Brand New",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: "RUGGED",
+    rating: '4.6',
+    reviewCount: 143,
+    soldCount: 388,
+    price: 'XAF 22.000',
+    salePrice: 'XAF 32.000',
+    storeName: "Oraimo Official CM",
+    storeCity: "Akwa, Douala",
+    storeRating: '4.6',
+    storeVerified: true,
+    coverImage: './Assets/acessories&gadgets/pawer%20bank%20with%204%20Data%20cables%20best%20power%20bank.jfif',
+    images: ['./Assets/acessories&gadgets/pawer%20bank%20with%204%20Data%20cables%20best%20power%20bank.jfif'],
+    attributes: [
+      { key: "Capacity", val: "30000mAh" },
+      { key: "Solar", val: "Emergency Solar Panel" },
+      { key: "Cables", val: "4 Built-in Cables" },
+      { key: "Output", val: "22.5W Fast Charge" }
+    ],
+    description: "A high-capacity 30000mAh power bank with an emergency solar panel and four built-in cables — keep every device charged on the trail or off-grid."
+  },
+  'action_cam': {
+    id: 'action_cam',
+    title: "Ordro EP7 4K Wearable Action Camera",
+    brand: "Ordro",
+    category: 'electronics',
+    categoryLabel: "Action Camera",
+    conditionLabel: "Brand New",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: "POV READY",
+    rating: '4.5',
+    reviewCount: 47,
+    soldCount: 58,
+    price: 'XAF 85.000',
+    salePrice: 'XAF 120.000',
+    storeName: "Orca Electronics",
+    storeCity: "Akwa, Douala",
+    storeRating: '4.5',
+    storeVerified: true,
+    coverImage: './Assets/acessories&gadgets/Ordro%20EP7%20YouTube%20Video%20Vlog%20Camera%204K%2060fps%20Head%20Wearable%20WiFi%20POV%20Digital%20Action%20Camcorder.jfif',
+    images: ['./Assets/acessories&gadgets/Ordro%20EP7%20YouTube%20Video%20Vlog%20Camera%204K%2060fps%20Head%20Wearable%20WiFi%20POV%20Digital%20Action%20Camcorder.jfif'],
+    attributes: [
+      { key: "Video", val: "4K / 60fps" },
+      { key: "Mount", val: "Head-Wearable POV" },
+      { key: "Connectivity", val: "Wi-Fi" },
+      { key: "Use", val: "Vlog & Adventure" }
+    ],
+    description: "A hands-free head-wearable 4K/60fps action camera with Wi-Fi — capture true point-of-view footage on hikes, rides and adventures."
+  },
+  'lapel_mic': {
+    id: 'lapel_mic',
+    title: "Wireless Lapel Microphone (Plug & Play)",
+    brand: "Loumoo Audio",
+    category: 'electronics',
+    categoryLabel: "Creator Audio",
+    conditionLabel: "Brand New",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: "CREATOR",
+    rating: '4.6',
+    reviewCount: 71,
+    soldCount: 134,
+    price: 'XAF 18.000',
+    salePrice: 'XAF 28.000',
+    storeName: "Creator Hub CM",
+    storeCity: "Bonapriso, Douala",
+    storeRating: '4.6',
+    storeVerified: true,
+    coverImage: './Assets/acessories&gadgets/Microfone%20Lapela%20Sem%20Fio%20Profissional%20para%20Smartphone%2C%20Microfone%20Sem%20Fio%20Plug%20and%20Play%2C%20Microfone___.jfif',
+    images: ['./Assets/acessories&gadgets/Microfone%20Lapela%20Sem%20Fio%20Profissional%20para%20Smartphone%2C%20Microfone%20Sem%20Fio%20Plug%20and%20Play%2C%20Microfone___.jfif'],
+    attributes: [
+      { key: "Type", val: "Dual Wireless Lavalier" },
+      { key: "Latency", val: "Plug & Play Instant" },
+      { key: "Range", val: "Up to 20m" },
+      { key: "Compatibility", val: "USB-C / Lightning" }
+    ],
+    description: "A plug-and-play wireless lavalier mic system for smartphones — crisp, low-latency audio for interviews, vlogs and live streams up to 20m away."
+  },
+  'mifa_a90': {
+    id: 'mifa_a90',
+    title: "Mifa A90 60W Rugged Bluetooth Speaker",
+    brand: "Mifa",
+    category: 'electronics',
+    categoryLabel: "Bluetooth Speaker",
+    conditionLabel: "Brand New",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: "OUTDOOR",
+    rating: '4.7',
+    reviewCount: 96,
+    soldCount: 152,
+    price: 'XAF 45.000',
+    salePrice: 'XAF 65.000',
+    storeName: "Orca Electronics",
+    storeCity: "Akwa, Douala",
+    storeRating: '4.7',
+    storeVerified: true,
+    coverImage: './Assets/acessories&gadgets/mifa%20A90%20Bluetooth%20Speaker%2060W%20Output%20Power%20Bluetooth%20Speaker%20with%20Class%20D%20Amplifier%20Excellent%20Bass.jfif',
+    images: ['./Assets/acessories&gadgets/mifa%20A90%20Bluetooth%20Speaker%2060W%20Output%20Power%20Bluetooth%20Speaker%20with%20Class%20D%20Amplifier%20Excellent%20Bass.jfif'],
+    attributes: [
+      { key: "Power", val: "60W Class-D" },
+      { key: "Bass", val: "Dual Passive Radiators" },
+      { key: "Battery", val: "Up to 20h" },
+      { key: "Build", val: "Rugged Portable" }
+    ],
+    description: "A hard-hitting 60W rugged speaker with a Class-D amplifier and deep bass — built to bring the party outdoors with up to 20 hours of playtime."
+  },
+  'airpods_max': {
+    id: 'airpods_max',
+    title: "Apple AirPods Max Over-Ear",
+    brand: "Apple",
+    category: 'electronics',
+    categoryLabel: "Premium Headphones",
+    conditionLabel: "Sealed · 12-Mo Warranty",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: "STUDIO",
+    rating: '4.8',
+    reviewCount: 87,
+    soldCount: 74,
+    price: 'XAF 230.000',
+    salePrice: 'XAF 290.000',
+    storeName: "iStore Cameroon",
+    storeCity: "Bonapriso, Douala",
+    storeRating: '4.8',
+    storeVerified: true,
+    coverImage: './Assets/_processed/acessories_gadgets_apple_air_pod_max_airpodmax_apple_keysho_16.png',
+    images: ['./Assets/_processed/acessories_gadgets_apple_air_pod_max_airpodmax_apple_keysho_16.png'],
+    attributes: [
+      { key: "Audio", val: "High-Fidelity Driver" },
+      { key: "ANC", val: "Active Noise Cancellation" },
+      { key: "Audio Mode", val: "Spatial + Head Tracking" },
+      { key: "Battery", val: "20h ANC" }
+    ],
+    description: "Apple's over-ear flagship: a custom high-fidelity driver, Active Noise Cancellation and immersive spatial audio in a machined aluminium design."
+  },
+  'oraimo_airfryer': {
+    id: 'oraimo_airfryer',
+    title: "Oraimo Smart Air Fryer 5L",
+    brand: "Oraimo",
+    category: 'electronics',
+    categoryLabel: "Kitchen Smart Living",
+    conditionLabel: "Brand New · 12-Mo Warranty",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: "SMART KITCHEN",
+    rating: '4.7',
+    reviewCount: 129,
+    soldCount: 246,
+    price: 'XAF 62.000',
+    salePrice: 'XAF 78.000',
+    storeName: "Oraimo Official CM",
+    storeCity: "Akwa, Douala",
+    storeRating: '4.7',
+    storeVerified: true,
+    coverImage: './Assets/acessories&gadgets/Oraimo%20Oraimo%20Smart%20Air%20Fryer%20OH-AF210N%201500W%205%20Liters%205%20L%201500%20W%20OH-AF210N%20Black%20_%20Best%20Price%20Egypt%20_%20Cairo%2C%20Giza.jfif',
+    images: ['./Assets/acessories&gadgets/Oraimo%20Oraimo%20Smart%20Air%20Fryer%20OH-AF210N%201500W%205%20Liters%205%20L%201500%20W%20OH-AF210N%20Black%20_%20Best%20Price%20Egypt%20_%20Cairo%2C%20Giza.jfif'],
+    attributes: [
+      { key: "Capacity", val: "5 Litres" },
+      { key: "Power", val: "1500W" },
+      { key: "Control", val: "Smart App + Touch" },
+      { key: "Window", val: "Cooking-Visible" }
+    ],
+    description: "A 1500W 5-litre smart air fryer with a see-through cooking window and app control — crispy, low-oil meals with a tap from your phone."
+  },
+  'cold_press_juicer': {
+    id: 'cold_press_juicer',
+    title: "Slow Cold-Press Juicer Extractor",
+    brand: "ACOQOOS",
+    category: 'electronics',
+    categoryLabel: "Kitchen Smart Living",
+    conditionLabel: "Brand New",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: "WELLNESS",
+    rating: '4.6',
+    reviewCount: 83,
+    soldCount: 141,
+    price: 'XAF 48.000',
+    salePrice: 'XAF 68.000',
+    storeName: "SmartLiving CM",
+    storeCity: "Akwa, Douala",
+    storeRating: '4.6',
+    storeVerified: true,
+    coverImage: './Assets/ElectroMenage/Cold%20Press%20Juicer%20Machine%20for%20Fresh%20Juice%20and%20Modern%20Kitchen%20Countertops.jfif',
+    images: ['./Assets/ElectroMenage/Cold%20Press%20Juicer%20Machine%20for%20Fresh%20Juice%20and%20Modern%20Kitchen%20Countertops.jfif'],
+    attributes: [
+      { key: "Type", val: "Slow Masticating" },
+      { key: "Feed", val: "Large Whole-Fruit Chute" },
+      { key: "Yield", val: "High Nutrient Retention" },
+      { key: "Cleaning", val: "Easy Detach & Rinse" }
+    ],
+    description: "A slow masticating cold-press juicer with a wide whole-fruit chute — extract more juice and nutrients with less foam and heat for fresh daily juices."
+  },
+  'espresso_maker': {
+    id: 'espresso_maker',
+    title: "15-Bar Espresso Coffee Machine",
+    brand: "Barista Pro",
+    category: 'electronics',
+    categoryLabel: "Kitchen Smart Living",
+    conditionLabel: "Brand New · 12-Mo Warranty",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: "BARISTA",
+    rating: '4.7',
+    reviewCount: 64,
+    soldCount: 88,
+    price: 'XAF 95.000',
+    salePrice: 'XAF 135.000',
+    storeName: "SmartLiving CM",
+    storeCity: "Bonapriso, Douala",
+    storeRating: '4.7',
+    storeVerified: true,
+    coverImage: './Assets/ElectroMenage/Make%20Great%20Coffee%20at%20Home.jfif',
+    images: ['./Assets/ElectroMenage/Make%20Great%20Coffee%20at%20Home.jfif'],
+    attributes: [
+      { key: "Pressure", val: "15-Bar Italian Pump" },
+      { key: "Frother", val: "Steam Milk Wand" },
+      { key: "Tank", val: "1.5L Removable" },
+      { key: "Build", val: "Stainless Steel" }
+    ],
+    description: "Café-quality espresso at home with a 15-bar Italian pump, a steam wand for silky microfoam and a stainless-steel build that lasts."
+  },
   'na_double_monk_01': {
     id: 'na_double_monk_01',
     title: 'Armonía Glossy Black Double-Monk Leather Shoes',
@@ -5359,8 +6059,8 @@ const PRODUCTS_DATA = {
     storeCity: 'Akwa, Douala',
     storeRating: '5.0',
     storeVerified: true,
-    coverImage: './Assets/_processed/new_arrivals_05.jpg',
-    images: ['./Assets/_processed/new_arrivals_05.jpg'],
+    coverImage: './Assets/telephone&PC/Google%20Pixel%2010%20Pro%20XL%20_%20Latest%20Google%20Smartphone%20with%20Advanced%20Camera%20&%20AI%20Features.jfif',
+    images: ['./Assets/telephone&PC/Google%20Pixel%2010%20Pro%20XL%20_%20Latest%20Google%20Smartphone%20with%20Advanced%20Camera%20&%20AI%20Features.jfif'],
     attributes: [
       { key: 'Processor', val: 'Google Tensor G5 (3nm Next-Gen Silicon)' },
       { key: 'Display', val: '6.7” Super Actua OLED 120Hz LTPO' },
@@ -5727,11 +6427,10 @@ const PRODUCTS_DATA = {
     storeCity: 'Douala, Bonamoussadi',
     storeRating: '4.8',
     storeVerified: true,
-    coverImage: './Assets/ElectroMenage/ACOQOOS%20Juicer%20Machines,%20Juicers%20Whole%20Fruit%20and%E2%80%A6.jfif',
+    coverImage: './Assets/fashion/Look%20at%20this%20new%20Nike%20Air%20Force.jfif',
     images: [
-      './Assets/ElectroMenage/ACOQOOS%20Juicer%20Machines,%20Juicers%20Whole%20Fruit%20and%E2%80%A6.jfif',
-      './Assets/ElectroMenage/Air%20fryer.jfif',
-      './Assets/_processed/electromenage_air_fryer_philips_series_3000_double_panier_9l__0.png'
+      './Assets/fashion/Look%20at%20this%20new%20Nike%20Air%20Force.jfif',
+      './Assets/fashion/Nike%20Air%20Force%201%20is%20Waiting%20For%20You___.jfif'
     ],
     videoUrl: './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2010%20Aesthetic%20holiday%20table%20setting%20ideas%20that%20bring%20together%20comfort%20beauty%20and%20useful%20ideas%20you%20will%20actually%20try%20for%20people%20w.mp4',
     attributes: [
@@ -6384,6 +7083,50 @@ class Component extends DCLogic {
           }
         }
       }, true);
+
+      // Ambient background videos (e.g. the "Collections for you" rail) must
+      // loop silently with no play button. React does not reliably set the
+      // muted/loop DOM *properties* on first render, so an `autoplay` attribute
+      // alone leaves them un-muted (autoplay blocked) and non-looping. Enforce
+      // the properties here and drive playback from an IntersectionObserver, so
+      // each clip only loads and plays while it is actually on screen.
+      try {
+        const setupAmbient = (v) => {
+          v.muted = true;
+          v.defaultMuted = true;
+          v.volume = 0;
+          v.loop = true;
+          v.playsInline = true;
+        };
+        const ambientObserver = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            const v = entry.target;
+            setupAmbient(v);
+            if (entry.isIntersecting) {
+              const p = v.play();
+              if (p && p.catch) p.catch(() => {});
+            } else {
+              v.pause();
+            }
+          });
+        }, { threshold: 0.25 });
+        const scanAmbient = () => {
+          document.querySelectorAll('video[data-ambient="true"]').forEach((v) => {
+            setupAmbient(v);
+            ambientObserver.observe(v); // observing the same node twice is a no-op
+          });
+        };
+        scanAmbient();
+        // Re-scan when React mounts new ambient videos (route changes, etc.),
+        // coalescing bursts of mutations into one scan per frame.
+        let scanScheduled = false;
+        const mo = new MutationObserver(() => {
+          if (scanScheduled) return;
+          scanScheduled = true;
+          requestAnimationFrame(() => { scanScheduled = false; scanAmbient(); });
+        });
+        mo.observe(document.body, { childList: true, subtree: true });
+      } catch (_) {}
     }
     this._startHeroSlideAutoAdvance();
     this._handleKeyDown = (e) => {
