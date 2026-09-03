@@ -12,6 +12,11 @@
  */
 
 const crypto = require('crypto');
+const dns = require('dns');
+
+if (typeof dns.setDefaultResultOrder === 'function') {
+  dns.setDefaultResultOrder('ipv4first');
+}
 
 if (!process.env.NODE_ENV || process.env.NODE_ENV === 'production') {
   process.env.NODE_ENV = 'test';
