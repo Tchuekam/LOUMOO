@@ -1428,38 +1428,17 @@ def get_home_view():
       <div class="africa-banner-left">
         <div class="africa-banner-eyebrow">LOUMOO</div>
         <h3 class="africa-banner-heading">Marketplace for Africa.</h3>
-        <p class="africa-banner-sub">Discover. Shop. Travel. Thrive.</p>
-        <button onClick="{{ openAllCategories }}" class="africa-banner-btn">Start exploring</button>
+        <p class="africa-banner-sub">Discover authentic African fashion, cutting-edge tech, luxury stays & travel across CEMAC and beyond.</p>
+        <button onClick="{{ openAllCategories }}" class="africa-banner-btn">Start exploring →</button>
       </div>
       <div class="africa-banner-right">
-        <!-- African Shopping Lifestyle Vector Art -->
-        <svg width="220" height="150" viewBox="0 0 220 150" fill="none" style="max-width:100%">
-          <defs>
-            <linearGradient id="skinTone1" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#8d5524"/>
-              <stop offset="100%" stop-color="#5a3311"/>
-            </linearGradient>
-            <linearGradient id="skinTone2" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#a66e38"/>
-              <stop offset="100%" stop-color="#6f441b"/>
-            </linearGradient>
-          </defs>
-          <circle cx="155" cy="42" r="20" fill="url(#skinTone1)"/>
-          <path d="M140 34 Q155 22 170 34 Q162 26 148 26 Z" fill="#18181b"/>
-          <path d="M125 76 C125 66 140 64 155 64 C170 64 185 66 185 76 L190 150 L120 150 Z" fill="#0284c7"/>
-          <path d="M150 64 L155 80 L160 64" stroke="#ffffff" stroke-width="2"/>
-
-          <circle cx="95" cy="48" r="19" fill="url(#skinTone2)"/>
-          <path d="M80 42 Q95 24 110 42 Q105 32 85 32 Z" fill="#09090b"/>
-          <path d="M78 44 C74 58 76 72 78 80" stroke="#09090b" stroke-width="5" stroke-linecap="round"/>
-          <path d="M112 44 C116 58 114 72 112 80" stroke="#09090b" stroke-width="5" stroke-linecap="round"/>
-          <path d="M70 82 C70 72 82 70 95 70 C108 70 120 72 120 82 L124 150 L66 150 Z" fill="#f59e0b"/>
-
-          <rect x="52" y="96" width="26" height="34" rx="4" fill="#ea580c"/>
-          <path d="M58 96 C58 88 72 88 72 96" stroke="#ffffff" stroke-width="2" fill="none"/>
-          <rect x="68" y="104" width="24" height="32" rx="4" fill="#007aff"/>
-          <path d="M74 104 C74 96 86 96 86 104" stroke="#ffffff" stroke-width="2" fill="none"/>
-        </svg>
+        <div class="africa-banner-img-frame" style="position:relative;width:100%;max-width:360px;height:240px;border-radius:20px;overflow:hidden;box-shadow:0 12px 32px rgba(0,0,0,0.14);border:1px solid rgba(0,0,0,0.06);margin-left:auto">
+          <img src="./Assets/fashion/THE%20UNPUNISHABLE%20WOMAN.jfif" alt="THE UNPUNISHABLE WOMAN — LOUMOO African Fashion" style="width:100%;height:100%;object-fit:cover;object-position:center 20%;display:block;transition:transform 0.4s ease">
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0) 55%, rgba(0,0,0,0.55) 100%);pointer-events:none"></div>
+          <div style="position:absolute;bottom:12px;left:14px;display:flex;align-items:center;gap:6px">
+            <span style="background:rgba(0,0,0,0.65);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#ffffff;font:800 11px/1 var(--font-heading);padding:5px 12px;border-radius:9999px;letter-spacing:0.04em;text-transform:uppercase">The Unpunishable Woman</span>
+          </div>
+        </div>
       </div>
     </div>
 

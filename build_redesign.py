@@ -3111,6 +3111,16 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   align-items: center;
   justify-content: center;
 }
+.africa-banner-img-frame {
+  transition: transform 0.28s var(--ease-spring), box-shadow 0.28s ease;
+}
+.africa-banner-img-frame:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.22) !important;
+}
+.africa-banner-img-frame:hover img {
+  transform: scale(1.05);
+}
 
 /* More to Explore Category Visual Tiles */
 .more-explore-grid {
