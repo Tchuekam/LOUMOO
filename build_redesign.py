@@ -4518,6 +4518,141 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 .pub-tab.is-active { background: var(--color-accent); border-color: var(--color-accent); color: #fff; }
 .pub-tab:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
 
+/* ══════════════════════════════════════════════════════════════════════════
+   LOUMOO ANNOUNCE — minimal, mobile-first feed (Apple-style)
+   ══════════════════════════════════════════════════════════════════════ */
+.ann-page { background: var(--color-bg); min-height: 100vh; padding-bottom: 64px; }
+
+.ann-head {
+  max-width: 980px; margin: 0 auto; padding: 14px 20px 0;
+}
+.ann-head-inner { display: flex; align-items: center; justify-content: space-between; }
+.ann-back {
+  width: 38px; height: 38px; border-radius: 50%; flex: none;
+  display: flex; align-items: center; justify-content: center;
+  border: none; background: transparent; color: var(--color-text); cursor: pointer;
+  margin-left: -8px; transition: background .15s ease;
+}
+.ann-back:hover { background: var(--color-neutral-100); }
+.ann-broadcast {
+  display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 16px;
+  border-radius: var(--radius-pill); border: none; cursor: pointer;
+  background: var(--color-text); color: var(--color-surface);
+  font: 600 13px/1 var(--font-heading);
+  transition: opacity .15s ease;
+}
+.ann-broadcast:hover { opacity: .85; }
+.ann-head-title-wrap { margin: 14px 0 20px; }
+.ann-title {
+  margin: 0; font: 700 clamp(30px, 8vw, 40px)/1.05 var(--font-heading);
+  letter-spacing: -.035em; color: var(--color-text);
+}
+.ann-subtitle {
+  margin: 6px 0 0; font: 400 15px/1.45 var(--font-body); color: var(--color-text-secondary);
+  max-width: 520px;
+}
+
+.ann-search {
+  display: flex; align-items: center; gap: 9px; height: 46px; padding: 0 16px;
+  border-radius: var(--radius-pill); background: var(--color-neutral-100);
+  border: 1px solid transparent; color: var(--color-text-muted); transition: border-color .15s ease, background .15s ease;
+}
+.ann-search:focus-within { background: var(--color-surface); border-color: var(--color-neutral-400); }
+.ann-search svg { flex: none; }
+.ann-search input {
+  flex: 1; min-width: 0; border: none; background: transparent; outline: none;
+  font: 400 15px/1 var(--font-body); color: var(--color-text);
+}
+.ann-search input::placeholder { color: var(--color-text-muted); }
+
+.ann-filters {
+  display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none;
+  margin: 14px -20px 0; padding: 2px 20px 4px; -webkit-overflow-scrolling: touch;
+}
+.ann-filters::-webkit-scrollbar { display: none; }
+.ann-filter {
+  flex: none; height: 34px; padding: 0 15px; border-radius: var(--radius-pill); cursor: pointer;
+  border: 1px solid var(--color-divider); background: var(--color-surface);
+  font: 500 13px/1 var(--font-heading); color: var(--color-text-secondary); white-space: nowrap;
+  transition: all .15s ease;
+}
+.ann-filter:hover { color: var(--color-text); border-color: var(--color-neutral-400); }
+.ann-filter.is-active { background: var(--color-text); border-color: var(--color-text); color: var(--color-surface); }
+
+.ann-body { max-width: 980px; margin: 0 auto; padding: 22px 20px 0; }
+
+.ann-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+@media (min-width: 640px) { .ann-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; } }
+@media (min-width: 960px) { .ann-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+.ann-card {
+  display: flex; flex-direction: column; overflow: hidden; cursor: pointer;
+  background: var(--color-surface); border: 1px solid var(--color-divider);
+  border-radius: 18px; transition: border-color .2s var(--ease-smooth), box-shadow .2s var(--ease-smooth), transform .2s var(--ease-smooth);
+}
+.ann-card:hover { border-color: var(--color-neutral-400); box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.ann-card-media { position: relative; aspect-ratio: 16 / 10; background: var(--color-neutral-100); overflow: hidden; }
+.ann-card-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ann-card-play {
+  position: absolute; left: 12px; bottom: 12px; width: 30px; height: 30px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; color: #fff;
+  background: rgba(0,0,0,.45); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+.ann-card-badge {
+  position: absolute; top: 12px; left: 12px; height: 22px; padding: 0 9px; border-radius: var(--radius-pill);
+  display: inline-flex; align-items: center; font: 600 10.5px/1 var(--font-heading); letter-spacing: .02em;
+  color: var(--color-text); background: rgba(255,255,255,.9); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+.ann-card-body { display: flex; flex-direction: column; gap: 7px; padding: 16px 16px 18px; flex: 1; }
+.ann-card-store { display: flex; align-items: center; gap: 5px; min-width: 0; }
+.ann-card-store-name {
+  font: 500 12px/1 var(--font-body); color: var(--color-text-muted);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.ann-card-verified { flex: none; }
+.ann-card-kind {
+  margin-left: auto; font: 600 10px/1 var(--font-heading); letter-spacing: .04em; text-transform: uppercase;
+  color: var(--color-text-muted); background: var(--color-neutral-100); padding: 3px 7px; border-radius: var(--radius-pill);
+}
+.ann-card-title {
+  margin: 0; font: 600 16.5px/1.3 var(--font-heading); letter-spacing: -.02em; color: var(--color-text);
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.ann-card-title.is-placeholder { color: var(--color-text-muted); font-weight: 500; }
+.ann-card-text {
+  margin: 0; font: 400 13.5px/1.5 var(--font-body); color: var(--color-text-secondary);
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.ann-card-foot {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
+  margin-top: auto; padding-top: 10px;
+}
+.ann-card-price { font: 700 15.5px/1 var(--font-heading); letter-spacing: -.01em; color: var(--color-text); }
+.ann-card-cta { font: 600 13px/1 var(--font-heading); color: var(--color-accent); white-space: nowrap; }
+
+.ann-empty {
+  text-align: center; padding: 56px 20px; display: flex; flex-direction: column; align-items: center; gap: 10px;
+}
+.ann-empty-mark {
+  width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  background: var(--color-neutral-100); color: var(--color-text-muted); margin-bottom: 4px;
+}
+.ann-empty h4 { margin: 0; font: 600 18px/1.2 var(--font-heading); color: var(--color-text); }
+.ann-empty p { margin: 0; font: 400 14px/1.5 var(--font-body); color: var(--color-text-secondary); max-width: 320px; }
+.ann-empty-cta {
+  margin-top: 8px; height: 44px; padding: 0 22px; border-radius: var(--radius-pill); border: none; cursor: pointer;
+  background: var(--color-text); color: var(--color-surface); font: 600 14px/1 var(--font-heading);
+}
+.ann-more { display: flex; justify-content: center; margin-top: 28px; }
+.ann-more-btn {
+  height: 44px; padding: 0 24px; border-radius: var(--radius-pill); cursor: pointer;
+  border: 1px solid var(--color-divider); background: var(--color-surface); color: var(--color-text);
+  font: 600 13.5px/1 var(--font-heading); transition: background .15s ease;
+}
+.ann-more-btn:hover { background: var(--color-neutral-100); }
+.ann-more-btn:disabled { opacity: .5; cursor: default; }
+.ann-count { margin-top: 20px; text-align: center; font: 400 12px/1 var(--font-body); color: var(--color-text-muted); }
+
 /* A publication with no photo should not reserve a full 4:3 well: for a
    broadcast the message is the content, and the empty frame just pushes it
    below the fold. */
@@ -7192,6 +7327,18 @@ class Component extends DCLogic {
         });
         mo.observe(document.body, { childList: true, subtree: true });
       } catch (_) {}
+
+      // Announce feed: if a card's cover image fails to load, collapse the media
+      // well so a broken URL becomes a clean text-first card rather than a broken
+      // frame. Capture phase because 'error' does not bubble. CSP-safe (no inline
+      // handler). Scoped to .ann-card-media to avoid touching other imagery.
+      document.addEventListener('error', (e) => {
+        const img = e.target;
+        if (img && img.tagName === 'IMG' && img.closest) {
+          const media = img.closest('.ann-card-media');
+          if (media) media.style.display = 'none';
+        }
+      }, true);
     }
     this._startHeroSlideAutoAdvance();
     this._handleKeyDown = (e) => {

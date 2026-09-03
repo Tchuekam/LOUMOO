@@ -29,59 +29,47 @@ _TEMPLATE = """
      publication card the publishing studio previews.
      ══════════════════════════════════════════════════════════════════════ -->
 <sc-if value="{{ is.announce }}">
-<div style="padding-bottom:56px;background:var(--color-bg);min-height:100vh">
+<div class="ann-page">
 
-  <div class="page-head-block">
-    <div class="page-head" style="position:static;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;border-bottom:none;justify-content:space-between;max-width:1200px;margin:0 auto">
-      <div class="page-head-main">
-        <button onClick="{{ back }}" aria-label="Go back" class="pub-iconbtn">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
-        </button>
-        <div class="page-head-text">
-          <div style="display:flex;align-items:center;gap:6px;min-width:0">
-            <h3 class="page-head-title">LOUMOO Announce</h3>
-            <span class="tag tag-accent hide-tight" style="min-height:18px;padding:1px 6px;font-size:9.5px;font-weight:800;white-space:nowrap;flex-shrink:0">COMMERCIAL FEED</span>
-          </div>
-          <div class="page-head-sub">Live promotions, drops, events, tenders &amp; jobs</div>
-        </div>
-      </div>
-
-      <div class="page-head-actions">
-        <button onClick="{{ on.announceStudio }}" class="btn btn-primary" style="height:36px;padding:0 14px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-          <span style="white-space:nowrap">BROADCAST</span>
-        </button>
-      </div>
+  <!-- ── Minimal header (mobile-first) ── -->
+  <header class="ann-head">
+    <div class="ann-head-inner">
+      <button onClick="{{ back }}" aria-label="Go back" class="ann-back">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+      <button onClick="{{ on.announceStudio }}" class="ann-broadcast" aria-label="Broadcast a new announcement">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+        <span>Broadcast</span>
+      </button>
     </div>
-  </div>
-
-  <div style="padding:18px 16px;max-width:1200px;margin:0 auto">
-
-    <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px;align-items:center">
-      <div style="flex:1;min-width:240px;position:relative">
-        <input type="text" class="pub-input" style="padding-left:36px"
-               placeholder="Search promotions, drops, tenders, jobs…"
-               value="{{ announceSearch }}"
-               onChange="{{ (e) => setAnnounceSearch(e && e.target ? e.target.value : e) }}">
-        <div style="position:absolute;left:11px;top:15px;color:var(--color-text-muted)">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        </div>
-      </div>
+    <div class="ann-head-title-wrap">
+      <h1 class="ann-title">Announce</h1>
+      <p class="ann-subtitle">Promotions, drops, events, tenders &amp; jobs across Cameroon</p>
     </div>
 
-    <div class="pub-tabs" role="tablist" aria-label="Broadcast type">
+    <!-- Search -->
+    <div class="ann-search">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" placeholder="Search announcements"
+             value="{{ announceSearch }}"
+             onChange="{{ (e) => setAnnounceSearch(e && e.target ? e.target.value : e) }}">
+    </div>
+
+    <!-- Filters -->
+    <div class="ann-filters" role="tablist" aria-label="Announcement type">
       <sc-for list="{{ announceFilters }}" as="chip">
-        <button class="pub-tab {{ chip.active ? 'is-active' : '' }}"
-                onClick="{{ () => setAnnounceFilter(chip.key) }}">
-          <span>{{ chip.label }}</span>
-        </button>
+        <button class="ann-filter {{ chip.active ? 'is-active' : '' }}"
+                onClick="{{ () => setAnnounceFilter(chip.key) }}">{{ chip.label }}</button>
       </sc-for>
     </div>
+  </header>
+
+  <div class="ann-body">
 
     <sc-if value="{{ announceLoading }}">
       <div class="pub-banner is-busy" role="status">
         <span class="pub-spinner" aria-hidden="true"></span>
-        <span>Loading broadcasts…</span>
+        <span>Loading…</span>
       </div>
     </sc-if>
 
@@ -93,35 +81,63 @@ _TEMPLATE = """
     </sc-if>
 
     <sc-if value="{{ !announceLoading && !announceCards.length }}">
-      <div class="pub-empty">
-        <div class="pub-empty-mark" aria-hidden="true">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m3 11 18-5v12L3 13v-2Z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
+      <div class="ann-empty">
+        <div class="ann-empty-mark" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m3 11 18-5v12L3 13v-2Z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
         </div>
         <h4>Nothing here yet</h4>
         <p>{{ announceEmptyBlurb }}</p>
-        <button onClick="{{ on.announceStudio }}" class="btn btn-primary">Publish a broadcast</button>
+        <button onClick="{{ on.announceStudio }}" class="ann-empty-cta">Publish a broadcast</button>
       </div>
     </sc-if>
 
-    <div class="pub-grid">
+    <!-- ── Feed ── -->
+    <div class="ann-grid">
       <sc-for list="{{ announceCards }}" as="card">
-        __CARD__
+        <article class="ann-card" onClick="{{ () => openAnnouncement(card.id) }}">
+          <sc-if value="{{ card.hasMedia }}">
+            <div class="ann-card-media">
+              <img src="{{ card.coverUrl }}" alt="" loading="lazy">
+              <sc-if value="{{ card.mediaType === 'video' || card.mediaStyle === 'video' }}">
+                <span class="ann-card-play" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+              </sc-if>
+              <sc-if value="{{ card.badge }}"><span class="ann-card-badge">{{ card.badge }}</span></sc-if>
+            </div>
+          </sc-if>
+
+          <div class="ann-card-body">
+            <sc-if value="{{ card.storeName }}">
+              <div class="ann-card-store">
+                <span class="ann-card-store-name">{{ card.storeName }}</span>
+                <sc-if value="{{ card.storeVerified }}">
+                  <svg class="ann-card-verified" width="13" height="13" viewBox="0 0 24 24" fill="var(--color-accent)" aria-label="Verified"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-1.1 14.2-4-4L8.3 10.8l2.6 2.6 4.8-4.8 1.4 1.4z"/></svg>
+                </sc-if>
+                <sc-if value="{{ !card.hasMedia && card.badge }}"><span class="ann-card-kind">{{ card.badge }}</span></sc-if>
+              </div>
+            </sc-if>
+
+            <h3 class="ann-card-title {{ card.isPlaceholder ? 'is-placeholder' : '' }}">{{ card.title }}</h3>
+            <sc-if value="{{ card.body }}"><p class="ann-card-text">{{ card.body }}</p></sc-if>
+
+            <div class="ann-card-foot">
+              <sc-if value="{{ card.priceLine }}"><span class="ann-card-price">{{ card.priceLine }}</span></sc-if>
+              <span class="ann-card-cta">{{ card.ctaLabel }} <span aria-hidden="true">→</span></span>
+            </div>
+          </div>
+        </article>
       </sc-for>
     </div>
 
     <sc-if value="{{ announceHasMore }}">
-      <div style="display:flex;justify-content:center;margin-top:24px">
-        <button class="btn btn-secondary" onClick="{{ loadMoreAnnouncements }}"
-                disabled="{{ announceLoading }}">
-          {{ announceLoading ? 'Loading…' : 'Load more broadcasts' }}
+      <div class="ann-more">
+        <button class="ann-more-btn" onClick="{{ loadMoreAnnouncements }}" disabled="{{ announceLoading }}">
+          {{ announceLoading ? 'Loading…' : 'Load more' }}
         </button>
       </div>
     </sc-if>
 
     <sc-if value="{{ announceCards.length }}">
-      <div style="margin-top:18px;text-align:center;font:400 11.5px/1.5 var(--font-body);color:var(--color-text-muted)">
-        Showing {{ announceCards.length }} of {{ announceTotal }} live broadcasts across Cameroon
-      </div>
+      <div class="ann-count">{{ announceCards.length }} of {{ announceTotal }} live</div>
     </sc-if>
 
   </div>
