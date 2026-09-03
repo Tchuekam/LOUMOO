@@ -31,6 +31,12 @@ for (const dir of ['Assets', 'src', '_ds']) {
   }
 }
 
+// The Python backend under src/backend is server-side code the static frontend
+// never loads, and src/backend/config.py hardcodes the Supabase URL as a default.
+// Publishing it would leak that into the static output (and trip Netlify's secret
+// scanner), so drop it from the deployed site.
+fs.rmSync(path.join(out, 'src', 'backend'), { recursive: true, force: true });
+
 function dirSizeMB(p) {
   let bytes = 0;
   for (const entry of fs.readdirSync(p, { withFileTypes: true })) {

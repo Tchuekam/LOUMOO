@@ -18,9 +18,12 @@
 
 [build.environment]
   NODE_VERSION = "22"
-  # Skip Netlify's secrets scanner tripping on the public Supabase anon key,
-  # which is a JWT by design and safe to expose to the browser.
-  SECRETS_SCAN_OMIT_KEYS = "SUPABASE_ANON_KEY,NEXT_PUBLIC_SUPABASE_ANON_KEY,SUPABASE_PUBLISHABLE_KEY,CLERK_PUBLISHABLE_KEY,NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,POSTHOG_API_KEY,SENTRY_DSN"
+  # Netlify's secret scanner flags any env-var VALUE that appears in build output.
+  # These keys are public-by-design client identifiers (anon JWT, publishable keys,
+  # project URL/ref, analytics/DSN) that legitimately surface in client config — so
+  # omit them. The genuinely secret values (service-role key, JWT secret, Clerk
+  # secret, Resend/ElevenLabs) are NOT omitted, so the scanner still guards them.
+  SECRETS_SCAN_OMIT_KEYS = "SUPABASE_ANON_KEY,NEXT_PUBLIC_SUPABASE_ANON_KEY,SUPABASE_PUBLISHABLE_KEY,SUPABASE_URL,NEXT_PUBLIC_SUPABASE_URL,SUPABASE_PROJECT_REF,CLERK_PUBLISHABLE_KEY,NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,CLERK_APP_ID,POSTHOG_API_KEY,POSTHOG_HOST,SENTRY_DSN,APP_BASE_URL"
 
 [functions]
   node_bundler = "esbuild"
