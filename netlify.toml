@@ -12,7 +12,7 @@
 # ─────────────────────────────────────────────────────────────────────────────
 
 [build]
-  command = "bash scripts/assemble_public.sh"
+  command = "node scripts/assemble_public.js"
   publish = "public"
   functions = "netlify/functions"
 
