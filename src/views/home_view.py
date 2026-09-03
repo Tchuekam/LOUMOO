@@ -528,200 +528,387 @@ def get_home_view():
     </div>
 
     <div id="newArrivalsRail" class="new-arrivals-rail" style="display:flex;flex-direction:row;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;gap:18px;margin-bottom:32px;padding:4px 4px 16px 4px">
-      <!-- Item 1: DJI Osmo Pocket 3 -->
-      <div onClick="{{ () => openProduct('insta360_x4') }}" class="loumoo-media-card" aria-label="View DJI Osmo Pocket 3 Creator Combo">
-        <div class="loumoo-card-media-cutout">
-          <span class="loumoo-card-badge badge-pill-sale">Save up to 55.000 FCFA</span>
-          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('insta360_x4', 'DJI Osmo Pocket 3'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('insta360_x4') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('insta360_x4') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+      <!-- Item 1: Armonía Double-Monk Shoes -->
+      <div onClick="{{ () => openProduct('na_double_monk_01') }}" class="loumoo-media-card na-card" aria-label="View Armonía Glossy Black Double-Monk Shoes">
+        <div class="na-card-media-wrap">
+          <span class="loumoo-card-badge badge-pill-sale">Save 30.000 FCFA</span>
+          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('na_double_monk_01', 'Armonía Double-Monk Shoes'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('na_double_monk_01') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('na_double_monk_01') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
           </button>
-          <img src="./Assets/acessories&gadgets/DJI%20Osmo%20Pocket%203.jfif" alt="DJI Osmo Pocket 3 Creator Combo">
+          <img src="./Assets/_processed/new_arrivals_01.jpg" alt="Armonía Glossy Black Double-Monk Shoes" loading="lazy" class="na-card-img">
+          <div class="na-card-transition-fade"></div>
         </div>
-        <div class="loumoo-card-body">
-          <h4 class="loumoo-card-title">DJI Osmo Pocket 3</h4>
-          <div class="loumoo-card-tagline">1" CMOS 4K 120fps Pocket Gimbal.</div>
-          <div class="loumoo-card-rating-row">
-            <span>★ 4.9</span>
-            <span class="loumoo-card-rating-text">(48) · Official Store</span>
+        <div class="na-card-transition-line"></div>
+        <div class="loumoo-card-body na-card-body">
+          <div class="na-card-brand-row">
+            <span class="na-card-rating">★ 4.9</span>
+            <span class="na-card-store-label">Armonía Milano · Bonapriso</span>
           </div>
+          <h4 class="loumoo-card-title na-card-title">Armonía Double-Monk Shoes</h4>
+          <div class="loumoo-card-tagline na-card-tagline">Glossy Italian box calfskin · Gold buckle accents.</div>
           <div class="loumoo-card-bottom-row">
             <div class="loumoo-card-pricing-block">
               <span class="loumoo-card-price-prefix">From</span>
               <div class="loumoo-card-price-main">
-                <span class="loumoo-card-price-val">485.000 FCFA</span>
-                <span class="loumoo-card-price-strike">540.000 FCFA</span>
+                <span class="loumoo-card-price-val">85.000 FCFA</span>
+                <span class="loumoo-card-price-strike">115.000 FCFA</span>
               </div>
               <div class="loumoo-card-trust-pill">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                <span>✓ Glotelho: 540.000 FCFA</span>
+                <span>✓ City Sport: 110.000 FCFA</span>
               </div>
             </div>
-            <button class="loumoo-card-pill-btn" aria-label="Buy DJI Osmo Pocket 3">Buy now</button>
+            <button class="loumoo-card-pill-btn" aria-label="Buy Armonía Double-Monk Shoes">Buy now</button>
           </div>
         </div>
       </div>
 
-      <!-- Item 2: iPhone 15 Pro Max -->
-      <div onClick="{{ () => openProduct('iphone_15_pro') }}" class="loumoo-media-card" aria-label="View iPhone 15 Pro Max 256GB">
-        <div class="loumoo-card-media-cutout">
-          <span class="loumoo-card-badge badge-pill-new">New · Natural Titanium</span>
-          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('iphone_15_pro', 'iPhone 15 Pro Max'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('iphone_15_pro') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('iphone_15_pro') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+      <!-- Item 2: Danbaoly Crimson Bow-Tie Handbag -->
+      <div onClick="{{ () => openProduct('na_danbaoly_bag_02') }}" class="loumoo-media-card na-card" aria-label="View Danbaoly Crimson Red Handbag">
+        <div class="na-card-media-wrap">
+          <span class="loumoo-card-badge badge-pill-new">Trending · Gold Charm</span>
+          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('na_danbaoly_bag_02', 'Danbaoly Crimson Tote'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('na_danbaoly_bag_02') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('na_danbaoly_bag_02') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
           </button>
-          <img src="./Assets/telephone%26PC/iphone%2015%20Pro%20Max%20-%20Best%20Features%20in%202025.jfif" alt="iPhone 15 Pro Max 256GB">
+          <img src="./Assets/_processed/new_arrivals_02.jpg" alt="Danbaoly Crimson Red Handbag" loading="lazy" class="na-card-img">
+          <div class="na-card-transition-fade"></div>
         </div>
-        <div class="loumoo-card-body">
-          <h4 class="loumoo-card-title">iPhone 15 Pro Max</h4>
-          <div class="loumoo-card-tagline">Forged in titanium. A17 Pro powerhouse.</div>
-          <div class="loumoo-card-rating-row">
-            <span>★ 5.0</span>
-            <span class="loumoo-card-rating-text">(112) · Apple Authorized</span>
+        <div class="na-card-transition-line"></div>
+        <div class="loumoo-card-body na-card-body">
+          <div class="na-card-brand-row">
+            <span class="na-card-rating">★ 4.8</span>
+            <span class="na-card-store-label">Maison Danbaoly · Akwa</span>
           </div>
+          <h4 class="loumoo-card-title na-card-title">Danbaoly Crimson Tote</h4>
+          <div class="loumoo-card-tagline na-card-tagline">Textured calfskin with bow tie & star charm.</div>
           <div class="loumoo-card-bottom-row">
             <div class="loumoo-card-pricing-block">
               <span class="loumoo-card-price-prefix">From</span>
               <div class="loumoo-card-price-main">
-                <span class="loumoo-card-price-val">795.000 FCFA</span>
-                <span class="loumoo-card-price-strike">890.000 FCFA</span>
+                <span class="loumoo-card-price-val">42.000 FCFA</span>
+                <span class="loumoo-card-price-strike">58.000 FCFA</span>
               </div>
               <div class="loumoo-card-trust-pill">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                <span>✓ Glotelho: 890.000 FCFA</span>
+                <span>✓ Jumia CM: 55.000 FCFA</span>
               </div>
             </div>
-            <button class="loumoo-card-pill-btn" aria-label="Buy iPhone 15 Pro Max">Buy now</button>
+            <button class="loumoo-card-pill-btn" aria-label="Buy Danbaoly Crimson Tote">Buy now</button>
           </div>
         </div>
       </div>
 
-      <!-- Item 3: Apple AirPods Max -->
-      <div onClick="{{ () => openProduct('sony_xm5') }}" class="loumoo-media-card" aria-label="View Apple AirPods Max">
-        <div class="loumoo-card-media-cutout">
-          <span class="loumoo-card-badge badge-pill-sale">Save 55.000 FCFA</span>
-          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('sony_xm5', 'Apple AirPods Max'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('sony_xm5') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('sony_xm5') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+      <!-- Item 3: Pedro Tri-Tone Urban Commuter Rucksack -->
+      <div onClick="{{ () => openProduct('na_pedro_backpack_03') }}" class="loumoo-media-card na-card" aria-label="View Pedro Tri-Tone Heritage Rucksack">
+        <div class="na-card-media-wrap">
+          <span class="loumoo-card-badge badge-pill-sale">Save 20.000 FCFA</span>
+          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('na_pedro_backpack_03', 'Pedro Heritage Rucksack'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('na_pedro_backpack_03') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('na_pedro_backpack_03') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
           </button>
-          <img src="./Assets/_processed/acessories_gadgets_apple_air_pod_max_airpodmax_apple_keysho_16.png" alt="Apple AirPods Max Studio ANC">
+          <img src="./Assets/_processed/new_arrivals_03.jpg" alt="Pedro Tri-Tone Heritage Rucksack" loading="lazy" class="na-card-img">
+          <div class="na-card-transition-fade"></div>
         </div>
-        <div class="loumoo-card-body">
-          <h4 class="loumoo-card-title">Apple AirPods Max</h4>
-          <div class="loumoo-card-tagline">Computational Studio Hi-Fi ANC.</div>
-          <div class="loumoo-card-rating-row">
-            <span>★ 4.9</span>
-            <span class="loumoo-card-rating-text">(89) · Verified Sound</span>
+        <div class="na-card-transition-line"></div>
+        <div class="loumoo-card-body na-card-body">
+          <div class="na-card-brand-row">
+            <span class="na-card-rating">★ 4.9</span>
+            <span class="na-card-store-label">Pedro Flagship · Yaoundé</span>
           </div>
+          <h4 class="loumoo-card-title na-card-title">Pedro Heritage Rucksack</h4>
+          <div class="loumoo-card-tagline na-card-tagline">Ivory, cognac tan & sky blue commuter pack.</div>
           <div class="loumoo-card-bottom-row">
             <div class="loumoo-card-pricing-block">
               <span class="loumoo-card-price-prefix">From</span>
               <div class="loumoo-card-price-main">
-                <span class="loumoo-card-price-val">395.000 FCFA</span>
-                <span class="loumoo-card-price-strike">450.000 FCFA</span>
+                <span class="loumoo-card-price-val">68.000 FCFA</span>
+                <span class="loumoo-card-price-strike">88.000 FCFA</span>
               </div>
               <div class="loumoo-card-trust-pill">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                <span>✓ Glotelho: 450.000 FCFA</span>
+                <span>✓ Pedro Import: 85.000 FCFA</span>
               </div>
             </div>
-            <button class="loumoo-card-pill-btn" aria-label="Buy Apple AirPods Max">Buy now</button>
+            <button class="loumoo-card-pill-btn" aria-label="Buy Pedro Heritage Rucksack">Buy now</button>
           </div>
         </div>
       </div>
 
-      <!-- Item 4: Rolex Sea-Dweller 43 -->
-      <div onClick="{{ () => openProduct('apple_watch_s9') }}" class="loumoo-media-card" aria-label="View Rolex Sea-Dweller 43mm">
-        <div class="loumoo-card-media-cutout">
-          <span class="loumoo-card-badge badge-pill-new">Luxury Diver</span>
-          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('apple_watch_s9', 'Rolex Sea-Dweller'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('apple_watch_s9') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('apple_watch_s9') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+      <!-- Item 4: boAt Stone 1400 Crimson Rugged Speaker -->
+      <div onClick="{{ () => openProduct('na_boat_speaker_04') }}" class="loumoo-media-card na-card" aria-label="View boAt Stone 1400 Crimson Speaker">
+        <div class="na-card-media-wrap">
+          <span class="loumoo-card-badge badge-pill-new">70W Stereo · IPX7</span>
+          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('na_boat_speaker_04', 'boAt Stone 1400 Crimson'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('na_boat_speaker_04') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('na_boat_speaker_04') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
           </button>
-          <img src="./Assets/watch/Classic%20Rolex%20SeaDweller.jfif" alt="Rolex Sea-Dweller 43mm Oystersteel">
+          <img src="./Assets/_processed/new_arrivals_04.jpg" alt="boAt Stone 1400 Crimson Speaker" loading="lazy" class="na-card-img">
+          <div class="na-card-transition-fade"></div>
         </div>
-        <div class="loumoo-card-body">
-          <h4 class="loumoo-card-title">Rolex Sea-Dweller 43</h4>
-          <div class="loumoo-card-tagline">Oystersteel Ceramic Diver · Akwa.</div>
-          <div class="loumoo-card-rating-row">
-            <span>★ 4.9</span>
-            <span class="loumoo-card-rating-text">(64) · Verified Seller</span>
+        <div class="na-card-transition-line"></div>
+        <div class="loumoo-card-body na-card-body">
+          <div class="na-card-brand-row">
+            <span class="na-card-rating">★ 4.9</span>
+            <span class="na-card-store-label">SoundWave · Douala Grand Mall</span>
           </div>
+          <h4 class="loumoo-card-title na-card-title">boAt Stone 1400 Crimson</h4>
+          <div class="loumoo-card-tagline na-card-tagline">70W dynamic stereo audio · RGB bass radiator.</div>
           <div class="loumoo-card-bottom-row">
             <div class="loumoo-card-pricing-block">
               <span class="loumoo-card-price-prefix">From</span>
               <div class="loumoo-card-price-main">
-                <span class="loumoo-card-price-val">7.900.000 FCFA</span>
-                <span class="loumoo-card-price-strike">8.500.000 FCFA</span>
+                <span class="loumoo-card-price-val">45.000 FCFA</span>
+                <span class="loumoo-card-price-strike">60.000 FCFA</span>
               </div>
               <div class="loumoo-card-trust-pill">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                <span>✓ Horlogerie Akwa: 8.500.000 FCFA</span>
+                <span>✓ Glotelho: 58.000 FCFA</span>
               </div>
             </div>
-            <button class="loumoo-card-pill-btn" aria-label="Buy Rolex Sea-Dweller">Buy now</button>
+            <button class="loumoo-card-pill-btn" aria-label="Buy boAt Stone 1400 Crimson">Buy now</button>
           </div>
         </div>
       </div>
 
-      <!-- Item 5: MacBook Air M2 -->
-      <div onClick="{{ () => openProduct('macbook_m2') }}" class="loumoo-media-card" aria-label="View MacBook Air M2 13-inch">
-        <div class="loumoo-card-media-cutout">
-          <span class="loumoo-card-badge badge-pill-sale">Save 75.000 FCFA</span>
-          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('macbook_m2', 'MacBook Air M2'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('macbook_m2') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('macbook_m2') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+      <!-- Item 5: Google Pixel 10 Pro Titanium -->
+      <div onClick="{{ () => openProduct('na_pixel_10_pro_05') }}" class="loumoo-media-card na-card" aria-label="View Google Pixel 10 Pro Titanium">
+        <div class="na-card-media-wrap">
+          <span class="loumoo-card-badge badge-pill-new">Tensor G5 · 256GB</span>
+          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('na_pixel_10_pro_05', 'Google Pixel 10 Pro'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('na_pixel_10_pro_05') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('na_pixel_10_pro_05') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
           </button>
-          <img src="./Assets/telephone%26PC/Macbook.jfif" alt="MacBook Air M2 13-inch Space Grey">
+          <img src="./Assets/_processed/new_arrivals_05.jpg" alt="Google Pixel 10 Pro Titanium Grey" loading="lazy" class="na-card-img">
+          <div class="na-card-transition-fade"></div>
         </div>
-        <div class="loumoo-card-body">
-          <h4 class="loumoo-card-title">MacBook Air 13" M2</h4>
-          <div class="loumoo-card-tagline">Apple M2 · Liquid Retina · 18h Battery.</div>
-          <div class="loumoo-card-rating-row">
-            <span>★ 4.9</span>
-            <span class="loumoo-card-rating-text">(78) · Apple Store</span>
+        <div class="na-card-transition-line"></div>
+        <div class="loumoo-card-body na-card-body">
+          <div class="na-card-brand-row">
+            <span class="na-card-rating">★ 5.0</span>
+            <span class="na-card-store-label">Pixel Hub Cameroon · Akwa</span>
           </div>
+          <h4 class="loumoo-card-title na-card-title">Google Pixel 10 Pro 5G</h4>
+          <div class="loumoo-card-tagline na-card-tagline">Tensor G5 Silicon · Studio AI Triple Camera.</div>
           <div class="loumoo-card-bottom-row">
             <div class="loumoo-card-pricing-block">
               <span class="loumoo-card-price-prefix">From</span>
               <div class="loumoo-card-price-main">
-                <span class="loumoo-card-price-val">745.000 FCFA</span>
-                <span class="loumoo-card-price-strike">820.000 FCFA</span>
+                <span class="loumoo-card-price-val">650.000 FCFA</span>
+                <span class="loumoo-card-price-strike">740.000 FCFA</span>
               </div>
               <div class="loumoo-card-trust-pill">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                <span>✓ Glotelho: 820.000 FCFA</span>
+                <span>✓ Glotelho Tech: 735.000 FCFA</span>
               </div>
             </div>
-            <button class="loumoo-card-pill-btn" aria-label="Buy MacBook Air M2">Buy now</button>
+            <button class="loumoo-card-pill-btn" aria-label="Buy Google Pixel 10 Pro">Buy now</button>
           </div>
         </div>
       </div>
 
-      <!-- Item 6: ACOQOOS Cold Press Juicer -->
-      <div onClick="{{ () => openProduct('nike_air_force_1') }}" class="loumoo-media-card" aria-label="View ACOQOOS Cold Press Extractor">
-        <div class="loumoo-card-media-cutout">
-          <span class="loumoo-card-badge badge-pill-new">Kitchen Pro</span>
-          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('nike_air_force_1', 'ACOQOOS Juicer'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('nike_air_force_1') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('nike_air_force_1') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+      <!-- Item 6: Amina Muaddi Crystal Sunburst Pumps & Quilted Bag Set -->
+      <div onClick="{{ () => openProduct('na_amina_muaddi_06') }}" class="loumoo-media-card na-card" aria-label="View Amina Muaddi Sunburst Duo">
+        <div class="na-card-media-wrap">
+          <span class="loumoo-card-badge badge-pill-sale">Save 40.000 FCFA</span>
+          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('na_amina_muaddi_06', 'Amina Muaddi Sunburst Duo'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('na_amina_muaddi_06') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('na_amina_muaddi_06') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
           </button>
-          <img src="./Assets/ElectroMenage/ACOQOOS%20Juicer%20Machines,%20Juicers%20Whole%20Fruit%20and%E2%80%A6.jfif" alt="ACOQOOS Cold Press Extractor Machine">
+          <img src="./Assets/_processed/new_arrivals_06.jpg" alt="Amina Muaddi Sunburst Orange Pumps & Bag" loading="lazy" class="na-card-img">
+          <div class="na-card-transition-fade"></div>
         </div>
-        <div class="loumoo-card-body">
-          <h4 class="loumoo-card-title">ACOQOOS Slow Juicer</h4>
-          <div class="loumoo-card-tagline">Whole Fruit Cold Masticating Extractor.</div>
-          <div class="loumoo-card-rating-row">
-            <span>★ 4.8</span>
-            <span class="loumoo-card-rating-text">(142) · Verified Electro</span>
+        <div class="na-card-transition-line"></div>
+        <div class="loumoo-card-body na-card-body">
+          <div class="na-card-brand-row">
+            <span class="na-card-rating">★ 5.0</span>
+            <span class="na-card-store-label">Bella Donna Boutique · Bonanjo</span>
           </div>
+          <h4 class="loumoo-card-title na-card-title">Amina Muaddi Sunburst Duo</h4>
+          <div class="loumoo-card-tagline na-card-tagline">Orange satin crystal pumps with matching quilted bag.</div>
           <div class="loumoo-card-bottom-row">
             <div class="loumoo-card-pricing-block">
               <span class="loumoo-card-price-prefix">From</span>
               <div class="loumoo-card-price-main">
-                <span class="loumoo-card-price-val">34.500 FCFA</span>
-                <span class="loumoo-card-price-strike">45.000 FCFA</span>
+                <span class="loumoo-card-price-val">125.000 FCFA</span>
+                <span class="loumoo-card-price-strike">165.000 FCFA</span>
               </div>
               <div class="loumoo-card-trust-pill">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                <span>✓ Arno Cameroun: 45.000 FCFA</span>
+                <span>✓ VIP Chic Douala: 160.000 FCFA</span>
               </div>
             </div>
-            <button class="loumoo-card-pill-btn" aria-label="Buy ACOQOOS Juicer">Buy now</button>
+            <button class="loumoo-card-pill-btn" aria-label="Buy Amina Muaddi Sunburst Duo">Buy now</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Item 7: NOIRE Matte Crocodile Birkin Luxury Handbag -->
+      <div onClick="{{ () => openProduct('na_noire_birkin_07') }}" class="loumoo-media-card na-card" aria-label="View NOIRE Alligator Birkin Luxury Handbag">
+        <div class="na-card-media-wrap">
+          <span class="loumoo-card-badge badge-pill-new">Atelier Edition · 24K Gold</span>
+          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('na_noire_birkin_07', 'NOIRE Alligator Birkin'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('na_noire_birkin_07') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('na_noire_birkin_07') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          </button>
+          <img src="./Assets/_processed/new_arrivals_07.jpg" alt="NOIRE Alligator Birkin Handbag with Cheetah" loading="lazy" class="na-card-img">
+          <div class="na-card-transition-fade"></div>
+        </div>
+        <div class="na-card-transition-line"></div>
+        <div class="loumoo-card-body na-card-body">
+          <div class="na-card-brand-row">
+            <span class="na-card-rating">★ 5.0</span>
+            <span class="na-card-store-label">NOIRE Atelier · Bastos, Yaoundé</span>
+          </div>
+          <h4 class="loumoo-card-title na-card-title">NOIRE Alligator Birkin</h4>
+          <div class="loumoo-card-tagline na-card-tagline">Crocodile-embossed leather with 24K gold lock.</div>
+          <div class="loumoo-card-bottom-row">
+            <div class="loumoo-card-pricing-block">
+              <span class="loumoo-card-price-prefix">From</span>
+              <div class="loumoo-card-price-main">
+                <span class="loumoo-card-price-val">195.000 FCFA</span>
+                <span class="loumoo-card-price-strike">260.000 FCFA</span>
+              </div>
+              <div class="loumoo-card-trust-pill">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <span>✓ Luxury Closet CM: 250.000 FCFA</span>
+              </div>
+            </div>
+            <button class="loumoo-card-pill-btn" aria-label="Buy NOIRE Alligator Birkin">Buy now</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Item 8: Bigtree 10cm Emerald Alligator Patent Pumps -->
+      <div onClick="{{ () => openProduct('na_bigtree_heels_08') }}" class="loumoo-media-card na-card" aria-label="View Bigtree Emerald Stiletto Pumps">
+        <div class="na-card-media-wrap">
+          <span class="loumoo-card-badge badge-pill-sale">Save 14.000 FCFA</span>
+          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('na_bigtree_heels_08', 'Bigtree Emerald Stilettos'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('na_bigtree_heels_08') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('na_bigtree_heels_08') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          </button>
+          <img src="./Assets/_processed/new_arrivals_08.jpg" alt="Bigtree Emerald Alligator Stiletto Pumps" loading="lazy" class="na-card-img">
+          <div class="na-card-transition-fade"></div>
+        </div>
+        <div class="na-card-transition-line"></div>
+        <div class="loumoo-card-body na-card-body">
+          <div class="na-card-brand-row">
+            <span class="na-card-rating">★ 4.8</span>
+            <span class="na-card-store-label">Glamour Steps · Douala Grand Mall</span>
+          </div>
+          <h4 class="loumoo-card-title na-card-title">Bigtree Emerald Stilettos</h4>
+          <div class="loumoo-card-tagline na-card-tagline">10cm crocodile patent stiletto with gold buckle.</div>
+          <div class="loumoo-card-bottom-row">
+            <div class="loumoo-card-pricing-block">
+              <span class="loumoo-card-price-prefix">From</span>
+              <div class="loumoo-card-price-main">
+                <span class="loumoo-card-price-val">38.000 FCFA</span>
+                <span class="loumoo-card-price-strike">52.000 FCFA</span>
+              </div>
+              <div class="loumoo-card-trust-pill">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <span>✓ Jumia CM: 49.000 FCFA</span>
+              </div>
+            </div>
+            <button class="loumoo-card-pill-btn" aria-label="Buy Bigtree Emerald Stilettos">Buy now</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Item 9: Artisan Lug-Sole Chunky Brogue Derby Shoes -->
+      <div onClick="{{ () => openProduct('na_artisan_brogue_09') }}" class="loumoo-media-card na-card" aria-label="View Artisan Lug-Sole Chunky Brogues">
+        <div class="na-card-media-wrap">
+          <span class="loumoo-card-badge badge-pill-new">Vibram Lug Sole</span>
+          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('na_artisan_brogue_09', 'Artisan Chunky Brogues'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('na_artisan_brogue_09') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('na_artisan_brogue_09') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          </button>
+          <img src="./Assets/_processed/new_arrivals_09.jpg" alt="Artisan Lug-Sole Wingtip Brogue Shoes" loading="lazy" class="na-card-img">
+          <div class="na-card-transition-fade"></div>
+        </div>
+        <div class="na-card-transition-line"></div>
+        <div class="loumoo-card-body na-card-body">
+          <div class="na-card-brand-row">
+            <span class="na-card-rating">★ 4.9</span>
+            <span class="na-card-store-label">Sartorial Douala · Bali</span>
+          </div>
+          <h4 class="loumoo-card-title na-card-title">Artisan Chunky Brogues</h4>
+          <div class="loumoo-card-tagline na-card-tagline">Full-grain box calfskin with commando lug sole.</div>
+          <div class="loumoo-card-bottom-row">
+            <div class="loumoo-card-pricing-block">
+              <span class="loumoo-card-price-prefix">From</span>
+              <div class="loumoo-card-price-main">
+                <span class="loumoo-card-price-val">75.000 FCFA</span>
+                <span class="loumoo-card-price-strike">98.000 FCFA</span>
+              </div>
+              <div class="loumoo-card-trust-pill">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <span>✓ Bata Heritage: 95.000 FCFA</span>
+              </div>
+            </div>
+            <button class="loumoo-card-pill-btn" aria-label="Buy Artisan Chunky Brogues">Buy now</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Item 10: Tobacco Vanille Artisanal Extrait De Parfum (30ml) -->
+      <div onClick="{{ () => openProduct('na_tobacco_vanille_10') }}" class="loumoo-media-card na-card" aria-label="View Tobacco Vanille Extrait De Parfum">
+        <div class="na-card-media-wrap">
+          <span class="loumoo-card-badge badge-pill-sale">Save 13.000 FCFA</span>
+          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('na_tobacco_vanille_10', 'Tobacco Vanille 30ml'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('na_tobacco_vanille_10') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('na_tobacco_vanille_10') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          </button>
+          <img src="./Assets/_processed/new_arrivals_10.jpg" alt="Tobacco Vanille Artisanal Extrait De Parfum" loading="lazy" class="na-card-img">
+          <div class="na-card-transition-fade"></div>
+        </div>
+        <div class="na-card-transition-line"></div>
+        <div class="loumoo-card-body na-card-body">
+          <div class="na-card-brand-row">
+            <span class="na-card-rating">★ 5.0</span>
+            <span class="na-card-store-label">L’Artisan Parfumeur · Yaoundé</span>
+          </div>
+          <h4 class="loumoo-card-title na-card-title">Tobacco Vanille 30ml</h4>
+          <div class="loumoo-card-tagline na-card-tagline">Madagascar vanilla blossoms, cedar & star anise.</div>
+          <div class="loumoo-card-bottom-row">
+            <div class="loumoo-card-pricing-block">
+              <span class="loumoo-card-price-prefix">From</span>
+              <div class="loumoo-card-price-main">
+                <span class="loumoo-card-price-val">35.000 FCFA</span>
+                <span class="loumoo-card-price-strike">48.000 FCFA</span>
+              </div>
+              <div class="loumoo-card-trust-pill">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <span>✓ Bastos Parfums: 46.000 FCFA</span>
+              </div>
+            </div>
+            <button class="loumoo-card-pill-btn" aria-label="Buy Tobacco Vanille 30ml">Buy now</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Item 11: Swarovski Crystal Infinity Teardrop Jewelry Set -->
+      <div onClick="{{ () => openProduct('na_infinity_necklace_11') }}" class="loumoo-media-card na-card" aria-label="View Crystal Infinity Parure Set">
+        <div class="na-card-media-wrap">
+          <span class="loumoo-card-badge badge-pill-new">Bridal Parure · CZ</span>
+          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('na_infinity_necklace_11', 'Crystal Infinity Parure'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('na_infinity_necklace_11') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('na_infinity_necklace_11') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          </button>
+          <img src="./Assets/_processed/new_arrivals_11.jpg" alt="Swarovski Crystal Infinity Teardrop Jewelry Set" loading="lazy" class="na-card-img">
+          <div class="na-card-transition-fade"></div>
+        </div>
+        <div class="na-card-transition-line"></div>
+        <div class="loumoo-card-body na-card-body">
+          <div class="na-card-brand-row">
+            <span class="na-card-rating">★ 4.9</span>
+            <span class="na-card-store-label">Prestige Bijoux · Bonapriso</span>
+          </div>
+          <h4 class="loumoo-card-title na-card-title">Crystal Infinity Parure</h4>
+          <div class="loumoo-card-tagline na-card-tagline">Rhodium-plated infinity necklace & drop earrings.</div>
+          <div class="loumoo-card-bottom-row">
+            <div class="loumoo-card-pricing-block">
+              <span class="loumoo-card-price-prefix">From</span>
+              <div class="loumoo-card-price-main">
+                <span class="loumoo-card-price-val">55.000 FCFA</span>
+                <span class="loumoo-card-price-strike">75.000 FCFA</span>
+              </div>
+              <div class="loumoo-card-trust-pill">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <span>✓ Bijouterie Douala: 72.000 FCFA</span>
+              </div>
+            </div>
+            <button class="loumoo-card-pill-btn" aria-label="Buy Crystal Infinity Parure">Buy now</button>
           </div>
         </div>
       </div>

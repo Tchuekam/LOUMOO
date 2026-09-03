@@ -2026,21 +2026,220 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 .new-arrivals-rail::-webkit-scrollbar {
   display: none;
 }
+/* ══════════════════════════════════════════════════════════════════════════
+   NEW ARRIVALS 65-70% MEDIA-DOMINANT PRODUCT CARDS & TRANSITION SYSTEM
+   ══════════════════════════════════════════════════════════════════════════ */
 .new-arrivals-rail .loumoo-media-card,
 .new-arrivals-rail > div {
   flex: 0 0 280px !important;
   width: 280px !important;
   min-width: 280px !important;
+  height: 515px !important;
+  border-radius: 22px !important;
+  overflow: hidden !important;
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
   scroll-snap-align: start;
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.28s ease, border-color 0.28s ease;
+  position: relative;
+  cursor: pointer;
 }
+.new-arrivals-rail .loumoo-media-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.1);
+  border-color: var(--color-neutral-300);
+}
+[data-theme="dark"] .new-arrivals-rail .loumoo-media-card {
+  background: #151824;
+  border-color: rgba(255, 255, 255, 0.09);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+}
+[data-theme="dark"] .new-arrivals-rail .loumoo-media-card:hover {
+  border-color: rgba(255, 255, 255, 0.22);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55);
+}
+
+/* 1. Media Section: Dominates exactly 67.0% of gridcard (345px / 515px = 67.0%) */
+.new-arrivals-rail .loumoo-card-media-cutout,
+.na-card-media-wrap {
+  position: relative;
+  width: 100%;
+  height: 345px !important;
+  flex: 0 0 345px !important;
+  padding: 0 !important;
+  aspect-ratio: auto !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+  background: #f8fafc;
+  border-radius: 21px 21px 0 0 !important;
+}
+[data-theme="dark"] .new-arrivals-rail .loumoo-card-media-cutout,
+[data-theme="dark"] .na-card-media-wrap {
+  background: #0f121a;
+}
+
+/* 2. Image: Centered, fills the grid area with rounded top borders */
+.new-arrivals-rail .loumoo-card-media-cutout img,
+.na-card-img {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+  display: block !important;
+  margin: 0 !important;
+  filter: none !important;
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+.new-arrivals-rail .loumoo-media-card:hover .loumoo-card-media-cutout img,
+.new-arrivals-rail .loumoo-media-card:hover .na-card-img {
+  transform: scale(1.045) !important;
+}
+
+/* 3. Transition Scrim & Line: smooth transition between product and description */
+.na-card-transition-fade {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 28px;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.04) 40%, var(--color-surface) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+[data-theme="dark"] .na-card-transition-fade {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.25) 40%, #151824 100%);
+}
+
+.na-card-transition-line {
+  position: relative;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, var(--color-divider) 15%, var(--color-divider) 85%, transparent 100%);
+  z-index: 2;
+  flex-shrink: 0;
+}
+
+/* 4. Description Area (takes remaining 33% = 170px) */
+.new-arrivals-rail .loumoo-card-body,
+.na-card-body {
+  padding: 12px 14px 14px !important;
+  flex: 1 1 auto !important;
+  min-height: 165px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  background: var(--color-surface);
+  position: relative;
+  z-index: 2;
+  overflow: visible !important;
+  gap: 0 !important;
+}
+[data-theme="dark"] .new-arrivals-rail .loumoo-card-body,
+[data-theme="dark"] .na-card-body {
+  background: #151824;
+}
+
+.na-card-brand-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 2px;
+  font: 700 11px/1.2 var(--font-heading);
+}
+.na-card-rating {
+  color: #f59e0b;
+  flex-shrink: 0;
+}
+.na-card-store-label {
+  color: var(--color-text-tertiary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.new-arrivals-rail .loumoo-card-title,
+.na-card-title {
+  margin: 0 0 2px !important;
+  font: 800 14.5px/1.25 var(--font-heading) !important;
+  letter-spacing: -0.015em !important;
+  color: var(--color-text) !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  display: block !important;
+}
+
+.new-arrivals-rail .loumoo-card-tagline,
+.na-card-tagline {
+  font: 400 11.5px/1.3 var(--font-body) !important;
+  color: var(--color-text-secondary) !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  margin: 0 0 6px !important;
+  display: block !important;
+}
+
+.new-arrivals-rail .loumoo-card-bottom-row {
+  margin-top: auto !important;
+  padding-top: 4px !important;
+}
+
+.new-arrivals-rail .loumoo-card-trust-pill {
+  margin-top: 3px !important;
+  font-size: 10px !important;
+  padding: 2px 6px !important;
+  white-space: nowrap !important;
+  max-width: 175px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+/* Mobile Responsiveness (<= 640px) */
 @media (max-width: 640px) {
   .new-arrivals-rail .loumoo-media-card,
   .new-arrivals-rail > div {
     flex: 0 0 240px !important;
     width: 240px !important;
     min-width: 240px !important;
+    height: 440px !important;
+    border-radius: 18px !important;
+  }
+  .new-arrivals-rail .loumoo-card-media-cutout,
+  .na-card-media-wrap {
+    height: 295px !important;
+    flex: 0 0 295px !important;
+    border-radius: 17px 17px 0 0 !important;
+  }
+  .new-arrivals-rail .loumoo-card-body,
+  .na-card-body {
+    padding: 10px 12px 12px !important;
+    min-height: 140px !important;
+  }
+  .new-arrivals-rail .loumoo-card-title,
+  .na-card-title {
+    font-size: 13.5px !important;
+  }
+  .new-arrivals-rail .loumoo-card-tagline,
+  .na-card-tagline {
+    font-size: 11px !important;
+    margin-bottom: 4px !important;
+  }
+  .new-arrivals-rail .loumoo-card-trust-pill {
+    max-width: 125px !important;
+    font-size: 9px !important;
+    padding: 1.5px 4px !important;
   }
 }
+
 
 .product-card-elevated, .loumoo-media-card {
   background: var(--color-surface);
@@ -5021,6 +5220,314 @@ function getClerk() {
 }
 
 const PRODUCTS_DATA = {
+  'na_double_monk_01': {
+    id: 'na_double_monk_01',
+    title: 'Armonía Glossy Black Double-Monk Leather Shoes',
+    brand: 'Armonía Milano',
+    category: 'fashion',
+    categoryLabel: 'Men’s Luxury Footwear',
+    conditionLabel: 'Handcrafted · Box Calfskin',
+    fulfillmentLabel: 'Douala & Yaoundé Express 24h',
+    badge: 'LUXURY DERBY',
+    rating: '4.9',
+    reviewCount: 42,
+    soldCount: 38,
+    price: 'XAF 85 000',
+    salePrice: 'XAF 115 000',
+    storeName: 'Armonía Milano Boutique',
+    storeCity: 'Bonapriso, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/_processed/new_arrivals_01.jpg',
+    images: ['./Assets/_processed/new_arrivals_01.jpg'],
+    attributes: [
+      { key: 'Material', val: 'Full-Grain Italian Box Calfskin Leather' },
+      { key: 'Hardware', val: 'Polished Dual Gold Buckles' },
+      { key: 'Construction', val: 'Blake-Stitched Leather Outsole' },
+      { key: 'Origin', val: 'Handmade in Milan, Italy' }
+    ],
+    description: 'Elevate your boardroom and evening presence with the Armonía Double-Monk Shoes. Cut from mirror-finish black Italian box calfskin with handcrafted brogue perforations on the toe cap. Finished with gold-tone dual buckle hardware and a durable Goodyear welted leather sole.'
+  },
+  'na_danbaoly_bag_02': {
+    id: 'na_danbaoly_bag_02',
+    title: 'Danbaoly Crimson Red Bow-Tie Structured Handbag',
+    brand: 'Danbaoly',
+    category: 'fashion',
+    categoryLabel: 'Women’s Designer Bags',
+    conditionLabel: 'Brand New · Dust Bag Included',
+    fulfillmentLabel: 'Nationwide Delivery',
+    badge: 'TRENDING LUXURY',
+    rating: '4.8',
+    reviewCount: 67,
+    soldCount: 112,
+    price: 'XAF 42 000',
+    salePrice: 'XAF 58 000',
+    storeName: 'Maison Danbaoly',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.8',
+    storeVerified: true,
+    coverImage: './Assets/_processed/new_arrivals_02.jpg',
+    images: ['./Assets/_processed/new_arrivals_02.jpg'],
+    attributes: [
+      { key: 'Material', val: 'Pebbled Calfskin Composite' },
+      { key: 'Accents', val: 'Structured Bow-Tie & 24K Star Charm' },
+      { key: 'Closure', val: 'Top Secure Zip with Dual Compartments' },
+      { key: 'Strap', val: 'Detachable Adjustable Crossbody Strap' }
+    ],
+    description: 'A striking statement of femininity and poise, the Danbaoly Crimson Tote features rich textured red leather, sculpted top handles, a signature bow-tie facade, and polished gold star pendant.'
+  },
+  'na_pedro_backpack_03': {
+    id: 'na_pedro_backpack_03',
+    title: 'Pedro Tri-Tone Heritage Urban Commuter Rucksack',
+    brand: 'Pedro Official',
+    category: 'fashion',
+    categoryLabel: 'Designer Backpacks & Rucksacks',
+    conditionLabel: 'Limited Release · Factory Sealed',
+    fulfillmentLabel: 'Same-Day Dispatch',
+    badge: 'LIMITED EDITION',
+    rating: '4.9',
+    reviewCount: 53,
+    soldCount: 41,
+    price: 'XAF 68 000',
+    salePrice: 'XAF 88 000',
+    storeName: 'Pedro Flagship Cameroon',
+    storeCity: 'Bastos, Yaoundé',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/_processed/new_arrivals_03.jpg',
+    images: ['./Assets/_processed/new_arrivals_03.jpg'],
+    attributes: [
+      { key: 'Palette', val: 'Ivory White, Cognac Tan & Sky Blue' },
+      { key: 'Capacity', val: '18L (Padded 15.6” Laptop Sleeve)' },
+      { key: 'Closure', val: 'Drawstring & Dual Magnetic Buckles' },
+      { key: 'Exterior', val: 'Dual Gusseted Quick-Access Pockets' }
+    ],
+    description: 'Engineered for modern creative professionals, the Pedro Tri-Tone Rucksack blends retro heritage craftsmanship with contemporary ergonomics. Fits up to 16” MacBook Pro with ergonomic ventilated back padding.'
+  },
+  'na_boat_speaker_04': {
+    id: 'na_boat_speaker_04',
+    title: 'boAt Stone 1400 Crimson Rugged 360° Speaker',
+    brand: 'boAt Audio',
+    category: 'electronics',
+    categoryLabel: 'Portable Bluetooth Audio',
+    conditionLabel: 'Brand New · Official 1-Year Warranty',
+    fulfillmentLabel: 'Express Express Douala / Yaoundé',
+    badge: '70W BOOMING AUDIO',
+    rating: '4.9',
+    reviewCount: 124,
+    soldCount: 189,
+    price: 'XAF 45 000',
+    salePrice: 'XAF 60 000',
+    storeName: 'SoundWave Electronics',
+    storeCity: 'Douala Grand Mall',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/_processed/new_arrivals_04.jpg',
+    images: ['./Assets/_processed/new_arrivals_04.jpg'],
+    attributes: [
+      { key: 'Output', val: '70W RMS Dynamic Stereo Drivers' },
+      { key: 'Waterproof', val: 'IPX7 Rugged Waterproof & Dustproof' },
+      { key: 'Battery', val: '18 Hours Continuous Playtime' },
+      { key: 'Lighting', val: 'Dynamic Ambient RGB Passive Radiators' }
+    ],
+    description: 'Unleash thunderous audio with the boAt Stone 1400. Featuring 70W dual drivers, twin passive bass radiators with pulsating RGB rings, and IPX7 rugged waterproof armor built for indoor studios and outdoor gatherings in Cameroon.'
+  },
+  'na_pixel_10_pro_05': {
+    id: 'na_pixel_10_pro_05',
+    title: 'Google Pixel 10 Pro 5G (Titanium Grey, 256GB)',
+    brand: 'Google',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: 'Brand New · Factory Unlocked',
+    fulfillmentLabel: 'Free Insured Express Courier',
+    badge: 'TENSOR G5 SILICON',
+    rating: '5.0',
+    reviewCount: 38,
+    soldCount: 22,
+    price: 'XAF 650 000',
+    salePrice: 'XAF 740 000',
+    storeName: 'Pixel Hub Cameroon',
+    storeCity: 'Akwa, Douala',
+    storeRating: '5.0',
+    storeVerified: true,
+    coverImage: './Assets/_processed/new_arrivals_05.jpg',
+    images: ['./Assets/_processed/new_arrivals_05.jpg'],
+    attributes: [
+      { key: 'Processor', val: 'Google Tensor G5 (3nm Next-Gen Silicon)' },
+      { key: 'Display', val: '6.7” Super Actua OLED 120Hz LTPO' },
+      { key: 'Camera', val: '50MP Studio Triple Array + 5X Telephoto' },
+      { key: 'Battery', val: '5050 mAh with 45W Fast Charging' }
+    ],
+    description: 'The pinnacle of Google computational intelligence. Powered by the groundbreaking 3nm Tensor G5 chip with native on-device Gemini Nano, unmatched Pro camera zoom, and sculpted aeronautical-grade titanium framing.'
+  },
+  'na_amina_muaddi_06': {
+    id: 'na_amina_muaddi_06',
+    title: 'Amina Muaddi Sunburst Orange Pumps & Quilted Bag Set',
+    brand: 'Amina Muaddi Paris',
+    category: 'fashion',
+    categoryLabel: 'Haute Couture Sets',
+    conditionLabel: 'Boutique Exclusive · Dust Bags & Box',
+    fulfillmentLabel: 'White Glove Concierge Delivery',
+    badge: 'CRYSTAL SUNBURST',
+    rating: '5.0',
+    reviewCount: 29,
+    soldCount: 15,
+    price: 'XAF 125 000',
+    salePrice: 'XAF 165 000',
+    storeName: 'Bella Donna Boutique',
+    storeCity: 'Bonanjo, Douala',
+    storeRating: '5.0',
+    storeVerified: true,
+    coverImage: './Assets/_processed/new_arrivals_06.jpg',
+    images: ['./Assets/_processed/new_arrivals_06.jpg'],
+    attributes: [
+      { key: 'Set Includes', val: 'Orange Satin Pumps + Quilted Top Handle Bag' },
+      { key: 'Embellishment', val: 'Swarovski Crystal Sunburst Brooch' },
+      { key: 'Heel', val: 'Sculptural 95mm Flared Martini Heel' },
+      { key: 'Origin', val: 'Artisan Crafted in Italy' }
+    ],
+    description: 'An iconic runway ensemble. Radiating vibrant mandarin orange duchess satin, anchored by Amina Muaddi’s signature crystal sunburst buckle and architectural flared martini heel, accompanied by a matching cannage-quilted handbag.'
+  },
+  'na_noire_birkin_07': {
+    id: 'na_noire_birkin_07',
+    title: 'NOIRE Matte Crocodile Birkin Luxury Top-Handle Handbag',
+    brand: 'NOIRE Haute Maroquinerie',
+    category: 'fashion',
+    categoryLabel: 'Ultra-Luxury Leather Goods',
+    conditionLabel: 'Atelier Edition · Clochette & Padlock',
+    fulfillmentLabel: 'Armored Escrow Courier Delivery',
+    badge: 'CROCO EMBOSSED',
+    rating: '5.0',
+    reviewCount: 17,
+    soldCount: 9,
+    price: 'XAF 195 000',
+    salePrice: 'XAF 260 000',
+    storeName: 'NOIRE Atelier Cameroon',
+    storeCity: 'Bastos, Yaoundé',
+    storeRating: '5.0',
+    storeVerified: true,
+    coverImage: './Assets/_processed/new_arrivals_07.jpg',
+    images: ['./Assets/_processed/new_arrivals_07.jpg'],
+    attributes: [
+      { key: 'Leather', val: 'Exotic Embossed Matte Porosus Leather' },
+      { key: 'Hardware', val: '24K Brushed Gold Plated Turn-Lock' },
+      { key: 'Dimensions', val: '30cm Width x 22cm Height x 16cm Depth' },
+      { key: 'Interior', val: 'Full Chevre Goatskin Lining with Zip Pocket' }
+    ],
+    description: 'The epitome of high-fashion prestige. The NOIRE 30 features exotic matte alligator grain in midnight black, polished 24K gold hardware with clochette and lock keys, and master artisan saddle stitching.'
+  },
+  'na_bigtree_heels_08': {
+    id: 'na_bigtree_heels_08',
+    title: 'Bigtree Emerald Alligator Patent 10cm Stiletto Pumps',
+    brand: 'Bigtree Shoes',
+    category: 'fashion',
+    categoryLabel: 'Women’s Luxury Heels',
+    conditionLabel: 'Brand New · Official Shoe Box',
+    fulfillmentLabel: 'Same-Day Dispatch',
+    badge: '10CM STILETTO',
+    rating: '4.8',
+    reviewCount: 85,
+    soldCount: 140,
+    price: 'XAF 38 000',
+    salePrice: 'XAF 52 000',
+    storeName: 'Glamour Steps Douala',
+    storeCity: 'Douala Grand Mall',
+    storeRating: '4.8',
+    storeVerified: true,
+    coverImage: './Assets/_processed/new_arrivals_08.jpg',
+    images: ['./Assets/_processed/new_arrivals_08.jpg'],
+    attributes: [
+      { key: 'Upper', val: 'Glossy Emerald Croc-Embossed Patent Leather' },
+      { key: 'Heel Height', val: '10cm (3.9 Inches) Precision Stiletto' },
+      { key: 'Accent', val: 'Sculpted Gold Metal Square Buckle' },
+      { key: 'Insole', val: 'Memory Foam Padded Arch Support' }
+    ],
+    description: 'Captivate the room in deep emerald green. Featuring high-gloss alligator patent leather, a sleek pointed toe framed by a polished gold metallic square buckle, and a razor-sharp 10cm stiletto heel.'
+  },
+  'na_artisan_brogue_09': {
+    id: 'na_artisan_brogue_09',
+    title: 'Artisan Lug-Sole Wingtip Brogue Derby Shoes (Black)',
+    brand: 'Sartorial Douala',
+    category: 'fashion',
+    categoryLabel: 'Men’s Heritage Footwear',
+    conditionLabel: 'Artisan Box Calfskin · With Shoe Trees',
+    fulfillmentLabel: 'Express Delivery Across Cameroon',
+    badge: 'COMMANDO LUG SOLE',
+    rating: '4.9',
+    reviewCount: 46,
+    soldCount: 33,
+    price: 'XAF 75 000',
+    salePrice: 'XAF 98 000',
+    storeName: 'Sartorial Douala Atelier',
+    storeCity: 'Bali, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/_processed/new_arrivals_09.jpg',
+    images: ['./Assets/_processed/new_arrivals_09.jpg'],
+    attributes: [
+      { key: 'Leather', val: 'Full-Grain Box Calfskin with Medallion Brogue' },
+      { key: 'Sole', val: 'Lightweight Chunky Commando Lug Sole' },
+      { key: 'Welt', val: 'Storm-Welted 360° Water-Resistant Edging' },
+      { key: 'Lining', val: 'Vegetable-Tanned Cowhide Lining' }
+    ],
+    description: 'Modern rugged sophistication meets classic tailoring. Crafted from lustrous black box calfskin with wingtip broguing, set on an imposing yet featherweight chunky lug sole for maximum grip and comfort in any weather.'
+  },
+  'na_tobacco_vanille_10': {
+    id: 'na_tobacco_vanille_10',
+    title: 'Tobacco Vanille Artisanal Extrait De Parfum (30ml)',
+    brand: 'L’Artisan Parfumeur',
+    category: 'beauty',
+    categoryLabel: 'Niche Haute Parfumerie',
+    conditionLabel: 'Freshly Matured Batch · 30ml Atomizer',
+    fulfillmentLabel: 'Carefully Padded Same-Day Shipping',
+    badge: 'PURE EXTRAIT 30ML',
+    rating: '5.0',
+    reviewCount: 92,
+    soldCount: 165,
+    price: 'XAF 35 000',
+    salePrice: 'XAF 48 000',
+    storeName: 'L’Artisan Parfumeur Yaoundé',
+    storeCity: 'Bastos, Yaoundé',
+    storeRating: '5.0',
+    storeVerified: true,
+    coverImage: './Assets/_processed/new_arrivals_10.jpg',
+    images: ['./Assets/_processed/new_arrivals_10.jpg'],
+    attributes: [
+      { key: 'Concentration', val: 'Extrait De Parfum (35% Oil Concentration)' },
+      { key: 'Top Notes', val: 'Tobacco Leaf, Spiced Ginger, Star Anise' },
+      { key: 'Heart Notes', val: 'Tonka Bean, Tobacco Blossom, Vanilla, Cacao' },
+      { key: 'Base Notes', val: 'Dried Fruits, Woody Accord, Smoky Cedar' }
+    ],
+    description: 'An intoxicating, warm, and opulent olfactory journey. Featuring rare hand-harvested tobacco leaves steeped in rich Madagascar bourbon vanilla, sweet tonka beans, and smoky cedarwood. Delivers 16+ hours of projection.'
+  },
+  'na_infinity_necklace_11': {
+    id: 'na_infinity_necklace_11',
+    title: 'Swarovski Crystal Infinity Teardrop Necklace & Earrings Set',
+    brand: 'Prestige Bijoux',
+    category: 'fashion',
+    categoryLabel: 'Fine Bridal & Gala Jewelry',
+    conditionLabel: 'Brand New · Velvet Presentation Box',
+    fulfillmentLabel: 'Insured Escrow Courier Delivery',
+    badge: 'BRIDAL & GALA PARURE',
+    rating: '4.9',
+    reviewCount: 73,
+    soldCount: 54,
+    price: 'XAF 55 000',
+    salePrice: 'XAF 75 000',
+    storeName: 'Prestige Bijoux Bonapriso',
+    storeCity: 'Bonapriso, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/_processed/new_arrivals_11.jpg',
+    images: ['./Assets/_processed/new_arrivals_11.jpg'],
+    attributes: [
+      { key: 'Metal', val: 'Hypoallergenic Rhodium Plated Platinum Finish' },
+      { key: 'Gems', val: 'Precision-Cut Swarovski CZ Pave Crystals' },
+      { key: 'Closure', val: 'Secure Lobster Clasp with Extension Chain' },
+      { key: 'Set Includes', val: 'Teardrop Statement Necklace + Matching Drop Earrings' }
+    ],
+    description: 'Dazzle at weddings, galas, and celebrations with this royal crystal parure. Featuring cascading infinity teardrop loops pavé-set with brilliant-cut crystals that catch every ray of light, complete with matching earrings.'
+  },
   'insta360_x4': {
     id: 'insta360_x4',
     title: 'Insta360 X4 8K 360° Waterproof Action Camera',
