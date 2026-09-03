@@ -1,0 +1,48 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# LOUMOO — Netlify deployment configuration
+#
+# Frontend: the single-file app (Commerce App.dc.html) plus its Assets/src/_ds
+#           are assembled into public/ and served as static files from the CDN.
+# API:      the Express server (server/index.js) is wrapped by serverless-http in
+#           netlify/functions/api.js; /api/* is rewritten to that function so the
+#           browser talks to the API on the same origin.
+#
+# Secrets (Supabase keys, JWT secret, etc.) are configured as site environment
+# variables in Netlify — never in this file, never in git.
+# ─────────────────────────────────────────────────────────────────────────────
+
+[build]
+  command = "bash scripts/assemble_public.sh"
+  publish = "public"
+  functions = "netlify/functions"
+
+[build.environment]
+  NODE_VERSION = "22"
+  # Skip Netlify's secrets scanner tripping on the public Supabase anon key,
+  # which is a JWT by design and safe to expose to the browser.
+  SECRETS_SCAN_OMIT_KEYS = "SUPABASE_ANON_KEY,NEXT_PUBLIC_SUPABASE_ANON_KEY,SUPABASE_PUBLISHABLE_KEY,CLERK_PUBLISHABLE_KEY,NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,POSTHOG_API_KEY,SENTRY_DSN"
+
+[functions]
+  node_bundler = "esbuild"
+  # dataLoader.js reads these datasets as text via process.cwd() (not require), so
+  # esbuild does not trace them. Ship them alongside the bundle at their repo path.
+  included_files = ["src/data/**"]
+
+# API → serverless-wrapped Express. Must come before the SPA fallback.
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+
+# SPA fallback: any path that is not a real static file serves the app shell.
+# (Non-forced 200 rewrites yield to existing files, so /Assets/... etc. still
+# resolve to the real media.)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  for = "/Assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
