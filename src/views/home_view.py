@@ -228,25 +228,32 @@ def get_home_view():
       </button>
     </div>
 
-    <!-- ── 04: NEW ARRIVALS PRODUCT RAIL / GRID ── -->
-    <div class="editorial-section-header">
-      <h2 class="editorial-section-title">New Arrivals</h2>
-      <button onClick="{{ on.bestpicks }}" class="editorial-see-all">See all →</button>
+    <!-- ── 04: NEW ARRIVALS PRODUCT RAIL (Single Line Horizontal Scroll) ── -->
+    <div class="editorial-section-header" style="display:flex;align-items:center;justify-content:space-between;padding:16px 0 12px">
+      <div>
+        <h2 class="editorial-section-title">New Arrivals</h2>
+        <div style="font:500 13px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Freshly dropped tech, luxury & lifestyle directly from verified Cameroonian sellers</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <button onClick="{{ on.bestpicks }}" class="editorial-see-all">See all →</button>
+        <button onClick="{{ () => scrollRail('newArrivalsRail', -320) }}" class="loumoo-rail-nav-btn" aria-label="Previous items">‹</button>
+        <button onClick="{{ () => scrollRail('newArrivalsRail', 320) }}" class="loumoo-rail-nav-btn" aria-label="Next items">›</button>
+      </div>
     </div>
 
-    <div class="new-arrivals-rail" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:20px;margin-bottom:32px">
-      <!-- Item 1: Insta360 X4 / X6 -->
-      <div onClick="{{ () => openProduct('insta360_x4') }}" class="loumoo-media-card" aria-label="View Insta360 X4 8K 360 Action Camera">
+    <div id="newArrivalsRail" class="new-arrivals-rail" style="display:flex;flex-direction:row;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;gap:18px;margin-bottom:32px;padding:4px 4px 16px 4px">
+      <!-- Item 1: DJI Osmo Pocket 3 -->
+      <div onClick="{{ () => openProduct('insta360_x4') }}" class="loumoo-media-card" aria-label="View DJI Osmo Pocket 3 Creator Combo">
         <div class="loumoo-card-media-cutout">
-          <span class="loumoo-card-badge badge-pill-sale">Save up to 81.000 FCFA</span>
-          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('insta360_x4', 'Insta360 X4'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
+          <span class="loumoo-card-badge badge-pill-sale">Save up to 55.000 FCFA</span>
+          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('insta360_x4', 'DJI Osmo Pocket 3'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('insta360_x4') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('insta360_x4') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
           </button>
           <img src="./Assets/acessories&gadgets/DJI%20Osmo%20Pocket%203.jfif" alt="DJI Osmo Pocket 3 Creator Combo">
         </div>
         <div class="loumoo-card-body">
-          <h4 class="loumoo-card-title">Insta360 X4 8K 360°</h4>
-          <div class="loumoo-card-tagline">Magic in action. Unstoppable 8K 360°.</div>
+          <h4 class="loumoo-card-title">DJI Osmo Pocket 3</h4>
+          <div class="loumoo-card-tagline">1" CMOS 4K 120fps Pocket Gimbal.</div>
           <div class="loumoo-card-rating-row">
             <span>★ 4.9</span>
             <span class="loumoo-card-rating-text">(48) · Official Store</span>
@@ -255,8 +262,8 @@ def get_home_view():
             <div class="loumoo-card-pricing-block">
               <span class="loumoo-card-price-prefix">From</span>
               <div class="loumoo-card-price-main">
-                <span class="loumoo-card-price-val">499.000 FCFA</span>
-                <span class="loumoo-card-price-strike">580.000 FCFA</span>
+                <span class="loumoo-card-price-val">485.000 FCFA</span>
+                <span class="loumoo-card-price-strike">540.000 FCFA</span>
               </div>
               <div class="loumoo-card-trust-pill">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
@@ -275,7 +282,7 @@ def get_home_view():
           <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('iphone_15_pro', 'iPhone 15 Pro Max'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('iphone_15_pro') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('iphone_15_pro') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
           </button>
-          <img src="./Assets/telephone&PC/iphone%2015%20Pro%20Max%20-%20Best%20Features%20in%202025.jfif" alt="iPhone 15 Pro Max 256GB">
+          <img src="./Assets/telephone%26PC/iphone%2015%20Pro%20Max%20-%20Best%20Features%20in%202025.jfif" alt="iPhone 15 Pro Max 256GB">
         </div>
         <div class="loumoo-card-body">
           <h4 class="loumoo-card-title">iPhone 15 Pro Max</h4>
@@ -288,12 +295,12 @@ def get_home_view():
             <div class="loumoo-card-pricing-block">
               <span class="loumoo-card-price-prefix">From</span>
               <div class="loumoo-card-price-main">
-                <span class="loumoo-card-price-val">1.150.000 FCFA</span>
-                <span class="loumoo-card-price-strike">1.250.000 FCFA</span>
+                <span class="loumoo-card-price-val">795.000 FCFA</span>
+                <span class="loumoo-card-price-strike">890.000 FCFA</span>
               </div>
               <div class="loumoo-card-trust-pill">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                <span>✓ Escrow options available</span>
+                <span>✓ Glotelho: 890.000 FCFA</span>
               </div>
             </div>
             <button class="loumoo-card-pill-btn" aria-label="Buy iPhone 15 Pro Max">Buy now</button>
@@ -301,28 +308,28 @@ def get_home_view():
         </div>
       </div>
 
-      <!-- Item 3: Sony WH-1000XM5 -->
-      <div onClick="{{ () => openProduct('sony_xm5') }}" class="loumoo-media-card" aria-label="View Sony WH-1000XM5 Wireless Headphones">
+      <!-- Item 3: Apple AirPods Max -->
+      <div onClick="{{ () => openProduct('sony_xm5') }}" class="loumoo-media-card" aria-label="View Apple AirPods Max">
         <div class="loumoo-card-media-cutout">
-          <span class="loumoo-card-badge badge-pill-sale">Save 35.000 FCFA</span>
-          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('sony_xm5', 'Sony WH-1000XM5'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
+          <span class="loumoo-card-badge badge-pill-sale">Save 55.000 FCFA</span>
+          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('sony_xm5', 'Apple AirPods Max'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('sony_xm5') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('sony_xm5') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
           </button>
           <img src="./Assets/_processed/acessories_gadgets_apple_air_pod_max_airpodmax_apple_keysho_16.png" alt="Apple AirPods Max Studio ANC">
         </div>
         <div class="loumoo-card-body">
-          <h4 class="loumoo-card-title">Sony WH-1000XM5</h4>
-          <div class="loumoo-card-tagline">Industry-leading noise cancellation master.</div>
+          <h4 class="loumoo-card-title">Apple AirPods Max</h4>
+          <div class="loumoo-card-tagline">Computational Studio Hi-Fi ANC.</div>
           <div class="loumoo-card-rating-row">
-            <span>★ 4.8</span>
+            <span>★ 4.9</span>
             <span class="loumoo-card-rating-text">(89) · Verified Sound</span>
           </div>
           <div class="loumoo-card-bottom-row">
             <div class="loumoo-card-pricing-block">
               <span class="loumoo-card-price-prefix">From</span>
               <div class="loumoo-card-price-main">
-                <span class="loumoo-card-price-val">215.000 FCFA</span>
-                <span class="loumoo-card-price-strike">250.000 FCFA</span>
+                <span class="loumoo-card-price-val">395.000 FCFA</span>
+                <span class="loumoo-card-price-strike">450.000 FCFA</span>
               </div>
               <div class="loumoo-card-trust-pill">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
@@ -334,18 +341,18 @@ def get_home_view():
         </div>
       </div>
 
-      <!-- Item 4: Apple Watch Series 9 -->
-      <div onClick="{{ () => openProduct('apple_watch_s9') }}" class="loumoo-media-card" aria-label="View Apple Watch Series 9 GPS 45mm">
+      <!-- Item 4: Rolex Sea-Dweller 43 -->
+      <div onClick="{{ () => openProduct('apple_watch_s9') }}" class="loumoo-media-card" aria-label="View Rolex Sea-Dweller 43mm">
         <div class="loumoo-card-media-cutout">
-          <span class="loumoo-card-badge badge-pill-new">New · Series 9</span>
-          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('apple_watch_s9', 'Apple Watch Series 9'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
+          <span class="loumoo-card-badge badge-pill-new">Luxury Diver</span>
+          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('apple_watch_s9', 'Rolex Sea-Dweller'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('apple_watch_s9') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('apple_watch_s9') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
           </button>
           <img src="./Assets/watch/Classic%20Rolex%20SeaDweller.jfif" alt="Rolex Sea-Dweller 43mm Oystersteel">
         </div>
         <div class="loumoo-card-body">
-          <h4 class="loumoo-card-title">Apple Watch Series 9</h4>
-          <div class="loumoo-card-tagline">Smarter. Brighter. Mightier.</div>
+          <h4 class="loumoo-card-title">Rolex Sea-Dweller 43</h4>
+          <div class="loumoo-card-tagline">Oystersteel Ceramic Diver · Akwa.</div>
           <div class="loumoo-card-rating-row">
             <span>★ 4.9</span>
             <span class="loumoo-card-rating-text">(64) · Verified Seller</span>
@@ -354,8 +361,8 @@ def get_home_view():
             <div class="loumoo-card-pricing-block">
               <span class="loumoo-card-price-prefix">From</span>
               <div class="loumoo-card-price-main">
-                <span class="loumoo-card-price-val">265.000 FCFA</span>
-                <span class="loumoo-card-price-strike">290.000 FCFA</span>
+                <span class="loumoo-card-price-val">7.900.000 FCFA</span>
+                <span class="loumoo-card-price-strike">8.500.000 FCFA</span>
               </div>
               <div class="loumoo-card-trust-pill">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
@@ -368,17 +375,17 @@ def get_home_view():
       </div>
 
       <!-- Item 5: MacBook Air M2 -->
-      <div onClick="{{ () => openProduct('macbook_m2') }}" class="loumoo-media-card" aria-label="View MacBook Air M2 15-inch">
+      <div onClick="{{ () => openProduct('macbook_m2') }}" class="loumoo-media-card" aria-label="View MacBook Air M2 13-inch">
         <div class="loumoo-card-media-cutout">
-          <span class="loumoo-card-badge badge-pill-sale">Save 55.000 FCFA</span>
+          <span class="loumoo-card-badge badge-pill-sale">Save 75.000 FCFA</span>
           <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('macbook_m2', 'MacBook Air M2'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('macbook_m2') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('macbook_m2') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
           </button>
-          <img src="./Assets/telephone&PC/Macbook.jfif" alt="MacBook Air M2 13-inch Space Grey">
+          <img src="./Assets/telephone%26PC/Macbook.jfif" alt="MacBook Air M2 13-inch Space Grey">
         </div>
         <div class="loumoo-card-body">
-          <h4 class="loumoo-card-title">MacBook Air M2 15"</h4>
-          <div class="loumoo-card-tagline">Impressively big. Impossibly thin.</div>
+          <h4 class="loumoo-card-title">MacBook Air 13" M2</h4>
+          <div class="loumoo-card-tagline">Apple M2 · Liquid Retina · 18h Battery.</div>
           <div class="loumoo-card-rating-row">
             <span>★ 4.9</span>
             <span class="loumoo-card-rating-text">(78) · Apple Store</span>
@@ -388,7 +395,7 @@ def get_home_view():
               <span class="loumoo-card-price-prefix">From</span>
               <div class="loumoo-card-price-main">
                 <span class="loumoo-card-price-val">745.000 FCFA</span>
-                <span class="loumoo-card-price-strike">800.000 FCFA</span>
+                <span class="loumoo-card-price-strike">820.000 FCFA</span>
               </div>
               <div class="loumoo-card-trust-pill">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
@@ -400,28 +407,28 @@ def get_home_view():
         </div>
       </div>
 
-      <!-- Item 6: Nike Air Force 1 -->
-      <div onClick="{{ () => openProduct('nike_air_force_1') }}" class="loumoo-media-card" aria-label="View Nike Air Force 1 07 White">
+      <!-- Item 6: ACOQOOS Cold Press Juicer -->
+      <div onClick="{{ () => openProduct('nike_air_force_1') }}" class="loumoo-media-card" aria-label="View ACOQOOS Cold Press Extractor">
         <div class="loumoo-card-media-cutout">
-          <span class="loumoo-card-badge badge-pill-new">Classic Edition</span>
-          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('nike_air_force_1', 'Nike Air Force 1'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
+          <span class="loumoo-card-badge badge-pill-new">Kitchen Pro</span>
+          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('nike_air_force_1', 'ACOQOOS Juicer'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('nike_air_force_1') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('nike_air_force_1') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
           </button>
           <img src="./Assets/ElectroMenage/ACOQOOS%20Juicer%20Machines,%20Juicers%20Whole%20Fruit%20and%E2%80%A6.jfif" alt="ACOQOOS Cold Press Extractor Machine">
         </div>
         <div class="loumoo-card-body">
-          <h4 class="loumoo-card-title">Nike Air Force 1 '07</h4>
-          <div class="loumoo-card-tagline">Iconic hardwood style for the street.</div>
+          <h4 class="loumoo-card-title">ACOQOOS Slow Juicer</h4>
+          <div class="loumoo-card-tagline">Whole Fruit Cold Masticating Extractor.</div>
           <div class="loumoo-card-rating-row">
             <span>★ 4.8</span>
-            <span class="loumoo-card-rating-text">(142) · Verified Sneaker</span>
+            <span class="loumoo-card-rating-text">(142) · Verified Electro</span>
           </div>
           <div class="loumoo-card-bottom-row">
             <div class="loumoo-card-pricing-block">
               <span class="loumoo-card-price-prefix">From</span>
               <div class="loumoo-card-price-main">
-                <span class="loumoo-card-price-val">65.000 FCFA</span>
-                <span class="loumoo-card-price-strike">75.000 FCFA</span>
+                <span class="loumoo-card-price-val">34.500 FCFA</span>
+                <span class="loumoo-card-price-strike">45.000 FCFA</span>
               </div>
               <div class="loumoo-card-trust-pill">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>

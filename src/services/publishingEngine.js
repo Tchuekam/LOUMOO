@@ -1696,9 +1696,13 @@
     card.chips = chips.slice(0, 4).map(toChip);
 
     var meta = [];
+    // Stock is only reported once the seller has actually entered a quantity.
+    // Announcing "Out of stock" on an untouched draft describes the default,
+    // not a decision they have made.
     if (v.trackInventory) {
       var qty = toNumber(v.quantity);
-      meta.push(qty ? qty + ' in stock' : 'Out of stock');
+      if (qty) meta.push(qty + ' in stock');
+      else if (draft.touched && draft.touched.quantity) meta.push('Out of stock');
     }
     if (card.storeCity) meta.push(card.storeCity);
     if (toNumber(v.minOrderQuantity) > 1) meta.push('Min ' + toNumber(v.minOrderQuantity));
