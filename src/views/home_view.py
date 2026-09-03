@@ -1432,11 +1432,10 @@ def get_home_view():
         <button onClick="{{ openAllCategories }}" class="africa-banner-btn">Start exploring →</button>
       </div>
       <div class="africa-banner-right">
-        <div class="africa-banner-img-frame" style="position:relative;width:100%;max-width:360px;height:240px;border-radius:20px;overflow:hidden;box-shadow:0 12px 32px rgba(0,0,0,0.14);border:1px solid rgba(0,0,0,0.06);margin-left:auto">
+        <div class="africa-banner-img-frame" style="position:relative;width:100%;max-width:380px;height:250px;border-radius:20px;overflow:hidden;background:#f1ebef;margin-left:auto">
           <img src="./Assets/fashion/THE%20UNPUNISHABLE%20WOMAN.jfif" alt="THE UNPUNISHABLE WOMAN — LOUMOO African Fashion" style="width:100%;height:100%;object-fit:cover;object-position:center 20%;display:block;transition:transform 0.4s ease">
-          <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0) 55%, rgba(0,0,0,0.55) 100%);pointer-events:none"></div>
           <div style="position:absolute;bottom:12px;left:14px;display:flex;align-items:center;gap:6px">
-            <span style="background:rgba(0,0,0,0.65);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#ffffff;font:800 11px/1 var(--font-heading);padding:5px 12px;border-radius:9999px;letter-spacing:0.04em;text-transform:uppercase">The Unpunishable Woman</span>
+            <span style="background:rgba(26,21,35,0.75);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#ffffff;font:800 11px/1 var(--font-heading);padding:5px 12px;border-radius:9999px;letter-spacing:0.04em;text-transform:uppercase">The Unpunishable Woman</span>
           </div>
         </div>
       </div>

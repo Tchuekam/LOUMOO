@@ -3046,8 +3046,8 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 
 /* LOUMOO African Marketplace Editorial Banner */
 .marketplace-africa-banner {
-  background: var(--color-surface);
-  border: 1px solid var(--color-divider);
+  background: #f1ebef !important;
+  border: 1px solid rgba(215, 202, 212, 0.6) !important;
   border-radius: 24px;
   padding: 28px 28px 24px;
   margin-bottom: 32px;
@@ -3055,7 +3055,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   grid-template-columns: 1.2fr 1fr;
   align-items: center;
   gap: 20px;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 4px 20px rgba(110, 85, 105, 0.08);
   overflow: hidden;
   position: relative;
 }
@@ -3067,44 +3067,47 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   }
 }
 [data-theme="dark"] .marketplace-africa-banner {
-  background: #141722;
+  background: #f1ebef !important;
+  border-color: rgba(215, 202, 212, 0.6) !important;
 }
 
-.africa-banner-eyebrow {
+.marketplace-africa-banner .africa-banner-eyebrow {
   font: 800 12px/1 var(--font-heading);
   letter-spacing: 0.14em;
-  color: var(--color-text);
+  color: #a0421e !important;
   text-transform: uppercase;
   margin-bottom: 6px;
 }
-.africa-banner-heading {
+.marketplace-africa-banner .africa-banner-heading {
   font: 800 clamp(24px, 3.5vw, 34px)/1.1 var(--font-heading);
   letter-spacing: -0.03em;
-  color: var(--color-text);
+  color: #1a1523 !important;
   margin: 0 0 8px;
 }
-.africa-banner-sub {
-  font: 500 13.5px/1.3 var(--font-body);
-  color: var(--color-text-secondary);
+.marketplace-africa-banner .africa-banner-sub {
+  font: 500 13.5px/1.35 var(--font-body);
+  color: #5c4f5a !important;
   margin: 0 0 18px;
 }
-.africa-banner-btn {
+.marketplace-africa-banner .africa-banner-btn {
   height: 38px;
-  padding: 0 20px;
+  padding: 0 22px;
   border-radius: var(--radius-pill);
-  background: var(--color-text);
-  color: var(--color-surface);
+  background: #1a1523 !important;
+  color: #ffffff !important;
   border: none;
   font: 800 12.5px/1 var(--font-heading);
   letter-spacing: -0.01em;
   cursor: pointer;
-  transition: transform 0.18s ease;
+  transition: transform 0.18s ease, background 0.18s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 4px 12px rgba(26, 21, 35, 0.2);
 }
-.africa-banner-btn:hover {
+.marketplace-africa-banner .africa-banner-btn:hover {
   transform: scale(1.04);
+  background: #000000 !important;
 }
 .africa-banner-right {
   display: flex;
@@ -3112,14 +3115,13 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   justify-content: center;
 }
 .africa-banner-img-frame {
-  transition: transform 0.28s var(--ease-spring), box-shadow 0.28s ease;
+  transition: transform 0.28s var(--ease-spring);
 }
 .africa-banner-img-frame:hover {
   transform: translateY(-2px);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.22) !important;
 }
 .africa-banner-img-frame:hover img {
-  transform: scale(1.05);
+  transform: scale(1.04);
 }
 
 /* More to Explore Category Visual Tiles */
