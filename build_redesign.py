@@ -2217,32 +2217,12 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   background: #1a1e2a;
 }
 
-/* Lifestyle Video Grid */
+/* Lifestyle Video Grid & Mobile Rail */
 .lifestyle-video-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 14px;
   margin-bottom: 28px;
-}
-@media (max-width: 900px) {
-  .lifestyle-video-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-@media (max-width: 540px) {
-  .lifestyle-video-grid {
-    display: flex;
-    overflow-x: auto;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
-    gap: 12px;
-    margin-inline: -16px;
-    padding-inline: 16px;
-  }
-  .lifestyle-video-grid > button {
-    flex: 0 0 240px;
-    width: 240px;
-  }
 }
 
 .lifestyle-card {
@@ -2270,6 +2250,48 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 }
 .lifestyle-card:hover video {
   transform: scale(1.04);
+}
+
+/* Mobile & Tablet: Horizontal rail scroll + slightly bigger cards + NO Category Pill / Title / Subtitle */
+@media (max-width: 860px) {
+  .lifestyle-video-grid {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    gap: 14px;
+    margin-inline: -16px;
+    padding-inline: 16px;
+    padding-bottom: 8px;
+  }
+  .lifestyle-video-grid::-webkit-scrollbar {
+    display: none;
+  }
+  .lifestyle-video-grid .lifestyle-card {
+    flex: 0 0 290px !important;
+    width: 290px !important;
+    min-width: 290px !important;
+    aspect-ratio: 16 / 11 !important;
+    scroll-snap-align: start;
+    padding: 0 !important;
+  }
+  /* On mobile: Pure edge-to-edge video without overlays or text */
+  .lifestyle-card .lifestyle-card-pill,
+  .lifestyle-card .lifestyle-card-meta,
+  .lifestyle-card .lifestyle-card-scrim {
+    display: none !important;
+  }
+}
+@media (max-width: 480px) {
+  .lifestyle-video-grid .lifestyle-card {
+    flex: 0 0 82vw !important;
+    width: 82vw !important;
+    min-width: 82vw !important;
+    aspect-ratio: 16 / 11 !important;
+  }
 }
 
 /* ══════════════════════════════════════════════════════════════════════════

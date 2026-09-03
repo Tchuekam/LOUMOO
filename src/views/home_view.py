@@ -756,11 +756,11 @@ def get_home_view():
       <!-- 1. Party Decor Ideas -->
       <div onClick="{{ () => openVideoModal('Party Decor & Vibes', 'Polished birthday and celebration decor ideas for lifestyle creators', 'EVENT DECOR', './Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%2010%20Beautiful%20birthday%20party%20decor%20ideas%20that%20help%20you%20create%20a%20polished%20look%20with%20very%20simple%20and%20affordable%20details%20for%20creato.mp4') }}" data-hover-video="true" class="lifestyle-card" onmouseenter="const v=this.querySelector('video');if(v)v.play().catch(function(){});" onmouseleave="const v=this.querySelector('video');if(v){v.pause();v.currentTime=0;}" aria-label="Play Party Decor & Vibes video">
         <video src="./Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%2010%20Beautiful%20birthday%20party%20decor%20ideas%20that%20help%20you%20create%20a%20polished%20look%20with%20very%20simple%20and%20affordable%20details%20for%20creato.mp4" poster="./Assets/_processed/capturelife_party_decor_poster.jpg" muted loop playsinline preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;transition:transform 0.4s ease;pointer-events:none"></video>
-        <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.05) 45%, rgba(0,0,0,0.85) 100%);pointer-events:none;z-index:1"></div>
-        <div style="position:relative;z-index:2;display:flex;justify-content:flex-end">
+        <div class="lifestyle-card-scrim" style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.05) 45%, rgba(0,0,0,0.85) 100%);pointer-events:none;z-index:1"></div>
+        <div class="lifestyle-card-pill" style="position:relative;z-index:2;display:flex;justify-content:flex-end">
           <span style="font:700 9.5px/1 var(--font-heading);background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.25);color:#fff;padding:3px 8px;border-radius:var(--radius-pill);letter-spacing:0.04em">EVENT DECOR</span>
         </div>
-        <div style="position:relative;z-index:2">
+        <div class="lifestyle-card-meta" style="position:relative;z-index:2">
           <div style="font:800 13.5px/1.2 var(--font-heading);color:#ffffff;text-shadow:0 1px 4px rgba(0,0,0,0.8)">Party Decor Ideas</div>
           <div style="font:500 11px/1 var(--font-body);color:rgba(255,255,255,0.85);margin-top:3px;text-shadow:0 1px 3px rgba(0,0,0,0.8)">Polished Creator Details</div>
         </div>
@@ -769,11 +769,11 @@ def get_home_view():
       <!-- 2. Dreamy Hair Care -->
       <div onClick="{{ () => openVideoModal('Dreamy Hair Care', 'Natural curls and intentional hair care routines for everyday beauty', 'GLOW & BEAUTY', './Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%20Explore%20Dreamy%20curly%20hair%20care%20ideas%20for%20your%20next%20inspiration%20board%20designed%20for%20people%20who%20want%20results%20that%20look%20intentional.mp4') }}" data-hover-video="true" class="lifestyle-card" onmouseenter="const v=this.querySelector('video');if(v)v.play().catch(function(){});" onmouseleave="const v=this.querySelector('video');if(v){v.pause();v.currentTime=0;}" aria-label="Play Dreamy Hair Care video">
         <video src="./Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%20Explore%20Dreamy%20curly%20hair%20care%20ideas%20for%20your%20next%20inspiration%20board%20designed%20for%20people%20who%20want%20results%20that%20look%20intentional.mp4" poster="./Assets/_processed/capturelife_hair_care_poster.jpg" muted loop playsinline preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;transition:transform 0.4s ease;pointer-events:none"></video>
-        <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.05) 45%, rgba(0,0,0,0.85) 100%);pointer-events:none;z-index:1"></div>
-        <div style="position:relative;z-index:2;display:flex;justify-content:flex-end">
+        <div class="lifestyle-card-scrim" style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.05) 45%, rgba(0,0,0,0.85) 100%);pointer-events:none;z-index:1"></div>
+        <div class="lifestyle-card-pill" style="position:relative;z-index:2;display:flex;justify-content:flex-end">
           <span style="font:700 9.5px/1 var(--font-heading);background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.25);color:#fff;padding:3px 8px;border-radius:var(--radius-pill);letter-spacing:0.04em">GLOW & BEAUTY</span>
         </div>
-        <div style="position:relative;z-index:2">
+        <div class="lifestyle-card-meta" style="position:relative;z-index:2">
           <div style="font:800 13.5px/1.2 var(--font-heading);color:#ffffff;text-shadow:0 1px 4px rgba(0,0,0,0.8)">Dreamy Hair Care</div>
           <div style="font:500 11px/1 var(--font-body);color:rgba(255,255,255,0.85);margin-top:3px;text-shadow:0 1px 3px rgba(0,0,0,0.8)">Natural Texture & Styling</div>
         </div>
@@ -782,11 +782,11 @@ def get_home_view():
       <!-- 3. Daily Inspiration Notes -->
       <div onClick="{{ () => openVideoModal('Daily Inspiration Notes', 'Fresh mindful notes and journaling ideas to keep things grounded', 'CREATIVE NOTES', './Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%20Fresh%20democracy%20notes%20with%20charm%20and%20useful%20ideas%20for%20daily%20inspiration%20that%20keep%20things%20grounded-pin-id-857654322816019216.mp4') }}" data-hover-video="true" class="lifestyle-card" onmouseenter="const v=this.querySelector('video');if(v)v.play().catch(function(){});" onmouseleave="const v=this.querySelector('video');if(v){v.pause();v.currentTime=0;}" aria-label="Play Daily Inspiration Notes video">
         <video src="./Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%20Fresh%20democracy%20notes%20with%20charm%20and%20useful%20ideas%20for%20daily%20inspiration%20that%20keep%20things%20grounded-pin-id-857654322816019216.mp4" poster="./Assets/_processed/capturelife_creative_notes_poster.jpg" muted loop playsinline preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;transition:transform 0.4s ease;pointer-events:none"></video>
-        <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.05) 45%, rgba(0,0,0,0.85) 100%);pointer-events:none;z-index:1"></div>
-        <div style="position:relative;z-index:2;display:flex;justify-content:flex-end">
+        <div class="lifestyle-card-scrim" style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.05) 45%, rgba(0,0,0,0.85) 100%);pointer-events:none;z-index:1"></div>
+        <div class="lifestyle-card-pill" style="position:relative;z-index:2;display:flex;justify-content:flex-end">
           <span style="font:700 9.5px/1 var(--font-heading);background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.25);color:#fff;padding:3px 8px;border-radius:var(--radius-pill);letter-spacing:0.04em">CREATIVE NOTES</span>
         </div>
-        <div style="position:relative;z-index:2">
+        <div class="lifestyle-card-meta" style="position:relative;z-index:2">
           <div style="font:800 13.5px/1.2 var(--font-heading);color:#ffffff;text-shadow:0 1px 4px rgba(0,0,0,0.8)">Daily Inspiration Notes</div>
           <div style="font:500 11px/1 var(--font-body);color:rgba(255,255,255,0.85);margin-top:3px;text-shadow:0 1px 3px rgba(0,0,0,0.8)">Grounded Thoughts & Charm</div>
         </div>
@@ -795,11 +795,11 @@ def get_home_view():
       <!-- 4. Budget Desk Setup -->
       <div onClick="{{ () => openVideoModal('Budget Desk Setup', 'Budget-friendly office desk styling ideas and workspace inspiration', 'DESK STYLING', './Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%20Try%20Budget-friendly%20office%20desk%20styling%20for%20your%20next%20Pinterest%20save%20built%20around%20ideas%20that%20are%20easy%20to%20save%20and%20revisit%20later.mp4') }}" data-hover-video="true" class="lifestyle-card" onmouseenter="const v=this.querySelector('video');if(v)v.play().catch(function(){});" onmouseleave="const v=this.querySelector('video');if(v){v.pause();v.currentTime=0;}" aria-label="Play Budget Desk Setup video">
         <video src="./Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%20Try%20Budget-friendly%20office%20desk%20styling%20for%20your%20next%20Pinterest%20save%20built%20around%20ideas%20that%20are%20easy%20to%20save%20and%20revisit%20later.mp4" poster="./Assets/_processed/capturelife_desk_styling_poster.jpg" muted loop playsinline preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;transition:transform 0.4s ease;pointer-events:none"></video>
-        <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.05) 45%, rgba(0,0,0,0.85) 100%);pointer-events:none;z-index:1"></div>
-        <div style="position:relative;z-index:2;display:flex;justify-content:flex-end">
+        <div class="lifestyle-card-scrim" style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.05) 45%, rgba(0,0,0,0.85) 100%);pointer-events:none;z-index:1"></div>
+        <div class="lifestyle-card-pill" style="position:relative;z-index:2;display:flex;justify-content:flex-end">
           <span style="font:700 9.5px/1 var(--font-heading);background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.25);color:#fff;padding:3px 8px;border-radius:var(--radius-pill);letter-spacing:0.04em">DESK STYLING</span>
         </div>
-        <div style="position:relative;z-index:2">
+        <div class="lifestyle-card-meta" style="position:relative;z-index:2">
           <div style="font:800 13.5px/1.2 var(--font-heading);color:#ffffff;text-shadow:0 1px 4px rgba(0,0,0,0.8)">Budget Desk Setup</div>
           <div style="font:500 11px/1 var(--font-body);color:rgba(255,255,255,0.85);margin-top:3px;text-shadow:0 1px 3px rgba(0,0,0,0.8)">Smart Workspace Aesthetics</div>
         </div>
