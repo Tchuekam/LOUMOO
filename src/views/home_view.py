@@ -97,6 +97,11 @@ def get_home_view():
             <button onClick="{{ setHeroSlide2 }}" class="hero-dot" aria-label="Slide 3 — Botanical Radiance Serum"></button>
             <button onClick="{{ setHeroSlide3 }}" class="hero-dot" aria-label="Slide 4 — Urban Striker Kit"></button>
             <button onClick="{{ setHeroSlide4 }}" class="hero-dot" aria-label="Slide 5 — Heavyweight Cotton Tee"></button>
+            <button onClick="{{ setHeroSlide5 }}" class="hero-dot" aria-label="Slide 6 — Titanium Minimalist Watch"></button>
+            <button onClick="{{ setHeroSlide6 }}" class="hero-dot" aria-label="Slide 7 — MateBook Pro Ultrathin"></button>
+            <button onClick="{{ setHeroSlide7 }}" class="hero-dot" aria-label="Slide 8 — DIVINY Noble Fragrance"></button>
+            <button onClick="{{ setHeroSlide8 }}" class="hero-dot" aria-label="Slide 9 — SoundPulse 360° Studio"></button>
+            <button onClick="{{ setHeroSlide9 }}" class="hero-dot" aria-label="Slide 10 — Ivory Structured Handbag"></button>
           </div>
         </div>
       </sc-if>
@@ -125,6 +130,11 @@ def get_home_view():
             <button onClick="{{ setHeroSlide2 }}" class="hero-dot" aria-label="Slide 3 — Botanical Radiance Serum"></button>
             <button onClick="{{ setHeroSlide3 }}" class="hero-dot" aria-label="Slide 4 — Urban Striker Kit"></button>
             <button onClick="{{ setHeroSlide4 }}" class="hero-dot" aria-label="Slide 5 — Heavyweight Cotton Tee"></button>
+            <button onClick="{{ setHeroSlide5 }}" class="hero-dot" aria-label="Slide 6 — Titanium Minimalist Watch"></button>
+            <button onClick="{{ setHeroSlide6 }}" class="hero-dot" aria-label="Slide 7 — MateBook Pro Ultrathin"></button>
+            <button onClick="{{ setHeroSlide7 }}" class="hero-dot" aria-label="Slide 8 — DIVINY Noble Fragrance"></button>
+            <button onClick="{{ setHeroSlide8 }}" class="hero-dot" aria-label="Slide 9 — SoundPulse 360° Studio"></button>
+            <button onClick="{{ setHeroSlide9 }}" class="hero-dot" aria-label="Slide 10 — Ivory Structured Handbag"></button>
           </div>
         </div>
       </sc-if>
@@ -153,6 +163,11 @@ def get_home_view():
             <button onClick="{{ setHeroSlide2 }}" class="hero-dot active" aria-label="Slide 3 — Botanical Radiance Serum"></button>
             <button onClick="{{ setHeroSlide3 }}" class="hero-dot" aria-label="Slide 4 — Urban Striker Kit"></button>
             <button onClick="{{ setHeroSlide4 }}" class="hero-dot" aria-label="Slide 5 — Heavyweight Cotton Tee"></button>
+            <button onClick="{{ setHeroSlide5 }}" class="hero-dot" aria-label="Slide 6 — Titanium Minimalist Watch"></button>
+            <button onClick="{{ setHeroSlide6 }}" class="hero-dot" aria-label="Slide 7 — MateBook Pro Ultrathin"></button>
+            <button onClick="{{ setHeroSlide7 }}" class="hero-dot" aria-label="Slide 8 — DIVINY Noble Fragrance"></button>
+            <button onClick="{{ setHeroSlide8 }}" class="hero-dot" aria-label="Slide 9 — SoundPulse 360° Studio"></button>
+            <button onClick="{{ setHeroSlide9 }}" class="hero-dot" aria-label="Slide 10 — Ivory Structured Handbag"></button>
           </div>
         </div>
       </sc-if>
@@ -181,6 +196,11 @@ def get_home_view():
             <button onClick="{{ setHeroSlide2 }}" class="hero-dot" aria-label="Slide 3 — Botanical Radiance Serum"></button>
             <button onClick="{{ setHeroSlide3 }}" class="hero-dot active" aria-label="Slide 4 — Urban Striker Kit"></button>
             <button onClick="{{ setHeroSlide4 }}" class="hero-dot" aria-label="Slide 5 — Heavyweight Cotton Tee"></button>
+            <button onClick="{{ setHeroSlide5 }}" class="hero-dot" aria-label="Slide 6 — Titanium Minimalist Watch"></button>
+            <button onClick="{{ setHeroSlide6 }}" class="hero-dot" aria-label="Slide 7 — MateBook Pro Ultrathin"></button>
+            <button onClick="{{ setHeroSlide7 }}" class="hero-dot" aria-label="Slide 8 — DIVINY Noble Fragrance"></button>
+            <button onClick="{{ setHeroSlide8 }}" class="hero-dot" aria-label="Slide 9 — SoundPulse 360° Studio"></button>
+            <button onClick="{{ setHeroSlide9 }}" class="hero-dot" aria-label="Slide 10 — Ivory Structured Handbag"></button>
           </div>
         </div>
       </sc-if>
@@ -209,6 +229,176 @@ def get_home_view():
             <button onClick="{{ setHeroSlide2 }}" class="hero-dot" aria-label="Slide 3 — Botanical Radiance Serum"></button>
             <button onClick="{{ setHeroSlide3 }}" class="hero-dot" aria-label="Slide 4 — Urban Striker Kit"></button>
             <button onClick="{{ setHeroSlide4 }}" class="hero-dot active" aria-label="Slide 5 — Heavyweight Cotton Tee"></button>
+            <button onClick="{{ setHeroSlide5 }}" class="hero-dot" aria-label="Slide 6 — Titanium Minimalist Watch"></button>
+            <button onClick="{{ setHeroSlide6 }}" class="hero-dot" aria-label="Slide 7 — MateBook Pro Ultrathin"></button>
+            <button onClick="{{ setHeroSlide7 }}" class="hero-dot" aria-label="Slide 8 — DIVINY Noble Fragrance"></button>
+            <button onClick="{{ setHeroSlide8 }}" class="hero-dot" aria-label="Slide 9 — SoundPulse 360° Studio"></button>
+            <button onClick="{{ setHeroSlide9 }}" class="hero-dot" aria-label="Slide 10 — Ivory Structured Handbag"></button>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- Slide 5: Minimalist Titanium Chronometer (Image) -->
+      <sc-if value="{{ isHeroSlide5 }}">
+        <div class="hero-slide-pane" style="background:#2b2b2c" data-hero-slide="5">
+          <div class="hero-grid-layout">
+            <div class="hero-text-wrap">
+              <div style="font:800 13px/1 var(--font-heading);letter-spacing:0.06em;text-transform:uppercase;color:#94a3b8;margin-bottom:8px">Swiss Automatic Horology</div>
+              <h1 style="margin:0 0 10px;font-size:clamp(28px, 4.2vw, 44px);font-weight:800;letter-spacing:-.035em;line-height:1.06;color:#ffffff">Titanium Minimalist.</h1>
+              <div style="font:500 clamp(13px, 1.8vw, 15.5px)/1.45 var(--font-body);color:rgba(255,255,255,0.85);margin-bottom:22px;max-width:400px">Aeronautical-grade brushed titanium case, sapphire crystal glass, and self-winding automatic movement. Timeless precision engineering.</div>
+              <div class="hero-actions-row">
+                <button onClick="{{ () => openCategory('fashion') }}" class="hero-btn-pill" style="background:#ffffff;color:#111214">Explore Horology →</button>
+                <button onClick="{{ () => openCategory('fashion') }}" class="hero-btn-subtle" style="border:1px solid rgba(255,255,255,0.3);color:#ffffff">Automatic Caliber</button>
+              </div>
+            </div>
+
+            <div class="hero-media-wrap" style="background:transparent">
+              <img src="./Assets/LOUMOO%20VIDEOS/HeroBanner/hero_luxury_watch.jpg" alt="Titanium Minimalist Automatic Timepiece" loading="lazy" />
+            </div>
+          </div>
+          <div class="hero-dots-row hero-dots-light">
+            <button onClick="{{ setHeroSlide0 }}" class="hero-dot" aria-label="Slide 1 — Galaxy S24 Ultra"></button>
+            <button onClick="{{ setHeroSlide1 }}" class="hero-dot" aria-label="Slide 2 — Royal Gele Couture"></button>
+            <button onClick="{{ setHeroSlide2 }}" class="hero-dot" aria-label="Slide 3 — Botanical Radiance Serum"></button>
+            <button onClick="{{ setHeroSlide3 }}" class="hero-dot" aria-label="Slide 4 — Urban Striker Kit"></button>
+            <button onClick="{{ setHeroSlide4 }}" class="hero-dot" aria-label="Slide 5 — Heavyweight Cotton Tee"></button>
+            <button onClick="{{ setHeroSlide5 }}" class="hero-dot active" aria-label="Slide 6 — Titanium Minimalist Watch"></button>
+            <button onClick="{{ setHeroSlide6 }}" class="hero-dot" aria-label="Slide 7 — MateBook Pro Ultrathin"></button>
+            <button onClick="{{ setHeroSlide7 }}" class="hero-dot" aria-label="Slide 8 — DIVINY Noble Fragrance"></button>
+            <button onClick="{{ setHeroSlide8 }}" class="hero-dot" aria-label="Slide 9 — SoundPulse 360° Studio"></button>
+            <button onClick="{{ setHeroSlide9 }}" class="hero-dot" aria-label="Slide 10 — Ivory Structured Handbag"></button>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- Slide 6: MateBook Pro Ultrathin (Image) -->
+      <sc-if value="{{ isHeroSlide6 }}">
+        <div class="hero-slide-pane" style="background:#cbdfee" data-hero-slide="6">
+          <div class="hero-grid-layout">
+            <div class="hero-text-wrap">
+              <div style="font:800 13px/1 var(--font-heading);letter-spacing:0.06em;text-transform:uppercase;color:#0284c7;margin-bottom:8px">Ultra-Portable Workstations</div>
+              <h1 style="margin:0 0 10px;font-size:clamp(28px, 4.2vw, 44px);font-weight:800;letter-spacing:-.035em;line-height:1.06;color:#0f172a">MateBook Pro Ultrathin.</h1>
+              <div style="font:500 clamp(13px, 1.8vw, 15.5px)/1.45 var(--font-body);color:#334155;margin-bottom:22px;max-width:400px">3.1K OLED Real Color Touch Display, Intel Core Ultra computing, and 18-hour battery in a featherlight 980g magnesium chassis.</div>
+              <div class="hero-actions-row">
+                <button onClick="{{ () => openCategory('electronics') }}" class="hero-btn-pill" style="background:#0f172a;color:#ffffff">Explore MateBook →</button>
+                <button onClick="{{ () => openCategory('electronics') }}" class="hero-btn-subtle" style="border:1px solid rgba(15,23,42,0.25);color:#0f172a">Intel Core Ultra</button>
+              </div>
+            </div>
+
+            <div class="hero-media-wrap" style="background:transparent">
+              <img src="./Assets/LOUMOO%20VIDEOS/HeroBanner/hero_ultrabook_laptops.jpg" alt="MateBook Pro Ultrathin Laptops" loading="lazy" />
+            </div>
+          </div>
+          <div class="hero-dots-row">
+            <button onClick="{{ setHeroSlide0 }}" class="hero-dot" aria-label="Slide 1 — Galaxy S24 Ultra"></button>
+            <button onClick="{{ setHeroSlide1 }}" class="hero-dot" aria-label="Slide 2 — Royal Gele Couture"></button>
+            <button onClick="{{ setHeroSlide2 }}" class="hero-dot" aria-label="Slide 3 — Botanical Radiance Serum"></button>
+            <button onClick="{{ setHeroSlide3 }}" class="hero-dot" aria-label="Slide 4 — Urban Striker Kit"></button>
+            <button onClick="{{ setHeroSlide4 }}" class="hero-dot" aria-label="Slide 5 — Heavyweight Cotton Tee"></button>
+            <button onClick="{{ setHeroSlide5 }}" class="hero-dot" aria-label="Slide 6 — Titanium Minimalist Watch"></button>
+            <button onClick="{{ setHeroSlide6 }}" class="hero-dot active" aria-label="Slide 7 — MateBook Pro Ultrathin"></button>
+            <button onClick="{{ setHeroSlide7 }}" class="hero-dot" aria-label="Slide 8 — DIVINY Noble Fragrance"></button>
+            <button onClick="{{ setHeroSlide8 }}" class="hero-dot" aria-label="Slide 9 — SoundPulse 360° Studio"></button>
+            <button onClick="{{ setHeroSlide9 }}" class="hero-dot" aria-label="Slide 10 — Ivory Structured Handbag"></button>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- Slide 7: DIVINY Noble Presence Luxury Perfume (Image) -->
+      <sc-if value="{{ isHeroSlide7 }}">
+        <div class="hero-slide-pane" style="background:#180102" data-hero-slide="7">
+          <div class="hero-grid-layout">
+            <div class="hero-text-wrap">
+              <div style="font:800 13px/1 var(--font-heading);letter-spacing:0.06em;text-transform:uppercase;color:#f43f5e;margin-bottom:8px">Haute Parfumerie Edition</div>
+              <h1 style="margin:0 0 10px;font-size:clamp(28px, 4.2vw, 44px);font-weight:800;letter-spacing:-.035em;line-height:1.06;color:#ffffff">DIVINY Noble Presence.</h1>
+              <div style="font:500 clamp(13px, 1.8vw, 15.5px)/1.45 var(--font-body);color:rgba(255,255,255,0.85);margin-bottom:22px;max-width:400px">Rare saffron, smoky Atlas cedarwood, and rich Bourbon vanilla in an artisan crystal flacon. An enduring signature of nobility.</div>
+              <div class="hero-actions-row">
+                <button onClick="{{ () => openCategory('supermarket') }}" class="hero-btn-pill" style="background:#ffffff;color:#111214">Shop Divine Fragrance →</button>
+                <button onClick="{{ () => openCategory('supermarket') }}" class="hero-btn-subtle" style="border:1px solid rgba(255,255,255,0.3);color:#ffffff">Artisan Notes</button>
+              </div>
+            </div>
+
+            <div class="hero-media-wrap" style="background:transparent">
+              <img src="./Assets/LOUMOO%20VIDEOS/HeroBanner/hero_diviny_perfume.jpg" alt="DIVINY Noble Presence Luxury Perfume" loading="lazy" />
+            </div>
+          </div>
+          <div class="hero-dots-row hero-dots-light">
+            <button onClick="{{ setHeroSlide0 }}" class="hero-dot" aria-label="Slide 1 — Galaxy S24 Ultra"></button>
+            <button onClick="{{ setHeroSlide1 }}" class="hero-dot" aria-label="Slide 2 — Royal Gele Couture"></button>
+            <button onClick="{{ setHeroSlide2 }}" class="hero-dot" aria-label="Slide 3 — Botanical Radiance Serum"></button>
+            <button onClick="{{ setHeroSlide3 }}" class="hero-dot" aria-label="Slide 4 — Urban Striker Kit"></button>
+            <button onClick="{{ setHeroSlide4 }}" class="hero-dot" aria-label="Slide 5 — Heavyweight Cotton Tee"></button>
+            <button onClick="{{ setHeroSlide5 }}" class="hero-dot" aria-label="Slide 6 — Titanium Minimalist Watch"></button>
+            <button onClick="{{ setHeroSlide6 }}" class="hero-dot" aria-label="Slide 7 — MateBook Pro Ultrathin"></button>
+            <button onClick="{{ setHeroSlide7 }}" class="hero-dot active" aria-label="Slide 8 — DIVINY Noble Fragrance"></button>
+            <button onClick="{{ setHeroSlide8 }}" class="hero-dot" aria-label="Slide 9 — SoundPulse 360° Studio"></button>
+            <button onClick="{{ setHeroSlide9 }}" class="hero-dot" aria-label="Slide 10 — Ivory Structured Handbag"></button>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- Slide 8: SoundPulse 360° Studio Speaker (Image) -->
+      <sc-if value="{{ isHeroSlide8 }}">
+        <div class="hero-slide-pane" style="background:#26304d" data-hero-slide="8">
+          <div class="hero-grid-layout">
+            <div class="hero-text-wrap">
+              <div style="font:800 13px/1 var(--font-heading);letter-spacing:0.06em;text-transform:uppercase;color:#38bdf8;margin-bottom:8px">Immersive 360° Wireless Audio</div>
+              <h1 style="margin:0 0 10px;font-size:clamp(28px, 4.2vw, 44px);font-weight:800;letter-spacing:-.035em;line-height:1.06;color:#ffffff">SoundPulse 360° Studio.</h1>
+              <div style="font:500 clamp(13px, 1.8vw, 15.5px)/1.45 var(--font-body);color:rgba(255,255,255,0.85);margin-bottom:22px;max-width:400px">40W dual stereo drivers, deep pulsating bass radiators, and ambient LED halo. IPX7 waterproof with 24-hour playtime anywhere in Cameroon.</div>
+              <div class="hero-actions-row">
+                <button onClick="{{ () => openCategory('electronics') }}" class="hero-btn-pill" style="background:#ffffff;color:#111214">Shop SoundPulse 360° →</button>
+                <button onClick="{{ () => openCategory('electronics') }}" class="hero-btn-subtle" style="border:1px solid rgba(255,255,255,0.3);color:#ffffff">IPX7 Waterproof</button>
+              </div>
+            </div>
+
+            <div class="hero-media-wrap" style="background:transparent">
+              <img src="./Assets/LOUMOO%20VIDEOS/HeroBanner/hero_bluetooth_speaker.jpg" alt="SoundPulse 360 Studio Waterproof Speaker" loading="lazy" />
+            </div>
+          </div>
+          <div class="hero-dots-row hero-dots-light">
+            <button onClick="{{ setHeroSlide0 }}" class="hero-dot" aria-label="Slide 1 — Galaxy S24 Ultra"></button>
+            <button onClick="{{ setHeroSlide1 }}" class="hero-dot" aria-label="Slide 2 — Royal Gele Couture"></button>
+            <button onClick="{{ setHeroSlide2 }}" class="hero-dot" aria-label="Slide 3 — Botanical Radiance Serum"></button>
+            <button onClick="{{ setHeroSlide3 }}" class="hero-dot" aria-label="Slide 4 — Urban Striker Kit"></button>
+            <button onClick="{{ setHeroSlide4 }}" class="hero-dot" aria-label="Slide 5 — Heavyweight Cotton Tee"></button>
+            <button onClick="{{ setHeroSlide5 }}" class="hero-dot" aria-label="Slide 6 — Titanium Minimalist Watch"></button>
+            <button onClick="{{ setHeroSlide6 }}" class="hero-dot" aria-label="Slide 7 — MateBook Pro Ultrathin"></button>
+            <button onClick="{{ setHeroSlide7 }}" class="hero-dot" aria-label="Slide 8 — DIVINY Noble Fragrance"></button>
+            <button onClick="{{ setHeroSlide8 }}" class="hero-dot active" aria-label="Slide 9 — SoundPulse 360° Studio"></button>
+            <button onClick="{{ setHeroSlide9 }}" class="hero-dot" aria-label="Slide 10 — Ivory Structured Handbag"></button>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- Slide 9: Ivory Structured Top-Handle Handbag (Image) -->
+      <sc-if value="{{ isHeroSlide9 }}">
+        <div class="hero-slide-pane" style="background:#30030d" data-hero-slide="9">
+          <div class="hero-grid-layout">
+            <div class="hero-text-wrap">
+              <div style="font:800 13px/1 var(--font-heading);letter-spacing:0.06em;text-transform:uppercase;color:#fb7185;margin-bottom:8px">Maison Luxury Leather</div>
+              <h1 style="margin:0 0 10px;font-size:clamp(28px, 4.2vw, 44px);font-weight:800;letter-spacing:-.035em;line-height:1.06;color:#ffffff">Ivory Structured Tote.</h1>
+              <div style="font:500 clamp(13px, 1.8vw, 15.5px)/1.45 var(--font-body);color:rgba(255,255,255,0.85);margin-bottom:22px;max-width:400px">Full-grain Italian calfskin leather accented by polished 24K gold-plated padlock charm. Sculptural dual-compartment luxury for modern living.</div>
+              <div class="hero-actions-row">
+                <button onClick="{{ () => openCategory('fashion') }}" class="hero-btn-pill" style="background:#ffffff;color:#111214">Discover Leathercraft →</button>
+                <button onClick="{{ () => openCategory('fashion') }}" class="hero-btn-subtle" style="border:1px solid rgba(255,255,255,0.3);color:#ffffff">Calfskin Collection</button>
+              </div>
+            </div>
+
+            <div class="hero-media-wrap" style="background:transparent">
+              <img src="./Assets/LOUMOO%20VIDEOS/HeroBanner/hero_luxury_handbag.jpg" alt="Ivory Structured Top Handle Handbag" loading="lazy" />
+            </div>
+          </div>
+          <div class="hero-dots-row hero-dots-light">
+            <button onClick="{{ setHeroSlide0 }}" class="hero-dot" aria-label="Slide 1 — Galaxy S24 Ultra"></button>
+            <button onClick="{{ setHeroSlide1 }}" class="hero-dot" aria-label="Slide 2 — Royal Gele Couture"></button>
+            <button onClick="{{ setHeroSlide2 }}" class="hero-dot" aria-label="Slide 3 — Botanical Radiance Serum"></button>
+            <button onClick="{{ setHeroSlide3 }}" class="hero-dot" aria-label="Slide 4 — Urban Striker Kit"></button>
+            <button onClick="{{ setHeroSlide4 }}" class="hero-dot" aria-label="Slide 5 — Heavyweight Cotton Tee"></button>
+            <button onClick="{{ setHeroSlide5 }}" class="hero-dot" aria-label="Slide 6 — Titanium Minimalist Watch"></button>
+            <button onClick="{{ setHeroSlide6 }}" class="hero-dot" aria-label="Slide 7 — MateBook Pro Ultrathin"></button>
+            <button onClick="{{ setHeroSlide7 }}" class="hero-dot" aria-label="Slide 8 — DIVINY Noble Fragrance"></button>
+            <button onClick="{{ setHeroSlide8 }}" class="hero-dot" aria-label="Slide 9 — SoundPulse 360° Studio"></button>
+            <button onClick="{{ setHeroSlide9 }}" class="hero-dot active" aria-label="Slide 10 — Ivory Structured Handbag"></button>
           </div>
         </div>
       </sc-if>

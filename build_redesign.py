@@ -1544,24 +1544,26 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 8px;
-  margin-top: 20px;
+  gap: 6px;
+  margin-top: 18px;
   position: relative;
   z-index: 5;
+  max-width: 100%;
 }
 .hero-dot {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   background: rgba(0, 0, 0, 0.22);
   border: none;
   padding: 0;
   cursor: pointer;
   transition: all 0.25s ease;
+  flex-shrink: 0;
 }
 .hero-dot.active {
-  width: 24px;
-  border-radius: 6px;
+  width: 20px;
+  border-radius: 5px;
   background: #111214;
 }
 
@@ -6954,7 +6956,7 @@ class Component extends DCLogic {
   }
 
   setHeroSlide(slideIndex) {
-    const nextIdx = ((slideIndex % 5) + 5) % 5;
+    const nextIdx = ((slideIndex % 10) + 10) % 10;
     this.setState({ heroSlide: nextIdx });
     clearTimeout(this._heroSlideTimer);
     if (typeof window !== 'undefined') {
@@ -6981,32 +6983,32 @@ class Component extends DCLogic {
   }
 
   heroNextSlide() {
-    const next = (((this.state.heroSlide || 0) + 1) % 5);
+    const next = (((this.state.heroSlide || 0) + 1) % 10);
     this.setHeroSlide(next);
   }
 
   heroPrevSlide() {
-    const prev = (((this.state.heroSlide || 0) - 1 + 5) % 5);
+    const prev = (((this.state.heroSlide || 0) - 1 + 10) % 10);
     this.setHeroSlide(prev);
   }
 
   _startHeroSlideAutoAdvance() {
     clearTimeout(this._heroSlideTimer);
     const curSlide = this.state.heroSlide || 0;
-    // Slides 0, 2, 4 are videos with onended callbacks; Slides 1 and 3 are static images
-    if (curSlide === 1 || curSlide === 3) {
-      this._heroSlideTimer = setTimeout(() => {
-        if (!this._unmounted && (!this.state.screen || this.state.screen === 'home')) {
-          this.heroNextSlide();
-        }
-      }, 6500);
-    } else {
+    // Slides 0, 2, 4 are videos with onended callbacks; Slides 1, 3, 5, 6, 7, 8, 9 are static images
+    if (curSlide === 0 || curSlide === 2 || curSlide === 4) {
       // Safety fallback timer for videos in case autoplay or onended is blocked
       this._heroSlideTimer = setTimeout(() => {
         if (!this._unmounted && (!this.state.screen || this.state.screen === 'home')) {
           this.heroNextSlide();
         }
       }, 19000);
+    } else {
+      this._heroSlideTimer = setTimeout(() => {
+        if (!this._unmounted && (!this.state.screen || this.state.screen === 'home')) {
+          this.heroNextSlide();
+        }
+      }, 6500);
     }
   }
 
@@ -10420,17 +10422,27 @@ class Component extends DCLogic {
       bookTravelItem: () => { this.go('paying'); setTimeout(() => this.go('travelTicket'), 1200); },
       bookFlight: () => { this.go('travelTicket'); },
 
-      // ── Homepage Master Hub (HeroBanner Cinema & Editorial Suite) ──
+      // ── Homepage Master Hub (HeroBanner Cinema & Editorial Suite - 10 Flagship Slides) ──
       isHeroSlide0: (this.state.heroSlide || 0) === 0,
       isHeroSlide1: this.state.heroSlide === 1,
       isHeroSlide2: this.state.heroSlide === 2,
       isHeroSlide3: this.state.heroSlide === 3,
       isHeroSlide4: this.state.heroSlide === 4,
+      isHeroSlide5: this.state.heroSlide === 5,
+      isHeroSlide6: this.state.heroSlide === 6,
+      isHeroSlide7: this.state.heroSlide === 7,
+      isHeroSlide8: this.state.heroSlide === 8,
+      isHeroSlide9: this.state.heroSlide === 9,
       setHeroSlide0: () => this.setHeroSlide(0),
       setHeroSlide1: () => this.setHeroSlide(1),
       setHeroSlide2: () => this.setHeroSlide(2),
       setHeroSlide3: () => this.setHeroSlide(3),
       setHeroSlide4: () => this.setHeroSlide(4),
+      setHeroSlide5: () => this.setHeroSlide(5),
+      setHeroSlide6: () => this.setHeroSlide(6),
+      setHeroSlide7: () => this.setHeroSlide(7),
+      setHeroSlide8: () => this.setHeroSlide(8),
+      setHeroSlide9: () => this.setHeroSlide(9),
       heroNextSlide: () => this.heroNextSlide(),
       heroPrevSlide: () => this.heroPrevSlide(),
 
