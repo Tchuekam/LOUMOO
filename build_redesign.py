@@ -5501,6 +5501,16 @@ class Component extends DCLogic {
           window._loumooHeroComponent.heroNextSlide();
         }
       };
+      // Enforce zero volume and muted on any autoplay/ambient/hero video
+      document.addEventListener('play', (e) => {
+        if (e.target && e.target.tagName === 'VIDEO') {
+          if (!e.target.closest('.video-modal-player')) {
+            e.target.muted = true;
+            e.target.volume = 0;
+            e.target.defaultMuted = true;
+          }
+        }
+      }, true);
     }
     this._startHeroSlideAutoAdvance();
     this._handleKeyDown = (e) => {
@@ -6953,6 +6963,9 @@ class Component extends DCLogic {
         if (banner) {
           const vids = banner.querySelectorAll('video');
           vids.forEach(v => {
+            v.muted = true;
+            v.volume = 0;
+            v.defaultMuted = true;
             const slideEl = v.closest('[data-hero-slide]');
             if (slideEl && parseInt(slideEl.getAttribute('data-hero-slide'), 10) === nextIdx) {
               v.currentTime = 0;
