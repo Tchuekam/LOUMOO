@@ -1397,27 +1397,41 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   position: relative;
   box-sizing: border-box;
   width: 100%;
-  background: 
-    linear-gradient(rgba(14, 11, 24, 0.84), rgba(14, 11, 24, 0.84)) padding-box,
-    linear-gradient(90deg, #c084fc 0%, #a855f7 15%, #6366f1 45%, #3b82f6 75%, #007aff 100%) border-box;
-  border: 1.5px solid transparent;
-  backdrop-filter: blur(28px) saturate(200%);
-  -webkit-backdrop-filter: blur(28px) saturate(200%);
+  background: rgba(255, 255, 255, 0.76);
+  backdrop-filter: blur(28px) saturate(190%);
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
+  border: 1.5px solid #ffffff;
   box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.38),
-    0 0 20px rgba(168, 85, 247, 0.2),
-    0 0 24px rgba(0, 122, 255, 0.22),
-    inset 0 1px 1px rgba(255, 255, 255, 0.3),
-    inset 0 -1px 1px rgba(0, 0, 0, 0.4);
+    0 4px 20px rgba(0, 0, 0, 0.05),
+    0 1px 2px rgba(0, 0, 0, 0.03),
+    0 0 16px rgba(255, 255, 255, 0.8),
+    inset 0 1px 2px #ffffff;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   margin-bottom: 2px;
 }
 .liquid-search-bar:hover {
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 
+    0 6px 26px rgba(0, 0, 0, 0.07),
+    0 0 20px rgba(255, 255, 255, 0.95),
+    inset 0 1px 2.5px #ffffff;
+}
+
+[data-theme="dark"] .liquid-search-bar {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.35),
+    0 0 18px rgba(255, 255, 255, 0.25),
+    inset 0 1px 2px rgba(255, 255, 255, 0.4);
+}
+[data-theme="dark"] .liquid-search-bar:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: #ffffff;
   box-shadow: 
     0 10px 36px rgba(0, 0, 0, 0.45),
-    0 0 26px rgba(168, 85, 247, 0.28),
-    0 0 32px rgba(0, 122, 255, 0.32),
-    inset 0 1px 1.5px rgba(255, 255, 255, 0.4);
+    0 0 24px rgba(255, 255, 255, 0.35),
+    inset 0 1px 2px rgba(255, 255, 255, 0.6);
 }
 
 /* 1. [Scan] Button */
@@ -1425,26 +1439,35 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   width: 40px;
   height: 40px;
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.7);
+  border: 1.5px solid #ffffff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04), inset 0 1px 1.5px #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #ffffff;
+  color: var(--color-text, #111214);
   cursor: pointer;
   padding: 0;
   flex-shrink: 0;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .lsb-scan-btn:hover {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.25);
+  background: #ffffff;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.25);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), inset 0 1px 2px #ffffff;
 }
 .lsb-scan-btn:active {
   transform: translateY(0);
+}
+[data-theme="dark"] .lsb-scan-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.85);
+  color: #ffffff;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.25);
+}
+[data-theme="dark"] .lsb-scan-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: #ffffff;
 }
 
 /* 2. [Filter] Button */
@@ -1452,26 +1475,35 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   height: 40px;
   padding: 0 12px;
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.7);
+  border: 1.5px solid #ffffff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04), inset 0 1px 1.5px #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 5px;
-  color: #ffffff;
+  color: var(--color-text, #111214);
   cursor: pointer;
   flex-shrink: 0;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .lsb-filter-btn:hover {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.25);
+  background: #ffffff;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.25);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), inset 0 1px 2px #ffffff;
 }
 .lsb-filter-btn:active {
   transform: translateY(0);
+}
+[data-theme="dark"] .lsb-filter-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.85);
+  color: #ffffff;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.25);
+}
+[data-theme="dark"] .lsb-filter-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: #ffffff;
 }
 
 /* 3. [Search Input + Search Icon] (Dominant Center Element) */
@@ -1480,11 +1512,12 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   min-width: 0;
   height: 40px;
   border-radius: 9999px;
-  background: rgba(10, 14, 28, 0.65);
-  border: 1.5px solid rgba(59, 130, 246, 0.6);
+  background: rgba(255, 255, 255, 0.95);
+  border: 1.5px solid #ffffff;
   box-shadow: 
-    0 0 14px rgba(59, 130, 246, 0.22),
-    inset 0 1px 2px rgba(255, 255, 255, 0.15);
+    0 2px 8px rgba(0, 0, 0, 0.04),
+    0 0 0 1px rgba(0, 0, 0, 0.03),
+    inset 0 1px 2px #ffffff;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1494,11 +1527,12 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   gap: 8px;
 }
 .lsb-search-wrap:hover {
-  border-color: rgba(96, 165, 250, 0.9);
-  background: rgba(12, 18, 36, 0.78);
+  background: #ffffff;
+  border-color: #ffffff;
   box-shadow: 
-    0 0 20px rgba(59, 130, 246, 0.38),
-    inset 0 1px 2px rgba(255, 255, 255, 0.25);
+    0 4px 16px rgba(0, 0, 0, 0.08),
+    0 0 0 1px rgba(0, 0, 0, 0.05),
+    inset 0 1px 2px #ffffff;
 }
 .lsb-search-text {
   flex: 1;
@@ -1507,12 +1541,12 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   text-overflow: ellipsis;
   white-space: nowrap;
   font: 400 13.5px/1 var(--font-body);
-  color: rgba(255, 255, 255, 0.65);
+  color: var(--color-text-secondary, #525763);
   user-select: none;
   text-align: left;
 }
 .lsb-search-icon {
-  color: rgba(255, 255, 255, 0.85);
+  color: var(--color-text, #111214);
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -1520,8 +1554,22 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   transition: transform 0.2s ease, color 0.2s ease;
 }
 .lsb-search-wrap:hover .lsb-search-icon {
-  color: #ffffff;
   transform: scale(1.08);
+}
+[data-theme="dark"] .lsb-search-wrap {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 0 14px rgba(255, 255, 255, 0.15), inset 0 1px 2px rgba(255, 255, 255, 0.3);
+}
+[data-theme="dark"] .lsb-search-wrap:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: #ffffff;
+}
+[data-theme="dark"] .lsb-search-text {
+  color: rgba(255, 255, 255, 0.75);
+}
+[data-theme="dark"] .lsb-search-icon {
+  color: #ffffff;
 }
 
 /* 4. [Microphone] Button */
@@ -1529,30 +1577,35 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1.5px solid rgba(59, 130, 246, 0.55);
-  box-shadow: 
-    0 0 14px rgba(59, 130, 246, 0.22),
-    inset 0 1px 1px rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.7);
+  border: 1.5px solid #ffffff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04), inset 0 1px 1.5px #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #ffffff;
+  color: var(--color-text, #111214);
   cursor: pointer;
   padding: 0;
   flex-shrink: 0;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .lsb-mic-btn:hover {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(96, 165, 250, 0.9);
+  background: #ffffff;
   transform: translateY(-1px);
-  box-shadow: 
-    0 0 20px rgba(59, 130, 246, 0.4),
-    inset 0 1px 1px rgba(255, 255, 255, 0.28);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), inset 0 1px 2px #ffffff;
 }
 .lsb-mic-btn:active {
   transform: translateY(0);
+}
+[data-theme="dark"] .lsb-mic-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.85);
+  color: #ffffff;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.25);
+}
+[data-theme="dark"] .lsb-mic-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: #ffffff;
 }
 
 /* 5. [Chat] Button (Speech Bubble Silhouette) */
@@ -1564,13 +1617,11 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   align-items: center;
   justify-content: center;
   border-radius: 20px 20px 20px 4px;
-  background: rgba(12, 18, 36, 0.75);
-  border: 1.5px solid rgba(59, 130, 246, 0.65);
-  box-shadow: 
-    0 0 14px rgba(59, 130, 246, 0.24),
-    inset 0 1px 1px rgba(255, 255, 255, 0.18);
-  color: #ffffff;
-  font: 600 13px/1 var(--font-heading);
+  background: rgba(255, 255, 255, 0.85);
+  border: 1.5px solid #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04), inset 0 1px 2px #ffffff;
+  color: var(--color-text, #111214);
+  font: 700 13px/1 var(--font-heading);
   letter-spacing: 0.01em;
   cursor: pointer;
   flex-shrink: 0;
@@ -1585,19 +1636,29 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   height: 0;
   border-style: solid;
   border-width: 6px 5px 0 0;
-  border-color: rgba(59, 130, 246, 0.85) transparent transparent transparent;
-  filter: drop-shadow(0 0 4px rgba(59, 130, 246, 0.4));
+  border-color: #ffffff transparent transparent transparent;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.04));
 }
 .lsb-chat-btn:hover {
-  background: rgba(16, 24, 48, 0.88);
-  border-color: rgba(96, 165, 250, 0.95);
+  background: #ffffff;
   transform: translateY(-1px);
-  box-shadow: 
-    0 0 22px rgba(59, 130, 246, 0.45),
-    inset 0 1px 1.5px rgba(255, 255, 255, 0.28);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08), inset 0 1px 2px #ffffff;
 }
 .lsb-chat-btn:active {
   transform: translateY(0);
+}
+[data-theme="dark"] .lsb-chat-btn {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.85);
+  color: #ffffff;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.25);
+}
+[data-theme="dark"] .lsb-chat-btn::after {
+  border-color: rgba(255, 255, 255, 0.85) transparent transparent transparent;
+}
+[data-theme="dark"] .lsb-chat-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: #ffffff;
 }
 
 /* Responsive Adaptability */
