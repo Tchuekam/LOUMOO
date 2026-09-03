@@ -2787,54 +2787,56 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 }
 
 .travel-squircle-card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-divider);
-  border-radius: 18px;
-  padding: 14px 10px;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 8px;
   cursor: pointer;
-  transition: transform 0.2s var(--ease-spring), box-shadow 0.2s ease, border-color 0.2s ease;
-  box-shadow: var(--shadow-xs);
+  transition: transform 0.2s var(--ease-spring);
 }
 .travel-squircle-card:hover {
   transform: translateY(-3px);
-  border-color: var(--color-accent);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  border-color: transparent !important;
+  box-shadow: none !important;
 }
 [data-theme="dark"] .travel-squircle-card {
-  background: #141722;
+  background: transparent !important;
 }
 
 .travel-squircle-icon-wrap {
-  width: 52px;
-  height: 52px;
-  border-radius: 16px;
+  width: 56px;
+  height: 56px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  background: var(--color-surface, #ffffff);
-  border: 1px solid rgba(0,0,0,0.08);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-  overflow: hidden;
-  padding: 6px;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0;
+  transition: transform 0.2s ease;
 }
-.travel-squircle-card:hover .travel-squircle-icon-wrap {
-  transform: translateY(-2px) scale(1.04);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+.travel-squircle-icon-wrap img {
+  width: 54px;
+  height: 54px;
+  object-fit: contain;
+  filter: drop-shadow(0 3px 6px rgba(0,0,0,0.08));
+  transition: transform 0.2s ease, filter 0.2s ease;
 }
-[data-theme="dark"] .travel-squircle-icon-wrap {
-  background: #1e2230;
-  border-color: rgba(255,255,255,0.08);
+.travel-squircle-card:hover .travel-squircle-icon-wrap img {
+  transform: scale(1.08);
+  filter: drop-shadow(0 6px 12px rgba(0,0,0,0.12));
 }
 .travel-squircle-label {
-  font: 700 12px/1 var(--font-heading);
+  font: 700 12px/1.2 var(--font-heading);
   color: var(--color-text);
   text-align: center;
+  white-space: nowrap;
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -3003,10 +3005,10 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 }
 
 .loumoo-rail-track .travel-squircle-card {
-  flex: 0 0 170px;
-  width: 170px;
-  min-width: 170px;
-  max-width: 170px;
+  flex: 0 0 84px !important;
+  width: 84px !important;
+  min-width: 84px !important;
+  max-width: 84px !important;
 }
 
 @media (max-width: 768px) {

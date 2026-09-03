@@ -1372,51 +1372,51 @@ def get_home_view():
         </div>
       </div>
 
-      <div class="loumoo-rail-track" id="travelWorldRail">
+      <div class="loumoo-rail-track" id="travelWorldRail" style="gap:24px;padding:8px 4px 14px 4px">
         <!-- 1. Hotels -->
         <button onClick="{{ () => openCategory('hotels') }}" class="travel-squircle-card" aria-label="Travel Hotels">
-          <div class="travel-squircle-icon-wrap" style="background:#fff;border:1px solid rgba(0,0,0,0.08);box-shadow:0 2px 8px rgba(0,0,0,0.04);overflow:hidden;padding:6px">
-            <img src="./Assets/_processed/logo_icons_tourist_icon_flat_style_isolated_on_whit_61.png" alt="Hotels" style="width:100%;height:100%;object-fit:contain">
+          <div class="travel-squircle-icon-wrap">
+            <img src="./Assets/_processed/logo_icons_tourist_icon_flat_style_isolated_on_whit_61.png" alt="Hotels">
           </div>
           <span class="travel-squircle-label">Hotels</span>
         </button>
 
         <!-- 2. Flights -->
         <button onClick="{{ () => { setTravelTabFlight(); on.travel(); } }}" class="travel-squircle-card" aria-label="Travel Flights">
-          <div class="travel-squircle-icon-wrap" style="background:#fff;border:1px solid rgba(0,0,0,0.08);box-shadow:0 2px 8px rgba(0,0,0,0.04);overflow:hidden;padding:5px">
-            <img src="./Assets/_processed/logo_icons_travel_logo_png_images_travel_icons_logo_63.png" alt="Flights" style="width:100%;height:100%;object-fit:contain">
+          <div class="travel-squircle-icon-wrap">
+            <img src="./Assets/_processed/logo_icons_travel_logo_png_images_travel_icons_logo_63.png" alt="Flights">
           </div>
           <span class="travel-squircle-label">Flights</span>
         </button>
 
         <!-- 3. Buses -->
         <button onClick="{{ () => { setTravelTabBus(); on.travel(); } }}" class="travel-squircle-card" aria-label="Travel Buses">
-          <div class="travel-squircle-icon-wrap" style="background:#fff;border:1px solid rgba(0,0,0,0.08);box-shadow:0 2px 8px rgba(0,0,0,0.04);overflow:hidden;padding:5px">
-            <img src="./Assets/_processed/logo_icons_travel_bus.png" alt="Buses" style="width:100%;height:100%;object-fit:contain">
+          <div class="travel-squircle-icon-wrap">
+            <img src="./Assets/_processed/logo_icons_travel_bus.png" alt="Buses">
           </div>
           <span class="travel-squircle-label">Buses</span>
         </button>
 
         <!-- 4. Trains -->
         <button onClick="{{ () => { setTravelTabTrain(); on.travel(); } }}" class="travel-squircle-card" aria-label="Travel Trains">
-          <div class="travel-squircle-icon-wrap" style="background:#fff;border:1px solid rgba(0,0,0,0.08);box-shadow:0 2px 8px rgba(0,0,0,0.04);overflow:hidden;padding:5px">
-            <img src="./Assets/_processed/logo_icons_travel_logo_image_premium_vector_62.png" alt="Trains" style="width:100%;height:100%;object-fit:contain">
+          <div class="travel-squircle-icon-wrap">
+            <img src="./Assets/_processed/logo_icons_travel_logo_image_premium_vector_62.png" alt="Trains">
           </div>
           <span class="travel-squircle-label">Trains</span>
         </button>
 
         <!-- 5. Taxi -->
         <button onClick="{{ () => { setTravelTabTaxi(); on.travel(); } }}" class="travel-squircle-card" aria-label="Travel Taxi">
-          <div class="travel-squircle-icon-wrap" style="background:#fff;border:1px solid rgba(0,0,0,0.08);box-shadow:0 2px 8px rgba(0,0,0,0.04);overflow:hidden;padding:6px">
-            <img src="./Assets/_processed/logo_icons_la_toyota_es_considerada_como_una_de_la__44.png" alt="Taxi" style="width:100%;height:100%;object-fit:contain">
+          <div class="travel-squircle-icon-wrap">
+            <img src="./Assets/_processed/logo_icons_la_toyota_es_considerada_como_una_de_la__44.png" alt="Taxi">
           </div>
           <span class="travel-squircle-label">Taxi</span>
         </button>
 
         <!-- 6. Car Rental -->
         <button onClick="{{ on.travel }}" class="travel-squircle-card" aria-label="Travel Car Rental">
-          <div class="travel-squircle-icon-wrap" style="background:#fff;border:1px solid rgba(0,0,0,0.08);box-shadow:0 2px 8px rgba(0,0,0,0.04);overflow:hidden;padding:5px">
-            <img src="./Assets/_processed/logo_icons_jeep_0.png" alt="Car Rental" style="width:100%;height:100%;object-fit:contain">
+          <div class="travel-squircle-icon-wrap">
+            <img src="./Assets/_processed/logo_icons_jeep_0.png" alt="Car Rental">
           </div>
           <span class="travel-squircle-label">Car Rental</span>
         </button>
