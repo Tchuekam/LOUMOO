@@ -35,7 +35,11 @@ async function run() {
   const context = {
     DCLogic,
     console,
-    setTimeout: (fn) => fn(),
+    setTimeout: (fn, ms) => {
+      if (ms && ms >= 4000) return 1;
+      if (typeof fn === 'function') fn();
+      return 1;
+    },
     clearTimeout: () => {},
     localStorage: {
       getItem: () => null,
