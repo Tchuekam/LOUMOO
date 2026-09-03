@@ -2810,13 +2810,26 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 }
 
 .travel-squircle-icon-wrap {
-  width: 44px;
-  height: 44px;
-  border-radius: 14px;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background: var(--color-surface, #ffffff);
+  border: 1px solid rgba(0,0,0,0.08);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  overflow: hidden;
+  padding: 6px;
+}
+.travel-squircle-card:hover .travel-squircle-icon-wrap {
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+}
+[data-theme="dark"] .travel-squircle-icon-wrap {
+  background: #1e2230;
+  border-color: rgba(255,255,255,0.08);
 }
 .travel-squircle-label {
   font: 700 12px/1 var(--font-heading);
