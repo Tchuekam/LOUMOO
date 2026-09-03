@@ -45,6 +45,15 @@ header_and_styles = """<!DOCTYPE html>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600;1,700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* Anti-flash / unmounted protection: hide raw uncompiled template elements until React mounts */
+  x-dc { display: none !important; }
+  sc-if { display: none !important; }
+  .video-player-backdrop { display: none !important; }
+  #dc-root .video-player-backdrop { display: flex !important; }
+  .toast-banner { display: none !important; }
+  #dc-root .toast-banner { display: flex !important; }
+</style>
 </head>
 <body>
 <div id="clerk-captcha" data-sitekey="1x00000000000000000000AA" style="display:none"></div>

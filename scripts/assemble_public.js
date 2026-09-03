@@ -34,6 +34,14 @@ const app = path.join(root, 'Commerce App.dc.html');
 fs.copyFileSync(app, path.join(out, 'index.html'));
 fs.copyFileSync(app, path.join(out, 'Commerce App.dc.html'));
 
+// Copy critical root scripts & static files (support.js is the DC runtime that boots React)
+for (const file of ['support.js', 'robots.txt', 'favicon.ico']) {
+  const srcFile = path.join(root, file);
+  if (fs.existsSync(srcFile)) {
+    fs.copyFileSync(srcFile, path.join(out, file));
+  }
+}
+
 for (const dir of ['Assets', 'src', '_ds']) {
   const from = path.join(root, dir);
   if (fs.existsSync(from)) {
