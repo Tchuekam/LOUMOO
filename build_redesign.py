@@ -2263,7 +2263,13 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 }
 .lifestyle-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.28);
+}
+.lifestyle-card video {
+  transition: transform 0.4s var(--ease-spring);
+}
+.lifestyle-card:hover video {
+  transform: scale(1.04);
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -4297,6 +4303,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && !window.
       e.target.closest('.insta-video-card-tall') ||
       e.target.closest('.insta-video-card-wide') ||
       e.target.closest('.insta-video-card-compact') ||
+      e.target.closest('.lifestyle-card') ||
       e.target.closest('[data-hover-video]')
     );
     if (target && !target._isPlayingVideo) {
@@ -4316,6 +4323,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && !window.
       e.target.closest('.insta-video-card-tall') ||
       e.target.closest('.insta-video-card-wide') ||
       e.target.closest('.insta-video-card-compact') ||
+      e.target.closest('.lifestyle-card') ||
       e.target.closest('[data-hover-video]')
     );
     if (target && e.relatedTarget && !target.contains(e.relatedTarget)) {

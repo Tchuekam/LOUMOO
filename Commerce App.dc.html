@@ -2230,7 +2230,13 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 }
 .lifestyle-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.28);
+}
+.lifestyle-card video {
+  transition: transform 0.4s var(--ease-spring);
+}
+.lifestyle-card:hover video {
+  transform: scale(1.04);
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -4883,67 +4889,55 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
     </div>
 
     <div class="lifestyle-video-grid">
-      <!-- 1. City Lights -->
-      <div onClick="{{ () => openVideoModal('City Lights', '8K Timelapse over Douala Port & Wouri Bridge', 'TIMELAPSE') }}" class="lifestyle-card" style="background:linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.85) 100%), radial-gradient(circle at 50% 30%, #475569 0%, #0f172a 100%)" aria-label="Play City Lights video">
-        <div style="display:flex;justify-content:flex-end">
-          <span style="font:700 9.5px/1 var(--font-heading);background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.2);padding:3px 7px;border-radius:var(--radius-pill)">8K 60FPS</span>
+      <!-- 1. Party Decor Ideas -->
+      <div onClick="{{ () => openVideoModal('Party Decor & Vibes', 'Polished birthday and celebration decor ideas for lifestyle creators', 'EVENT DECOR', './Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%2010%20Beautiful%20birthday%20party%20decor%20ideas%20that%20help%20you%20create%20a%20polished%20look%20with%20very%20simple%20and%20affordable%20details%20for%20creato.mp4') }}" data-hover-video="true" class="lifestyle-card" onmouseenter="const v=this.querySelector('video');if(v)v.play().catch(function(){});" onmouseleave="const v=this.querySelector('video');if(v){v.pause();v.currentTime=0;}" aria-label="Play Party Decor & Vibes video">
+        <video src="./Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%2010%20Beautiful%20birthday%20party%20decor%20ideas%20that%20help%20you%20create%20a%20polished%20look%20with%20very%20simple%20and%20affordable%20details%20for%20creato.mp4" poster="./Assets/_processed/capturelife_party_decor_poster.jpg" muted loop playsinline preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;transition:transform 0.4s ease;pointer-events:none"></video>
+        <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.05) 45%, rgba(0,0,0,0.85) 100%);pointer-events:none;z-index:1"></div>
+        <div style="position:relative;z-index:2;display:flex;justify-content:flex-end">
+          <span style="font:700 9.5px/1 var(--font-heading);background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.25);color:#fff;padding:3px 8px;border-radius:var(--radius-pill);letter-spacing:0.04em">EVENT DECOR</span>
         </div>
-        <div style="display:flex;justify-content:center;align-items:center">
-          <div class="video-play-btn-circle" style="width:38px;height:38px">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="#ffffff" style="margin-left:1px"><polygon points="6 4 20 12 6 20 6 4"/></svg>
-          </div>
-        </div>
-        <div>
-          <div style="font:800 13.5px/1.2 var(--font-heading);color:#ffffff">City Lights</div>
-          <div style="font:500 11px/1 var(--font-body);color:rgba(255,255,255,0.7);margin-top:3px">8K Timelapse</div>
+        <div style="position:relative;z-index:2">
+          <div style="font:800 13.5px/1.2 var(--font-heading);color:#ffffff;text-shadow:0 1px 4px rgba(0,0,0,0.8)">Party Decor Ideas</div>
+          <div style="font:500 11px/1 var(--font-body);color:rgba(255,255,255,0.85);margin-top:3px;text-shadow:0 1px 3px rgba(0,0,0,0.8)">Polished Creator Details</div>
         </div>
       </div>
 
-      <!-- 2. Ride Without Limits -->
-      <div onClick="{{ () => openVideoModal('Ride Without Limits', '360° Freedom on Yaoundé-Douala Highway', 'ROAD TRIP') }}" class="lifestyle-card" style="background:linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.85) 100%), radial-gradient(circle at 60% 40%, #0284c7 0%, #0c4a6e 100%)" aria-label="Play Ride Without Limits video">
-        <div style="display:flex;justify-content:flex-end">
-          <span style="font:700 9.5px/1 var(--font-heading);background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.2);padding:3px 7px;border-radius:var(--radius-pill)">360° HDR</span>
+      <!-- 2. Dreamy Hair Care -->
+      <div onClick="{{ () => openVideoModal('Dreamy Hair Care', 'Natural curls and intentional hair care routines for everyday beauty', 'GLOW & BEAUTY', './Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%20Explore%20Dreamy%20curly%20hair%20care%20ideas%20for%20your%20next%20inspiration%20board%20designed%20for%20people%20who%20want%20results%20that%20look%20intentional.mp4') }}" data-hover-video="true" class="lifestyle-card" onmouseenter="const v=this.querySelector('video');if(v)v.play().catch(function(){});" onmouseleave="const v=this.querySelector('video');if(v){v.pause();v.currentTime=0;}" aria-label="Play Dreamy Hair Care video">
+        <video src="./Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%20Explore%20Dreamy%20curly%20hair%20care%20ideas%20for%20your%20next%20inspiration%20board%20designed%20for%20people%20who%20want%20results%20that%20look%20intentional.mp4" poster="./Assets/_processed/capturelife_hair_care_poster.jpg" muted loop playsinline preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;transition:transform 0.4s ease;pointer-events:none"></video>
+        <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.05) 45%, rgba(0,0,0,0.85) 100%);pointer-events:none;z-index:1"></div>
+        <div style="position:relative;z-index:2;display:flex;justify-content:flex-end">
+          <span style="font:700 9.5px/1 var(--font-heading);background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.25);color:#fff;padding:3px 8px;border-radius:var(--radius-pill);letter-spacing:0.04em">GLOW & BEAUTY</span>
         </div>
-        <div style="display:flex;justify-content:center;align-items:center">
-          <div class="video-play-btn-circle" style="width:38px;height:38px">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="#ffffff" style="margin-left:1px"><polygon points="6 4 20 12 6 20 6 4"/></svg>
-          </div>
-        </div>
-        <div>
-          <div style="font:800 13.5px/1.2 var(--font-heading);color:#ffffff">Ride Without Limits</div>
-          <div style="font:500 11px/1 var(--font-body);color:rgba(255,255,255,0.7);margin-top:3px">360° Freedom</div>
+        <div style="position:relative;z-index:2">
+          <div style="font:800 13.5px/1.2 var(--font-heading);color:#ffffff;text-shadow:0 1px 4px rgba(0,0,0,0.8)">Dreamy Hair Care</div>
+          <div style="font:500 11px/1 var(--font-body);color:rgba(255,255,255,0.85);margin-top:3px;text-shadow:0 1px 3px rgba(0,0,0,0.8)">Natural Texture & Styling</div>
         </div>
       </div>
 
-      <!-- 3. Ocean Vibes -->
-      <div onClick="{{ () => openVideoModal('Ocean Vibes', 'Pure Motion underwater 360 at Kribi Grand Batanga', 'OCEAN DIVE') }}" class="lifestyle-card" style="background:linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.85) 100%), radial-gradient(circle at 50% 50%, #0d9488 0%, #115e59 100%)" aria-label="Play Ocean Vibes video">
-        <div style="display:flex;justify-content:flex-end">
-          <span style="font:700 9.5px/1 var(--font-heading);background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.2);padding:3px 7px;border-radius:var(--radius-pill)">5.7K 120FPS</span>
+      <!-- 3. Daily Inspiration Notes -->
+      <div onClick="{{ () => openVideoModal('Daily Inspiration Notes', 'Fresh mindful notes and journaling ideas to keep things grounded', 'CREATIVE NOTES', './Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%20Fresh%20democracy%20notes%20with%20charm%20and%20useful%20ideas%20for%20daily%20inspiration%20that%20keep%20things%20grounded-pin-id-857654322816019216.mp4') }}" data-hover-video="true" class="lifestyle-card" onmouseenter="const v=this.querySelector('video');if(v)v.play().catch(function(){});" onmouseleave="const v=this.querySelector('video');if(v){v.pause();v.currentTime=0;}" aria-label="Play Daily Inspiration Notes video">
+        <video src="./Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%20Fresh%20democracy%20notes%20with%20charm%20and%20useful%20ideas%20for%20daily%20inspiration%20that%20keep%20things%20grounded-pin-id-857654322816019216.mp4" poster="./Assets/_processed/capturelife_creative_notes_poster.jpg" muted loop playsinline preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;transition:transform 0.4s ease;pointer-events:none"></video>
+        <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.05) 45%, rgba(0,0,0,0.85) 100%);pointer-events:none;z-index:1"></div>
+        <div style="position:relative;z-index:2;display:flex;justify-content:flex-end">
+          <span style="font:700 9.5px/1 var(--font-heading);background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.25);color:#fff;padding:3px 8px;border-radius:var(--radius-pill);letter-spacing:0.04em">CREATIVE NOTES</span>
         </div>
-        <div style="display:flex;justify-content:center;align-items:center">
-          <div class="video-play-btn-circle" style="width:38px;height:38px">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="#ffffff" style="margin-left:1px"><polygon points="6 4 20 12 6 20 6 4"/></svg>
-          </div>
-        </div>
-        <div>
-          <div style="font:800 13.5px/1.2 var(--font-heading);color:#ffffff">Ocean Vibes</div>
-          <div style="font:500 11px/1 var(--font-body);color:rgba(255,255,255,0.7);margin-top:3px">Pure Motion</div>
+        <div style="position:relative;z-index:2">
+          <div style="font:800 13.5px/1.2 var(--font-heading);color:#ffffff;text-shadow:0 1px 4px rgba(0,0,0,0.8)">Daily Inspiration Notes</div>
+          <div style="font:500 11px/1 var(--font-body);color:rgba(255,255,255,0.85);margin-top:3px;text-shadow:0 1px 3px rgba(0,0,0,0.8)">Grounded Thoughts & Charm</div>
         </div>
       </div>
 
-      <!-- 4. Moments That Matter -->
-      <div onClick="{{ () => openVideoModal('Moments That Matter', 'Captured in 360° with Invisible Selfie Stick', 'LIFESTYLE') }}" class="lifestyle-card" style="background:linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.85) 100%), radial-gradient(circle at 40% 40%, #ea580c 0%, #7c2d12 100%)" aria-label="Play Moments That Matter video">
-        <div style="display:flex;justify-content:flex-end">
-          <span style="font:700 9.5px/1 var(--font-heading);background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.2);padding:3px 7px;border-radius:var(--radius-pill)">8K ACTIVE</span>
+      <!-- 4. Budget Desk Setup -->
+      <div onClick="{{ () => openVideoModal('Budget Desk Setup', 'Budget-friendly office desk styling ideas and workspace inspiration', 'DESK STYLING', './Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%20Try%20Budget-friendly%20office%20desk%20styling%20for%20your%20next%20Pinterest%20save%20built%20around%20ideas%20that%20are%20easy%20to%20save%20and%20revisit%20later.mp4') }}" data-hover-video="true" class="lifestyle-card" onmouseenter="const v=this.querySelector('video');if(v)v.play().catch(function(){});" onmouseleave="const v=this.querySelector('video');if(v){v.pause();v.currentTime=0;}" aria-label="Play Budget Desk Setup video">
+        <video src="./Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%20Try%20Budget-friendly%20office%20desk%20styling%20for%20your%20next%20Pinterest%20save%20built%20around%20ideas%20that%20are%20easy%20to%20save%20and%20revisit%20later.mp4" poster="./Assets/_processed/capturelife_desk_styling_poster.jpg" muted loop playsinline preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;transition:transform 0.4s ease;pointer-events:none"></video>
+        <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.05) 45%, rgba(0,0,0,0.85) 100%);pointer-events:none;z-index:1"></div>
+        <div style="position:relative;z-index:2;display:flex;justify-content:flex-end">
+          <span style="font:700 9.5px/1 var(--font-heading);background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.25);color:#fff;padding:3px 8px;border-radius:var(--radius-pill);letter-spacing:0.04em">DESK STYLING</span>
         </div>
-        <div style="display:flex;justify-content:center;align-items:center">
-          <div class="video-play-btn-circle" style="width:38px;height:38px">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="#ffffff" style="margin-left:1px"><polygon points="6 4 20 12 6 20 6 4"/></svg>
-          </div>
-        </div>
-        <div>
-          <div style="font:800 13.5px/1.2 var(--font-heading);color:#ffffff">Moments That Matter</div>
-          <div style="font:500 11px/1 var(--font-body);color:rgba(255,255,255,0.7);margin-top:3px">Captured in 360°</div>
+        <div style="position:relative;z-index:2">
+          <div style="font:800 13.5px/1.2 var(--font-heading);color:#ffffff;text-shadow:0 1px 4px rgba(0,0,0,0.8)">Budget Desk Setup</div>
+          <div style="font:500 11px/1 var(--font-body);color:rgba(255,255,255,0.85);margin-top:3px;text-shadow:0 1px 3px rgba(0,0,0,0.8)">Smart Workspace Aesthetics</div>
         </div>
       </div>
     </div>
@@ -17949,6 +17943,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && !window.
       e.target.closest('.insta-video-card-tall') ||
       e.target.closest('.insta-video-card-wide') ||
       e.target.closest('.insta-video-card-compact') ||
+      e.target.closest('.lifestyle-card') ||
       e.target.closest('[data-hover-video]')
     );
     if (target && !target._isPlayingVideo) {
@@ -17968,6 +17963,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && !window.
       e.target.closest('.insta-video-card-tall') ||
       e.target.closest('.insta-video-card-wide') ||
       e.target.closest('.insta-video-card-compact') ||
+      e.target.closest('.lifestyle-card') ||
       e.target.closest('[data-hover-video]')
     );
     if (target && e.relatedTarget && !target.contains(e.relatedTarget)) {
