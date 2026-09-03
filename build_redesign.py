@@ -1386,6 +1386,300 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
    LOUMOO HOMEPAGE MASTER HUB — APPLE & INSTA360 EDITORIAL COMMERCE SUITE
    ══════════════════════════════════════════════════════════════════════ */
 
+/* ── Liquid-Glass Refined Search Bar Capsule (Reference Design) ── */
+.liquid-search-bar {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  height: 52px;
+  padding: 5px 7px;
+  border-radius: 9999px;
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  background: 
+    linear-gradient(rgba(14, 11, 24, 0.84), rgba(14, 11, 24, 0.84)) padding-box,
+    linear-gradient(90deg, #c084fc 0%, #a855f7 15%, #6366f1 45%, #3b82f6 75%, #007aff 100%) border-box;
+  border: 1.5px solid transparent;
+  backdrop-filter: blur(28px) saturate(200%);
+  -webkit-backdrop-filter: blur(28px) saturate(200%);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.38),
+    0 0 20px rgba(168, 85, 247, 0.2),
+    0 0 24px rgba(0, 122, 255, 0.22),
+    inset 0 1px 1px rgba(255, 255, 255, 0.3),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.4);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  margin-bottom: 2px;
+}
+.liquid-search-bar:hover {
+  box-shadow: 
+    0 10px 36px rgba(0, 0, 0, 0.45),
+    0 0 26px rgba(168, 85, 247, 0.28),
+    0 0 32px rgba(0, 122, 255, 0.32),
+    inset 0 1px 1.5px rgba(255, 255, 255, 0.4);
+}
+
+/* 1. [Scan] Button */
+.lsb-scan-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.lsb-scan-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.25);
+}
+.lsb-scan-btn:active {
+  transform: translateY(0);
+}
+
+/* 2. [Filter] Button */
+.lsb-filter-btn {
+  height: 40px;
+  padding: 0 12px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  color: #ffffff;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.lsb-filter-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.25);
+}
+.lsb-filter-btn:active {
+  transform: translateY(0);
+}
+
+/* 3. [Search Input + Search Icon] (Dominant Center Element) */
+.lsb-search-wrap {
+  flex: 1;
+  min-width: 0;
+  height: 40px;
+  border-radius: 9999px;
+  background: rgba(10, 14, 28, 0.65);
+  border: 1.5px solid rgba(59, 130, 246, 0.6);
+  box-shadow: 
+    0 0 14px rgba(59, 130, 246, 0.22),
+    inset 0 1px 2px rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 14px 0 16px;
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  gap: 8px;
+}
+.lsb-search-wrap:hover {
+  border-color: rgba(96, 165, 250, 0.9);
+  background: rgba(12, 18, 36, 0.78);
+  box-shadow: 
+    0 0 20px rgba(59, 130, 246, 0.38),
+    inset 0 1px 2px rgba(255, 255, 255, 0.25);
+}
+.lsb-search-text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font: 400 13.5px/1 var(--font-body);
+  color: rgba(255, 255, 255, 0.65);
+  user-select: none;
+  text-align: left;
+}
+.lsb-search-icon {
+  color: rgba(255, 255, 255, 0.85);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+.lsb-search-wrap:hover .lsb-search-icon {
+  color: #ffffff;
+  transform: scale(1.08);
+}
+
+/* 4. [Microphone] Button */
+.lsb-mic-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1.5px solid rgba(59, 130, 246, 0.55);
+  box-shadow: 
+    0 0 14px rgba(59, 130, 246, 0.22),
+    inset 0 1px 1px rgba(255, 255, 255, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.lsb-mic-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(96, 165, 250, 0.9);
+  transform: translateY(-1px);
+  box-shadow: 
+    0 0 20px rgba(59, 130, 246, 0.4),
+    inset 0 1px 1px rgba(255, 255, 255, 0.28);
+}
+.lsb-mic-btn:active {
+  transform: translateY(0);
+}
+
+/* 5. [Chat] Button (Speech Bubble Silhouette) */
+.lsb-chat-btn {
+  position: relative;
+  height: 40px;
+  padding: 0 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px 20px 20px 4px;
+  background: rgba(12, 18, 36, 0.75);
+  border: 1.5px solid rgba(59, 130, 246, 0.65);
+  box-shadow: 
+    0 0 14px rgba(59, 130, 246, 0.24),
+    inset 0 1px 1px rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+  font: 600 13px/1 var(--font-heading);
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.lsb-chat-btn::after {
+  content: "";
+  position: absolute;
+  bottom: -5px;
+  left: 8px;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 6px 5px 0 0;
+  border-color: rgba(59, 130, 246, 0.85) transparent transparent transparent;
+  filter: drop-shadow(0 0 4px rgba(59, 130, 246, 0.4));
+}
+.lsb-chat-btn:hover {
+  background: rgba(16, 24, 48, 0.88);
+  border-color: rgba(96, 165, 250, 0.95);
+  transform: translateY(-1px);
+  box-shadow: 
+    0 0 22px rgba(59, 130, 246, 0.45),
+    inset 0 1px 1.5px rgba(255, 255, 255, 0.28);
+}
+.lsb-chat-btn:active {
+  transform: translateY(0);
+}
+
+/* Responsive Adaptability */
+@media (max-width: 640px) {
+  .liquid-search-bar {
+    height: 48px;
+    padding: 4px 6px;
+    gap: 5px;
+  }
+  .lsb-scan-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+  }
+  .lsb-filter-btn {
+    height: 36px;
+    padding: 0 8px;
+    border-radius: 12px;
+  }
+  .lsb-filter-chevron {
+    display: none;
+  }
+  .lsb-search-wrap {
+    height: 36px;
+    padding: 0 10px 0 12px;
+  }
+  .lsb-search-text {
+    font-size: 12.5px;
+  }
+  .lsb-mic-btn {
+    width: 36px;
+    height: 36px;
+  }
+  .lsb-chat-btn {
+    height: 36px;
+    padding: 0 12px;
+    font-size: 12px;
+    border-radius: 18px 18px 18px 3px;
+  }
+  .lsb-chat-btn::after {
+    bottom: -4px;
+    left: 6px;
+    border-width: 5px 4px 0 0;
+  }
+}
+
+@media (max-width: 380px) {
+  .liquid-search-bar {
+    gap: 4px;
+    padding: 3px 4px;
+    height: 44px;
+  }
+  .lsb-scan-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+  }
+  .lsb-filter-btn {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border-radius: 10px;
+  }
+  .lsb-search-wrap {
+    height: 32px;
+    padding: 0 8px 0 10px;
+  }
+  .lsb-search-text {
+    font-size: 11.5px;
+  }
+  .lsb-mic-btn {
+    width: 32px;
+    height: 32px;
+  }
+  .lsb-chat-btn {
+    height: 32px;
+    padding: 0 9px;
+    font-size: 11px;
+    border-radius: 16px 16px 16px 2px;
+  }
+}
+
 /* Hero Cinematic Banner */
 .hero-cinematic-banner {
   position: relative;

@@ -44,23 +44,50 @@ def get_home_view():
       </button>
     </div>
 
-    <!-- Preserved Full-Featured Search Bar with Visual & Voice Capabilities -->
-    <div style="display:flex;height:46px;border:1.5px solid var(--color-divider);border-radius:var(--radius-pill);background:var(--color-surface);box-shadow:var(--shadow-xs);overflow:hidden">
-      <button onClick="{{ on.visual }}" aria-label="Visual camera search" title="Visual search" style="width:42px;border:none;border-right:1px solid var(--color-divider);background:transparent;display:flex;align-items:center;justify-content:center;color:var(--color-text-secondary);cursor:pointer">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+    <!-- ── LIQUID-GLASS REFINED SEARCH BAR CAPSULE (Reference Design) ── -->
+    <div class="liquid-search-bar" role="search">
+      <!-- 1. [Scan] Button -->
+      <button onClick="{{ on.visual }}" aria-label="Visual camera search" title="Visual Camera Search" class="lsb-scan-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 8V5a1 1 0 0 1 1-1h3"/>
+          <path d="M16 4h3a1 1 0 0 1 1 1v3"/>
+          <path d="M4 16v3a1 1 0 0 0 1 1h3"/>
+          <path d="M16 20h3a1 1 0 0 0 1-1v-3"/>
+          <line x1="8" y1="12" x2="16" y2="12" stroke-width="2.2"/>
+        </svg>
       </button>
-      <button onClick="{{ on.filters }}" aria-label="Filter search" title="Filters" style="width:42px;border:none;border-right:1px solid var(--color-divider);background:transparent;display:flex;align-items:center;justify-content:center;color:var(--color-text-secondary);cursor:pointer">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+
+      <!-- 2. [Filter] Button -->
+      <button onClick="{{ on.filters }}" aria-label="Search filters" title="Filters" class="lsb-filter-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="4" y1="7" x2="20" y2="7"/>
+          <line x1="4" y1="12" x2="20" y2="12"/>
+          <line x1="4" y1="17" x2="14" y2="17"/>
+          <circle cx="17" cy="17" r="2" fill="currentColor"/>
+        </svg>
+        <svg class="lsb-filter-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.75"><path d="m6 9 6 6 6-6"/></svg>
       </button>
-      <button onClick="{{ on.search }}" aria-label="Search products and stores" style="flex:1;min-width:0;border:none;background:transparent;text-align:left;padding:0 12px;font:400 13px/1 var(--font-body);color:var(--color-text-muted);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;cursor:pointer">Search products, stores, services…</button>
-      <button onClick="{{ on.search }}" aria-label="Execute search" title="Search" style="width:36px;border:none;background:transparent;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4 4"/></svg>
+
+      <!-- 3. [Search input + search icon] (Dominant Center Element) -->
+      <div onClick="{{ on.search }}" class="lsb-search-wrap" role="button" tabindex="0" aria-label="Search products, stores, services">
+        <span class="lsb-search-text">Search anything...</span>
+        <span class="lsb-search-icon">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4 4"/></svg>
+        </span>
+      </div>
+
+      <!-- 4. [Microphone] Button -->
+      <button onClick="{{ on.voice }}" aria-label="Voice search mode" title="Voice Search" class="lsb-mic-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+          <line x1="12" y1="19" x2="12" y2="22"/>
+        </svg>
       </button>
-      <button onClick="{{ on.voice }}" aria-label="Voice search" title="Voice mode" style="width:36px;border:none;background:transparent;display:flex;align-items:center;justify-content:center;color:var(--color-text-secondary);cursor:pointer">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
-      </button>
-      <button onClick="{{ on.chat }}" aria-label="Open discussions" style="width:68px;border:none;background:var(--color-accent);color:#fff;font:800 11px/1 var(--font-heading);letter-spacing:.06em;display:flex;align-items:center;justify-content:center;gap:4px;cursor:pointer">CHAT
-        <span style="width:6px;height:6px;border-radius:50%;background:#fff;display:block"></span>
+
+      <!-- 5. [Chat] Button -->
+      <button onClick="{{ on.chat }}" aria-label="Open AI and seller chat" title="Chat" class="lsb-chat-btn">
+        <span>Chat</span>
       </button>
     </div>
   </div>
