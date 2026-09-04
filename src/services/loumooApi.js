@@ -471,6 +471,44 @@
       .then(function (data) { return (data && data.order) || null; });
   };
 
+  // Place a new order from the bag (payment deferred — pay on delivery).
+  LoumooApiClient.prototype.createOrder = function (payload) {
+    return this.request('/api/v1/users/me/orders', { method: 'POST', body: payload })
+      .then(function (data) { return (data && data.order) || null; });
+  };
+
+  /* --- Reviews --- */
+  LoumooApiClient.prototype.createReview = function (payload) {
+    return this.request('/api/v1/reviews', { method: 'POST', body: payload })
+      .then(function (data) { return (data && data.review) || null; });
+  };
+
+  LoumooApiClient.prototype.getReviews = function (targetType, targetId, params) {
+    return this.request('/api/v1/reviews/' + encodeURIComponent(targetType) + '/' + encodeURIComponent(targetId) + qs(params));
+  };
+
+  /* --- Travel --- */
+  LoumooApiClient.prototype.searchTravel = function (params) {
+    return this.request('/api/v1/travel/search' + qs(params));
+  };
+
+  LoumooApiClient.prototype.getBusSchedules = function (params) {
+    return this.request('/api/v1/travel/bus/schedules' + qs(params));
+  };
+
+  LoumooApiClient.prototype.getTravelPackages = function (params) {
+    return this.request('/api/v1/travel/packages' + qs(params));
+  };
+
+  LoumooApiClient.prototype.createTravelBooking = function (payload) {
+    return this.request('/api/v1/travel/bookings', { method: 'POST', body: payload })
+      .then(function (data) { return data || null; });
+  };
+
+  LoumooApiClient.prototype.getMyTrips = function (params) {
+    return this.request('/api/v1/travel/bookings/my-trips' + qs(params));
+  };
+
   /* --- 04.07 Activity history --- */
   LoumooApiClient.prototype.getActivities = function (params) {
     return this.request('/api/v1/users/me/activities' + qs(params));

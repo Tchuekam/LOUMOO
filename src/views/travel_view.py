@@ -582,8 +582,8 @@ def get_travel_view():
     <!-- Itinerary Summary Card -->
     <div style="padding:16px;background:var(--color-neutral-100);border:1px solid var(--color-divider);border-radius:var(--radius-sm);display:flex;justify-content:space-between;align-items:center">
       <div>
-        <div style="font:800 14.5px/1.2 var(--font-heading);color:var(--color-text)">Douala (Bépanda) → Yaoundé (Mvan)</div>
-        <div style="font:500 11.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">General Express VIP · Tomorrow 08:00 · Seat 4A</div>
+        <div style="font:800 14.5px/1.2 var(--font-heading);color:var(--color-text)">{{ travelRouteLabel }}</div>
+        <div style="font:500 11.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Camair-Co · Departs 08:40 · Escrow protected</div>
       </div>
       <div style="text-align:right">
         <div style="font:800 17px/1 var(--font-heading);color:var(--color-accent)">XAF 6 500</div>
@@ -598,17 +598,17 @@ def get_travel_view():
       <div style="display:flex;flex-direction:column;gap:12px">
         <div>
           <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:4px;display:block">FULL NAME (AS ON CNI / PASSPORT)</label>
-          <input type="text" class="input" value="ROSTAND TCHUEKAM">
+          <input type="text" class="input" value="{{ travelPaxName }}" onInput="{{ updateTravelPaxName }}" placeholder="Full name">
         </div>
-        
+
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
           <div>
             <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:4px;display:block">ID / PASSPORT NUMBER</label>
-            <input type="text" class="input" value="09CM48921">
+            <input type="text" class="input" value="{{ travelPaxId }}" onInput="{{ updateTravelPaxId }}" placeholder="CNI / passport no.">
           </div>
           <div>
             <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:4px;display:block">PHONE / WHATSAPP (FOR E-TICKET)</label>
-            <input type="text" class="input" value="+237 690 12 34 56">
+            <input type="text" class="input" value="{{ travelPaxPhone }}" onInput="{{ updateTravelPaxPhone }}" placeholder="+237 …">
           </div>
         </div>
       </div>
@@ -676,8 +676,8 @@ def get_travel_view():
       <!-- Route -->
       <div style="display:flex;justify-content:space-between;align-items:center;margin-top:18px">
         <div style="flex:1">
-          <div style="font:800 34px/1 var(--font-heading)">DLA</div>
-          <div style="font:500 10.5px/1.3 var(--font-body);opacity:0.9;margin-top:4px">Douala Int'l</div>
+          <div style="font:800 34px/1 var(--font-heading)">{{ ticketFromCode }}</div>
+          <div style="font:500 10.5px/1.3 var(--font-body);opacity:0.9;margin-top:4px">{{ ticketFromCity }}</div>
         </div>
         <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 6px">
           <div style="font:600 9.5px/1 var(--font-body);opacity:0.8">1h 05m · Direct</div>
@@ -686,11 +686,11 @@ def get_travel_view():
             <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff" style="transform:rotate(90deg);flex-shrink:0"><path d="M21 16v-2l-8-5V3.5A1.5 1.5 0 0 0 11.5 2 1.5 1.5 0 0 0 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></svg>
             <span style="height:2px;flex:1;background:rgba(255,255,255,0.4);border-radius:2px"></span>
           </div>
-          <div style="font:700 9px/1 var(--font-mono);opacity:0.75;letter-spacing:.06em">QC 302</div>
+          <div style="font:700 9px/1 var(--font-mono);opacity:0.75;letter-spacing:.06em">{{ ticketFlightNo }}</div>
         </div>
         <div style="flex:1;text-align:right">
-          <div style="font:800 34px/1 var(--font-heading)">NSI</div>
-          <div style="font:500 10.5px/1.3 var(--font-body);opacity:0.9;margin-top:4px">Yaoundé Nsimalen</div>
+          <div style="font:800 34px/1 var(--font-heading)">{{ ticketToCode }}</div>
+          <div style="font:500 10.5px/1.3 var(--font-body);opacity:0.9;margin-top:4px">{{ ticketToCity }}</div>
         </div>
       </div>
     </div>
@@ -700,45 +700,45 @@ def get_travel_view():
       <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:16px 14px;font-size:12px">
         <div>
           <div style="color:var(--color-text-muted);font-weight:700;font-size:9.5px;letter-spacing:.06em">PASSENGER</div>
-          <div style="font-weight:800;font-size:14px;color:var(--color-text);margin-top:3px">TCHUEKAM / ROSTAND MR</div>
+          <div style="font-weight:800;font-size:14px;color:var(--color-text);margin-top:3px">{{ ticketPassenger }}</div>
         </div>
         <div>
           <div style="color:var(--color-text-muted);font-weight:700;font-size:9.5px;letter-spacing:.06em">BOOKING REF (PNR)</div>
-          <div style="font-weight:800;font-size:14px;color:var(--color-text);margin-top:3px;font-family:var(--font-mono)">LMR-CMR-4821</div>
+          <div style="font-weight:800;font-size:14px;color:var(--color-text);margin-top:3px;font-family:var(--font-mono)">{{ ticketPnr }}</div>
         </div>
         <div>
           <div style="color:var(--color-text-muted);font-weight:700;font-size:9.5px;letter-spacing:.06em">DATE</div>
-          <div style="font-weight:800;font-size:13.5px;color:var(--color-text);margin-top:3px">Mon 13 Oct 2025</div>
+          <div style="font-weight:800;font-size:13.5px;color:var(--color-text);margin-top:3px">{{ ticketDate }}</div>
         </div>
         <div>
           <div style="color:var(--color-text-muted);font-weight:700;font-size:9.5px;letter-spacing:.06em">FLIGHT</div>
-          <div style="font-weight:800;font-size:13.5px;color:var(--color-text);margin-top:3px">QC 302 · Q400</div>
+          <div style="font-weight:800;font-size:13.5px;color:var(--color-text);margin-top:3px">{{ ticketFlightNo }} · {{ ticketOperator }}</div>
         </div>
       </div>
 
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px;padding-top:14px;border-top:1px solid var(--color-divider)">
         <div>
           <div style="color:var(--color-text-muted);font-weight:700;font-size:9px;letter-spacing:.05em">BOARDING</div>
-          <div style="font-weight:800;font-size:15px;color:var(--color-text);margin-top:3px">08:10</div>
+          <div style="font-weight:800;font-size:15px;color:var(--color-text);margin-top:3px">{{ ticketBoard }}</div>
         </div>
         <div>
           <div style="color:var(--color-text-muted);font-weight:700;font-size:9px;letter-spacing:.05em">DEPARTS</div>
-          <div style="font-weight:800;font-size:15px;color:var(--color-text);margin-top:3px">08:40</div>
+          <div style="font-weight:800;font-size:15px;color:var(--color-text);margin-top:3px">{{ ticketDepart }}</div>
         </div>
         <div>
           <div style="color:var(--color-text-muted);font-weight:700;font-size:9px;letter-spacing:.05em">GATE</div>
-          <div style="font-weight:800;font-size:15px;color:var(--color-accent);margin-top:3px">B4</div>
+          <div style="font-weight:800;font-size:15px;color:var(--color-accent);margin-top:3px">{{ ticketGate }}</div>
         </div>
         <div>
           <div style="color:var(--color-text-muted);font-weight:700;font-size:9px;letter-spacing:.05em">SEAT</div>
-          <div style="font-weight:800;font-size:15px;color:var(--color-accent);margin-top:3px">12A</div>
+          <div style="font-weight:800;font-size:15px;color:var(--color-accent);margin-top:3px">{{ ticketSeat }}</div>
         </div>
       </div>
 
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:14px">
         <div>
           <div style="color:var(--color-text-muted);font-weight:700;font-size:9px;letter-spacing:.05em">ARRIVES</div>
-          <div style="font-weight:800;font-size:13.5px;color:var(--color-text);margin-top:3px">09:45</div>
+          <div style="font-weight:800;font-size:13.5px;color:var(--color-text);margin-top:3px">{{ ticketArrive }}</div>
         </div>
         <div>
           <div style="color:var(--color-text-muted);font-weight:700;font-size:9px;letter-spacing:.05em">ZONE</div>

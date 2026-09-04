@@ -5331,7 +5331,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
     <sc-if value="{{ isLoggedIn }}">
       <button onClick="{{ on.notifications }}" aria-label="Notifications" title="Notifications" style="border:1px solid var(--color-divider);background:var(--color-surface);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--color-text);position:relative">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-        <span style="position:absolute;top:7px;right:7px;width:7px;height:7px;border-radius:50%;background:var(--color-accent-sale)"></span>
+        <sc-if value="{{ notifHasUnread }}"><span style="position:absolute;top:1px;right:1px;min-width:15px;height:15px;padding:0 3px;border-radius:8px;background:var(--color-accent-sale);color:#fff;font:800 9px/15px var(--font-heading);text-align:center">{{ notifBadgeLabel }}</span></sc-if>
       </button>
     </sc-if>
     <sc-if value="{{ !isLoggedIn }}">
@@ -7258,10 +7258,13 @@ if (typeof window !== 'undefined') {
 
 class Component extends DCLogic {
   state = {
-    screen: 'home', stack: [], cart: 2, vs: 2, toast: '', following: false, saved: false,
+    screen: 'home', stack: [], cart: 0, cartItems: [], orders: [], lastOrder: null, vs: 2, toast: '', following: false, saved: false,
     sidebarCollapsed: false,
     vsFilterMode: 'all',
     vsPriority: 'perf',
+    vsResult: null,
+    vsResultLoading: false,
+    vsCompareIds: ['elec-1', 'elec-macbook-pro'],
     vsSlot1Active: true,
     vsSlot2Active: true,
     vsSlot3Active: false,
@@ -7450,6 +7453,17 @@ class Component extends DCLogic {
     reviewRatingLabel: '5.0 EXCELLENT',
     reviewTitle: '',
     reviewBody: '',
+    reviews: [],
+    reviewTargetId: '',
+    reviewTargetName: '',
+    trips: [],
+    lastTrip: null,
+    notifications: [],
+    travelPaxName: 'Rostand Tchuekam',
+    travelPaxPhone: '+237 690 12 34 56',
+    travelPaxId: '09CM48921',
+    travelFrom: 'Douala',
+    travelTo: 'Yaoundé',
     payoutMethod: 'mtn',
     payoutPhone: '690 12 34 56',
     payoutAmount: '500 000',
@@ -7654,15 +7668,24 @@ class Component extends DCLogic {
     const digits = String(s || '').replace(/[^0-9]/g, '');
     return digits ? parseInt(digits, 10) : 0;
   };
+  // Resolve a product by id from the curated catalogue (PRODUCTS_DATA) first,
+  // then from the live API catalogue already loaded into state (real seller
+  // listings shown in the home rail / search). Returns {} if unknown.
+  _resolveProduct = (id) => {
+    let p = (typeof PRODUCTS_DATA !== 'undefined' && PRODUCTS_DATA[id]) || null;
+    if (!p) p = (this.state.catalogProducts || []).find((x) => x && x.id === id) || null;
+    return p || {};
+  };
   _wishlistEntry = (id, name) => {
-    const p = (typeof PRODUCTS_DATA !== 'undefined' && PRODUCTS_DATA[id]) || {};
+    const p = this._resolveProduct(id);
+    const priceStr = p.salePrice || p.price || '';
     return {
       id: id,
       name: name || p.title || 'Saved item',
-      image: p.coverImage || (p.images && p.images[0]) || '',
-      price: p.salePrice || p.price || '',
-      priceXaf: this._priceToXaf(p.salePrice || p.price || p.base_price_minor),
-      store: p.storeName || '',
+      image: p.coverImage || p.imageUrl || p.image || (p.images && p.images[0]) || '',
+      price: priceStr,
+      priceXaf: this._priceToXaf(priceStr) || Number(p.priceNumeric) || Number(p.base_price_minor) || 0,
+      store: p.storeName || p.merchant || '',
       category: p.category || 'General',
       savedAt: Date.now()
     };
@@ -7699,11 +7722,214 @@ class Component extends DCLogic {
     } catch (e) {}
   };
 
+  // ── Shopping bag / cart ───────────────────────────────────────────────────
+  // Real cart with line items + quantities, persisted to localStorage so it
+  // survives reloads (works for guests). Checkout/payment wiring comes later.
+  _cartEntry = (id, name) => {
+    const p = this._resolveProduct(id);
+    const priceStr = p.salePrice || p.price || '';
+    return {
+      id: id,
+      name: name || p.title || 'Item',
+      image: p.coverImage || p.imageUrl || p.image || (p.images && p.images[0]) || '',
+      price: priceStr,
+      priceXaf: this._priceToXaf(priceStr) || Number(p.priceNumeric) || Number(p.base_price_minor) || 0,
+      store: p.storeName || p.merchant || 'LOUMOO seller',
+      qty: 1
+    };
+  };
+  _persistCart = (list) => {
+    try { localStorage.setItem('loumoo_cart', JSON.stringify(list || [])); } catch (e) {}
+  };
+  _restoreCart = () => {
+    try {
+      const raw = localStorage.getItem('loumoo_cart');
+      if (!raw) return;
+      const list = JSON.parse(raw);
+      if (Array.isArray(list)) this.setState({ cartItems: list });
+    } catch (e) {}
+  };
+
+  // ── Orders ────────────────────────────────────────────────────────────────
+  // Placing an order snapshots the bag into a real order (payment deferred, so
+  // it is "pending / pay on delivery"). Persisted to localStorage so the order
+  // history works for everyone, and mirrored to the backend when signed in.
+  _persistOrders = (list) => {
+    try { localStorage.setItem('loumoo_orders', JSON.stringify(list || [])); } catch (e) {}
+  };
+  _restoreOrders = () => {
+    try {
+      const raw = localStorage.getItem('loumoo_orders');
+      if (!raw) return;
+      const list = JSON.parse(raw);
+      if (Array.isArray(list)) this.setState({ orders: list });
+    } catch (e) {}
+  };
+  _orderDateLabel = (ts) => {
+    try {
+      const d = new Date(ts);
+      const now = new Date();
+      const hhmm = d.toTimeString().slice(0, 5);
+      if (d.toDateString() === now.toDateString()) return 'today · ' + hhmm;
+      return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) + ' · ' + hhmm;
+    } catch (e) { return ''; }
+  };
+  _orderStatusLabel = (status) => {
+    switch (status) {
+      case 'processing': return 'PREPARING';
+      case 'in_transit': return 'OUT FOR DELIVERY';
+      case 'delivered': return 'DELIVERED';
+      case 'cancelled': return 'CANCELLED';
+      default: return 'PENDING · PAY ON DELIVERY';
+    }
+  };
+
+  // ── Reviews ───────────────────────────────────────────────────────────────
+  // Buyer reviews persist locally so a submitted review is immediately visible
+  // on the product; when signed in on a real DB listing it also posts to the
+  // reviews API (POST /reviews).
+  _persistReviews = (list) => {
+    try { localStorage.setItem('loumoo_reviews', JSON.stringify(list || [])); } catch (e) {}
+  };
+  _restoreReviews = () => {
+    try {
+      const raw = localStorage.getItem('loumoo_reviews');
+      if (!raw) return;
+      const list = JSON.parse(raw);
+      if (Array.isArray(list)) this.setState({ reviews: list });
+    } catch (e) {}
+  };
+
+  // ── Travel trips ──────────────────────────────────────────────────────────
+  _persistTrips = (list) => {
+    try { localStorage.setItem('loumoo_trips', JSON.stringify(list || [])); } catch (e) {}
+  };
+  _restoreTrips = () => {
+    try {
+      const raw = localStorage.getItem('loumoo_trips');
+      if (!raw) return;
+      const list = JSON.parse(raw);
+      if (Array.isArray(list)) this.setState({ trips: list });
+    } catch (e) {}
+  };
+
+  // ── Notifications ─────────────────────────────────────────────────────────
+  // A real activity feed generated from the buyer's own actions (orders placed,
+  // reviews posted, trips booked, stores followed), persisted locally.
+  _persistNotifs = (list) => {
+    try { localStorage.setItem('loumoo_notifs', JSON.stringify(list || [])); } catch (e) {}
+  };
+  _restoreNotifs = () => {
+    try {
+      const raw = localStorage.getItem('loumoo_notifs');
+      if (raw) {
+        const list = JSON.parse(raw);
+        if (Array.isArray(list)) { this.setState({ notifications: list }); return; }
+      }
+      // First run: seed a friendly welcome so the feed is never a dead end.
+      const seed = [{
+        id: 'ntf_welcome', tone: 'accent', title: 'Welcome to LOUMOO',
+        body: 'Your notifications about orders, deliveries and trips will appear here.',
+        read: false, createdAt: Date.now()
+      }];
+      this.setState({ notifications: seed });
+      this._persistNotifs(seed);
+    } catch (e) {}
+  };
+  _pushNotif = (notif) => {
+    const item = Object.assign({
+      id: 'ntf_' + Date.now().toString(36) + Math.floor(Math.random() * 1000),
+      tone: 'accent', title: '', body: '', read: false, createdAt: Date.now()
+    }, notif || {});
+    const list = [item].concat(this.state.notifications || []).slice(0, 40);
+    this.setState({ notifications: list });
+    this._persistNotifs(list);
+  };
+  _markNotifsRead = () => {
+    const list = (this.state.notifications || []).map((n) => n.read ? n : Object.assign({}, n, { read: true }));
+    this.setState({ notifications: list });
+    this._persistNotifs(list);
+  };
+  // City → IATA-ish code + airport label for the boarding pass.
+  _cityCode = (city) => {
+    const map = {
+      'douala': { code: 'DLA', airport: "Douala Int'l" },
+      'yaoundé': { code: 'NSI', airport: 'Yaoundé Nsimalen' },
+      'yaounde': { code: 'NSI', airport: 'Yaoundé Nsimalen' },
+      'garoua': { code: 'GOU', airport: "Garoua Int'l" },
+      'maroua': { code: 'MVR', airport: 'Maroua Salak' },
+      'ngaoundéré': { code: 'NGE', airport: 'Ngaoundéré' },
+      'bafoussam': { code: 'BFX', airport: 'Bafoussam Bamougoum' },
+      'bamenda': { code: 'BPC', airport: 'Bamenda' },
+      'kribi': { code: 'KBI', airport: 'Kribi' },
+      'paris': { code: 'CDG', airport: 'Paris Charles de Gaulle' }
+    };
+    const key = String(city || '').trim().toLowerCase();
+    return map[key] || { code: (String(city || 'DLA').slice(0, 3).toUpperCase()), airport: city || 'Douala' };
+  };
+
+  // Confirm a travel booking: build a trip, persist it, issue a boarding pass,
+  // and best-effort register it with the real travel API (which returns a PNR).
+  _confirmTravelBooking() {
+    const from = this.state.travelFrom || 'Douala';
+    const to = this.state.travelTo || 'Yaoundé';
+    const fromC = this._cityCode(from);
+    const toC = this._cityCode(to);
+    const paxName = String(this.state.travelPaxName || 'Guest Traveller').trim() || 'Guest Traveller';
+    const seats = ['9C', '12A', '14B', '7D', '3A', '18F', '21C'];
+    const seat = seats[Math.floor(Math.random() * seats.length)];
+    const gate = 'B' + (1 + Math.floor(Math.random() * 8));
+    const flightNo = 'QC ' + (300 + Math.floor(Math.random() * 90));
+    const now = new Date();
+    const trip = {
+      reference: 'LMT-' + Date.now().toString(36).toUpperCase().slice(-6),
+      passenger: paxName,
+      passengerPhone: this.state.travelPaxPhone || '',
+      fromCode: fromC.code, toCode: toC.code,
+      fromCity: fromC.airport, toCity: toC.airport,
+      fromLabel: from, toLabel: to,
+      operator: 'Camair-Co', flightNo: flightNo,
+      dateLabel: now.toLocaleDateString('en-GB', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' }),
+      board: '08:10', depart: '08:40', arrive: '09:45', gate: gate, seat: seat,
+      priceLabel: 'XAF 78 000', status: 'CONFIRMED', createdAt: Date.now()
+    };
+    const list = [trip].concat(this.state.trips || []);
+    this.setState({ lastTrip: trip, trips: list });
+    this._persistTrips(list);
+    try {
+      const api = getApi();
+      if (api && api.createTravelBooking) {
+        api.createTravelBooking({
+          type: 'flight',
+          itinerary: { origin: from, destination: to, operator: 'Camair-Co', flightNo: flightNo, departureTime: trip.depart, arrivalTime: trip.arrive },
+          passengers: [{ name: paxName, phone: trip.passengerPhone, seat: seat }]
+        }).then((bk) => {
+          if (this._unmounted || !bk || !bk.reference) return;
+          const updated = Object.assign({}, trip, { reference: bk.reference, bookingId: bk.id, qr: bk.qrCodePayload });
+          const l2 = (this.state.trips || []).map((t) => t.createdAt === trip.createdAt ? updated : t);
+          this.setState({ lastTrip: updated, trips: l2 });
+          this._persistTrips(l2);
+        }).catch(() => {});
+      }
+    } catch (e) {}
+    this._pushNotif({ tone: 'accent', title: 'E-ticket issued', body: trip.fromLabel + ' → ' + trip.toLabel + ' · booking ' + trip.reference });
+    this.toast('Ticket issued — ' + trip.reference);
+    this.go('travelTicket');
+  }
+
   componentDidMount() {
     this._restoreOnboardingDraft();
     this._restoreUserAvatar();
     this._restoreWishlist();
+    this._restoreCart();
+    this._restoreOrders();
+    this._restoreReviews();
+    this._restoreTrips();
+    this._restoreNotifs();
     this._bootAuth();
+    // Load the live marketplace catalogue for the home rail on first paint
+    // (_onScreenEnter only fires on subsequent navigation, not initial mount).
+    this.loadCatalogProducts({ limit: 16 });
     if (typeof window !== 'undefined') {
       window._loumooHeroComponent = this;
       window.heroNextSlide = () => {
@@ -8118,8 +8344,10 @@ class Component extends DCLogic {
       // The marketplace rails show real published listings alongside the
       // curated editorial ones.
       if (!this.state.catalogProducts.length && !this.state.catalogLoading) {
-        this.loadCatalogProducts({ limit: 12 });
+        this.loadCatalogProducts({ limit: 16 });
       }
+    } else if (screen === 'vsCompare') {
+      this.runCompare();
     }
   }
 
@@ -9349,6 +9577,27 @@ class Component extends DCLogic {
     this.setState({ currentProductActiveImage: imgUrl });
   }
 
+  // Call the real comparison engine (GET /catalog/compare) for the two products
+  // in the VS workspace, weighting by the buyer's chosen priority. Drives the
+  // recommendation banner on the compare screen.
+  runCompare() {
+    const api = getApi();
+    if (!api || !api.compareProducts) return;
+    const ids = this.state.vsCompareIds || ['elec-1', 'elec-macbook-pro'];
+    const priMap = { perf: 'performance', price: 'price', display: 'display', battery: 'battery', portability: 'portability', warranty: 'warranty' };
+    const key = priMap[this.state.vsPriority] || 'value';
+    const priorities = { price: 3, performance: 3, battery: 3, display: 3, portability: 3, warranty: 3, delivery: 3, value: 3 };
+    priorities[key] = 5;
+    this.setState({ vsResultLoading: true });
+    api.compareProducts(ids, priorities)
+      .then((res) => {
+        if (this._unmounted) return;
+        const data = (res && res.recommendation) ? res : (res && res.data) ? res.data : res;
+        this.setState({ vsResult: data || null, vsResultLoading: false });
+      })
+      .catch(() => { if (!this._unmounted) this.setState({ vsResultLoading: false }); });
+  }
+
   loadCatalogProducts(params) {
     const api = getApi();
     if (!api) return;
@@ -9538,6 +9787,8 @@ class Component extends DCLogic {
     SCREENS.forEach(k => { is[k] = s === k; });
     const on = {};
     SCREENS.forEach(k => { on[k] = () => this.go(k); });
+    // Opening the notifications feed marks everything read (clears the badge).
+    on.notifications = () => { this._markNotifsRead(); this.go('notifications'); };
     on.toggleSidebar = () => this.toggleSidebar();
     on.expandSidebar = () => this.expandSidebar();
     on.collapseSidebar = () => this.collapseSidebar();
@@ -9624,8 +9875,12 @@ class Component extends DCLogic {
     });
 
     const fmt = n => String(n).replace(/\\B(?=(\\d{3})+(?!\\d))/g, ' ');
-    const line = 745000 * this.state.qty;
-    const items = line + 130000;
+    // Real cart totals derived from the line items in the bag.
+    const cartList = this.state.cartItems || [];
+    const cartSubtotal = cartList.reduce((a, it) => a + (Number(it.priceXaf) || 0) * (Number(it.qty) || 1), 0);
+    const escrowFee = cartSubtotal > 0 ? 3000 : 0;
+    const line = cartSubtotal;
+    const items = cartSubtotal;
     const shipStyle = o => ({
       bd: o ? 'var(--color-text)' : 'var(--color-divider)',
       w: o ? '2px' : '1px',
@@ -9666,10 +9921,10 @@ class Component extends DCLogic {
       },
       incQty: () => this.setState(s => ({ qty: Math.min(9, s.qty + 1) })),
       decQty: () => this.setState(s => ({ qty: Math.max(1, s.qty - 1) })),
-      lineTotal: 'XAF ' + fmt(line),
-      cartItems: 'XAF ' + fmt(items),
-      cartTotal: 'XAF ' + fmt(items + 3000),
-      payLabel: 'PAY XAF ' + fmt(items + 3000) + ' WITH MOMO',
+      cartSubtotalLabel: 'XAF ' + fmt(items),
+      cartTotal: 'XAF ' + fmt(items + escrowFee),
+      cartEscrowLabel: escrowFee > 0 ? ('XAF ' + fmt(escrowFee)) : 'XAF 0',
+      payLabel: 'PAY XAF ' + fmt(items + escrowFee) + ' WITH MOMO',
 
       // ── Canonical Dynamic Product Details Getters & Actions ──
       productLoading: Boolean(this.state.productLoading),
@@ -9716,6 +9971,18 @@ class Component extends DCLogic {
       catalogProducts: this.state.catalogProducts || [],
       catalogLoading: Boolean(this.state.catalogLoading),
       catalogError: this.state.catalogError || '',
+      // Display-ready cards for the home "Live catalogue" rail, from GET /products.
+      catalogHasCards: (this.state.catalogProducts || []).length > 0,
+      catalogCards: (this.state.catalogProducts || []).map((p) => ({
+        id: p.id,
+        title: p.title,
+        imageUrl: p.imageUrl || p.image || '',
+        priceLabel: p.price || (p.priceNumeric ? ('XAF ' + fmt(p.priceNumeric)) : ''),
+        ratingLabel: '★ ' + (p.rating != null ? p.rating : '5.0'),
+        storeLabel: (p.storeName || 'LOUMOO seller') + (p.merchantCity ? (' · ' + p.merchantCity) : ''),
+        tagline: p.tagline || p.categoryLabel || '',
+        badge: p.badge || ''
+      })),
       ship: { home: shipStyle(sh.home), pickup: shipStyle(sh.pickup), nation: shipStyle(sh.nation) },
       toggleShip: {
         home: () => this.setState(s => ({ ship: { ...s.ship, home: !s.ship.home } })),
@@ -11233,20 +11500,72 @@ class Component extends DCLogic {
           this.go('orderDetail');
         }, 800);
       },
-      openWriteReview: () => this.go('writeReview'),
+      openWriteReview: () => {
+        // Capture the product being reviewed from the current PDP context.
+        const p = (this.state.currentProductId && typeof PRODUCTS_DATA !== 'undefined')
+          ? PRODUCTS_DATA[this.state.currentProductId] : null;
+        this.setState({
+          reviewTargetId: this.state.currentProductId || '',
+          reviewTargetName: (p && p.title) || this.state.reviewTargetName || 'this product',
+          reviewStars: 5, reviewRatingLabel: '5.0 EXCELLENT', reviewTitle: '', reviewBody: ''
+        });
+        this.go('writeReview');
+      },
       reviewStars: this.state.reviewStars,
       reviewRatingLabel: this.state.reviewRatingLabel,
       reviewTitle: this.state.reviewTitle,
       reviewBody: this.state.reviewBody,
+      reviewTargetName: this.state.reviewTargetName || 'this product',
       setReviewStars: (n) => {
         const labels = { 1: '1.0 TERRIBLE', 2: '2.0 POOR', 3: '3.0 AVERAGE', 4: '4.0 GOOD', 5: '5.0 EXCELLENT' };
         this.setState({ reviewStars: n, reviewRatingLabel: labels[n] || '5.0 EXCELLENT' });
       },
       updateReviewTitle: (e) => this.setState({ reviewTitle: e && e.target ? e.target.value : e }),
       updateReviewBody: (e) => this.setState({ reviewBody: e && e.target ? e.target.value : e }),
+      // Reviews for the product currently open, newest first (for the PDP).
+      myReviewsForProduct: (this.state.reviews || [])
+        .filter((r) => r.productId && r.productId === this.state.currentProductId)
+        .map((r) => ({
+          author: r.author || 'You',
+          starsLabel: '★★★★★☆☆☆☆☆'.slice(5 - (Number(r.rating) || 5), 10 - (Number(r.rating) || 5)),
+          title: r.title || '',
+          content: r.content || '',
+          dateLabel: this._orderDateLabel(r.createdAt)
+        })),
+      myReviewsCount: (this.state.reviews || []).filter((r) => r.productId === this.state.currentProductId).length,
       submitProductReview: () => {
-        this.toast('Review published. Thank you for helping Cameroon shoppers!');
-        this.go('orderDetail');
+        const rating = Number(this.state.reviewStars) || 0;
+        const content = String(this.state.reviewBody || '').trim();
+        const title = String(this.state.reviewTitle || '').trim();
+        if (rating < 1 || rating > 5) { this.toast('Please pick a star rating'); return; }
+        if (content.length < 5) { this.toast('Please write a few words about your experience'); return; }
+        const productId = this.state.reviewTargetId || this.state.currentProductId || '';
+        const productName = this.state.reviewTargetName || 'this product';
+        const review = {
+          id: 'rev_' + Date.now().toString(36),
+          productId: productId,
+          productName: productName,
+          rating: rating,
+          title: title,
+          content: content,
+          author: (this.state.userName || 'You'),
+          createdAt: Date.now()
+        };
+        const list = [review].concat(this.state.reviews || []);
+        this.setState({ reviews: list, reviewTitle: '', reviewBody: '', reviewStars: 5, reviewRatingLabel: '5.0 EXCELLENT' });
+        this._persistReviews(list);
+        // Best-effort: post to the real reviews API when signed in.
+        try {
+          if (this.state.authStatus === 'authenticated' && productId) {
+            const api = getApi();
+            if (api && api.createReview) {
+              api.createReview({ targetType: 'product', targetId: productId, rating: rating, title: title, content: content }).catch(() => {});
+            }
+          }
+        } catch (e) {}
+        this._pushNotif({ tone: 'success', title: 'Review posted', body: 'Thanks for reviewing ' + productName + '.' });
+        this.toast('Your review has been posted — thank you!');
+        this.back();
       },
       openSellerOrderDetail: () => this.go('sellerOrderDetail'),
       markOrderDispatched: () => {
@@ -12504,8 +12823,63 @@ class Component extends DCLogic {
         || this.state.regFirstName
         || '',
       showAds: this.props.showAds ?? true,
-      cartCount: this.state.cart,
-      cartLabel: (this.state.qty + 1) + ' items · 2 sellers',
+      cartCount: (this.state.cartItems || []).reduce((n, it) => n + (Number(it.qty) || 1), 0),
+      cartHasItems: (this.state.cartItems || []).length > 0,
+      cartItemsList: (this.state.cartItems || []).map((it) => ({
+        id: it.id,
+        name: it.name,
+        image: it.image,
+        store: it.store,
+        qty: it.qty,
+        lineLabel: 'XAF ' + fmt((Number(it.priceXaf) || 0) * (Number(it.qty) || 1))
+      })),
+      cartLabel: (() => {
+        const items = this.state.cartItems || [];
+        const n = items.reduce((a, it) => a + (Number(it.qty) || 1), 0);
+        const sellers = new Set(items.map((it) => it.store)).size;
+        if (n === 0) return 'Your bag is empty';
+        return n + (n === 1 ? ' item' : ' items') + (sellers > 1 ? (' · ' + sellers + ' sellers') : '');
+      })(),
+      // ── Notifications feed ──
+      notifHasItems: (this.state.notifications || []).length > 0,
+      notifUnreadCount: (this.state.notifications || []).filter((n) => !n.read).length,
+      notifHasUnread: (this.state.notifications || []).some((n) => !n.read),
+      notifBadgeLabel: (() => {
+        const n = (this.state.notifications || []).filter((x) => !x.read).length;
+        return n > 9 ? '9+' : (n > 0 ? String(n) : '');
+      })(),
+      notifList: (this.state.notifications || []).map((n) => ({
+        id: n.id,
+        title: n.title,
+        body: n.body,
+        read: Boolean(n.read),
+        toneColor: n.tone === 'success' ? 'var(--color-success)' : (n.tone === 'sale' ? 'var(--color-accent-sale)' : 'var(--color-accent)'),
+        dateLabel: this._orderDateLabel(n.createdAt)
+      })),
+      markNotifsRead: () => this._markNotifsRead(),
+      // ── Order confirmation (success screen) ──
+      lastOrderNumber: this.state.lastOrder ? this.state.lastOrder.orderNumber : '',
+      lastOrderTotal: this.state.lastOrder ? ('XAF ' + fmt(this.state.lastOrder.totalXaf)) : '',
+      lastOrderSeller: this.state.lastOrder ? this.state.lastOrder.seller : 'the seller',
+      lastOrderPayMethod: this.state.lastOrder ? this.state.lastOrder.paymentMethod : '',
+      lastOrderItemsLabel: (() => {
+        const o = this.state.lastOrder;
+        if (!o) return '';
+        return o.itemCount + (o.itemCount === 1 ? ' item' : ' items');
+      })(),
+      // ── Order history ──
+      ordersHasItems: (this.state.orders || []).length > 0,
+      ordersList: (this.state.orders || []).map((o) => ({
+        orderNumber: o.orderNumber,
+        dateLabel: 'Placed ' + this._orderDateLabel(o.createdAt),
+        statusLabel: this._orderStatusLabel(o.status),
+        itemsSummary: (o.items || []).map((it) => (it.qty > 1 ? (it.qty + '× ') : '') + it.name).join(', '),
+        firstImage: (o.items && o.items[0] && o.items[0].image) || '',
+        itemCountLabel: o.itemCount + (o.itemCount === 1 ? ' item' : ' items'),
+        totalLabel: 'XAF ' + fmt(o.totalXaf),
+        seller: o.seller,
+        payLabel: (o.paymentMethod || 'Pay on delivery') + ' · pay on delivery'
+      })),
       vsCount: this.state.vs,
       vsFilterAll: this.state.vsFilterMode === 'all',
       vsFilterDiff: this.state.vsFilterMode === 'diff',
@@ -12521,12 +12895,25 @@ class Component extends DCLogic {
       vsPriPort: this.state.vsPriority === 'portability',
       vsPriWarr: this.state.vsPriority === 'warranty',
 
-      setVsPriorityPerf: () => { this.setState({ vsPriority: 'perf' }); this.toast('Prioritizing Performance & M3 Pro Architecture'); },
-      setVsPriorityPrice: () => { this.setState({ vsPriority: 'price' }); this.toast('Prioritizing Lowest Price & Budget Efficiency'); },
-      setVsPriorityDisp: () => { this.setState({ vsPriority: 'display' }); this.toast('Prioritizing 120Hz Liquid Retina XDR'); },
-      setVsPriorityBatt: () => { this.setState({ vsPriority: 'battery' }); this.toast('Prioritizing 18-Hour Battery Endurance'); },
-      setVsPriorityPort: () => { this.setState({ vsPriority: 'portability' }); this.toast('Prioritizing 1.24kg Featherweight Portability'); },
-      setVsPriorityWarr: () => { this.setState({ vsPriority: 'warranty' }); this.toast('Prioritizing 12–36 Month Official Warranty'); },
+      setVsPriorityPerf: () => { this.setState({ vsPriority: 'perf' }, () => this.runCompare()); },
+      setVsPriorityPrice: () => { this.setState({ vsPriority: 'price' }, () => this.runCompare()); },
+      setVsPriorityDisp: () => { this.setState({ vsPriority: 'display' }, () => this.runCompare()); },
+      setVsPriorityBatt: () => { this.setState({ vsPriority: 'battery' }, () => this.runCompare()); },
+      setVsPriorityPort: () => { this.setState({ vsPriority: 'portability' }, () => this.runCompare()); },
+      setVsPriorityWarr: () => { this.setState({ vsPriority: 'warranty' }, () => this.runCompare()); },
+      vsResultLoading: Boolean(this.state.vsResultLoading),
+      vsRecommendTitle: (() => {
+        const r = this.state.vsResult && this.state.vsResult.recommendation;
+        return (r && r.recommendedTitle) ? String(r.recommendedTitle).replace(/\\s+\\d+GB.*/, '').trim() : '';
+      })(),
+      vsRecommendMatch: (() => {
+        const r = this.state.vsResult && this.state.vsResult.recommendation;
+        return (r && r.matchPercentage != null) ? (r.matchPercentage + '% match') : '';
+      })(),
+      vsRecommendReason: (() => {
+        const r = this.state.vsResult && this.state.vsResult.recommendation;
+        return (r && Array.isArray(r.topReasons) && r.topReasons.length) ? r.topReasons.slice(0, 2).join(' · ') : '';
+      })(),
 
       vsSlot1Active: this.state.vsSlot1Active !== false,
       vsSlot2Active: this.state.vsSlot2Active !== false,
@@ -12615,7 +13002,93 @@ class Component extends DCLogic {
           });
         }
       },
-      addToCart: () => { this.setState(st => ({ cart: st.cart + 1 })); this.toast('Added to Bag — 1 item from Orca Electronics'); },
+      addToCart: (arg) => {
+        // Resolve which product to add: an explicit id string, otherwise the
+        // product currently open on the PDP. No product context = honest nudge.
+        let id = (typeof arg === 'string' && arg) ? arg : null;
+        if (!id && this.state.currentProductId) id = this.state.currentProductId;
+        if (!id) { this.toast('Open a product to add it to your bag'); return; }
+        const list = (this.state.cartItems || []).map((it) => ({ ...it }));
+        const qtyToAdd = (this.state.screen === 'product') ? Math.max(1, Number(this.state.qty) || 1) : 1;
+        const existing = list.find((it) => it.id === id);
+        let name;
+        if (existing) {
+          existing.qty = Math.min(99, (Number(existing.qty) || 1) + qtyToAdd);
+          name = existing.name;
+        } else {
+          const entry = this._cartEntry(id);
+          entry.qty = qtyToAdd;
+          list.push(entry);
+          name = entry.name;
+        }
+        this.setState({ cartItems: list });
+        this._persistCart(list);
+        this.toast('Added ' + name + ' to your bag');
+      },
+      incCartQty: (id) => {
+        const list = (this.state.cartItems || []).map((it) => it.id === id ? { ...it, qty: Math.min(99, (Number(it.qty) || 1) + 1) } : it);
+        this.setState({ cartItems: list });
+        this._persistCart(list);
+      },
+      decCartQty: (id) => {
+        const list = (this.state.cartItems || []).map((it) => it.id === id ? { ...it, qty: (Number(it.qty) || 1) - 1 } : it).filter((it) => (Number(it.qty) || 0) > 0);
+        this.setState({ cartItems: list });
+        this._persistCart(list);
+      },
+      removeCartItem: (id) => {
+        const list = (this.state.cartItems || []).filter((it) => it.id !== id);
+        this.setState({ cartItems: list });
+        this._persistCart(list);
+        this.toast('Removed from bag');
+      },
+      // Place the order from the bag. Payment is deferred, so the order is
+      // created as "pending / pay on delivery" — no charge is taken.
+      placeOrder: () => {
+        const cart = this.state.cartItems || [];
+        if (!cart.length) { this.toast('Your bag is empty'); return; }
+        const subtotal = cart.reduce((a, it) => a + (Number(it.priceXaf) || 0) * (Number(it.qty) || 1), 0);
+        const escrow = subtotal > 0 ? 3000 : 0;
+        const total = subtotal + escrow;
+        const orderNumber = 'LM-' + Date.now().toString(36).toUpperCase().slice(-6);
+        const payMap = { mtn: 'MTN MoMo', om: 'Orange Money', card: 'Bank card' };
+        const method = payMap[this.state.sel && this.state.sel.pay] || 'Pay on delivery';
+        const address = {
+          name: [this.state.regFirstName, this.state.regLastName].filter(Boolean).join(' ') || 'LOUMOO customer',
+          phone: this.state.regPhone || '',
+          city: this.state.regCity || 'Douala'
+        };
+        const items = cart.map((it) => ({ id: it.id, name: it.name, image: it.image, priceXaf: it.priceXaf, qty: it.qty, store: it.store }));
+        const order = {
+          orderNumber: orderNumber,
+          status: 'pending',
+          paymentStatus: 'pending',
+          paymentMethod: method,
+          items: items,
+          itemCount: items.reduce((n, it) => n + (Number(it.qty) || 1), 0),
+          subtotalXaf: subtotal,
+          escrowXaf: escrow,
+          totalXaf: total,
+          seller: (items[0] && items[0].store) || 'LOUMOO seller',
+          address: address,
+          createdAt: Date.now()
+        };
+        const list = [order].concat(this.state.orders || []);
+        this.setState({ orders: list, lastOrder: order, cartItems: [] });
+        this._persistOrders(list);
+        this._persistCart([]);
+        // Mirror to the backend as a real order row when the user is signed in.
+        try {
+          if (this.state.authStatus === 'authenticated') {
+            const api = getApi();
+            if (api && api.createOrder) {
+              api.createOrder({ orderNumber: orderNumber, items: items, totalAmountXaf: total, shippingAddress: address }).catch(() => {});
+            }
+          }
+        } catch (e) {}
+        this._pushNotif({ tone: 'accent', title: 'Order ' + orderNumber + ' placed', body: 'Your order is confirmed — pay on delivery via ' + method + '.' });
+        this.toast('Order ' + orderNumber + ' placed');
+        this.go('success');
+      },
       addToVs: () => { this.setState(st => ({ vs: st.vs + 1 })); this.go('vsCompare'); },
       claimGift: () => this.toast('Gift claimed. The seller will message you shortly.'),
       toggleFollow: () => { const next = !this.state.following; this.setState({ following: next }); this.toast(next ? 'Following Orca Electronics' : 'Unfollowed'); },
@@ -12745,8 +13218,37 @@ class Component extends DCLogic {
       setBusSeat4C: () => { this.setState({ selectedBusSeat: '4C' }); this.toast('Selected Seat 4C (Solo VIP)'); },
 
       swapTravelRoute: () => { this.toast('Swapped Origin & Destination (Douala ⇄ Yaoundé)'); },
-      bookTravelItem: () => { this.go('paying'); setTimeout(() => this.go('travelTicket'), 1200); },
-      bookFlight: () => { this.go('travelTicket'); },
+      // Passenger form bindings
+      travelPaxName: this.state.travelPaxName,
+      travelPaxPhone: this.state.travelPaxPhone,
+      travelPaxId: this.state.travelPaxId,
+      travelFrom: this.state.travelFrom,
+      travelTo: this.state.travelTo,
+      updateTravelPaxName: (e) => this.setState({ travelPaxName: e && e.target ? e.target.value : e }),
+      updateTravelPaxPhone: (e) => this.setState({ travelPaxPhone: e && e.target ? e.target.value : e }),
+      updateTravelPaxId: (e) => this.setState({ travelPaxId: e && e.target ? e.target.value : e }),
+      updateTravelFrom: (e) => this.setState({ travelFrom: e && e.target ? e.target.value : e }),
+      updateTravelTo: (e) => this.setState({ travelTo: e && e.target ? e.target.value : e }),
+      travelRouteLabel: (this.state.travelFrom || 'Douala') + ' → ' + (this.state.travelTo || 'Yaoundé'),
+      // Confirm a real booking → persists a trip and issues the e-ticket.
+      bookTravelItem: () => this._confirmTravelBooking(),
+      bookFlight: () => this._confirmTravelBooking(),
+      // E-ticket (boarding pass) fields, from the last confirmed trip.
+      ticketPnr: (this.state.lastTrip && this.state.lastTrip.reference) || 'LMT-000000',
+      ticketPassenger: (this.state.lastTrip && this.state.lastTrip.passenger) ? String(this.state.lastTrip.passenger).toUpperCase() : 'GUEST TRAVELLER',
+      ticketFromCode: (this.state.lastTrip && this.state.lastTrip.fromCode) || 'DLA',
+      ticketToCode: (this.state.lastTrip && this.state.lastTrip.toCode) || 'NSI',
+      ticketFromCity: (this.state.lastTrip && this.state.lastTrip.fromCity) || "Douala Int'l",
+      ticketToCity: (this.state.lastTrip && this.state.lastTrip.toCity) || 'Yaound\\u00e9 Nsimalen',
+      ticketDate: (this.state.lastTrip && this.state.lastTrip.dateLabel) || '',
+      ticketBoard: (this.state.lastTrip && this.state.lastTrip.board) || '08:10',
+      ticketDepart: (this.state.lastTrip && this.state.lastTrip.depart) || '08:40',
+      ticketArrive: (this.state.lastTrip && this.state.lastTrip.arrive) || '09:45',
+      ticketGate: (this.state.lastTrip && this.state.lastTrip.gate) || 'B4',
+      ticketSeat: (this.state.lastTrip && this.state.lastTrip.seat) || '12A',
+      ticketFlightNo: (this.state.lastTrip && this.state.lastTrip.flightNo) || 'QC 302',
+      ticketOperator: (this.state.lastTrip && this.state.lastTrip.operator) || 'Camair-Co',
+      ticketPriceLabel: (this.state.lastTrip && this.state.lastTrip.priceLabel) || 'XAF 78 000',
 
       // ── Homepage Master Hub (HeroBanner Cinema & Editorial Suite - 10 Flagship Slides) ──
       isHeroSlide0: (this.state.heroSlide || 0) === 0,
@@ -12854,6 +13356,53 @@ class Component extends DCLogic {
 </body>
 </html>
 """
+
+# ── Emit the shared product catalogue ────────────────────────────────────────
+# The curated storefront products live once, as the `PRODUCTS_DATA` object inside
+# the frontend app script. Extract that literal on every build and write it to
+# src/data/catalog_products.js so the backend catalog API (dataLoader →
+# CatalogRepository) serves the exact same products the storefront shows. One
+# source of truth: edit PRODUCTS_DATA and both sides stay in sync.
+def _extract_products_data(js_text):
+    marker = 'const PRODUCTS_DATA = {'
+    start = js_text.find(marker)
+    if start == -1:
+        return None
+    brace_start = start + len(marker) - 1  # index of the opening '{'
+    depth = 0
+    in_str = None
+    esc = False
+    i = brace_start
+    while i < len(js_text):
+        ch = js_text[i]
+        if in_str is not None:
+            if esc:
+                esc = False
+            elif ch == '\\':
+                esc = True
+            elif ch == in_str:
+                in_str = None
+        else:
+            if ch in ('"', "'", '`'):
+                in_str = ch
+            elif ch == '{':
+                depth += 1
+            elif ch == '}':
+                depth -= 1
+                if depth == 0:
+                    return js_text[brace_start:i + 1]
+        i += 1
+    return None
+
+_catalog_literal = _extract_products_data(footer_and_scripts)
+if _catalog_literal:
+    with open('src/data/catalog_products.js', 'w', encoding='utf-8') as _cf:
+        _cf.write('// AUTO-GENERATED by build_redesign.py from PRODUCTS_DATA — do not edit by hand.\n')
+        _cf.write('// Edit PRODUCTS_DATA in build_redesign.py instead; this file is regenerated each build.\n')
+        _cf.write('export const catalogProducts = ' + _catalog_literal + ';\n')
+    print('catalog_products.js written (%d chars).' % len(_catalog_literal))
+else:
+    print('WARNING: could not extract PRODUCTS_DATA for catalog_products.js')
 
 # Assemble all screens
 full_html = (

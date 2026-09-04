@@ -290,7 +290,7 @@ def get_product_view():
           <div class="card-premium">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
               <h2 style="font-size:20px;margin:0">Verified Buyer Reviews</h2>
-              <span style="font:700 13px/1 var(--font-heading);color:var(--color-success)">100% Genuine Escrow Deliveries</span>
+              <button onClick="{{ openWriteReview }}" class="btn btn-secondary btn-sm" style="height:34px;padding:0 14px;font-size:12px;font-weight:700;cursor:pointer">✍️ Write a review</button>
             </div>
 
             <div style="display:grid;grid-template-columns:120px 1fr;gap:20px;align-items:center;padding:16px 0;border-bottom:1px solid var(--color-divider)">
@@ -318,6 +318,22 @@ def get_product_view():
                 </div>
               </div>
             </div>
+
+            <!-- Your submitted reviews (dynamic, newest first) -->
+            <sc-if value="{{ myReviewsCount }}">
+            <div style="display:flex;flex-direction:column;gap:14px;margin-top:16px">
+              <sc-for list="{{ myReviewsForProduct }}" as="rev">
+              <div style="background:var(--color-accent-50, var(--color-surface-subtle));border-radius:12px;padding:14px;border:1px solid var(--color-accent-200)">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+                  <span style="font:700 13px/1 var(--font-heading);color:var(--color-text)">{{ rev.author }} · <span style="color:var(--color-accent);font-weight:600">You</span></span>
+                  <span style="color:#eab308;font-size:12px">{{ rev.starsLabel }}</span>
+                </div>
+                <sc-if value="{{ rev.title }}"><div style="font:700 13px/1.3 var(--font-heading);color:var(--color-text);margin-bottom:3px">{{ rev.title }}</div></sc-if>
+                <div style="font:400 13px/1.45 var(--font-body);color:var(--color-text-secondary)">{{ rev.content }}</div>
+              </div>
+              </sc-for>
+            </div>
+            </sc-if>
 
             <!-- Buyer Testimonial Snippets -->
             <div style="display:flex;flex-direction:column;gap:14px;margin-top:16px">

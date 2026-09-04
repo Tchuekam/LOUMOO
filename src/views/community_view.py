@@ -457,7 +457,7 @@ _TEMPLATE = """
         </div>
 
         <div style="display:flex;gap:10px;margin-top:14px">
-          <button onClick="{{ addToCart }}" class="btn btn-outline" style="flex:1;height:42px;font-size:12.5px;font-weight:700">Add to Bag</button>
+          <button onClick="{{ () => addToCart('macbook_m2') }}" class="btn btn-outline" style="flex:1;height:42px;font-size:12.5px;font-weight:700">Add to Bag</button>
           <button onClick="{{ on.checkout }}" class="btn btn-primary" style="flex:2;height:42px;font-size:13px;font-weight:800">BUY NOW (XAF 850,000)</button>
         </div>
       </div>
@@ -722,22 +722,16 @@ _TEMPLATE = """
         <button onClick="{{ setVsPriorityPort }}" class="cmp-pri {{ vsPriPort ? 'is-active' : '' }}">Portability</button>
         <button onClick="{{ setVsPriorityWarr }}" class="cmp-pri {{ vsPriWarr ? 'is-active' : '' }}">Warranty</button>
       </div>
-      <sc-if value="{{ vsPriPerf || vsPriDisp }}">
+      <sc-if value="{{ vsResultLoading }}">
+        <div class="cmp-pri-result"><span>Analysing both products for your priority…</span></div>
+      </sc-if>
+      <sc-if value="{{ vsRecommendTitle }}">
         <div class="cmp-pri-result">
-          <span>Recommended for you — <strong>MacBook Pro 14”</strong> · 96% match</span>
-          <button onClick="{{ addToCart }}" class="cmp-pri-btn">Select</button>
+          <span>Recommended for you — <strong>{{ vsRecommendTitle }}</strong> · {{ vsRecommendMatch }}</span>
         </div>
       </sc-if>
-      <sc-if value="{{ vsPriPrice || vsPriPort || vsPriBatt }}">
-        <div class="cmp-pri-result">
-          <span>Recommended for you — <strong>MacBook Air 13”</strong> · 98% match</span>
-          <button onClick="{{ addToCart }}" class="cmp-pri-btn">Select</button>
-        </div>
-      </sc-if>
-      <sc-if value="{{ vsPriWarr }}">
-        <div class="cmp-pri-result">
-          <span>Both include 12 months official Apple warranty · Tier 1 escrow</span>
-        </div>
+      <sc-if value="{{ vsRecommendReason }}">
+        <div class="cmp-pri-note" style="font:500 12px/1.4 var(--font-body);color:var(--color-text-secondary);padding:6px 2px 0">Why: {{ vsRecommendReason }}</div>
       </sc-if>
     </section>
 
@@ -793,7 +787,7 @@ _TEMPLATE = """
         </div>
         <div class="cmp-buy-act">
           <span class="cmp-buy-price">XAF 745 000</span>
-          <button onClick="{{ addToCart }}" class="cmp-buy-btn">Buy</button>
+          <button onClick="{{ () => addToCart('macbook_m2') }}" class="cmp-buy-btn">Buy</button>
         </div>
       </div>
       <div class="cmp-buy-row">
@@ -803,7 +797,7 @@ _TEMPLATE = """
         </div>
         <div class="cmp-buy-act">
           <span class="cmp-buy-price">XAF 1 250 000</span>
-          <button onClick="{{ addToCart }}" class="cmp-buy-btn">Buy</button>
+          <button onClick="{{ () => addToCart('macbook_m2') }}" class="cmp-buy-btn">Buy</button>
         </div>
       </div>
     </section>
@@ -812,7 +806,7 @@ _TEMPLATE = """
 
   <div class="cmp-sticky">
     <span class="cmp-sticky-text">Recommended · Pro 14” · XAF 1.25M</span>
-    <button onClick="{{ addToCart }}" class="cmp-sticky-btn">Add to bag <span aria-hidden="true">→</span></button>
+    <button onClick="{{ () => addToCart('macbook_m2') }}" class="cmp-sticky-btn">Add to bag <span aria-hidden="true">→</span></button>
   </div>
 
 </div>

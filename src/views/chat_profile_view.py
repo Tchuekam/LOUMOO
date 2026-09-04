@@ -209,26 +209,42 @@ def get_chat_and_profile_view():
      ══════════════════════════════════════════════════════════════════════ -->
 <sc-if value="{{ is.notifications }}">
 <div style="padding-bottom:32px">
-  <div class="page-head">
-    <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
-    </button>
-    <h4 style="margin:0;font-size:16px">Notifications</h4>
+  <div class="page-head" style="display:flex;align-items:center;justify-content:space-between">
+    <div style="display:flex;align-items:center;gap:12px">
+      <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+      <h4 style="margin:0;font-size:16px">Notifications</h4>
+    </div>
+    <sc-if value="{{ notifHasUnread }}">
+      <button onClick="{{ markNotifsRead }}" style="border:none;background:transparent;color:var(--color-accent);font:700 12px/1 var(--font-heading);cursor:pointer">Mark all read</button>
+    </sc-if>
   </div>
 
+  <sc-if value="{{ !notifHasItems }}">
+    <div style="padding:72px 24px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px">
+      <div style="width:64px;height:64px;border-radius:50%;background:var(--color-surface-subtle);display:flex;align-items:center;justify-content:center;color:var(--color-text-muted)">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+      </div>
+      <h3 style="margin:0;font-size:17px">You're all caught up</h3>
+      <p style="font-size:13px;color:var(--color-text-secondary);max-width:280px;margin:0">Updates about your orders, deliveries and trips will show up here.</p>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ notifHasItems }}">
   <div style="padding:16px;max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:10px">
-    <div class="card-premium" style="padding:14px 16px">
-      <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-accent)">Order #KM-884920 Dispatched</div>
-      <div style="font:400 12px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:4px">Orca Electronics has handed your package to the Douala Express courier.</div>
-      <div style="font:500 10px/1 var(--font-body);color:var(--color-text-muted);margin-top:6px">10 min ago</div>
+    <sc-for list="{{ notifList }}" as="ntf">
+    <div class="card-premium" style="padding:14px 16px;display:flex;gap:12px;align-items:flex-start;{{ ntf.read ? 'opacity:0.68' : '' }}">
+      <span style="width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0;background:{{ ntf.read ? 'var(--color-neutral-300)' : ntf.toneColor }}"></span>
+      <div style="flex:1;min-width:0">
+        <div style="font:700 13px/1.2 var(--font-heading);color:{{ ntf.read ? 'var(--color-text)' : ntf.toneColor }}">{{ ntf.title }}</div>
+        <div style="font:400 12px/1.35 var(--font-body);color:var(--color-text-secondary);margin-top:4px">{{ ntf.body }}</div>
+        <div style="font:500 10px/1 var(--font-body);color:var(--color-text-muted);margin-top:6px">{{ ntf.dateLabel }}</div>
+      </div>
     </div>
-
-    <div class="card-premium" style="padding:14px 16px">
-      <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-success)">Black FreeDay Deal Alert</div>
-      <div style="font:400 12px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:4px">Sony WH-1000XM5 is now 28% off for the next 8 hours.</div>
-      <div style="font:500 10px/1 var(--font-body);color:var(--color-text-muted);margin-top:6px">1 hour ago</div>
-    </div>
+    </sc-for>
   </div>
+  </sc-if>
 </div>
 </sc-if>
 

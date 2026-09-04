@@ -196,7 +196,7 @@ def get_order_product_flow_view():
 
     <div class="card-premium" style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px;padding:24px 20px">
       <div style="font:800 16px/1.2 var(--font-heading);color:var(--color-text)">Rate Your Experience</div>
-      <div style="font:400 12.5px/1.4 var(--font-body);color:var(--color-text-secondary)">Apple iPhone 15 Pro Max 256GB · Orca Electronics</div>
+      <div style="font:400 12.5px/1.4 var(--font-body);color:var(--color-text-secondary)">{{ reviewTargetName }}</div>
 
       <!-- Star Selector -->
       <div style="display:flex;gap:10px;font-size:32px;cursor:pointer;margin:6px 0">

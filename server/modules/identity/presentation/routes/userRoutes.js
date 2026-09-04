@@ -277,6 +277,26 @@ router.get('/me/purchases/:orderId', requireAuth, async (req, res, next) => {
   }
 });
 
+// POST /api/v1/users/me/orders (Place a new order — payment deferred, pay on delivery)
+router.post('/me/orders', requireAuth, async (req, res, next) => {
+  try {
+    const order = await PurchaseHistoryUseCase.createOrder(req.userProfile.id, req.body);
+    await UserActivityUseCase.recordActivity(req.userProfile.id, {
+      actionType: 'order_placed',
+      title: 'Order Placed',
+      description: `Placed order ${order.orderNumber} (XAF ${order.totalAmountXaf}).`,
+      resourceType: 'order',
+      resourceId: order.id
+    });
+    res.status(201).json({
+      status: 'success',
+      data: { order }
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
 // ── 04.07 ACTIVITY HISTORY ──
 // GET /api/v1/users/me/activities
 router.get('/me/activities', requireAuth, async (req, res, next) => {

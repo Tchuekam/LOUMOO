@@ -41,7 +41,7 @@ def get_home_view():
       </button>
       <button onClick="{{ on.notifications }}" aria-label="Open notifications" style="width:38px;height:38px;border:1px solid var(--color-divider);border-radius:50%;background:var(--color-surface);display:flex;align-items:center;justify-content:center;position:relative;color:var(--color-text);cursor:pointer">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
-        <span style="position:absolute;top:6px;right:6px;width:6px;height:6px;border-radius:50%;background:var(--color-accent-sale)"></span>
+        <sc-if value="{{ notifHasUnread }}"><span style="position:absolute;top:1px;right:1px;min-width:15px;height:15px;padding:0 3px;border-radius:8px;background:var(--color-accent-sale);color:#fff;font:800 9px/15px var(--font-heading);text-align:center">{{ notifBadgeLabel }}</span></sc-if>
       </button>
     </div>
 
@@ -514,6 +514,47 @@ def get_home_view():
         <span class="cat-squircle-label" style="line-height:1.1">Explore All<br>Categories</span>
       </button>
     </div>
+
+    <!-- ── 03.5: LIVE CATALOGUE RAIL (real products from GET /api/v1/products) ── -->
+    <sc-if value="{{ catalogHasCards }}">
+    <div class="editorial-section-header" style="display:flex;align-items:center;justify-content:space-between;padding:16px 0 12px">
+      <div>
+        <h2 class="editorial-section-title">Live on LOUMOO</h2>
+        <div style="font:500 13px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Straight from the marketplace catalogue — verified Cameroonian sellers</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <button onClick="{{ () => scrollRail('liveCatalogueRail', -320) }}" class="loumoo-rail-nav-btn" aria-label="Previous items">‹</button>
+        <button onClick="{{ () => scrollRail('liveCatalogueRail', 320) }}" class="loumoo-rail-nav-btn" aria-label="Next items">›</button>
+      </div>
+    </div>
+    <div id="liveCatalogueRail" class="new-arrivals-rail" style="display:flex;flex-direction:row;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;gap:18px;margin-bottom:32px;padding:4px 4px 16px 4px">
+      <sc-for list="{{ catalogCards }}" as="prod">
+      <div onClick="{{ () => openProduct(prod.id) }}" class="loumoo-media-card na-card" style="cursor:pointer" aria-label="View product">
+        <div class="na-card-media-wrap">
+          <sc-if value="{{ prod.badge }}"><span class="loumoo-card-badge badge-pill-sale">{{ prod.badge }}</span></sc-if>
+          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist(prod.id, prod.title); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted(prod.id) ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted(prod.id) ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          </button>
+          <img src="{{ prod.imageUrl }}" alt="{{ prod.title }}" loading="lazy" class="na-card-img">
+          <div class="na-card-transition-fade"></div>
+        </div>
+        <div class="na-card-transition-line"></div>
+        <div class="loumoo-card-body na-card-body">
+          <div class="na-card-brand-row">
+            <span class="na-card-rating">{{ prod.ratingLabel }}</span>
+            <span class="na-card-store-label">{{ prod.storeLabel }}</span>
+          </div>
+          <h4 class="loumoo-card-title na-card-title">{{ prod.title }}</h4>
+          <div class="loumoo-card-tagline na-card-tagline">{{ prod.tagline }}</div>
+          <div class="loumoo-card-bottom-row" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px">
+            <span class="loumoo-card-price-val" style="font:800 15px/1 var(--font-heading);color:var(--color-text)">{{ prod.priceLabel }}</span>
+            <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); addToCart(prod.id); } }}" class="btn btn-primary" style="height:32px;padding:0 12px;font-size:11.5px;font-weight:700;flex-shrink:0" aria-label="Add to bag">+ Bag</button>
+          </div>
+        </div>
+      </div>
+      </sc-for>
+    </div>
+    </sc-if>
 
     <!-- ── 04: NEW ARRIVALS PRODUCT RAIL (Single Line Horizontal Scroll) ── -->
     <div class="editorial-section-header" style="display:flex;align-items:center;justify-content:space-between;padding:16px 0 12px">

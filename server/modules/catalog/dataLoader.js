@@ -43,9 +43,14 @@ const categories = loadEsmDataset('src/data/categories.js', 'categories') || [];
 const curatedBrands = loadEsmDataset('src/data/categories.js', 'curatedBrands') || [];
 const commerceDomains = loadEsmDataset('src/data/categories.js', 'commerceDomains') || [];
 
+// The storefront catalogue: the same curated products the app shows, generated
+// from PRODUCTS_DATA on every frontend build. Keyed by product id.
+const catalogProducts = loadEsmDataset('src/data/catalog_products.js', 'catalogProducts') || {};
+
 module.exports = {
   products,
   categories,
   curatedBrands,
-  commerceDomains
+  commerceDomains,
+  catalogProducts
 };

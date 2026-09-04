@@ -69,6 +69,66 @@ class PurchaseHistoryUseCase {
   }
 
   /**
+   * Place a new order from the buyer's bag.
+   *
+   * Payment integration is intentionally deferred, so orders are created with
+   * payment_status 'pending' (pay on delivery / pay on pickup) and
+   * fulfillment_status 'processing'. seller_id is left null on purpose: the cart
+   * carries a store *name*, not a profiles.id, and seller_id is a FK to
+   * iam.profiles — the seller name is preserved inside the items snapshot.
+   */
+  async createOrder(userId, payload = {}) {
+    if (!userId) throw new ValidationError('User ID is required');
+
+    const items = Array.isArray(payload.items) ? payload.items : [];
+    if (!items.length) throw new ValidationError('Cannot place an order with an empty bag');
+
+    const totalXaf = Number(payload.totalAmountXaf != null ? payload.totalAmountXaf : payload.totalXaf) || 0;
+    if (totalXaf < 0) throw new ValidationError('Order total must be a positive amount');
+
+    const orderNumber = payload.orderNumber
+      ? String(payload.orderNumber).slice(0, 64)
+      : ('LM-' + Date.now().toString(36).toUpperCase());
+    const shippingAddress = (payload.shippingAddress && typeof payload.shippingAddress === 'object')
+      ? payload.shippingAddress : {};
+
+    let created = null;
+    try {
+      const supabase = SupabaseClient.getAdmin();
+      const { data, error } = await supabase
+        .from('orders')
+        .insert({
+          buyer_id: userId,
+          seller_id: null,
+          order_number: orderNumber,
+          total_amount_xaf: totalXaf,
+          items: items,
+          shipping_address: shippingAddress,
+          payment_status: 'pending',
+          fulfillment_status: 'processing'
+        })
+        .select()
+        .single();
+
+      if (error) { handleDatabaseFailure(error, 'PurchaseHistoryUseCase.createOrder'); }
+      if (!error && data) created = this._mapRow(data);
+    } catch (err) {
+      handleDatabaseFailure(err, 'Supabase createOrder');
+      throw err;
+    }
+
+    if (!created) throw new Error('Order could not be created');
+
+    // The buyer's purchase-history cache is now stale.
+    try {
+      if (CacheService.deletePattern) await CacheService.deletePattern(`purchases:${userId}:*`);
+      else if (CacheService.del) await CacheService.del(`purchases:${userId}:all:20:0`);
+    } catch (e) { /* cache invalidation is best-effort */ }
+
+    return created;
+  }
+
+  /**
    * Get details for a single order (Strict buyer ownership verification)
    */
   async getOrderDetails(userId, orderId) {
