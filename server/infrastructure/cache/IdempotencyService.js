@@ -23,8 +23,9 @@ class IdempotencyService {
    * @param {string} key - Idempotency Key from request header
    * @param {any} payload - Request payload to verify semantic equality
    * @param {number} ttlSeconds - Duration to lock / cache the result (default 24h)
+   * @param {string|null} authScope - Hashed caller identity or auth scope
    */
-  async checkOrLock(key, payload = null, ttlSeconds = 86400) {
+  async checkOrLock(key, payload = null, ttlSeconds = 86400, authScope = null) {
     if (!key) return { state: 'NO_KEY' };
 
     const redisKey = `idempotency:${key}`;
@@ -38,6 +39,12 @@ class IdempotencyService {
           if (record.state === 'IN_PROGRESS') {
             throw new IdempotencyError('A transaction with this idempotency key is currently processing', key);
           }
+          if (record.payloadHash && record.payloadHash !== payloadHash) {
+            throw new IdempotencyError('Idempotency key has already been used with different request parameters', key);
+          }
+          if (record.authScope && authScope && record.authScope !== authScope) {
+            throw new IdempotencyError('Idempotency key has already been used by another authenticated caller', key);
+          }
           return {
             state: 'COMPLETED',
             statusCode: record.statusCode,
@@ -49,7 +56,7 @@ class IdempotencyService {
         // Atomically set state = IN_PROGRESS
         const lockAcquired = await this.redis.set(
           redisKey,
-          JSON.stringify({ state: 'IN_PROGRESS', payloadHash, lockedAt: new Date().toISOString() }),
+          JSON.stringify({ state: 'IN_PROGRESS', payloadHash, authScope, lockedAt: new Date().toISOString() }),
           'EX',
           120, // 2-minute lock during execution
           'NX'
@@ -73,6 +80,12 @@ class IdempotencyService {
         if (memRecord.state === 'IN_PROGRESS') {
           throw new IdempotencyError('A transaction with this idempotency key is currently processing', key);
         }
+        if (memRecord.payloadHash && memRecord.payloadHash !== payloadHash) {
+          throw new IdempotencyError('Idempotency key has already been used with different request parameters', key);
+        }
+        if (memRecord.authScope && authScope && memRecord.authScope !== authScope) {
+          throw new IdempotencyError('Idempotency key has already been used by another authenticated caller', key);
+        }
         return {
           state: 'COMPLETED',
           statusCode: memRecord.statusCode,
@@ -85,6 +98,7 @@ class IdempotencyService {
     this.memoryStore.set(redisKey, {
       state: 'IN_PROGRESS',
       payloadHash,
+      authScope,
       expiresAt: Date.now() + 120000
     });
 
@@ -94,19 +108,33 @@ class IdempotencyService {
   /**
    * Save completed response for the idempotency key
    */
-  async saveResponse(key, statusCode, responseBody, ttlSeconds = 86400) {
+  async saveResponse(key, statusCode, responseBody, ttlSeconds = 86400, payloadHash = null, authScope = null) {
     if (!key) return;
 
     const redisKey = `idempotency:${key}`;
-    const record = {
-      state: 'COMPLETED',
-      statusCode,
-      responseBody,
-      savedAt: new Date().toISOString()
-    };
+    let finalPayloadHash = payloadHash;
+    let finalAuthScope = authScope;
 
     try {
       if (this.redis && this.redis.status === 'ready') {
+        if (!finalPayloadHash || !finalAuthScope) {
+          const existingRaw = await this.redis.get(redisKey);
+          if (existingRaw) {
+            try {
+              const existing = JSON.parse(existingRaw);
+              finalPayloadHash = finalPayloadHash || existing.payloadHash;
+              finalAuthScope = finalAuthScope || existing.authScope;
+            } catch (e) {}
+          }
+        }
+        const record = {
+          state: 'COMPLETED',
+          statusCode,
+          responseBody,
+          payloadHash: finalPayloadHash || null,
+          authScope: finalAuthScope || null,
+          savedAt: new Date().toISOString()
+        };
         await this.redis.set(redisKey, JSON.stringify(record), 'EX', ttlSeconds);
         return;
       }
@@ -114,8 +142,17 @@ class IdempotencyService {
       logger.warn(`[IdempotencyService] Redis save response failed: ${err.message}`);
     }
 
+    const memRecord = this.memoryStore.get(redisKey);
+    finalPayloadHash = finalPayloadHash || (memRecord && memRecord.payloadHash);
+    finalAuthScope = finalAuthScope || (memRecord && memRecord.authScope);
+
     this.memoryStore.set(redisKey, {
-      ...record,
+      state: 'COMPLETED',
+      statusCode,
+      responseBody,
+      payloadHash: finalPayloadHash || null,
+      authScope: finalAuthScope || null,
+      savedAt: new Date().toISOString(),
       expiresAt: Date.now() + (ttlSeconds * 1000)
     });
   }
@@ -145,7 +182,11 @@ class IdempotencyService {
       }
 
       try {
-        const check = await this.checkOrLock(idempotencyKey, req.body);
+        const authHeader = req.headers.authorization || '';
+        const authScope = authHeader ? crypto.createHash('sha256').update(authHeader).digest('hex').slice(0, 16) : null;
+        const payloadHash = this._computeHash(req.body);
+
+        const check = await this.checkOrLock(idempotencyKey, req.body, 86400, authScope);
         if (check.state === 'COMPLETED') {
           res.setHeader('X-Cache-Lookup', 'IDEMPOTENT_HIT');
           return res.status(check.statusCode).json(check.responseBody);
@@ -157,7 +198,7 @@ class IdempotencyService {
         const originalJson = res.json.bind(res);
         res.json = (body) => {
           if (res.statusCode >= 200 && res.statusCode < 300) {
-            this.saveResponse(idempotencyKey, res.statusCode, body).catch(e => {
+            this.saveResponse(idempotencyKey, res.statusCode, body, 86400, payloadHash, authScope).catch(e => {
               logger.warn(`[Idempotency] Failed saving response: ${e.message}`);
             });
           } else {

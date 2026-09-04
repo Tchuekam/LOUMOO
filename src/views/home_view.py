@@ -124,7 +124,7 @@ def get_home_view():
             </div>
 
             <div class="hero-media-wrap" style="background:transparent">
-              <video src="./Assets/LOUMOO%20VIDEOS/HeroBanner/From%20Klickpin.com-%20Aesthetic%20Stretching%20Routine%20Ideas%20for%20This%20Year-pin-id-958000151963779036.mp4" poster="./Assets/_processed/herobanner_stretching.jpg" autoplay muted="true" defaultMuted="true" playsinline onplay="this.muted=true;this.volume=0;" onloadedmetadata="this.muted=true;this.volume=0;" onended="window.heroNextSlide && window.heroNextSlide()"></video>
+              <video src="./Assets/LOUMOO%20VIDEOS/HeroBanner/From%20Klickpin.com-%20Aesthetic%20Stretching%20Routine%20Ideas%20for%20This%20Year-pin-id-958000151963779036.mp4" poster="./Assets/_processed/herobanner_stretching.jpg" autoplay muted="true" defaultMuted="true" playsinline data-hero-video="true"></video>
             </div>
           </div>
           <div class="hero-dots-row">
@@ -190,7 +190,7 @@ def get_home_view():
             </div>
 
             <div class="hero-media-wrap" style="background:transparent">
-              <video src="./Assets/LOUMOO%20VIDEOS/HeroBanner/From%20Klickpin.com-%2093%20Trending%20Passive%20Income%20Ideas%20for%20Right%20Now-pin-id-1142084786777854743.mp4" poster="./Assets/_processed/herobanner_passive_income.jpg" autoplay muted="true" defaultMuted="true" playsinline onplay="this.muted=true;this.volume=0;" onloadedmetadata="this.muted=true;this.volume=0;" onended="window.heroNextSlide && window.heroNextSlide()"></video>
+              <video src="./Assets/LOUMOO%20VIDEOS/HeroBanner/From%20Klickpin.com-%2093%20Trending%20Passive%20Income%20Ideas%20for%20Right%20Now-pin-id-1142084786777854743.mp4" poster="./Assets/_processed/herobanner_passive_income.jpg" autoplay muted="true" defaultMuted="true" playsinline data-hero-video="true"></video>
             </div>
           </div>
           <div class="hero-dots-row">
@@ -256,7 +256,7 @@ def get_home_view():
             </div>
 
             <div class="hero-media-wrap" style="background:transparent">
-              <video src="./Assets/LOUMOO%20VIDEOS/HeroBanner/From%20Klickpin.com-%20Discover%20Unique%20rustic%20wedding%20decor%20for%20your%20next%20Pinterest%20save%20built%20around%20ideas%20that%20are%20easy%20to%20save%20and%20revisit%20later-pi.mp4" poster="./Assets/_processed/herobanner_rustic_wedding.jpg" autoplay muted="true" defaultMuted="true" playsinline onplay="this.muted=true;this.volume=0;" onloadedmetadata="this.muted=true;this.volume=0;" onended="window.heroNextSlide && window.heroNextSlide()"></video>
+              <video src="./Assets/LOUMOO%20VIDEOS/HeroBanner/From%20Klickpin.com-%20Discover%20Unique%20rustic%20wedding%20decor%20for%20your%20next%20Pinterest%20save%20built%20around%20ideas%20that%20are%20easy%20to%20save%20and%20revisit%20later-pi.mp4" poster="./Assets/_processed/herobanner_rustic_wedding.jpg" autoplay muted="true" defaultMuted="true" playsinline data-hero-video="true"></video>
             </div>
           </div>
           <div class="hero-dots-row">
@@ -1471,7 +1471,7 @@ def get_home_view():
 
     <div class="lifestyle-video-grid">
       <!-- 1. Party Decor Ideas -->
-      <div onClick="{{ () => openVideoModal('Party Decor & Vibes', 'Polished birthday and celebration decor ideas for lifestyle creators', 'EVENT DECOR', './Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%2010%20Beautiful%20birthday%20party%20decor%20ideas%20that%20help%20you%20create%20a%20polished%20look%20with%20very%20simple%20and%20affordable%20details%20for%20creato.mp4') }}" data-hover-video="true" class="lifestyle-card" onmouseenter="const v=this.querySelector('video');if(v)v.play().catch(function(){});" onmouseleave="const v=this.querySelector('video');if(v){v.pause();v.currentTime=0;}" aria-label="Play Party Decor & Vibes video">
+      <div onClick="{{ () => openVideoModal('Party Decor & Vibes', 'Polished birthday and celebration decor ideas for lifestyle creators', 'EVENT DECOR', './Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%2010%20Beautiful%20birthday%20party%20decor%20ideas%20that%20help%20you%20create%20a%20polished%20look%20with%20very%20simple%20and%20affordable%20details%20for%20creato.mp4') }}" data-hover-video="true" class="lifestyle-card" aria-label="Play Party Decor & Vibes video">
         <video src="./Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%2010%20Beautiful%20birthday%20party%20decor%20ideas%20that%20help%20you%20create%20a%20polished%20look%20with%20very%20simple%20and%20affordable%20details%20for%20creato.mp4" poster="./Assets/_processed/capturelife_party_decor_poster.jpg" muted loop playsinline preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;transition:transform 0.4s ease;pointer-events:none"></video>
         <div class="lifestyle-card-scrim" style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.05) 45%, rgba(0,0,0,0.85) 100%);pointer-events:none;z-index:1"></div>
         <div class="lifestyle-card-pill" style="position:relative;z-index:2;display:flex;justify-content:flex-end">
@@ -1484,7 +1484,7 @@ def get_home_view():
       </div>
 
       <!-- 2. Dreamy Hair Care -->
-      <div onClick="{{ () => openVideoModal('Dreamy Hair Care', 'Natural curls and intentional hair care routines for everyday beauty', 'GLOW & BEAUTY', './Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%20Explore%20Dreamy%20curly%20hair%20care%20ideas%20for%20your%20next%20inspiration%20board%20designed%20for%20people%20who%20want%20results%20that%20look%20intentional.mp4') }}" data-hover-video="true" class="lifestyle-card" onmouseenter="const v=this.querySelector('video');if(v)v.play().catch(function(){});" onmouseleave="const v=this.querySelector('video');if(v){v.pause();v.currentTime=0;}" aria-label="Play Dreamy Hair Care video">
+      <div onClick="{{ () => openVideoModal('Dreamy Hair Care', 'Natural curls and intentional hair care routines for everyday beauty', 'GLOW & BEAUTY', './Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%20Explore%20Dreamy%20curly%20hair%20care%20ideas%20for%20your%20next%20inspiration%20board%20designed%20for%20people%20who%20want%20results%20that%20look%20intentional.mp4') }}" data-hover-video="true" class="lifestyle-card" aria-label="Play Dreamy Hair Care video">
         <video src="./Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%20Explore%20Dreamy%20curly%20hair%20care%20ideas%20for%20your%20next%20inspiration%20board%20designed%20for%20people%20who%20want%20results%20that%20look%20intentional.mp4" poster="./Assets/_processed/capturelife_hair_care_poster.jpg" muted loop playsinline preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;transition:transform 0.4s ease;pointer-events:none"></video>
         <div class="lifestyle-card-scrim" style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.05) 45%, rgba(0,0,0,0.85) 100%);pointer-events:none;z-index:1"></div>
         <div class="lifestyle-card-pill" style="position:relative;z-index:2;display:flex;justify-content:flex-end">
@@ -1497,7 +1497,7 @@ def get_home_view():
       </div>
 
       <!-- 3. Daily Inspiration Notes -->
-      <div onClick="{{ () => openVideoModal('Daily Inspiration Notes', 'Fresh mindful notes and journaling ideas to keep things grounded', 'CREATIVE NOTES', './Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%20Fresh%20democracy%20notes%20with%20charm%20and%20useful%20ideas%20for%20daily%20inspiration%20that%20keep%20things%20grounded-pin-id-857654322816019216.mp4') }}" data-hover-video="true" class="lifestyle-card" onmouseenter="const v=this.querySelector('video');if(v)v.play().catch(function(){});" onmouseleave="const v=this.querySelector('video');if(v){v.pause();v.currentTime=0;}" aria-label="Play Daily Inspiration Notes video">
+      <div onClick="{{ () => openVideoModal('Daily Inspiration Notes', 'Fresh mindful notes and journaling ideas to keep things grounded', 'CREATIVE NOTES', './Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%20Fresh%20democracy%20notes%20with%20charm%20and%20useful%20ideas%20for%20daily%20inspiration%20that%20keep%20things%20grounded-pin-id-857654322816019216.mp4') }}" data-hover-video="true" class="lifestyle-card" aria-label="Play Daily Inspiration Notes video">
         <video src="./Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%20Fresh%20democracy%20notes%20with%20charm%20and%20useful%20ideas%20for%20daily%20inspiration%20that%20keep%20things%20grounded-pin-id-857654322816019216.mp4" poster="./Assets/_processed/capturelife_creative_notes_poster.jpg" muted loop playsinline preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;transition:transform 0.4s ease;pointer-events:none"></video>
         <div class="lifestyle-card-scrim" style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.05) 45%, rgba(0,0,0,0.85) 100%);pointer-events:none;z-index:1"></div>
         <div class="lifestyle-card-pill" style="position:relative;z-index:2;display:flex;justify-content:flex-end">
@@ -1510,7 +1510,7 @@ def get_home_view():
       </div>
 
       <!-- 4. Budget Desk Setup -->
-      <div onClick="{{ () => openVideoModal('Budget Desk Setup', 'Budget-friendly office desk styling ideas and workspace inspiration', 'DESK STYLING', './Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%20Try%20Budget-friendly%20office%20desk%20styling%20for%20your%20next%20Pinterest%20save%20built%20around%20ideas%20that%20are%20easy%20to%20save%20and%20revisit%20later.mp4') }}" data-hover-video="true" class="lifestyle-card" onmouseenter="const v=this.querySelector('video');if(v)v.play().catch(function(){});" onmouseleave="const v=this.querySelector('video');if(v){v.pause();v.currentTime=0;}" aria-label="Play Budget Desk Setup video">
+      <div onClick="{{ () => openVideoModal('Budget Desk Setup', 'Budget-friendly office desk styling ideas and workspace inspiration', 'DESK STYLING', './Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%20Try%20Budget-friendly%20office%20desk%20styling%20for%20your%20next%20Pinterest%20save%20built%20around%20ideas%20that%20are%20easy%20to%20save%20and%20revisit%20later.mp4') }}" data-hover-video="true" class="lifestyle-card" aria-label="Play Budget Desk Setup video">
         <video src="./Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%20Try%20Budget-friendly%20office%20desk%20styling%20for%20your%20next%20Pinterest%20save%20built%20around%20ideas%20that%20are%20easy%20to%20save%20and%20revisit%20later.mp4" poster="./Assets/_processed/capturelife_desk_styling_poster.jpg" muted loop playsinline preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;transition:transform 0.4s ease;pointer-events:none"></video>
         <div class="lifestyle-card-scrim" style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.05) 45%, rgba(0,0,0,0.85) 100%);pointer-events:none;z-index:1"></div>
         <div class="lifestyle-card-pill" style="position:relative;z-index:2;display:flex;justify-content:flex-end">

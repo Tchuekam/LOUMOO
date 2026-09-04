@@ -32,6 +32,99 @@ const { InfrastructureError } = require('../../shared/errors/AppError');
 let adminClient = null;
 let publicClient = null;
 
+const https = require('https');
+const http = require('http');
+
+const httpsAgent = new https.Agent({
+  autoSelectFamily: false,
+  keepAlive: true,
+  keepAliveMsecs: 15000,
+  timeout: 45000
+});
+
+const httpAgent = new http.Agent({
+  autoSelectFamily: false,
+  keepAlive: true,
+  keepAliveMsecs: 15000,
+  timeout: 45000
+});
+
+function nativeFetch(url, options = {}) {
+  return new Promise((resolve, reject) => {
+    const parsed = new URL(url);
+    const mod = parsed.protocol === 'http:' ? http : https;
+    const agent = parsed.protocol === 'http:' ? httpAgent : httpsAgent;
+
+    const headers = {};
+    if (options.headers) {
+      if (typeof options.headers.forEach === 'function') {
+        options.headers.forEach((v, k) => { headers[k] = v; });
+      } else {
+        Object.assign(headers, options.headers);
+      }
+    }
+
+    const req = mod.request(parsed, {
+      method: options.method || 'GET',
+      headers,
+      agent,
+      timeout: 45000
+    }, (res) => {
+      const chunks = [];
+      res.on('data', c => chunks.push(c));
+      res.on('end', () => {
+        const buf = Buffer.concat(chunks);
+        const resHeaders = new Headers();
+        for (const [k, v] of Object.entries(res.headers)) {
+          if (Array.isArray(v)) {
+            v.forEach(val => resHeaders.append(k, val));
+          } else if (v !== undefined) {
+            resHeaders.set(k, v);
+          }
+        }
+        const body = (res.statusCode === 204 || res.statusCode === 304) ? null : buf;
+        resolve(new Response(body, {
+          status: res.statusCode,
+          statusText: res.statusMessage,
+          headers: resHeaders
+        }));
+      });
+    });
+
+    req.on('timeout', () => {
+      req.destroy(new Error(`Request to ${parsed.host} timed out after 45000ms`));
+    });
+
+    req.on('error', reject);
+
+    if (options.body) {
+      req.write(options.body);
+    }
+    req.end();
+  });
+}
+
+async function resilientNativeFetch(url, options = {}) {
+  const maxAttempts = 3;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      return await nativeFetch(url, options);
+    } catch (err) {
+      const isTransient = err.message && (
+        err.message.includes('timed out') ||
+        err.message.includes('ECONNRESET') ||
+        err.message.includes('ETIMEDOUT') ||
+        err.message.includes('socket hang up')
+      );
+      if (attempt === maxAttempts || !isTransient) {
+        throw err;
+      }
+      logger.warn(`[SupabaseClient] Retrying HTTP request (${attempt}/${maxAttempts}) due to: ${err.message}`);
+      await new Promise(r => setTimeout(r, attempt * 500));
+    }
+  }
+}
+
 const CLIENT_OPTIONS = {
   auth: {
     autoRefreshToken: false,
@@ -40,6 +133,9 @@ const CLIENT_OPTIONS = {
   // Canonical default schema: all application domain tables are in `iam`.
   db: {
     schema: 'iam'
+  },
+  global: {
+    fetch: resilientNativeFetch
   }
 };
 

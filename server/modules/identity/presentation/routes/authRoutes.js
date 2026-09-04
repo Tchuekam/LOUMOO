@@ -7,16 +7,11 @@
 
 const express = require('express');
 const router = express.Router();
-const crypto = require('crypto');
 
-function signJwt(payload, secret, expiresInSeconds = 2592000) {
-  const header = Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64url');
-  const now = Math.floor(Date.now() / 1000);
-  const fullPayload = Object.assign({}, payload, { iat: now, exp: now + expiresInSeconds });
-  const body = Buffer.from(JSON.stringify(fullPayload)).toString('base64url');
-  const signature = crypto.createHmac('sha256', secret).update(header + '.' + body).digest('base64url');
-  return header + '.' + body + '.' + signature;
-}
+const SessionToken = require('../../infrastructure/SessionToken');
+const OtpSecurity = require('../../infrastructure/OtpSecurity');
+const AuthThrottle = require('../../infrastructure/AuthThrottle');
+const { resolveAuthUserId } = require('../../infrastructure/IdentityResolver');
 
 /**
  * THE session secret. There is deliberately no fallback default: a hardcoded
@@ -38,12 +33,11 @@ function sessionSecret() {
 
 /** The ONE place a LOUMOO session token is minted. */
 function issueSessionToken({ userId, email, firstName, lastName, phone, city }) {
-  return signJwt(
+  return SessionToken.sign(
     {
       sub: userId,
       email: email,
       role: 'authenticated',
-      iss: 'supabase',
       app_metadata: { provider: 'email', providers: ['email'] },
       user_metadata: {
         first_name: firstName || '',
@@ -53,30 +47,15 @@ function issueSessionToken({ userId, email, firstName, lastName, phone, city }) 
       }
     },
     sessionSecret(),
-    30 * 86400
+    { expiresInSeconds: 30 * 86400 }
   );
 }
 
-/**
- * Finds a Supabase auth user by email across ALL pages.
- *
- * `listUsers()` returns only the first page (50 users). Once the project passed
- * that many accounts, an existing user stopped being found, and the caller fell
- * back to a synthetic `usr_<hex>` id — silently handing the user a brand-new
- * empty identity instead of their own account.
- */
-async function findAuthUserByEmail(admin, email) {
-  if (!admin || !admin.auth || !admin.auth.admin) return null;
-  const perPage = 200;
-  for (let page = 1; page <= 25; page++) {
-    const { data, error } = await admin.auth.admin.listUsers({ page, perPage });
-    if (error || !data || !data.users || data.users.length === 0) return null;
-    const hit = data.users.find(u => String(u.email || '').toLowerCase() === email);
-    if (hit) return hit;
-    if (data.users.length < perPage) return null;
-  }
-  return null;
-}
+// The Supabase auth user for an email is resolved through IdentityResolver,
+// which uses only indexed, constant-time lookups. The previous implementation
+// here paged through the entire user table (up to 25 × 200) on every OTP
+// verification and, once the project outgrew the last page, stopped finding
+// real users and fabricated a synthetic id in their place.
 
 /**
  * Emits the verification code to the server log.
@@ -94,6 +73,21 @@ function logDevOtp(label, email, code) {
 `);
 }
 
+/** The verification-code email body. */
+function otpEmailHtml(code, intro) {
+  const message = intro || 'Here is your 6-digit verification code:';
+  return `
+    <div style="font-family:sans-serif;max-width:540px;margin:auto;padding:24px;border:1px solid #e5e7eb;border-radius:12px">
+      <h2 style="color:#0f172a;margin-bottom:8px">Welcome to LOUMOO</h2>
+      <p style="color:#475569;font-size:15px">${message}</p>
+      <div style="background:#f1f5f9;padding:18px;border-radius:8px;font-size:32px;font-weight:bold;letter-spacing:6px;text-align:center;color:#0284c7;margin:20px 0">
+        ${code}
+      </div>
+      <p style="color:#64748b;font-size:13px">This code expires in 15 minutes. If you did not request this, please ignore this email.</p>
+    </div>
+  `;
+}
+
 
 const { requireAuth } = require('../guards/authGuard');
 const AccountStateService = require('../../application/AccountStateService');
@@ -105,10 +99,113 @@ const AnalyticsService = require('../../../../infrastructure/analytics/Analytics
 const { sendEmail } = require('../../../../clients/resend');
 const config = require('../../../../config/env');
 const logger = require('../../../../shared/logging/logger');
-const { AuthenticationError, ValidationError, InfrastructureError } = require('../../../../shared/errors/AppError');
+const { AuthenticationError, ValidationError, InfrastructureError, RateLimitError } = require('../../../../shared/errors/AppError');
 
 const OTP_NAMESPACE = 'auth_otp';
 const OTP_TTL_SECONDS = 900; // 15 minutes
+
+// Account brute-force protection. The per-code attempt limit is keyed on the
+// email identifier and on the code itself, so it cannot be bypassed by spoofing
+// X-Forwarded-For or by rotating IPs — every guess counts against the one code.
+const OTP_MAX_ATTEMPTS = 5;                    // failed verifications before the code is destroyed
+const OTP_RESEND_MIN_INTERVAL_MS = 30 * 1000;  // minimum spacing between code dispatches
+const OTP_MAX_SENDS = 5;                        // maximum dispatches within one code's lifetime
+
+// Anti-abuse windows and caps. Login and OTP-generation throttles are keyed on
+// a server-derived source (the connection IP) COMBINED with the account, never
+// on a single client-controlled value — an attacker can neither lock a victim
+// out globally nor buy extra guesses by changing the one field they control.
+const AUTH_WINDOW_SECONDS = 15 * 60;            // 15-minute sliding window for all counters
+const LOGIN_MAX_PER_ACCOUNT = 8;               // failed sign-ins for one account from one source
+const LOGIN_MAX_PER_SOURCE = 30;               // failed sign-ins across all accounts from one source
+const OTP_GEN_MAX_PER_SOURCE = 20;             // OTP dispatches from one source (anti-bombing)
+
+/** The client address Express resolved (honours `trust proxy`). */
+function requestSource(req) {
+  return (req && (req.ip || (req.socket && req.socket.remoteAddress))) || 'unknown';
+}
+
+/**
+ * Generates, stores and dispatches a fresh OTP for `email`, enforcing
+ * generation throttling so the endpoint cannot be used to brute-force codes
+ * into existence or to bomb an inbox.
+ *
+ * Throttling is silent and uniform: when a send is skipped — too soon after the
+ * last one, over the per-code send cap, or (for a resend) no signup pending —
+ * the caller still returns the same success envelope. Nothing about whether a
+ * signup exists for the address is observable from the response.
+ *
+ * The chosen password is stored only as AES-GCM ciphertext and the code only as
+ * an HMAC; neither is ever written to the cache in the clear.
+ *
+ * @returns {Promise<{sent:boolean, code?:string, throttled?:boolean}>}
+ */
+async function prepareAndSendOtp({ email, fields = {}, requireExisting = false, subject, intro, ip = null }) {
+  const existing = await CacheService.get(email, OTP_NAMESPACE);
+
+  if (requireExisting && !existing) {
+    return { sent: false };
+  }
+
+  const now = Date.now();
+  if (existing) {
+    const tooSoon = existing.lastSentAt && (now - existing.lastSentAt) < OTP_RESEND_MIN_INTERVAL_MS;
+    const overCap = (existing.sendCount || 0) >= OTP_MAX_SENDS;
+    if (tooSoon || overCap) {
+      return { sent: false, throttled: true };
+    }
+  }
+
+  // Per-source generation cap: bound how many codes one origin can have LOUMOO
+  // mail out in a window, so signup/resend cannot be used to bomb inboxes or
+  // enumerate across many addresses from one machine. Silent and uniform.
+  const genKey = `otpgen:${AuthThrottle.fingerprint(ip || 'unknown')}`;
+  const genState = await AuthThrottle.check(genKey, { max: OTP_GEN_MAX_PER_SOURCE, windowSeconds: AUTH_WINDOW_SECONDS });
+  if (genState.blocked) {
+    return { sent: false, throttled: true };
+  }
+
+  const code = OtpSecurity.generateOtp();
+  const base = existing || {};
+  const record = {
+    email,
+    passwordEnc: fields.password != null
+      ? OtpSecurity.encryptSecret(fields.password)
+      : (base.passwordEnc || null),
+    firstName: fields.firstName != null ? fields.firstName : (base.firstName || ''),
+    lastName: fields.lastName != null ? fields.lastName : (base.lastName || ''),
+    phone: fields.phone != null ? fields.phone : (base.phone || ''),
+    city: fields.city != null ? fields.city : (base.city || ''),
+    // The Supabase auth id captured at signup (if any), preserved across resend
+    // so verification resolves identity without a lookup.
+    supabaseUserId: fields.supabaseUserId != null ? fields.supabaseUserId : (base.supabaseUserId || null),
+    otpHash: OtpSecurity.hashOtp(code),
+    attempts: 0,
+    sendCount: (base.sendCount || 0) + 1,
+    createdAt: base.createdAt || now,
+    lastSentAt: now,
+    expiresAt: now + OTP_TTL_SECONDS * 1000
+  };
+
+  await CacheService.set(email, record, OTP_TTL_SECONDS, OTP_NAMESPACE);
+
+  // Count this dispatch against the source so the per-origin cap accrues.
+  await AuthThrottle.recordFailure(genKey, { windowSeconds: AUTH_WINDOW_SECONDS });
+
+  try {
+    await sendEmail({
+      to: email,
+      subject: subject || `${code} is your LOUMOO verification code`,
+      html: otpEmailHtml(code, intro)
+    });
+    logger.info(`[Auth] Sent verification OTP to ${email}`);
+  } catch (emailErr) {
+    logger.warn(`[Auth] OTP email warning: ${emailErr.message}`);
+  }
+
+  logDevOtp('VERIFICATION OTP', email, code);
+  return { sent: true, code };
+}
 
 /* ── Public bootstrap config ── */
 router.get('/config', (req, res) => {
@@ -143,26 +240,16 @@ router.post('/signup', async (req, res, next) => {
       throw new ValidationError('Password must be at least 6 characters.');
     }
 
-    const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
-
-    // Store in cache
-    const signupData = {
-      email: cleanEmail,
-      password,
-      firstName: firstName || '',
-      lastName: lastName || '',
-      phone: phone || '',
-      city: city || '',
-      otpCode,
-      createdAt: Date.now()
-    };
-    await CacheService.set(cleanEmail, signupData, OTP_TTL_SECONDS, OTP_NAMESPACE);
-
-    // Try to ensure Supabase user exists in background
+    // Ensure the Supabase auth user exists with the chosen password. This is the
+    // authoritative place the credential lands; the OTP cache only holds an
+    // encrypted fallback copy for the confirmation step, never plaintext. When
+    // creation succeeds we capture the real id so verification needs no lookup
+    // at all — the common path resolves identity with zero extra I/O.
+    let supabaseUserId = null;
     try {
       const admin = SupabaseDatabase.getAdmin();
       if (admin && admin.auth && admin.auth.admin) {
-        await admin.auth.admin.createUser({
+        const { data: created, error: createErr } = await admin.auth.admin.createUser({
           email: cleanEmail,
           password: password,
           email_confirm: false,
@@ -172,38 +259,25 @@ router.post('/signup', async (req, res, next) => {
             phone_number: phone || '',
             city: city || ''
           }
-        }).catch(err => {
-          // If already exists, ignore
-          logger.debug(`[SupabaseUser] createUser note: ${err.message}`);
         });
+        if (created && created.user) {
+          supabaseUserId = created.user.id;
+        } else if (createErr) {
+          // "Already registered" is the expected, benign case; the id is then
+          // resolved at verification through the indexed lookups.
+          logger.debug(`[SupabaseUser] createUser note: ${createErr.message}`);
+        }
       }
     } catch (e) {
       logger.debug(`[SupabaseUser] admin note: ${e.message}`);
     }
 
-    // Send email OTP via Resend
-    try {
-      const htmlContent = `
-        <div style="font-family:sans-serif;max-width:540px;margin:auto;padding:24px;border:1px solid #e5e7eb;border-radius:12px">
-          <h2 style="color:#0f172a;margin-bottom:8px">Welcome to LOUMOO</h2>
-          <p style="color:#475569;font-size:15px">Here is your 6-digit verification code to complete your registration:</p>
-          <div style="background:#f1f5f9;padding:18px;border-radius:8px;font-size:32px;font-weight:bold;letter-spacing:6px;text-align:center;color:#0284c7;margin:20px 0">
-            ${otpCode}
-          </div>
-          <p style="color:#64748b;font-size:13px">This code expires in 15 minutes. If you did not request this, please ignore this email.</p>
-        </div>
-      `;
-      await sendEmail({
-        to: cleanEmail,
-        subject: `${otpCode} is your LOUMOO verification code`,
-        html: htmlContent
-      });
-      logger.info(`[Auth] Sent verification OTP to ${cleanEmail}`);
-    } catch (emailErr) {
-      logger.warn(`[Auth] Resend email warning: ${emailErr.message}`);
-    }
-
-    logDevOtp('VERIFICATION OTP', cleanEmail, otpCode);
+    const result = await prepareAndSendOtp({
+      email: cleanEmail,
+      fields: { password, firstName, lastName, phone, city, supabaseUserId },
+      intro: 'Here is your 6-digit verification code to complete your registration:',
+      ip: requestSource(req)
+    });
 
     res.json({
       status: 'success',
@@ -211,8 +285,8 @@ router.post('/signup', async (req, res, next) => {
       data: {
         email: cleanEmail,
         needsEmailCode: true,
-        // In local dev, provide devOtp for instant frictionless testing
-        devOtp: config.isDevelopment ? otpCode : undefined
+        // In local dev, provide devOtp for instant frictionless testing.
+        devOtp: config.isDevelopment && result.code ? result.code : undefined
       }
     });
   } catch (err) { next(err); }
@@ -229,28 +303,76 @@ router.post('/verify-otp', async (req, res, next) => {
       throw new ValidationError('Email and 6-digit verification code are required.');
     }
 
+    // One generic failure for every unsuccessful outcome — wrong code, expired
+    // code, no pending signup, or too many attempts. Distinguishing them would
+    // reveal whether a signup exists for this address and whether guesses land.
+    const INVALID = 'That verification code is invalid or has expired. Please request a new one.';
+
     const cached = await CacheService.get(cleanEmail, OTP_NAMESPACE);
-    if (!cached || cached.otpCode !== cleanCode) {
-      // Check if code was incorrect or expired
-      if (!cached) {
-        throw new AuthenticationError('That verification code has expired. Please click Resend code.');
-      }
-      throw new AuthenticationError('That verification code is incorrect. Please check and try again.');
+    if (!cached) {
+      throw new AuthenticationError(INVALID);
     }
 
-    // Mark email confirmed in Supabase Admin
-    let userId = null;
+    const nowMs = Date.now();
+    const expired = cached.expiresAt && nowMs > cached.expiresAt;
+    const lockedOut = (cached.attempts || 0) >= OTP_MAX_ATTEMPTS;
+    if (expired || lockedOut) {
+      await CacheService.delete(cleanEmail, OTP_NAMESPACE);
+      throw new AuthenticationError(INVALID);
+    }
+
+    if (!OtpSecurity.verifyOtp(cleanCode, cached.otpHash)) {
+      const attempts = (cached.attempts || 0) + 1;
+      if (attempts >= OTP_MAX_ATTEMPTS) {
+        // The code is now spent: destroy it so brute force cannot continue.
+        await CacheService.delete(cleanEmail, OTP_NAMESPACE);
+      } else {
+        // Persist the higher attempt count WITHOUT extending the original
+        // expiry — a wrong guess must never buy the attacker more time.
+        const remainingTtl = Math.max(1, Math.ceil((cached.expiresAt - nowMs) / 1000));
+        await CacheService.set(cleanEmail, { ...cached, attempts }, remainingTtl, OTP_NAMESPACE);
+      }
+      throw new AuthenticationError(INVALID);
+    }
+
+    // Correct code. Consume it immediately so it is single-use even under two
+    // concurrent requests carrying the same valid code.
+    await CacheService.delete(cleanEmail, OTP_NAMESPACE);
+    const password = OtpSecurity.decryptSecret(cached.passwordEnc);
+
+    // Establish the AUTHORITATIVE identity for this verified email. Resolution
+    // is constant-time — the id captured at signup, then the indexed profiles
+    // mirror, then a single admin probe — never a paginated scan of the whole
+    // user table. If no real identity can be established we FAIL rather than
+    // fabricate one: a synthesized `usr_<hex(email)>` id forks the same person
+    // into two accounts and is a predictable, guessable subject claim.
+    let userId = cached.supabaseUserId || null;
+
+    let admin = null;
     try {
-      const admin = SupabaseDatabase.getAdmin();
-      if (admin && admin.auth && admin.auth.admin) {
-        const existing = await findAuthUserByEmail(admin, cleanEmail);
-        if (existing) {
-          userId = existing.id;
-          await admin.auth.admin.updateUserById(existing.id, { email_confirm: true });
-        } else {
+      admin = SupabaseDatabase.getAdmin();
+    } catch (e) {
+      logger.error(`[Auth] Identity provider unavailable during verification: ${e.message}`);
+    }
+
+    if (admin && admin.auth && admin.auth.admin) {
+      if (!userId) {
+        userId = await resolveAuthUserId(admin, cleanEmail);
+      }
+
+      if (userId) {
+        // Existing account — mark the address confirmed.
+        try {
+          await admin.auth.admin.updateUserById(userId, { email_confirm: true });
+        } catch (e) {
+          logger.debug(`[SupabaseUser] confirm note: ${e.message}`);
+        }
+      } else {
+        // Genuinely new — create a confirmed user and take the id it returns.
+        try {
           const { data: created } = await admin.auth.admin.createUser({
             email: cleanEmail,
-            password: cached.password,
+            password: password || undefined,
             email_confirm: true,
             user_metadata: {
               first_name: cached.firstName,
@@ -260,14 +382,21 @@ router.post('/verify-otp', async (req, res, next) => {
             }
           });
           userId = created && created.user ? created.user.id : null;
+        } catch (createErr) {
+          // A create race, or an account that exists without a local profile:
+          // resolve once more rather than guessing an id.
+          logger.debug(`[SupabaseUser] create note: ${createErr.message}`);
+          userId = await resolveAuthUserId(admin, cleanEmail);
         }
       }
-    } catch (e) {
-      logger.debug(`[SupabaseUser] verify update note: ${e.message}`);
     }
 
     if (!userId) {
-      userId = 'usr_' + Buffer.from(cleanEmail).toString('hex').slice(0, 16);
+      // Never mint a session for an identity the provider did not issue.
+      throw new InfrastructureError(
+        'Identity',
+        'We could not finish verifying your account right now. Please try again in a moment.'
+      );
     }
 
     // Generate authenticated JWT session token
@@ -299,9 +428,7 @@ router.post('/verify-otp', async (req, res, next) => {
     await ProfileRepository.recordLogin(profile.id, userId);
     const { accountState } = await AccountStateService.resolve(userId, { source: 'supabase' });
 
-    // Clean up OTP cache
-    await CacheService.delete(cleanEmail, OTP_NAMESPACE);
-
+    // (The OTP was already consumed above, before provisioning, for single-use.)
     logger.info(`[Auth] User ${cleanEmail} verified and logged in successfully (id=${userId})`);
 
     res.json({
@@ -347,6 +474,28 @@ router.post('/login', async (req, res, next) => {
       throw new ValidationError('Enter your password.');
     }
 
+    // Brute-force / credential-stuffing gate. Two buckets, both keyed on the
+    // connection source AND the account (never the account alone), so an
+    // attacker can neither lock a victim out from elsewhere nor get unlimited
+    // guesses by only varying the email. Only FAILURES are counted below and a
+    // correct password clears the bucket, so a legitimate user is never blocked
+    // by their own successful sign-ins.
+    const srcFp = AuthThrottle.fingerprint(requestSource(req));
+    const accountKey = `login:${srcFp}:${AuthThrottle.fingerprint(cleanEmail)}`;
+    const sourceKey = `login:src:${srcFp}`;
+    const THROTTLE = { windowSeconds: AUTH_WINDOW_SECONDS };
+
+    const [acctState, srcState] = await Promise.all([
+      AuthThrottle.check(accountKey, { max: LOGIN_MAX_PER_ACCOUNT, ...THROTTLE }),
+      AuthThrottle.check(sourceKey, { max: LOGIN_MAX_PER_SOURCE, ...THROTTLE })
+    ]);
+    if (acctState.blocked || srcState.blocked) {
+      const retryAfter = Math.max(acctState.retryAfter || 0, srcState.retryAfter || 0) || AUTH_WINDOW_SECONDS;
+      res.setHeader('Retry-After', retryAfter);
+      logger.warn(`[Auth] Sign-in throttled (source=${srcFp})`);
+      throw new RateLimitError('Too many sign-in attempts. Please wait a few minutes and try again.', retryAfter);
+    }
+
     const publicClient = SupabaseDatabase.getPublic();
     const { data, error } = await publicClient.auth.signInWithPassword({
       email: cleanEmail,
@@ -354,13 +503,21 @@ router.post('/login', async (req, res, next) => {
     });
 
     // Wrong password and unknown account return the SAME message on purpose:
-    // distinguishing them turns this endpoint into an account enumerator.
+    // distinguishing them turns this endpoint into an account enumerator. The
+    // failed attempt is counted against both buckets before we answer.
     if (error || !data || !data.user) {
+      await Promise.all([
+        AuthThrottle.recordFailure(accountKey, THROTTLE),
+        AuthThrottle.recordFailure(sourceKey, THROTTLE)
+      ]);
       logger.warn(`[Auth] Failed sign-in for ${cleanEmail}: ${error ? error.message : 'no user'}`);
       throw new AuthenticationError('That email or password is incorrect.');
     }
 
     const authUser = data.user;
+    // Correct credentials: clear this account's guessing counter for the source
+    // so an occasional mistyped password never accumulates against the user.
+    await AuthThrottle.clear(accountKey);
     const meta = authUser.user_metadata || {};
 
     const { profile } = await ProfileRepository.getOrCreateForClerkUser({
@@ -428,30 +585,22 @@ router.post('/resend-otp', async (req, res, next) => {
     const cleanEmail = String(email || '').trim().toLowerCase();
     if (!cleanEmail) throw new ValidationError('Email is required.');
 
-    const cached = await CacheService.get(cleanEmail, OTP_NAMESPACE);
-    const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
-
-    const signupData = cached ? { ...cached, otpCode, createdAt: Date.now() } : {
+    // Only resend when a signup is actually pending for this address. Otherwise
+    // we answer with the same success envelope and send nothing — the endpoint
+    // reveals nothing about who has an account and cannot be used to mail codes
+    // to arbitrary third parties. Throttling inside prepareAndSendOtp is silent.
+    const result = await prepareAndSendOtp({
       email: cleanEmail,
-      otpCode,
-      createdAt: Date.now()
-    };
-    await CacheService.set(cleanEmail, signupData, OTP_TTL_SECONDS, OTP_NAMESPACE);
-
-    try {
-      await sendEmail({
-        to: cleanEmail,
-        subject: `${otpCode} is your new LOUMOO verification code`,
-        html: `<p>Your new verification code is: <strong>${otpCode}</strong></p>`
-      });
-    } catch (e) {}
-
-    logDevOtp('RESENT OTP', cleanEmail, otpCode);
+      requireExisting: true,
+      subject: 'Your new LOUMOO verification code',
+      intro: 'Here is your new 6-digit verification code:',
+      ip: requestSource(req)
+    });
 
     res.json({
       status: 'success',
       message: 'New verification code sent',
-      data: { devOtp: config.isDevelopment ? otpCode : undefined }
+      data: { devOtp: config.isDevelopment && result.code ? result.code : undefined }
     });
   } catch (err) { next(err); }
 });

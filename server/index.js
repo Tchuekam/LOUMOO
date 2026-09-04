@@ -110,6 +110,8 @@ v1Router.use('/announcements', announcementRoutes);
 v1Router.use('/travel', travelRoutes);
 
 app.use('/api/v1', v1Router);
+// Direct REST path mount for Travel API
+app.use('/api/travel', travelRoutes);
 
 // Root health fallbacks for cloud load balancers
 app.use('/', healthRoutes);

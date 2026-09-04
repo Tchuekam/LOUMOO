@@ -7836,6 +7836,8 @@ class Component extends DCLogic {
     payoutPhone: '690 12 34 56',
     payoutAmount: '500 000',
     hotelCity: 'kribi',
+    hotelGuestName: 'Rostand Tchuekam',
+    hotelGuestPhone: '+237 690 12 34 56',
 
     // ── Travel & Mobility Ecosystem State ──
     travelServiceTab: 'bus',
@@ -8347,6 +8349,12 @@ class Component extends DCLogic {
             e.target.volume = 0;
             e.target.defaultMuted = true;
           }
+        }
+      }, true);
+
+      document.addEventListener('ended', (e) => {
+        if (e.target && e.target.tagName === 'VIDEO' && (e.target.closest('.hero-media-wrap') || e.target.hasAttribute('data-hero-video'))) {
+          if (window.heroNextSlide) window.heroNextSlide();
         }
       }, true);
 
@@ -11992,9 +12000,45 @@ class Component extends DCLogic {
       hotelCity: this.state.hotelCity,
       updateHotelCity: (e) => this.setState({ hotelCity: e && e.target ? e.target.value : e }),
       openHotelDetail: () => this.go('hotelDetail'),
-      openHotelBooking: () => this.go('hotelBooking'),
+      openHotelBooking: () => {
+        const updates = {};
+        if (!this.state.hotelGuestName) {
+          updates.hotelGuestName = (this.state.regFirstName ? (this.state.regFirstName + ' ' + (this.state.regLastName || '')).trim() : '') || this.state.travelPaxName || 'Rostand Tchuekam';
+        }
+        if (!this.state.hotelGuestPhone) {
+          const p = this.state.regPhone || this.state.travelPaxPhone || '690 12 34 56';
+          updates.hotelGuestPhone = p.startsWith('+') ? p : ('+237 ' + p);
+        }
+        if (Object.keys(updates).length > 0) this.setState(updates);
+        this.go('hotelBooking');
+      },
+      hotelGuestName: this.state.hotelGuestName !== undefined ? this.state.hotelGuestName : (this.state.regFirstName ? (this.state.regFirstName + ' ' + (this.state.regLastName || '')).trim() : 'Rostand Tchuekam'),
+      hotelGuestPhone: this.state.hotelGuestPhone !== undefined ? this.state.hotelGuestPhone : (this.state.regPhone ? (this.state.regPhone.startsWith('+') ? this.state.regPhone : ('+237 ' + this.state.regPhone)) : '+237 690 12 34 56'),
+      updateHotelGuestName: (e) => this.setState({ hotelGuestName: e && e.target ? e.target.value : e }),
+      updateHotelGuestPhone: (e) => this.setState({ hotelGuestPhone: e && e.target ? e.target.value : e }),
       submitHotelReservation: () => {
-        this.toast('Hotel reservation confirmed! Voucher generated.');
+        const guestName = this.state.hotelGuestName || (this.state.regFirstName ? (this.state.regFirstName + ' ' + (this.state.regLastName || '')).trim() : 'Rostand Tchuekam');
+        const guestPhone = this.state.hotelGuestPhone || (this.state.regPhone ? (this.state.regPhone.startsWith('+') ? this.state.regPhone : ('+237 ' + this.state.regPhone)) : '+237 690 12 34 56');
+        const trip = {
+          reference: 'LMT-HTL-' + Math.floor(100000 + Math.random() * 900000),
+          passenger: guestName,
+          phone: guestPhone,
+          hotelName: 'Hôtel Les Cascades du Tara (Kribi)',
+          roomType: 'Ocean Deluxe King Room',
+          nights: 3,
+          amount: 195000,
+          currency: 'XAF',
+          fromCode: 'KBI',
+          toCode: 'HTL',
+          type: 'hotel',
+          departureTime: '15 Oct 2026',
+          status: 'confirmed',
+          createdAt: Date.now()
+        };
+        const trips = [trip].concat(this.state.trips || []);
+        this.setState({ trips, lastTrip: trip });
+        this._persistTrips(trips);
+        this.toast('Hotel reservation confirmed for ' + guestName + '! Voucher generated.');
         this.go('travelTicket');
       },
 

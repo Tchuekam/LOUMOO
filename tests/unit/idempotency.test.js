@@ -42,3 +42,10 @@ async function run() {
 }
 
 module.exports = { run };
+
+if (require.main === module) {
+  run().then(() => process.exit(0)).catch(err => {
+    console.error(err);
+    process.exit(1);
+  });
+}

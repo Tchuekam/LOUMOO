@@ -334,11 +334,11 @@ def get_hotel_vertical_view():
       <div style="font:800 11.5px/1 var(--font-heading);letter-spacing:.08em;color:var(--color-text-muted);text-transform:uppercase">Primary Guest Details</div>
       <div>
         <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">FULL NAME</label>
-        <input type="text" class="input" value="{{ regFirstName }} {{ regLastName }}" style="height:44px;border-radius:var(--radius-sm)">
+        <input type="text" class="input" value="{{ hotelGuestName }}" onInput="{{ updateHotelGuestName }}" placeholder="Enter full legal name" style="height:44px;border-radius:var(--radius-sm)">
       </div>
       <div>
         <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">PHONE NUMBER</label>
-        <input type="tel" class="input" value="+237 {{ regPhone }}" style="height:44px;border-radius:var(--radius-sm)">
+        <input type="tel" class="input" value="{{ hotelGuestPhone }}" onInput="{{ updateHotelGuestPhone }}" placeholder="+237 6XX XX XX XX" style="height:44px;border-radius:var(--radius-sm)">
       </div>
     </div>
 

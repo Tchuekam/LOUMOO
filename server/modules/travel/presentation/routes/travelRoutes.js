@@ -1,40 +1,446 @@
 /**
  * LOUMOO Travel Presentation Routes
- * REST endpoints for unified multi-modal travel, intercity buses, seat maps,
- * taxi quotes, packages, visa concierge, and bookings / My Trips.
+ * ---------------------------------------------------------------------------
+ * REST endpoints for unified multi-modal search, hotels & rooms availability,
+ * excursions, flights, buses, trains, rides, transactional bookings, trips, and tickets.
  */
 
 const express = require('express');
 const { travelService } = require('../../application/TravelService');
-const { ValidationError } = require('../../../../shared/errors/AppError');
+const { requireAuth } = require('../../../identity/presentation/guards/authGuard');
+const { ValidationError, NotFoundError, UnauthorizedError, AuthenticationError, AuthorizationError } = require('../../../../shared/errors/AppError');
+const logger = require('../../../../shared/logging/logger');
 
 const router = express.Router();
 
-// GET /api/v1/travel/search - Multi-modal travel search
-router.get('/search', (req, res, next) => {
+// ============================================================================
+// 1. SEARCH
+// ============================================================================
+
+// GET /api/travel/search (and /api/v1/travel/search)
+router.get('/search', async (req, res, next) => {
   try {
-    const { type, origin, destination, departureDate, passengers, classType } = req.query;
-    const results = travelService.search({
+    const {
+      type = 'all',
+      origin = '',
+      destination = '',
+      date = '',
+      departureDate = '',
+      returnDate = '',
+      passengers = 1,
+      rooms = 1,
+      guests = 1,
+      page = 1,
+      limit = 20,
+      minPrice,
+      maxPrice,
+      rating,
+      sort,
+      classType
+    } = req.query;
+
+    // If client requested legacy shape specifically
+    const isLegacy = req.query.legacy === 'true' || (!req.query.type && !req.query.origin && !req.query.destination && Object.keys(req.query).length === 0);
+    
+    if (isLegacy) {
+      const legacyData = travelService._legacySearch({
+        type: type || 'all',
+        origin,
+        destination,
+        departureDate: departureDate || date,
+        passengers: Number(passengers) || 1,
+        classType: classType || 'all'
+      });
+      return res.json({
+        success: true,
+        data: legacyData
+      });
+    }
+
+    const results = await travelService.search({
       type,
       origin,
       destination,
-      departureDate,
-      passengers: passengers ? Number(passengers) : 1,
-      classType
+      date: date || departureDate,
+      returnDate,
+      passengers: Number(passengers || guests) || 1,
+      rooms: Number(rooms) || 1,
+      guests: Number(guests || passengers) || 1,
+      page: Number(page) || 1,
+      limit: Number(limit) || 20,
+      minPrice: minPrice ? Number(minPrice) : undefined,
+      maxPrice: maxPrice ? Number(maxPrice) : undefined,
+      rating: rating ? Number(rating) : undefined,
+      sort
     });
+
+    const legacyData = travelService._legacySearch({
+      type,
+      origin,
+      destination,
+      departureDate: departureDate || date,
+      passengers: Number(passengers || guests) || 1,
+      classType: classType || 'all'
+    });
+
     res.json({
       success: true,
-      data: results
+      items: results.items,
+      pagination: results.pagination,
+      data: {
+        ...results,
+        buses: legacyData.buses,
+        flights: legacyData.flights,
+        trains: legacyData.trains,
+        taxis: legacyData.taxis,
+        tours: legacyData.tours,
+        trainRouteNotice: legacyData.trainRouteNotice || null
+      }
     });
   } catch (err) {
     next(err);
   }
 });
 
-// GET /api/v1/travel/bus/operators - List official bus agencies
-router.get('/bus/operators', (req, res, next) => {
+// GET /api/travel/destinations
+router.get('/destinations', async (req, res, next) => {
   try {
-    const operators = travelService.getBusOperators();
+    const destinations = await travelService.getDestinations();
+    res.json({
+      success: true,
+      count: destinations.length,
+      items: destinations,
+      data: destinations
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// ============================================================================
+// 2. HOTELS
+// ============================================================================
+
+// GET /api/travel/hotels - List hotels with filters & pagination
+router.get('/hotels', async (req, res, next) => {
+  try {
+    const { city, rating, maxPrice, page = 1, limit = 20 } = req.query;
+    const result = await travelService.getHotels({
+      city,
+      rating,
+      maxPrice,
+      page: Number(page) || 1,
+      limit: Number(limit) || 20
+    });
+    res.json({
+      success: true,
+      items: result.items,
+      pagination: result.pagination,
+      data: result.items
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// GET /api/travel/hotels/:id - Get hotel details
+router.get('/hotels/:id', async (req, res, next) => {
+  try {
+    const hotel = await travelService.getHotelById(req.params.id);
+    res.json({
+      success: true,
+      data: hotel
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// GET /api/travel/hotels/:id/rooms - Get rooms with stay pricing calculation
+router.get('/hotels/:id/rooms', async (req, res, next) => {
+  try {
+    const { checkIn, checkOut, guests } = req.query;
+    const rooms = await travelService.getHotelRooms(req.params.id, { checkIn, checkOut, guests });
+    res.json({
+      success: true,
+      count: rooms.length,
+      items: rooms,
+      data: rooms
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// ============================================================================
+// 3. EXCURSIONS
+// ============================================================================
+
+// GET /api/travel/excursions - List excursions
+router.get('/excursions', async (req, res, next) => {
+  try {
+    const { destination, maxPrice, page = 1, limit = 20 } = req.query;
+    const result = await travelService.getExcursions({
+      destination,
+      maxPrice,
+      page: Number(page) || 1,
+      limit: Number(limit) || 20
+    });
+    res.json({
+      success: true,
+      items: result.items,
+      pagination: result.pagination,
+      data: result.items
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// GET /api/travel/excursions/:id - Get excursion detail
+router.get('/excursions/:id', async (req, res, next) => {
+  try {
+    const excursion = await travelService.getExcursionById(req.params.id);
+    res.json({
+      success: true,
+      data: excursion
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// ============================================================================
+// 4. TRANSPORT (FLIGHTS, BUSES, TRAINS, RIDES)
+// ============================================================================
+
+// GET /api/travel/flights
+router.get('/flights', async (req, res, next) => {
+  try {
+    const flights = await travelService.getTransportServices('flight', req.query);
+    res.json({
+      success: true,
+      count: flights.length,
+      items: flights,
+      data: flights
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// GET /api/travel/buses
+router.get('/buses', async (req, res, next) => {
+  try {
+    const buses = await travelService.getTransportServices('bus', req.query);
+    res.json({
+      success: true,
+      count: buses.length,
+      items: buses,
+      data: buses
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// GET /api/travel/trains
+router.get('/trains', async (req, res, next) => {
+  try {
+    const trains = await travelService.getTransportServices('train', req.query);
+    res.json({
+      success: true,
+      count: trains.length,
+      items: trains,
+      data: trains
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// GET /api/travel/rides
+router.get('/rides', async (req, res, next) => {
+  try {
+    const quote = travelService.calculateTaxiQuote(req.query);
+    res.json({
+      success: true,
+      data: quote
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// ============================================================================
+// 5. BOOKINGS (AUTHENTICATED & OWNER BOUND)
+// ============================================================================
+
+// POST /api/travel/bookings - Transactional booking creation
+router.post('/bookings', requireAuth, async (req, res, next) => {
+  try {
+    const idempotencyKey = req.headers['x-idempotency-key'] || req.body.idempotencyKey;
+    const user = req.principal;
+
+    const result = await travelService.createBooking(req.body, {
+      idempotencyKey,
+      user
+    });
+
+    res.status(201).json({
+      success: true,
+      message: 'Booking confirmed, trip created, and digital ticket issued.',
+      data: result.booking,
+      booking: result.booking,
+      trip: result.trip,
+      ticket: result.ticket
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// GET /api/travel/bookings - List caller's bookings
+router.get('/bookings', requireAuth, async (req, res, next) => {
+  try {
+    const userId = req.principal.id;
+    const status = req.query.status || 'all';
+    const bookings = await travelService.getUserBookings(userId, status);
+    res.json({
+      success: true,
+      count: bookings.length,
+      data: bookings,
+      items: bookings
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// GET /api/travel/bookings/my-trips (legacy path - caller's bookings)
+router.get('/bookings/my-trips', requireAuth, async (req, res, next) => {
+  try {
+    const userId = req.principal.id;
+    const status = req.query.status || 'all';
+    const trips = await travelService.getUserBookings(userId, status);
+    res.json({
+      success: true,
+      count: trips.length,
+      data: trips,
+      items: trips
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// GET /api/travel/bookings/:id - Caller must own the booking
+router.get('/bookings/:id', requireAuth, async (req, res, next) => {
+  try {
+    const userId = req.principal.id;
+    const booking = await travelService.getBookingById(req.params.id, userId);
+    res.json({
+      success: true,
+      data: booking
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// POST /api/travel/bookings/:id/cancel - Caller must own the booking
+router.post('/bookings/:id/cancel', requireAuth, async (req, res, next) => {
+  try {
+    const userId = req.principal.id;
+    const reason = req.body.reason || 'Customer request';
+    const cancelled = await travelService.cancelBooking(req.params.id, userId, reason);
+    res.json({
+      success: true,
+      message: 'Booking successfully cancelled.',
+      data: cancelled
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// ============================================================================
+// 6. TRIPS (POWERS "MY TRIPS" FRONTEND - AUTHENTICATED)
+// ============================================================================
+
+// GET /api/travel/trips - List authenticated caller's trips
+router.get('/trips', requireAuth, async (req, res, next) => {
+  try {
+    const userId = req.principal.id;
+    const status = req.query.status || 'all';
+    const trips = await travelService.getUserTrips(userId, status);
+    res.json({
+      success: true,
+      count: trips.length,
+      items: trips,
+      data: trips
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// GET /api/travel/trips/:id - Caller must own the trip
+router.get('/trips/:id', requireAuth, async (req, res, next) => {
+  try {
+    const userId = req.principal.id;
+    const trip = await travelService.getTripById(req.params.id, userId);
+    res.json({
+      success: true,
+      data: trip
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// ============================================================================
+// 7. TICKETS & QR (AUTHENTICATED & OWNER BOUND)
+// ============================================================================
+
+// GET /api/travel/tickets - List authenticated caller's tickets
+router.get('/tickets', requireAuth, async (req, res, next) => {
+  try {
+    const userId = req.principal.id;
+    const tickets = await travelService.getUserTickets(userId);
+    res.json({
+      success: true,
+      count: tickets.length,
+      items: tickets,
+      data: tickets
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// GET /api/travel/tickets/:id - Caller must own the ticket
+router.get('/tickets/:id', requireAuth, async (req, res, next) => {
+  try {
+    const userId = req.principal.id;
+    const ticket = await travelService.getTicketById(req.params.id, userId);
+    res.json({
+      success: true,
+      data: ticket
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// ============================================================================
+// 8. BACKWARD COMPATIBILITY LEGACY ENDPOINTS
+// ============================================================================
+
+// GET /api/travel/bus/operators
+router.get('/bus/operators', async (req, res, next) => {
+  try {
+    const operators = await travelService.getBusOperators();
     res.json({
       success: true,
       count: operators.length,
@@ -45,10 +451,10 @@ router.get('/bus/operators', (req, res, next) => {
   }
 });
 
-// GET /api/v1/travel/bus/schedules - List bus schedules with filters
-router.get('/bus/schedules', (req, res, next) => {
+// GET /api/travel/bus/schedules
+router.get('/bus/schedules', async (req, res, next) => {
   try {
-    const schedules = travelService.getBusSchedules(req.query);
+    const schedules = await travelService.getBusSchedules(req.query);
     res.json({
       success: true,
       count: schedules.length,
@@ -59,10 +465,10 @@ router.get('/bus/schedules', (req, res, next) => {
   }
 });
 
-// GET /api/v1/travel/bus/seats/:scheduleId - Get visual seat layout & status
-router.get('/bus/seats/:scheduleId', (req, res, next) => {
+// GET /api/travel/bus/seats/:scheduleId
+router.get('/bus/seats/:scheduleId', async (req, res, next) => {
   try {
-    const seatsData = travelService.getBusSeats(req.params.scheduleId);
+    const seatsData = await travelService.getBusSeats(req.params.scheduleId);
     res.json({
       success: true,
       data: seatsData
@@ -72,26 +478,24 @@ router.get('/bus/seats/:scheduleId', (req, res, next) => {
   }
 });
 
-// GET /api/v1/travel/train/schedules - Get Camrail train schedules
-router.get('/train/schedules', (req, res, next) => {
+// GET /api/travel/train/schedules
+router.get('/train/schedules', async (req, res, next) => {
   try {
-    const trains = travelService.search({ type: 'train', origin: req.query.origin, destination: req.query.destination });
+    const trains = await travelService.getTransportServices('train', req.query);
     res.json({
       success: true,
-      count: trains.trains.length,
-      data: trains.trains,
-      notice: trains.trainRouteNotice || null
+      count: trains.length,
+      data: trains
     });
   } catch (err) {
     next(err);
   }
 });
 
-// GET /api/v1/travel/taxi/quote - Calculate upfront taxi / airport / intercity transfer price
+// GET /api/travel/taxi/quote
 router.get('/taxi/quote', (req, res, next) => {
   try {
-    const { type, origin, destination, vehicleClass } = req.query;
-    const quote = travelService.calculateTaxiQuote({ type, origin, destination, vehicleClass });
+    const quote = travelService.calculateTaxiQuote(req.query);
     res.json({
       success: true,
       data: quote
@@ -101,7 +505,7 @@ router.get('/taxi/quote', (req, res, next) => {
   }
 });
 
-// GET /api/v1/travel/packages - Get curated tourism packages
+// GET /api/travel/packages
 router.get('/packages', (req, res, next) => {
   try {
     const packages = travelService.getPackages();
@@ -115,7 +519,7 @@ router.get('/packages', (req, res, next) => {
   }
 });
 
-// GET /api/v1/travel/packages/:id - Get specific tourism package
+// GET /api/travel/packages/:id
 router.get('/packages/:id', (req, res, next) => {
   try {
     const pkg = travelService.getPackageById(req.params.id);
@@ -128,7 +532,7 @@ router.get('/packages/:id', (req, res, next) => {
   }
 });
 
-// GET /api/v1/travel/visa/destinations - List visa concierge destinations & requirements
+// GET /api/travel/visa/destinations
 router.get('/visa/destinations', (req, res, next) => {
   try {
     const destinations = travelService.getVisaDestinations();
@@ -142,73 +546,14 @@ router.get('/visa/destinations', (req, res, next) => {
   }
 });
 
-// POST /api/v1/travel/visa/applications - Submit visa concierge assistance
-router.post('/visa/applications', (req, res, next) => {
+// POST /api/travel/visa/applications (AUTHENTICATED)
+router.post('/visa/applications', requireAuth, async (req, res, next) => {
   try {
-    const application = travelService.submitVisaApplication(req.body);
+    const application = await travelService.submitVisaApplication(req.body, { user: req.principal });
     res.status(201).json({
       success: true,
       message: 'Visa assistance request submitted successfully. A LOUMOO consular specialist has been assigned.',
       data: application
-    });
-  } catch (err) {
-    next(err);
-  }
-});
-
-// POST /api/v1/travel/bookings - Create unified travel booking
-router.post('/bookings', (req, res, next) => {
-  try {
-    const booking = travelService.createBooking(req.body);
-    res.status(201).json({
-      success: true,
-      message: 'Booking confirmed and digital ticket issued.',
-      data: booking
-    });
-  } catch (err) {
-    next(err);
-  }
-});
-
-// GET /api/v1/travel/bookings/my-trips - Get user travel bookings
-router.get('/bookings/my-trips', (req, res, next) => {
-  try {
-    const userId = req.user?.id || req.query.userId || 'usr_guest';
-    const status = req.query.status || 'all';
-    const trips = travelService.getUserTrips(userId, status);
-    res.json({
-      success: true,
-      count: trips.length,
-      data: trips
-    });
-  } catch (err) {
-    next(err);
-  }
-});
-
-// GET /api/v1/travel/bookings/:id - Get specific booking detail & ticket
-router.get('/bookings/:id', (req, res, next) => {
-  try {
-    const booking = travelService.getBookingById(req.params.id);
-    res.json({
-      success: true,
-      data: booking
-    });
-  } catch (err) {
-    next(err);
-  }
-});
-
-// POST /api/v1/travel/bookings/:id/cancel - Cancel booking
-router.post('/bookings/:id/cancel', (req, res, next) => {
-  try {
-    const userId = req.user?.id || req.body.userId || 'usr_guest';
-    const reason = req.body.reason || 'Customer request';
-    const cancelled = travelService.cancelBooking(req.params.id, userId, reason);
-    res.json({
-      success: true,
-      message: 'Booking successfully cancelled.',
-      data: cancelled
     });
   } catch (err) {
     next(err);

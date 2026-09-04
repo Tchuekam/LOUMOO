@@ -566,6 +566,506 @@ const travelData = {
       ],
       appointmentCenter: 'VFS Global Yaoundé'
     }
+  ],
+
+  // 7. Destinations & Geo Coordinates
+  destinations: [
+    {
+      id: 'dst-douala',
+      name: 'Douala',
+      city: 'Douala',
+      country: 'Cameroon',
+      latitude: 4.051056,
+      longitude: 9.767868,
+      image: 'https://images.unsplash.com/photo-1577717903315-1691ae25ab3f?w=600&auto=format&fit=crop&q=80',
+      popular: true,
+      tagline: 'Economic capital & vibrant seaport'
+    },
+    {
+      id: 'dst-yaounde',
+      name: 'Yaoundé',
+      city: 'Yaoundé',
+      country: 'Cameroon',
+      latitude: 3.8480,
+      longitude: 11.5021,
+      image: 'https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=600&auto=format&fit=crop&q=80',
+      popular: true,
+      tagline: 'City of seven hills & political hub'
+    },
+    {
+      id: 'dst-kribi',
+      name: 'Kribi',
+      city: 'Kribi',
+      country: 'Cameroon',
+      latitude: 2.9390,
+      longitude: 9.9100,
+      image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&auto=format&fit=crop&q=80',
+      popular: true,
+      tagline: 'White sand beaches & Lobé waterfalls'
+    },
+    {
+      id: 'dst-limbe',
+      name: 'Limbé',
+      city: 'Limbé',
+      country: 'Cameroon',
+      latitude: 4.0167,
+      longitude: 9.2167,
+      image: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=600&auto=format&fit=crop&q=80',
+      popular: true,
+      tagline: 'Volcanic black sands & botanic gardens'
+    },
+    {
+      id: 'dst-bafoussam',
+      name: 'Bafoussam',
+      city: 'Bafoussam',
+      country: 'Cameroon',
+      latitude: 5.4778,
+      longitude: 10.4176,
+      image: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=600&auto=format&fit=crop&q=80',
+      popular: false,
+      tagline: 'Western highlands, chieftancies & culture'
+    },
+    {
+      id: 'dst-ngaoundere',
+      name: 'Ngaoundéré',
+      city: 'Ngaoundéré',
+      country: 'Cameroon',
+      latitude: 7.3195,
+      longitude: 13.5843,
+      image: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=600&auto=format&fit=crop&q=80',
+      popular: false,
+      tagline: 'Northern plateau & Camrail terminus'
+    },
+    {
+      id: 'dst-maroua',
+      name: 'Maroua',
+      city: 'Maroua',
+      country: 'Cameroon',
+      latitude: 10.5956,
+      longitude: 14.3247,
+      image: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?w=600&auto=format&fit=crop&q=80',
+      popular: true,
+      tagline: 'Sahelian gateway & Waza National Park'
+    }
+  ],
+
+  // 8. Travel Providers (Unified Registry)
+  travelProviders: [
+    {
+      id: 'prv-krystal',
+      name: 'Krystal Palace Douala',
+      type: 'hotel',
+      logo: '🏨',
+      description: 'First 5-star luxury hotel in Douala with rooftop infinity pool and Michelin-inspired dining',
+      contact: { phone: '+237 233 42 00 00', email: 'concierge@krystalpalace.cm', address: 'Boulevard de la Liberté, Akwa, Douala' },
+      rating: 4.9,
+      verificationStatus: 'VERIFIED'
+    },
+    {
+      id: 'prv-starland',
+      name: 'Star Land Hotel Bastos',
+      type: 'hotel',
+      logo: '🏨',
+      description: 'Exclusive 4-star boutique hotel located in the diplomatic quarter of Bastos, Yaoundé',
+      contact: { phone: '+237 222 20 60 60', email: 'reservation@starlandhotel.com', address: 'Rue 1.792, Bastos, Yaoundé' },
+      rating: 4.8,
+      verificationStatus: 'VERIFIED'
+    },
+    {
+      id: 'prv-montfebe',
+      name: 'Hôtel Mont Fébé',
+      type: 'hotel',
+      logo: '🏨',
+      description: 'Panoramic hillside luxury overlooking Yaoundé with adjacent golf course',
+      contact: { phone: '+237 222 21 40 02', email: 'booking@hotel-montfebe.com', address: 'Colline du Mont Fébé, Yaoundé' },
+      rating: 4.6,
+      verificationStatus: 'VERIFIED'
+    },
+    {
+      id: 'prv-ilomba',
+      name: 'Hôtel Ilomba Kribi',
+      type: 'hotel',
+      logo: '🏖️',
+      description: 'Eco-chic beachfront lodge located close to the legendary Lobé waterfalls',
+      contact: { phone: '+237 699 80 12 34', email: 'info@ilomba.com', address: 'Grand Batanga, Kribi' },
+      rating: 4.8,
+      verificationStatus: 'VERIFIED'
+    },
+    {
+      id: 'prv-fini',
+      name: 'Fini Hotel Bobende Limbe',
+      type: 'hotel',
+      logo: '🌊',
+      description: 'Seaside resort on the Atlantic coast overlooking Mount Cameroon slopes',
+      contact: { phone: '+237 233 33 25 14', email: 'contact@finihotel.cm', address: 'Bobende Ocean Road, Limbe' },
+      rating: 4.5,
+      verificationStatus: 'VERIFIED'
+    },
+    {
+      id: 'prv-zingana',
+      name: 'Hôtel Zingana',
+      type: 'hotel',
+      logo: '🏔️',
+      description: 'Modern luxury comfort in the heart of Bafoussam western highlands',
+      contact: { phone: '+237 233 44 11 22', email: 'reservation@hotelzingana.cm', address: 'Avenue de la République, Bafoussam' },
+      rating: 4.7,
+      verificationStatus: 'VERIFIED'
+    },
+    {
+      id: 'prv-general-express',
+      name: 'General Express Voyages',
+      type: 'bus',
+      logo: '🚌',
+      description: 'Premier intercity coach operator serving Douala, Yaoundé, and western corridors',
+      contact: { phone: '+237 677 00 11 22', email: 'support@generalexpress.cm' },
+      rating: 4.7,
+      verificationStatus: 'VERIFIED'
+    },
+    {
+      id: 'prv-finexs',
+      name: 'Finexs Voyages',
+      type: 'bus',
+      logo: '🚌',
+      description: 'Exclusive executive VIP express coach line between Douala and Yaoundé',
+      contact: { phone: '+237 690 12 34 56', email: 'booking@finexs.cm' },
+      rating: 4.9,
+      verificationStatus: 'VERIFIED'
+    },
+    {
+      id: 'prv-touristique',
+      name: 'Touristique Express',
+      type: 'bus',
+      logo: '🚌',
+      description: 'Nationwide VIP carrier connecting southern hubs to the northern provinces',
+      contact: { phone: '+237 699 33 44 55', email: 'contact@touristiqueexpress.cm' },
+      rating: 4.8,
+      verificationStatus: 'VERIFIED'
+    },
+    {
+      id: 'prv-camrail',
+      name: 'Camrail (Bolloré Railways)',
+      type: 'train',
+      logo: '🚆',
+      description: 'Official national railway of Cameroon operating Transcam intercity and sleeper services',
+      contact: { phone: '+237 233 50 25 00', email: 'voyageurs@camrail.net' },
+      rating: 4.6,
+      verificationStatus: 'VERIFIED'
+    },
+    {
+      id: 'prv-camairco',
+      name: 'Camair-Co (The Star of Cameroon)',
+      type: 'flight',
+      logo: '✈️',
+      description: 'National flag carrier operating domestic flights and CEMAC regional connections',
+      contact: { phone: '+237 233 42 20 10', email: 'callcenter@camair-co.cm' },
+      rating: 4.4,
+      verificationStatus: 'VERIFIED'
+    },
+    {
+      id: 'prv-discovery-tours',
+      name: 'Cameroon Discovery Tours',
+      type: 'excursion',
+      logo: '🧭',
+      description: 'Licensed national ecotourism, mountain guiding, and coastal expedition specialist',
+      contact: { phone: '+237 670 99 88 77', email: 'hello@cameroondiscovery.cm' },
+      rating: 4.9,
+      verificationStatus: 'VERIFIED'
+    }
+  ],
+
+  // 9. Hotels & Real Room Tiers
+  hotels: [
+    {
+      id: 'htl-krystal-douala',
+      providerId: 'prv-krystal',
+      name: 'Krystal Palace Douala',
+      description: 'The standard of 5-star hospitality in Douala. Located in Akwa, offering panoramic ocean & city views, spa wellness, and high-speed fiber connectivity.',
+      location: 'Boulevard de la Liberté, Akwa, Douala',
+      city: 'Douala',
+      country: 'Cameroon',
+      latitude: 4.0515,
+      longitude: 9.7025,
+      rating: 4.9,
+      priceFrom: 95000,
+      currency: 'XAF',
+      amenities: ['Free High-Speed Wi-Fi', 'Rooftop Infinity Pool', 'Spa & Hammam', 'Fitness Centre', 'Airport Shuttle', 'Fine Dining Restaurant', '24/7 Room Service', 'Business Lounge'],
+      images: [
+        'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=700&auto=format&fit=crop&q=80',
+        'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=700&auto=format&fit=crop&q=80',
+        'https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=700&auto=format&fit=crop&q=80'
+      ],
+      status: 'ACTIVE',
+      rooms: [
+        {
+          id: 'rm-krystal-deluxe',
+          hotelId: 'htl-krystal-douala',
+          name: 'Deluxe City View Room',
+          description: '38m² luxury room with king-size bed, marble bathroom, and floor-to-ceiling city views',
+          capacity: 2,
+          price: 95000,
+          currency: 'XAF',
+          totalInventory: 10,
+          availableInventory: 8,
+          cancellationPolicy: 'FREE_CANCELLATION_24H',
+          amenities: ['King Bed', 'Rain Shower', 'Espresso Machine', 'High-Speed Wi-Fi', 'Smart TV 55"'],
+          images: ['https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=600&auto=format&fit=crop&q=80']
+        },
+        {
+          id: 'rm-krystal-exec',
+          hotelId: 'htl-krystal-douala',
+          name: 'Executive Port Suite',
+          description: '65m² suite with separate lounge area, executive club access, and harbour panorama',
+          capacity: 3,
+          price: 165000,
+          currency: 'XAF',
+          totalInventory: 5,
+          availableInventory: 3,
+          cancellationPolicy: 'FREE_CANCELLATION_24H',
+          amenities: ['King Bed + Sofa Bed', 'Deep Soaking Tub', 'Executive Lounge Access', 'Balcony', 'Breakfast Included'],
+          images: ['https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=600&auto=format&fit=crop&q=80']
+        },
+        {
+          id: 'rm-krystal-presidential',
+          hotelId: 'htl-krystal-douala',
+          name: 'Presidential Penthouse',
+          description: '140m² luxury penthouse with private terrace, meeting room, and dedicated butler',
+          capacity: 4,
+          price: 450000,
+          currency: 'XAF',
+          totalInventory: 1,
+          availableInventory: 1,
+          cancellationPolicy: 'MODERATE_48H',
+          amenities: ['2 Bedrooms', 'Private Butler', 'Panoramic Terrace', 'Dining Room', 'VIP Airport Transfer'],
+          images: ['https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&auto=format&fit=crop&q=80']
+        }
+      ]
+    },
+    {
+      id: 'htl-starland-yaounde',
+      providerId: 'prv-starland',
+      name: 'Star Land Hotel Bastos',
+      description: 'Boutique elegance in Yaoundé prestigious Bastos neighborhood. Walk to major embassies, restaurants, and art galleries.',
+      location: 'Rue 1.792, Bastos, Yaoundé',
+      city: 'Yaoundé',
+      country: 'Cameroon',
+      latitude: 3.8920,
+      longitude: 11.5120,
+      rating: 4.8,
+      priceFrom: 75000,
+      currency: 'XAF',
+      amenities: ['Outdoor Pool', 'Complimentary Breakfast', 'Free Wi-Fi', 'Cocktail Bar', 'Meeting Rooms', 'Concierge Service'],
+      images: [
+        'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=700&auto=format&fit=crop&q=80',
+        'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=700&auto=format&fit=crop&q=80'
+      ],
+      status: 'ACTIVE',
+      rooms: [
+        {
+          id: 'rm-starland-classic',
+          hotelId: 'htl-starland-yaounde',
+          name: 'Classic Bastos Room',
+          description: 'Spacious 32m² room with garden view, queen bed, and quiet working desk',
+          capacity: 2,
+          price: 75000,
+          currency: 'XAF',
+          totalInventory: 12,
+          availableInventory: 9,
+          cancellationPolicy: 'FREE_CANCELLATION_24H',
+          amenities: ['Queen Bed', 'Work Desk', 'En-suite Bathroom', 'Wi-Fi 6', 'Mini Bar'],
+          images: ['https://images.unsplash.com/photo-1590490360182-c33d57733427?w=600&auto=format&fit=crop&q=80']
+        },
+        {
+          id: 'rm-starland-suite',
+          hotelId: 'htl-starland-yaounde',
+          name: 'Ambassador Executive Suite',
+          description: '55m² executive suite with separate parlor and VIP amenities',
+          capacity: 3,
+          price: 130000,
+          currency: 'XAF',
+          totalInventory: 4,
+          availableInventory: 2,
+          cancellationPolicy: 'FREE_CANCELLATION_24H',
+          amenities: ['King Bed', 'Living Area', 'Espresso Machine', 'Bathtub', 'Complimentary Wine'],
+          images: ['https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=600&auto=format&fit=crop&q=80']
+        }
+      ]
+    },
+    {
+      id: 'htl-montfebe-yaounde',
+      providerId: 'prv-montfebe',
+      name: 'Hôtel Mont Fébé',
+      description: 'Perched atop Mont Fébé with commanding views of the seven hills. Features lush gardens, tennis courts, and peaceful elevation.',
+      location: 'Colline du Mont Fébé, Yaoundé',
+      city: 'Yaoundé',
+      country: 'Cameroon',
+      latitude: 3.9140,
+      longitude: 11.4980,
+      rating: 4.6,
+      priceFrom: 65000,
+      currency: 'XAF',
+      amenities: ['Semi-Olympic Pool', 'Tennis Courts', 'Golf Course Proximity', 'Scenic Restaurant', 'Airport Shuttle', 'Free Parking'],
+      images: [
+        'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=700&auto=format&fit=crop&q=80',
+        'https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=700&auto=format&fit=crop&q=80'
+      ],
+      status: 'ACTIVE',
+      rooms: [
+        {
+          id: 'rm-montfebe-standard',
+          hotelId: 'htl-montfebe-yaounde',
+          name: 'Hillside Superior Room',
+          description: 'Bright 30m² room overlooking the wooded slopes of Mount Fébé',
+          capacity: 2,
+          price: 65000,
+          currency: 'XAF',
+          totalInventory: 15,
+          availableInventory: 12,
+          cancellationPolicy: 'FREE_CANCELLATION_24H',
+          amenities: ['Double Bed', 'Mountain Breeze Balcony', 'TV', 'Desk', 'Free Wi-Fi'],
+          images: ['https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=600&auto=format&fit=crop&q=80']
+        }
+      ]
+    },
+    {
+      id: 'htl-ilomba-kribi',
+      providerId: 'prv-ilomba',
+      name: 'Hôtel Ilomba Kribi',
+      description: 'Charming beachfront resort nestled under coconut palms in Grand Batanga, only 5 minutes from Lobé waterfalls.',
+      location: 'Grand Batanga Beachfront, Kribi',
+      city: 'Kribi',
+      country: 'Cameroon',
+      latitude: 2.8940,
+      longitude: 9.8890,
+      rating: 4.8,
+      priceFrom: 55000,
+      currency: 'XAF',
+      amenities: ['Private Beach', 'Open-Air Seafood Grill', 'Canoe & Excursions', 'Bar Tropical', 'Free Wi-Fi', 'Pet Friendly'],
+      images: [
+        'https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?w=700&auto=format&fit=crop&q=80',
+        'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=700&auto=format&fit=crop&q=80'
+      ],
+      status: 'ACTIVE',
+      rooms: [
+        {
+          id: 'rm-ilomba-bungalow',
+          hotelId: 'htl-ilomba-kribi',
+          name: 'Oceanfront Wooden Bungalow',
+          description: 'Traditional wood and thatch cottage stepping directly onto warm golden sand',
+          capacity: 2,
+          price: 55000,
+          currency: 'XAF',
+          totalInventory: 8,
+          availableInventory: 6,
+          cancellationPolicy: 'FREE_CANCELLATION_24H',
+          amenities: ['Queen Bed', 'Private Ocean Porch', 'Mosquito Netting', 'Ceiling Fan & AC', 'Open-sky Shower'],
+          images: ['https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=600&auto=format&fit=crop&q=80']
+        },
+        {
+          id: 'rm-ilomba-family',
+          hotelId: 'htl-ilomba-kribi',
+          name: 'Family Garden Villa',
+          description: 'Two-bedroom coastal villa surrounded by tropical hibiscus and palm groves',
+          capacity: 5,
+          price: 110000,
+          currency: 'XAF',
+          totalInventory: 3,
+          availableInventory: 2,
+          cancellationPolicy: 'MODERATE_48H',
+          amenities: ['1 King Bed + 2 Twin Beds', 'Private Garden Terrace', 'Kitchenette', 'Dining Table', 'Air Conditioned'],
+          images: ['https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?w=600&auto=format&fit=crop&q=80']
+        }
+      ]
+    },
+    {
+      id: 'htl-fini-limbe',
+      providerId: 'prv-fini',
+      name: 'Fini Hotel Bobende Limbe',
+      description: 'Coastal haven on the Atlantic with views of Bioko Island on clear days. Famous for freshly caught sea fish and ocean breezes.',
+      location: 'Bobende Road, Limbe',
+      city: 'Limbé',
+      country: 'Cameroon',
+      latitude: 4.0200,
+      longitude: 9.1950,
+      rating: 4.5,
+      priceFrom: 45000,
+      currency: 'XAF',
+      amenities: ['Swimming Pool', 'Seaside Terrace', 'Conference Hall', 'Bar & Grill', 'Free Parking'],
+      images: [
+        'https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=700&auto=format&fit=crop&q=80'
+      ],
+      status: 'ACTIVE',
+      rooms: [
+        {
+          id: 'rm-fini-deluxe',
+          hotelId: 'htl-fini-limbe',
+          name: 'Ocean View Deluxe',
+          description: 'Spacious room with balcony facing the volcanic black sand coastline',
+          capacity: 2,
+          price: 45000,
+          currency: 'XAF',
+          totalInventory: 10,
+          availableInventory: 8,
+          cancellationPolicy: 'FREE_CANCELLATION_24H',
+          amenities: ['Queen Bed', 'Sea Balcony', 'AC', 'Satellite TV', 'Free Wi-Fi'],
+          images: ['https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=600&auto=format&fit=crop&q=80']
+        }
+      ]
+    }
+  ],
+
+  // 10. Excursions & Day Tours
+  excursions: [
+    {
+      id: 'exc-lobe-falls',
+      providerId: 'prv-discovery-tours',
+      title: 'Lobé Waterfalls & Bagyeli Pygmy Cultural Encounter',
+      destination: 'Kribi',
+      description: 'Experience one of the only waterfalls in the world that empties directly into the Atlantic ocean. Pirogue ride, fresh giant prawns on the beach, and cultural dialogue.',
+      duration: '1 Day',
+      price: 35000,
+      currency: 'XAF',
+      images: [
+        'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=700&auto=format&fit=crop&q=80'
+      ],
+      highlights: ['Lobé Waterfall Canoe Safari', 'Beachside Grilled Giant Prawns (Crevettes)', 'Bagyeli Rainforest Walk', 'German Lighthouse Visit'],
+      included: ['Licensed Guide', 'Pirogue Boat Ride', 'Seafood Lunch & Fresh Coconut', 'All Conservation Fees'],
+      availableSlots: 24,
+      status: 'ACTIVE'
+    },
+    {
+      id: 'exc-mount-cameroon',
+      providerId: 'prv-discovery-tours',
+      title: 'Mount Cameroon Lava Trail Day Trek',
+      destination: 'Limbé & Buea',
+      description: 'Hike through misty tropical rainforest to the active 1999 lava flow on the slopes of West Africa highest peak (Mount Fako, 4,040m).',
+      duration: '1 Day',
+      price: 45000,
+      currency: 'XAF',
+      images: [
+        'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=700&auto=format&fit=crop&q=80'
+      ],
+      highlights: ['Mount Fako 1999 Lava Flow', 'Tropical Rainforest Canopy', 'Limbe Botanical Garden Visit', 'Black Sand Beach Sunset'],
+      included: ['Certified Mountain Guide', 'Park Entry & Porter', 'Picnic Lunch & Water', 'Transport from Douala/Limbe'],
+      availableSlots: 16,
+      status: 'ACTIVE'
+    },
+    {
+      id: 'exc-waza-safari',
+      providerId: 'prv-discovery-tours',
+      title: 'Waza National Park Wildlife Safari',
+      destination: 'Maroua & Waza',
+      description: '2-Day UNESCO biosphere reserve safari tracking elephants, giraffes, lions, and hundreds of migratory bird species across the northern savanna.',
+      duration: '2 Days / 1 Night',
+      price: 180000,
+      currency: 'XAF',
+      images: [
+        'https://images.unsplash.com/photo-1516426122078-c23e76319801?w=700&auto=format&fit=crop&q=80'
+      ],
+      highlights: ['Elephant Herd Tracking', 'Giraffe & Antelope Watering Holes', 'Savanna Sunset at Campement de Waza', 'Local Kotoko Village Visit'],
+      included: ['4x4 Safari Vehicle with Fuel', 'Eco-guard Guide', '1 Night Safari Camp Lodge', 'All Meals & Mineral Water'],
+      availableSlots: 10,
+      status: 'ACTIVE'
+    }
   ]
 };
 

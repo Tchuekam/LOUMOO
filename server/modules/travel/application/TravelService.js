@@ -1,91 +1,45 @@
 /**
  * LOUMOO Travel Service & Multi-Modal Provider Orchestrator
+ * ---------------------------------------------------------------------------
+ * Central orchestration facade uniting Search, Hotels, Transport, Excursions,
+ * Booking Engine, Seat Inventory, Trips, and Tickets.
  */
 
+const { travelRepository } = require('../infrastructure/TravelRepository');
+const { travelSearchEngine } = require('./TravelSearchEngine');
+const { hotelAvailabilityService } = require('./HotelAvailabilityService');
+const { seatInventoryService } = require('./SeatInventoryService');
+const { bookingEngine } = require('./BookingEngine');
 const travelData = require('../data/travelData');
-const { Booking, BOOKING_STATUS, SERVICE_TYPES } = require('../domain/Booking');
-const { NotFoundError, ValidationError } = require('../../../shared/errors/AppError');
+const { NotFoundError, ValidationError, AuthenticationError, AuthorizationError } = require('../../../shared/errors/AppError');
 const logger = require('../../../shared/logging/logger');
 
 class TravelService {
   constructor() {
+    this.repo = travelRepository;
+    this.searchEngine = travelSearchEngine;
+    this.hotelService = hotelAvailabilityService;
+    this.seatService = seatInventoryService;
+    this.bookingEngine = bookingEngine;
     this.data = travelData;
-    // In-memory bookings store with seeded demo bookings
-    this.bookings = new Map();
-    this._seedDemoBookings();
   }
 
-  _seedDemoBookings() {
-    const demo1 = new Booking({
-      id: 'bkg_demo_upcoming_1',
-      reference: 'LMT-BUS-78291',
-      type: SERVICE_TYPES.BUS,
-      userId: 'usr_guest',
-      status: BOOKING_STATUS.CONFIRMED,
-      itinerary: {
-        operator: 'General Express Voyages',
-        operatorVerified: true,
-        route: 'Douala (Bépanda) → Yaoundé (Mvan)',
-        origin: 'Douala',
-        destination: 'Yaoundé',
-        departureDate: 'Tomorrow',
-        departureTime: '08:00',
-        arrivalTime: '11:45',
-        busClass: 'VIP Prestige',
-        terminal: 'Terminal Bépanda Quai VIP 2'
-      },
-      passengers: [
-        { name: 'ROSTAND TCHUEKAM', seat: '4A', idNumber: '09CM48921', phone: '+237 690 12 34 56' }
-      ],
-      pricing: {
-        baseAmount: 6000,
-        serviceFee: 500,
-        taxes: 0,
-        totalAmount: 6500,
-        currency: 'XAF'
-      },
-      payment: {
-        method: 'mtn_momo',
-        status: 'PAID',
-        transactionRef: 'MOMO-94810294'
-      }
+  // 1. Normalized Multi-Modal Search (Promise + Synchronous Legacy Properties)
+  search(params = {}) {
+    const legacy = this._legacySearch(params);
+    const asyncPromise = this.searchEngine.search(params).then(results => {
+      return {
+        ...results,
+        ...legacy,
+        data: legacy
+      };
     });
-
-    const demo2 = new Booking({
-      id: 'bkg_demo_past_1',
-      reference: 'LMT-FLT-49102',
-      type: SERVICE_TYPES.FLIGHT,
-      userId: 'usr_guest',
-      status: BOOKING_STATUS.COMPLETED,
-      itinerary: {
-        airline: 'Air France',
-        flightNumber: 'AF949',
-        route: 'DLA (Douala) → CDG (Paris)',
-        origin: 'Douala (DLA)',
-        destination: 'Paris (CDG)',
-        departureDate: '12 Oct 2026',
-        departureTime: '23:45',
-        arrivalTime: '06:50 (+1)',
-        terminal: 'Terminal 1 · Gate B4'
-      },
-      passengers: [
-        { name: 'ROSTAND TCHUEKAM', seat: '14A', idNumber: '09CM48921', passport: '09CM48921' }
-      ],
-      pricing: {
-        baseAmount: 485000,
-        serviceFee: 0,
-        taxes: 0,
-        totalAmount: 485000,
-        currency: 'XAF'
-      }
-    });
-
-    this.bookings.set(demo1.id, demo1);
-    this.bookings.set(demo2.id, demo2);
+    // Attach legacy properties directly to the promise so synchronous test/code callers don't break
+    Object.assign(asyncPromise, legacy);
+    return asyncPromise;
   }
 
-  // 1. Multi-Modal Unified Search
-  search({ type = 'all', origin = '', destination = '', departureDate = '', passengers = 1, classType = 'all' }) {
+  _legacySearch({ type = 'all', origin = '', destination = '', departureDate = '', passengers = 1, classType = 'all' }) {
     const results = {
       query: { type, origin, destination, departureDate, passengers, classType },
       buses: [],
@@ -124,7 +78,6 @@ class TravelService {
         const matchDest = !normDest || t.destination.toLowerCase().includes(normDest);
         return matchOrigin && matchDest;
       });
-      // Route availability notification if destination not serviced by rail
       if (normDest && !['yaoundé', 'yaounde', 'douala', 'ngaoundéré', 'ngaoundere'].some(c => normDest.includes(c))) {
         results.trainRouteNotice = `No train service currently operates to '${destination}'. Camrail passenger lines operate between Douala, Yaoundé, and Ngaoundéré.`;
       }
@@ -145,7 +98,83 @@ class TravelService {
     return results;
   }
 
-  // 2. Bus Operators & Schedules
+  // 2. Destinations
+  async getDestinations() {
+    return this.repo.getDestinations();
+  }
+
+  // 3. Hotels & Rooms
+  async getHotels(filters = {}) {
+    const page = Math.max(1, Number(filters.page) || 1);
+    const limit = Math.max(1, Math.min(100, Number(filters.limit) || 20));
+    const all = await this.repo.getHotels(filters);
+
+    const total = all.length;
+    const startIndex = (page - 1) * limit;
+    const items = all.slice(startIndex, startIndex + limit);
+
+    return {
+      items,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit) || 1
+      }
+    };
+  }
+
+  async getHotelById(hotelId) {
+    const hotel = await this.repo.getHotelById(hotelId);
+    if (!hotel) {
+      throw new NotFoundError(`Hotel '${hotelId}' not found`);
+    }
+    return hotel;
+  }
+
+  async getHotelRooms(hotelId, params = {}) {
+    await this.getHotelById(hotelId); // asserts existence
+    return this.repo.getHotelRooms(hotelId, params);
+  }
+
+  async checkHotelRoomAvailability(params) {
+    return this.hotelService.checkRoomAvailability(params);
+  }
+
+  // 4. Excursions
+  async getExcursions(filters = {}) {
+    const page = Math.max(1, Number(filters.page) || 1);
+    const limit = Math.max(1, Math.min(100, Number(filters.limit) || 20));
+    const all = await this.repo.getExcursions(filters);
+
+    const total = all.length;
+    const startIndex = (page - 1) * limit;
+    const items = all.slice(startIndex, startIndex + limit);
+
+    return {
+      items,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit) || 1
+      }
+    };
+  }
+
+  async getExcursionById(id) {
+    const exc = await this.repo.getExcursionById(id);
+    if (!exc) {
+      throw new NotFoundError(`Excursion '${id}' not found`);
+    }
+    return exc.toJSON();
+  }
+
+  // 5. Transport Modalities
+  async getTransportServices(type, filters = {}) {
+    return this.repo.getTransportServices({ ...filters, type });
+  }
+
   getBusOperators() {
     return this.data.busOperators;
   }
@@ -161,52 +190,11 @@ class TravelService {
     return schedules;
   }
 
-  getBusScheduleById(scheduleId) {
-    const schedule = this.data.busSchedules.find(s => s.id === scheduleId);
-    if (!schedule) {
-      throw new NotFoundError(`Bus schedule '${scheduleId}' not found`);
-    }
-    return schedule;
-  }
-
-  // 3. Seat Map Inspection & Availability
   getBusSeats(scheduleId) {
-    const schedule = this.getBusScheduleById(scheduleId);
-    const layout = [];
-    const totalRows = schedule.layoutType === '2x1' ? 7 : 12;
-
-    for (let r = 1; r <= totalRows; r++) {
-      const rowSeats = [];
-      const cols = schedule.layoutType === '2x1' ? ['A', 'B', 'C'] : ['A', 'B', 'C', 'D'];
-      for (const col of cols) {
-        const seatId = `${r}${col}`;
-        const isOccupied = schedule.occupiedSeats.includes(seatId);
-        rowSeats.push({
-          seatId,
-          row: r,
-          column: col,
-          isWindow: col === 'A' || col === cols[cols.length - 1],
-          isAisle: col === 'B' || col === 'C',
-          status: isOccupied ? 'OCCUPIED' : 'AVAILABLE',
-          price: schedule.price
-        });
-      }
-      layout.push({ row: r, seats: rowSeats });
-    }
-
-    return {
-      scheduleId: schedule.id,
-      operatorName: schedule.operatorName,
-      busClass: schedule.busClass,
-      layoutType: schedule.layoutType,
-      totalSeats: schedule.totalSeats,
-      availableSeatsCount: schedule.availableSeats,
-      occupiedSeats: schedule.occupiedSeats,
-      seatLayout: layout
-    };
+    return this.seatService.getSeatMap(scheduleId);
   }
 
-  // 4. Taxi Quote Calculation
+  // 6. Taxi / Airport Transfers
   calculateTaxiQuote({ type = 'city', origin = '', destination = '', vehicleClass = 'comfort' }) {
     const taxiOption = this.data.taxis.find(t => t.type === type) || this.data.taxis[0];
     const vClass = taxiOption.vehicleClasses.find(vc => vc.id === vehicleClass) || taxiOption.vehicleClasses[0];
@@ -230,7 +218,7 @@ class TravelService {
     };
   }
 
-  // 5. Tourism Packages
+  // 7. Packages & Visa Concierge
   getPackages() {
     return this.data.packages;
   }
@@ -243,7 +231,6 @@ class TravelService {
     return pkg;
   }
 
-  // 6. Visa Concierge
   getVisaDestinations() {
     return this.data.visaDestinations;
   }
@@ -256,105 +243,107 @@ class TravelService {
     return visa;
   }
 
-  submitVisaApplication(payload) {
+  async submitVisaApplication(payload = {}, options = {}) {
     if (!payload.country || !payload.applicantName || !payload.phone) {
       throw new ValidationError('Country, applicantName and phone are required for visa concierge');
     }
 
-    const booking = new Booking({
-      type: SERVICE_TYPES.VISA,
-      userId: payload.userId || 'usr_guest',
-      status: BOOKING_STATUS.CONFIRMED,
+    const user = options.user || payload.user;
+    if (!user || !user.id || user.id === 'usr_guest') {
+      throw new AuthenticationError('Authentication required to submit visa application');
+    }
+
+    const bookingResult = await this.bookingEngine.createBooking({
+      type: 'visa',
+      passengerName: payload.applicantName,
+      phone: payload.phone,
+      amount: 25000,
       itinerary: {
         country: payload.country,
         visaType: payload.visaType || 'Tourist (Type C)',
         plannedTravelDate: payload.plannedTravelDate || 'Within 60 days',
         appointmentCenter: 'TLScontact / Consular Concierge'
-      },
-      passengers: [
-        { name: payload.applicantName, phone: payload.phone, passport: payload.passportNumber || 'Pending' }
-      ],
-      pricing: {
-        baseAmount: 25000,
-        serviceFee: 0,
-        taxes: 0,
-        totalAmount: 25000,
-        currency: 'XAF'
-      },
-      payment: {
-        method: payload.paymentMethod || 'mtn_momo',
-        status: 'PAID'
       }
-    });
+    }, { user });
 
-    this.bookings.set(booking.id, booking);
-    logger.info(`[TravelService] Created visa application booking ${booking.id} (${booking.reference})`);
-    return booking.toJSON();
+    return bookingResult.booking;
   }
 
-  // 7. Booking Creation & Management
-  createBooking(payload) {
-    if (!payload.type) {
-      throw new ValidationError('Booking type is required');
-    }
-    if (!payload.passengers || payload.passengers.length === 0) {
-      throw new ValidationError('At least one passenger is required');
-    }
+  // 8. Transactional Booking Engine
+  async createBooking(payload, options = {}) {
+    return this.bookingEngine.createBooking(payload, options);
+  }
 
-    // Bus seat conflict validation
-    if (payload.type === SERVICE_TYPES.BUS && payload.scheduleId) {
-      const schedule = this.getBusScheduleById(payload.scheduleId);
-      const requestedSeats = payload.passengers.map(p => p.seat).filter(Boolean);
-      for (const s of requestedSeats) {
-        if (schedule.occupiedSeats.includes(s)) {
-          throw new ValidationError(`Seat '${s}' is already occupied. Please select another seat.`);
+  async getBookingById(bookingId, userId = null) {
+    const b = await this.repo.getBookingById(bookingId);
+    if (!b) {
+      throw new NotFoundError('Booking', bookingId);
+    }
+    if (userId && b.userId !== userId && userId !== 'admin') {
+      throw new NotFoundError('Booking', bookingId);
+    }
+    const trip = await this.repo.getTripById(b.id);
+    const ticket = await this.repo.getTicketByIdOrBooking(b.id);
+    return {
+      ...b.toJSON(),
+      trip,
+      ticket,
+      qrCodePayload: ticket?.qrPayload || ''
+    };
+  }
+
+  async cancelBooking(bookingId, userId, reason) {
+    return this.bookingEngine.cancelBooking(bookingId, userId, reason);
+  }
+
+  async getUserBookings(userId, status = 'all') {
+    return this.repo.getUserBookings(userId, status);
+  }
+
+  // 9. Trips (Powers My Trips)
+  async getUserTrips(userId, status = 'all') {
+    return this.repo.getUserTrips(userId, status);
+  }
+
+  async getTripById(tripId, userId = null) {
+    const trip = await this.repo.getTripById(tripId);
+    if (!trip) {
+      throw new NotFoundError('Trip', tripId);
+    }
+    if (userId && trip.userId !== userId && userId !== 'admin') {
+      throw new NotFoundError('Trip', tripId);
+    }
+    return trip;
+  }
+
+  // 10. Tickets & QR
+  async getUserTickets(userId) {
+    return this.repo.getUserTickets(userId);
+  }
+
+  async getTicketById(ticketId, userId = null) {
+    const ticket = await this.repo.getTicketByIdOrBooking(ticketId);
+    if (!ticket) {
+      throw new NotFoundError('Ticket', ticketId);
+    }
+    if (userId && userId !== 'admin') {
+      if (ticket.userId) {
+        if (ticket.userId !== userId) {
+          throw new NotFoundError('Ticket', ticketId);
+        }
+      } else {
+        const booking = await this.repo.getBookingById(ticket.bookingId);
+        if (!booking || booking.userId !== userId) {
+          throw new NotFoundError('Ticket', ticketId);
         }
       }
     }
-
-    const booking = new Booking(payload);
-    this.bookings.set(booking.id, booking);
-    logger.info(`[TravelService] Created booking ${booking.id} (${booking.reference}) for user ${booking.userId}`);
-    return booking.toJSON();
-  }
-
-  getBookingById(bookingId) {
-    const booking = this.bookings.get(bookingId) || Array.from(this.bookings.values()).find(b => b.reference === bookingId);
-    if (!booking) {
-      throw new NotFoundError(`Booking '${bookingId}' not found`);
-    }
-    return booking.toJSON();
-  }
-
-  getUserTrips(userId = 'usr_guest', statusFilter = 'all') {
-    let list = Array.from(this.bookings.values()).map(b => b.toJSON());
-    if (userId) {
-      list = list.filter(b => b.userId === userId || userId === 'usr_guest');
-    }
-
-    if (statusFilter === 'upcoming') {
-      list = list.filter(b => b.status === BOOKING_STATUS.CONFIRMED || b.status === BOOKING_STATUS.PENDING_PAYMENT);
-    } else if (statusFilter === 'past') {
-      list = list.filter(b => b.status === BOOKING_STATUS.COMPLETED);
-    } else if (statusFilter === 'cancelled') {
-      list = list.filter(b => b.status === BOOKING_STATUS.CANCELLED);
-    }
-
-    return list;
-  }
-
-  cancelBooking(bookingId, userId, reason) {
-    const booking = this.bookings.get(bookingId);
-    if (!booking) {
-      throw new NotFoundError(`Booking '${bookingId}' not found`);
-    }
-    booking.cancel(reason);
-    logger.info(`[TravelService] Cancelled booking ${bookingId} (${booking.reference})`);
-    return booking.toJSON();
+    return ticket;
   }
 }
 
 const travelServiceInstance = new TravelService();
+
 module.exports = {
   TravelService,
   travelService: travelServiceInstance

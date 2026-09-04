@@ -21,8 +21,7 @@ class RedisConnection {
           maxRetriesPerRequest: 3,
           enableReadyCheck: true,
           lazyConnect: false,
-          connectTimeout: 10000,
-          family: 4,
+          connectTimeout: 5000,
           keepAlive: 10000,
           enableAutoPipelining: true,
           reconnectOnError(err) {
@@ -33,13 +32,11 @@ class RedisConnection {
             return false;
           },
           retryStrategy(times) {
-            if (times > 5) {
-              logger.warn('GRedis] Max connection retry attempts reached (' + times + '/5), using in-memory fallback.');
+            if (times > 1) {
+              logger.warn('[Redis] Redis unavailable; using in-memory distributed lock fallback.');
               return null;
             }
-            const delay = Math.min(times * 250, 2000);
-            logger.warn('[Redis] Connection retry attempt #' + times + ' in ' + delay + 'ms');
-            return delay;
+            return 250;
           }
         });
 

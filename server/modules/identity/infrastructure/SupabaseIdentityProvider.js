@@ -4,10 +4,10 @@
  * Verifies Supabase Auth and LOUMOO JWT session tokens using native crypto.
  */
 
-const crypto = require('crypto');
 const { createClient } = require('@supabase/supabase-js');
 const config = require('../../../config/env');
 const logger = require('../../../shared/logging/logger');
+const SessionToken = require('./SessionToken');
 const { AuthenticationError, InfrastructureError } = require('../../../shared/errors/AppError');
 
 let supabaseAdmin = null;
@@ -18,20 +18,23 @@ if (config.supabase.url && (config.supabase.serviceRoleKey || config.supabase.an
   });
 }
 
+/**
+ * Verifies a LOUMOO-issued HS256 session token through the shared trust
+ * boundary. The verifier pins the algorithm, checks the signature in constant
+ * time, and validates issuer, audience, expiry, not-before and the required
+ * `sub` claim — nothing in the payload is read until the signature holds.
+ * Returns the verified payload, or null with the failure reason logged at debug
+ * level (never surfaced to the client).
+ */
 function verifyJwt(token, secret) {
-  if (!token || typeof token !== 'string') return null;
-  const parts = token.split('.');
-  if (parts.length !== 3) return null;
-  const [header, body, signature] = parts;
-  try {
-    const expectedSig = crypto.createHmac('sha256', secret).update(`${header}.${body}`).digest('base64url');
-    if (signature !== expectedSig) return null;
-    const payload = JSON.parse(Buffer.from(body, 'base64url').toString('utf8'));
-    if (payload.exp && payload.exp < Math.floor(Date.now() / 1000)) return null;
-    return payload;
-  } catch (e) {
-    return null;
-  }
+  const result = SessionToken.verify(token, secret, {
+    issuer: SessionToken.ISSUER,
+    audience: SessionToken.AUDIENCE,
+    requiredClaims: ['sub']
+  });
+  if (result.ok) return result.payload;
+  logger.debug(`[Identity] Session token rejected: ${result.reason}`);
+  return null;
 }
 
 const TEST_TOKEN_PREFIX = 'loumoo_test:';

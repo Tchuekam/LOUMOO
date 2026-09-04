@@ -4,8 +4,12 @@
  * The ONLY module that reads or writes `iam.profiles`.
  *
  * Design rules enforced here:
- *   - `clerk_user_id` is the stable external identity. Users are never looked
- *     up or matched by email, phone, username or display name.
+ *   - `clerk_user_id` is the stable external identity, and every authorization
+ *     decision is keyed on it. Users are never matched by email, phone,
+ *     username or display name to decide what they may do. The lone exception
+ *     is `findAuthIdByVerifiedEmail`, used only to resolve the owning account of
+ *     an email that has JUST been proven by OTP during the sign-in handshake —
+ *     it returns an id, never an authorization.
  *   - There is no in-memory fallback store. If the database is unavailable the
  *     request fails; it does not silently succeed against a Map that vanishes
  *     on restart and lets two servers disagree about who someone is.
@@ -79,6 +83,35 @@ class ProfileRepository {
       throw new InfrastructureError('Supabase', `profile lookup by id failed: ${error.message}`, error);
     }
     return data || null;
+  }
+
+  /**
+   * Resolves the stable identity (`clerk_user_id`, i.e. the Supabase auth id)
+   * for an email that has JUST been proven via OTP.
+   *
+   * This is the ONE sanctioned by-email read and it exists solely for the
+   * post-verification identity handshake, replacing a full auth-table scan. It
+   * returns only the id, is backed by `idx_profiles_email`, and must NEVER be
+   * used to make an authorization decision — those are always keyed on
+   * `clerk_user_id`, never on a mutable, re-assignable email.
+   */
+  static async findAuthIdByVerifiedEmail(email) {
+    const clean = String(email || '').trim().toLowerCase();
+    if (!clean) return null;
+
+    const { data, error } = await this.db
+      .from('profiles')
+      .select('clerk_user_id')
+      .eq('email', clean)
+      .is('deleted_at', null)
+      .order('created_at', { ascending: true })
+      .limit(1)
+      .maybeSingle();
+
+    if (error) {
+      throw new InfrastructureError('Supabase', `profile identity lookup by email failed: ${error.message}`, error);
+    }
+    return data ? data.clerk_user_id : null;
   }
 
   /* --------------------------------------------------------------- writes */
