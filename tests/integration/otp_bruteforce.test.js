@@ -103,7 +103,36 @@ async function run() {
     assert.strictEqual(resend.body.data.devOtp, undefined,
       'No code may be handed back when nothing was sent');
 
-    console.log('  ✓ OTP endpoints resist brute force, replay after lockout, and enumeration');
+    /* ── 6. An expired code is rejected even when correct ─────────────────── */
+    const expiredEmail = `otp_expired_${Date.now().toString(36)}@loumoo-test.cm`;
+    const now = Date.now();
+    await CacheService.set(expiredEmail, {
+      email: expiredEmail,
+      passwordEnc: OtpSecurity.encryptSecret('pw'),
+      firstName: '', lastName: '', phone: '', city: '',
+      otpHash: OtpSecurity.hashOtp('314159'),
+      attempts: 0, sendCount: 1,
+      createdAt: now - 1000 * 1000,
+      lastSentAt: now - 1000 * 1000,
+      expiresAt: now - 1000            // already elapsed
+    }, 900, OTP_NAMESPACE);
+    const expiredRes = await harness.request('POST', '/api/v1/auth/verify-otp', {
+      body: { email: expiredEmail, code: '314159' }
+    });
+    assert.strictEqual(expiredRes.status, 401, 'An expired code must be rejected even if it matches');
+    assert.ok(seenMessages.has(expiredRes.body.error.message),
+      'An expired code must return the same generic message');
+    assert.strictEqual(await CacheService.get(expiredEmail, OTP_NAMESPACE), null,
+      'An expired code must be purged from the cache');
+
+    /* ── 7. Boundary: missing email or code is a validation error ─────────── */
+    for (const body of [{}, { email: 'x@loumoo-test.cm' }, { code: '123456' }]) {
+      const bad = await harness.request('POST', '/api/v1/auth/verify-otp', { body });
+      assert.strictEqual(bad.status, 400,
+        `Missing required fields must be a 400 validation error, got ${bad.status}`);
+    }
+
+    console.log('  ✓ OTP endpoints resist brute force, replay after lockout, expiry, and enumeration');
   } finally {
     await CacheService.delete(email, OTP_NAMESPACE);
     await CacheService.delete(unknownEmail, OTP_NAMESPACE);

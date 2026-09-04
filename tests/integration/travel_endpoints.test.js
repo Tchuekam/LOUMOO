@@ -259,7 +259,7 @@ async function run() {
 }
 
 if (require.main === module) {
-  run().catch(err => {
+  run().then(() => process.exit(0)).catch(err => {
     console.error('FAILED:', err);
     process.exit(1);
   });

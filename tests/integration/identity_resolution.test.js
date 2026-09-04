@@ -77,7 +77,14 @@ async function run() {
     const remaining = await CacheService.get(user.email, OTP_NAMESPACE);
     assert.strictEqual(remaining, null, 'A successfully used OTP must be destroyed');
 
-    console.log('  ✓ Verification resolves the real account via the indexed mirror; no synthetic identity');
+    // 5) Replaying the same code after success is rejected — no reuse.
+    const replay = await harness.request('POST', '/api/v1/auth/verify-otp', {
+      body: { email: user.email, code }
+    });
+    assert.strictEqual(replay.status, 401,
+      'A code that already completed verification must not be replayable');
+
+    console.log('  ✓ Verification resolves the real account via the indexed mirror; no synthetic identity; no replay');
   } finally {
     await CacheService.delete(user.email, OTP_NAMESPACE);
   }
