@@ -236,98 +236,87 @@ def get_chat_and_profile_view():
      UPGRADED USER PROFILE PORTAL (is.profile)
      ══════════════════════════════════════════════════════════════════════ -->
 <sc-if value="{{ is.profile }}">
-<div style="padding-bottom:32px">
-  
-  <!-- Header -->
-  <div class="page-head" style="justify-content:space-between">
-    <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text)">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
-    </button>
-    <h4 style="margin:0;font-size:16px">My Account</h4>
-    <button onClick="{{ on.settings }}" aria-label="Open settings" style="border:none;background:transparent;color:var(--color-text);cursor:pointer">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-    </button>
-  </div>
+<div class="prof-page">
 
-  <div style="padding:16px;max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:16px">
-    
-    <!-- Registration / Onboarding Entry Hero Banner (Shown only when unauthenticated) -->
+  <header class="prof-head">
+    <button onClick="{{ back }}" aria-label="Go back" class="prof-icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <button onClick="{{ on.settings }}" aria-label="Open settings" class="prof-icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </button>
+  </header>
+
+  <div class="prof-body">
+
+    <!-- Onboarding entry (unauthenticated) -->
     <sc-if value="{{ showGetStarted }}">
-    <div class="card-premium" style="background:linear-gradient(135deg, #002b61 0%, #007aff 100%);color:#fff;border:none;padding:24px;box-shadow:var(--shadow-glow-blue)">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <div style="max-width:440px">
-          <span style="font:800 10.5px/1 var(--font-heading);letter-spacing:.12em;background:rgba(255,255,255,0.2);padding:4px 8px;border-radius:var(--radius-pill);display:inline-block;margin-bottom:10px">
-            LOUMOO ONBOARDING
-          </span>
-          <h2 style="color:#fff;margin:0 0 6px;font-size:22px">Create your LOUMOO account</h2>
-          <p style="color:rgba(255,255,255,0.88);font-size:13px;line-height:1.45;margin:0 0 16px">
-            Unlock fast escrow checkout, open your verified storefront, track parcels in real-time, and get personalized deals across Cameroon.
-          </p>
-          <div style="display:flex;gap:10px;flex-wrap:wrap">
-            <button onClick="{{ on.onboardWelcome }}" class="btn btn-dark" style="background:#fff;color:var(--color-text);height:42px;padding:0 20px;font-size:13px">
-              <span>GET STARTED →</span>
-            </button>
-            <button onClick="{{ signIn }}" class="btn btn-secondary" style="background:rgba(255,255,255,0.15);color:#fff;border-color:rgba(255,255,255,0.3);height:42px;padding:0 16px;font-size:12.5px">
-              SIGN IN
-            </button>
-          </div>
-        </div>
+    <div class="prof-cta">
+      <span class="prof-cta-kicker">Get started</span>
+      <h2 class="prof-cta-title">Create your LOUMOO account.</h2>
+      <p class="prof-cta-text">Escrow checkout, a verified storefront, real-time parcel tracking, and deals picked for you across Cameroon.</p>
+      <div class="prof-cta-actions">
+        <button onClick="{{ on.onboardWelcome }}" class="prof-btn-dark">Get started</button>
+        <button onClick="{{ signIn }}" class="prof-btn-ghost">Sign in</button>
       </div>
     </div>
     </sc-if>
 
-    <!-- Active Profile Card with Real Dynamic Completion Score -->
-    <div class="card-premium" style="display:flex;align-items:center;gap:14px">
-      <div style="width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,var(--color-accent),#003d8a);color:#fff;display:flex;align-items:center;justify-content:center;font:800 18px/1 var(--font-heading);flex-shrink:0">{{ userInitials }}</div>
-      <div style="flex:1">
-        <div style="display:flex;align-items:center;gap:8px">
-          <span style="font:800 17px/1.2 var(--font-heading);color:var(--color-text)">{{ userName }}</span>
-          <span class="tag tag-accent" style="min-height:18px;padding:2px 6px;font-size:9.5px">{{ profileRoleLabel }}</span>
-        </div>
-        <div style="font:400 12px/1 var(--font-body);color:var(--color-text-secondary);margin-top:4px">{{ userPhoneCity }}</div>
-        <div style="display:flex;align-items:center;gap:8px;margin-top:8px">
-          <div style="flex:1;max-width:180px;height:5px;background:var(--color-neutral-200);border-radius:3px;overflow:hidden">
-            <div style="width:{{ completionScore }}%;height:100%;background:var(--color-success);border-radius:3px"></div>
-          </div>
-          <span style="font:700 10.5px/1 var(--font-heading);color:var(--color-success)">{{ completionScore }}% Profile Setup</span>
-        </div>
+    <!-- Identity -->
+    <section class="prof-identity">
+      <div class="prof-avatar">{{ userInitials }}</div>
+      <div class="prof-name-row">
+        <h1 class="prof-name">{{ userName }}</h1>
+        <span class="prof-role">{{ profileRoleLabel }}</span>
       </div>
+      <div class="prof-sub">{{ userPhoneCity }}</div>
+      <button onClick="{{ openEditProfile }}" class="prof-edit">Edit profile</button>
+      <div class="prof-complete">
+        <div class="prof-complete-bar"><span style="width:{{ completionScore }}%"></span></div>
+        <span class="prof-complete-label">{{ completionScore }}% complete</span>
+      </div>
+    </section>
+
+    <!-- Quick tiles -->
+    <div class="prof-tiles">
+      <button onClick="{{ on.orders }}" aria-label="Go to My Orders" class="prof-tile">
+        <span class="prof-tile-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+        </span>
+        <span class="prof-tile-title">Orders</span>
+        <span class="prof-tile-sub">{{ activeDeliveriesLabel }}</span>
+      </button>
+
+      <button onClick="{{ on.saved }}" aria-label="Go to Saved Items" class="prof-tile">
+        <span class="prof-tile-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+        </span>
+        <span class="prof-tile-title">Saved</span>
+        <span class="prof-tile-sub">{{ savedItemsLabel }}</span>
+      </button>
+
+      <button onClick="{{ on.transactions }}" aria-label="Go to Escrow Ledger" class="prof-tile">
+        <span class="prof-tile-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+        </span>
+        <span class="prof-tile-title">Escrow</span>
+        <span class="prof-tile-sub">Payments &amp; payouts</span>
+      </button>
+
+      <button onClick="{{ on.seller }}" aria-label="Go to Seller Studio" class="prof-tile">
+        <span class="prof-tile-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg>
+        </span>
+        <span class="prof-tile-title">Seller Studio</span>
+        <span class="prof-tile-sub">Merchant workspace</span>
+      </button>
     </div>
 
-    <!-- Quick Navigation Tiles (Lucide Icons) -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <button onClick="{{ on.orders }}" aria-label="Go to My Orders" class="card-premium" style="text-align:left;padding:14px;cursor:pointer">
-        <div style="width:36px;height:36px;border-radius:var(--radius-sm);background:var(--color-accent-100);color:var(--color-accent);display:flex;align-items:center;justify-content:center;margin-bottom:8px">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
-        </div>
-        <div style="font:700 13.5px/1 var(--font-heading);color:var(--color-text)">My Orders</div>
-        <div style="font:400 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">{{ activeDeliveriesLabel }}</div>
-      </button>
-
-      <button onClick="{{ on.saved }}" aria-label="Go to Saved Items" class="card-premium" style="text-align:left;padding:14px;cursor:pointer">
-        <div style="width:36px;height:36px;border-radius:var(--radius-sm);background:var(--color-neutral-200);color:var(--color-text);display:flex;align-items:center;justify-content:center;margin-bottom:8px">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-        </div>
-        <div style="font:700 13.5px/1 var(--font-heading);color:var(--color-text)">Saved Items</div>
-        <div style="font:400 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">{{ savedItemsLabel }}</div>
-      </button>
-
-      <button onClick="{{ on.transactions }}" aria-label="Go to Escrow Ledger" class="card-premium" style="text-align:left;padding:14px;cursor:pointer">
-        <div style="width:36px;height:36px;border-radius:var(--radius-sm);background:var(--color-neutral-200);color:var(--color-text);display:flex;align-items:center;justify-content:center;margin-bottom:8px">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
-        </div>
-        <div style="font:700 13.5px/1 var(--font-heading);color:var(--color-text)">Escrow Ledger</div>
-        <div style="font:400 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Payments &amp; Payouts</div>
-      </button>
-
-      <button onClick="{{ on.seller }}" aria-label="Go to Seller Studio" class="card-premium" style="text-align:left;padding:14px;cursor:pointer">
-        <div style="width:36px;height:36px;border-radius:var(--radius-sm);background:var(--color-neutral-200);color:var(--color-text);display:flex;align-items:center;justify-content:center;margin-bottom:8px">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg>
-        </div>
-        <div style="font:700 13.5px/1 var(--font-heading);color:var(--color-text)">Seller Studio</div>
-        <div style="font:400 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Merchant Workspace</div>
-      </button>
-    </div>
+    <!-- Settings entry -->
+    <button onClick="{{ on.settings }}" class="prof-row">
+      <span class="prof-row-text">Settings &amp; preferences</span>
+      <span class="prof-row-chevron" aria-hidden="true">→</span>
+    </button>
 
   </div>
 </div>

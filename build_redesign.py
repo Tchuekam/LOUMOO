@@ -4856,6 +4856,78 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 .cmp-btn-dark { height: 44px; padding: 0 22px; border: none; border-radius: var(--radius-pill); cursor: pointer; background: var(--color-text); color: var(--color-surface); font: 600 14px/1 var(--font-heading); }
 .cmp-btn-ghost { height: 44px; padding: 0 22px; border: 1px solid var(--color-divider); border-radius: var(--radius-pill); cursor: pointer; background: var(--color-surface); color: var(--color-text); font: 600 14px/1 var(--font-heading); }
 
+/* ══════════════════════════════════════════════════════════════════════════
+   LOUMOO PROFILE — minimal account (Apple-style, mobile-first)
+   ══════════════════════════════════════════════════════════════════════ */
+.prof-page { background: var(--color-bg); min-height: 100vh; padding-bottom: 40px; }
+.prof-head { max-width: 640px; margin: 0 auto; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; }
+.prof-icon {
+  width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  border: none; background: transparent; color: var(--color-text); cursor: pointer; transition: background .15s ease;
+}
+.prof-icon:hover { background: var(--color-neutral-100); }
+.prof-body { max-width: 640px; margin: 0 auto; padding: 8px 20px 0; display: flex; flex-direction: column; gap: 14px; }
+
+/* Onboarding CTA (unauth) */
+.prof-cta { background: var(--color-neutral-100); border: 1px solid var(--color-divider); border-radius: 20px; padding: 26px 24px; text-align: center; }
+.prof-cta-kicker { font: 600 11px/1 var(--font-heading); letter-spacing: .08em; text-transform: uppercase; color: var(--color-text-muted); }
+.prof-cta-title { margin: 10px 0 8px; font: 700 clamp(22px, 6vw, 28px)/1.1 var(--font-heading); letter-spacing: -.03em; color: var(--color-text); }
+.prof-cta-text { margin: 0 auto; max-width: 400px; font: 400 14px/1.5 var(--font-body); color: var(--color-text-secondary); }
+.prof-cta-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 18px; }
+.prof-btn-dark { height: 46px; padding: 0 24px; border: none; border-radius: var(--radius-pill); cursor: pointer; background: var(--color-text); color: var(--color-surface); font: 600 14px/1 var(--font-heading); }
+.prof-btn-ghost { height: 46px; padding: 0 22px; border: 1px solid var(--color-neutral-400); border-radius: var(--radius-pill); cursor: pointer; background: transparent; color: var(--color-text); font: 600 14px/1 var(--font-heading); }
+
+/* Identity */
+.prof-identity {
+  background: var(--color-surface); border: 1px solid var(--color-divider); border-radius: 20px;
+  padding: 28px 24px; display: flex; flex-direction: column; align-items: center; text-align: center;
+}
+.prof-avatar {
+  width: 84px; height: 84px; border-radius: 50%; flex: none; margin-bottom: 14px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--color-text); color: var(--color-surface); font: 600 30px/1 var(--font-heading); letter-spacing: -.02em;
+}
+.prof-name-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: center; }
+.prof-name { margin: 0; font: 700 clamp(20px, 5.5vw, 26px)/1.15 var(--font-heading); letter-spacing: -.03em; color: var(--color-text); }
+.prof-role { font: 600 10.5px/1 var(--font-heading); letter-spacing: .04em; text-transform: uppercase; color: var(--color-accent); background: var(--color-accent-100); padding: 4px 9px; border-radius: var(--radius-pill); }
+.prof-sub { margin-top: 6px; font: 400 14px/1.4 var(--font-body); color: var(--color-text-secondary); }
+.prof-edit {
+  margin-top: 16px; height: 38px; padding: 0 20px; border-radius: var(--radius-pill); cursor: pointer;
+  border: 1px solid var(--color-neutral-400); background: transparent; color: var(--color-text); font: 600 13px/1 var(--font-heading);
+  transition: background .15s ease;
+}
+.prof-edit:hover { background: var(--color-neutral-100); }
+.prof-complete { display: flex; align-items: center; gap: 10px; width: 100%; max-width: 280px; margin-top: 20px; }
+.prof-complete-bar { flex: 1; height: 5px; background: var(--color-neutral-200); border-radius: 3px; overflow: hidden; }
+.prof-complete-bar span { display: block; height: 100%; background: var(--color-success); border-radius: 3px; }
+.prof-complete-label { font: 600 11px/1 var(--font-heading); color: var(--color-text-muted); white-space: nowrap; }
+
+/* Quick tiles */
+.prof-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.prof-tile {
+  text-align: left; cursor: pointer; background: var(--color-surface); border: 1px solid var(--color-divider);
+  border-radius: 18px; padding: 16px; display: flex; flex-direction: column; gap: 4px;
+  transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease;
+}
+.prof-tile:hover { border-color: var(--color-neutral-400); box-shadow: var(--shadow-sm); transform: translateY(-2px); }
+.prof-tile-icon {
+  width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
+  background: var(--color-neutral-100); color: var(--color-text); margin-bottom: 8px;
+}
+.prof-tile:first-child .prof-tile-icon { background: var(--color-accent-100); color: var(--color-accent); }
+.prof-tile-title { font: 600 14px/1.2 var(--font-heading); letter-spacing: -.01em; color: var(--color-text); }
+.prof-tile-sub { font: 400 12px/1.3 var(--font-body); color: var(--color-text-secondary); }
+
+/* Settings row */
+.prof-row {
+  display: flex; align-items: center; justify-content: space-between; cursor: pointer;
+  background: var(--color-surface); border: 1px solid var(--color-divider); border-radius: 16px; padding: 16px 18px;
+  transition: border-color .15s ease;
+}
+.prof-row:hover { border-color: var(--color-neutral-400); }
+.prof-row-text { font: 600 14px/1 var(--font-heading); color: var(--color-text); }
+.prof-row-chevron { color: var(--color-text-muted); font-size: 15px; }
+
 /* A publication with no photo should not reserve a full 4:3 well: for a
    broadcast the message is the content, and the empty frame just pushes it
    below the fold. */
@@ -7211,6 +7283,7 @@ class Component extends DCLogic {
     // then displayed as its own.
     regFirstName: '',
     regLastName: '',
+    regAvatar: '',
     regPhone: '',
     regEmail: '',
     regCity: 'douala',
@@ -7466,8 +7539,59 @@ class Component extends DCLogic {
     this.setState({ sidebarCollapsed: true });
   };
 
+  // ── Profile photo ────────────────────────────────────────────────────────
+  // Stored as a downscaled data URL so it survives reloads and reflects in
+  // every avatar across the app (sidebar, top bar, profile, account, edit).
+  _restoreUserAvatar = () => {
+    try {
+      const a = localStorage.getItem('loumoo_user_avatar');
+      if (a) this.setState({ regAvatar: a });
+    } catch (e) {}
+  };
+  pickAvatar = () => {
+    try {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.onchange = () => {
+        const file = input.files && input.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          const img = new Image();
+          img.onload = () => {
+            // Center-crop to a 256px square and re-encode to keep it small.
+            const size = 256;
+            const canvas = document.createElement('canvas');
+            canvas.width = size; canvas.height = size;
+            const ctx = canvas.getContext('2d');
+            const s = Math.min(img.width, img.height);
+            const sx = (img.width - s) / 2;
+            const sy = (img.height - s) / 2;
+            ctx.drawImage(img, sx, sy, s, s, 0, 0, size, size);
+            let dataUrl;
+            try { dataUrl = canvas.toDataURL('image/jpeg', 0.85); }
+            catch (e) { dataUrl = reader.result; }
+            this.setState({ regAvatar: dataUrl });
+            try { localStorage.setItem('loumoo_user_avatar', dataUrl); } catch (e) {}
+            if (this.toast) this.toast('Profile photo updated');
+          };
+          img.onerror = () => {};
+          img.src = reader.result;
+        };
+        reader.readAsDataURL(file);
+      };
+      input.click();
+    } catch (e) {}
+  };
+  removeAvatar = () => {
+    this.setState({ regAvatar: '' });
+    try { localStorage.removeItem('loumoo_user_avatar'); } catch (e) {}
+  };
+
   componentDidMount() {
     this._restoreOnboardingDraft();
+    this._restoreUserAvatar();
     this._bootAuth();
     if (typeof window !== 'undefined') {
       window._loumooHeroComponent = this;
