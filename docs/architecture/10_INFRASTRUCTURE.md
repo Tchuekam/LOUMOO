@@ -1,5 +1,13 @@
 # LOUMOO — Master Infrastructure, Deployment & DevOps Specification
 
+> **Implemented deployment note (2026-09):** The current repository deploys the
+> Express API in `server/index.js` to Railway through its single public ingress
+> hop; Netlify separately publishes the generated `public/` frontend. The HA
+> Cloudflare/Kubernetes/Fastify topology below is a target-state specification,
+> not the active proxy boundary. Configure `TRUST_PROXY=1` for the current
+> Railway path, or replace it with the exact trusted hop/CIDR policy when the
+> target topology is adopted.
+
 ## 1. Deployment Architecture & Cloud Topology
 
 LOUMOO is deployed as containerized services across a **High-Availability (HA) Cloud Cluster** (AWS or Hetzner Cloud / OVH with Cloudflare Edge Ingress).

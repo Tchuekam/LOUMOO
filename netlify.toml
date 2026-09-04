@@ -49,3 +49,13 @@
   for = "/Assets/*"
   [headers.values]
     Cache-Control = "public, max-age=86400"
+
+# The Netlify CDN is the production static-file boundary. Keep the same
+# baseline browser protections as the Express gateway without adding a CSP
+# here that could change the existing frontend's execution model.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "strict-origin-when-cross-origin"

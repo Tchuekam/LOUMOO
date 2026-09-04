@@ -53,6 +53,25 @@ for (const dir of ['Assets', 'src', '_ds']) {
 // the Supabase URL as a default (which would leak into the deploy).
 fs.rmSync(path.join(out, 'src', 'backend'), { recursive: true, force: true });
 
+// The design-system directory is part of the browser runtime, but its source
+// manifests, adherence configuration and readme are build metadata rather than
+// public resources. Keep only asset types the generated page can execute/load.
+const PUBLIC_DESIGN_EXTENSIONS = new Set(['.js', '.css', '.svg', '.png', '.jpg', '.jpeg', '.webp', '.gif', '.woff', '.woff2', '.ttf', '.otf']);
+function pruneDesignMetadata(dir) {
+  if (!fs.existsSync(dir)) return;
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      pruneDesignMetadata(full);
+      continue;
+    }
+    if (!PUBLIC_DESIGN_EXTENSIONS.has(path.extname(entry.name).toLowerCase())) {
+      fs.rmSync(full, { force: true });
+    }
+  }
+}
+pruneDesignMetadata(path.join(out, '_ds'));
+
 // (2) Sanitize filenames Netlify rejects ('#' and '?'). Rename bottom-up so a
 // directory is renamed only after its children have been processed.
 const sanitize = name => name.replace(/[#?]/g, '_');

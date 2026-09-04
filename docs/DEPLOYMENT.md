@@ -54,9 +54,16 @@ NODE_ENV=production
 CLERK_SECRET_KEY=sk_test_...         # replace with LIVE key when ready
 CLERK_PUBLISHABLE_KEY=pk_test_...
 SUPABASE_URL=https://vhojbhvaasjvolcfkobz.supabase.co
+SUPABASE_ANON_KEY=eyJ...             # public client key used by auth flows
 SUPABASE_SERVICE_ROLE_KEY=eyJ...      (service_role)
+SUPABASE_JWT_SECRET=<strong-secret>    # session verification/signing secret
 CORS_ORIGINS=https://<your-domain>,https://admin.<your-domain>
 ```
+
+Set `TRUST_PROXY=1` on Railway for its single public ingress hop. This is
+warned at boot when omitted (the safe fallback ignores forwarded headers), but
+the exact deployment topology must be configured before serving production
+traffic.
 
 **Warning-only (boots without, degrades one capability):**
 
@@ -65,10 +72,15 @@ CLERK_WEBHOOK_SECRET=whsec_...        # already configured in .env.local;
                                       # set on Railway too, or webhook = 503
 ```
 
-**Optional but recommended:**
+**Required for protected API availability (the process still boots for liveness):**
 
 ```
-REDIS_URL=redis[s]://...               # cache + rate limiting + idempotency
+REDIS_URL=redis[s]://...               # shared cache + rate limiting + idempotency
+```
+
+**Optional integrations:**
+
+```
 AISSTREAM_API_KEY=...                  # listing AI (needs AISSTREAM_BASE_URL too)
 ELEVENLABS_API_KEY=...                 # voice
 RESEND_API_KEY=re_...                  # transactional email
@@ -76,11 +88,16 @@ SENTRY_DSN=https://...@...ingest.sentry.io/...
 POSTHOG_API_KEY=phc_...                # project key, NOT phx_ (personal)
 ```
 
+The API rate limiter fails closed in production when Redis is unavailable; it
+does not silently fall back to process-local state. Keep the Railway service
+behind its public ingress and do not expose the container port directly. If the
+proxy topology changes, update `TRUST_PROXY` to the exact trusted policy before
+deploying.
+
 **NEVER set** `LOUMOO_TEST_AUTH_SECRET` in production — it is a boot
 blocker by design (`assertProductionConfig`).
 
-Source of truth for every variable: `server/config/env.js` ↔ `.env.example`
-(scripted consistency check: 36/36 documented).
+Source of truth for every variable: `server/config/env.js` ↔ `.env.example`.
 
 ## 4. GitHub Actions (optional but recommended)
 

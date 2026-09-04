@@ -40,6 +40,8 @@ const authenticatedUiTest = require('./unit/authenticated_ui.test');
 const categoryTaxonomyTest = require('./unit/category_taxonomy.test');
 const coreCommerceUnificationTest = require('./integration/core_commerce_unification.test');
 const identityRoleHardeningTest = require('./integration/identity_role_hardening.test');
+const commercePricingEngineTest = require('./unit/commerce_pricing_engine.test');
+const commerceSecurityLifecycleTest = require('./integration/commerce_security_lifecycle.test');
 
 const suites = [
   // Foundation Suites
@@ -80,7 +82,11 @@ const suites = [
   { name: 'Core Commerce Unification (Listing -> PostgreSQL -> Catalog -> PDP)', test: coreCommerceUnificationTest.run },
 
   // Critical Production Hardening Suite
-  { name: 'Identity, Role, Category-First Store & Vertical Authorization', test: identityRoleHardeningTest.run }
+  { name: 'Identity, Role, Category-First Store & Vertical Authorization', test: identityRoleHardeningTest.run },
+
+  // Commerce Core & Orders Hardening Suites
+  { name: 'Commerce Core Authoritative Pricing & State Machine', test: commercePricingEngineTest.run },
+  { name: 'Commerce Core Security, Anti-IDOR & Lifecycle', test: commerceSecurityLifecycleTest.run }
 ];
 
 async function main() {

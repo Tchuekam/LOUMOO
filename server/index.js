@@ -5,6 +5,7 @@
 
 const express = require('express');
 const cors = require('cors');
+const fs = require('fs');
 const path = require('path');
 const config = require('./config/env');
 const { assertProductionConfig, validateProductionConfig } = require('./config/env');
@@ -28,22 +29,26 @@ const uploadRoutes = require('./modules/listing/presentation/routes/uploadRoutes
 const adaptiveRoutes = require('./modules/adaptive/presentation/routes/adaptiveRoutes');
 const announcementRoutes = require('./modules/announcement/presentation/routes/announcementRoutes');
 const travelRoutes = require('./modules/travel/presentation/routes/travelRoutes');
+const orderRoutes = require('./modules/commerce/presentation/routes/orderRoutes');
 
 // Fail fast rather than boot a production server that cannot enforce its own
 // security model. In development the same problems are logged as warnings.
-assertProductionConfig();
-if (!config.isProduction) {
-  const problems = validateProductionConfig();
-  for (const p of problems) {
-    const label = p.severity === 'warning' ? 'warning' : 'ERROR';
-    logger.warn(`[Config] (${label}) ${p.variable}: ${p.reason}`);
-  }
+const configProblems = config.isProduction
+  ? assertProductionConfig()
+  : validateProductionConfig();
+for (const p of configProblems) {
+  const label = p.severity === 'warning' ? 'warning' : 'ERROR';
+  logger.warn(`[Config] (${label}) ${p.variable}: ${p.reason}`);
 }
 
 const app = express();
 
-// Trust reverse proxies (Cloudflare / Netlify / Nginx) for correct client IPs.
-app.set('trust proxy', 1);
+// Trust only the ingress policy configured for this deployment. The previous
+// hard-coded hop count made a directly reachable process treat attacker-owned
+// X-Forwarded-* headers as authoritative. Railway's public service should set
+// TRUST_PROXY=1; local development defaults to no proxy trust.
+app.set('trust proxy', config.proxy.trust);
+app.disable('x-powered-by');
 
 // 0. Security headers (before anything can write a response).
 app.use(securityHeaders);
@@ -51,15 +56,60 @@ app.use(securityHeaders);
 // 1. Request context & tracing
 app.use(requestContext);
 
-// 2. CORS
+// 2. CORS. A wildcard origin is usable only for non-production development
+// traffic and never combined with credentialed responses. Production requires
+// exact origins via assertProductionConfig().
+const allowAnyOrigin = config.corsOrigins.includes('*') && !config.isProduction;
+const corsOrigin = allowAnyOrigin
+  ? '*'
+  : (origin, callback) => callback(null, !origin || config.corsOrigins.includes(origin));
+
 app.use(cors({
-  origin: config.corsOrigins.includes('*') ? '*' : config.corsOrigins,
-  credentials: true,
-  exposedHeaders: ['X-Request-Id', 'X-RateLimit-Limit', 'X-RateLimit-Remaining', 'X-RateLimit-Reset']
+  origin: corsOrigin,
+  credentials: !allowAnyOrigin,
+  methods: ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Authorization', 'Content-Type', 'Idempotency-Key', 'X-Idempotency-Key'],
+  exposedHeaders: ['X-Request-Id', 'X-RateLimit-Limit', 'X-RateLimit-Remaining', 'X-RateLimit-Reset', 'Retry-After']
 }));
 
+// API responses may contain account, order, travel or other user-scoped data;
+// leave caching decisions to explicit downstream public-CDN routes.
+app.use('/api', (req, res, next) => {
+  res.setHeader('Cache-Control', 'no-store');
+  next();
+});
+
+// Reject methods the API does not implement before parsing a potentially
+// expensive body. CORS preflights continue through the CORS middleware above.
+const API_METHODS = new Set(['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']);
+app.use('/api', (req, res, next) => {
+  if (API_METHODS.has(req.method)) return next();
+  res.setHeader('Allow', Array.from(API_METHODS).join(', '));
+  return res.status(405).json({
+    success: false,
+    error: {
+      code: 'METHOD_NOT_ALLOWED',
+      message: 'The requested HTTP method is not supported.',
+      details: null,
+      requestId: req.requestId || 'req_unknown'
+    }
+  });
+});
+
+// 3. Sliding-window rate limiting — scoped to the API surface and placed
+// before body parsing so repeated oversized payloads cannot consume parser
+// memory before the abuse gate runs.
+//
+// This must NOT guard static asset serving: a single page load of the
+// media-heavy SPA fires 100+ image/video requests, which would blow a
+// per-minute budget instantly and make the server 429 its own HTML shell and
+// assets. In production Netlify's CDN serves those static files and only
+// routes /api/* to this app, so limiting /api mirrors production exactly while
+// keeping local dev (which also serves the frontend here) usable.
+app.use('/api', RateLimitService.middleware({ maxRequests: 120, windowSeconds: 60 }));
+
 /**
- * 3. Body parsing.
+ * 4. Body parsing.
  *
  * Two routes MUST NOT be JSON-parsed:
  *   - the Clerk webhook, whose Svix signature covers the exact raw bytes
@@ -82,17 +132,12 @@ function skipRawBodyRoutes(parser) {
 }
 
 app.use(skipRawBodyRoutes(express.json({ limit: '2mb' })));
-app.use(skipRawBodyRoutes(express.urlencoded({ extended: true, limit: '2mb' })));
-
-// 4. Sliding-window rate limiting — scoped to the API surface.
-//
-// This must NOT guard static asset serving: a single page load of the
-// media-heavy SPA fires 100+ image/video requests, which would blow a
-// per-minute budget instantly and make the server 429 its own HTML shell and
-// assets. In production Netlify's CDN serves those static files and only
-// routes /api/* to this app, so limiting /api mirrors production exactly while
-// keeping local dev (which also serves the frontend here) usable.
-app.use('/api', RateLimitService.middleware({ maxRequests: 120, windowSeconds: 60 }));
+app.use(skipRawBodyRoutes(express.urlencoded({
+  extended: true,
+  limit: '2mb',
+  parameterLimit: 100,
+  depth: 10
+})));
 
 // 5. Idempotency support for mutating requests
 app.use(IdempotencyService.middleware());
@@ -108,10 +153,12 @@ v1Router.use('/listings', listingRoutes);
 v1Router.use('/uploads', uploadRoutes);
 v1Router.use('/announcements', announcementRoutes);
 v1Router.use('/travel', travelRoutes);
+v1Router.use('/orders', orderRoutes);
 
 app.use('/api/v1', v1Router);
-// Direct REST path mount for Travel API
+// Direct REST path mount for Travel & Orders API
 app.use('/api/travel', travelRoutes);
+app.use('/api/orders', orderRoutes);
 
 // Root health fallbacks for cloud load balancers
 app.use('/', healthRoutes);
@@ -150,16 +197,8 @@ app.get('/api/config', (req, res) => {
   });
 });
 
-app.get(['/', '/index.html', '/app'], (req, res) => {
-  res.sendFile(path.resolve(__dirname, '..', 'Commerce App.dc.html'));
-});
-
-// 7. Static frontend assets (registered after the explicit frontend routes so
-// that '/' serves the generated single-file app, not the legacy index.html stub)
-app.use(express.static(path.resolve(__dirname, '..')));
-
-// 7b. API 404 — unknown /api routes answer JSON, never Express's HTML "Cannot GET" page.
-// The frontend must always be able to parse an error response.
+// Unknown API routes must never fall through to static assets or an HTML SPA
+// shell. Keep this before the public-resource middleware.
 app.use('/api', (req, res) => {
   res.status(404).json({
     success: false,
@@ -171,6 +210,31 @@ app.use('/api', (req, res) => {
     }
   });
 });
+
+const publicRoot = path.resolve(__dirname, '..', 'public');
+const publicIndex = path.join(publicRoot, 'index.html');
+const appShell = fs.existsSync(publicIndex)
+  ? publicIndex
+  : path.resolve(__dirname, '..', 'Commerce App.dc.html');
+
+app.get(['/', '/index.html', '/app'], (req, res) => {
+  res.sendFile(appShell);
+});
+
+// 7. Static frontend assets. Only the generated public directory is exposed;
+// never mount the repository root, which contains manifests, source, tests,
+// configuration and server-side code. Netlify creates this directory during
+// its build; the Railway API image may omit it and still serves its explicit
+// app-shell route above.
+if (fs.existsSync(publicRoot)) {
+  app.use(express.static(publicRoot, {
+    dotfiles: 'deny',
+    index: false,
+    redirect: false,
+    fallthrough: true,
+    maxAge: config.isProduction ? '1d' : 0
+  }));
+}
 
 // 8. Sentry error handler
 if (Sentry && Sentry.setupExpressErrorHandler) {

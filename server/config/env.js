@@ -9,13 +9,11 @@
  * production deployment must fail loudly at startup, never degrade silently
  * into a permissive mode.
  *
- * One credential is deliberately a WARNING, not a boot blocker:
- * CLERK_WEBHOOK_SECRET. Its absence cannot be exploited — the webhook
- * endpoint answers 503 WEBHOOK_NOT_CONFIGURED and processes NO unsigned
- * identity event (see clerkWebhookHandler.js). The documented intent in
- * .env.example is exactly that: "Without it the webhook endpoint answers
- * 503". Blocking the whole deployment on it is therefore a deployment
- * availability bug, not a security requirement.
+ * Some capabilities are deliberately WARNING-level rather than boot blockers:
+ * Redis absence makes protected API traffic fail closed, and
+ * CLERK_WEBHOOK_SECRET absence makes the webhook answer 503 without processing
+ * unsigned identity events. Blocking the whole deployment on either capability
+ * would hide the safe degraded behavior and turn it into an availability bug.
  */
 
 const { z } = require('zod');
@@ -42,6 +40,9 @@ const envSchema = z.object({
   APP_NAME: z.string().default('LOUMOO Universal Commerce Platform'),
   APP_BASE_URL: z.string().default('http://localhost:8080'),
   CORS_ORIGINS: z.string().default('*').transform(val => val.split(',').map(o => o.trim()).filter(Boolean)),
+  // Express proxy trust policy. Keep this explicit: trusting every proxy lets
+  // a direct caller forge X-Forwarded-For and X-Forwarded-Proto.
+  TRUST_PROXY: z.string().optional(),
 
   // Supabase
   NEXT_PUBLIC_SUPABASE_URL: z.string().url().optional(),
@@ -124,6 +125,30 @@ const nodeEnv = env.NODE_ENV || 'development';
 const isProduction = nodeEnv === 'production';
 const isTest = nodeEnv === 'test';
 
+/**
+ * Convert the operator-facing TRUST_PROXY value into the value Express
+ * expects. Railway's public service has one platform ingress hop, so its
+ * production setting is TRUST_PROXY=1. Development deliberately trusts no
+ * proxy by default; the test harness opts into one hop to exercise forwarded
+ * request behavior.
+ */
+function parseTrustProxy(rawValue, environment) {
+  const raw = String(rawValue == null
+    ? (environment === 'test' ? '1' : 'false')
+    : rawValue).trim();
+
+  if (!raw || ['false', '0', 'off', 'none'].includes(raw.toLowerCase())) return false;
+  if (['true', 'on', 'all'].includes(raw.toLowerCase())) return true;
+  if (/^\d+$/.test(raw)) return Number(raw);
+
+  const entries = raw.split(',').map(item => item.trim()).filter(Boolean);
+  return entries.length === 1 ? entries[0] : entries;
+}
+
+const trustProxyRaw = typeof process.env.TRUST_PROXY === 'string'
+  ? process.env.TRUST_PROXY.trim()
+  : '';
+
 const config = {
   port: env.PORT || 8080,
   nodeEnv,
@@ -133,6 +158,11 @@ const config = {
   appName: env.APP_NAME || 'LOUMOO Universal Commerce Platform',
   baseUrl: env.APP_BASE_URL || 'http://localhost:8080',
   corsOrigins: env.CORS_ORIGINS || ['*'],
+  proxy: {
+    trust: parseTrustProxy(env.TRUST_PROXY, nodeEnv),
+    trustRaw: trustProxyRaw || (isTest ? '1' : 'false'),
+    explicitlyConfigured: Boolean(trustProxyRaw)
+  },
 
   supabase: {
     url: env.SUPABASE_URL || env.NEXT_PUBLIC_SUPABASE_URL || '',
@@ -223,6 +253,8 @@ const PRODUCTION_REQUIRED = [
  * documented behavior in .env.example is that the server runs without it.
  */
 const PRODUCTION_WARNINGS = [
+  ['REDIS_URL', config.redis.url,
+    'Missing. Shared rate limiting is unavailable; protected API traffic fails closed instead of using process-local state.'],
   ['CLERK_WEBHOOK_SECRET', config.clerk.webhookSecret,
     'Missing. The /api/v1/webhooks/clerk endpoint answers 503 WEBHOOK_NOT_CONFIGURED ' +
     'until the Svix signing secret is configured — identity events are NOT processed.'],
@@ -253,6 +285,22 @@ function validateProductionConfig() {
     problems.push({
       variable: 'CORS_ORIGINS',
       reason: 'Wildcard "*" is not permitted in production; list the exact origins.',
+      severity: 'error'
+    });
+  }
+
+  if (!config.proxy.explicitlyConfigured) {
+    problems.push({
+      variable: 'TRUST_PROXY',
+      reason: 'Not configured; forwarded client metadata is ignored. Set TRUST_PROXY=1 for the Railway ingress hop, or use an exact trusted proxy policy for another deployment.',
+      severity: 'warning'
+    });
+  }
+
+  if (config.proxy.trust === true) {
+    problems.push({
+      variable: 'TRUST_PROXY',
+      reason: 'Trusting every proxy is unsafe; use an exact hop count or trusted proxy CIDR list.',
       severity: 'error'
     });
   }

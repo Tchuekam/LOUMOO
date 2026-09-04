@@ -53,16 +53,23 @@ exports.handler = async (event, context) => {
 
     return await wrapped(event, context);
   } catch (err) {
-    const message = err && err.message ? err.message : String(err);
-    console.error('[netlify/api] Handler error:', message);
+    const detail = err && err.message ? err.message : String(err);
+    console.error('[netlify/api] Handler error:', detail);
+    const production = process.env.NODE_ENV === 'production';
     return {
       statusCode: 500,
-      headers: { 'content-type': 'application/json' },
+      headers: {
+        'content-type': 'application/json',
+        'cache-control': 'no-store',
+        'x-content-type-options': 'nosniff'
+      },
       body: JSON.stringify({
         success: false,
         error: {
           code: 'FUNCTION_INIT_ERROR',
-          message,
+          message: production
+            ? 'The API is temporarily unavailable.'
+            : detail,
           details: null,
           requestId: 'req_function'
         }

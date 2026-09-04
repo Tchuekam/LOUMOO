@@ -6,6 +6,7 @@
 const { AppError } = require('../errors/AppError');
 const logger = require('../logging/logger');
 const { Sentry } = require('../../clients/sentry');
+const { config } = require('../../config/env');
 
 /**
  * Some >=500 responses are the CORRECT, expected answer to a well-formed
@@ -16,7 +17,8 @@ const { Sentry } = require('../../clients/sentry');
 const EXPECTED_5XX_CODES = new Set([
   'USE_CLERK_AUTHENTICATION',
   'PHONE_VERIFICATION_NOT_CONFIGURED',
-  'WEBHOOK_NOT_CONFIGURED'
+  'WEBHOOK_NOT_CONFIGURED',
+  'SERVICE_UNAVAILABLE'
 ]);
 
 function errorHandler(err, req, res, next) {
@@ -45,12 +47,15 @@ function errorHandler(err, req, res, next) {
       });
     }
 
+    const expected5xx = EXPECTED_5XX_CODES.has(err.code);
+    const exposeAppError = !config.isProduction || err.statusCode < 500 || expected5xx;
+
     return res.status(err.statusCode).json({
       success: false,
       error: {
         code: err.code,
-        message: err.message,
-        details: err.details,
+        message: exposeAppError ? err.message : 'An unexpected internal server error occurred.',
+        details: exposeAppError ? err.details : null,
         requestId
       }
     });
@@ -64,6 +69,26 @@ function errorHandler(err, req, res, next) {
       error: {
         code: 'INVALID_JSON',
         message: 'Malformed request JSON payload',
+        details: null,
+        requestId
+      }
+    });
+  }
+
+  // Body-parser rejects oversized JSON, urlencoded and raw upload payloads
+  // with these structured errors. Preserve the correct client-facing status
+  // without echoing parser internals.
+  if (err && (err.status === 413 || err.type === 'entity.too.large' || err.type === 'parameters.too.many')) {
+    logger.warn('[RequestLimit] Request body exceeded the configured limit', {
+      requestId,
+      path: req.originalUrl,
+      method: req.method
+    });
+    return res.status(413).json({
+      success: false,
+      error: {
+        code: 'PAYLOAD_TOO_LARGE',
+        message: 'The request payload exceeds the allowed size.',
         details: null,
         requestId
       }
@@ -84,7 +109,7 @@ function errorHandler(err, req, res, next) {
     });
   }
 
-  const isDev = process.env.NODE_ENV === 'development';
+  const isDev = config.isDevelopment;
   return res.status(500).json({
     success: false,
     error: {

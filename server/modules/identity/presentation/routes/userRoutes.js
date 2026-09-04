@@ -80,7 +80,11 @@ router.get('/:userId/public', async (req, res, next) => {
 // PATCH /api/v1/users/me (Hardened Profile Update with Rate Limiting)
 router.patch('/me', requireAuth, profileUpdateRateLimiter, async (req, res, next) => {
   try {
-    const clientIp = (req.headers && req.headers['x-forwarded-for']) || req.ip || (req.socket && req.socket.remoteAddress);
+    // Audit metadata follows the same server-derived, canonical address used
+    // by the infrastructure limiter; never persist a raw forwarding header.
+    const clientIp = RateLimitService.normalizeAddress(
+      req.ip || (req.socket && req.socket.remoteAddress)
+    );
     const result = await UpdateUserProfileUseCase.execute(req.userProfile, req.body, { ip: clientIp });
     await UserActivityUseCase.recordActivity(req.userProfile.id, {
       actionType: 'profile_updated',
