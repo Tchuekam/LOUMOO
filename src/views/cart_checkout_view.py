@@ -294,7 +294,7 @@ def get_success_view():
 
   <div style="display:flex;flex-direction:column;gap:10px">
     <button onClick="{{ on.orders }}" class="btn btn-primary btn-block" style="height:48px">TRACK IN MY ORDERS</button>
-    <button onClick="{{ on.threadSeller }}" class="btn btn-secondary btn-block" style="height:44px;color:var(--color-wa-teal)">WHATSAPP MERCHANT</button>
+    <button onClick="{{ contactSellerWhatsApp }}" class="btn btn-secondary btn-block" style="height:44px;color:var(--color-wa-teal)">WHATSAPP MERCHANT</button>
     <button onClick="{{ on.home }}" style="border:none;background:transparent;padding:8px;font:700 12.5px/1 var(--font-heading);color:var(--color-text-secondary);cursor:pointer">Back to Marketplace</button>
   </div>
 
@@ -366,7 +366,7 @@ def get_orders_and_transactions_view():
 
       <div style="display:flex;gap:10px;margin-top:14px;border-top:1px solid var(--color-divider);padding-top:12px">
         <button onClick="{{ on.success }}" class="btn btn-primary" style="flex:1;height:38px;font-size:12px">TRACK PARCEL</button>
-        <button onClick="{{ on.threadSeller }}" class="btn btn-secondary" style="flex:1;height:38px;font-size:12px;color:var(--color-wa-teal)">CONTACT SELLER</button>
+        <button onClick="{{ contactSellerWhatsApp }}" class="btn btn-secondary" style="flex:1;height:38px;font-size:12px;color:var(--color-wa-teal)">CONTACT SELLER</button>
       </div>
     </div>
 

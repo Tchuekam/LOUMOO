@@ -5543,6 +5543,44 @@ const SCREENS = [
   'publishIntent','publishStudio','publishReview','publishSuccess',
   'publicUserProfile','sellerPublicPage'
 ];
+// ── Seller WhatsApp lines (Cameroon) ──
+// Real deep-link messaging: contacting a seller opens WhatsApp with a
+// pre-filled enquiry to that store's line. Numbers are per-store; new sellers
+// register theirs at onboarding. Format = full international MSISDN, digits
+// only, ready for a wa.me link. Unknown stores fall back to the LOUMOO line.
+const SELLER_WHATSAPP_DEFAULT = '237690123456';
+const SELLER_WHATSAPP = {
+  'Orca Electronics': '237677101234',
+  'Digital Corner': '237699204567',
+  'iStore Cameroon': '237677308899',
+  'Samsung Experience Store': '237655412200',
+  'SmartLiving CM': '237678503311',
+  'Oraimo Official CM': '237691604422',
+  'TECNO Official': '237677705533',
+  'Kraasa Official': '237699806644',
+  'Armonía Milano Boutique': '237655907755',
+  'Maison Danbaoly': '237678108866',
+  'Bigtree Footwear': '237691209977',
+  'Douala Heritage Atelier': '237677310088',
+  'Sahel Leather Works': '237655411099',
+  'Nubian Glow Beauty': '237699512100',
+  'Creator Hub CM': '237678613211',
+  'Kamer Tech Solutions': '237677814455',
+  'Sawa Luxury Hotel': '237233435566',
+  'Sawa Luxury Resort': '237233435566'
+};
+function resolveSellerWhatsApp(name) {
+  if (!name) return SELLER_WHATSAPP_DEFAULT;
+  if (SELLER_WHATSAPP[name]) return SELLER_WHATSAPP[name];
+  // Store names vary ("Orca Electronics" vs "Orca Electronics Douala"): match
+  // case-insensitively on a shared prefix so a variant still finds its line.
+  const norm = String(name).toLowerCase().trim();
+  for (const key in SELLER_WHATSAPP) {
+    const k = key.toLowerCase();
+    if (norm === k || norm.indexOf(k) === 0 || k.indexOf(norm) === 0) return SELLER_WHATSAPP[key];
+  }
+  return SELLER_WHATSAPP_DEFAULT;
+}
 const GROUPS = {
   searchTab: ['all','products','stores','services','travel'],
   chatTab: ['all','buying','selling','orders','support'],
@@ -7608,9 +7646,63 @@ class Component extends DCLogic {
     try { localStorage.removeItem('loumoo_user_avatar'); } catch (e) {}
   };
 
+  // ── Wishlist / Saved items ────────────────────────────────────────────────
+  // Persist to localStorage so saves survive reloads (works for guests too),
+  // and mirror writes to the backend saved-items API when the user is signed in.
+  _priceToXaf = (s) => {
+    if (typeof s === 'number') return s;
+    const digits = String(s || '').replace(/[^0-9]/g, '');
+    return digits ? parseInt(digits, 10) : 0;
+  };
+  _wishlistEntry = (id, name) => {
+    const p = (typeof PRODUCTS_DATA !== 'undefined' && PRODUCTS_DATA[id]) || {};
+    return {
+      id: id,
+      name: name || p.title || 'Saved item',
+      image: p.coverImage || (p.images && p.images[0]) || '',
+      price: p.salePrice || p.price || '',
+      priceXaf: this._priceToXaf(p.salePrice || p.price || p.base_price_minor),
+      store: p.storeName || '',
+      category: p.category || 'General',
+      savedAt: Date.now()
+    };
+  };
+  _persistWishlist = (map) => {
+    try { localStorage.setItem('loumoo_wishlist', JSON.stringify(map || {})); } catch (e) {}
+  };
+  _restoreWishlist = () => {
+    try {
+      const raw = localStorage.getItem('loumoo_wishlist');
+      if (!raw) return;
+      const map = JSON.parse(raw);
+      if (map && typeof map === 'object' && !Array.isArray(map)) {
+        this.setState({ productWishlist: map });
+      }
+    } catch (e) {}
+  };
+  _syncWishlistToBackend = (id, isSaving, entry) => {
+    try {
+      if (this.state.authStatus !== 'authenticated') return;
+      const api = getApi();
+      if (!api) return;
+      if (isSaving && api.saveItem) {
+        api.saveItem({
+          productId: id,
+          title: (entry && entry.name) || 'Saved item',
+          priceXaf: (entry && entry.priceXaf) || 0,
+          imageUrl: (entry && entry.image) || null,
+          category: (entry && entry.category) || 'General'
+        }).catch(() => {});
+      } else if (!isSaving && api.removeSavedItem) {
+        api.removeSavedItem(id).catch(() => {});
+      }
+    } catch (e) {}
+  };
+
   componentDidMount() {
     this._restoreOnboardingDraft();
     this._restoreUserAvatar();
+    this._restoreWishlist();
     this._bootAuth();
     if (typeof window !== 'undefined') {
       window._loumooHeroComponent = this;
@@ -12297,7 +12389,8 @@ class Component extends DCLogic {
         return n === 0 ? 'No active delivery' : (n + (n === 1 ? ' Active Delivery' : ' Active Deliveries'));
       })(),
       savedItemsLabel: (() => {
-        const n = Number((this.state.dashboard && this.state.dashboard.counts
+        const local = Object.keys(this.state.productWishlist || {}).length;
+        const n = local || Number((this.state.dashboard && this.state.dashboard.counts
           && this.state.dashboard.counts.savedItems) || 0);
         return n === 0 ? 'No saved products yet' : (n + (n === 1 ? ' Product Saved' : ' Products Saved'));
       })(),
@@ -12534,16 +12627,73 @@ class Component extends DCLogic {
       following: Boolean(this.state.following),
       followLabel: this.state.following ? 'FOLLOWING' : 'FOLLOW',
       toggleSave: () => { const next = !this.state.saved; this.setState({ saved: next }); this.toast(next ? 'Saved to your list' : 'Removed from saved'); },
+      // ── Real seller messaging via WhatsApp deep-link ──
+      // Opens WhatsApp to the store's line with a pre-filled enquiry that names
+      // the product and price. Callable bare (uses the current product's store)
+      // or with an explicit { sellerName, productTitle, price } for storefronts
+      // and classifieds where there is no active product in state.
+      contactSellerWhatsApp: (opts) => {
+        opts = (opts && typeof opts === 'object' && !opts.nativeEvent && !opts.target) ? opts : {};
+        const p = this.state.currentProduct || {};
+        const sellerName = opts.sellerName || p.storeName || 'LOUMOO Seller';
+        const productTitle = opts.productTitle || p.title || '';
+        const price = opts.price || p.salePrice || p.price || '';
+        const phone = resolveSellerWhatsApp(sellerName);
+        let msg = 'Hello ' + sellerName + ', I found ';
+        msg += productTitle ? ('the "' + productTitle + '"') : 'your listing';
+        msg += ' on LOUMOO';
+        if (price) msg += ' (' + price + ')';
+        msg += ' — is it still available?';
+        const url = 'https://wa.me/' + phone + '?text=' + encodeURIComponent(msg);
+        try { window.open(url, '_blank', 'noopener,noreferrer'); }
+        catch (_) { try { window.location.href = url; } catch (e) {} }
+        this.toast('Opening WhatsApp with ' + sellerName + '…');
+      },
+      // ── Boarding pass actions ──
+      downloadBoardingPass: () => {
+        this.toast('Preparing your boarding pass — use “Save as PDF” in the print dialog.');
+        try { setTimeout(() => { try { window.print(); } catch (_) {} }, 250); } catch (_) {}
+      },
+      shareBoardingPass: () => {
+        const msg = 'My LOUMOO e-ticket — Camair-Co QC 302 · Douala (DLA) → Yaoundé (NSI) · 13 Oct 08:40 · Seat 12A · Booking ref LMR-CMR-4821.';
+        const url = 'https://wa.me/?text=' + encodeURIComponent(msg);
+        try { window.open(url, '_blank', 'noopener,noreferrer'); }
+        catch (_) { try { window.location.href = url; } catch (e) {} }
+        this.toast('Sharing your e-ticket via WhatsApp…');
+      },
       payNow: () => { this.go('paying'); setTimeout(() => this.go('success'), 1800); },
       publish: () => this.publishNow(),
 
       // ── Wishlist State & Infinite Discovery Commerce Feed ──
+      // Real, persistent save/favourite. Entries are rich objects (name, image,
+      // price, store) enriched from the product catalogue by id, stored in
+      // localStorage so they survive reloads, and best-effort synced to the
+      // backend saved-items API when the user is signed in.
       isWishlisted: (id) => Boolean(this.state.productWishlist && this.state.productWishlist[id]),
+      wishlistCount: Object.keys(this.state.productWishlist || {}).length,
+      wishlistHasItems: Object.keys(this.state.productWishlist || {}).length > 0,
+      wishlistCountLabel: (() => {
+        const n = Object.keys(this.state.productWishlist || {}).length;
+        return n === 1 ? '1 item saved' : (n + ' items saved');
+      })(),
+      wishlistItems: Object.keys(this.state.productWishlist || {})
+        .map((k) => this.state.productWishlist[k])
+        .filter((it) => it && typeof it === 'object')
+        .sort((a, b) => (b.savedAt || 0) - (a.savedAt || 0)),
       toggleProductWishlist: (id, name) => {
         const current = this.state.productWishlist || {};
         const isCurrentlySaved = Boolean(current[id]);
-        const next = { ...current, [id]: !isCurrentlySaved };
+        const next = { ...current };
+        let entry = null;
+        if (isCurrentlySaved) {
+          delete next[id];
+        } else {
+          entry = this._wishlistEntry(id, name);
+          next[id] = entry;
+        }
         this.setState({ productWishlist: next });
+        this._persistWishlist(next);
+        this._syncWishlistToBackend(id, !isCurrentlySaved, entry);
         this.toast(!isCurrentlySaved ? `Saved ${name || 'item'} to your wishlist` : `Removed ${name || 'item'} from wishlist`);
       },
       infiniteFeedBatch: this.state.infiniteFeedBatch || 1,

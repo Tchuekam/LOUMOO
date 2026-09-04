@@ -641,74 +641,157 @@ def get_travel_view():
      DIGITAL BOARDING PASS & QR E-TICKET (is.travelTicket)
      ══════════════════════════════════════════════════════════════════════ -->
 <sc-if value="{{ is.travelTicket }}">
-<div style="padding:24px 16px;max-width:540px;margin:0 auto">
-  
+<div style="padding:20px 16px 32px;max-width:540px;margin:0 auto">
+
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
     <button onClick="{{ on.travel }}" aria-label="Return to travel hub" style="border:1px solid var(--color-divider);background:var(--color-surface);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
     </button>
-    <span class="tag tag-accent" style="font-weight:800">● VALID &amp; VERIFIED E-TICKET</span>
+    <span class="tag" style="font-weight:800;background:rgba(16,185,129,0.12);color:#059669;border:1px solid rgba(16,185,129,0.3);display:flex;align-items:center;gap:6px">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg>
+      CHECKED IN · BOARDING PASS
+    </span>
   </div>
 
-  <div class="boarding-pass" style="background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-md)">
-    
-    <!-- Pass Header -->
-    <div class="pass-header" style="background:linear-gradient(135deg, #059669 0%, #047857 100%);padding:20px;color:#fff">
+  <div class="boarding-pass" style="background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-lg)">
+
+    <!-- Airline Header -->
+    <div class="pass-header" style="background:linear-gradient(135deg,#0b2e5c 0%,#123f7a 55%,#1a5fb4 100%);padding:18px 20px;color:#fff">
       <div style="display:flex;justify-content:space-between;align-items:center">
-        <span style="font:800 15px/1 var(--font-heading);letter-spacing:.02em">GENERAL EXPRESS VOYAGES VIP</span>
-        <span style="font:800 11px/1 var(--font-mono);background:rgba(255,255,255,0.2);padding:4px 8px;border-radius:var(--radius-pill)">REF: LMT-BUS-78291</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:16px">
-        <div>
-          <div style="font:800 26px/1 var(--font-heading)">DLA</div>
-          <div style="font:500 11px/1 var(--font-body);opacity:0.9">Douala (Bépanda)</div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,0.16);display:flex;align-items:center;justify-content:center">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1z"/></svg>
+          </div>
+          <div>
+            <div style="font:800 14px/1 var(--font-heading);letter-spacing:.01em">Camair-Co</div>
+            <div style="font:500 10px/1.2 var(--font-body);opacity:0.85;margin-top:3px">Cameroon Airlines</div>
+          </div>
         </div>
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6v6"/><path d="M16 6v6"/><path d="M2 12h20"/><path d="M6 18H4a2 2 0 0 1-2-2V7a3 3 0 0 1 3-3h14a3 3 0 0 1 3 3v9a2 2 0 0 1-2 2h-2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>
         <div style="text-align:right">
-          <div style="font:800 26px/1 var(--font-heading)">YAO</div>
-          <div style="font:500 11px/1 var(--font-body);opacity:0.9">Yaoundé (Mvan)</div>
+          <div style="font:800 10px/1 var(--font-heading);letter-spacing:.14em;opacity:0.85">BOARDING PASS</div>
+          <div style="font:800 11px/1 var(--font-mono);margin-top:5px;background:rgba(255,255,255,0.18);padding:3px 8px;border-radius:var(--radius-pill)">ECONOMY</div>
+        </div>
+      </div>
+
+      <!-- Route -->
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:18px">
+        <div style="flex:1">
+          <div style="font:800 34px/1 var(--font-heading)">DLA</div>
+          <div style="font:500 10.5px/1.3 var(--font-body);opacity:0.9;margin-top:4px">Douala Int'l</div>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 6px">
+          <div style="font:600 9.5px/1 var(--font-body);opacity:0.8">1h 05m · Direct</div>
+          <div style="display:flex;align-items:center;width:100%;gap:4px">
+            <span style="height:2px;flex:1;background:rgba(255,255,255,0.4);border-radius:2px"></span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff" style="transform:rotate(90deg);flex-shrink:0"><path d="M21 16v-2l-8-5V3.5A1.5 1.5 0 0 0 11.5 2 1.5 1.5 0 0 0 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></svg>
+            <span style="height:2px;flex:1;background:rgba(255,255,255,0.4);border-radius:2px"></span>
+          </div>
+          <div style="font:700 9px/1 var(--font-mono);opacity:0.75;letter-spacing:.06em">QC 302</div>
+        </div>
+        <div style="flex:1;text-align:right">
+          <div style="font:800 34px/1 var(--font-heading)">NSI</div>
+          <div style="font:500 10.5px/1.3 var(--font-body);opacity:0.9;margin-top:4px">Yaoundé Nsimalen</div>
         </div>
       </div>
     </div>
 
-    <!-- Pass Body -->
-    <div class="pass-body" style="padding:18px;border-bottom:1px dashed var(--color-divider)">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;font-size:12px">
+    <!-- Flight & Passenger Details -->
+    <div class="pass-body" style="padding:18px 20px;border-bottom:2px dashed var(--color-divider)">
+      <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:16px 14px;font-size:12px">
         <div>
-          <div style="color:var(--color-text-muted);font-weight:700">PASSENGER</div>
-          <div style="font-weight:800;font-size:14px;color:var(--color-text);margin-top:2px">ROSTAND TCHUEKAM</div>
+          <div style="color:var(--color-text-muted);font-weight:700;font-size:9.5px;letter-spacing:.06em">PASSENGER</div>
+          <div style="font-weight:800;font-size:14px;color:var(--color-text);margin-top:3px">TCHUEKAM / ROSTAND MR</div>
         </div>
         <div>
-          <div style="color:var(--color-text-muted);font-weight:700">DEPARTURE TIME</div>
-          <div style="font-weight:800;font-size:14px;color:var(--color-text);margin-top:2px">08:00 · 13 OCT</div>
+          <div style="color:var(--color-text-muted);font-weight:700;font-size:9.5px;letter-spacing:.06em">BOOKING REF (PNR)</div>
+          <div style="font-weight:800;font-size:14px;color:var(--color-text);margin-top:3px;font-family:var(--font-mono)">LMR-CMR-4821</div>
         </div>
         <div>
-          <div style="color:var(--color-text-muted);font-weight:700">SEAT NUMBER</div>
-          <div style="font-weight:800;font-size:16px;color:var(--color-accent);margin-top:2px">4A (Window VIP)</div>
+          <div style="color:var(--color-text-muted);font-weight:700;font-size:9.5px;letter-spacing:.06em">DATE</div>
+          <div style="font-weight:800;font-size:13.5px;color:var(--color-text);margin-top:3px">Mon 13 Oct 2025</div>
         </div>
         <div>
-          <div style="color:var(--color-text-muted);font-weight:700">DEPARTURE TERMINAL</div>
-          <div style="font-weight:800;font-size:13.5px;color:var(--color-text);margin-top:2px">Terminal Bépanda Quai 2</div>
+          <div style="color:var(--color-text-muted);font-weight:700;font-size:9.5px;letter-spacing:.06em">FLIGHT</div>
+          <div style="font-weight:800;font-size:13.5px;color:var(--color-text);margin-top:3px">QC 302 · Q400</div>
         </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px;padding-top:14px;border-top:1px solid var(--color-divider)">
+        <div>
+          <div style="color:var(--color-text-muted);font-weight:700;font-size:9px;letter-spacing:.05em">BOARDING</div>
+          <div style="font-weight:800;font-size:15px;color:var(--color-text);margin-top:3px">08:10</div>
+        </div>
+        <div>
+          <div style="color:var(--color-text-muted);font-weight:700;font-size:9px;letter-spacing:.05em">DEPARTS</div>
+          <div style="font-weight:800;font-size:15px;color:var(--color-text);margin-top:3px">08:40</div>
+        </div>
+        <div>
+          <div style="color:var(--color-text-muted);font-weight:700;font-size:9px;letter-spacing:.05em">GATE</div>
+          <div style="font-weight:800;font-size:15px;color:var(--color-accent);margin-top:3px">B4</div>
+        </div>
+        <div>
+          <div style="color:var(--color-text-muted);font-weight:700;font-size:9px;letter-spacing:.05em">SEAT</div>
+          <div style="font-weight:800;font-size:15px;color:var(--color-accent);margin-top:3px">12A</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:14px">
+        <div>
+          <div style="color:var(--color-text-muted);font-weight:700;font-size:9px;letter-spacing:.05em">ARRIVES</div>
+          <div style="font-weight:800;font-size:13.5px;color:var(--color-text);margin-top:3px">09:45</div>
+        </div>
+        <div>
+          <div style="color:var(--color-text-muted);font-weight:700;font-size:9px;letter-spacing:.05em">ZONE</div>
+          <div style="font-weight:800;font-size:13.5px;color:var(--color-text);margin-top:3px">Zone 2</div>
+        </div>
+        <div>
+          <div style="color:var(--color-text-muted);font-weight:700;font-size:9px;letter-spacing:.05em">TERMINAL</div>
+          <div style="font-weight:800;font-size:13.5px;color:var(--color-text);margin-top:3px">T1</div>
+        </div>
+        <div>
+          <div style="color:var(--color-text-muted);font-weight:700;font-size:9px;letter-spacing:.05em">BAGGAGE</div>
+          <div style="font-weight:800;font-size:13.5px;color:var(--color-text);margin-top:3px">23 kg</div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:8px;margin-top:16px;padding:9px 12px;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.28);border-radius:var(--radius-sm)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#b45309" stroke-width="2" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
+        <span style="font:600 11px/1.3 var(--font-body);color:#92600a">Gate B4 closes at <b>08:25</b>. Be at the gate 15 min before boarding.</span>
       </div>
     </div>
 
-    <!-- Scannable QR Code Section -->
-    <div class="pass-qr-wrap" style="padding:22px;text-align:center;background:var(--color-surface)">
-      <div style="display:inline-block;padding:12px;background:#fff;border-radius:var(--radius-sm);border:1px solid var(--color-divider);box-shadow:var(--shadow-xs)">
-        <svg width="120" height="120" viewBox="0 0 24 24" fill="var(--color-text)"><path d="M3 3h6v6H3V3zm2 2v2h2V5H5zm8-2h6v6h-6V3zm2 2v2h2V5h-2zM3 13h6v6H3v-6zm2 2v2h2v-2H5zm13-2h3v2h-3v-2zm-3 2h2v3h-2v-3zm3 3h3v3h-3v-3zm-5 1h2v2h-2v-2zm2-4h2v2h-2v-2z"/></svg>
+    <!-- Barcode Stub -->
+    <div class="pass-qr-wrap" style="padding:18px 20px;background:var(--color-surface)">
+      <div style="display:flex;align-items:center;gap:16px">
+        <div style="flex-shrink:0;padding:8px;background:#fff;border-radius:var(--radius-sm);border:1px solid var(--color-divider)">
+          <svg width="82" height="82" viewBox="0 0 24 24" fill="var(--color-text)"><path d="M3 3h6v6H3V3zm2 2v2h2V5H5zm8-2h6v6h-6V3zm2 2v2h2V5h-2zM3 13h6v6H3v-6zm2 2v2h2v-2H5zm13-2h3v2h-3v-2zm-3 2h2v3h-2v-3zm3 3h3v3h-3v-3zm-5 1h2v2h-2v-2zm2-4h2v2h-2v-2z"/></svg>
+        </div>
+        <div style="flex:1;min-width:0">
+          <div style="height:52px;width:100%;background-image:repeating-linear-gradient(90deg,var(--color-text) 0,var(--color-text) 2px,transparent 2px,transparent 4px,var(--color-text) 4px,var(--color-text) 5px,transparent 5px,transparent 9px,var(--color-text) 9px,var(--color-text) 12px,transparent 12px,transparent 14px);border-radius:2px"></div>
+          <div style="font:700 10px/1 var(--font-mono);color:var(--color-text-muted);margin-top:8px;letter-spacing:.14em">ETKT 057 2294810294 · QC302DLANSI12A</div>
+        </div>
       </div>
-      <div style="font:800 11px/1 var(--font-mono);color:var(--color-text-muted);margin-top:10px;letter-spacing:.1em">ETKT: 057-2294810294 · LOUMOO ESCROW</div>
     </div>
   </div>
 
-  <!-- Wallet & Sharing Actions -->
-  <div style="display:flex;flex-direction:column;gap:10px;margin-top:18px">
-    <button onClick="{{ say.origin }}" class="btn btn-primary btn-block" style="height:46px;font-weight:800">
-      DOWNLOAD PDF BOARDING PASS <span>↓</span>
+  <!-- Travel document reminder -->
+  <div style="display:flex;align-items:flex-start;gap:10px;margin-top:14px;padding:12px 14px;background:var(--color-surface-subtle);border:1px solid var(--color-divider);border-radius:var(--radius-sm)">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="1.8" style="flex-shrink:0;margin-top:1px"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M15 8h2"/><path d="M15 12h2"/><path d="M7 16h10"/></svg>
+    <div>
+      <div style="font:700 12px/1.3 var(--font-heading);color:var(--color-text)">Bring a valid ID</div>
+      <div style="font:400 11.5px/1.4 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Carry your national ID card or passport matching the passenger name. Online check-in confirmed · e-ticket protected by LOUMOO Escrow.</div>
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div style="display:flex;flex-direction:column;gap:10px;margin-top:16px">
+    <button onClick="{{ downloadBoardingPass }}" class="btn btn-primary btn-block" style="height:46px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+      Download PDF boarding pass
     </button>
-    <button onClick="{{ say.origin }}" class="btn btn-secondary btn-block" style="height:46px;font-weight:700">
-      SHARE VIA WHATSAPP (+237 690 12 34 56)
+    <button onClick="{{ shareBoardingPass }}" class="btn btn-secondary btn-block" style="height:46px;font-weight:700;color:var(--color-wa-teal);display:flex;align-items:center;justify-content:center;gap:8px">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.15-1.7-.85-2-.95-.26-.1-.46-.15-.65.15-.2.3-.75.95-.9 1.15-.17.2-.34.22-.63.07-.3-.15-1.25-.46-2.4-1.47-.9-.8-1.5-1.77-1.67-2.07-.17-.3-.02-.46.13-.6.13-.14.3-.34.44-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.65-1.57-.9-2.15-.24-.57-.48-.5-.65-.5h-.56c-.2 0-.5.07-.77.37-.26.3-1 .98-1 2.4s1.03 2.78 1.17 2.98c.15.2 2.02 3.08 4.9 4.32.68.3 1.22.47 1.63.6.68.22 1.3.18 1.8.11.55-.08 1.7-.7 1.93-1.36.24-.67.24-1.24.17-1.36-.07-.12-.26-.2-.55-.34zM12 2C6.48 2 2 6.48 2 12c0 1.77.46 3.43 1.27 4.87L2 22l5.25-1.38A9.94 9.94 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2z"/></svg>
+      Share via WhatsApp
     </button>
   </div>
 </div>

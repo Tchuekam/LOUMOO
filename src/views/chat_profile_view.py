@@ -341,20 +341,42 @@ def get_chat_and_profile_view():
     <h4 style="margin:0;font-size:16px">Saved Items</h4>
   </div>
 
-  <div style="padding:16px;max-width:800px;margin:0 auto;display:flex;flex-direction:column;gap:12px">
-    <div class="card-premium" style="display:flex;align-items:center;gap:14px">
-      <div class="ph" style="width:64px;height:64px;border-radius:var(--radius-sm)"></div>
-      <div style="flex:1">
-        <div style="font:700 13.5px/1.2 var(--font-heading);color:var(--color-text)">Apple AirPods Pro 2 (USB-C)</div>
-        <div style="font:800 14px/1 var(--font-heading);color:var(--color-accent);margin-top:3px">XAF 185 000</div>
-        <div style="font:400 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:4px">Sold by Orca Electronics · Douala</div>
+  <!-- Empty state -->
+  <sc-if value="{{ !wishlistHasItems }}">
+    <div style="padding:72px 24px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px">
+      <div style="width:72px;height:72px;border-radius:50%;background:var(--color-surface-subtle);display:flex;align-items:center;justify-content:center;color:var(--color-text-muted)">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
       </div>
-      <div style="display:flex;flex-direction:column;gap:6px">
-        <button onClick="{{ addToCart }}" class="btn btn-primary" style="height:34px;padding:0 12px;font-size:11px">ADD TO BAG</button>
-        <button onClick="{{ toggleSave }}" class="btn btn-secondary" style="height:28px;padding:0 8px;font-size:10px;color:var(--color-text-muted)">REMOVE</button>
+      <div>
+        <h3 style="margin:0 0 6px;font-size:18px">No saved items yet</h3>
+        <p style="font-size:13.5px;line-height:1.5;color:var(--color-text-secondary);max-width:300px;margin:0 auto">Tap the bookmark on any product and it will be kept here for later.</p>
       </div>
+      <button onClick="{{ on.home }}" class="btn btn-primary" style="height:44px;padding:0 24px;font-size:13.5px;font-weight:700">Browse the marketplace</button>
     </div>
+  </sc-if>
+
+  <!-- Saved products -->
+  <sc-if value="{{ wishlistHasItems }}">
+  <div style="padding:16px;max-width:800px;margin:0 auto;display:flex;flex-direction:column;gap:12px">
+    <div style="font:600 12px/1 var(--font-body);color:var(--color-text-secondary);padding:0 2px">{{ wishlistCountLabel }}</div>
+    <sc-for list="{{ wishlistItems }}" as="item">
+      <div class="card-premium" style="display:flex;align-items:center;gap:14px">
+        <div onClick="{{ () => openProduct(item.id) }}" style="width:64px;height:64px;border-radius:var(--radius-sm);overflow:hidden;flex-shrink:0;background:var(--color-surface-subtle);cursor:pointer">
+          <img src="{{ item.image }}" alt="{{ item.name }}" style="width:100%;height:100%;object-fit:cover">
+        </div>
+        <div onClick="{{ () => openProduct(item.id) }}" style="flex:1;cursor:pointer">
+          <div style="font:700 13.5px/1.2 var(--font-heading);color:var(--color-text)">{{ item.name }}</div>
+          <div style="font:800 14px/1 var(--font-heading);color:var(--color-accent);margin-top:3px">{{ item.price }}</div>
+          <div style="font:400 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:4px">Sold by {{ item.store || 'LOUMOO seller' }}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <button onClick="{{ () => openProduct(item.id) }}" class="btn btn-primary" style="height:34px;padding:0 14px;font-size:11px">VIEW</button>
+          <button onClick="{{ () => toggleProductWishlist(item.id, item.name) }}" class="btn btn-secondary" style="height:28px;padding:0 8px;font-size:10px;color:var(--color-text-muted)">REMOVE</button>
+        </div>
+      </div>
+    </sc-for>
   </div>
+  </sc-if>
 </div>
 </sc-if>
 

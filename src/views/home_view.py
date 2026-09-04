@@ -31,8 +31,9 @@ def get_home_view():
         </div>
         <button onClick="{{ on.signIn }}" class="btn btn-secondary" style="height:32px;padding:0 12px;font-size:11px;font-weight:800;border-radius:var(--radius-pill);cursor:pointer">SIGN IN</button>
       </sc-if>
-      <button onClick="{{ toggleSave }}" aria-label="Open saved wishlist" title="Wishlist" style="width:38px;height:38px;border:1px solid var(--color-divider);border-radius:50%;background:var(--color-surface);display:flex;align-items:center;justify-content:center;position:relative;color:{{ saved ? 'var(--color-accent-sale)' : 'var(--color-text)' }};cursor:pointer">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ saved ? 'currentColor' : 'none' }}" stroke="currentColor" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+      <button onClick="{{ on.saved }}" aria-label="Open saved wishlist" title="Wishlist" style="width:38px;height:38px;border:1px solid var(--color-divider);border-radius:50%;background:var(--color-surface);display:flex;align-items:center;justify-content:center;position:relative;color:{{ wishlistHasItems ? 'var(--color-accent-sale)' : 'var(--color-text)' }};cursor:pointer">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ wishlistHasItems ? 'currentColor' : 'none' }}" stroke="currentColor" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+        <sc-if value="{{ wishlistHasItems }}"><span style="position:absolute;top:-4px;right:-4px;min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:var(--color-accent-sale);color:#fff;font:800 9.5px/16px var(--font-heading);text-align:center">{{ wishlistCount }}</span></sc-if>
       </button>
       <button onClick="{{ on.cart }}" aria-label="Open bag" style="width:38px;height:38px;border:1px solid var(--color-divider);border-radius:50%;background:var(--color-surface);display:flex;align-items:center;justify-content:center;position:relative;color:var(--color-text);cursor:pointer">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
@@ -481,7 +482,7 @@ def get_home_view():
       <!-- 6. Markets -->
       <button onClick="{ () => openCategory('store') }" class="cat-squircle-card" aria-label="Category Markets & Stores">
         <div class="cat-squircle-icon-wrap" style="background:#fff;border:1px solid rgba(0,0,0,0.06);overflow:hidden;padding:4px">
-          <img src="./Assets/LOGO%20icons/Market%20Logo%20Design%20_#logo%20#logodesigner%20#marketing.jfif" alt="Markets" style="width:100%;height:100%;object-fit:contain">
+          <img src="./Assets/_processed/logo_icons_market_logo_design_logo_logodesigner_mar_47.png" alt="Markets" style="width:100%;height:100%;object-fit:contain">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
         </div>
         <span class="cat-squircle-label">Markets</span>

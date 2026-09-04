@@ -473,7 +473,7 @@ _TEMPLATE = """
             <div style="font-size:11px;color:var(--color-text-secondary)">Direct verified seller phone line · Replies in &lt;5 mins</div>
           </div>
         </div>
-        <button class="btn" style="background:#25d366;color:#fff;font-weight:800;font-size:12px;height:36px;padding:0 14px">
+        <button onClick="{{ (e) => contactSellerWhatsApp({ sellerName: 'Kamer Tech Solutions', productTitle: 'Apple MacBook Air 13.6\" M3 16GB/512GB', price: 'XAF 850,000' }) }}" class="btn" style="background:#25d366;color:#fff;font-weight:800;font-size:12px;height:36px;padding:0 14px;cursor:pointer">
           OPEN CHAT
         </button>
       </div>

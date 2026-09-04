@@ -281,7 +281,7 @@ def get_product_view():
             </div>
             
             <div style="display:flex;align-items:center;gap:10px">
-              <button onClick="{{ on.chat }}" class="btn btn-secondary" style="height:38px;padding:0 14px;font-size:12px;font-weight:700">MESSAGE BOUTIQUE</button>
+              <button onClick="{{ contactSellerWhatsApp }}" class="btn btn-secondary" style="height:38px;padding:0 14px;font-size:12px;font-weight:700;color:var(--color-wa-teal)">MESSAGE BOUTIQUE</button>
               <button onClick="{{ on.merchant }}" class="btn btn-primary" style="height:38px;padding:0 16px;font-size:12px;font-weight:700">VISIT STOREFRONT →</button>
             </div>
           </div>
