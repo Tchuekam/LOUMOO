@@ -4895,6 +4895,25 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 .prof-row-text { font: 600 14px/1 var(--font-heading); color: var(--color-text); }
 .prof-row-chevron { color: var(--color-text-muted); font-size: 15px; }
 
+/* ── Shared user avatar (image-or-initials, reflected app-wide) ── */
+.user-avatar { position: relative; overflow: hidden; }
+.user-avatar > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+/* Profile page avatar = tap-to-change upload control */
+.prof-avatar { border: none; padding: 0; cursor: pointer; }
+.prof-avatar > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.prof-avatar-initials { position: relative; z-index: 1; }
+.prof-avatar-cam {
+  position: absolute; right: -2px; bottom: -2px; z-index: 2; width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--color-accent); color: #fff; border: 2px solid var(--color-surface);
+}
+.prof-avatar-remove {
+  margin-top: 10px; border: none; background: transparent; cursor: pointer;
+  font: 500 12.5px/1 var(--font-heading); color: var(--color-text-muted); text-decoration: underline; text-underline-offset: 2px;
+}
+.prof-avatar-remove:hover { color: var(--color-text); }
+
 /* A publication with no photo should not reserve a full 4:3 well: for a
    broadcast the message is the content, and the empty frame just pushes it
    below the fold. */
@@ -5242,7 +5261,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   <div class="sidebar-footer">
     <sc-if value="{{ isLoggedIn }}">
       <button onClick="{{ on.profile }}" class="nav-item {{ (is.profile || is.settings || is.orders || is.seller) ? 'active' : '' }}" style="padding:6px 8px" title="{{ userName }} · {{ profileRoleLabel }}">
-        <div style="width:30px;height:30px;border-radius:50%;background:var(--color-accent);color:#fff;display:flex;align-items:center;justify-content:center;font:800 11px/1 var(--font-heading);flex:none">{{ userInitials }}</div>
+        <div class="user-avatar" style="width:30px;height:30px;border-radius:50%;background:var(--color-accent);color:#fff;display:flex;align-items:center;justify-content:center;font:800 11px/1 var(--font-heading);flex:none"><sc-if value="{{ hasUserAvatar }}"><img src="{{ userAvatar }}" alt=""></sc-if><sc-if value="{{ !hasUserAvatar }}">{{ userInitials }}</sc-if></div>
         <div style="flex:1;min-width:0">
           <div style="font-weight:700;font-size:12.5px;color:var(--color-text);line-height:1.1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ userName }}</div>
           <div style="font-size:10px;color:var(--color-text-secondary);margin-top:2px">{{ profileRoleLabel }}</div>
@@ -5315,7 +5334,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
     <!-- User Context Bar (Mobile View) -->
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
       <sc-if value="{{ isLoggedIn }}">
-        <button onClick="{{ on.profile }}" aria-label="Open profile" style="width:42px;height:42px;border:2px solid var(--color-text);border-radius:var(--radius-sm);background:var(--color-surface);display:flex;align-items:center;justify-content:center;font:800 15px/1 var(--font-heading);letter-spacing:-.02em;padding:0;color:var(--color-text);box-shadow:var(--shadow-xs);cursor:pointer">{{ userInitials }}</button>
+        <button onClick="{{ on.profile }}" aria-label="Open profile" class="user-avatar" style="width:42px;height:42px;border:2px solid var(--color-text);border-radius:var(--radius-sm);background:var(--color-surface);display:flex;align-items:center;justify-content:center;font:800 15px/1 var(--font-heading);letter-spacing:-.02em;padding:0;color:var(--color-text);box-shadow:var(--shadow-xs);cursor:pointer"><sc-if value="{{ hasUserAvatar }}"><img src="{{ userAvatar }}" alt=""></sc-if><sc-if value="{{ !hasUserAvatar }}">{{ userInitials }}</sc-if></button>
         <div style="flex:1;min-width:0">
           <div style="font:700 9px/1 var(--font-heading);letter-spacing:.14em;color:var(--color-text-muted);text-transform:uppercase">WELCOME BACK</div>
           <div style="font:800 19px/1.1 var(--font-heading);letter-spacing:-.025em;margin-top:3px;color:var(--color-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ userName }}</div>
@@ -8411,7 +8430,14 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 
     <!-- Identity -->
     <section class="prof-identity">
-      <div class="prof-avatar">{{ userInitials }}</div>
+      <button onClick="{{ pickAvatar }}" class="prof-avatar user-avatar" aria-label="Change profile photo">
+        <sc-if value="{{ hasUserAvatar }}"><img src="{{ userAvatar }}" alt="Profile photo"></sc-if>
+        <sc-if value="{{ !hasUserAvatar }}"><span class="prof-avatar-initials">{{ userInitials }}</span></sc-if>
+        <span class="prof-avatar-cam" aria-hidden="true">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3.2"/></svg>
+        </span>
+      </button>
+      <sc-if value="{{ hasUserAvatar }}"><button onClick="{{ removeAvatar }}" class="prof-avatar-remove">Remove photo</button></sc-if>
       <div class="prof-name-row">
         <h1 class="prof-name">{{ userName }}</h1>
         <span class="prof-role">{{ profileRoleLabel }}</span>
@@ -10129,8 +10155,9 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
         <!-- Identity + completion meter -->
         <div class="card-premium" style="display:flex;flex-direction:column;gap:16px">
           <div style="display:flex;align-items:center;gap:14px">
-            <div style="width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,var(--color-accent) 0%,#003d8a 100%);color:#fff;display:flex;align-items:center;justify-content:center;font:800 20px/1 var(--font-heading);flex-shrink:0">
-              {{ userInitials }}
+            <div class="user-avatar" style="width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,var(--color-accent) 0%,#003d8a 100%);color:#fff;display:flex;align-items:center;justify-content:center;font:800 20px/1 var(--font-heading);flex-shrink:0">
+              <sc-if value="{{ hasUserAvatar }}"><img src="{{ userAvatar }}" alt=""></sc-if>
+              <sc-if value="{{ !hasUserAvatar }}">{{ userInitials }}</sc-if>
             </div>
             <div style="flex:1;min-width:0">
               <div style="font:800 17px/1.25 var(--font-heading);color:var(--color-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ dashboard.profile.name }}</div>
@@ -10322,12 +10349,18 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 
     <!-- Avatar & identity summary -->
     <div class="card-premium" style="display:flex;align-items:center;gap:14px">
-      <div style="width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,var(--color-accent) 0%,#003d8a 100%);color:#fff;display:flex;align-items:center;justify-content:center;font:800 20px/1 var(--font-heading);flex-shrink:0">
-        {{ userInitials }}
-      </div>
+      <button onClick="{{ pickAvatar }}" class="user-avatar prof-avatar" aria-label="Change profile photo" style="width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,var(--color-accent) 0%,#003d8a 100%);color:#fff;display:flex;align-items:center;justify-content:center;font:800 20px/1 var(--font-heading);flex-shrink:0">
+        <sc-if value="{{ hasUserAvatar }}"><img src="{{ userAvatar }}" alt=""></sc-if>
+        <sc-if value="{{ !hasUserAvatar }}"><span class="prof-avatar-initials">{{ userInitials }}</span></sc-if>
+        <span class="prof-avatar-cam" aria-hidden="true">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3.2"/></svg>
+        </span>
+      </button>
       <div style="flex:1;min-width:0">
         <div style="font:700 14px/1.3 var(--font-heading);color:var(--color-text)">{{ profileFormFirstName }} {{ profileFormLastName }}</div>
         <div style="font:400 12px/1.4 var(--font-body);color:var(--color-text-secondary);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ regEmail }}</div>
+        <sc-if value="{{ hasUserAvatar }}"><button onClick="{{ removeAvatar }}" class="prof-avatar-remove" style="margin-top:4px">Remove photo</button></sc-if>
+        <sc-if value="{{ !hasUserAvatar }}"><button onClick="{{ pickAvatar }}" class="prof-avatar-remove" style="margin-top:4px;text-decoration:none;color:var(--color-accent)">Add photo</button></sc-if>
       </div>
     </div>
 
@@ -20510,6 +20543,7 @@ class Component extends DCLogic {
     // then displayed as its own.
     regFirstName: '',
     regLastName: '',
+    regAvatar: '',
     regPhone: '',
     regEmail: '',
     regCity: 'douala',
@@ -20765,8 +20799,59 @@ class Component extends DCLogic {
     this.setState({ sidebarCollapsed: true });
   };
 
+  // ── Profile photo ────────────────────────────────────────────────────────
+  // Stored as a downscaled data URL so it survives reloads and reflects in
+  // every avatar across the app (sidebar, top bar, profile, account, edit).
+  _restoreUserAvatar = () => {
+    try {
+      const a = localStorage.getItem('loumoo_user_avatar');
+      if (a) this.setState({ regAvatar: a });
+    } catch (e) {}
+  };
+  pickAvatar = () => {
+    try {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.onchange = () => {
+        const file = input.files && input.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          const img = new Image();
+          img.onload = () => {
+            // Center-crop to a 256px square and re-encode to keep it small.
+            const size = 256;
+            const canvas = document.createElement('canvas');
+            canvas.width = size; canvas.height = size;
+            const ctx = canvas.getContext('2d');
+            const s = Math.min(img.width, img.height);
+            const sx = (img.width - s) / 2;
+            const sy = (img.height - s) / 2;
+            ctx.drawImage(img, sx, sy, s, s, 0, 0, size, size);
+            let dataUrl;
+            try { dataUrl = canvas.toDataURL('image/jpeg', 0.85); }
+            catch (e) { dataUrl = reader.result; }
+            this.setState({ regAvatar: dataUrl });
+            try { localStorage.setItem('loumoo_user_avatar', dataUrl); } catch (e) {}
+            if (this.toast) this.toast('Profile photo updated');
+          };
+          img.onerror = () => {};
+          img.src = reader.result;
+        };
+        reader.readAsDataURL(file);
+      };
+      input.click();
+    } catch (e) {}
+  };
+  removeAvatar = () => {
+    this.setState({ regAvatar: '' });
+    try { localStorage.removeItem('loumoo_user_avatar'); } catch (e) {}
+  };
+
   componentDidMount() {
     this._restoreOnboardingDraft();
+    this._restoreUserAvatar();
     this._bootAuth();
     if (typeof window !== 'undefined') {
       window._loumooHeroComponent = this;
@@ -23952,6 +24037,8 @@ class Component extends DCLogic {
         });
         this.go('editProfile');
       },
+      pickAvatar: () => this.pickAvatar(),
+      removeAvatar: () => this.removeAvatar(),
       updateProfileFirstName: (e) => this.setState({ profileFormFirstName: e && e.target ? e.target.value : e, profileFormDirty: true }),
       updateProfileLastName: (e) => this.setState({ profileFormLastName: e && e.target ? e.target.value : e, profileFormDirty: true }),
       updateProfileCity: (e) => this.setState({ profileFormCity: e && e.target ? e.target.value : e, profileFormDirty: true }),
@@ -25421,6 +25508,8 @@ class Component extends DCLogic {
       // authenticated user never sees the promotional CTA flash during boot.
       showGetStarted: this.state.authStatus === 'anonymous',
       userInitials: (this.state.regFirstName ? this.state.regFirstName[0].toUpperCase() : 'T') + (this.state.regLastName ? this.state.regLastName[0].toUpperCase() : 'K'),
+      userAvatar: this.state.regAvatar || '',
+      hasUserAvatar: !!this.state.regAvatar,
       profileRoleLabel: this.state.userRole === 'both' ? 'VERIFIED BUYER & SELLER' : (this.state.userRole === 'seller' ? 'VERIFIED SELLER' : 'VERIFIED BUYER'),
       // Stored numbers already carry their country code, so blindly prefixing
       // '+237' rendered "+237 +237690000001". Normalise instead of concatenate,

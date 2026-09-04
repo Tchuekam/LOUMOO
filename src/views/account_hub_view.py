@@ -76,8 +76,9 @@ def get_account_hub_view():
         <!-- Identity + completion meter -->
         <div class="card-premium" style="display:flex;flex-direction:column;gap:16px">
           <div style="display:flex;align-items:center;gap:14px">
-            <div style="width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,var(--color-accent) 0%,#003d8a 100%);color:#fff;display:flex;align-items:center;justify-content:center;font:800 20px/1 var(--font-heading);flex-shrink:0">
-              {{ userInitials }}
+            <div class="user-avatar" style="width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,var(--color-accent) 0%,#003d8a 100%);color:#fff;display:flex;align-items:center;justify-content:center;font:800 20px/1 var(--font-heading);flex-shrink:0">
+              <sc-if value="{{ hasUserAvatar }}"><img src="{{ userAvatar }}" alt=""></sc-if>
+              <sc-if value="{{ !hasUserAvatar }}">{{ userInitials }}</sc-if>
             </div>
             <div style="flex:1;min-width:0">
               <div style="font:800 17px/1.25 var(--font-heading);color:var(--color-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ dashboard.profile.name }}</div>
@@ -269,12 +270,18 @@ def get_account_hub_view():
 
     <!-- Avatar & identity summary -->
     <div class="card-premium" style="display:flex;align-items:center;gap:14px">
-      <div style="width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,var(--color-accent) 0%,#003d8a 100%);color:#fff;display:flex;align-items:center;justify-content:center;font:800 20px/1 var(--font-heading);flex-shrink:0">
-        {{ userInitials }}
-      </div>
+      <button onClick="{{ pickAvatar }}" class="user-avatar prof-avatar" aria-label="Change profile photo" style="width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,var(--color-accent) 0%,#003d8a 100%);color:#fff;display:flex;align-items:center;justify-content:center;font:800 20px/1 var(--font-heading);flex-shrink:0">
+        <sc-if value="{{ hasUserAvatar }}"><img src="{{ userAvatar }}" alt=""></sc-if>
+        <sc-if value="{{ !hasUserAvatar }}"><span class="prof-avatar-initials">{{ userInitials }}</span></sc-if>
+        <span class="prof-avatar-cam" aria-hidden="true">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3.2"/></svg>
+        </span>
+      </button>
       <div style="flex:1;min-width:0">
         <div style="font:700 14px/1.3 var(--font-heading);color:var(--color-text)">{{ profileFormFirstName }} {{ profileFormLastName }}</div>
         <div style="font:400 12px/1.4 var(--font-body);color:var(--color-text-secondary);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ regEmail }}</div>
+        <sc-if value="{{ hasUserAvatar }}"><button onClick="{{ removeAvatar }}" class="prof-avatar-remove" style="margin-top:4px">Remove photo</button></sc-if>
+        <sc-if value="{{ !hasUserAvatar }}"><button onClick="{{ pickAvatar }}" class="prof-avatar-remove" style="margin-top:4px;text-decoration:none;color:var(--color-accent)">Add photo</button></sc-if>
       </div>
     </div>
 

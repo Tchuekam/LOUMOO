@@ -17,7 +17,7 @@ def get_home_view():
     <!-- User Context Bar (Mobile View) -->
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
       <sc-if value="{{ isLoggedIn }}">
-        <button onClick="{{ on.profile }}" aria-label="Open profile" style="width:42px;height:42px;border:2px solid var(--color-text);border-radius:var(--radius-sm);background:var(--color-surface);display:flex;align-items:center;justify-content:center;font:800 15px/1 var(--font-heading);letter-spacing:-.02em;padding:0;color:var(--color-text);box-shadow:var(--shadow-xs);cursor:pointer">{{ userInitials }}</button>
+        <button onClick="{{ on.profile }}" aria-label="Open profile" class="user-avatar" style="width:42px;height:42px;border:2px solid var(--color-text);border-radius:var(--radius-sm);background:var(--color-surface);display:flex;align-items:center;justify-content:center;font:800 15px/1 var(--font-heading);letter-spacing:-.02em;padding:0;color:var(--color-text);box-shadow:var(--shadow-xs);cursor:pointer"><sc-if value="{{ hasUserAvatar }}"><img src="{{ userAvatar }}" alt=""></sc-if><sc-if value="{{ !hasUserAvatar }}">{{ userInitials }}</sc-if></button>
         <div style="flex:1;min-width:0">
           <div style="font:700 9px/1 var(--font-heading);letter-spacing:.14em;color:var(--color-text-muted);text-transform:uppercase">WELCOME BACK</div>
           <div style="font:800 19px/1.1 var(--font-heading);letter-spacing:-.025em;margin-top:3px;color:var(--color-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ userName }}</div>

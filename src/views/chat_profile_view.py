@@ -264,7 +264,14 @@ def get_chat_and_profile_view():
 
     <!-- Identity -->
     <section class="prof-identity">
-      <div class="prof-avatar">{{ userInitials }}</div>
+      <button onClick="{{ pickAvatar }}" class="prof-avatar user-avatar" aria-label="Change profile photo">
+        <sc-if value="{{ hasUserAvatar }}"><img src="{{ userAvatar }}" alt="Profile photo"></sc-if>
+        <sc-if value="{{ !hasUserAvatar }}"><span class="prof-avatar-initials">{{ userInitials }}</span></sc-if>
+        <span class="prof-avatar-cam" aria-hidden="true">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3.2"/></svg>
+        </span>
+      </button>
+      <sc-if value="{{ hasUserAvatar }}"><button onClick="{{ removeAvatar }}" class="prof-avatar-remove">Remove photo</button></sc-if>
       <div class="prof-name-row">
         <h1 class="prof-name">{{ userName }}</h1>
         <span class="prof-role">{{ profileRoleLabel }}</span>

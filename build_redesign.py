@@ -4928,6 +4928,25 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 .prof-row-text { font: 600 14px/1 var(--font-heading); color: var(--color-text); }
 .prof-row-chevron { color: var(--color-text-muted); font-size: 15px; }
 
+/* ── Shared user avatar (image-or-initials, reflected app-wide) ── */
+.user-avatar { position: relative; overflow: hidden; }
+.user-avatar > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+/* Profile page avatar = tap-to-change upload control */
+.prof-avatar { border: none; padding: 0; cursor: pointer; }
+.prof-avatar > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.prof-avatar-initials { position: relative; z-index: 1; }
+.prof-avatar-cam {
+  position: absolute; right: -2px; bottom: -2px; z-index: 2; width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--color-accent); color: #fff; border: 2px solid var(--color-surface);
+}
+.prof-avatar-remove {
+  margin-top: 10px; border: none; background: transparent; cursor: pointer;
+  font: 500 12.5px/1 var(--font-heading); color: var(--color-text-muted); text-decoration: underline; text-underline-offset: 2px;
+}
+.prof-avatar-remove:hover { color: var(--color-text); }
+
 /* A publication with no photo should not reserve a full 4:3 well: for a
    broadcast the message is the content, and the empty frame just pushes it
    below the fold. */
@@ -5275,7 +5294,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   <div class="sidebar-footer">
     <sc-if value="{{ isLoggedIn }}">
       <button onClick="{{ on.profile }}" class="nav-item {{ (is.profile || is.settings || is.orders || is.seller) ? 'active' : '' }}" style="padding:6px 8px" title="{{ userName }} · {{ profileRoleLabel }}">
-        <div style="width:30px;height:30px;border-radius:50%;background:var(--color-accent);color:#fff;display:flex;align-items:center;justify-content:center;font:800 11px/1 var(--font-heading);flex:none">{{ userInitials }}</div>
+        <div class="user-avatar" style="width:30px;height:30px;border-radius:50%;background:var(--color-accent);color:#fff;display:flex;align-items:center;justify-content:center;font:800 11px/1 var(--font-heading);flex:none"><sc-if value="{{ hasUserAvatar }}"><img src="{{ userAvatar }}" alt=""></sc-if><sc-if value="{{ !hasUserAvatar }}">{{ userInitials }}</sc-if></div>
         <div style="flex:1;min-width:0">
           <div style="font-weight:700;font-size:12.5px;color:var(--color-text);line-height:1.1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ userName }}</div>
           <div style="font-size:10px;color:var(--color-text-secondary);margin-top:2px">{{ profileRoleLabel }}</div>
@@ -10777,6 +10796,8 @@ class Component extends DCLogic {
         });
         this.go('editProfile');
       },
+      pickAvatar: () => this.pickAvatar(),
+      removeAvatar: () => this.removeAvatar(),
       updateProfileFirstName: (e) => this.setState({ profileFormFirstName: e && e.target ? e.target.value : e, profileFormDirty: true }),
       updateProfileLastName: (e) => this.setState({ profileFormLastName: e && e.target ? e.target.value : e, profileFormDirty: true }),
       updateProfileCity: (e) => this.setState({ profileFormCity: e && e.target ? e.target.value : e, profileFormDirty: true }),
@@ -12246,6 +12267,8 @@ class Component extends DCLogic {
       // authenticated user never sees the promotional CTA flash during boot.
       showGetStarted: this.state.authStatus === 'anonymous',
       userInitials: (this.state.regFirstName ? this.state.regFirstName[0].toUpperCase() : 'T') + (this.state.regLastName ? this.state.regLastName[0].toUpperCase() : 'K'),
+      userAvatar: this.state.regAvatar || '',
+      hasUserAvatar: !!this.state.regAvatar,
       profileRoleLabel: this.state.userRole === 'both' ? 'VERIFIED BUYER & SELLER' : (this.state.userRole === 'seller' ? 'VERIFIED SELLER' : 'VERIFIED BUYER'),
       // Stored numbers already carry their country code, so blindly prefixing
       // '+237' rendered "+237 +237690000001". Normalise instead of concatenate,
