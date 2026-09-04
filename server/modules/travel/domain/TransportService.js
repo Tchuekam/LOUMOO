@@ -76,6 +76,19 @@ class TransportService {
     return !this.occupiedSeats.has(seatNumber);
   }
 
+  isValidSeat(seatNumber) {
+    if (!seatNumber || typeof seatNumber !== 'string') return false;
+    const s = seatNumber.trim().toUpperCase();
+    const cols = this.layoutType === '2x1' ? ['A', 'B', 'C'] : ['A', 'B', 'C', 'D'];
+    const totalRows = Math.ceil(this.capacity / cols.length);
+    
+    const match = s.match(/^(\d+)([A-D])$/);
+    if (!match) return false;
+    const row = parseInt(match[1], 10);
+    const col = match[2];
+    return row >= 1 && row <= totalRows && cols.includes(col);
+  }
+
   reserveSeat(seatNumber) {
     if (!seatNumber) return true;
     if (this.occupiedSeats.has(seatNumber)) {
@@ -95,8 +108,8 @@ class TransportService {
 
   getSeatMap() {
     const layout = [];
-    const totalRows = this.layoutType === '2x1' ? 7 : Math.ceil(this.capacity / (this.layoutType === '2x1' ? 3 : 4));
     const cols = this.layoutType === '2x1' ? ['A', 'B', 'C'] : ['A', 'B', 'C', 'D'];
+    const totalRows = Math.ceil(this.capacity / cols.length);
 
     for (let r = 1; r <= totalRows; r++) {
       const rowSeats = [];

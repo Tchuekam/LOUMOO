@@ -15,12 +15,12 @@ const { NotFoundError, ValidationError, AuthenticationError, AuthorizationError 
 const logger = require('../../../shared/logging/logger');
 
 class TravelService {
-  constructor() {
-    this.repo = travelRepository;
+  constructor(repo = travelRepository, bookingEngineInstance = bookingEngine, seatService = seatInventoryService) {
+    this.repo = repo;
     this.searchEngine = travelSearchEngine;
     this.hotelService = hotelAvailabilityService;
-    this.seatService = seatInventoryService;
-    this.bookingEngine = bookingEngine;
+    this.seatService = seatService;
+    this.bookingEngine = bookingEngineInstance;
     this.data = travelData;
   }
 
@@ -274,16 +274,19 @@ class TravelService {
     return this.bookingEngine.createBooking(payload, options);
   }
 
-  async getBookingById(bookingId, userId = null) {
+  async getBookingById(bookingId, userOrId = null, options = {}) {
     const b = await this.repo.getBookingById(bookingId);
     if (!b) {
       throw new NotFoundError('Booking', bookingId);
     }
-    if (userId && b.userId !== userId && userId !== 'admin') {
+    const userId = typeof userOrId === 'object' && userOrId !== null ? userOrId.id : userOrId;
+    const userObj = typeof userOrId === 'object' && userOrId !== null ? userOrId : options.user;
+    const isPrivileged = (userObj && ['admin', 'super_admin'].includes(userObj.primaryRole || userObj.role)) || userId === 'admin';
+    if (userId && b.userId !== userId && !isPrivileged) {
       throw new NotFoundError('Booking', bookingId);
     }
-    const trip = await this.repo.getTripById(b.id);
-    const ticket = await this.repo.getTicketByIdOrBooking(b.id);
+    const trip = await this.repo.getTripById(b.id, isPrivileged ? null : userId);
+    const ticket = await this.repo.getTicketByIdOrBooking(b.id, isPrivileged ? null : userId);
     return {
       ...b.toJSON(),
       trip,
@@ -292,25 +295,42 @@ class TravelService {
     };
   }
 
-  async cancelBooking(bookingId, userId, reason) {
-    return this.bookingEngine.cancelBooking(bookingId, userId, reason);
+  async cancelBooking(bookingId, userId, reason, options = {}) {
+    const targetUserId = typeof userId === 'object' && userId !== null ? userId.id : userId;
+    const userObj = typeof userId === 'object' && userId !== null ? userId : options.user;
+    return this.bookingEngine.cancelBooking(bookingId, targetUserId, reason, { ...options, user: userObj });
+  }
+
+  async recordPaymentConfirmation(bookingId, confirmationDetails = {}) {
+    const booking = await this.repo.getBookingById(bookingId);
+    if (!booking) {
+      throw new NotFoundError('Booking', bookingId);
+    }
+    booking.recordPaymentConfirmation(confirmationDetails);
+    await this.repo.updatePaymentStatus(booking.id, booking.payment);
+    return booking.toJSON();
   }
 
   async getUserBookings(userId, status = 'all') {
-    return this.repo.getUserBookings(userId, status);
+    const targetUserId = typeof userId === 'object' && userId !== null ? userId.id : userId;
+    return this.repo.getUserBookings(targetUserId, status);
   }
 
   // 9. Trips (Powers My Trips)
   async getUserTrips(userId, status = 'all') {
-    return this.repo.getUserTrips(userId, status);
+    const targetUserId = typeof userId === 'object' && userId !== null ? userId.id : userId;
+    return this.repo.getUserTrips(targetUserId, status);
   }
 
-  async getTripById(tripId, userId = null) {
-    const trip = await this.repo.getTripById(tripId);
+  async getTripById(tripId, userOrId = null, options = {}) {
+    const userId = typeof userOrId === 'object' && userOrId !== null ? userOrId.id : userOrId;
+    const userObj = typeof userOrId === 'object' && userOrId !== null ? userOrId : options.user;
+    const isPrivileged = (userObj && ['admin', 'super_admin'].includes(userObj.primaryRole || userObj.role)) || userId === 'admin';
+    const trip = await this.repo.getTripById(tripId, isPrivileged ? null : userId);
     if (!trip) {
       throw new NotFoundError('Trip', tripId);
     }
-    if (userId && trip.userId !== userId && userId !== 'admin') {
+    if (userId && trip.userId !== userId && !isPrivileged) {
       throw new NotFoundError('Trip', tripId);
     }
     return trip;
@@ -318,22 +338,26 @@ class TravelService {
 
   // 10. Tickets & QR
   async getUserTickets(userId) {
-    return this.repo.getUserTickets(userId);
+    const targetUserId = typeof userId === 'object' && userId !== null ? userId.id : userId;
+    return this.repo.getUserTickets(targetUserId);
   }
 
-  async getTicketById(ticketId, userId = null) {
-    const ticket = await this.repo.getTicketByIdOrBooking(ticketId);
+  async getTicketById(ticketId, userOrId = null, options = {}) {
+    const userId = typeof userOrId === 'object' && userOrId !== null ? userOrId.id : userOrId;
+    const userObj = typeof userOrId === 'object' && userOrId !== null ? userOrId : options.user;
+    const isPrivileged = (userObj && ['admin', 'super_admin'].includes(userObj.primaryRole || userObj.role)) || userId === 'admin';
+    const ticket = await this.repo.getTicketByIdOrBooking(ticketId, isPrivileged ? null : userId);
     if (!ticket) {
       throw new NotFoundError('Ticket', ticketId);
     }
-    if (userId && userId !== 'admin') {
+    if (userId && !isPrivileged) {
       if (ticket.userId) {
         if (ticket.userId !== userId) {
           throw new NotFoundError('Ticket', ticketId);
         }
       } else {
         const booking = await this.repo.getBookingById(ticket.bookingId);
-        if (!booking || booking.userId !== userId) {
+        if (booking && booking.userId !== userId) {
           throw new NotFoundError('Ticket', ticketId);
         }
       }

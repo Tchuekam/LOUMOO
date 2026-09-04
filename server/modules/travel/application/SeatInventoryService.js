@@ -73,14 +73,20 @@ class SeatInventoryService {
       }
     }
 
-    // 2. Authoritative database active bookings
+    // 2. Authoritative database active bookings (guarded with fast timeout to avoid blocking on WAN latency)
     if (this.repo.db) {
       try {
-        const { data: activeBookings, error } = await this.repo.db
+        const dbPromise = this.repo.db
           .from('travel_bookings')
           .select('id, status, booking_passengers(seat)')
           .eq('item_id', serviceId)
           .in('status', ['CONFIRMED', 'PENDING']);
+
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Database occupancy lookup timeout')), 1200)
+        );
+
+        const { data: activeBookings, error } = await Promise.race([dbPromise, timeoutPromise]);
 
         if (!error && Array.isArray(activeBookings)) {
           for (const b of activeBookings) {
@@ -97,7 +103,7 @@ class SeatInventoryService {
           }
         }
       } catch (err) {
-        logger.warn(`[SeatInventory] DB read error for ${serviceId}: ${err.message}`);
+        logger.warn(`[SeatInventory] DB read notice for ${serviceId}: ${err.message}`);
       }
     }
 
@@ -109,7 +115,8 @@ class SeatInventoryService {
   }
 
   /**
-   * Real-time seat layout with synchronous compatibility and async rehydration
+   * Real-time seat layout inspection.
+   * Returns current seat map immediately from in-memory state and active occupancy.
    */
   getSeatMap(serviceId) {
     const service = this.repo.getTransportServiceById(serviceId);
@@ -117,19 +124,7 @@ class SeatInventoryService {
       throw new NotFoundError(`Transport service '${serviceId}' not found`);
     }
 
-    const currentMap = service.getSeatMap();
-
-    // Kick off async rehydration to ensure up-to-date occupancy across instances
-    const promise = (async () => {
-      await this.getOccupiedSeats(serviceId);
-      return service.getSeatMap();
-    })();
-
-    // Expose synchronous properties directly on the returned Promise object
-    // so both synchronous callers (`const map = svc.getSeatMap(...)`) and
-    // asynchronous callers (`const map = await svc.getSeatMap(...)`) work seamlessly.
-    Object.assign(promise, currentMap);
-    return promise;
+    return service.getSeatMap();
   }
 
   /**

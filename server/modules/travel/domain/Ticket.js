@@ -81,6 +81,10 @@ class Ticket {
   }
 
   cancel() {
+    if (this.status === TICKET_STATUS.CANCELLED) return this;
+    if (this.status === TICKET_STATUS.USED) {
+      throw new Error('Cannot cancel a used ticket');
+    }
     this.status = TICKET_STATUS.CANCELLED;
     this.updatedAt = new Date().toISOString();
     return this;

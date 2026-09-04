@@ -12,6 +12,16 @@ const BOOKING_STATUS = {
   COMPLETED: 'COMPLETED'
 };
 
+const PAYMENT_STATUS = {
+  PENDING: 'PENDING_PAYMENT',
+  REQUIRES_PAYMENT: 'REQUIRES_PAYMENT',
+  PAID: 'PAID',
+  REFUND_PENDING: 'REFUND_PENDING',
+  REFUNDED: 'REFUNDED',
+  CANCELLED: 'CANCELLED',
+  FAILED: 'FAILED'
+};
+
 const SERVICE_TYPES = {
   FLIGHT: 'flight',
   BUS: 'bus',
@@ -79,11 +89,13 @@ class Booking {
     this.amount = this.pricing.totalAmount;
     this.currency = this.pricing.currency;
 
-    // Payment state
+    // Explicit, provider-agnostic payment state (no fake provider or transaction ID)
     this.payment = {
-      method: data.payment?.method || 'mtn_momo',
-      status: data.payment?.status || 'PENDING_PAYMENT',
-      transactionRef: data.payment?.transactionRef || `TXN-${Date.now()}`
+      method: data.payment?.method || null,
+      status: data.payment?.status || PAYMENT_STATUS.PENDING,
+      transactionRef: data.payment?.transactionRef || null,
+      gatewayProvider: data.payment?.gatewayProvider || null,
+      paidAt: data.payment?.paidAt || null
     };
 
     this.cancellationReason = data.cancellationReason || '';
@@ -114,24 +126,73 @@ class Booking {
   }
 
   cancel(reason = 'User requested cancellation') {
+    if (this.status === BOOKING_STATUS.CANCELLED) {
+      throw new Error(`Cannot cancel a booking with status 'CANCELLED'`);
+    }
+    if (this.status === BOOKING_STATUS.COMPLETED) {
+      throw new Error(`Cannot cancel a booking with status 'COMPLETED'`);
+    }
+    if (this.status === BOOKING_STATUS.EXPIRED) {
+      throw new Error(`Cannot cancel a booking with status 'EXPIRED'`);
+    }
     if (!this.canCancel()) {
       throw new Error(`Cannot cancel a booking with status '${this.status}'`);
     }
+
     this.status = BOOKING_STATUS.CANCELLED;
     this.cancellationReason = reason;
+    if (this.payment.status === PAYMENT_STATUS.PAID) {
+      this.payment.status = PAYMENT_STATUS.REFUND_PENDING;
+    } else if (this.payment.status === PAYMENT_STATUS.PENDING) {
+      this.payment.status = PAYMENT_STATUS.CANCELLED;
+    }
     this.updatedAt = new Date().toISOString();
     return this;
   }
 
   confirm() {
+    if (this.status === BOOKING_STATUS.CANCELLED) {
+      throw new Error(`Cannot confirm a booking with status 'CANCELLED'`);
+    }
+    if (this.status === BOOKING_STATUS.COMPLETED) {
+      throw new Error(`Cannot confirm a booking with status 'COMPLETED'`);
+    }
     this.status = BOOKING_STATUS.CONFIRMED;
-    this.payment.status = 'PAID';
     this.updatedAt = new Date().toISOString();
     return this;
   }
 
   complete() {
+    if (this.status === BOOKING_STATUS.CANCELLED) {
+      throw new Error(`Cannot complete a booking with status 'CANCELLED'`);
+    }
     this.status = BOOKING_STATUS.COMPLETED;
+    this.updatedAt = new Date().toISOString();
+    return this;
+  }
+
+  /**
+   * Provider-agnostic payment confirmation method.
+   * Ready for future real payment provider integration without coupling.
+   */
+  recordPaymentConfirmation({ provider, transactionRef, amount, confirmedAt } = {}) {
+    if (!provider || typeof provider !== 'string') {
+      throw new Error('A legitimate payment provider identifier is required');
+    }
+    if (!transactionRef || typeof transactionRef !== 'string') {
+      throw new Error('A legitimate transaction reference is required from payment provider');
+    }
+    if (this.status === BOOKING_STATUS.CANCELLED) {
+      throw new Error(`Cannot apply payment confirmation to cancelled booking '${this.reference}'`);
+    }
+    if (this.payment.status === PAYMENT_STATUS.PAID) {
+      throw new Error(`Booking '${this.reference}' has already been paid`);
+    }
+
+    this.payment.status = PAYMENT_STATUS.PAID;
+    this.payment.gatewayProvider = provider;
+    this.payment.transactionRef = transactionRef;
+    this.payment.paidAt = confirmedAt || new Date().toISOString();
     this.updatedAt = new Date().toISOString();
     return this;
   }
@@ -164,5 +225,6 @@ module.exports = {
   Booking,
   BookingPassenger,
   BOOKING_STATUS,
+  PAYMENT_STATUS,
   SERVICE_TYPES
 };

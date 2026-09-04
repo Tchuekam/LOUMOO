@@ -7,17 +7,19 @@
  */
 
 const { travelRepository } = require('../infrastructure/TravelRepository');
-const { Booking, BookingPassenger, BOOKING_STATUS, SERVICE_TYPES } = require('../domain/Booking');
+const { Booking, BookingPassenger, BOOKING_STATUS, PAYMENT_STATUS, SERVICE_TYPES } = require('../domain/Booking');
 const { Trip } = require('../domain/Trip');
 const { Ticket, TICKET_STATUS } = require('../domain/Ticket');
 const { seatInventoryService } = require('./SeatInventoryService');
-const { hotelAvailabilityService } = require('./HotelAvailabilityService');
+const { HotelAvailabilityService, hotelAvailabilityService } = require('./HotelAvailabilityService');
 const { AuthenticationError, AuthorizationError, ValidationError, NotFoundError, ConflictError } = require('../../../shared/errors/AppError');
 const logger = require('../../../shared/logging/logger');
 
 class BookingEngine {
-  constructor() {
-    this.repo = travelRepository;
+  constructor(repo = travelRepository, seatService = seatInventoryService, hotelService = null) {
+    this.repo = repo;
+    this.seatService = seatService;
+    this.hotelService = hotelService || new HotelAvailabilityService(repo);
   }
 
   /**
@@ -29,6 +31,11 @@ class BookingEngine {
       throw new AuthenticationError('Authentication required to create a booking');
     }
     const type = (payload.type || SERVICE_TYPES.BUS).toLowerCase();
+
+    const allowedTypes = ['bus', 'train', 'flight', 'ride', 'taxi', 'hotel', 'excursion', 'tour', 'visa'];
+    if (!allowedTypes.includes(type)) {
+      throw new ValidationError(`Unsupported travel service type '${type}'. Supported modalities: ${allowedTypes.join(', ')}`);
+    }
 
     // 1. Idempotency Check: if identical request was sent, return existing confirmation
     const finalIdempotencyKey = idempotencyKey || payload.idempotencyKey || null;
@@ -54,6 +61,18 @@ class BookingEngine {
       ? payload.passengers
       : [{ name: payload.passengerName || user?.fullName || 'Traveler', phone: payload.phone || '' }];
 
+    if (rawPassengers.length === 0) {
+      throw new ValidationError('At least one passenger is required to create a booking');
+    }
+    if (rawPassengers.length > 10) {
+      throw new ValidationError('A maximum of 10 passengers can be booked in a single reservation');
+    }
+    for (const p of rawPassengers) {
+      if (!p.name || typeof p.name !== 'string' || p.name.trim().length === 0) {
+        throw new ValidationError('Passenger name is required for all travelers');
+      }
+    }
+
     const passengers = rawPassengers.map(p => new BookingPassenger(p));
 
     let verifiedPricing = null;
@@ -75,11 +94,25 @@ class BookingEngine {
         throw new NotFoundError(`Transport service '${serviceId}' not found`);
       }
 
+      if (passengers.length > service.availableSeats) {
+        throw new ConflictError(`Service only has ${service.availableSeats} seat(s) available, but ${passengers.length} were requested`);
+      }
+
       // Collect requested seats from passengers
       reservedSeats = passengers.map(p => p.seat).filter(Boolean);
       if (reservedSeats.length > 0) {
+        const seenSeats = new Set();
+        for (const seat of reservedSeats) {
+          if (seenSeats.has(seat)) {
+            throw new ValidationError(`Duplicate seat '${seat}' requested in the same booking`);
+          }
+          seenSeats.add(seat);
+          if (typeof service.isValidSeat === 'function' && !service.isValidSeat(seat)) {
+            throw new ValidationError(`Seat '${seat}' is not a valid seat for this service layout`);
+          }
+        }
         // Concurrency-safe atomic check and reservation
-        await seatInventoryService.reserveSeats(serviceId, reservedSeats);
+        await (this.seatService || seatInventoryService).reserveSeats(serviceId, reservedSeats);
       }
 
       // Authoritative server-side price calculation
@@ -109,7 +142,8 @@ class BookingEngine {
         route: `${service.origin} ➔ ${service.destination}`
       };
     } else if (type === 'hotel') {
-      const { hotelId, roomId, checkIn, checkOut, guests } = payload;
+      const { hotelId, checkIn, checkOut, guests } = payload;
+      const roomId = payload.roomId || payload.hotelRoomId;
       if (!hotelId || !roomId || !checkIn || !checkOut) {
         throw new ValidationError('hotelId, roomId, checkIn, and checkOut are required for hotel bookings');
       }
@@ -118,7 +152,7 @@ class BookingEngine {
       roomsCount = Math.max(1, Number(payload.roomsCount) || 1);
 
       // Verify availability and compute stay price on server
-      const availability = await hotelAvailabilityService.checkRoomAvailability({
+      const availability = await (this.hotelService || hotelAvailabilityService).checkRoomAvailability({
         hotelId,
         roomId,
         checkIn,
@@ -146,7 +180,7 @@ class BookingEngine {
         roomsCount,
         cancellationPolicy: availability.cancellationPolicy
       };
-    } else if (type === 'excursion') {
+    } else if (type === 'excursion' || type === 'tour') {
       const excursionId = payload.excursionId || payload.itemId;
       if (!excursionId) {
         throw new ValidationError('excursionId is required for excursion bookings');
@@ -176,9 +210,48 @@ class BookingEngine {
         duration: excursion.duration,
         tourDate: payload.tourDate || 'Flexible confirmation'
       };
+    } else if (type === 'ride' || type === 'taxi') {
+      // Authoritative taxi/ride calculation
+      const { travelService } = require('./TravelService');
+      const quote = travelService.calculateTaxiQuote({
+        type: payload.rideType || payload.taxiType || payload.itinerary?.type || 'city',
+        origin: payload.origin || payload.itinerary?.origin || 'Douala',
+        destination: payload.destination || payload.itinerary?.destination || 'Douala Airport',
+        vehicleClass: payload.vehicleClass || payload.itinerary?.vehicleClass || 'comfort'
+      });
+      const subtotal = quote.estimatedPrice;
+      const serviceFee = Math.round(subtotal * 0.05);
+      verifiedPricing = {
+        baseAmount: subtotal,
+        serviceFee,
+        taxes: 0,
+        totalAmount: subtotal + serviceFee,
+        currency: quote.currency || 'XAF'
+      };
+      itinerary = {
+        rideType: quote.type,
+        origin: quote.origin,
+        destination: quote.destination,
+        vehicleClass: quote.vehicleClass,
+        etaMinutes: quote.etaMinutes,
+        driverAssigned: quote.driverAssigned
+      };
+    } else if (type === 'visa') {
+      const subtotal = 25000;
+      const serviceFee = 2500;
+      verifiedPricing = {
+        baseAmount: subtotal,
+        serviceFee,
+        taxes: 0,
+        totalAmount: subtotal + serviceFee,
+        currency: 'XAF'
+      };
+      itinerary = payload.itinerary || {
+        country: payload.country || 'France',
+        visaType: payload.visaType || 'Tourist (Type C)'
+      };
     } else {
-      // Default fallback / taxi / rides
-      const baseAmount = Number(payload.pricing?.baseAmount || payload.amount || 10000);
+      const baseAmount = 10000;
       verifiedPricing = {
         baseAmount,
         serviceFee: 0,
@@ -188,7 +261,8 @@ class BookingEngine {
       };
     }
 
-    // 4. Create Domain Booking
+    // 4. Create Domain Booking with Provider-Agnostic Pending Payment State
+    // Travel must NOT pretend payment has already cleared or fake transaction IDs!
     const booking = new Booking({
       userId,
       type,
@@ -199,9 +273,11 @@ class BookingEngine {
       pricing: verifiedPricing,
       itinerary,
       payment: {
-        method: payload.paymentMethod || 'mtn_momo',
-        status: 'PAID', // In sandbox/prod ready pipeline
-        transactionRef: `TXN-${Date.now()}`
+        method: payload.paymentMethod || payload.payment?.method || null,
+        status: PAYMENT_STATUS.PENDING, // Explicit: PENDING_PAYMENT
+        transactionRef: null, // Strictly null: no fake transaction ID
+        gatewayProvider: null,
+        paidAt: null
       }
     });
 
@@ -246,7 +322,7 @@ class BookingEngine {
       // Roll back reserved seats or inventory so we don't leak reserved resources on persistence failure
       if (['bus', 'train', 'flight'].includes(type) && reservedSeats.length > 0) {
         try {
-          await seatInventoryService.releaseSeats(itemId, reservedSeats);
+          await (this.seatService || seatInventoryService).releaseSeats(itemId, reservedSeats);
         } catch (rollbackErr) {
           logger.error(`[BookingEngine] Rollback releaseSeats failed: ${rollbackErr.message}`);
         }
@@ -255,6 +331,13 @@ class BookingEngine {
           await this.repo.releaseHotelRoom(hotelRoomId, roomsCount);
         } catch (rollbackErr) {
           logger.error(`[BookingEngine] Rollback releaseHotelRoom failed: ${rollbackErr.message}`);
+        }
+      } else if ((type === 'excursion' || type === 'tour') && itemId) {
+        try {
+          const exc = await this.repo.getExcursionById(itemId);
+          if (exc) exc.release(passengers.length);
+        } catch (rollbackErr) {
+          logger.error(`[BookingEngine] Rollback excursion release failed: ${rollbackErr.message}`);
         }
       }
       throw persistErr;
@@ -272,7 +355,7 @@ class BookingEngine {
   /**
    * Cancel booking and release inventory
    */
-  async cancelBooking(bookingId, userId, reason = 'Customer request') {
+  async cancelBooking(bookingId, userId, reason = 'Customer request', options = {}) {
     if (!userId || userId === 'usr_guest') {
       throw new AuthenticationError('Authentication required to cancel a booking');
     }
@@ -283,12 +366,18 @@ class BookingEngine {
     }
 
     // Verify ownership - anti-enumeration 404
-    if (booking.userId !== userId && userId !== 'admin') {
+    const isOwner = booking.userId === userId;
+    const isPrivileged = (options.user && ['admin', 'super_admin'].includes(options.user.primaryRole)) || userId === 'admin';
+    if (!isOwner && !isPrivileged) {
       throw new NotFoundError('Booking', bookingId);
     }
 
-    // Cancel in domain entity
-    booking.cancel(reason);
+    // Cancel in domain entity (enforces lifecycle state machine)
+    try {
+      booking.cancel(reason);
+    } catch (err) {
+      throw new ConflictError(err.message);
+    }
 
     // Authoritative durable cancellation in database & memory
     await this.repo.cancelBookingInStore(booking.id, reason);
@@ -296,9 +385,14 @@ class BookingEngine {
     // Release seats or room inventory
     if (['bus', 'train', 'flight'].includes(booking.type)) {
       const seats = booking.passengers.map(p => p.seat).filter(Boolean);
-      await seatInventoryService.releaseSeats(booking.itemId, seats);
+      await (this.seatService || seatInventoryService).releaseSeats(booking.itemId, seats);
     } else if (booking.type === 'hotel') {
       await this.repo.releaseHotelRoom(booking.itemId, 1);
+    } else if (booking.type === 'excursion' || booking.type === 'tour') {
+      const exc = await this.repo.getExcursionById(booking.itemId);
+      if (exc) {
+        exc.release(booking.passengers.length || 1);
+      }
     }
 
     logger.info(`[BookingEngine] Cancelled booking ${booking.id} (${booking.reference}) and released inventory`);

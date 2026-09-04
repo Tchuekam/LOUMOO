@@ -23,12 +23,19 @@ class Trip {
   }
 
   cancel() {
+    if (this.status === 'CANCELLED') return this;
+    if (this.status === 'COMPLETED') {
+      throw new Error('Cannot cancel a completed trip');
+    }
     this.status = 'CANCELLED';
     this.updatedAt = new Date().toISOString();
     return this;
   }
 
   complete() {
+    if (this.status === 'CANCELLED') {
+      throw new Error('Cannot complete a cancelled trip');
+    }
     this.status = 'COMPLETED';
     this.updatedAt = new Date().toISOString();
     return this;

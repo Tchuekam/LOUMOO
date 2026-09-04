@@ -9,8 +9,8 @@ const { travelRepository } = require('../infrastructure/TravelRepository');
 const { ValidationError, NotFoundError } = require('../../../shared/errors/AppError');
 
 class HotelAvailabilityService {
-  constructor() {
-    this.repo = travelRepository;
+  constructor(repo = travelRepository) {
+    this.repo = repo;
   }
 
   /**

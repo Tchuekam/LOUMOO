@@ -22,11 +22,13 @@ const { Trip } = require('../domain/Trip');
 const { Ticket } = require('../domain/Ticket');
 
 class TravelRepository {
-  constructor() {
+  constructor({ db = undefined } = {}) {
+    this._customDb = db;
     this._initInMemoryStore();
   }
 
   get db() {
+    if (this._customDb !== undefined) return this._customDb;
     try {
       return SupabaseDatabase.getAdmin();
     } catch {
@@ -150,68 +152,9 @@ class TravelRepository {
   }
 
   _seedDemoActivity() {
-    const bkg1 = new Booking({
-      id: 'bkg_demo_upcoming_1',
-      reference: 'LMT-BUS-78291',
-      type: 'bus',
-      itemId: 'bus-sch-1',
-      userId: 'usr_guest',
-      status: BOOKING_STATUS.CONFIRMED,
-      itinerary: {
-        operator: 'General Express Voyages',
-        route: 'Douala (Bépanda) → Yaoundé (Mvan)',
-        origin: 'Douala',
-        destination: 'Yaoundé',
-        departureDate: 'Tomorrow',
-        departureTime: '08:00',
-        arrivalTime: '11:45',
-        busClass: 'VIP Prestige',
-        terminal: 'Terminal Bépanda Quai VIP 2'
-      },
-      passengers: [
-        new BookingPassenger({ name: 'ROSTAND TCHUEKAM', seat: '4A', phone: '+237 690 12 34 56' })
-      ],
-      pricing: {
-        baseAmount: 6000,
-        serviceFee: 500,
-        totalAmount: 6500,
-        currency: 'XAF'
-      },
-      payment: {
-        method: 'mtn_momo',
-        status: 'PAID',
-        transactionRef: 'MOMO-94810294'
-      }
-    });
-
-    const trip1 = new Trip({
-      id: 'trp_demo_1',
-      userId: bkg1.userId,
-      bookingId: bkg1.id,
-      bookingReference: bkg1.reference,
-      type: bkg1.type,
-      providerName: 'General Express Voyages',
-      origin: 'Douala',
-      destination: 'Yaoundé',
-      departure: 'Tomorrow 08:00',
-      arrival: 'Tomorrow 11:45',
-      status: 'UPCOMING',
-      passenger: 'ROSTAND TCHUEKAM',
-      seat: '4A'
-    });
-
-    const ticket1 = new Ticket({
-      id: 'tkt_demo_1',
-      bookingId: bkg1.id,
-      ticketNumber: 'TK-BUS-78291-C8F',
-      type: bkg1.type,
-      reference: bkg1.reference,
-      status: 'VALID'
-    });
-
-    this.bookings.set(bkg1.id, bkg1);
-    this.trips.set(trip1.id, trip1);
-    this.tickets.set(ticket1.id, ticket1);
+    // In production, real customer bookings, trips, and tickets originate exclusively from
+    // authenticated user transactions committed to authoritative persistent storage.
+    // Zero hardcoded customer PII or placeholder transactions are seeded into memory.
   }
 
   // --- DESTINATIONS ---
@@ -750,16 +693,19 @@ class TravelRepository {
     return list.map(t => t.toJSON());
   }
 
-  async getTripById(tripId) {
+  async getTripById(tripId, userId = null) {
     if (!tripId) return null;
 
     if (this.db) {
       try {
-        const { data, error } = await this.db
+        let q = this.db
           .from('trips')
           .select('*')
-          .or(`id.eq.${tripId},booking_id.eq.${tripId}`)
-          .maybeSingle();
+          .or(`id.eq.${tripId},booking_id.eq.${tripId}`);
+        if (userId && userId !== 'admin') {
+          q = q.eq('user_id', userId);
+        }
+        const { data, error } = await q.maybeSingle();
         if (!error && data) {
           const trip = this._mapRowToTrip(data);
           this.trips.set(trip.id, trip);
@@ -771,20 +717,26 @@ class TravelRepository {
     }
 
     const trip = this.trips.get(tripId) || Array.from(this.trips.values()).find(t => t.bookingId === tripId);
-    return trip ? trip.toJSON() : null;
+    if (!trip) return null;
+    if (userId && userId !== 'admin' && trip.userId !== userId) return null;
+    return trip.toJSON();
   }
 
-  async getTicketByIdOrBooking(idOrBookingId) {
+  async getTicketByIdOrBooking(idOrBookingId, userId = null) {
     if (!idOrBookingId) return null;
 
     if (this.db) {
       try {
         const { data, error } = await this.db
           .from('tickets')
-          .select('*')
+          .select('*, travel_bookings(user_id)')
           .or(`id.eq.${idOrBookingId},booking_id.eq.${idOrBookingId},ticket_number.eq.${idOrBookingId}`)
           .maybeSingle();
         if (!error && data) {
+          if (userId && userId !== 'admin') {
+            const ticketOwner = data.travel_bookings?.user_id;
+            if (ticketOwner && ticketOwner !== userId) return null;
+          }
           const ticket = this._mapRowToTicket(data);
           this.tickets.set(ticket.id, ticket);
           return ticket.toJSON();
@@ -800,7 +752,12 @@ class TravelRepository {
         t => t.bookingId === idOrBookingId || t.ticketNumber === idOrBookingId
       );
     }
-    return tkt ? tkt.toJSON() : null;
+    if (!tkt) return null;
+    if (userId && userId !== 'admin') {
+      const b = this.bookings.get(tkt.bookingId);
+      if (b && b.userId !== userId) return null;
+    }
+    return tkt.toJSON();
   }
 
   async getUserTickets(userId) {
@@ -847,22 +804,20 @@ class TravelRepository {
   async cancelBookingInStore(bookingId, reason = 'Customer request') {
     const booking = await this.getBookingById(bookingId);
     if (booking) {
-      booking.status = BOOKING_STATUS.CANCELLED;
-      booking.cancellationReason = reason;
-      booking.updatedAt = new Date().toISOString();
+      if (booking.status !== BOOKING_STATUS.CANCELLED) {
+        booking.cancel(reason);
+      }
       this.bookings.set(booking.id, booking);
     }
 
     const trip = this.trips.get(bookingId) || Array.from(this.trips.values()).find(t => t.bookingId === bookingId);
     if (trip) {
-      trip.status = 'CANCELLED';
-      trip.updatedAt = new Date().toISOString();
+      trip.cancel();
     }
 
     const ticket = this.tickets.get(bookingId) || Array.from(this.tickets.values()).find(t => t.bookingId === bookingId);
     if (ticket) {
-      ticket.status = 'CANCELLED';
-      ticket.updatedAt = new Date().toISOString();
+      ticket.cancel();
     }
 
     if (this.db) {
@@ -876,6 +831,31 @@ class TravelRepository {
       } catch (err) {
         logger.error('[TravelRepo] Failed to cancel booking in database', err);
         throw new InfrastructureError('Supabase', 'Failed to update booking cancellation in database', err);
+      }
+    }
+
+    return booking;
+  }
+
+  async updatePaymentStatus(bookingId, paymentInfo = {}) {
+    const booking = await this.getBookingById(bookingId);
+    if (booking) {
+      booking.payment = { ...booking.payment, ...paymentInfo };
+      booking.updatedAt = new Date().toISOString();
+      this.bookings.set(booking.id, booking);
+    }
+
+    if (this.db) {
+      try {
+        await this.db.from('travel_bookings')
+          .update({
+            payment_info: booking ? booking.payment : paymentInfo,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', bookingId);
+      } catch (err) {
+        logger.error('[TravelRepo] Failed to update payment status in database', err);
+        throw new InfrastructureError('Supabase', 'Failed to update payment status in database', err);
       }
     }
 

@@ -338,7 +338,7 @@ router.get('/bookings/my-trips', requireAuth, async (req, res, next) => {
 router.get('/bookings/:id', requireAuth, async (req, res, next) => {
   try {
     const userId = req.principal.id;
-    const booking = await travelService.getBookingById(req.params.id, userId);
+    const booking = await travelService.getBookingById(req.params.id, userId, { user: req.principal });
     res.json({
       success: true,
       data: booking
@@ -353,7 +353,7 @@ router.post('/bookings/:id/cancel', requireAuth, async (req, res, next) => {
   try {
     const userId = req.principal.id;
     const reason = req.body.reason || 'Customer request';
-    const cancelled = await travelService.cancelBooking(req.params.id, userId, reason);
+    const cancelled = await travelService.cancelBooking(req.params.id, userId, reason, { user: req.principal });
     res.json({
       success: true,
       message: 'Booking successfully cancelled.',
@@ -389,7 +389,7 @@ router.get('/trips', requireAuth, async (req, res, next) => {
 router.get('/trips/:id', requireAuth, async (req, res, next) => {
   try {
     const userId = req.principal.id;
-    const trip = await travelService.getTripById(req.params.id, userId);
+    const trip = await travelService.getTripById(req.params.id, userId, { user: req.principal });
     res.json({
       success: true,
       data: trip
@@ -423,7 +423,7 @@ router.get('/tickets', requireAuth, async (req, res, next) => {
 router.get('/tickets/:id', requireAuth, async (req, res, next) => {
   try {
     const userId = req.principal.id;
-    const ticket = await travelService.getTicketById(req.params.id, userId);
+    const ticket = await travelService.getTicketById(req.params.id, userId, { user: req.principal });
     res.json({
       success: true,
       data: ticket
