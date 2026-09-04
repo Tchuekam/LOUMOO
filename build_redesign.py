@@ -791,20 +791,22 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
     background: var(--color-surface); border-right: 1px solid var(--color-divider);
     flex: none; padding: 20px 14px 16px; box-sizing: border-box; overflow-y: auto; overflow-x: hidden; z-index: 10;
     transition: width 0.22s cubic-bezier(0.4, 0, 0.2, 1), padding 0.22s ease;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
   }
+  .sidebar-nav::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
   .sidebar-nav.collapsed {
     width: 72px !important;
     padding: 16px 8px !important;
     align-items: center;
+    overflow-y: auto !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
   }
+  .sidebar-nav.collapsed::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
   .device-frame { max-width: none !important; height: 100vh !important; background: var(--color-bg) !important; flex: 1 !important; transition: all 0.22s ease; }
   .status-bar, .bottom-nav-mobile { display: none !important; }
-  .desktop-topbar {
-    display: flex !important; align-items: center; justify-content: space-between;
-    height: 62px; padding: 0 24px; background: var(--color-surface);
-    border-bottom: 1px solid var(--color-divider); flex: none; gap: 16px; z-index: 10;
-    box-sizing: border-box; box-shadow: var(--shadow-xs);
-  }
+  .desktop-topbar { display: none !important; }
   .scr { flex: 1; overflow-y: auto; overflow-x: hidden; padding-bottom: 48px; }
   .scr > sc-if > div { max-width: 1300px; margin: 0 auto; padding: 24px 32px 64px !important; }
   .home-grid, .home-grid-3 { grid-template-columns: repeat(4, 1fr) !important; gap: 18px !important; }
@@ -1032,8 +1034,8 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 .sidebar-nav.collapsed .sidebar-cta-wrap { padding: 0 !important; margin-top: 12px !important; display: flex !important; justify-content: center !important; width: 100% !important; }
 .sidebar-nav.collapsed .sidebar-cta-btn { width: 44px !important; height: 44px !important; min-width: 44px !important; border-radius: 50% !important; padding: 0 !important; margin: 0 auto !important; }
 .sidebar-nav.collapsed .sidebar-cta-btn span { display: none !important; }
-.sidebar-nav.collapsed .sidebar-footer { width: 100% !important; display: flex !important; justify-content: center !important; padding-top: 10px !important; }
-.sidebar-nav.collapsed .sidebar-footer .nav-item { justify-content: center !important; width: 44px !important; height: 44px !important; padding: 0 !important; margin: 0 auto !important; }
+.sidebar-nav.collapsed .sidebar-footer { width: 100% !important; display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; padding-top: 10px !important; gap: 6px !important; }
+.sidebar-nav.collapsed .sidebar-footer .nav-item { justify-content: center !important; width: 44px !important; height: 44px !important; padding: 0 !important; margin: 0 auto !important; border-radius: 12px !important; }
 .sidebar-nav.collapsed .sidebar-footer .nav-item div:not(:first-child),
 .sidebar-nav.collapsed .sidebar-footer .nav-item svg:last-child { display: none !important; }
 
@@ -1150,22 +1152,33 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 .radar-center-icon { width: 64px; height: 64px; border-radius: 50%; background: var(--color-accent); color: #fff; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-glow-blue); position: relative; z-index: 2; }
 .success-check-badge { width: 72px; height: 72px; border-radius: 50%; background: var(--color-success); color: #fff; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; box-shadow: var(--shadow-glow-green); }
 
-/* ── Travel Concierge Styles ── */
-.travel-search-widget { background: var(--color-surface); border: 1px solid var(--color-divider); border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 14px; }
-.flight-route-row { display: grid; grid-template-columns: 1fr auto 1fr; gap: 8px; align-items: center; }
-.route-swap-btn { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--color-divider); background: var(--color-surface); display: flex; align-items: center; justify-content: center; color: var(--color-text); cursor: pointer; }
-.flight-card { background: var(--color-surface); border: 1px solid var(--color-divider); border-radius: var(--radius-md); padding: 18px; box-shadow: var(--shadow-xs); display: flex; flex-direction: column; gap: 14px; cursor: pointer; transition: all 0.2s ease; }
-.flight-card:hover { border-color: var(--color-neutral-300); box-shadow: var(--shadow-sm); }
-.flight-timeline { display: flex; justify-content: space-between; align-items: center; }
-.flight-line-wrap { flex: 1; margin: 0 16px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+/* ── Travel Concierge Styles (Apple-Grade Spatial Commerce) ── */
+.travel-search-widget { background: var(--color-surface); border: 1px solid var(--color-divider); border-radius: var(--radius-xl); padding: 24px; box-shadow: var(--shadow-md); display: flex; flex-direction: column; gap: 16px; transition: box-shadow 0.3s var(--ease-spring); }
+.travel-segmented-bar { background: var(--color-neutral-100); border: 1px solid var(--color-divider); border-radius: var(--radius-pill); padding: 4px; display: inline-flex; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+.travel-segmented-bar::-webkit-scrollbar { display: none; }
+.travel-segmented-bar .seg-item { border: none; background: transparent; color: var(--color-text-secondary); padding: 9px 18px; border-radius: var(--radius-pill); font: 700 13px/1 var(--font-heading); cursor: pointer; display: flex; align-items: center; gap: 7px; white-space: nowrap; transition: all 0.2s var(--ease-spring); }
+.travel-segmented-bar .seg-item:hover { color: var(--color-text); }
+.travel-segmented-bar .seg-item.active { background: var(--color-surface); color: var(--color-text); box-shadow: var(--shadow-sm); }
+.flight-route-row { display: grid; grid-template-columns: 1fr auto 1fr; gap: 12px; align-items: center; }
+.route-swap-btn { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--color-divider); background: var(--color-surface); display: flex; align-items: center; justify-content: center; color: var(--color-accent); cursor: pointer; box-shadow: var(--shadow-sm); transition: all 0.2s var(--ease-spring); }
+.route-swap-btn:hover { background: var(--color-accent-100); transform: rotate(180deg); }
+.flight-card { background: var(--color-surface); border: 1px solid var(--color-divider); border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 14px; cursor: pointer; transition: all 0.25s var(--ease-spring); }
+.flight-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); border-color: var(--color-accent-200); }
+.flight-timeline { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+.flight-line-wrap { flex: 1; margin: 0 16px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 4px; position: relative; }
 .flight-line { width: 100%; height: 2px; background: var(--color-divider); position: relative; }
 .flight-line::after { content: ''; position: absolute; right: 0; top: -3px; width: 8px; height: 8px; border-radius: 50%; background: var(--color-accent); }
+@media (max-width: 860px) { .travel-desktop-split { grid-template-columns: 1fr !important; } .spatial-discovery-card { display: none !important; } }
 
 /* ── Apple Wallet Boarding Pass ── */
-.boarding-pass { background: var(--color-surface); border: 1px solid var(--color-divider); border-radius: var(--radius-xl); box-shadow: var(--shadow-lg); overflow: hidden; }
-.pass-header { background: linear-gradient(135deg, #002b61 0%, #007aff 100%); color: #fff; padding: 24px 20px; }
-.pass-body { padding: 20px; background: var(--color-surface); border-bottom: 1px dashed var(--color-divider); }
-.pass-qr-wrap { padding: 24px 20px; text-align: center; background: var(--color-surface-subtle); }
+.boarding-pass { background: var(--color-surface); border: 1px solid var(--color-divider); border-radius: var(--radius-xl); box-shadow: var(--shadow-xl); overflow: hidden; max-width: 560px; margin: 0 auto; }
+.pass-header { background: linear-gradient(135deg, #0b2e5c 0%, #123f7a 55%, #1a5fb4 100%); color: #fff; padding: 24px 24px 20px; }
+.pass-body { padding: 24px; background: var(--color-surface); border-bottom: 2px dashed var(--color-divider); }
+.pass-qr-wrap { padding: 24px; text-align: center; background: var(--color-surface); position: relative; }
+.pass-qr-wrap::before, .pass-qr-wrap::after { content: ''; position: absolute; top: -14px; width: 28px; height: 28px; background: var(--color-bg); border-radius: 50%; z-index: 5; }
+.pass-qr-wrap::before { left: -14px; box-shadow: inset -2px 0 3px rgba(0,0,0,0.05); }
+.pass-qr-wrap::after { right: -14px; box-shadow: inset 2px 0 3px rgba(0,0,0,0.05); }
+[data-theme="dark"] .pass-qr-wrap::before, [data-theme="dark"] .pass-qr-wrap::after { background: #090a0f; }
 
 /* ══════════════════════════════════════════════════════════════════════════
    LOUMOO COMPARISON ENGINE & SIDE-BY-SIDE MATRIX STYLES
@@ -5313,37 +5326,6 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 
 <div class="device-frame">
 
-<!-- Desktop Topbar (≥1024px) -->
-<div class="desktop-topbar">
-  <div style="display:flex;align-items:center;gap:10px">
-    <button onClick="{{ toggleSidebar }}" aria-label="Toggle sidebar navigation" title="{{ sidebarCollapsed ? 'Expand full sidebar' : 'Collapse to icon rail' }}" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--color-text);transition:all .15s ease">
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 3v18"/></svg>
-    </button>
-    <button onClick="{{ back }}" aria-label="Go back" title="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--color-text)">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
-    </button>
-  </div>
-
-  <div style="display:flex;align-items:center;gap:10px">
-    <button onClick="{{ toggleDark }}" aria-label="Toggle dark and light mode" title="Toggle Dark/Light Mode" style="border:1px solid var(--color-divider);background:var(--color-surface);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--color-text)">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-    </button>
-    <sc-if value="{{ isLoggedIn }}">
-      <button onClick="{{ on.notifications }}" aria-label="Notifications" title="Notifications" style="border:1px solid var(--color-divider);background:var(--color-surface);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--color-text);position:relative">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-        <sc-if value="{{ notifHasUnread }}"><span style="position:absolute;top:1px;right:1px;min-width:15px;height:15px;padding:0 3px;border-radius:8px;background:var(--color-accent-sale);color:#fff;font:800 9px/15px var(--font-heading);text-align:center">{{ notifBadgeLabel }}</span></sc-if>
-      </button>
-    </sc-if>
-    <sc-if value="{{ !isLoggedIn }}">
-      <button onClick="{{ on.signIn }}" class="btn btn-secondary" style="height:38px;padding:0 14px;font-size:12px;font-weight:700">SIGN IN</button>
-    </sc-if>
-    <button onClick="{{ on.cart }}" aria-label="View bag" style="display:flex;align-items:center;gap:8px;background:var(--color-accent);color:#fff;border:none;border-radius:var(--radius-pill);padding:0 18px;height:40px;font:700 13px/1 var(--font-heading);cursor:pointer;box-shadow:var(--shadow-glow-blue)">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
-      <span>Bag ({{ cartCount }})</span>
-    </button>
-  </div>
-</div>
-
 <!-- Mobile Status Bar (<1024px) -->
 <div class="status-bar">
   <span>9:41</span>
@@ -7259,7 +7241,7 @@ if (typeof window !== 'undefined') {
 class Component extends DCLogic {
   state = {
     screen: 'home', stack: [], cart: 0, cartItems: [], orders: [], lastOrder: null, vs: 2, toast: '', following: false, saved: false,
-    sidebarCollapsed: false,
+    sidebarCollapsed: true,
     vsFilterMode: 'all',
     vsPriority: 'perf',
     vsResult: null,
@@ -7849,7 +7831,39 @@ class Component extends DCLogic {
     const list = (this.state.notifications || []).map((n) => n.read ? n : Object.assign({}, n, { read: true }));
     this.setState({ notifications: list });
     this._persistNotifs(list);
+    // Sync to the backend feed when signed in.
+    try {
+      if (this.state.authStatus === 'authenticated') {
+        const api = getApi();
+        if (api && api.markAllNotificationsRead) api.markAllNotificationsRead().catch(() => {});
+      }
+    } catch (e) {}
   };
+  // Pull the server-side notification feed (order events, etc.) and merge it
+  // into the local activity feed, de-duplicated by server id.
+  loadServerNotifications() {
+    try {
+      if (this.state.authStatus !== 'authenticated') return;
+      const api = getApi();
+      if (!api || !api.getNotifications) return;
+      api.getNotifications({ limit: 30 }).then((serverList) => {
+        if (this._unmounted || !Array.isArray(serverList) || !serverList.length) return;
+        const local = this.state.notifications || [];
+        const known = new Set(local.filter((n) => n.serverId).map((n) => n.serverId));
+        const mapped = serverList
+          .filter((s) => s && s.id && !known.has(s.id))
+          .map((s) => ({
+            id: 'srv_' + s.id, serverId: s.id, tone: s.tone || 'accent',
+            title: s.title, body: s.body, read: Boolean(s.read),
+            createdAt: new Date(s.createdAt).getTime() || Date.now()
+          }));
+        if (!mapped.length) return;
+        const merged = local.concat(mapped).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)).slice(0, 40);
+        this.setState({ notifications: merged });
+        this._persistNotifs(merged);
+      }).catch(() => {});
+    } catch (e) {}
+  }
   // City → IATA-ish code + airport label for the boarding pass.
   _cityCode = (city) => {
     const map = {
@@ -7930,6 +7944,8 @@ class Component extends DCLogic {
     // Load the live marketplace catalogue for the home rail on first paint
     // (_onScreenEnter only fires on subsequent navigation, not initial mount).
     this.loadCatalogProducts({ limit: 16 });
+    // Once auth has had a moment to settle, pull the server notification feed.
+    setTimeout(() => { if (!this._unmounted) this.loadServerNotifications(); }, 2000);
     if (typeof window !== 'undefined') {
       window._loumooHeroComponent = this;
       window.heroNextSlide = () => {
@@ -9787,8 +9803,8 @@ class Component extends DCLogic {
     SCREENS.forEach(k => { is[k] = s === k; });
     const on = {};
     SCREENS.forEach(k => { on[k] = () => this.go(k); });
-    // Opening the notifications feed marks everything read (clears the badge).
-    on.notifications = () => { this._markNotifsRead(); this.go('notifications'); };
+    // Opening the notifications feed pulls the server feed, then marks read.
+    on.notifications = () => { this.go('notifications'); this.loadServerNotifications(); this._markNotifsRead(); };
     on.toggleSidebar = () => this.toggleSidebar();
     on.expandSidebar = () => this.expandSidebar();
     on.collapseSidebar = () => this.collapseSidebar();
@@ -13077,15 +13093,23 @@ class Component extends DCLogic {
         this._persistOrders(list);
         this._persistCart([]);
         // Mirror to the backend as a real order row when the user is signed in.
+        const authed = this.state.authStatus === 'authenticated';
         try {
-          if (this.state.authStatus === 'authenticated') {
+          if (authed) {
             const api = getApi();
             if (api && api.createOrder) {
-              api.createOrder({ orderNumber: orderNumber, items: items, totalAmountXaf: total, shippingAddress: address }).catch(() => {});
+              // The server creates the order notification; pull it back once saved.
+              api.createOrder({ orderNumber: orderNumber, items: items, totalAmountXaf: total, shippingAddress: address })
+                .then(() => { if (!this._unmounted) this.loadServerNotifications(); })
+                .catch(() => {});
             }
           }
         } catch (e) {}
-        this._pushNotif({ tone: 'accent', title: 'Order ' + orderNumber + ' placed', body: 'Your order is confirmed — pay on delivery via ' + method + '.' });
+        // Guests get an instant local notification; signed-in users get the
+        // authoritative one from the server (above) to avoid a duplicate.
+        if (!authed) {
+          this._pushNotif({ tone: 'accent', title: 'Order ' + orderNumber + ' placed', body: 'Your order is confirmed — pay on delivery via ' + method + '.' });
+        }
         this.toast('Order ' + orderNumber + ' placed');
         this.go('success');
       },

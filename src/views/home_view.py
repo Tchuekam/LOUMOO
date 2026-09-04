@@ -31,6 +31,14 @@ def get_home_view():
         </div>
         <button onClick="{{ on.signIn }}" class="btn btn-secondary" style="height:32px;padding:0 12px;font-size:11px;font-weight:800;border-radius:var(--radius-pill);cursor:pointer">SIGN IN</button>
       </sc-if>
+      <button onClick="{{ toggleDark }}" aria-label="Toggle dark and light mode" title="{{ darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode' }}" style="width:38px;height:38px;border:1px solid var(--color-divider);border-radius:50%;background:var(--color-surface);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--color-text);transition:all .15s ease">
+        <sc-if value="{{ darkMode }}">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        </sc-if>
+        <sc-if value="{{ !darkMode }}">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </sc-if>
+      </button>
       <button onClick="{{ on.saved }}" aria-label="Open saved wishlist" title="Wishlist" style="width:38px;height:38px;border:1px solid var(--color-divider);border-radius:50%;background:var(--color-surface);display:flex;align-items:center;justify-content:center;position:relative;color:{{ wishlistHasItems ? 'var(--color-accent-sale)' : 'var(--color-text)' }};cursor:pointer">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ wishlistHasItems ? 'currentColor' : 'none' }}" stroke="currentColor" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
         <sc-if value="{{ wishlistHasItems }}"><span style="position:absolute;top:-4px;right:-4px;min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:var(--color-accent-sale);color:#fff;font:800 9.5px/16px var(--font-heading);text-align:center">{{ wishlistCount }}</span></sc-if>

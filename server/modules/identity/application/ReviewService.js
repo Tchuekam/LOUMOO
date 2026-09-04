@@ -62,13 +62,23 @@ class ReviewService {
         .eq('id', targetId)
         .maybeSingle();
 
-      if (!listing || listing.status === 'ARCHIVED') {
-        throw new NotFoundError('Listing', targetId);
+      if (listing && listing.status !== 'ARCHIVED') {
+        if (listing.seller_id === authorPrincipal.id) {
+          throw new ValidationError('You cannot review your own product or service listing.');
+        }
+        targetOwnerId = listing.seller_id;
+      } else {
+        // Not a live DB listing — accept the review only if it targets a product
+        // from the curated storefront catalogue (src/data/catalog_products.js).
+        // Those products have no seller account, so there is no owner to notify
+        // or run a block check against.
+        let curated = {};
+        try { curated = require('../../catalog/dataLoader').catalogProducts || {}; } catch (e) { curated = {}; }
+        if (!curated[targetId]) {
+          throw new NotFoundError('Listing', targetId);
+        }
+        targetOwnerId = null;
       }
-      if (listing.seller_id === authorPrincipal.id) {
-        throw new ValidationError('You cannot review your own product or service listing.');
-      }
-      targetOwnerId = listing.seller_id;
     }
 
     // ── 2. Check Blocking Preferences ──

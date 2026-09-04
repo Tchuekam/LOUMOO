@@ -15,6 +15,7 @@ const AddressManagementUseCase = require('../../application/AddressManagementUse
 const PurchaseHistoryUseCase = require('../../application/PurchaseHistoryUseCase');
 const UserActivityUseCase = require('../../application/UserActivityUseCase');
 const NotificationPreferencesUseCase = require('../../application/NotificationPreferencesUseCase');
+const NotificationService = require('../../application/NotificationService');
 const AccountSecurityService = require('../../application/AccountSecurityService');
 const DeleteAccountUseCase = require('../../application/DeleteAccountUseCase');
 const PrivacyPreferencesUseCase = require('../../application/PrivacyPreferencesUseCase');
@@ -277,6 +278,37 @@ router.get('/me/purchases/:orderId', requireAuth, async (req, res, next) => {
   }
 });
 
+// GET /api/v1/users/me/notifications — the buyer's notification feed
+router.get('/me/notifications', requireAuth, async (req, res, next) => {
+  try {
+    const limit = Math.min(50, Math.max(1, parseInt(req.query.limit, 10) || 30));
+    const notifications = await NotificationService.list(req.userProfile.id, { limit });
+    res.json({ status: 'success', data: { notifications } });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// POST /api/v1/users/me/notifications/read-all — mark every notification read
+router.post('/me/notifications/read-all', requireAuth, async (req, res, next) => {
+  try {
+    await NotificationService.markAllRead(req.userProfile.id);
+    res.json({ status: 'success', data: { ok: true } });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// POST /api/v1/users/me/notifications/:id/read — mark one notification read
+router.post('/me/notifications/:id/read', requireAuth, async (req, res, next) => {
+  try {
+    await NotificationService.markRead(req.userProfile.id, req.params.id);
+    res.json({ status: 'success', data: { ok: true } });
+  } catch (err) {
+    next(err);
+  }
+});
+
 // POST /api/v1/users/me/orders (Place a new order — payment deferred, pay on delivery)
 router.post('/me/orders', requireAuth, async (req, res, next) => {
   try {
@@ -287,6 +319,15 @@ router.post('/me/orders', requireAuth, async (req, res, next) => {
       description: `Placed order ${order.orderNumber} (XAF ${order.totalAmountXaf}).`,
       resourceType: 'order',
       resourceId: order.id
+    });
+    // Server-side notification so the buyer's feed reflects the order everywhere
+    // they sign in — not just on the device that placed it.
+    await NotificationService.create(req.userProfile.id, {
+      type: 'order',
+      tone: 'accent',
+      title: `Order ${order.orderNumber} placed`,
+      body: `Your order is confirmed — pay on delivery. Total XAF ${order.totalAmountXaf}.`,
+      metadata: { orderId: order.id, orderNumber: order.orderNumber }
     });
     res.status(201).json({
       status: 'success',

@@ -509,6 +509,20 @@
     return this.request('/api/v1/travel/bookings/my-trips' + qs(params));
   };
 
+  /* --- Notifications feed --- */
+  LoumooApiClient.prototype.getNotifications = function (params) {
+    return this.request('/api/v1/users/me/notifications' + qs(params))
+      .then(function (data) { return (data && data.notifications) || []; });
+  };
+
+  LoumooApiClient.prototype.markNotificationRead = function (id) {
+    return this.request('/api/v1/users/me/notifications/' + encodeURIComponent(id) + '/read', { method: 'POST' });
+  };
+
+  LoumooApiClient.prototype.markAllNotificationsRead = function () {
+    return this.request('/api/v1/users/me/notifications/read-all', { method: 'POST' });
+  };
+
   /* --- 04.07 Activity history --- */
   LoumooApiClient.prototype.getActivities = function (params) {
     return this.request('/api/v1/users/me/activities' + qs(params));

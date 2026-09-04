@@ -128,6 +128,13 @@ html, body {
     box-sizing: border-box;
     overflow-y: auto;
     z-index: 10;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+  .sidebar-nav::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
   }
   .device-frame {
     max-width: none !important;
@@ -142,21 +149,7 @@ html, body {
   }
   .status-bar { display: none !important; }
   .bottom-nav-mobile { display: none !important; }
-  
-  .desktop-topbar {
-    display: flex !important;
-    align-items: center;
-    justify-content: space-between;
-    height: 58px;
-    padding: 0 28px;
-    background: var(--color-surface);
-    border-bottom: 1px solid var(--color-divider);
-    flex: none;
-    gap: 16px;
-    z-index: 10;
-    box-sizing: border-box;
-    box-shadow: var(--shadow-xs);
-  }
+  .desktop-topbar { display: none !important; }
   .scr {
     flex: 1;
     overflow-y: auto;
