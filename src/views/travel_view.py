@@ -11,339 +11,386 @@ def get_travel_view():
      TRAVEL & MOBILITY CENTRAL HUB (is.travel)
      ══════════════════════════════════════════════════════════════════════ -->
 <sc-if value="{{ is.travel }}">
-<div style="padding-bottom:60px">
+<div style="padding-bottom:70px">
   
   <!-- Apple-Grade Glass Sticky Topbar -->
-  <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:var(--color-surface-glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:30">
-    <div style="display:flex;align-items:center;gap:14px">
-      <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;box-shadow:var(--shadow-xs);transition:all .2s var(--ease-spring)">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m15 18-6-6 6-6"/></svg>
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--color-surface-glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:30">
+    <div style="display:flex;align-items:center;gap:12px">
+      <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;box-shadow:var(--shadow-xs);transition:all .2s var(--ease-spring);flex-shrink:0">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m15 18-6-6 6-6"/></svg>
       </button>
       <div>
-        <div style="display:flex;align-items:center;gap:8px">
-          <h4 style="margin:0;font-size:17px;font-weight:800;letter-spacing:-.02em;color:var(--color-text)">LOUMOO Travel</h4>
-          <span style="background:rgba(0,122,255,0.1);color:var(--color-accent);font:800 10px/1 var(--font-heading);padding:3px 8px;border-radius:var(--radius-pill);letter-spacing:.04em">CENTRAL</span>
+        <div style="display:flex;align-items:center;gap:6px">
+          <h4 style="margin:0;font-size:15.5px;font-weight:800;letter-spacing:-.02em;color:var(--color-text)">LOUMOO Travel</h4>
+          <span style="background:var(--color-accent-100);color:var(--color-accent);font:800 9px/1 var(--font-heading);padding:2px 6px;border-radius:var(--radius-pill)">CENTRAL</span>
         </div>
-        <div style="font:500 12px/1.2 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Flights, stays, intercity buses, trains &amp; rides</div>
+        <div style="font:500 11px/1.2 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Flights, stays, buses, trains &amp; rides</div>
       </div>
     </div>
-    <div style="display:flex;align-items:center;gap:10px">
-      <button onClick="{{ on.travelTicket }}" aria-label="View My Ticket" style="height:36px;padding:0 14px;border-radius:var(--radius-pill);border:1px solid var(--color-divider);background:var(--color-surface);font:700 12px/1 var(--font-body);color:var(--color-text);cursor:pointer;display:flex;align-items:center;gap:6px;box-shadow:var(--shadow-xs);transition:all .2s var(--ease-spring)">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
-        <span>My Ticket</span>
-      </button>
-    </div>
+    <button onClick="{{ on.travelTicket }}" aria-label="View My Ticket" style="height:32px;padding:0 12px;border-radius:var(--radius-pill);border:1px solid var(--color-divider);background:var(--color-surface);font:700 11.5px/1 var(--font-body);color:var(--color-text);cursor:pointer;display:flex;align-items:center;gap:5px;box-shadow:var(--shadow-xs);flex-shrink:0">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+      <span>My Ticket</span>
+    </button>
   </div>
 
-  <div style="padding:24px 20px;max-width:1120px;margin:0 auto">
+  <div style="padding:16px 16px;max-width:1040px;margin:0 auto;display:flex;flex-direction:column;gap:20px">
     
-    <!-- Hero Statement -->
-    <div style="margin-bottom:28px;text-align:left">
-      <h1 style="font-size:clamp(28px, 4vw, 42px);font-weight:800;letter-spacing:-0.035em;color:var(--color-text);margin:0 0 8px;line-height:1.15">
+    <!-- Editorial Headline & Primary Travel Question -->
+    <div>
+      <div style="font:700 10.5px/1 var(--font-heading);letter-spacing:.1em;color:var(--color-accent);text-transform:uppercase;margin-bottom:4px">EXPLORE &amp; BOOK</div>
+      <h1 style="font-size:clamp(21px, 3.2vw, 30px);font-weight:800;letter-spacing:-0.03em;color:var(--color-text);margin:0 0 4px;line-height:1.2">
         Where are you going?
       </h1>
-      <p style="font-size:15px;color:var(--color-text-secondary);margin:0;font-weight:500;line-height:1.4">
-        Flights, buses, trains, stays and rides — all in one place.
+      <p style="font-size:13px;color:var(--color-text-secondary);margin:0;font-weight:500">
+        Official bookings across Cameroon &amp; beyond.
       </p>
     </div>
 
-    <!-- Apple-Style Segmented Navigation (Primary Modes) -->
-    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;margin-bottom:20px">
-      
-      <!-- Primary 5 Category Segmented Bar -->
-      <div class="travel-segmented-bar" style="background:var(--color-neutral-100);border:1px solid var(--color-divider);border-radius:var(--radius-pill);padding:4px;display:inline-flex;gap:4px;overflow-x:auto;max-width:100%;box-shadow:inset 0 1px 2px rgba(0,0,0,0.03)">
-        
-        <button onClick="{{ setTravelTabFlight }}" class="seg-item {{ isTravelTabFlight ? 'active' : '' }}" style="border:none;background:{{ isTravelTabFlight ? 'var(--color-surface)' : 'transparent' }};color:{{ isTravelTabFlight ? 'var(--color-text)' : 'var(--color-text-secondary)' }};padding:9px 18px;border-radius:var(--radius-pill);font:700 13px/1 var(--font-heading);cursor:pointer;display:flex;align-items:center;gap:7px;box-shadow:{{ isTravelTabFlight ? 'var(--shadow-sm)' : 'none' }};transition:all .2s var(--ease-spring)">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1z"/></svg>
-          <span>Flights</span>
-        </button>
-
-        <button onClick="{{ openHotelSearch }}" class="seg-item" style="border:none;background:transparent;color:var(--color-text-secondary);padding:9px 18px;border-radius:var(--radius-pill);font:700 13px/1 var(--font-heading);cursor:pointer;display:flex;align-items:center;gap:7px;transition:all .2s var(--ease-spring)">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 21h18"/><path d="M19 21v-4"/><path d="M19 17a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v4"/><path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"/></svg>
-          <span>Hotels</span>
-        </button>
-
-        <button onClick="{{ setTravelTabBus }}" class="seg-item {{ isTravelTabBus ? 'active' : '' }}" style="border:none;background:{{ isTravelTabBus ? 'var(--color-surface)' : 'transparent' }};color:{{ isTravelTabBus ? 'var(--color-text)' : 'var(--color-text-secondary)' }};padding:9px 18px;border-radius:var(--radius-pill);font:700 13px/1 var(--font-heading);cursor:pointer;display:flex;align-items:center;gap:7px;box-shadow:{{ isTravelTabBus ? 'var(--shadow-sm)' : 'none' }};transition:all .2s var(--ease-spring)">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M8 6v6"/><path d="M16 6v6"/><path d="M2 12h20"/><path d="M6 18H4a2 2 0 0 1-2-2V7a3 3 0 0 1 3-3h14a3 3 0 0 1 3 3v9a2 2 0 0 1-2 2h-2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>
+    <!-- Apple-Style Compact Mode Segmented Bar -->
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+      <div class="travel-segmented-bar">
+        <button onClick="{{ setTravelTabBus }}" class="seg-item {{ isTravelTabBus ? 'active' : '' }}">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M8 6v6"/><path d="M16 6v6"/><path d="M2 12h20"/><path d="M6 18H4a2 2 0 0 1-2-2V7a3 3 0 0 1 3-3h14a3 3 0 0 1 3 3v9a2 2 0 0 1-2 2h-2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>
           <span>Buses</span>
         </button>
-
-        <button onClick="{{ setTravelTabTrain }}" class="seg-item {{ isTravelTabTrain ? 'active' : '' }}" style="border:none;background:{{ isTravelTabTrain ? 'var(--color-surface)' : 'transparent' }};color:{{ isTravelTabTrain ? 'var(--color-text)' : 'var(--color-text-secondary)' }};padding:9px 18px;border-radius:var(--radius-pill);font:700 13px/1 var(--font-heading);cursor:pointer;display:flex;align-items:center;gap:7px;box-shadow:{{ isTravelTabTrain ? 'var(--shadow-sm)' : 'none' }};transition:all .2s var(--ease-spring)">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect width="16" height="16" x="4" y="3" rx="2"/><path d="M4 11h16"/><path d="M12 3v8"/><path d="m8 19-2 3"/><path d="m18 22-2-3"/><circle cx="8" cy="15" r="1"/><circle cx="16" cy="15" r="1"/></svg>
+        <button onClick="{{ openHotelSearch }}" class="seg-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 21h18"/><path d="M19 21v-4"/><path d="M19 17a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v4"/><path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"/></svg>
+          <span>Hotels</span>
+        </button>
+        <button onClick="{{ setTravelTabFlight }}" class="seg-item {{ isTravelTabFlight ? 'active' : '' }}">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1z"/></svg>
+          <span>Flights</span>
+        </button>
+        <button onClick="{{ setTravelTabTrain }}" class="seg-item {{ isTravelTabTrain ? 'active' : '' }}">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect width="16" height="16" x="4" y="3" rx="2"/><path d="M4 11h16"/><path d="M12 3v8"/><path d="m8 19-2 3"/><path d="m18 22-2-3"/><circle cx="8" cy="15" r="1"/><circle cx="16" cy="15" r="1"/></svg>
           <span>Trains</span>
         </button>
-
-        <button onClick="{{ setTravelTabTaxi }}" class="seg-item {{ isTravelTabTaxi ? 'active' : '' }}" style="border:none;background:{{ isTravelTabTaxi ? 'var(--color-surface)' : 'transparent' }};color:{{ isTravelTabTaxi ? 'var(--color-text)' : 'var(--color-text-secondary)' }};padding:9px 18px;border-radius:var(--radius-pill);font:700 13px/1 var(--font-heading);cursor:pointer;display:flex;align-items:center;gap:7px;box-shadow:{{ isTravelTabTaxi ? 'var(--shadow-sm)' : 'none' }};transition:all .2s var(--ease-spring)">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>
+        <button onClick="{{ setTravelTabTaxi }}" class="seg-item {{ isTravelTabTaxi ? 'active' : '' }}">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>
           <span>Rides</span>
         </button>
       </div>
 
-      <!-- Secondary Services Links -->
-      <div style="display:flex;align-items:center;gap:8px">
-        <button onClick="{{ on.travelPackages }}" style="border:1px solid var(--color-divider);background:var(--color-surface);color:var(--color-text-secondary);padding:7px 14px;border-radius:var(--radius-pill);font:600 12px/1 var(--font-body);cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .15s ease">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
-          <span>Curated Tours</span>
+      <div style="display:flex;align-items:center;gap:6px">
+        <button onClick="{{ on.travelPackages }}" style="border:1px solid var(--color-divider);background:var(--color-surface);color:var(--color-text-secondary);padding:6px 12px;border-radius:var(--radius-pill);font:600 11px/1 var(--font-body);cursor:pointer;display:flex;align-items:center;gap:4px">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+          <span>Tours</span>
         </button>
-        <button onClick="{{ on.travelVisa }}" style="border:1px solid var(--color-divider);background:var(--color-surface);color:var(--color-text-secondary);padding:7px 14px;border-radius:var(--radius-pill);font:600 12px/1 var(--font-body);cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .15s ease">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m9 12 2 2 4-4"/></svg>
-          <span>Visa Concierge</span>
+        <button onClick="{{ on.travelVisa }}" style="border:1px solid var(--color-divider);background:var(--color-surface);color:var(--color-text-secondary);padding:6px 12px;border-radius:var(--radius-pill);font:600 11px/1 var(--font-body);cursor:pointer;display:flex;align-items:center;gap:4px">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m9 12 2 2 4-4"/></svg>
+          <span>Visa</span>
         </button>
       </div>
-
     </div>
 
-    <!-- Unified Adaptive Booking & Search Component (Google Travel / Apple Aesthetics) -->
-    <div class="travel-search-widget" style="background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-xl);padding:24px;box-shadow:var(--shadow-md);position:relative;overflow:hidden">
-      
-      <!-- Top Mode Badge & Assurance -->
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
-        <div style="display:flex;align-items:center;gap:8px">
-          <span style="font:800 11px/1 var(--font-heading);letter-spacing:.08em;color:var(--color-accent);text-transform:uppercase;background:var(--color-accent-100);padding:4px 10px;border-radius:var(--radius-pill)">
-            <sc-if value="{{ isTravelTabBus }}">Intercity Bus Booking</sc-if>
-            <sc-if value="{{ isTravelTabFlight }}">Air Travel Search</sc-if>
-            <sc-if value="{{ isTravelTabTrain }}">Camrail Passenger Train</sc-if>
-            <sc-if value="{{ isTravelTabTaxi }}">Private Transfer &amp; Airport Ride</sc-if>
-          </span>
-          <sc-if value="{{ isTravelTabFlight }}">
-            <div style="display:inline-flex;gap:6px;background:var(--color-neutral-100);padding:3px;border-radius:var(--radius-pill);font-size:11px;font-weight:700">
-              <span style="padding:3px 10px;background:var(--color-surface);border-radius:var(--radius-pill);color:var(--color-text);box-shadow:var(--shadow-xs)">Round trip</span>
-              <span style="padding:3px 10px;color:var(--color-text-muted)">One way</span>
-            </div>
-          </sc-if>
-        </div>
-        <span style="font:700 11.5px/1 var(--font-body);color:var(--color-success);display:flex;align-items:center;gap:5px">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>
-          Official Operator Guaranteed
+    <!-- Compact Unified Search Widget -->
+    <div class="travel-search-widget">
+      <!-- Mode Tagline -->
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font:800 10.5px/1 var(--font-heading);letter-spacing:.06em;color:var(--color-accent);text-transform:uppercase;background:var(--color-accent-100);padding:3px 8px;border-radius:var(--radius-pill)">
+          <sc-if value="{{ isTravelTabBus }}">Intercity Bus (4 Agencies)</sc-if>
+          <sc-if value="{{ isTravelTabFlight }}">Camair-Co &amp; International</sc-if>
+          <sc-if value="{{ isTravelTabTrain }}">Camrail InterCity Express</sc-if>
+          <sc-if value="{{ isTravelTabTaxi }}">Fixed-Fare Airport Transfer</sc-if>
+        </span>
+        <span style="font:600 11px/1 var(--font-body);color:var(--color-success);display:flex;align-items:center;gap:4px">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>
+          Direct Operator Pricing
         </span>
       </div>
 
-      <!-- Adaptive Input Grid -->
-      <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;margin-bottom:14px" class="flight-route-row">
-        
-        <!-- Origin Block -->
-        <div style="background:var(--color-surface-subtle);border:1px solid var(--color-border-subtle);border-radius:var(--radius-md);padding:12px 16px;transition:border-color .2s">
-          <label style="font:700 10.5px/1 var(--font-heading);color:var(--color-text-muted);letter-spacing:.08em;margin-bottom:6px;display:block">
-            <sc-if value="{{ isTravelTabTaxi }}">PICKUP ADDRESS</sc-if>
-            <sc-if value="{{ !isTravelTabTaxi }}">ORIGIN / DEPARTURE</sc-if>
+      <!-- Route Row -->
+      <div class="flight-route-row">
+        <div style="background:var(--color-surface-subtle);border:1px solid var(--color-border-subtle);border-radius:var(--radius-md);padding:9px 12px;min-width:0">
+          <label style="font:700 9.5px/1 var(--font-heading);color:var(--color-text-muted);letter-spacing:.08em;margin-bottom:4px;display:block">
+            <sc-if value="{{ isTravelTabTaxi }}">PICKUP LOCATION</sc-if>
+            <sc-if value="{{ !isTravelTabTaxi }}">FROM / DEPARTURE</sc-if>
           </label>
-          <button onClick="{{ say.origin }}" aria-label="Select origin" style="width:100%;border:none;background:transparent;padding:0;font:700 15px/1.2 var(--font-heading);text-align:left;color:var(--color-text);cursor:pointer">
+          <button onClick="{{ say.origin }}" aria-label="Select origin" class="lc-1" style="width:100%;border:none;background:transparent;padding:0;font:700 13.5px/1.2 var(--font-heading);text-align:left;color:var(--color-text);cursor:pointer">
             <sc-if value="{{ isTravelTabFlight }}">Douala (DLA)</sc-if>
-            <sc-if value="{{ isTravelTabTaxi }}">Akwa, Douala (Current Location)</sc-if>
-            <sc-if value="{{ !isTravelTabFlight && !isTravelTabTaxi }}">Douala (Bépanda / Akwa)</sc-if>
+            <sc-if value="{{ isTravelTabTaxi }}">Akwa, Douala</sc-if>
+            <sc-if value="{{ !isTravelTabFlight && !isTravelTabTaxi }}">Douala (Bépanda)</sc-if>
           </button>
         </div>
 
-        <!-- Route Swap Button -->
-        <button onClick="{{ swapTravelRoute }}" class="route-swap-btn" aria-label="Swap origin and destination" style="width:40px;height:40px;border-radius:50%;border:1px solid var(--color-divider);background:var(--color-surface);display:flex;align-items:center;justify-content:center;color:var(--color-accent);cursor:pointer;box-shadow:var(--shadow-sm);transition:all .2s var(--ease-spring)">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg>
+        <button onClick="{{ swapTravelRoute }}" class="route-swap-btn" aria-label="Swap origin and destination">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg>
         </button>
 
-        <!-- Destination Block -->
-        <div style="background:var(--color-surface-subtle);border:1px solid var(--color-border-subtle);border-radius:var(--radius-md);padding:12px 16px;transition:border-color .2s">
-          <label style="font:700 10.5px/1 var(--font-heading);color:var(--color-text-muted);letter-spacing:.08em;margin-bottom:6px;display:block">
+        <div style="background:var(--color-surface-subtle);border:1px solid var(--color-border-subtle);border-radius:var(--radius-md);padding:9px 12px;min-width:0">
+          <label style="font:700 9.5px/1 var(--font-heading);color:var(--color-text-muted);letter-spacing:.08em;margin-bottom:4px;display:block">
             <sc-if value="{{ isTravelTabTaxi }}">DROP-OFF DESTINATION</sc-if>
-            <sc-if value="{{ !isTravelTabTaxi }}">DESTINATION / ARRIVAL</sc-if>
+            <sc-if value="{{ !isTravelTabTaxi }}">TO / ARRIVAL</sc-if>
           </label>
-          <button onClick="{{ say.dest }}" aria-label="Select destination" style="width:100%;border:none;background:transparent;padding:0;font:700 15px/1.2 var(--font-heading);text-align:left;color:var(--color-text);cursor:pointer">
-            <sc-if value="{{ isTravelTabFlight }}">Paris (CDG) / Yaoundé (NSI)</sc-if>
-            <sc-if value="{{ isTravelTabTaxi }}">Douala International Airport (DLA)</sc-if>
-            <sc-if value="{{ !isTravelTabFlight && !isTravelTabTaxi }}">Yaoundé (Mvan / Tongolo)</sc-if>
+          <button onClick="{{ say.dest }}" aria-label="Select destination" class="lc-1" style="width:100%;border:none;background:transparent;padding:0;font:700 13.5px/1.2 var(--font-heading);text-align:left;color:var(--color-text);cursor:pointer">
+            <sc-if value="{{ isTravelTabFlight }}">Paris (CDG)</sc-if>
+            <sc-if value="{{ isTravelTabTaxi }}">Douala Airport (DLA)</sc-if>
+            <sc-if value="{{ !isTravelTabFlight && !isTravelTabTaxi }}">Yaoundé (Mvan)</sc-if>
           </button>
         </div>
-
       </div>
 
-      <!-- Dates & Passengers Grid -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
-        
-        <div style="background:var(--color-surface-subtle);border:1px solid var(--color-border-subtle);border-radius:var(--radius-md);padding:12px 16px">
-          <label style="font:700 10.5px/1 var(--font-heading);color:var(--color-text-muted);letter-spacing:.08em;margin-bottom:6px;display:block">TRAVEL DATE</label>
-          <button onClick="{{ say.depart }}" aria-label="Select departure date" style="width:100%;border:none;background:transparent;padding:0;font:600 14px/1.2 var(--font-body);text-align:left;color:var(--color-text);display:flex;justify-content:space-between;align-items:center;cursor:pointer">
-            <span>Tomorrow (13 Oct 2026)</span>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-muted)" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+      <!-- Date & Pax Row -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div style="background:var(--color-surface-subtle);border:1px solid var(--color-border-subtle);border-radius:var(--radius-md);padding:9px 12px">
+          <label style="font:700 9.5px/1 var(--font-heading);color:var(--color-text-muted);letter-spacing:.08em;margin-bottom:4px;display:block">DEPARTURE DATE</label>
+          <button onClick="{{ say.depart }}" aria-label="Select date" class="lc-1" style="width:100%;border:none;background:transparent;padding:0;font:600 12.5px/1.2 var(--font-body);text-align:left;color:var(--color-text);display:flex;justify-content:space-between;align-items:center;cursor:pointer">
+            <span>Tomorrow · 13 Oct</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-muted)" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
           </button>
         </div>
 
-        <div style="background:var(--color-surface-subtle);border:1px solid var(--color-border-subtle);border-radius:var(--radius-md);padding:12px 16px">
-          <label style="font:700 10.5px/1 var(--font-heading);color:var(--color-text-muted);letter-spacing:.08em;margin-bottom:6px;display:block">TRAVELERS &amp; CLASS</label>
-          <button onClick="{{ say.pax }}" aria-label="Select passenger count" style="width:100%;border:none;background:transparent;padding:0;font:600 14px/1.2 var(--font-body);text-align:left;color:var(--color-text);display:flex;justify-content:space-between;align-items:center;cursor:pointer">
-            <span>1 Passenger · VIP Class</span>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-muted)" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <div style="background:var(--color-surface-subtle);border:1px solid var(--color-border-subtle);border-radius:var(--radius-md);padding:9px 12px">
+          <label style="font:700 9.5px/1 var(--font-heading);color:var(--color-text-muted);letter-spacing:.08em;margin-bottom:4px;display:block">PASSENGERS &amp; CLASS</label>
+          <button onClick="{{ say.pax }}" aria-label="Select passengers" class="lc-1" style="width:100%;border:none;background:transparent;padding:0;font:600 12.5px/1.2 var(--font-body);text-align:left;color:var(--color-text);display:flex;justify-content:space-between;align-items:center;cursor:pointer">
+            <span>1 Adult · VIP</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-muted)" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
           </button>
         </div>
-
       </div>
 
-      <!-- Action Primary CTA based on active mode -->
+      <!-- Action Button Based on Mode -->
       <sc-if value="{{ isTravelTabBus }}">
-        <button onClick="{{ on.travelBus }}" class="btn btn-primary btn-block" style="height:50px;font-size:15px;font-weight:800;border-radius:var(--radius-pill);box-shadow:var(--shadow-glow-blue)">
-          Search Intercity Buses (4 Operators) <span>→</span>
+        <button onClick="{{ on.travelBus }}" class="btn btn-primary btn-block" style="height:44px;font-size:13.5px;font-weight:800;border-radius:var(--radius-pill);box-shadow:var(--shadow-glow-blue)">
+          Find Bus Schedules <span>→</span>
         </button>
       </sc-if>
       <sc-if value="{{ isTravelTabFlight }}">
-        <button onClick="{{ on.travelResults }}" class="btn btn-primary btn-block" style="height:50px;font-size:15px;font-weight:800;border-radius:var(--radius-pill);box-shadow:var(--shadow-glow-blue)">
-          Search Flights (Camair-Co &amp; International) <span>→</span>
+        <button onClick="{{ on.travelResults }}" class="btn btn-primary btn-block" style="height:44px;font-size:13.5px;font-weight:800;border-radius:var(--radius-pill);box-shadow:var(--shadow-glow-blue)">
+          Search Available Flights <span>→</span>
         </button>
       </sc-if>
       <sc-if value="{{ isTravelTabTrain }}">
-        <div style="margin-bottom:14px;padding:12px 16px;background:rgba(0, 122, 255, 0.05);border:1px solid rgba(0, 122, 255, 0.18);border-radius:var(--radius-md);font-size:13px;color:var(--color-text)">
-          <div style="font-weight:800;color:var(--color-accent);margin-bottom:2px">🚆 Camrail Bessengue ➔ Yaoundé InterCity Express</div>
-          <div style="color:var(--color-text-secondary);font-size:12px">Daily departure at 06:20 · 3h 55m non-stop transit · 1st Class VIP: <strong>XAF 10 000</strong> · 2nd Class Standard: <strong>XAF 6 000</strong></div>
-        </div>
-        <button onClick="{{ on.travelPassenger }}" class="btn btn-primary btn-block" style="height:50px;font-size:15px;font-weight:800;border-radius:var(--radius-pill);box-shadow:var(--shadow-glow-blue)">
-          Book Camrail 1st Class VIP (XAF 10 000) <span>→</span>
+        <button onClick="{{ on.travelPassenger }}" class="btn btn-primary btn-block" style="height:44px;font-size:13.5px;font-weight:800;border-radius:var(--radius-pill);box-shadow:var(--shadow-glow-blue)">
+          Book Camrail VIP (XAF 10 000) <span>→</span>
         </button>
       </sc-if>
       <sc-if value="{{ isTravelTabTaxi }}">
-        <div style="margin-bottom:14px;padding:14px 16px;background:var(--color-surface-subtle);border-radius:var(--radius-md);display:flex;justify-content:space-between;align-items:center;border:1px solid var(--color-border-subtle)">
-          <div>
-            <div style="font:800 15px/1.2 var(--font-heading);color:var(--color-text)">Fixed Fare: XAF 12 000</div>
-            <div style="font:500 12px/1.2 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Comfort AC Sedan · Driver ETA: ~8 mins · Door-to-terminal pickup</div>
-          </div>
-          <span style="background:var(--color-success-100);color:var(--color-success);padding:4px 10px;border-radius:var(--radius-pill);font:800 11px/1 var(--font-heading);letter-spacing:.04em">GUARANTEED RATE</span>
-        </div>
-        <button onClick="{{ on.travelPassenger }}" class="btn btn-primary btn-block" style="height:50px;font-size:15px;font-weight:800;border-radius:var(--radius-pill);box-shadow:var(--shadow-glow-blue)">
-          Request Private Transfer Now <span>→</span>
+        <button onClick="{{ on.travelPassenger }}" class="btn btn-primary btn-block" style="height:44px;font-size:13.5px;font-weight:800;border-radius:var(--radius-pill);box-shadow:var(--shadow-glow-blue)">
+          Request Airport Transfer (XAF 12 000) <span>→</span>
         </button>
       </sc-if>
-
     </div>
 
-    <!-- Apple-Wallet Style Compact Upcoming Trip Card -->
-    <div style="margin-top:24px;padding:18px 22px;background:linear-gradient(135deg, rgba(0, 122, 255, 0.04) 0%, rgba(16, 185, 129, 0.04) 100%);border:1px solid rgba(0, 122, 255, 0.16);border-radius:var(--radius-lg);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;box-shadow:var(--shadow-sm)">
-      <div style="display:flex;align-items:center;gap:16px">
-        <div style="width:48px;height:48px;border-radius:var(--radius-md);background:var(--color-surface);border:1px solid var(--color-divider);display:flex;align-items:center;justify-content:center;color:var(--color-accent);box-shadow:var(--shadow-xs);flex-shrink:0">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6v6"/><path d="M16 6v6"/><path d="M2 12h20"/><path d="M6 18H4a2 2 0 0 1-2-2V7a3 3 0 0 1 3-3h14a3 3 0 0 1 3 3v9a2 2 0 0 1-2 2h-2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>
+    <!-- Your Next Trip (Apple Wallet Style Slim Ticket Card) -->
+    <div onClick="{{ on.travelTicket }}" style="padding:12px 14px;background:linear-gradient(135deg, rgba(0, 122, 255, 0.05) 0%, rgba(16, 185, 129, 0.05) 100%);border:1px solid rgba(0, 122, 255, 0.18);border-radius:var(--radius-lg);display:flex;justify-content:space-between;align-items:center;gap:12px;cursor:pointer;box-shadow:var(--shadow-xs);transition:all .2s var(--ease-spring)">
+      <div style="display:flex;align-items:center;gap:10px;min-width:0">
+        <div style="width:36px;height:36px;border-radius:var(--radius-sm);background:var(--color-surface);border:1px solid var(--color-divider);display:flex;align-items:center;justify-content:center;color:var(--color-accent);box-shadow:var(--shadow-xs);flex-shrink:0">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6v6"/><path d="M16 6v6"/><path d="M2 12h20"/><path d="M6 18H4a2 2 0 0 1-2-2V7a3 3 0 0 1 3-3h14a3 3 0 0 1 3 3v9a2 2 0 0 1-2 2h-2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>
         </div>
-        <div>
-          <div style="display:flex;align-items:center;gap:8px">
-            <span style="background:rgba(0, 122, 255, 0.12);color:var(--color-accent);padding:3px 8px;border-radius:var(--radius-pill);font:800 10px/1 var(--font-heading);letter-spacing:.05em">NEXT TRIP</span>
-            <span style="font:700 11px/1 var(--font-mono);color:var(--color-text-muted)">REF: LMT-BUS-78291</span>
+        <div style="min-width:0">
+          <div style="display:flex;align-items:center;gap:6px">
+            <span style="background:rgba(0, 122, 255, 0.12);color:var(--color-accent);padding:2px 6px;border-radius:var(--radius-pill);font:800 9px/1 var(--font-heading)">ACTIVE TICKET</span>
+            <span style="font:600 11px/1 var(--font-mono);color:var(--color-text-muted)">4A · VIP</span>
           </div>
-          <div style="font:800 16px/1.3 var(--font-heading);color:var(--color-text);margin-top:4px">Douala (Bépanda) → Yaoundé (Mvan)</div>
-          <div style="font:500 12px/1.2 var(--font-body);color:var(--color-text-secondary);margin-top:2px">General Express VIP · Tomorrow at 08:00 · Seat 4A</div>
+          <div class="lc-1" style="font:700 13px/1.2 var(--font-heading);color:var(--color-text);margin-top:3px">Douala ➔ Yaoundé (Tomorrow 08:00)</div>
         </div>
       </div>
-      <button onClick="{{ on.travelTicket }}" style="height:38px;padding:0 18px;border-radius:var(--radius-pill);border:none;background:var(--color-text);color:#fff;font:700 12.5px/1 var(--font-body);cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .2s var(--ease-spring);box-shadow:var(--shadow-sm)">
-        <span>View trip</span>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-      </button>
+      <span style="font:700 12px/1 var(--font-heading);color:var(--color-accent);white-space:nowrap;flex-shrink:0">View →</span>
     </div>
 
-    <!-- Popular Cameroon Corridors -->
-    <div style="margin-top:36px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-        <div>
-          <h3 style="margin:0;font-size:18px;font-weight:800;letter-spacing:-.01em">Popular Corridors</h3>
-          <div style="font-size:13px;color:var(--color-text-secondary);margin-top:2px">Official bus, flight and train operators across Cameroon</div>
-        </div>
-        <span style="font:700 12px/1 var(--font-body);color:var(--color-accent)">Real-time Seats</span>
+    <!-- ── 1. POPULAR CORRIDORS (HORIZONTAL RAIL) ── -->
+    <div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px">
+        <h3 style="margin:0;font-size:15px;font-weight:800;letter-spacing:-.01em;color:var(--color-text)">Popular Corridors</h3>
+        <span style="font:600 11.5px/1 var(--font-body);color:var(--color-text-muted)">Live Seats</span>
       </div>
-
-      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:14px">
-        
-        <div onClick="{{ on.travelBus }}" class="card-premium" style="text-align:left;padding:18px;border-radius:var(--radius-lg);cursor:pointer;transition:all .2s var(--ease-spring)">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start">
-            <span style="font:800 15px/1.2 var(--font-heading);color:var(--color-text)">Douala ⇄ Yaoundé</span>
-            <span style="background:var(--color-accent-100);color:var(--color-accent);padding:2px 8px;border-radius:var(--radius-pill);font:800 10px/1 var(--font-heading)">BUS &amp; TRAIN</span>
+      <div class="travel-rail" style="display:flex;flex-direction:row;flex-wrap:nowrap;gap:12px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:4px 2px 10px;margin:0 -16px;padding-left:16px;padding-right:16px">
+        <div onClick="{{ on.travelBus }}" class="travel-corridor-card" style="flex:0 0 155px;width:155px;max-width:180px;scroll-snap-align:start;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:12px;cursor:pointer;display:flex;flex-direction:column;gap:4px;box-shadow:var(--shadow-xs);box-sizing:border-box">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span style="font:800 12px/1.2 var(--font-heading);color:var(--color-text)">Douala ⇄ Yaoundé</span>
           </div>
-          <div style="font:500 12px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:4px">3h 45m · 4 Bus Operators + Camrail</div>
-          <div style="font:800 15px/1 var(--font-heading);color:var(--color-text);margin-top:12px">From <span style="color:var(--color-accent)">XAF 6 000</span></div>
+          <div class="lc-1" style="font:500 10.5px/1.2 var(--font-body);color:var(--color-text-secondary)">3h 45m · Bus &amp; Camrail</div>
+          <div style="font:800 12.5px/1 var(--font-heading);color:var(--color-accent);margin-top:2px">From XAF 6 000</div>
         </div>
-
-        <div onClick="{{ on.travelBus }}" class="card-premium" style="text-align:left;padding:18px;border-radius:var(--radius-lg);cursor:pointer;transition:all .2s var(--ease-spring)">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start">
-            <span style="font:800 15px/1.2 var(--font-heading);color:var(--color-text)">Douala ⇄ Kribi</span>
-            <span style="background:var(--color-success-100);color:var(--color-success);padding:2px 8px;border-radius:var(--radius-pill);font:800 10px/1 var(--font-heading)">COASTLINE</span>
+        <div onClick="{{ on.travelBus }}" class="travel-corridor-card" style="flex:0 0 155px;width:155px;max-width:180px;scroll-snap-align:start;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:12px;cursor:pointer;display:flex;flex-direction:column;gap:4px;box-shadow:var(--shadow-xs);box-sizing:border-box">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span style="font:800 12px/1.2 var(--font-heading);color:var(--color-text)">Douala ⇄ Kribi</span>
           </div>
-          <div style="font:500 12px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:4px">2h 30m · Coastal Express Shuttle</div>
-          <div style="font:800 15px/1 var(--font-heading);color:var(--color-text);margin-top:12px">From <span style="color:var(--color-accent)">XAF 4 500</span></div>
+          <div class="lc-1" style="font:500 10.5px/1.2 var(--font-body);color:var(--color-text-secondary)">2h 30m · Coastal Shuttle</div>
+          <div style="font:800 12.5px/1 var(--font-heading);color:var(--color-accent);margin-top:2px">From XAF 4 500</div>
         </div>
-
-        <div onClick="{{ on.travelBus }}" class="card-premium" style="text-align:left;padding:18px;border-radius:var(--radius-lg);cursor:pointer;transition:all .2s var(--ease-spring)">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start">
-            <span style="font:800 15px/1.2 var(--font-heading);color:var(--color-text)">Yaoundé ⇄ Bafoussam</span>
-            <span style="background:var(--color-neutral-100);color:var(--color-text-muted);padding:2px 8px;border-radius:var(--radius-pill);font:800 10px/1 var(--font-heading)">HIGHLANDS</span>
+        <div onClick="{{ on.travelBus }}" class="travel-corridor-card" style="flex:0 0 155px;width:155px;max-width:180px;scroll-snap-align:start;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:12px;cursor:pointer;display:flex;flex-direction:column;gap:4px;box-shadow:var(--shadow-xs);box-sizing:border-box">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span style="font:800 12px/1.2 var(--font-heading);color:var(--color-text)">Yaoundé ⇄ Bafoussam</span>
           </div>
-          <div style="font:500 12px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:4px">4h 00m · West Region VIP Coaches</div>
-          <div style="font:800 15px/1 var(--font-heading);color:var(--color-text);margin-top:12px">From <span style="color:var(--color-accent)">XAF 5 500</span></div>
+          <div class="lc-1" style="font:500 10.5px/1.2 var(--font-body);color:var(--color-text-secondary)">4h 00m · Highlands VIP</div>
+          <div style="font:800 12.5px/1 var(--font-heading);color:var(--color-accent);margin-top:2px">From XAF 5 500</div>
         </div>
-
-        <div onClick="{{ on.travelBus }}" class="card-premium" style="text-align:left;padding:18px;border-radius:var(--radius-lg);cursor:pointer;transition:all .2s var(--ease-spring)">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start">
-            <span style="font:800 15px/1.2 var(--font-heading);color:var(--color-text)">Douala ⇄ Ngaoundéré</span>
-            <span style="background:rgba(217, 119, 6, 0.1);color:#d97706;padding:2px 8px;border-radius:var(--radius-pill);font:800 10px/1 var(--font-heading)">SLEEPER</span>
+        <div onClick="{{ on.travelBus }}" class="travel-corridor-card" style="flex:0 0 155px;width:155px;max-width:180px;scroll-snap-align:start;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:12px;cursor:pointer;display:flex;flex-direction:column;gap:4px;box-shadow:var(--shadow-xs);box-sizing:border-box">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span style="font:800 12px/1.2 var(--font-heading);color:var(--color-text)">Douala ⇄ Ngaoundéré</span>
           </div>
-          <div style="font:500 12px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:4px">Overnight Prestige Couchette</div>
-          <div style="font:800 15px/1 var(--font-heading);color:var(--color-text);margin-top:12px">From <span style="color:var(--color-accent)">XAF 18 000</span></div>
+          <div class="lc-1" style="font:500 10.5px/1.2 var(--font-body);color:var(--color-text-secondary)">Overnight Couchette</div>
+          <div style="font:800 12.5px/1 var(--font-heading);color:var(--color-accent);margin-top:2px">From XAF 18 000</div>
         </div>
-
       </div>
     </div>
 
-    <!-- Curated Excursions & Tourism -->
-    <div style="margin-top:40px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+    <!-- ── 2. CURATED EXCURSIONS (COMPACT HORIZONTAL RAIL ~4 CARDS) ── -->
+    <div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px">
         <div>
-          <h3 style="margin:0;font-size:18px;font-weight:800;letter-spacing:-.01em">Curated Excursions</h3>
-          <div style="font-size:13px;color:var(--color-text-secondary);margin-top:2px">All-inclusive stays, guided tours &amp; lodge packages</div>
+          <h3 style="margin:0;font-size:15px;font-weight:800;letter-spacing:-.01em;color:var(--color-text)">Curated Excursions</h3>
+          <div style="font:500 11.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">All-inclusive stays &amp; guided lodge packages</div>
         </div>
-        <button onClick="{{ on.travelPackages }}" style="background:none;border:none;color:var(--color-accent);font:700 13px/1 var(--font-heading);cursor:pointer">See All Tours →</button>
+        <button onClick="{{ on.travelPackages }}" style="background:none;border:none;color:var(--color-accent);font:700 12px/1 var(--font-heading);cursor:pointer;padding:0">See all →</button>
       </div>
       
-      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));gap:16px">
-        
-        <div onClick="{{ on.travelPackages }}" class="card-premium" style="padding:0;overflow:hidden;border-radius:var(--radius-lg);cursor:pointer;position:relative">
-          <div style="height:200px;position:relative">
-            <img src="./Assets/Travel%26Hotel/Residence%20JULLY%20Kribi.jfif" alt="Kribi Beach & Lobé Falls" style="width:100%;height:100%;object-fit:cover">
-            <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.75) 100%)"></div>
-            <span style="position:absolute;top:14px;left:14px;background:rgba(0,0,0,0.65);backdrop-filter:blur(10px);color:#fff;padding:4px 10px;border-radius:var(--radius-pill);font:800 10.5px/1 var(--font-heading);letter-spacing:.04em">3 DAYS / 2 NIGHTS</span>
-            <div style="position:absolute;bottom:14px;left:16px;right:16px;color:#fff">
-              <div style="font:800 19px/1.2 var(--font-heading);text-shadow:0 1px 3px rgba(0,0,0,0.5)">Kribi Beach &amp; Lobé Waterfalls</div>
-              <div style="font:500 12px/1.3 var(--font-body);opacity:0.9;margin-top:3px">Private ocean lodge · Seafood tasting · Pygmy cultural excursion</div>
-            </div>
+      <div class="travel-rail" style="display:flex;flex-direction:row;flex-wrap:nowrap;gap:12px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:4px 2px 10px;margin:0 -16px;padding-left:16px;padding-right:16px">
+        <!-- Excursion 1: Kribi Beach -->
+        <div onClick="{{ on.travelPackages }}" class="travel-card-compact" style="flex:0 0 185px;width:185px;max-width:220px;scroll-snap-align:start;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-lg);overflow:hidden;display:flex;flex-direction:column;cursor:pointer;box-shadow:var(--shadow-xs);box-sizing:border-box">
+          <div class="card-img-wrap" style="height:110px;max-height:110px;width:100%;position:relative;overflow:hidden;background:var(--color-surface-subtle)">
+            <img src="./Assets/Travel%26Hotel/Residence%20JULLY%20Kribi.jfif" alt="Kribi Beach & Lobé Waterfalls" style="width:100%;height:100%;max-height:110px;object-fit:cover;display:block">
+            <span style="position:absolute;top:6px;left:6px;background:rgba(0,0,0,0.65);color:#fff;padding:2px 6px;border-radius:var(--radius-pill);font:800 8.5px/1 var(--font-heading);letter-spacing:.04em">3D / 2N</span>
           </div>
-          <div style="padding:14px 18px;display:flex;justify-content:space-between;align-items:center;background:var(--color-surface)">
-            <span style="font:500 12px/1 var(--font-body);color:var(--color-text-secondary)">All-inclusive package</span>
-            <span style="font:800 16px/1 var(--font-heading);color:var(--color-accent)">XAF 120 000 / person</span>
+          <div class="card-info">
+            <div class="lc-1" style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Kribi Beach &amp; Lobé Falls</div>
+            <div class="lc-1" style="font:500 11px/1.2 var(--font-body);color:var(--color-text-secondary)">Ocean lodge &amp; seafood tasting</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px">
+              <span style="font:800 12.5px/1 var(--font-heading);color:var(--color-accent)">XAF 120 000</span>
+              <span style="font:600 10.5px/1 var(--font-body);color:var(--color-text-muted)">★ 4.9</span>
+            </div>
           </div>
         </div>
 
-        <div onClick="{{ on.travelPackages }}" class="card-premium" style="padding:0;overflow:hidden;border-radius:var(--radius-lg);cursor:pointer;position:relative">
-          <div style="height:200px;position:relative">
-            <img src="./Assets/Travel%26Hotel/Hotel%20du%20Phare%20(Kribi%2C%20Cameroun)%20_%20tarifs%202019%20mis%E2%80%A6.jfif" alt="Limbe Botanic & Black Sand Beach" style="width:100%;height:100%;object-fit:cover">
-            <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.75) 100%)"></div>
-            <span style="position:absolute;top:14px;left:14px;background:rgba(0,0,0,0.65);backdrop-filter:blur(10px);color:#fff;padding:4px 10px;border-radius:var(--radius-pill);font:800 10.5px/1 var(--font-heading);letter-spacing:.04em">2 DAYS / 1 NIGHT</span>
-            <div style="position:absolute;bottom:14px;left:16px;right:16px;color:#fff">
-              <div style="font:800 19px/1.2 var(--font-heading);text-shadow:0 1px 3px rgba(0,0,0,0.5)">Limbe Botanic &amp; Mount Cameroon Hike</div>
-              <div style="font:500 12px/1.3 var(--font-body);opacity:0.9;margin-top:3px">Certified mountain guide · Lava trail · Black sand beach lodge</div>
-            </div>
+        <!-- Excursion 2: Limbe & Mt Cameroon -->
+        <div onClick="{{ on.travelPackages }}" class="travel-card-compact" style="flex:0 0 185px;width:185px;max-width:220px;scroll-snap-align:start;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-lg);overflow:hidden;display:flex;flex-direction:column;cursor:pointer;box-shadow:var(--shadow-xs);box-sizing:border-box">
+          <div class="card-img-wrap" style="height:110px;max-height:110px;width:100%;position:relative;overflow:hidden;background:var(--color-surface-subtle)">
+            <img src="./Assets/Travel%26Hotel/Hotel%20du%20Phare%20(Kribi%2C%20Cameroun)%20_%20tarifs%202019%20mis%E2%80%A6.jfif" alt="Limbe Botanic & Mount Cameroon" style="width:100%;height:100%;max-height:110px;object-fit:cover;display:block">
+            <span style="position:absolute;top:6px;left:6px;background:rgba(0,0,0,0.65);color:#fff;padding:2px 6px;border-radius:var(--radius-pill);font:800 8.5px/1 var(--font-heading);letter-spacing:.04em">2D / 1N</span>
           </div>
-          <div style="padding:14px 18px;display:flex;justify-content:space-between;align-items:center;background:var(--color-surface)">
-            <span style="font:500 12px/1 var(--font-body);color:var(--color-text-secondary)">All-inclusive package</span>
-            <span style="font:800 16px/1 var(--font-heading);color:var(--color-accent)">XAF 75 000 / person</span>
+          <div class="card-info">
+            <div class="lc-1" style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Limbe &amp; Mt Cameroon</div>
+            <div class="lc-1" style="font:500 11px/1.2 var(--font-body);color:var(--color-text-secondary)">Lava trail &amp; black sand beach</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px">
+              <span style="font:800 12.5px/1 var(--font-heading);color:var(--color-accent)">XAF 75 000</span>
+              <span style="font:600 10.5px/1 var(--font-body);color:var(--color-text-muted)">★ 4.8</span>
+            </div>
           </div>
         </div>
 
+        <!-- Excursion 3: Dja Biosphere Eco-Camp -->
+        <div onClick="{{ on.travelPackages }}" class="travel-card-compact" style="flex:0 0 185px;width:185px;max-width:220px;scroll-snap-align:start;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-lg);overflow:hidden;display:flex;flex-direction:column;cursor:pointer;box-shadow:var(--shadow-xs);box-sizing:border-box">
+          <div class="card-img-wrap" style="height:110px;max-height:110px;width:100%;position:relative;overflow:hidden;background:var(--color-surface-subtle)">
+            <img src="./Assets/Travel%26Hotel/Residence%20JULLY%20Kribi.jfif" alt="Dja Biosphere Reserve" style="width:100%;height:100%;max-height:110px;object-fit:cover;display:block">
+            <span style="position:absolute;top:6px;left:6px;background:rgba(0,0,0,0.65);color:#fff;padding:2px 6px;border-radius:var(--radius-pill);font:800 8.5px/1 var(--font-heading);letter-spacing:.04em">3D / 2N</span>
+          </div>
+          <div class="card-info">
+            <div class="lc-1" style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Dja Rainforest Safari</div>
+            <div class="lc-1" style="font:500 11px/1.2 var(--font-body);color:var(--color-text-secondary)">Canopy expedition &amp; eco-lodge</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px">
+              <span style="font:800 12.5px/1 var(--font-heading);color:var(--color-accent)">XAF 95 000</span>
+              <span style="font:600 10.5px/1 var(--font-body);color:var(--color-text-muted)">★ 4.9</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Excursion 4: Rhumsiki Volcanic Peaks -->
+        <div onClick="{{ on.travelPackages }}" class="travel-card-compact" style="flex:0 0 185px;width:185px;max-width:220px;scroll-snap-align:start;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-lg);overflow:hidden;display:flex;flex-direction:column;cursor:pointer;box-shadow:var(--shadow-xs);box-sizing:border-box">
+          <div class="card-img-wrap" style="height:110px;max-height:110px;width:100%;position:relative;overflow:hidden;background:var(--color-surface-subtle)">
+            <img src="./Assets/Travel%26Hotel/Hotel%20du%20Phare%20(Kribi%2C%20Cameroun)%20_%20tarifs%202019%20mis%E2%80%A6.jfif" alt="Rhumsiki Lunar Peaks" style="width:100%;height:100%;max-height:110px;object-fit:cover;display:block">
+            <span style="position:absolute;top:6px;left:6px;background:rgba(0,0,0,0.65);color:#fff;padding:2px 6px;border-radius:var(--radius-pill);font:800 8.5px/1 var(--font-heading);letter-spacing:.04em">4D / 3N</span>
+          </div>
+          <div class="card-info">
+            <div class="lc-1" style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Rhumsiki Lunar Peaks</div>
+            <div class="lc-1" style="font:500 11px/1.2 var(--font-body);color:var(--color-text-secondary)">Mandara volcanic trekking</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px">
+              <span style="font:800 12.5px/1 var(--font-heading);color:var(--color-accent)">XAF 140 000</span>
+              <span style="font:600 10.5px/1 var(--font-body);color:var(--color-text-muted)">★ 4.7</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- Consular & Visa Concierge Banner -->
-    <div style="margin-top:36px;padding:22px;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-xl);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;box-shadow:var(--shadow-sm)">
-      <div style="max-width:620px">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-          <span style="background:rgba(16, 185, 129, 0.1);color:var(--color-success);font:800 10.5px/1 var(--font-heading);padding:3px 8px;border-radius:var(--radius-pill)">CONSULAR CONCIERGE</span>
-          <span style="font:600 12px/1 var(--font-body);color:var(--color-text-muted)">France, Schengen, USA, Canada &amp; UAE</span>
+    <!-- ── 3. POPULAR STAYS (COMPACT HORIZONTAL HOTEL RAIL) ── -->
+    <div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px">
+        <div>
+          <h3 style="margin:0;font-size:15px;font-weight:800;letter-spacing:-.01em;color:var(--color-text)">Popular Stays</h3>
+          <div style="font:500 11.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Verified beach resorts &amp; luxury suites</div>
         </div>
-        <div style="font:800 16px/1.3 var(--font-heading);color:var(--color-text)">Certified Document Vetting &amp; TLS / VFS Appointment Securing</div>
-        <div style="font:400 13px/1.4 var(--font-body);color:var(--color-text-secondary);margin-top:4px">
-          Our certified immigration specialists in Douala &amp; Yaoundé review your financial statements, generate compliant travel insurance, and manage full dossier verification.
+        <button onClick="{{ openHotelSearch }}" style="background:none;border:none;color:var(--color-accent);font:700 12px/1 var(--font-heading);cursor:pointer;padding:0">All stays →</button>
+      </div>
+      
+      <div class="travel-rail" style="display:flex;flex-direction:row;flex-wrap:nowrap;gap:12px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:4px 2px 10px;margin:0 -16px;padding-left:16px;padding-right:16px">
+        <!-- Hotel 1 -->
+        <div onClick="{{ openHotelDetail }}" class="hotel-card-compact" style="flex:0 0 195px;width:195px;max-width:230px;scroll-snap-align:start;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-lg);overflow:hidden;display:flex;flex-direction:column;cursor:pointer;box-shadow:var(--shadow-xs);box-sizing:border-box">
+          <div class="card-img-wrap" style="height:112px;max-height:112px;width:100%;position:relative;overflow:hidden;background:var(--color-surface-subtle)">
+            <img src="./Assets/Travel%26Hotel/Krystal%20Palace%20Hotel%20Douala.jfif" alt="Krystal Palace Hotel Douala" style="width:100%;height:100%;max-height:112px;object-fit:cover;display:block">
+            <span style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,0.65);color:#fff;padding:2px 6px;border-radius:var(--radius-pill);font:700 9px/1 var(--font-heading)">★ 4.9</span>
+          </div>
+          <div class="card-info">
+            <div class="lc-1" style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Krystal Palace Hotel</div>
+            <div class="lc-1" style="font:500 11px/1.2 var(--font-body);color:var(--color-text-secondary)">Akwa / Bonanjo, Douala</div>
+            <div style="font:800 12.5px/1 var(--font-heading);color:var(--color-accent);margin-top:3px">From XAF 145 000 <span style="font-size:10px;font-weight:500;color:var(--color-text-muted)">/ night</span></div>
+          </div>
+        </div>
+
+        <!-- Hotel 2 -->
+        <div onClick="{{ openHotelDetail }}" class="hotel-card-compact" style="flex:0 0 195px;width:195px;max-width:230px;scroll-snap-align:start;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-lg);overflow:hidden;display:flex;flex-direction:column;cursor:pointer;box-shadow:var(--shadow-xs);box-sizing:border-box">
+          <div class="card-img-wrap" style="height:112px;max-height:112px;width:100%;position:relative;overflow:hidden;background:var(--color-surface-subtle)">
+            <img src="./Assets/Travel%26Hotel/Hotel%20du%20Phare%20(Kribi%2C%20Cameroun)%20_%20tarifs%202019%20mis%E2%80%A6.jfif" alt="Hôtel du Phare Kribi" style="width:100%;height:100%;max-height:112px;object-fit:cover;display:block">
+            <span style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,0.65);color:#fff;padding:2px 6px;border-radius:var(--radius-pill);font:700 9px/1 var(--font-heading)">★ 4.8</span>
+          </div>
+          <div class="card-info">
+            <div class="lc-1" style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Hôtel du Phare Kribi</div>
+            <div class="lc-1" style="font:500 11px/1.2 var(--font-body);color:var(--color-text-secondary)">Atlantic Shore, Kribi</div>
+            <div style="font:800 12.5px/1 var(--font-heading);color:var(--color-accent);margin-top:3px">From XAF 45 000 <span style="font-size:10px;font-weight:500;color:var(--color-text-muted)">/ night</span></div>
+          </div>
+        </div>
+
+        <!-- Hotel 3 -->
+        <div onClick="{{ openHotelDetail }}" class="hotel-card-compact" style="flex:0 0 195px;width:195px;max-width:230px;scroll-snap-align:start;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-lg);overflow:hidden;display:flex;flex-direction:column;cursor:pointer;box-shadow:var(--shadow-xs);box-sizing:border-box">
+          <div class="card-img-wrap" style="height:112px;max-height:112px;width:100%;position:relative;overflow:hidden;background:var(--color-surface-subtle)">
+            <img src="./Assets/Travel%26Hotel/Residence%20JULLY%20Kribi.jfif" alt="Résidence Jully Kribi" style="width:100%;height:100%;max-height:112px;object-fit:cover;display:block">
+            <span style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,0.65);color:#fff;padding:2px 6px;border-radius:var(--radius-pill);font:700 9px/1 var(--font-heading)">★ 4.7</span>
+          </div>
+          <div class="card-info">
+            <div class="lc-1" style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Résidence JULLY Kribi</div>
+            <div class="lc-1" style="font:500 11px/1.2 var(--font-body);color:var(--color-text-secondary)">Lobé Waterfalls, Kribi</div>
+            <div style="font:800 12.5px/1 var(--font-heading);color:var(--color-accent);margin-top:3px">From XAF 38 000 <span style="font-size:10px;font-weight:500;color:var(--color-text-muted)">/ night</span></div>
+          </div>
         </div>
       </div>
-      <button onClick="{{ on.travelVisa }}" style="height:44px;padding:0 22px;border-radius:var(--radius-pill);border:1px solid var(--color-divider);background:var(--color-surface);font:700 13px/1 var(--font-body);color:var(--color-text);cursor:pointer;display:flex;align-items:center;gap:8px;transition:all .2s var(--ease-spring);box-shadow:var(--shadow-xs)">
+    </div>
+
+    <!-- ── 4. WEEKEND ESCAPES (TEXT-LED EDITORIAL CARDS — VISUAL FATIGUE PREVENTED) ── -->
+    <div>
+      <div style="margin-bottom:8px">
+        <h3 style="margin:0;font-size:15px;font-weight:800;letter-spacing:-.01em;color:var(--color-text)">Weekend Escapes</h3>
+        <div style="font:500 11.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Short getaways within driving distance</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:10px">
+        <div onClick="{{ openHotelSearch }}" style="padding:14px;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);cursor:pointer;box-shadow:var(--shadow-xs);transition:border-color .15s">
+          <div style="font:800 10px/1 var(--font-heading);color:var(--color-accent);letter-spacing:.06em;text-transform:uppercase">COASTAL BREEZE</div>
+          <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text);margin-top:4px">Grand Batanga Beachfront</div>
+          <div style="font:500 11px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Secluded sands &amp; fresh lobster shacks · 2.5h from Douala</div>
+        </div>
+        <div onClick="{{ openHotelSearch }}" style="padding:14px;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);cursor:pointer;box-shadow:var(--shadow-xs);transition:border-color .15s">
+          <div style="font:800 10px/1 var(--font-heading);color:var(--color-success);letter-spacing:.06em;text-transform:uppercase">HIGHLAND RETREAT</div>
+          <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text);margin-top:4px">Mount Fébé Panoramic</div>
+          <div style="font:500 11px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Crisp mountain air &amp; golf greens · 30m from Bastos</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 5. CONSULAR & VISA CONCIERGE (QUIET ADVISORY) ── -->
+    <div style="padding:14px 16px;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-lg);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;box-shadow:var(--shadow-xs)">
+      <div style="max-width:540px">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
+          <span style="background:rgba(16, 185, 129, 0.1);color:var(--color-success);font:800 9.5px/1 var(--font-heading);padding:2px 6px;border-radius:var(--radius-pill)">CONSULAR DESK</span>
+          <span style="font:600 11px/1 var(--font-body);color:var(--color-text-muted)">Schengen · UAE · UK · Canada</span>
+        </div>
+        <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Certified Document Vetting &amp; Appointment Concierge</div>
+        <div style="font:400 11.5px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">
+          Specialists in Douala &amp; Yaoundé review your dossier and verify compliant travel insurance.
+        </div>
+      </div>
+      <button onClick="{{ on.travelVisa }}" style="height:36px;padding:0 16px;border-radius:var(--radius-pill);border:1px solid var(--color-divider);background:var(--color-surface);font:700 11.5px/1 var(--font-body);color:var(--color-text);cursor:pointer;display:flex;align-items:center;gap:5px;flex-shrink:0">
         <span>Request Vetting</span>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
       </button>
     </div>
 

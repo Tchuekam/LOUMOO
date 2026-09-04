@@ -5236,6 +5236,392 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   .pub-spinner { animation-duration: 2s; }
 }
 
+/* ══════════════════════════════════════════════════════════════════════════
+   LOUMOO TRAVEL & MOBILITY STYLES — APPLE-GRADE MOBILE-FIRST COMPACT ENGINE
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* Search Hero Widget (Compact & Mobile First) */
+.travel-search-widget {
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-xl);
+  padding: 18px 16px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: box-shadow 0.25s var(--ease-spring);
+}
+@media (min-width: 768px) {
+  .travel-search-widget {
+    padding: 22px 20px;
+    gap: 14px;
+    box-shadow: var(--shadow-md);
+  }
+}
+
+/* Apple-Style Segmented Navigation */
+.travel-segmented-bar {
+  background: var(--color-neutral-100);
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-pill);
+  padding: 3px;
+  display: inline-flex;
+  gap: 3px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+}
+.travel-segmented-bar::-webkit-scrollbar { display: none; }
+
+.travel-segmented-bar .seg-item {
+  border: none;
+  background: transparent;
+  color: var(--color-text-secondary);
+  padding: 7px 14px;
+  border-radius: var(--radius-pill);
+  font: 700 12px/1 var(--font-heading);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  transition: all 0.2s var(--ease-spring);
+  user-select: none;
+}
+.travel-segmented-bar .seg-item:hover {
+  color: var(--color-text);
+}
+.travel-segmented-bar .seg-item.active {
+  background: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: var(--shadow-xs);
+}
+
+.flight-route-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 8px;
+  align-items: center;
+}
+
+.route-swap-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--color-divider);
+  background: var(--color-surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-accent);
+  cursor: pointer;
+  box-shadow: var(--shadow-xs);
+  transition: all 0.2s var(--ease-spring);
+  flex-shrink: 0;
+}
+.route-swap-btn:hover {
+  background: var(--color-accent-100);
+  transform: rotate(180deg);
+}
+
+/* ── Mobile Horizontal Discovery Rails ── */
+.travel-rail {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  gap: 12px !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  scroll-snap-type: x mandatory !important;
+  -webkit-overflow-scrolling: touch !important;
+  scrollbar-width: none !important;
+  padding: 4px 2px 10px !important;
+  margin: 0 -16px !important;
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+}
+.travel-rail::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
+
+@media (min-width: 1024px) {
+  .travel-rail {
+    margin: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    gap: 16px !important;
+  }
+}
+
+/* ── Compact Travel & Excursion Discovery Card ── */
+.travel-card-compact {
+  flex: 0 0 185px !important;
+  width: 185px !important;
+  max-width: 220px !important;
+  scroll-snap-align: start !important;
+  background: var(--color-surface) !important;
+  border: 1px solid var(--color-divider) !important;
+  border-radius: var(--radius-lg) !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  cursor: pointer !important;
+  box-shadow: var(--shadow-xs) !important;
+  transition: transform 0.2s var(--ease-spring), box-shadow 0.2s ease !important;
+  user-select: none !important;
+}
+.travel-card-compact:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: var(--shadow-sm) !important;
+  border-color: var(--color-accent-200) !important;
+}
+.travel-card-compact .card-img-wrap {
+  height: 110px !important;
+  max-height: 110px !important;
+  width: 100% !important;
+  position: relative !important;
+  overflow: hidden !important;
+  background: var(--color-surface-subtle) !important;
+}
+.travel-card-compact .card-img-wrap img {
+  width: 100% !important;
+  height: 100% !important;
+  max-height: 110px !important;
+  object-fit: cover !important;
+  display: block !important;
+  transition: transform 0.3s ease !important;
+}
+.travel-card-compact:hover .card-img-wrap img {
+  transform: scale(1.04) !important;
+}
+.travel-card-compact .card-info {
+  padding: 10px 12px 12px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 3px !important;
+  flex: 1 !important;
+}
+
+/* ── Compact Hotel Rail Card ── */
+.hotel-card-compact {
+  flex: 0 0 195px !important;
+  width: 195px !important;
+  max-width: 230px !important;
+  scroll-snap-align: start !important;
+  background: var(--color-surface) !important;
+  border: 1px solid var(--color-divider) !important;
+  border-radius: var(--radius-lg) !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  cursor: pointer !important;
+  box-shadow: var(--shadow-xs) !important;
+  transition: transform 0.2s var(--ease-spring), box-shadow 0.2s ease !important;
+  user-select: none !important;
+}
+.hotel-card-compact:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: var(--shadow-sm) !important;
+  border-color: var(--color-accent-200) !important;
+}
+.hotel-card-compact .card-img-wrap {
+  height: 112px !important;
+  max-height: 112px !important;
+  width: 100% !important;
+  position: relative !important;
+  overflow: hidden !important;
+  background: var(--color-surface-subtle) !important;
+}
+.hotel-card-compact .card-img-wrap img {
+  width: 100% !important;
+  height: 100% !important;
+  max-height: 112px !important;
+  object-fit: cover !important;
+  display: block !important;
+  transition: transform 0.3s ease !important;
+}
+.hotel-card-compact:hover .card-img-wrap img {
+  transform: scale(1.04) !important;
+}
+.hotel-card-compact .card-info {
+  padding: 10px 12px 12px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 3px !important;
+  flex: 1 !important;
+}
+
+/* ── Compact Hotel List Row ── */
+.hotel-row-compact {
+  display: flex !important;
+  background: var(--color-surface) !important;
+  border: 1px solid var(--color-divider) !important;
+  border-radius: var(--radius-md) !important;
+  overflow: hidden !important;
+  cursor: pointer !important;
+  box-shadow: var(--shadow-xs) !important;
+  transition: transform 0.2s var(--ease-spring), border-color 0.2s ease !important;
+}
+.hotel-row-compact:hover {
+  transform: translateY(-1px) !important;
+  border-color: var(--color-accent-200) !important;
+}
+.hotel-row-compact .row-img {
+  width: 100px !important;
+  height: 90px !important;
+  max-width: 100px !important;
+  max-height: 90px !important;
+  object-fit: cover !important;
+  flex-shrink: 0 !important;
+  display: block !important;
+}
+.hotel-row-compact .row-info {
+  padding: 8px 12px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  gap: 2px !important;
+  min-width: 0 !important;
+  flex: 1 !important;
+}
+
+/* ── Compact Corridor Route Pill / Card ── */
+.travel-corridor-card {
+  flex: 0 0 155px !important;
+  width: 155px !important;
+  max-width: 180px !important;
+  scroll-snap-align: start !important;
+  background: var(--color-surface) !important;
+  border: 1px solid var(--color-divider) !important;
+  border-radius: var(--radius-md) !important;
+  padding: 12px !important;
+  cursor: pointer !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+  box-shadow: var(--shadow-xs) !important;
+  transition: all 0.2s var(--ease-spring) !important;
+  user-select: none !important;
+}
+.travel-corridor-card:hover {
+  border-color: var(--color-accent) !important;
+  background: var(--color-surface-hover) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* ── Typography & Line Clamping Utilities ── */
+.lc-1 {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+.lc-2 {
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+}
+
+/* Flight Results Cards */
+.flight-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  box-shadow: var(--shadow-xs);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: all 0.2s var(--ease-spring);
+  cursor: pointer;
+}
+.flight-card:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+  border-color: var(--color-accent-200);
+}
+
+.flight-timeline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.flight-line-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.flight-line {
+  width: 100%;
+  height: 2px;
+  background: var(--color-divider);
+  position: relative;
+  margin: 4px 0;
+}
+.flight-line::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-accent);
+}
+
+/* Digital Boarding Pass (Apple Wallet Style) */
+.boarding-pass {
+  background: var(--color-surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  border: 1px solid var(--color-divider);
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.pass-header {
+  background: linear-gradient(135deg, #0b2e5c 0%, #123f7a 55%, #1a5fb4 100%);
+  color: #ffffff;
+  padding: 20px 20px 16px;
+}
+
+.pass-body {
+  padding: 20px;
+  background: var(--color-surface);
+  border-bottom: 2px dashed var(--color-divider);
+}
+
+.pass-qr-wrap {
+  padding: 20px;
+  text-align: center;
+  background: var(--color-surface);
+  position: relative;
+}
+.pass-qr-wrap::before, .pass-qr-wrap::after {
+  content: '';
+  position: absolute;
+  top: -12px;
+  width: 24px;
+  height: 24px;
+  background: var(--color-bg);
+  border-radius: 50%;
+  z-index: 5;
+}
+.pass-qr-wrap::before { left: -12px; box-shadow: inset -2px 0 3px rgba(0,0,0,0.05); }
+.pass-qr-wrap::after { right: -12px; box-shadow: inset 2px 0 3px rgba(0,0,0,0.05); }
+
+[data-theme="dark"] .pass-qr-wrap::before,
+[data-theme="dark"] .pass-qr-wrap::after {
+  background: #090a0f;
+}
+
 </style>
 </helmet>
 
