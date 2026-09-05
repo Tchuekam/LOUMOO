@@ -13292,11 +13292,11 @@ class Component extends DCLogic {
       catalogCards: (this.state.catalogProducts || []).map((p) => ({
         id: p.id,
         title: p.title,
-        imageUrl: p.imageUrl || p.image || '',
+        imageUrl: encImg(p.imageUrl || p.image || ''),
         priceLabel: p.price || (p.priceNumeric ? ('XAF ' + fmt(p.priceNumeric)) : ''),
         ratingLabel: '★ ' + (p.rating != null ? p.rating : '5.0'),
         storeLabel: (p.storeName || 'LOUMOO seller') + (p.merchantCity ? (' · ' + p.merchantCity) : ''),
-        tagline: p.tagline || p.categoryLabel || '',
+        tagline: p.tagline || (p.description ? String(p.description).split('. ')[0].slice(0, 80) : '') || p.categoryLabel || '',
         badge: p.badge || ''
       })),
       ship: { home: shipStyle(sh.home), pickup: shipStyle(sh.pickup), nation: shipStyle(sh.nation) },

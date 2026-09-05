@@ -159,6 +159,14 @@ class CatalogRepository {
           const store = storesById[l.store_id] || null;
           return this._formatProductCard(l, coverUrl, store, mediaList);
         });
+
+        // Keep QA/test boutiques out of the public buyer feed — a shopper must
+        // never see "Test Boutique …" listings sitting among real inventory.
+        const beforeFilter = dbItems.length;
+        dbItems = dbItems.filter((it) =>
+          !/^store_test_/i.test(String(it.storeId || '')) &&
+          !/test\s*boutique/i.test(String(it.storeName || '')));
+        dbTotal = Math.max(dbItems.length, dbTotal - (beforeFilter - dbItems.length));
       }
     } catch (err) {
       // An empty or unreachable database is not fatal for discovery: the curated
@@ -311,6 +319,17 @@ class CatalogRepository {
     }, {});
   }
 
+  // Local asset paths in seed/curated data carry raw spaces and ampersands
+  // (e.g. "telephone&PC/..."), which break the URL and 404 the image. Encode
+  // those defensively. Remote (http/https) URLs are left untouched so query
+  // strings — where "&" is significant — are never corrupted.
+  static _enc(u) {
+    if (!u) return u;
+    const s = String(u);
+    if (/^https?:\/\//i.test(s)) return s;
+    return s.replace(/ /g, '%20').replace(/&/g, '%26');
+  }
+
   static _formatProductCard(listing, coverUrl, store, mediaList = []) {
     const priceMinor = Number(listing.base_price_minor) || 0;
     const salePriceMinor = listing.sale_price_minor ? Number(listing.sale_price_minor) : null;
@@ -341,17 +360,18 @@ class CatalogRepository {
       id: listing.id,
       slug: listing.slug || listing.id,
       title: listing.title,
+      description: listing.description || '',
       category: listing.category_id,
-      brand: listing.brand || 'Bespoke',
+      brand: listing.brand || '',
       model: listing.model || '',
       price: formattedPrice,
       priceNumeric: priceMinor,
       salePrice: salePriceMinor ? formatXaf(salePriceMinor) : null,
       salePriceNumeric: salePriceMinor,
       currency: listing.currency || 'XAF',
-      image: resolvedCover,
-      imageUrl: resolvedCover,
-      images: resolvedImages,
+      image: CatalogRepository._enc(resolvedCover),
+      imageUrl: CatalogRepository._enc(resolvedCover),
+      images: resolvedImages.map((u) => CatalogRepository._enc(u)),
       merchant: storeName,
       storeName: storeName,
       storeId: listing.store_id,
@@ -398,7 +418,13 @@ class CatalogRepository {
     const STOP = new Set(['the', 'and', 'with', 'for', 'new', 'sealed', 'box', 'boxed', 'official', 'brand', 'set',
       'edition', 'gb', 'tb', 'ram', 'ssd', '256gb', '512gb', '128gb', '64gb', '1tb', 'same', 'day', 'guarantee',
       'month', 'months', 'warranty', 'black', 'white', 'grey', 'gray', 'blue', 'green', 'red', 'gold', 'silver',
-      'titanium', 'space', 'natural', 'graphite', 'unlocked', 'dual', 'sim', 'inch', 'series', 'xaf', 'fcfa']);
+      'titanium', 'space', 'natural', 'graphite', 'unlocked', 'dual', 'sim', 'inch', 'series', 'xaf', 'fcfa',
+      // Generic product-type and marketing words: matching on these alone caused
+      // cross-category mismatches (a Sony headphone getting an AirPods photo).
+      'wireless', 'headphones', 'headphone', 'earbuds', 'earbud', 'speaker', 'smartphone', 'phone', 'laptop',
+      'tablet', 'charger', 'case', 'cover', 'smart', 'bluetooth', 'anc', 'noise', 'cancelling', 'cancellation',
+      'premium', 'luxury', 'best', 'features', 'stunning', 'finish', 'look', 'colors', 'color', 'buy', 'screen',
+      'replacement', 'repair']);
     const tok = (s) => String(s || '')
       .toLowerCase()
       .replace(/[^a-z0-9 ]+/g, ' ')
@@ -416,7 +442,10 @@ class CatalogRepository {
       if (category && c.category && String(category).toLowerCase() === String(c.category).toLowerCase()) score += 0.5;
       if (score > bestScore) { bestScore = score; best = c; }
     }
-    return (best && bestScore >= 1) ? best.imageUrl : null;
+    // Require at least two shared meaningful tokens (e.g. brand + model). A
+    // single weak token is not enough to justify replacing the cover, which is
+    // what produced wrong-product photos.
+    return (best && bestScore >= 2) ? best.imageUrl : null;
   }
 
   static _formatCuratedCard(id, p) {
@@ -438,9 +467,9 @@ class CatalogRepository {
       salePrice: hasDiscount ? p.salePrice : null,
       salePriceNumeric: hasDiscount ? compareAt : null,
       currency: 'XAF',
-      image: cover,
-      imageUrl: cover,
-      images: Array.isArray(p.images) ? p.images : (cover ? [cover] : []),
+      image: CatalogRepository._enc(cover),
+      imageUrl: CatalogRepository._enc(cover),
+      images: (Array.isArray(p.images) ? p.images : (cover ? [cover] : [])).map((u) => CatalogRepository._enc(u)),
       merchant: p.storeName || 'LOUMOO seller',
       storeName: p.storeName || 'LOUMOO seller',
       storeId: null,
