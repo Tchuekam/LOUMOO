@@ -59,12 +59,13 @@ router.post('/me/adaptive/answers', requireAuth, async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
-// POST /api/v1/me/adaptive/complete  { missionTitle?, missionDescription? }
+// POST /api/v1/me/adaptive/complete  { missionTitle?, missionDescription?, skipAll? }
 router.post('/me/adaptive/complete', requireAuth, async (req, res, next) => {
   try {
     const state = await AdaptiveOnboardingUseCase.complete(req.principal, {
       missionTitle: req.body && req.body.missionTitle,
-      missionDescription: req.body && req.body.missionDescription
+      missionDescription: req.body && req.body.missionDescription,
+      skipAll: Boolean(req.body && req.body.skipAll)
     });
     res.json({ status: 'success', data: state });
   } catch (err) { next(err); }

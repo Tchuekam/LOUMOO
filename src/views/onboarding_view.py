@@ -382,6 +382,9 @@ def get_onboarding_view():
       <div style="display:flex;flex-direction:column;align-items:center;gap:16px;padding:64px 0">
         <div style="width:46px;height:46px;border:3px solid var(--color-divider);border-top-color:var(--color-accent);border-radius:50%;animation:spin 0.8s linear infinite"></div>
         <span style="font:600 13px/1.4 var(--font-body);color:var(--color-text-secondary)">Understanding you…</span>
+        <button onClick="{{ adaptiveSkipAll }}" style="margin-top:12px;border:none;background:transparent;color:var(--color-accent);font:600 13px var(--font-body);cursor:pointer;text-decoration:underline">
+          Taking too long? Continue directly to LOUMOO →
+        </button>
       </div>
     </sc-if>
 

@@ -6134,6 +6134,100 @@ function getClerk() {
   return null;
 }
 
+// Curated hospitality inventory — the single source of truth for the hotel
+// vertical (search → detail → booking → voucher). Each hotel carries its own
+// rooms so the selection is coherent end to end (no hardcoded mismatches).
+const HOTELS_DATA = {
+  krystal_palace: {
+    id: 'krystal_palace', name: 'Krystal Palace Hotel', city: 'douala',
+    area: 'Boulevard de la Liberté, Akwa · Douala', star: '5-Star Luxury', rating: 4.9, reviews: 312,
+    image: './Assets/Travel&Hotel/Krystal Palace Hotel Douala.jfif',
+    tagline: 'Panoramic port views, a Clarins spa and fine dining in the heart of Akwa.',
+    amenities: ['Infinity pool', 'Clarins spa', 'Airport shuttle', 'Free Wi-Fi', 'Fine dining', '24/7 room service'],
+    rooms: [
+      { name: 'Executive Harbor View Suite', features: '1 King bed · Skyline balcony · Breakfast included', price: 145000, strike: 165000 },
+      { name: 'Deluxe Business Room', features: '1 Queen bed · City view · Breakfast included', price: 98000, strike: 120000 }
+    ]
+  },
+  golden_haven: {
+    id: 'golden_haven', name: 'Golden Haven Retreat', city: 'douala',
+    area: 'Bonapriso · Douala', star: 'Boutique Luxury', rating: 4.8, reviews: 176,
+    image: './Assets/Travel&Hotel/Golden Haven Retreat _ Warm Luxury Hotel Bedroom Design with Modern Organic Elegance.jfif',
+    tagline: 'Warm, organic luxury bedrooms with a quiet garden courtyard.',
+    amenities: ['Rooftop bar', 'Spa & sauna', 'Free Wi-Fi', 'Breakfast buffet', 'Airport shuttle', 'Gym'],
+    rooms: [
+      { name: 'Organic Luxury Suite', features: '1 King bed · Lounge area · Breakfast included', price: 68000, strike: 82000 },
+      { name: 'Garden Deluxe Room', features: '1 Queen bed · Garden view · Breakfast included', price: 52000, strike: 60000 }
+    ]
+  },
+  phare_kribi: {
+    id: 'phare_kribi', name: 'Hôtel du Phare', city: 'kribi',
+    area: 'Atlantic Shore · Kribi', star: 'Oceanfront', rating: 4.8, reviews: 204,
+    image: './Assets/Travel&Hotel/Hotel du Phare (Kribi, Cameroun) _ tarifs 2019 mis….jfif',
+    tagline: 'Steps from the sand, with sunset terraces over the Atlantic.',
+    amenities: ['Private beach', 'Seafood restaurant', 'Free Wi-Fi', 'Terrace bar', 'Airport transfer', 'Breakfast included'],
+    rooms: [
+      { name: 'Ocean Deluxe King Room', features: '1 King bed · Sea-view balcony · Breakfast included', price: 65000, strike: 78000 },
+      { name: 'Coastal Twin Room', features: '2 Twin beds · Partial sea view · Breakfast included', price: 45000, strike: 52000 }
+    ]
+  },
+  jully_kribi: {
+    id: 'jully_kribi', name: 'Résidence JULLY', city: 'kribi',
+    area: 'Lobé Waterfalls Coast · Kribi', star: 'Seaside Villa', rating: 4.7, reviews: 138,
+    image: './Assets/Travel&Hotel/Residence JULLY Kribi.jfif',
+    tagline: 'A serene seaside villa near the Lobé Falls, made for slow mornings.',
+    amenities: ['Beach access', 'Outdoor pool', 'Free Wi-Fi', 'Kitchenette', 'Free parking', 'Breakfast included'],
+    rooms: [
+      { name: 'Villa Suite', features: '1 King bed · Private terrace · Kitchenette', price: 58000, strike: 68000 },
+      { name: 'Garden Studio', features: '1 Queen bed · Garden view · Kitchenette', price: 38000, strike: 44000 }
+    ]
+  },
+  gites_kribi: {
+    id: 'gites_kribi', name: 'Les Gîtes de Kribi', city: 'kribi',
+    area: 'Plage Tara · Kribi', star: 'Beach Lodge', rating: 4.6, reviews: 96,
+    image: './Assets/Travel&Hotel/lesgitesdekribi.jfif',
+    tagline: 'Relaxed beach cabins on Plage Tara with fresh grilled fish nightly.',
+    amenities: ['Beachfront', 'Restaurant', 'Free Wi-Fi', 'Free parking', 'Bar', 'Breakfast included'],
+    rooms: [
+      { name: 'Beach Cabin Deluxe', features: '1 King bed · Beachfront terrace', price: 42000, strike: 50000 },
+      { name: 'Standard Cabin', features: '1 Queen bed · Garden path', price: 32000, strike: 38000 }
+    ]
+  },
+  kribi_oceanfront: {
+    id: 'kribi_oceanfront', name: 'Kribi Oceanfront Lodge', city: 'kribi',
+    area: 'Boulevard de la Plage · Kribi', star: 'Oceanfront', rating: 4.5, reviews: 112,
+    image: './Assets/Travel&Hotel/Kribi Hotel.jfif',
+    tagline: 'A modern lodge on the beach boulevard, minutes from the port.',
+    amenities: ['Sea view', 'Pool', 'Free Wi-Fi', 'Restaurant', 'Airport transfer', 'Breakfast included'],
+    rooms: [
+      { name: 'Panorama Sea Room', features: '1 King bed · Full sea view · Breakfast included', price: 52000, strike: 60000 },
+      { name: 'City Comfort Room', features: '1 Queen bed · Boulevard view', price: 42000, strike: 48000 }
+    ]
+  },
+  bastos_suites: {
+    id: 'bastos_suites', name: 'Bastos Panoramic Suites', city: 'yaounde',
+    area: 'Bastos · Yaoundé', star: 'Business Luxury', rating: 4.7, reviews: 154,
+    image: './Assets/Travel&Hotel/Yaounde, Cameroon.jfif',
+    tagline: 'Elevated suites over the diplomatic quarter with skyline views.',
+    amenities: ['Rooftop pool', 'Business lounge', 'Free Wi-Fi', 'Gym', 'Airport shuttle', 'Breakfast included'],
+    rooms: [
+      { name: 'Panoramic Executive Suite', features: '1 King bed · Skyline lounge · Breakfast included', price: 55000, strike: 66000 },
+      { name: 'Diplomat Deluxe Room', features: '1 Queen bed · City view · Breakfast included', price: 44000, strike: 50000 }
+    ]
+  },
+  relais_maroua: {
+    id: 'relais_maroua', name: 'Hôtel Le Relais', city: 'maroua',
+    area: 'Maroua Central · Far North', star: 'Comfort Stay', rating: 4.6, reviews: 88,
+    image: './Assets/Travel&Hotel/Hotel le relais - Nord Cameroun.jfif',
+    tagline: 'A calm courtyard hotel with Sahelian charm in central Maroua.',
+    amenities: ['Courtyard pool', 'Restaurant', 'Free Wi-Fi', 'Free parking', 'Airport transfer', 'Breakfast included'],
+    rooms: [
+      { name: 'Courtyard Suite', features: '1 King bed · Courtyard view · Breakfast included', price: 38000, strike: 45000 },
+      { name: 'Standard Room', features: '1 Queen bed · Garden view', price: 28000, strike: 33000 }
+    ]
+  }
+};
+
 const PRODUCTS_DATA = {
   'chelsea_boots': {
     id: 'chelsea_boots',
@@ -7839,6 +7933,11 @@ class Component extends DCLogic {
     payoutPhone: '690 12 34 56',
     payoutAmount: '500 000',
     hotelCity: 'kribi',
+    hotelSelectedId: 'krystal_palace',
+    hotelRoomIndex: 0,
+    hotelCheckIn: '2026-10-15',
+    hotelCheckOut: '2026-10-18',
+    hotelGuests: 2,
     hotelGuestName: 'Rostand Tchuekam',
     hotelGuestPhone: '+237 690 12 34 56',
     hotelReservation: null,
@@ -8086,6 +8185,21 @@ class Component extends DCLogic {
     try { if (typeof PRODUCTS_DATA !== 'undefined') Object.keys(PRODUCTS_DATA).forEach((k) => add(Object.assign({ id: k }, PRODUCTS_DATA[k]))); } catch (e) {}
     (this.state.catalogProducts || []).forEach(add);
     return merged.filter((p) => cats.indexOf(String(p.category || '').toLowerCase()) !== -1);
+  };
+  // Hotel date helpers: nights between two ISO dates, and a human label.
+  _hotelNights = (ci, co) => {
+    try {
+      const d = Math.round((new Date(co + 'T00:00:00') - new Date(ci + 'T00:00:00')) / 86400000);
+      return d > 0 ? d : 1;
+    } catch (e) { return 1; }
+  };
+  _hotelDateLabel = (iso) => {
+    try {
+      const d = new Date(iso + 'T00:00:00');
+      if (isNaN(d.getTime())) return String(iso || '');
+      const M = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      return d.getDate() + ' ' + M[d.getMonth()] + ' ' + d.getFullYear();
+    } catch (e) { return String(iso || ''); }
   };
   _wishlistEntry = (id, name) => {
     const p = this._resolveProduct(id);
@@ -9022,12 +9136,16 @@ class Component extends DCLogic {
 
         return { interests: interests, priorities: priorities };
       },
-      SELLER_SETUP: () => ({
-        sellerType: this.state.sellerType === 'company' ? 'pro' : (this.state.sellerType || 'individual'),
-        businessName: this.state.regBusinessName || null,
-        rccmNumber: this.state.regRccm || null,
-        taxNiuNumber: this.state.regNiu || null
-      }),
+      SELLER_SETUP: () => {
+        const type = this.state.sellerType === 'company' ? 'pro' : (this.state.sellerType || 'individual');
+        const defaultName = (this.state.regFirstName ? `${this.state.regFirstName}'s Store` : 'Boutique');
+        return {
+          sellerType: type,
+          businessName: this.state.regBusinessName || this.state.currentStoreName || (type !== 'individual' ? defaultName : null),
+          rccmNumber: this.state.regRccm || null,
+          taxNiuNumber: this.state.regNiu || null
+        };
+      },
       COMPLETION: () => ({ acceptedTerms: true })
     };
 
@@ -9054,7 +9172,9 @@ class Component extends DCLogic {
       });
     };
 
-    return step(0).then(() => this._syncAccountState(true));
+    return step(0)
+      .catch(err => { console.warn('[Onboarding] step sync fallback:', err); return null; })
+      .then(() => this._syncAccountState(true));
   }
 
   /* ══════════════════════════════════════════════════════════════════════
@@ -9124,14 +9244,19 @@ class Component extends DCLogic {
       });
   }
 
-  /** Routes past the adaptive phase into the rest of the existing flow. */
+  /** Routes past the adaptive phase directly into the application. */
   _adaptiveFinish() {
-    const next = (this.state.userRole === 'seller' || this.state.userRole === 'both')
-      ? 'onboardSeller'
-      : 'onboardReview';
-    return this._submitRemainingOnboardingSteps().then(() => {
-      if (!this._unmounted) this.go(next);
-    });
+    const isSeller = (this.state.userRole === 'seller' || this.state.userRole === 'both' ||
+      (this.state.accountState && this.state.accountState.capabilities && this.state.accountState.capabilities.canStartSelling));
+    const next = isSeller ? 'seller' : 'home';
+
+    // Server has atomically completed the entire onboarding lifecycle.
+    // Sync state in the background without blocking screen transition.
+    this._syncAccountState(false).catch(() => {});
+    if (!this._unmounted) {
+      this.setState({ adBusy: false, adError: '' });
+      this.go(next);
+    }
   }
 
   /* ══════════════════════════════════════════════════════════════════════
@@ -10720,9 +10845,33 @@ class Component extends DCLogic {
       adaptiveReload: () => this._adaptiveLoad(),
       adaptiveBack: () => this.go('onboardOtp'),
       adaptiveSkipAll: () => {
-        // "Skip for now": fall back to the classic preference screens.
-        const next = (this.state.userRole === 'seller' || this.state.userRole === 'both') ? 'onboardSeller' : 'onboardBuyer';
-        this._submitRemainingOnboardingSteps().then(() => { if (!this._unmounted) this.go(next); });
+        if (this.state.adBusy) return;
+        this.setState({ adBusy: true, adError: '' });
+        const api = getApi();
+        const isSeller = (this.state.userRole === 'seller' || this.state.userRole === 'both');
+        const next = isSeller ? 'seller' : 'home';
+        if (!api) {
+          this.setState({ adBusy: false });
+          this.go(next);
+          return;
+        }
+        api.completeAdaptiveOnboarding({ skipAll: true })
+          .then(c => {
+            if (this._unmounted) return;
+            if (c && c.accountState) {
+              const guard = getGuard();
+              if (guard) guard.adopt(c.accountState);
+              this._applyAccountState(c.accountState);
+            }
+            this.setState({ adBusy: false, adError: '' });
+            this.go(next);
+          })
+          .catch(err => {
+            if (this._unmounted) return;
+            console.warn('[Onboarding] skipAll fallback:', err);
+            this.setState({ adBusy: false, adError: '' });
+            this.go(next);
+          });
       },
       adaptiveStartOver: () => {
         const api = getApi();
@@ -10792,6 +10941,11 @@ class Component extends DCLogic {
           .then(() => api.completeAdaptiveOnboarding(text ? { missionTitle: text } : {}))
           .then(c => {
             if (this._unmounted) return;
+            if (c && c.accountState) {
+              const guard = getGuard();
+              if (guard) guard.adopt(c.accountState);
+              this._applyAccountState(c.accountState);
+            }
             this._adaptiveApply(c);
             this._adaptiveFinish();
           })
@@ -12241,7 +12395,52 @@ class Component extends DCLogic {
       openHotelSearch: () => this.go('hotelSearch'),
       hotelCity: this.state.hotelCity,
       updateHotelCity: (e) => this.setState({ hotelCity: e && e.target ? e.target.value : e }),
-      openHotelDetail: () => this.go('hotelDetail'),
+
+      // Data-driven search cards — every card opens its own hotel (was: all
+      // eight cards hardcoded to open Krystal Palace).
+      hotelPopularCards: (() => {
+        const map = (h) => ({ id: h.id, name: h.name, area: h.area, star: h.star, ratingLabel: '★ ' + h.rating, reviews: h.reviews, image: encImg(h.image), priceLabel: 'XAF ' + fmt(Math.min.apply(null, h.rooms.map((r) => r.price))) });
+        return Object.keys(HOTELS_DATA).map((k) => HOTELS_DATA[k]).sort((a, b) => b.rating - a.rating).map(map);
+      })(),
+      hotelAllCards: (() => {
+        const city = this.state.hotelCity || '';
+        const map = (h) => ({ id: h.id, name: h.name, area: h.area, star: h.star, ratingLabel: '★ ' + h.rating, reviews: h.reviews, image: encImg(h.image), priceLabel: 'XAF ' + fmt(Math.min.apply(null, h.rooms.map((r) => r.price))) });
+        const all = Object.keys(HOTELS_DATA).map((k) => HOTELS_DATA[k]);
+        const inCity = all.filter((h) => h.city === city);
+        return (inCity.length ? inCity : all).map(map);
+      })(),
+
+      openHotelDetail: (id) => {
+        const hid = (typeof id === 'string' && HOTELS_DATA[id]) ? id : (this.state.hotelSelectedId || 'krystal_palace');
+        this.setState({ hotelSelectedId: hid, hotelRoomIndex: 0 });
+        this.go('hotelDetail');
+      },
+      selectHotelRoom: (idx) => this.setState({ hotelRoomIndex: Number(idx) || 0 }),
+      hotelCheckIn: this.state.hotelCheckIn,
+      hotelCheckOut: this.state.hotelCheckOut,
+      updateHotelCheckIn: (e) => this.setState({ hotelCheckIn: e && e.target ? e.target.value : e }),
+      updateHotelCheckOut: (e) => this.setState({ hotelCheckOut: e && e.target ? e.target.value : e }),
+      hotelGuests: this.state.hotelGuests || 2,
+      incHotelGuests: () => this.setState((s) => ({ hotelGuests: Math.min(9, (s.hotelGuests || 2) + 1) })),
+      decHotelGuests: () => this.setState((s) => ({ hotelGuests: Math.max(1, (s.hotelGuests || 2) - 1) })),
+
+      hotelDetailCard: (() => {
+        const h = HOTELS_DATA[this.state.hotelSelectedId] || HOTELS_DATA.krystal_palace;
+        const ri = Math.min(this.state.hotelRoomIndex || 0, h.rooms.length - 1);
+        const nights = this._hotelNights(this.state.hotelCheckIn, this.state.hotelCheckOut);
+        return {
+          id: h.id, name: h.name, area: h.area, star: h.star,
+          ratingLabel: '★ ' + h.rating, reviews: h.reviews, image: encImg(h.image), tagline: h.tagline,
+          amenities: h.amenities,
+          rooms: h.rooms.map((r, i) => ({ index: i, name: r.name, features: r.features, priceLabel: 'XAF ' + fmt(r.price), strikeLabel: r.strike ? ('XAF ' + fmt(r.strike)) : '', selected: i === ri })),
+          nights: nights, nightsLabel: nights + (nights === 1 ? ' night' : ' nights'),
+          checkInLabel: this._hotelDateLabel(this.state.hotelCheckIn),
+          checkOutLabel: this._hotelDateLabel(this.state.hotelCheckOut),
+          guests: this.state.hotelGuests || 2,
+          totalLabel: 'XAF ' + fmt(h.rooms[ri].price * nights)
+        };
+      })(),
+
       openHotelBooking: () => {
         const updates = {};
         if (!this.state.hotelGuestName) {
@@ -12258,30 +12457,72 @@ class Component extends DCLogic {
       hotelGuestPhone: this.state.hotelGuestPhone !== undefined ? this.state.hotelGuestPhone : (this.state.regPhone ? (this.state.regPhone.startsWith('+') ? this.state.regPhone : ('+237 ' + this.state.regPhone)) : '+237 690 12 34 56'),
       updateHotelGuestName: (e) => this.setState({ hotelGuestName: e && e.target ? e.target.value : e }),
       updateHotelGuestPhone: (e) => this.setState({ hotelGuestPhone: e && e.target ? e.target.value : e }),
+
+      hotelBookingSummary: (() => {
+        const h = HOTELS_DATA[this.state.hotelSelectedId] || HOTELS_DATA.krystal_palace;
+        const ri = Math.min(this.state.hotelRoomIndex || 0, h.rooms.length - 1);
+        const nights = this._hotelNights(this.state.hotelCheckIn, this.state.hotelCheckOut);
+        const room = h.rooms[ri];
+        const subtotal = room.price * nights;
+        const escrow = 3000;
+        return {
+          hotelName: h.name, area: h.area, image: encImg(h.image),
+          roomName: room.name, roomFeatures: room.features,
+          nights: nights, nightsLabel: nights + (nights === 1 ? ' night' : ' nights'), guests: this.state.hotelGuests || 2,
+          checkInLabel: this._hotelDateLabel(this.state.hotelCheckIn), checkOutLabel: this._hotelDateLabel(this.state.hotelCheckOut),
+          perNightLabel: 'XAF ' + fmt(room.price), subtotalLabel: 'XAF ' + fmt(subtotal),
+          escrowLabel: 'XAF ' + fmt(escrow), totalLabel: 'XAF ' + fmt(subtotal + escrow),
+          payLabel: 'Confirm & Pay XAF ' + fmt(subtotal + escrow) + ' with MoMo'
+        };
+      })(),
+
       submitHotelReservation: () => {
-        const guestName = this.state.hotelGuestName || (this.state.regFirstName ? (this.state.regFirstName + ' ' + (this.state.regLastName || '')).trim() : 'Rostand Tchuekam');
-        const guestPhone = this.state.hotelGuestPhone || (this.state.regPhone ? (this.state.regPhone.startsWith('+') ? this.state.regPhone : ('+237 ' + this.state.regPhone)) : '+237 690 12 34 56');
+        const h = HOTELS_DATA[this.state.hotelSelectedId] || HOTELS_DATA.krystal_palace;
+        const ri = Math.min(this.state.hotelRoomIndex || 0, h.rooms.length - 1);
+        const room = h.rooms[ri];
+        const nights = this._hotelNights(this.state.hotelCheckIn, this.state.hotelCheckOut);
+        const guestName = this.state.hotelGuestName || 'Guest';
+        const guestPhone = this.state.hotelGuestPhone || '';
+        const total = room.price * nights + 3000;
         const trip = {
-          reference: 'LMT-HTL-' + Math.floor(100000 + Math.random() * 900000),
-          passenger: guestName,
-          phone: guestPhone,
-          hotelName: 'Hôtel Les Cascades du Tara (Kribi)',
-          roomType: 'Ocean Deluxe King Room',
-          nights: 3,
-          amount: 195000,
-          currency: 'XAF',
-          fromCode: 'KBI',
-          toCode: 'HTL',
-          type: 'hotel',
-          departureTime: '15 Oct 2026',
-          status: 'confirmed',
-          createdAt: Date.now()
+          reference: 'LM-HTL-' + Math.floor(100000 + Math.random() * 900000),
+          type: 'hotel', passenger: guestName, phone: guestPhone,
+          hotelId: h.id, hotelName: h.name, area: h.area, image: h.image,
+          roomType: room.name, roomFeatures: room.features,
+          checkIn: this.state.hotelCheckIn, checkOut: this.state.hotelCheckOut,
+          nights: nights, guests: this.state.hotelGuests || 2,
+          amount: total, currency: 'XAF', status: 'confirmed', createdAt: Date.now()
         };
         const trips = [trip].concat(this.state.trips || []);
         this.setState({ trips, lastTrip: trip });
         this._persistTrips(trips);
-        this.toast('Hotel reservation confirmed for ' + guestName + '! Voucher generated.');
-        this.go('travelTicket');
+        try { if (typeof this._pushNotif === 'function') this._pushNotif({ tone: 'success', title: 'Reservation confirmed', body: h.name + ' · ' + room.name + ' · ' + nights + (nights === 1 ? ' night' : ' nights') }); } catch (e) {}
+        this.toast('Reservation confirmed at ' + h.name);
+        this.go('hotelVoucher');
+      },
+      hotelVoucher: (() => {
+        const t = this.state.lastTrip || {};
+        const h = HOTELS_DATA[t.hotelId] || null;
+        return {
+          ref: t.reference || 'LM-HTL-000000',
+          hotelName: t.hotelName || (h && h.name) || 'Your hotel',
+          area: t.area || (h && h.area) || '',
+          image: encImg(t.image || (h && h.image) || ''),
+          roomType: t.roomType || 'Room', roomFeatures: t.roomFeatures || '',
+          checkInLabel: this._hotelDateLabel(t.checkIn), checkOutLabel: this._hotelDateLabel(t.checkOut),
+          nights: t.nights || 1, nightsLabel: (t.nights || 1) + ((t.nights || 1) === 1 ? ' night' : ' nights'),
+          guests: t.guests || 1, guestName: t.passenger || 'Guest',
+          totalLabel: 'XAF ' + fmt(t.amount || 0),
+          isHotel: t.type === 'hotel'
+        };
+      })(),
+      downloadHotelVoucher: () => this.toast('Voucher saved to My Trips'),
+      shareHotelVoucher: () => {
+        const t = this.state.lastTrip || {};
+        try {
+          const msg = 'My LOUMOO reservation at ' + (t.hotelName || 'hotel') + ' (' + (t.roomType || '') + '), ref ' + (t.reference || '') + '.';
+          window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+        } catch (e) { this.toast('Could not open WhatsApp'); }
       },
 
       // ══════════════════════════════════════════════════════════════════
@@ -13791,14 +14032,14 @@ class Component extends DCLogic {
       isNavHome: ['home', 'category', 'bestpicks', 'freeday', 'notifications', 'search', 'product', 'cart', 'chat'].includes(s),
       isNavStore: ['store', 'business', 'sellerPublicPage'].includes(s),
       isNavVs: ['vs', 'vsCompare'].includes(s),
-      isNavTravel: ['travel', 'travelBus', 'travelPackages', 'travelVisa', 'travelResults', 'travelDetail', 'travelPassenger', 'hotelSearch', 'hotelDetail', 'hotelBooking'].includes(s),
+      isNavTravel: ['travel', 'travelBus', 'travelPackages', 'travelVisa', 'travelResults', 'travelDetail', 'travelPassenger', 'travelTicket', 'hotelSearch', 'hotelDetail', 'hotelBooking', 'hotelVoucher'].includes(s),
       isNavAnnounce: ['announce', 'announceCampaigns', 'announceDetail'].includes(s),
       isNavProfile: ['profile', 'seller', 'orders', 'settings', 'accountDashboard', 'editProfile', 'addresses', 'notificationPreferences', 'privacySettings', 'securitySettings', 'followedStores', 'userActivity', 'publicUserProfile', 'signIn', 'forgotPassword', 'resetPassword', 'verifyEmail'].includes(s),
       navHome: this.navColor('home', 'category', 'bestpicks', 'freeday', 'notifications', 'search', 'product', 'cart', 'chat'),
       navStore: this.navColor('store', 'business', 'sellerPublicPage'),
       navVs: this.navColor('vs', 'vsCompare'),
       navUpload: this.navColor('publishIntent', 'publishStudio', 'publishReview', 'publishSuccess', 'myListings'),
-      navTravel: this.navColor('travel', 'travelBus', 'travelPackages', 'travelVisa', 'travelResults', 'travelDetail', 'travelPassenger', 'hotelSearch', 'hotelDetail', 'hotelBooking'),
+      navTravel: this.navColor('travel', 'travelBus', 'travelPackages', 'travelVisa', 'travelResults', 'travelDetail', 'travelPassenger', 'travelTicket', 'hotelSearch', 'hotelDetail', 'hotelBooking', 'hotelVoucher'),
       navAnnounce: this.navColor('announce', 'announceCampaigns', 'announceDetail'),
       navProfile: this.navColor('profile', 'seller', 'orders', 'settings', 'accountDashboard', 'editProfile', 'addresses', 'notificationPreferences', 'privacySettings', 'securitySettings', 'followedStores', 'userActivity', 'publicUserProfile', 'signIn', 'forgotPassword', 'resetPassword', 'verifyEmail'),
       setScroller: (el) => {
@@ -14243,7 +14484,7 @@ _screen_chunks = [
     ('AccountAccessScreens', 'is.signIn || is.forgotPassword || is.resetPassword || is.verifyEmail', get_account_access_view()),
     ('AccountHubScreens', 'is.accountDashboard || is.editProfile || is.addresses || is.addAddress || is.editAddress || is.notificationPreferences || is.privacySettings || is.securitySettings || is.followedStores || is.userActivity || is.deleteAccount', get_account_hub_view()),
     ('OrderScreens', 'is.orderDetail || is.refundRequest || is.writeReview || is.sellerOrderDetail || is.sellerPayouts', get_order_product_flow_view()),
-    ('HotelScreens', 'is.hotelSearch || is.hotelDetail || is.hotelBooking', get_hotel_vertical_view()),
+    ('HotelScreens', 'is.hotelSearch || is.hotelDetail || is.hotelBooking || is.hotelVoucher', get_hotel_vertical_view()),
     ('ProductScreens', 'is.product', get_product_view()),
     ('CheckoutScreens', 'is.cart || is.checkout || is.paying || is.success || is.payFailed || is.orders || is.transactions', get_cart_view() + get_checkout_view() + get_paying_view() + get_success_view() + get_payfailed_view() + get_orders_and_transactions_view()),
     ('CollectionsScreens', 'is.category || is.bestpicks || is.freeday', get_collections_view()),
