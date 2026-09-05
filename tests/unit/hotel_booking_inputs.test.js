@@ -1,12 +1,13 @@
 const fs = require('fs');
 const path = require('path');
 const assert = require('assert');
+const { readFrontendSource } = require('../helpers/frontendSource');
 
 console.log('Testing Hotel Booking Inputs & Video Handlers in Commerce App.dc.html...');
 
 const htmlPath = path.join(__dirname, '../../Commerce App.dc.html');
 assert(fs.existsSync(htmlPath), 'Commerce App.dc.html must exist');
-const html = fs.readFileSync(htmlPath, 'utf8');
+const html = readFrontendSource();
 
 // 1. Verify that hotel booking guest inputs have proper controlled bindings and onInput handlers
 assert(html.includes('value="{{ hotelGuestName }}"'), 'hotelGuestName binding must exist on Full Name input');

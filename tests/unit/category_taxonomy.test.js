@@ -9,6 +9,7 @@ const fs = require('fs');
 const path = require('path');
 const ListingTaxonomyUseCase = require('../../server/modules/listing/application/ListingTaxonomyUseCase');
 const { categories, commerceDomains } = require('../../server/modules/catalog/dataLoader');
+const { readFrontendSource } = require('../helpers/frontendSource');
 
 async function run() {
   console.log('    ✓ Starting Category Taxonomy & Directory Discovery tests...');
@@ -75,7 +76,7 @@ async function run() {
   // ── Test 5: Rebuilt HTML Template Structural Integrity ──
   const htmlPath = path.resolve(process.cwd(), 'Commerce App.dc.html');
   assert(fs.existsSync(htmlPath), 'Commerce App.dc.html must exist');
-  const html = fs.readFileSync(htmlPath, 'utf-8');
+  const html = readFrontendSource();
 
   assert(html.includes('Explore everything on LOUMOO'), 'HTML must contain "Explore everything on LOUMOO" header');
   assert(html.includes('categorySearchQuery'), 'HTML must bind categorySearchQuery');

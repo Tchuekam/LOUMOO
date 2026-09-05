@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<x-dc>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     HOTEL SEARCH (is.hotelSearch)
+     ══════════════════════════════════════════════════════════════════════ -->
+<!-- ══════════════════════════════════════════════════════════════════════════
+     HOTEL SEARCH (is.hotelSearch)
+     ══════════════════════════════════════════════════════════════════════ -->
+<sc-if value="{{ is.hotelSearch }}">
+<div style="padding-bottom:60px">
+
+  <!-- Compact Sticky Header -->
+  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface-glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:30">
+    <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;box-shadow:var(--shadow-xs);flex-shrink:0">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <div style="flex:1;min-width:0">
+      <h4 style="margin:0;font-size:15px;font-weight:800;letter-spacing:-.01em;color:var(--color-text)">Hotels &amp; Stays</h4>
+      <div style="font:500 11.5px/1.2 var(--font-body);color:var(--color-text-secondary);margin-top:1px">Kribi, Douala, Yaoundé &amp; Limbé</div>
+    </div>
+  </div>
+
+  <div style="padding:14px 16px;max-width:960px;margin:0 auto;display:flex;flex-direction:column;gap:16px">
+
+    <!-- Compact Search Filter Capsule -->
+    <div style="background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-lg);padding:12px 14px;box-shadow:var(--shadow-xs);display:flex;flex-direction:column;gap:10px">
+      <div>
+        <label style="font:700 10px/1 var(--font-heading);color:var(--color-text-muted);letter-spacing:.06em;margin-bottom:6px;display:block">DESTINATION</label>
+        <select class="input" style="cursor:pointer;height:40px;font-weight:700;font-size:13px;border-radius:var(--radius-sm)" value="{{ hotelCity }}" onChange="{{ updateHotelCity }}">
+          <option value="kribi">Kribi Beach &amp; Oceanfront</option>
+          <option value="douala">Douala (Bonanjo &amp; Akwa)</option>
+          <option value="yaounde">Yaoundé (Bastos &amp; Fébé)</option>
+          <option value="limbe">Limbé (Black Sand Coast)</option>
+        </select>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div style="background:var(--color-surface-subtle);border:1px solid var(--color-divider);border-radius:var(--radius-sm);padding:8px 10px">
+          <label style="font:700 9.5px/1 var(--font-heading);color:var(--color-text-muted);letter-spacing:.05em;margin-bottom:4px;display:block">CHECK-IN</label>
+          <input type="text" class="input" value="15 Oct 2026" readonly="true" style="border:none;background:transparent;padding:0;font-weight:700;font-size:12.5px;color:var(--color-text);height:auto">
+        </div>
+        <div style="background:var(--color-surface-subtle);border:1px solid var(--color-divider);border-radius:var(--radius-sm);padding:8px 10px">
+          <label style="font:700 9.5px/1 var(--font-heading);color:var(--color-text-muted);letter-spacing:.05em;margin-bottom:4px;display:block">CHECK-OUT</label>
+          <input type="text" class="input" value="18 Oct 2026" readonly="true" style="border:none;background:transparent;padding:0;font-weight:700;font-size:12.5px;color:var(--color-text);height:auto">
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 1. POPULAR STAYS — HORIZONTAL RAIL ── -->
+    <div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px">
+        <div>
+          <h3 style="margin:0;font-size:15px;font-weight:800;letter-spacing:-.01em;color:var(--color-text)">Popular stays</h3>
+          <div style="font:500 11.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Top-rated luxury lodges &amp; oceanfront resorts</div>
+        </div>
+        <span style="font:700 11px/1 var(--font-body);color:var(--color-accent)">Swipe →</span>
+      </div>
+
+      <div class="travel-rail" style="display:flex;flex-direction:row;flex-wrap:nowrap;gap:12px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:4px 2px 10px;margin:0 -16px;padding-left:16px;padding-right:16px">
+        <!-- Hotel 1 -->
+        <div onClick="{{ openHotelDetail }}" class="hotel-card-compact" style="flex:0 0 195px;width:195px;max-width:230px;scroll-snap-align:start;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-lg);overflow:hidden;display:flex;flex-direction:column;cursor:pointer;box-shadow:var(--shadow-xs);box-sizing:border-box">
+          <div class="card-img-wrap" style="height:112px;max-height:112px;width:100%;position:relative;overflow:hidden;background:var(--color-surface-subtle)">
+            <img src="./Assets/Travel%26Hotel/Krystal%20Palace%20Hotel%20Douala.jfif" alt="Krystal Palace Hotel Douala" style="width:100%;height:100%;max-height:112px;object-fit:cover;display:block" loading="lazy" decoding="async">
+            <span style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,0.65);color:#fff;padding:2px 6px;border-radius:var(--radius-pill);font:700 9.5px/1 var(--font-heading)">★ 4.9</span>
+          </div>
+          <div class="card-info">
+            <div class="lc-1" style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Krystal Palace Hotel</div>
+            <div class="lc-1" style="font:500 11px/1.2 var(--font-body);color:var(--color-text-secondary)">Akwa, Douala</div>
+            <div style="font:800 12.5px/1 var(--font-heading);color:var(--color-accent);margin-top:3px">From XAF 145 000 <span style="font-size:10px;font-weight:500;color:var(--color-text-muted)">/ night</span></div>
+          </div>
+        </div>
+
+        <!-- Hotel 2 -->
+        <div onClick="{{ openHotelDetail }}" class="hotel-card-compact" style="flex:0 0 195px;width:195px;max-width:230px;scroll-snap-align:start;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-lg);overflow:hidden;display:flex;flex-direction:column;cursor:pointer;box-shadow:var(--shadow-xs);box-sizing:border-box">
+          <div class="card-img-wrap" style="height:112px;max-height:112px;width:100%;position:relative;overflow:hidden;background:var(--color-surface-subtle)">
+            <img src="./Assets/Travel%26Hotel/Hotel%20du%20Phare%20(Kribi%2C%20Cameroun)%20_%20tarifs%202019%20mis%E2%80%A6.jfif" alt="Hôtel du Phare Kribi" style="width:100%;height:100%;max-height:112px;object-fit:cover;display:block" loading="lazy" decoding="async">
+            <span style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,0.65);color:#fff;padding:2px 6px;border-radius:var(--radius-pill);font:700 9.5px/1 var(--font-heading)">★ 4.8</span>
+          </div>
+          <div class="card-info">
+            <div class="lc-1" style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Hôtel du Phare</div>
+            <div class="lc-1" style="font:500 11px/1.2 var(--font-body);color:var(--color-text-secondary)">Atlantic Shore, Kribi</div>
+            <div style="font:800 12.5px/1 var(--font-heading);color:var(--color-accent);margin-top:3px">From XAF 45 000 <span style="font-size:10px;font-weight:500;color:var(--color-text-muted)">/ night</span></div>
+          </div>
+        </div>
+
+        <!-- Hotel 3 -->
+        <div onClick="{{ openHotelDetail }}" class="hotel-card-compact" style="flex:0 0 195px;width:195px;max-width:230px;scroll-snap-align:start;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-lg);overflow:hidden;display:flex;flex-direction:column;cursor:pointer;box-shadow:var(--shadow-xs);box-sizing:border-box">
+          <div class="card-img-wrap" style="height:112px;max-height:112px;width:100%;position:relative;overflow:hidden;background:var(--color-surface-subtle)">
+            <img src="./Assets/Travel%26Hotel/Residence%20JULLY%20Kribi.jfif" alt="Résidence Jully Kribi" style="width:100%;height:100%;max-height:112px;object-fit:cover;display:block" loading="lazy" decoding="async">
+            <span style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,0.65);color:#fff;padding:2px 6px;border-radius:var(--radius-pill);font:700 9.5px/1 var(--font-heading)">★ 4.7</span>
+          </div>
+          <div class="card-info">
+            <div class="lc-1" style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Résidence JULLY</div>
+            <div class="lc-1" style="font:500 11px/1.2 var(--font-body);color:var(--color-text-secondary)">Lobé Falls, Kribi</div>
+            <div style="font:800 12.5px/1 var(--font-heading);color:var(--color-accent);margin-top:3px">From XAF 38 000 <span style="font-size:10px;font-weight:500;color:var(--color-text-muted)">/ night</span></div>
+          </div>
+        </div>
+
+        <!-- Hotel 4 -->
+        <div onClick="{{ openHotelDetail }}" class="hotel-card-compact" style="flex:0 0 195px;width:195px;max-width:230px;scroll-snap-align:start;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-lg);overflow:hidden;display:flex;flex-direction:column;cursor:pointer;box-shadow:var(--shadow-xs);box-sizing:border-box">
+          <div class="card-img-wrap" style="height:112px;max-height:112px;width:100%;position:relative;overflow:hidden;background:var(--color-surface-subtle)">
+            <img src="./Assets/Travel%26Hotel/lesgitesdekribi.jfif" alt="Les Gîtes de Kribi" style="width:100%;height:100%;max-height:112px;object-fit:cover;display:block" loading="lazy" decoding="async">
+            <span style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,0.65);color:#fff;padding:2px 6px;border-radius:var(--radius-pill);font:700 9.5px/1 var(--font-heading)">★ 4.6</span>
+          </div>
+          <div class="card-info">
+            <div class="lc-1" style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Les Gîtes de Kribi</div>
+            <div class="lc-1" style="font:500 11px/1.2 var(--font-body);color:var(--color-text-secondary)">Plage Tara, Kribi</div>
+            <div style="font:800 12.5px/1 var(--font-heading);color:var(--color-accent);margin-top:3px">From XAF 32 000 <span style="font-size:10px;font-weight:500;color:var(--color-text-muted)">/ night</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 2. RECOMMENDED NEAR YOU — HORIZONTAL RAIL ── -->
+    <div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px">
+        <div>
+          <h3 style="margin:0;font-size:15px;font-weight:800;letter-spacing:-.01em;color:var(--color-text)">Recommended near you</h3>
+          <div style="font:500 11.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Curated stays matching your destination</div>
+        </div>
+        <span style="font:700 11px/1 var(--font-body);color:var(--color-accent)">Swipe →</span>
+      </div>
+
+      <div class="travel-rail" style="display:flex;flex-direction:row;flex-wrap:nowrap;gap:12px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:4px 2px 10px;margin:0 -16px;padding-left:16px;padding-right:16px">
+        <!-- Hotel 5 -->
+        <div onClick="{{ openHotelDetail }}" class="hotel-card-compact" style="flex:0 0 195px;width:195px;max-width:230px;scroll-snap-align:start;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-lg);overflow:hidden;display:flex;flex-direction:column;cursor:pointer;box-shadow:var(--shadow-xs);box-sizing:border-box">
+          <div class="card-img-wrap" style="height:112px;max-height:112px;width:100%;position:relative;overflow:hidden;background:var(--color-surface-subtle)">
+            <img src="./Assets/Travel%26Hotel/Hotel%20le%20relais%20-%20Nord%20Cameroun.jfif" alt="Hôtel Le Relais" style="width:100%;height:100%;max-height:112px;object-fit:cover;display:block" loading="lazy" decoding="async">
+            <span style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,0.65);color:#fff;padding:2px 6px;border-radius:var(--radius-pill);font:700 9.5px/1 var(--font-heading)">★ 4.6</span>
+          </div>
+          <div class="card-info">
+            <div class="lc-1" style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Hôtel Le Relais</div>
+            <div class="lc-1" style="font:500 11px/1.2 var(--font-body);color:var(--color-text-secondary)">Maroua Central</div>
+            <div style="font:800 12.5px/1 var(--font-heading);color:var(--color-accent);margin-top:3px">From XAF 28 000 <span style="font-size:10px;font-weight:500;color:var(--color-text-muted)">/ night</span></div>
+          </div>
+        </div>
+
+        <!-- Hotel 6 -->
+        <div onClick="{{ openHotelDetail }}" class="hotel-card-compact" style="flex:0 0 195px;width:195px;max-width:230px;scroll-snap-align:start;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-lg);overflow:hidden;display:flex;flex-direction:column;cursor:pointer;box-shadow:var(--shadow-xs);box-sizing:border-box">
+          <div class="card-img-wrap" style="height:112px;max-height:112px;width:100%;position:relative;overflow:hidden;background:var(--color-surface-subtle)">
+            <img src="./Assets/Travel%26Hotel/Kribi%20Hotel.jfif" alt="Kribi Oceanfront Lodge" style="width:100%;height:100%;max-height:112px;object-fit:cover;display:block" loading="lazy" decoding="async">
+            <span style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,0.65);color:#fff;padding:2px 6px;border-radius:var(--radius-pill);font:700 9.5px/1 var(--font-heading)">★ 4.5</span>
+          </div>
+          <div class="card-info">
+            <div class="lc-1" style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Kribi Oceanfront Lodge</div>
+            <div class="lc-1" style="font:500 11px/1.2 var(--font-body);color:var(--color-text-secondary)">Boulevard de la Plage</div>
+            <div style="font:800 12.5px/1 var(--font-heading);color:var(--color-accent);margin-top:3px">From XAF 42 000 <span style="font-size:10px;font-weight:500;color:var(--color-text-muted)">/ night</span></div>
+          </div>
+        </div>
+
+        <!-- Hotel 7 -->
+        <div onClick="{{ openHotelDetail }}" class="hotel-card-compact" style="flex:0 0 195px;width:195px;max-width:230px;scroll-snap-align:start;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-lg);overflow:hidden;display:flex;flex-direction:column;cursor:pointer;box-shadow:var(--shadow-xs);box-sizing:border-box">
+          <div class="card-img-wrap" style="height:112px;max-height:112px;width:100%;position:relative;overflow:hidden;background:var(--color-surface-subtle)">
+            <img src="./Assets/Travel%26Hotel/Yaounde%2C%20Cameroon.jfif" alt="Bastos Panoramic Suites" style="width:100%;height:100%;max-height:112px;object-fit:cover;display:block" loading="lazy" decoding="async">
+            <span style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,0.65);color:#fff;padding:2px 6px;border-radius:var(--radius-pill);font:700 9.5px/1 var(--font-heading)">★ 4.7</span>
+          </div>
+          <div class="card-info">
+            <div class="lc-1" style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Bastos Panoramic Suites</div>
+            <div class="lc-1" style="font:500 11px/1.2 var(--font-body);color:var(--color-text-secondary)">Bastos, Yaoundé</div>
+            <div style="font:800 12.5px/1 var(--font-heading);color:var(--color-accent);margin-top:3px">From XAF 55 000 <span style="font-size:10px;font-weight:500;color:var(--color-text-muted)">/ night</span></div>
+          </div>
+        </div>
+
+        <!-- Hotel 8 -->
+        <div onClick="{{ openHotelDetail }}" class="hotel-card-compact" style="flex:0 0 195px;width:195px;max-width:230px;scroll-snap-align:start;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-lg);overflow:hidden;display:flex;flex-direction:column;cursor:pointer;box-shadow:var(--shadow-xs);box-sizing:border-box">
+          <div class="card-img-wrap" style="height:112px;max-height:112px;width:100%;position:relative;overflow:hidden;background:var(--color-surface-subtle)">
+            <img src="./Assets/Travel%26Hotel/Golden%20Haven%20Retreat%20_%20Warm%20Luxury%20Hotel%20Bedroom%20Design%20with%20Modern%20Organic%20Elegance.jfif" alt="Golden Haven Retreat" style="width:100%;height:100%;max-height:112px;object-fit:cover;display:block" loading="lazy" decoding="async">
+            <span style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,0.65);color:#fff;padding:2px 6px;border-radius:var(--radius-pill);font:700 9.5px/1 var(--font-heading)">★ 4.8</span>
+          </div>
+          <div class="card-info">
+            <div class="lc-1" style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Golden Haven Retreat</div>
+            <div class="lc-1" style="font:500 11px/1.2 var(--font-body);color:var(--color-text-secondary)">Bonapriso, Douala</div>
+            <div style="font:800 12.5px/1 var(--font-heading);color:var(--color-accent);margin-top:3px">From XAF 68 000 <span style="font-size:10px;font-weight:500;color:var(--color-text-muted)">/ night</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 3. ALL CURATED STAYS — COMPACT SCAN ROWS (ZERO VISUAL FATIGUE) ── -->
+    <div>
+      <div style="margin-bottom:8px">
+        <h3 style="margin:0;font-size:15px;font-weight:800;letter-spacing:-.01em;color:var(--color-text)">All verified stays</h3>
+        <div style="font:500 11.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Instant booking with LOUMOO MoMo Escrow protection</div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:10px">
+        
+        <div onClick="{{ openHotelDetail }}" class="hotel-row-compact">
+          <img src="./Assets/Travel%26Hotel/Krystal%20Palace%20Hotel%20Douala.jfif" alt="Krystal Palace Hotel" class="row-img" loading="lazy" decoding="async">
+          <div class="row-info">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <span style="font:800 9.5px/1 var(--font-heading);color:var(--color-accent);letter-spacing:.04em;text-transform:uppercase">5-STAR LUXURY</span>
+              <span style="font:700 10.5px/1 var(--font-heading);color:var(--color-text-secondary)">★ 4.9</span>
+            </div>
+            <div class="lc-1" style="font:700 13.5px/1.2 var(--font-heading);color:var(--color-text)">Krystal Palace Hotel Douala</div>
+            <div class="lc-1" style="font:500 11px/1 var(--font-body);color:var(--color-text-secondary)">Boulevard de la Liberté, Akwa</div>
+            <div style="font:800 13px/1 var(--font-heading);color:var(--color-accent);margin-top:2px">XAF 145 000 <span style="font-size:10.5px;font-weight:500;color:var(--color-text-muted)">/ night</span></div>
+          </div>
+        </div>
+
+        <div onClick="{{ openHotelDetail }}" class="hotel-row-compact">
+          <img src="./Assets/Travel%26Hotel/Hotel%20du%20Phare%20(Kribi%2C%20Cameroun)%20_%20tarifs%202019%20mis%E2%80%A6.jfif" alt="Hôtel du Phare Kribi" class="row-img" loading="lazy" decoding="async">
+          <div class="row-info">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <span style="font:800 9.5px/1 var(--font-heading);color:var(--color-success);letter-spacing:.04em;text-transform:uppercase">OCEANFRONT</span>
+              <span style="font:700 10.5px/1 var(--font-heading);color:var(--color-text-secondary)">★ 4.8</span>
+            </div>
+            <div class="lc-1" style="font:700 13.5px/1.2 var(--font-heading);color:var(--color-text)">Hôtel du Phare Kribi</div>
+            <div class="lc-1" style="font:500 11px/1 var(--font-body);color:var(--color-text-secondary)">Atlantic Shore, Kribi</div>
+            <div style="font:800 13px/1 var(--font-heading);color:var(--color-accent);margin-top:2px">XAF 45 000 <span style="font-size:10.5px;font-weight:500;color:var(--color-text-muted)">/ night</span></div>
+          </div>
+        </div>
+
+        <div onClick="{{ openHotelDetail }}" class="hotel-row-compact">
+          <img src="./Assets/Travel%26Hotel/Residence%20JULLY%20Kribi.jfif" alt="Résidence Jully Kribi" class="row-img" loading="lazy" decoding="async">
+          <div class="row-info">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <span style="font:800 9.5px/1 var(--font-heading);color:#d97706;letter-spacing:.04em;text-transform:uppercase">SEASIDE VILLA</span>
+              <span style="font:700 10.5px/1 var(--font-heading);color:var(--color-text-secondary)">★ 4.7</span>
+            </div>
+            <div class="lc-1" style="font:700 13.5px/1.2 var(--font-heading);color:var(--color-text)">Résidence JULLY Kribi</div>
+            <div class="lc-1" style="font:500 11px/1 var(--font-body);color:var(--color-text-secondary)">Lobé Waterfalls Coast, Kribi</div>
+            <div style="font:800 13px/1 var(--font-heading);color:var(--color-accent);margin-top:2px">XAF 38 000 <span style="font-size:10.5px;font-weight:500;color:var(--color-text-muted)">/ night</span></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+</sc-if>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     HOTEL DETAIL (is.hotelDetail)
+     ══════════════════════════════════════════════════════════════════════ -->
+<sc-if value="{{ is.hotelDetail }}">
+<div style="padding-bottom:60px">
+
+  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface-glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:30">
+    <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;box-shadow:var(--shadow-xs);flex-shrink:0">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <div style="flex:1;min-width:0">
+      <h4 style="margin:0;font-size:15px;font-weight:800;color:var(--color-text)" class="lc-1">Krystal Palace Hotel Douala</h4>
+      <div style="font:500 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:1px">Akwa / Bonanjo, Douala</div>
+    </div>
+  </div>
+
+  <div style="padding:14px 16px;max-width:960px;margin:0 auto;display:flex;flex-direction:column;gap:14px">
+
+    <!-- Restrained Gallery Hero (Visual Fatigue Prevented) -->
+    <div style="height:210px;border-radius:var(--radius-lg);overflow:hidden;position:relative;box-shadow:var(--shadow-xs)">
+      <img src="./Assets/Travel%26Hotel/Krystal%20Palace%20Hotel%20Douala.jfif" alt="Krystal Palace Douala" style="width:100%;height:100%;object-fit:cover" loading="lazy" decoding="async">
+      <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.05) 40%, rgba(0,0,0,0.75) 100%)"></div>
+      <div style="position:absolute;bottom:12px;left:14px;right:14px;color:#fff;z-index:2;display:flex;justify-content:space-between;align-items:flex-end">
+        <div>
+          <span style="background:var(--color-accent);color:#fff;padding:3px 8px;border-radius:var(--radius-pill);font:800 9.5px/1 var(--font-heading);display:inline-block;margin-bottom:4px">5-STAR LUXURY</span>
+          <div style="font:800 18px/1.2 var(--font-heading);text-shadow:0 1px 4px rgba(0,0,0,0.6)">Krystal Palace Hotel</div>
+        </div>
+        <span style="background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);padding:3px 8px;border-radius:var(--radius-pill);font:700 11px/1 var(--font-heading)">★ 4.9 (312)</span>
+      </div>
+    </div>
+
+    <!-- Info Card -->
+    <div style="background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:14px;box-shadow:var(--shadow-xs);display:flex;flex-direction:column;gap:8px">
+      <div style="font:700 13px/1.4 var(--font-body);color:var(--color-text-secondary)">
+        Boulevard de la Liberté, Akwa / Bonanjo, Douala. Premier luxury accommodation with panoramic port views, Clarins spa, fine dining, and instant escrow check-in.
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:2px">
+        <span style="background:var(--color-surface-subtle);border:1px solid var(--color-divider);color:var(--color-text-secondary);padding:3px 8px;border-radius:var(--radius-pill);font-size:10.5px;font-weight:600">Infinity Pool</span>
+        <span style="background:var(--color-surface-subtle);border:1px solid var(--color-divider);color:var(--color-text-secondary);padding:3px 8px;border-radius:var(--radius-pill);font-size:10.5px;font-weight:600">Clarins Spa</span>
+        <span style="background:var(--color-surface-subtle);border:1px solid var(--color-divider);color:var(--color-text-secondary);padding:3px 8px;border-radius:var(--radius-pill);font-size:10.5px;font-weight:600">Airport Shuttle</span>
+      </div>
+    </div>
+
+    <!-- Room Selection -->
+    <div style="background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:14px;box-shadow:var(--shadow-xs);display:flex;flex-direction:column;gap:10px">
+      <div style="font:700 10.5px/1 var(--font-heading);letter-spacing:.06em;color:var(--color-text-muted);text-transform:uppercase">Available Room Tier</div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;border-radius:var(--radius-sm);border:1.5px solid var(--color-accent);background:var(--color-accent-100);flex-wrap:wrap;gap:8px">
+        <div>
+          <div style="font:800 14px/1.2 var(--font-heading);color:var(--color-text)">Executive Harbor View Suite</div>
+          <div style="font:400 11.5px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">1 King Bed · Skyline Balcony · Breakfast Included</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font:500 10.5px/1 var(--font-body);color:var(--color-text-muted);text-decoration:line-through">XAF 165 000</div>
+          <div style="font:800 15px/1 var(--font-heading);color:var(--color-accent);margin-top:1px">XAF 145 000 <span style="font-size:10.5px;font-weight:500;color:var(--color-text-muted)">/ night</span></div>
+        </div>
+      </div>
+    </div>
+
+    <button onClick="{{ openHotelBooking }}" class="btn btn-primary btn-block" style="height:44px;font-size:14px;font-weight:800;border-radius:var(--radius-pill);box-shadow:var(--shadow-glow-blue);cursor:pointer">
+      Reserve Room Now <span>→</span>
+    </button>
+
+  </div>
+</div>
+</sc-if>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     HOTEL BOOKING CHECKOUT (is.hotelBooking)
+     ══════════════════════════════════════════════════════════════════════ -->
+<sc-if value="{{ is.hotelBooking }}">
+<div style="padding-bottom:60px">
+
+  <div style="display:flex;align-items:center;gap:14px;padding:14px 20px;background:var(--color-surface-glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:30">
+    <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;box-shadow:var(--shadow-xs);transition:all .2s var(--ease-spring);flex-shrink:0">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <h4 style="margin:0;font-size:16.5px;font-weight:800">Hotel Reservation Checkout</h4>
+  </div>
+
+  <div style="padding:24px 20px;max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:18px">
+
+    <div class="card-premium" style="display:flex;flex-direction:column;gap:12px;padding:22px;border-radius:var(--radius-lg);box-shadow:var(--shadow-sm)">
+      <div style="font:800 11.5px/1 var(--font-heading);letter-spacing:.08em;color:var(--color-text-muted);text-transform:uppercase">Reservation Summary</div>
+      <div style="font:800 17px/1.2 var(--font-heading);color:var(--color-text)">Hôtel Les Cascades du Tara (Kribi)</div>
+      <div style="font:400 13px/1.3 var(--font-body);color:var(--color-text-secondary)">Ocean Deluxe King Room · 3 Nights (15 - 18 Oct 2026)</div>
+      <div style="font:800 18px/1 var(--font-heading);color:var(--color-text);margin-top:8px;border-top:1px solid var(--color-divider);padding-top:12px">Total: XAF 195 000 (Escrow Protected)</div>
+    </div>
+
+    <div class="card-premium" style="display:flex;flex-direction:column;gap:14px;padding:22px;border-radius:var(--radius-lg);box-shadow:var(--shadow-sm)">
+      <div style="font:800 11.5px/1 var(--font-heading);letter-spacing:.08em;color:var(--color-text-muted);text-transform:uppercase">Primary Guest Details</div>
+      <div>
+        <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">FULL NAME</label>
+        <input type="text" class="input" value="{{ hotelGuestName }}" onInput="{{ updateHotelGuestName }}" placeholder="Enter full legal name" style="height:44px;border-radius:var(--radius-sm)">
+      </div>
+      <div>
+        <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">PHONE NUMBER</label>
+        <input type="tel" class="input" value="{{ hotelGuestPhone }}" onInput="{{ updateHotelGuestPhone }}" placeholder="+237 6XX XX XX XX" style="height:44px;border-radius:var(--radius-sm)">
+      </div>
+    </div>
+
+    <button onClick="{{ submitHotelReservation }}" class="btn btn-primary btn-block" style="height:50px;font-size:15px;font-weight:800;border-radius:var(--radius-pill);box-shadow:var(--shadow-glow-blue);cursor:pointer">
+      Confirm &amp; Pay XAF 195 000 with MoMo <span>→</span>
+    </button>
+
+  </div>
+</div>
+</sc-if>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() { return (this.props && this.props.dcProps) || this.props || {}; }
+}
+</script>
+</body>
+</html>

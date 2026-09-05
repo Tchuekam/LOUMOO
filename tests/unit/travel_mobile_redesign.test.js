@@ -1,11 +1,12 @@
 const fs = require('fs');
 const path = require('path');
 const assert = require('assert');
+const { readFrontendSource } = require('../helpers/frontendSource');
 
 console.log('Testing LOUMOO Travel Mobile-First Redesign Assertions...');
 
 const htmlPath = path.join(__dirname, '../../Commerce App.dc.html');
-const html = fs.readFileSync(htmlPath, 'utf8');
+const html = readFrontendSource();
 
 // 1. Check Travel Hub (is.travel) exists and has balanced tag
 assert(html.includes('<sc-if value="{{ is.travel }}">'), 'is.travel conditional must be present');

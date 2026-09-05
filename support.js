@@ -666,7 +666,12 @@
     const listGet = compileAttr(el.getAttribute("list") || "");
     const asName = el.getAttribute("as") || "item";
     const hintN = parseInt(el.getAttribute("hint-placeholder-count") || "0", 10);
-    const kids = walkChildren(el, host);
+    // Compile the repeated subtree only when the list has content. The old
+    // compiler recursively walked every `sc-for` during boot, including
+    // lists on screens that were not mounted. Keeping the raw node here is
+    // safe because the source template is immutable after compilation.
+    let kids = null;
+    const getKids = () => kids || (kids = walkChildren(el, host));
     const listSrc = el.getAttribute("list") || "";
     return (vals, ctx, key) => {
       let list = listGet(vals);
@@ -683,6 +688,8 @@
           list = hintN > 0 ? Array(hintN).fill(void 0) : [];
         }
       }
+      if (!list.length) return null;
+      const compiledKids = getKids();
       return h(
         getReact().Fragment,
         { key },
@@ -691,7 +698,7 @@
           return h(
             getReact().Fragment,
             { key: i },
-            kids.map((b, j) => b(sub, ctx, j))
+            compiledKids.map((b, j) => b(sub, ctx, j))
           );
         })
       );
@@ -701,14 +708,19 @@
     const valGet = compileAttr(el.getAttribute("value") || "");
     const hintRaw = el.getAttribute("hint-placeholder-val");
     const hintGet = hintRaw != null ? compileAttr(hintRaw) : null;
-    const kids = walkChildren(el, host);
+    // Conditional screens are the main performance boundary in LOUMOO. Do
+    // not compile an inactive screen's entire DOM/expression tree during the
+    // first render. The first activation compiles it once and reuses it for
+    // the rest of the session.
+    let kids = null;
+    const getKids = () => kids || (kids = walkChildren(el, host));
     return (vals, ctx, key) => {
       let v = valGet(vals);
       if (v === void 0 && hintGet && ctx?.__streamingNow) v = hintGet(vals);
       return v ? h(
         getReact().Fragment,
         { key },
-        kids.map((b, j) => b(vals, ctx, j))
+        getKids().map((b, j) => b(vals, ctx, j))
       ) : null;
     };
   }

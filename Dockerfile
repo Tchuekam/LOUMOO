@@ -26,7 +26,9 @@ RUN addgroup -S loumoo && adduser -S loumoo -G loumoo
 COPY --from=deps --chown=loumoo:loumoo /app/node_modules ./node_modules
 COPY --chown=loumoo:loumoo server ./server
 COPY --chown=loumoo:loumoo src ./src
+COPY --chown=loumoo:loumoo support.js ./support.js
 COPY --chown=loumoo:loumoo "Commerce App.dc.html" ./
+COPY --chown=loumoo:loumoo *Screens.dc.html ./
 COPY --chown=loumoo:loumoo index.html ./
 RUN chown loumoo:loumoo /app
 

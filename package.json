@@ -12,6 +12,7 @@
     "verify:screens": "python verify_screens.py",
     "verify:runtime": "node verify_runtime.js",
     "build:frontend": "python build_redesign.py",
+    "test:performance": "node tests/unit/frontend_performance.test.js",
     "test:unit": "node tests/run_all.js",
     "test:security": "node tests/integration/api_security.test.js",
     "test:journey": "node tests/integration/seller_journey.test.js",

@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<x-dc>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     RETURNING USER SIGN IN (is.signIn)
+     ══════════════════════════════════════════════════════════════════════ -->
+<sc-if value="{{ is.signIn }}">
+<div style="min-height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:24px 20px 32px;max-width:580px;margin:0 auto;box-sizing:border-box">
+
+  <div>
+    <!-- Top Navigation -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px">
+      <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+      <span style="font:800 13px/1 var(--font-heading);letter-spacing:.08em;color:var(--color-accent)">LOUMOO ID</span>
+    </div>
+
+    <!-- Hero -->
+    <div style="text-align:center;margin-bottom:28px">
+      <div style="width:72px;height:72px;border-radius:24px;background:linear-gradient(135deg,var(--color-accent) 0%,#003d8a 100%);color:#fff;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;box-shadow:var(--shadow-glow-blue)">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="m10 17 5-5-5-5"/><path d="M15 12H3"/></svg>
+      </div>
+      <h1 style="font-size:26px;margin:0 0 8px;line-height:1.2">Welcome back</h1>
+      <p style="font-size:14px;color:var(--color-text-secondary);max-width:400px;margin:0 auto;line-height:1.5">
+        Sign in to reach your orders, escrow protection, saved items and storefront.
+      </p>
+    </div>
+
+    <!-- Credentials -->
+    <div class="card-premium" style="display:flex;flex-direction:column;gap:16px">
+
+      <div>
+        <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">EMAIL OR PHONE NUMBER</label>
+        <input type="text" class="input" value="{{ signInIdentifier }}" placeholder="rostand@example.com or 690 12 34 56" autocomplete="username" onInput="{{ updateSignInIdentifier }}">
+      </div>
+
+      <div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+          <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary)">PASSWORD</label>
+          <button onClick="{{ on.forgotPassword }}" style="border:none;background:transparent;padding:0;font:700 11px/1 var(--font-heading);color:var(--color-accent);cursor:pointer">FORGOT?</button>
+        </div>
+        <div style="position:relative;display:flex;align-items:center">
+          <input type="{{ signInShowPassword ? 'text' : 'password' }}" class="input" value="{{ signInPassword }}" placeholder="Enter your password" autocomplete="current-password" style="padding-right:46px" onInput="{{ updateSignInPassword }}">
+          <button onClick="{{ toggleSignInPassword }}" aria-label="{{ signInShowPassword ? 'Hide password' : 'Show password' }}" style="position:absolute;right:8px;border:none;background:transparent;width:32px;height:32px;display:flex;align-items:center;justify-content:center;color:var(--color-text-muted);cursor:pointer">
+            <sc-if value="{{ signInShowPassword }}">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.53 13.53 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><path d="m2 2 20 20"/></svg>
+            </sc-if>
+            <sc-if value="{{ !signInShowPassword }}">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+            </sc-if>
+          </button>
+        </div>
+      </div>
+
+      <!-- Inline error surface -->
+      <sc-if value="{{ signInError }}">
+        <div role="alert" style="display:flex;align-items:flex-start;gap:10px;background:var(--color-accent-sale-100);border:1px solid var(--color-accent-sale);border-radius:var(--radius-sm);padding:12px 14px">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-sale)" stroke-width="2" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+          <span style="font:600 12.5px/1.45 var(--font-body);color:var(--color-accent-sale)">{{ signInError }}</span>
+        </div>
+      </sc-if>
+    </div>
+
+    <!-- Escrow trust reassurance -->
+    <div style="display:flex;align-items:center;gap:10px;margin-top:16px;padding:0 4px">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-success)" stroke-width="2" style="flex-shrink:0"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <span style="font:500 11.5px/1.4 var(--font-body);color:var(--color-text-secondary)">Protected by LOUMOO escrow. We never share your credentials with sellers.</span>
+    </div>
+  </div>
+
+  <!-- CTAs -->
+  <div style="margin-top:28px;display:flex;flex-direction:column;gap:12px">
+    <button onClick="{{ submitSignIn }}" disabled="{{ signInBusy }}" class="btn btn-primary btn-block" style="height:50px;font-size:15px;cursor:{{ signInBusy ? 'wait' : 'pointer' }};opacity:{{ signInBusy ? '0.72' : '1' }}">
+      <sc-if value="{{ signInBusy }}">
+        <span class="spinner-inline" aria-hidden="true"></span>
+        <span>SIGNING YOU IN…</span>
+      </sc-if>
+      <sc-if value="{{ !signInBusy }}">
+        <span>SIGN IN</span>
+        <span>→</span>
+      </sc-if>
+    </button>
+
+    <button onClick="{{ on.onboardWelcome }}" class="btn btn-secondary btn-block" style="height:44px;font-size:13px;cursor:pointer">
+      NEW TO LOUMOO? CREATE AN ACCOUNT
+    </button>
+  </div>
+
+</div>
+</sc-if>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     PASSWORD RESET — REQUEST RECOVERY (is.forgotPassword)
+     ══════════════════════════════════════════════════════════════════════ -->
+<sc-if value="{{ is.forgotPassword }}">
+<div style="min-height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:24px 20px 32px;max-width:580px;margin:0 auto;box-sizing:border-box">
+
+  <div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px">
+      <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+      <span style="font:800 13px/1 var(--font-heading);letter-spacing:.08em;color:var(--color-accent)">ACCOUNT RECOVERY</span>
+    </div>
+
+    <div style="text-align:center;margin-bottom:26px">
+      <div style="width:72px;height:72px;border-radius:24px;background:var(--color-accent-100);color:var(--color-accent);display:flex;align-items:center;justify-content:center;margin:0 auto 20px">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </div>
+      <h1 style="font-size:25px;margin:0 0 8px;line-height:1.2">Reset your password</h1>
+      <p style="font-size:14px;color:var(--color-text-secondary);max-width:410px;margin:0 auto;line-height:1.5">
+        Enter the email address on your LOUMOO account and we'll send recovery instructions.
+      </p>
+    </div>
+
+    <!-- Request state -->
+    <sc-if value="{{ !resetRequestSent }}">
+      <div class="card-premium" style="display:flex;flex-direction:column;gap:16px">
+        <div>
+          <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">EMAIL ADDRESS</label>
+          <input type="email" class="input" value="{{ resetEmail }}" placeholder="rostand@example.com" autocomplete="email" onInput="{{ updateResetEmail }}">
+        </div>
+
+        <sc-if value="{{ resetError }}">
+          <div role="alert" style="display:flex;align-items:flex-start;gap:10px;background:var(--color-accent-sale-100);border:1px solid var(--color-accent-sale);border-radius:var(--radius-sm);padding:12px 14px">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-sale)" stroke-width="2" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+            <span style="font:600 12.5px/1.45 var(--font-body);color:var(--color-accent-sale)">{{ resetError }}</span>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <!-- Sent confirmation state (message comes from the server response) -->
+    <sc-if value="{{ resetRequestSent }}">
+      <div class="card-premium" style="display:flex;flex-direction:column;gap:14px;align-items:center;text-align:center;padding:24px 20px">
+        <div style="width:56px;height:56px;border-radius:50%;background:var(--color-success-100);color:var(--color-success);display:flex;align-items:center;justify-content:center">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg>
+        </div>
+        <div style="font:800 16px/1.3 var(--font-heading);color:var(--color-text)">Check your inbox</div>
+        <div style="font:400 13px/1.5 var(--font-body);color:var(--color-text-secondary)">{{ resetServerMessage }}</div>
+
+        <button onClick="{{ submitResetRequest }}" disabled="{{ resetBusy || resetCooldown > 0 }}" style="border:none;background:transparent;padding:6px 0;font:700 12px/1 var(--font-heading);color:{{ resetCooldown > 0 ? 'var(--color-text-muted)' : 'var(--color-accent)' }};cursor:{{ resetCooldown > 0 ? 'default' : 'pointer' }}">
+          {{ resetCooldown > 0 ? 'RESEND AVAILABLE IN ' + resetCooldown + 'S' : 'RESEND INSTRUCTIONS' }}
+        </button>
+      </div>
+    </sc-if>
+  </div>
+
+  <div style="margin-top:28px;display:flex;flex-direction:column;gap:12px">
+    <sc-if value="{{ !resetRequestSent }}">
+      <button onClick="{{ submitResetRequest }}" disabled="{{ resetBusy }}" class="btn btn-primary btn-block" style="height:50px;font-size:15px;cursor:{{ resetBusy ? 'wait' : 'pointer' }};opacity:{{ resetBusy ? '0.72' : '1' }}">
+        <sc-if value="{{ resetBusy }}">
+          <span class="spinner-inline" aria-hidden="true"></span>
+          <span>SENDING…</span>
+        </sc-if>
+        <sc-if value="{{ !resetBusy }}">
+          <span>SEND RECOVERY INSTRUCTIONS</span>
+          <span>→</span>
+        </sc-if>
+      </button>
+    </sc-if>
+
+    <sc-if value="{{ resetRequestSent }}">
+      <button onClick="{{ on.resetPassword }}" class="btn btn-primary btn-block" style="height:50px;font-size:15px;cursor:pointer">
+        <span>I HAVE A RECOVERY CODE</span>
+        <span>→</span>
+      </button>
+    </sc-if>
+
+    <button onClick="{{ on.signIn }}" class="btn btn-secondary btn-block" style="height:44px;font-size:13px;cursor:pointer">
+      BACK TO SIGN IN
+    </button>
+  </div>
+
+</div>
+</sc-if>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     PASSWORD RESET — SET NEW PASSWORD (is.resetPassword)
+     ══════════════════════════════════════════════════════════════════════ -->
+<sc-if value="{{ is.resetPassword }}">
+<div style="min-height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:24px 20px 32px;max-width:580px;margin:0 auto;box-sizing:border-box">
+
+  <div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px">
+      <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+      <span style="font:800 13px/1 var(--font-heading);letter-spacing:.08em;color:var(--color-accent)">NEW PASSWORD</span>
+    </div>
+
+    <h2 style="font-size:24px;margin:0 0 6px">Choose a new password</h2>
+    <p style="font-size:14px;color:var(--color-text-secondary);margin:0 0 24px">
+      Enter the recovery code we sent you, then set a password you haven't used before.
+    </p>
+
+    <div class="card-premium" style="display:flex;flex-direction:column;gap:16px">
+
+      <div>
+        <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">RECOVERY CODE</label>
+        <input type="text" class="input" value="{{ resetCode }}" placeholder="6-digit code" inputmode="numeric" maxlength="6" autocomplete="one-time-code" style="letter-spacing:.34em;font-weight:700" onInput="{{ updateResetCode }}">
+      </div>
+
+      <div>
+        <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">NEW PASSWORD</label>
+        <div style="position:relative;display:flex;align-items:center">
+          <input type="{{ resetShowPassword ? 'text' : 'password' }}" class="input" value="{{ resetNewPassword }}" placeholder="At least 8 characters" autocomplete="new-password" style="padding-right:46px" onInput="{{ updateResetNewPassword }}">
+          <button onClick="{{ toggleResetPassword }}" aria-label="{{ resetShowPassword ? 'Hide password' : 'Show password' }}" style="position:absolute;right:8px;border:none;background:transparent;width:32px;height:32px;display:flex;align-items:center;justify-content:center;color:var(--color-text-muted);cursor:pointer">
+            <sc-if value="{{ resetShowPassword }}">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.53 13.53 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><path d="m2 2 20 20"/></svg>
+            </sc-if>
+            <sc-if value="{{ !resetShowPassword }}">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+            </sc-if>
+          </button>
+        </div>
+
+        <!-- Live strength meter -->
+        <div style="display:flex;align-items:center;gap:8px;margin-top:8px">
+          <div style="flex:1;height:4px;background:var(--color-divider);border-radius:2px;overflow:hidden">
+            <div style="width:{{ passwordStrengthPct }};height:100%;background:{{ passwordStrengthColor }};border-radius:2px;transition:width .25s ease,background .25s ease"></div>
+          </div>
+          <span style="font:700 10.5px/1 var(--font-heading);color:{{ passwordStrengthColor }};min-width:52px;text-align:right">{{ passwordStrengthLabel }}</span>
+        </div>
+      </div>
+
+      <div>
+        <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">CONFIRM NEW PASSWORD</label>
+        <input type="password" class="input" value="{{ resetConfirmPassword }}" placeholder="Re-enter the password" autocomplete="new-password" onInput="{{ updateResetConfirmPassword }}">
+      </div>
+
+      <sc-if value="{{ resetError }}">
+        <div role="alert" style="display:flex;align-items:flex-start;gap:10px;background:var(--color-accent-sale-100);border:1px solid var(--color-accent-sale);border-radius:var(--radius-sm);padding:12px 14px">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-sale)" stroke-width="2" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+          <span style="font:600 12.5px/1.45 var(--font-body);color:var(--color-accent-sale)">{{ resetError }}</span>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+
+  <div style="margin-top:28px">
+    <button onClick="{{ submitResetConfirm }}" disabled="{{ resetBusy }}" class="btn btn-primary btn-block" style="height:50px;font-size:15px;cursor:{{ resetBusy ? 'wait' : 'pointer' }};opacity:{{ resetBusy ? '0.72' : '1' }}">
+      <sc-if value="{{ resetBusy }}">
+        <span class="spinner-inline" aria-hidden="true"></span>
+        <span>UPDATING PASSWORD…</span>
+      </sc-if>
+      <sc-if value="{{ !resetBusy }}">
+        <span>SET NEW PASSWORD</span>
+        <span>→</span>
+      </sc-if>
+    </button>
+  </div>
+
+</div>
+</sc-if>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     EMAIL VERIFICATION (is.verifyEmail)
+     States: pending · verifying · verified · expired
+     ══════════════════════════════════════════════════════════════════════ -->
+<sc-if value="{{ is.verifyEmail }}">
+<div style="min-height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:24px 20px 32px;max-width:580px;margin:0 auto;box-sizing:border-box">
+
+  <div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px">
+      <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+      <span style="font:800 13px/1 var(--font-heading);letter-spacing:.08em;color:var(--color-accent)">EMAIL VERIFICATION</span>
+    </div>
+
+    <!-- ── PENDING ── -->
+    <sc-if value="{{ emailVerifyState === 'pending' }}">
+      <div style="text-align:center;margin-bottom:26px">
+        <div style="width:76px;height:76px;border-radius:26px;background:var(--color-accent-100);color:var(--color-accent);display:flex;align-items:center;justify-content:center;margin:0 auto 20px">
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+        </div>
+        <h1 style="font-size:25px;margin:0 0 8px;line-height:1.2">Verify your email</h1>
+        <p style="font-size:14px;color:var(--color-text-secondary);max-width:420px;margin:0 auto;line-height:1.5">
+          We sent a 6-digit confirmation code to <strong style="color:var(--color-text)">{{ verifyEmailAddress }}</strong>. Enter it below to continue.
+        </p>
+        <p style="font-size:12.5px;color:var(--color-text-muted);max-width:440px;margin:12px auto 0;line-height:1.55">
+          {{ verifyEmailWhy }}
+        </p>
+      </div>
+
+      <div class="card-premium" style="display:flex;flex-direction:column;gap:16px">
+        <div>
+          <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">CONFIRMATION CODE</label>
+          <input type="text" class="input" value="{{ emailVerifyCode }}" placeholder="000000" inputmode="numeric" maxlength="6" autocomplete="one-time-code" style="letter-spacing:.4em;font-weight:700;text-align:center;font-size:19px;height:52px" onInput="{{ updateEmailVerifyCode }}">
+        </div>
+
+        <sc-if value="{{ emailVerifyError }}">
+          <div role="alert" style="display:flex;align-items:flex-start;gap:10px;background:var(--color-accent-sale-100);border:1px solid var(--color-accent-sale);border-radius:var(--radius-sm);padding:12px 14px">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-sale)" stroke-width="2" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+            <span style="font:600 12.5px/1.45 var(--font-body);color:var(--color-accent-sale)">{{ emailVerifyError }}</span>
+          </div>
+        </sc-if>
+
+        <div style="display:flex;align-items:center;justify-content:center;gap:6px;padding-top:2px">
+          <span style="font:400 12px/1 var(--font-body);color:var(--color-text-secondary)">Didn't receive it?</span>
+          <button onClick="{{ resendEmailVerification }}" disabled="{{ emailVerifyCooldown > 0 }}" style="border:none;background:transparent;padding:0;font:700 12px/1 var(--font-heading);color:{{ emailVerifyCooldown > 0 ? 'var(--color-text-muted)' : 'var(--color-accent)' }};cursor:{{ emailVerifyCooldown > 0 ? 'default' : 'pointer' }}">
+            {{ emailVerifyCooldown > 0 ? 'RESEND IN ' + emailVerifyCooldown + 'S' : 'RESEND CODE' }}
+          </button>
+        </div>
+
+        <div style="border-top:1px solid var(--color-border);padding-top:14px;display:flex;flex-direction:column;gap:10px">
+          <p style="font:400 12px/1.5 var(--font-body);color:var(--color-text-muted);margin:0">
+            {{ verifyEmailNoCodeHelp }}
+          </p>
+          <div style="display:flex;flex-wrap:wrap;gap:14px">
+            <button onClick="{{ recheckEmailVerification }}" style="border:none;background:transparent;padding:0;font:700 12px/1 var(--font-heading);color:var(--color-accent);cursor:pointer">
+              I ALREADY VERIFIED — CHECK AGAIN
+            </button>
+            <button onClick="{{ changeVerifyEmail }}" style="border:none;background:transparent;padding:0;font:700 12px/1 var(--font-heading);color:var(--color-text-secondary);cursor:pointer">
+              USE A DIFFERENT EMAIL
+            </button>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ── VERIFYING ── -->
+    <sc-if value="{{ emailVerifyState === 'verifying' }}">
+      <div style="text-align:center;padding:56px 0">
+        <div style="width:76px;height:76px;border-radius:50%;background:var(--color-accent-100);display:flex;align-items:center;justify-content:center;margin:0 auto 22px">
+          <span class="spinner-lg" aria-hidden="true"></span>
+        </div>
+        <h1 style="font-size:23px;margin:0 0 8px;line-height:1.2">Confirming your email…</h1>
+        <p style="font-size:13.5px;color:var(--color-text-secondary);margin:0">This only takes a moment.</p>
+      </div>
+    </sc-if>
+
+    <!-- ── VERIFIED ── -->
+    <sc-if value="{{ emailVerifyState === 'verified' }}">
+      <div style="text-align:center;padding:36px 0">
+        <div style="width:84px;height:84px;border-radius:50%;background:var(--color-success-100);color:var(--color-success);display:flex;align-items:center;justify-content:center;margin:0 auto 22px">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg>
+        </div>
+        <h1 style="font-size:25px;margin:0 0 8px;line-height:1.2">Email verified</h1>
+        <p style="font-size:14px;color:var(--color-text-secondary);max-width:400px;margin:0 auto;line-height:1.5">
+          <strong style="color:var(--color-text)">{{ verifyEmailAddress }}</strong> is now confirmed on your LOUMOO account.
+        </p>
+        <p style="font-size:12.5px;color:var(--color-text-muted);max-width:400px;margin:10px auto 0;line-height:1.55">
+          {{ verifyEmailNext }}
+        </p>
+
+        <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:20px;background:var(--color-success-100);border-radius:var(--radius-pill);padding:9px 16px;width:fit-content;margin-left:auto;margin-right:auto">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--color-success)" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <span style="font:700 11.5px/1 var(--font-heading);color:var(--color-success)">TRUST SCORE INCREASED</span>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ── EXPIRED / INVALID ── -->
+    <sc-if value="{{ emailVerifyState === 'expired' }}">
+      <div style="text-align:center;padding:36px 0">
+        <div style="width:84px;height:84px;border-radius:50%;background:var(--color-accent-sale-100);color:var(--color-accent-sale);display:flex;align-items:center;justify-content:center;margin:0 auto 22px">
+          <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        </div>
+        <h1 style="font-size:25px;margin:0 0 8px;line-height:1.2">This code has expired</h1>
+        <p style="font-size:14px;color:var(--color-text-secondary);max-width:410px;margin:0 auto;line-height:1.5">
+          Verification codes are valid for a short window for your security. Request a fresh one to continue.
+        </p>
+      </div>
+    </sc-if>
+  </div>
+
+  <!-- CTAs per state -->
+  <div style="margin-top:28px;display:flex;flex-direction:column;gap:12px">
+    <sc-if value="{{ emailVerifyState === 'pending' }}">
+      <button onClick="{{ submitEmailVerification }}" class="btn btn-primary btn-block" style="height:50px;font-size:15px;cursor:pointer">
+        <span>VERIFY EMAIL ADDRESS</span>
+        <span>→</span>
+      </button>
+    </sc-if>
+
+    <sc-if value="{{ emailVerifyState === 'verified' }}">
+      <button onClick="{{ finishEmailVerification }}" class="btn btn-primary btn-block" style="height:50px;font-size:15px;cursor:pointer">
+        <span>CONTINUE</span>
+        <span>→</span>
+      </button>
+    </sc-if>
+
+    <sc-if value="{{ emailVerifyState === 'expired' }}">
+      <button onClick="{{ resendEmailVerification }}" class="btn btn-primary btn-block" style="height:50px;font-size:15px;cursor:pointer">
+        <span>SEND A NEW CODE</span>
+        <span>→</span>
+      </button>
+    </sc-if>
+
+    <sc-if value="{{ emailVerifyState === 'pending' }}">
+      <button onClick="{{ recheckEmailVerification }}" class="btn btn-secondary btn-block" style="height:44px;font-size:13px;cursor:pointer">
+        I VERIFIED ON ANOTHER DEVICE
+      </button>
+    </sc-if>
+
+    <sc-if value="{{ emailVerifyState === 'expired' }}">
+      <button onClick="{{ changeVerifyEmail }}" class="btn btn-secondary btn-block" style="height:44px;font-size:13px;cursor:pointer">
+        USE A DIFFERENT EMAIL ADDRESS
+      </button>
+    </sc-if>
+  </div>
+
+</div>
+</sc-if>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() { return (this.props && this.props.dcProps) || this.props || {}; }
+}
+</script>
+</body>
+</html>

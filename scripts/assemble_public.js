@@ -4,11 +4,12 @@
 /**
  * Assemble the static publish directory for Netlify.
  *
- * The single-file frontend `Commerce App.dc.html` references ./Assets, ./src and
- * ./_ds by relative path, so those directories must sit next to it at the site
- * root. We also serve the app itself as index.html so it loads at `/` with no
- * redirect hop. Written in Node (not shell) so it runs identically on the
- * Windows dev machine and the Linux build image, with no line-ending pitfalls.
+ * The frontend shell and its route-level `*Screens.dc.html` chunks reference
+ * ./Assets, ./src and ./_ds by relative path, so those files/directories must
+ * sit next to the shell at the site root. We also serve the app itself as
+ * index.html so it loads at `/` with no redirect hop. Written in Node (not
+ * shell) so it runs identically on the Windows dev machine and the Linux build
+ * image, with no line-ending pitfalls.
  *
  * Two deploy-blocking issues are fixed here at build time so the source tree is
  * left untouched:
@@ -33,6 +34,17 @@ fs.mkdirSync(out, { recursive: true });
 const app = path.join(root, 'Commerce App.dc.html');
 fs.copyFileSync(app, path.join(out, 'index.html'));
 fs.copyFileSync(app, path.join(out, 'Commerce App.dc.html'));
+
+// Secondary Design Component screens are route-level frontend chunks. Keep
+// them beside the shell so the browser can fetch them on demand from the same
+// CDN origin rather than making the initial document carry every screen.
+const routeChunks = [];
+for (const file of fs.readdirSync(root)) {
+  if (/Screens\.dc\.html$/.test(file)) {
+    fs.copyFileSync(path.join(root, file), path.join(out, file));
+    routeChunks.push(path.join(out, file));
+  }
+}
 
 // Copy critical root scripts & static files (support.js is the DC runtime that boots React)
 for (const file of ['support.js', 'robots.txt', 'favicon.ico']) {
@@ -113,6 +125,7 @@ function rewriteRefs(file) {
 }
 rewriteRefs(path.join(out, 'index.html'));
 rewriteRefs(path.join(out, 'Commerce App.dc.html'));
+for (const file of routeChunks) rewriteRefs(file);
 // CSS under the design-system folder may also reference assets by URL.
 (function walkCss(dir) {
   if (!fs.existsSync(dir)) return;

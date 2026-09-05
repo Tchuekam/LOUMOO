@@ -5,6 +5,7 @@ Combines all modular views including the new World-Class Onboarding Engine, and 
 """
 
 import os
+import re
 import sys
 
 # Import all view modules
@@ -36,12 +37,13 @@ header_and_styles = """<!DOCTYPE html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="./src/services/supabase.js"></script>
 <script src="./support.js"></script>
-<script src="./src/services/loumooApi.js"></script>
-<script src="./src/services/clerkSession.js"></script>
-<script src="./src/services/accountGuard.js"></script>
-<script src="./src/services/publishingEngine.js"></script>
+<!-- Keep the critical API/auth bridges non-blocking; they execute before
+     DOMContentLoaded, which is when the DC runtime mounts the app. The
+     publishing engine is a route-level chunk loaded only when Sell is used. -->
+<script defer src="./src/services/loumooApi.js"></script>
+<script defer src="./src/services/clerkSession.js"></script>
+<script defer src="./src/services/accountGuard.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600;1,700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -7959,7 +7961,18 @@ class Component extends DCLogic {
     catalogError: ''
   };
 
-  go = (s) => this.setState(st => ({ screen: s, stack: [...st.stack, st.screen], toast: '' }));
+  go = (s) => {
+    this.setState(st => ({ screen: s, stack: [...st.stack, st.screen], toast: '' }));
+    // The publishing studio is a feature chunk. Start loading it on intent,
+    // while the route transition remains immediate for all other screens.
+    if (s === 'publishIntent' || s === 'publishStudio' || s === 'publishReview' || s === 'publishSuccess') {
+      this._ensurePublishingEngine().then((pub) => {
+        if (this._unmounted || !pub) return;
+        this.setState({ publishingEngineReady: true });
+        if (this.state.screen === 'publishIntent') this.checkResumableDraft();
+      }).catch(() => {});
+    }
+  };
   back = () => this.setState(st => {
     const stack = st.stack.slice();
     const prev = stack.pop() || 'home';
@@ -8320,14 +8333,10 @@ class Component extends DCLogic {
   }
 
   componentDidMount() {
-    this._restoreOnboardingDraft();
-    this._restoreUserAvatar();
-    this._restoreWishlist();
-    this._restoreCart();
-    this._restoreOrders();
-    this._restoreReviews();
-    this._restoreTrips();
-    this._restoreNotifs();
+    // Restore all small, local-only UI caches in one state commit. The old
+    // sequence triggered up to eight root renders before the first useful
+    // interaction was available on a slow device.
+    this._restoreLocalState();
     this._bootAuth();
     // Load the live marketplace catalogue for the home rail on first paint
     // (_onScreenEnter only fires on subsequent navigation, not initial mount).
@@ -8342,7 +8351,7 @@ class Component extends DCLogic {
         }
       };
       // Enforce zero volume and muted on any autoplay/ambient/hero video
-      document.addEventListener('play', (e) => {
+      this._onMediaPlay = (e) => {
         if (e.target && e.target.tagName === 'VIDEO') {
           if (!e.target.closest('.video-modal-player')) {
             e.target.muted = true;
@@ -8350,13 +8359,15 @@ class Component extends DCLogic {
             e.target.defaultMuted = true;
           }
         }
-      }, true);
+      };
+      document.addEventListener('play', this._onMediaPlay, true);
 
-      document.addEventListener('ended', (e) => {
+      this._onMediaEnded = (e) => {
         if (e.target && e.target.tagName === 'VIDEO' && (e.target.closest('.hero-media-wrap') || e.target.hasAttribute('data-hero-video'))) {
           if (window.heroNextSlide) window.heroNextSlide();
         }
-      }, true);
+      };
+      document.addEventListener('ended', this._onMediaEnded, true);
 
       // Ambient background videos (e.g. the "Collections for you" rail) must
       // loop silently with no play button. React does not reliably set the
@@ -8372,7 +8383,7 @@ class Component extends DCLogic {
           v.loop = true;
           v.playsInline = true;
         };
-        const ambientObserver = new IntersectionObserver((entries) => {
+        this._ambientObserver = new IntersectionObserver((entries) => {
           entries.forEach((entry) => {
             const v = entry.target;
             setupAmbient(v);
@@ -8384,35 +8395,37 @@ class Component extends DCLogic {
             }
           });
         }, { threshold: 0.25 });
-        const scanAmbient = () => {
+        this._scanAmbient = () => {
           document.querySelectorAll('video[data-ambient="true"]').forEach((v) => {
             setupAmbient(v);
-            ambientObserver.observe(v); // observing the same node twice is a no-op
+            this._ambientObserver.observe(v); // observing the same node twice is a no-op
           });
         };
-        scanAmbient();
+        this._scanAmbient();
         // Re-scan when React mounts new ambient videos (route changes, etc.),
         // coalescing bursts of mutations into one scan per frame.
         let scanScheduled = false;
-        const mo = new MutationObserver(() => {
+        this._ambientMutationObserver = new MutationObserver(() => {
           if (scanScheduled) return;
           scanScheduled = true;
-          requestAnimationFrame(() => { scanScheduled = false; scanAmbient(); });
+          requestAnimationFrame(() => { scanScheduled = false; this._scanAmbient(); });
         });
-        mo.observe(document.body, { childList: true, subtree: true });
+        const root = document.getElementById('dc-root') || document.body;
+        this._ambientMutationObserver.observe(root, { childList: true, subtree: true });
       } catch (_) {}
 
       // Announce feed: if a card's cover image fails to load, collapse the media
       // well so a broken URL becomes a clean text-first card rather than a broken
       // frame. Capture phase because 'error' does not bubble. CSP-safe (no inline
       // handler). Scoped to .ann-card-media to avoid touching other imagery.
-      document.addEventListener('error', (e) => {
+      this._onMediaError = (e) => {
         const img = e.target;
         if (img && img.tagName === 'IMG' && img.closest) {
           const media = img.closest('.ann-card-media');
-          if (media) media.style.display = 'none';
+            if (media) media.style.display = 'none';
         }
-      }, true);
+      };
+      document.addEventListener('error', this._onMediaError, true);
     }
     this._startHeroSlideAutoAdvance();
     this._handleKeyDown = (e) => {
@@ -8445,6 +8458,20 @@ class Component extends DCLogic {
     if (typeof window !== 'undefined' && this._onWindowFocus) {
       window.removeEventListener('focus', this._onWindowFocus);
     }
+    if (typeof document !== 'undefined') {
+      if (this._onMediaPlay) document.removeEventListener('play', this._onMediaPlay, true);
+      if (this._onMediaEnded) document.removeEventListener('ended', this._onMediaEnded, true);
+      if (this._onMediaError) document.removeEventListener('error', this._onMediaError, true);
+    }
+    if (this._ambientObserver) this._ambientObserver.disconnect();
+    if (this._ambientMutationObserver) this._ambientMutationObserver.disconnect();
+    this._ambientObserver = null;
+    this._ambientMutationObserver = null;
+    this._scanAmbient = null;
+    if (typeof window !== 'undefined' && window._loumooHeroComponent === this) {
+      window._loumooHeroComponent = null;
+      window.heroNextSlide = null;
+    }
     this._stopCameraStream();
     this._unmounted = true;
   }
@@ -8456,6 +8483,76 @@ class Component extends DCLogic {
         this._cameraStream = null;
       }
     } catch (e) {}
+  }
+
+  /**
+   * Restores the browser's small UI caches with one render. These values are
+   * convenience state only; server-backed identity and permissions still come
+   * from the existing auth/account flows.
+   */
+  _restoreLocalState() {
+    if (typeof localStorage === 'undefined') return;
+    const next = {};
+
+    try {
+      const draft = localStorage.getItem('loumoo_onboarding_draft');
+      if (draft) {
+        const value = JSON.parse(draft);
+        if (value && typeof value === 'object') Object.assign(next, value);
+      }
+    } catch (e) {}
+    try {
+      const avatar = localStorage.getItem('loumoo_user_avatar');
+      if (avatar) next.regAvatar = avatar;
+    } catch (e) {}
+    try {
+      const raw = localStorage.getItem('loumoo_wishlist');
+      const value = raw ? JSON.parse(raw) : null;
+      if (value && typeof value === 'object' && !Array.isArray(value)) next.productWishlist = value;
+    } catch (e) {}
+    try {
+      const raw = localStorage.getItem('loumoo_cart');
+      const value = raw ? JSON.parse(raw) : null;
+      if (Array.isArray(value)) next.cartItems = value;
+    } catch (e) {}
+    try {
+      const raw = localStorage.getItem('loumoo_orders');
+      const value = raw ? JSON.parse(raw) : null;
+      if (Array.isArray(value)) next.orders = value;
+    } catch (e) {}
+    try {
+      const raw = localStorage.getItem('loumoo_reviews');
+      const value = raw ? JSON.parse(raw) : null;
+      if (Array.isArray(value)) next.reviews = value;
+    } catch (e) {}
+    try {
+      const raw = localStorage.getItem('loumoo_trips');
+      const value = raw ? JSON.parse(raw) : null;
+      if (Array.isArray(value)) next.trips = value;
+    } catch (e) {}
+
+    let hasNotifications = false;
+    try {
+      const raw = localStorage.getItem('loumoo_notifs');
+      if (raw) {
+        const value = JSON.parse(raw);
+        if (Array.isArray(value)) {
+          next.notifications = value;
+          hasNotifications = true;
+        }
+      }
+      if (!hasNotifications && !raw) {
+        const seed = [{
+          id: 'ntf_welcome', tone: 'accent', title: 'Welcome to LOUMOO',
+          body: 'Your notifications about orders, deliveries and trips will appear here.',
+          read: false, createdAt: Date.now()
+        }];
+        next.notifications = seed;
+        this._persistNotifs(seed);
+      }
+    } catch (e) {}
+
+    if (Object.keys(next).length) this.setState(next);
   }
 
   /** Onboarding drafts are UI convenience only — never an auth signal. */
@@ -8996,6 +9093,35 @@ class Component extends DCLogic {
       if (typeof globalThis !== 'undefined' && globalThis && globalThis.LoumooPublishing) return globalThis.LoumooPublishing;
     } catch (e) { /* sandboxed */ }
     return null;
+  }
+
+  /** Loads the seller-only publishing engine at the first publishing intent. */
+  _ensurePublishingEngine() {
+    const ready = this._pub();
+    if (ready) return Promise.resolve(ready);
+    if (typeof document === 'undefined' || typeof window === 'undefined') return Promise.resolve(null);
+    if (!window.__loumooPublishingEnginePromise) {
+      window.__loumooPublishingEnginePromise = new Promise((resolve, reject) => {
+        const existing = document.querySelector('script[data-loumoo-publishing-engine]');
+        if (existing) {
+          existing.addEventListener('load', () => resolve(this._pub()), { once: true });
+          existing.addEventListener('error', reject, { once: true });
+          return;
+        }
+        const script = document.createElement('script');
+        script.src = './src/services/publishingEngine.js';
+        script.async = true;
+        script.setAttribute('data-loumoo-publishing-engine', 'true');
+        script.onload = () => {
+          const loaded = this._pub();
+          if (loaded) resolve(loaded);
+          else reject(new Error('Publishing engine did not expose LoumooPublishing'));
+        };
+        script.onerror = () => reject(new Error('Publishing engine failed to load'));
+        document.head.appendChild(script);
+      });
+    }
+    return window.__loumooPublishingEnginePromise;
   }
 
   /** The context the engine needs: who is publishing, and what the server said. */
@@ -10240,8 +10366,16 @@ class Component extends DCLogic {
         return;
       }
 
-      this.checkResumableDraft();
-      this.go('publishIntent');
+      this._ensurePublishingEngine().then((pub) => {
+        if (this._unmounted || !pub) {
+          if (!this._unmounted) this.toast('The publishing studio could not load. Please try again.');
+          return;
+        }
+        this.checkResumableDraft();
+        this.go('publishIntent');
+      }).catch(() => {
+        if (!this._unmounted) this.toast('The publishing studio could not load. Please try again.');
+      });
     };
     on.upload = handleSellClick;
     on.publishIntent = handleSellClick;
@@ -10260,7 +10394,15 @@ class Component extends DCLogic {
         this.go('createStore');
         return;
       }
-      this.startPublishing('BROADCAST');
+      this._ensurePublishingEngine().then((pub) => {
+        if (this._unmounted || !pub) {
+          if (!this._unmounted) this.toast('The publishing studio could not load. Please try again.');
+          return;
+        }
+        this.startPublishing('BROADCAST');
+      }).catch(() => {
+        if (!this._unmounted) this.toast('The publishing studio could not load. Please try again.');
+      });
     };
 
     const st = {}, pick = {};
@@ -10314,7 +10456,7 @@ class Component extends DCLogic {
     const strength = passwordStrength(this.state.resetNewPassword || '');
     const regStrength = passwordStrength(this.state.regPassword || '');
 
-    return {
+    const viewProps = {
       is, on, st, pick,
       sidebarCollapsed: Boolean(this.state.sidebarCollapsed),
       sidebarNavClass: Boolean(this.state.sidebarCollapsed) ? 'collapsed' : '',
@@ -13804,6 +13946,11 @@ class Component extends DCLogic {
         } catch (_) {}
       }
     };
+    // Pass the already-derived render object to on-demand screen chunks. A
+    // shared object keeps lazy boundaries cheap and avoids recomputing the
+    // entire projection in every child component.
+    viewProps.viewProps = viewProps;
+    return viewProps;
   }
 }
 </script>
@@ -13858,32 +14005,82 @@ if _catalog_literal:
 else:
     print('WARNING: could not extract PRODUCTS_DATA for catalog_products.js')
 
-# Assemble all screens
+# The home hub remains in the critical document because it is the first
+# meaningful journey. Every secondary surface is a meaningful route-level
+# chunk fetched by the DC runtime only after its route becomes active.
+_screen_chunks = [
+    ('SearchScreens', 'is.search || is.filters || is.voice || is.visual || is.visualScan || is.visualResults', get_search_and_ai_view()),
+    ('ChatProfileScreens', 'is.chat || is.threadAi || is.threadSeller || is.notifications || is.profile || is.saved || is.settings || is.loading || is.networkError', get_chat_and_profile_view()),
+    ('OnboardingScreens', 'is.onboardWelcome || is.onboardType || is.onboardIdentity || is.onboardOtp || is.onboardAdaptive || is.onboardBuyer || is.onboardSeller || is.onboardBusiness || is.onboardVerify || is.onboardReview || is.onboardSuccess', get_onboarding_view()),
+    ('AccountAccessScreens', 'is.signIn || is.forgotPassword || is.resetPassword || is.verifyEmail', get_account_access_view()),
+    ('AccountHubScreens', 'is.accountDashboard || is.editProfile || is.addresses || is.addAddress || is.editAddress || is.notificationPreferences || is.privacySettings || is.securitySettings || is.followedStores || is.userActivity || is.deleteAccount', get_account_hub_view()),
+    ('OrderScreens', 'is.orderDetail || is.refundRequest || is.writeReview || is.sellerOrderDetail || is.sellerPayouts', get_order_product_flow_view()),
+    ('HotelScreens', 'is.hotelSearch || is.hotelDetail || is.hotelBooking', get_hotel_vertical_view()),
+    ('ProductScreens', 'is.product', get_product_view()),
+    ('CheckoutScreens', 'is.cart || is.checkout || is.paying || is.success || is.payFailed || is.orders || is.transactions', get_cart_view() + get_checkout_view() + get_paying_view() + get_success_view() + get_payfailed_view() + get_orders_and_transactions_view()),
+    ('CollectionsScreens', 'is.category || is.bestpicks || is.freeday', get_collections_view()),
+    ('MerchantScreens', 'is.store || is.business || is.brand || is.seller || is.myListings', get_merchant_view()),
+    ('CommunityScreens', 'is.announce || is.announceCampaigns || is.announceDetail || is.vs || is.vsCompare', get_community_view()),
+    ('TravelScreens', 'is.travel || is.travelBus || is.travelPackages || is.travelVisa || is.travelResults || is.travelDetail || is.travelPassenger || is.travelTicket', get_travel_view()),
+    ('StoreBusinessScreens', 'is.createStore || is.storeOnboarding || is.storeSettings || is.storeVerification || is.storeAnalytics', get_store_business_view()),
+    ('PublishingScreens', 'is.publishIntent || is.publishStudio || is.publishReview || is.publishSuccess', build_publishing_view()),
+    ('PublicProfileScreens', 'is.publicUserProfile || is.sellerPublicPage', get_public_profile_view()),
+]
+
+def _optimize_media_markup(markup):
+    """Make template media cheap before the route is actually mounted."""
+    def image_tag(match):
+        tag = match.group(0)
+        if not re.search(r'\bloading\s*=', tag, re.I):
+            tag = tag[:-2] + ' loading="lazy" />' if tag.endswith('/>') else tag[:-1] + ' loading="lazy">'
+        if not re.search(r'\bdecoding\s*=', tag, re.I):
+            tag = tag[:-2] + ' decoding="async" />' if tag.endswith('/>') else tag[:-1] + ' decoding="async">'
+        return tag
+
+    def video_tag(match):
+        tag = match.group(0)
+        if not re.search(r'\bpreload\s*=', tag, re.I):
+            tag = tag[:-1] + ' preload="none">'
+        return tag
+
+    markup = re.sub(r'<img\b[^>]*>', image_tag, markup, flags=re.I)
+    return re.sub(r'<video\b[^>]*>', video_tag, markup, flags=re.I)
+
+
+def _write_screen_chunk(name, markup):
+    # A child DC component intentionally has no logic of its own. The root
+    # owns navigation/state and passes its already-derived view projection via
+    # `dcProps`, so the split changes loading boundaries without changing UX.
+    chunk = (
+        '<!DOCTYPE html>\n<html>\n<head>\n<meta charset="utf-8">\n'
+        '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
+        '</head>\n<body>\n<x-dc>\n'
+        + _optimize_media_markup(markup)
+        + '\n</x-dc>\n'
+        '<script type="text/x-dc" data-dc-script>\n'
+        'class Component extends DCLogic {\n'
+        '  renderVals() { return (this.props && this.props.dcProps) || this.props || {}; }\n'
+        '}\n'
+        '</script>\n</body>\n</html>\n'
+    )
+    with open(name + '.dc.html', 'w', encoding='utf-8') as f:
+        f.write(chunk)
+    return chunk
+
+lazy_screen_markup = ''
+for _name, _condition, _markup in _screen_chunks:
+    _write_screen_chunk(_name, _markup)
+    lazy_screen_markup += (
+        '\n<sc-if value="{{ ' + _condition + ' }}">\n'
+        '  <dc-import name="' + _name + '" dcProps="{{ viewProps }}"></dc-import>\n'
+        '</sc-if>\n'
+    )
+
 full_html = (
-    header_and_styles
-    + get_home_view()
-    + get_search_and_ai_view()
-    + get_chat_and_profile_view()
-    + get_onboarding_view()
-    + get_account_access_view()
-    + get_account_hub_view()
-    + get_order_product_flow_view()
-    + get_hotel_vertical_view()
-    + get_product_view()
-    + get_cart_view()
-    + get_checkout_view()
-    + get_paying_view()
-    + get_success_view()
-    + get_payfailed_view()
-    + get_orders_and_transactions_view()
-    + get_collections_view()
-    + get_merchant_view()
-    + get_community_view()
-    + get_travel_view()
-    + get_store_business_view()
-    + build_publishing_view()
-    + get_public_profile_view()
-    + footer_and_scripts
+    _optimize_media_markup(header_and_styles)
+    + _optimize_media_markup(get_home_view())
+    + lazy_screen_markup
+    + _optimize_media_markup(footer_and_scripts)
 )
 
 with open('Commerce App.dc.html', 'w', encoding='utf-8') as f:

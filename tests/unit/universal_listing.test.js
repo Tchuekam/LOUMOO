@@ -7,6 +7,7 @@
 const assert = require('assert');
 const path = require('path');
 const fs = require('fs');
+const { readFrontendSource } = require('../helpers/frontendSource');
 
 // ── 1. ListingType Enum & Capabilities Tests ──
 
@@ -311,7 +312,7 @@ function testApiClientListingMethods() {
 // ── 10. HTML Screen Presence & Balance Tests ──
 
 function testHtmlScreens() {
-  const html = fs.readFileSync('Commerce App.dc.html', 'utf8');
+  const html = readFrontendSource();
 
   const requiredScreens = [
     'publishIntent', 'publishStudio', 'publishReview', 'publishSuccess', 'myListings'
