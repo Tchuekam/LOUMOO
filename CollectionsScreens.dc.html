@@ -511,6 +511,7 @@
       </div>
 
       <!-- Verified Retailers in this Category -->
+      <sc-if value="{{ categoryHasPartnerStores }}">
       <div>
         <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px">
           <div style="font:800 14px/1 var(--font-heading);color:var(--color-text)">Authorized Stores &amp; Partners</div>
@@ -571,13 +572,16 @@
 
         </div>
       </div>
+      </sc-if>
 
       <!-- Live Category Products Grid -->
       <div>
+        <sc-if value="{{ !categoryShowEmptyState }}">
         <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px">
           <div style="font:800 14px/1 var(--font-heading);color:var(--color-text)">Featured Verified Listings</div>
           <span style="font:500 12px/1 var(--font-body);color:var(--color-text-secondary)">All covered by LOUMOO Escrow Protection</span>
         </div>
+        </sc-if>
 
         <div class="home-grid" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:20px;margin-top:16px">
           
@@ -848,7 +852,51 @@
             </div>
           </sc-if>
 
+          <!-- Universal data-driven grid: fills every category without a bespoke editorial block -->
+          <sc-if value="{{ categoryUsesDataGrid }}">
+            <sc-for list="{{ categoryProductCards }}" as="card">
+              <div onClick="{{ () => openProduct(card.id) }}" class="loumoo-media-card" aria-label="{{ card.title }}">
+                <div class="loumoo-card-media-cutout">
+                  <sc-if value="{{ card.verified }}"><span class="loumoo-card-badge">✓ Verified</span></sc-if>
+                  <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist(card.id, card.title); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted(card.id) ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted(card.id) ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                  </button>
+                  <img src="{{ card.imageUrl }}" alt="{{ card.title }}" loading="lazy" decoding="async">
+                </div>
+                <div class="loumoo-card-body">
+                  <h4 class="loumoo-card-title">{{ card.title }}</h4>
+                  <div class="loumoo-card-tagline">{{ card.storeLabel }}</div>
+                  <div class="loumoo-card-rating-row"><span>{{ card.ratingLabel }}</span></div>
+                  <div class="loumoo-card-bottom-row">
+                    <div class="loumoo-card-pricing-block">
+                      <div class="loumoo-card-price-main">
+                        <span class="loumoo-card-price-val">{{ card.priceLabel }}</span>
+                        <sc-if value="{{ card.strikeLabel }}"><span class="loumoo-card-price-strike">{{ card.strikeLabel }}</span></sc-if>
+                      </div>
+                    </div>
+                    <button class="loumoo-card-pill-btn" aria-label="View listing">View</button>
+                  </div>
+                </div>
+              </div>
+            </sc-for>
+          </sc-if>
+
         </div>
+
+        <!-- Honest, professional empty state for categories still onboarding sellers -->
+        <sc-if value="{{ categoryShowEmptyState }}">
+          <div class="card-premium" style="text-align:center;padding:48px 24px;display:flex;flex-direction:column;align-items:center;gap:14px">
+            <div style="width:64px;height:64px;border-radius:50%;background:var(--color-surface-subtle);display:flex;align-items:center;justify-content:center;color:var(--color-accent)">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 7h-3V5a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v2H4a1 1 0 0 0-1 1v11a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8a1 1 0 0 0-1-1Z"/><path d="M9 7V5h6v2"/></svg>
+            </div>
+            <h3 style="margin:0;font:800 18px/1.25 var(--font-heading);color:var(--color-text)">Verified {{ categoryDisplayName }} sellers are coming soon</h3>
+            <p style="margin:0;max-width:440px;font:400 13.5px/1.6 var(--font-body);color:var(--color-text-secondary)">We're onboarding trusted merchants for this category. Every listing on LOUMOO is escrow-protected — you only pay when your order is delivered.</p>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:6px">
+              <button onClick="{{ openAllCategories }}" class="btn btn-primary" style="height:44px;padding:0 20px;border-radius:var(--radius-pill)">Explore what's live →</button>
+              <button onClick="{{ on.upload }}" class="btn btn-outline" style="height:44px;padding:0 20px;border-radius:var(--radius-pill)">Sell in this category</button>
+            </div>
+          </div>
+        </sc-if>
       </div>
 
     </div>

@@ -375,6 +375,28 @@
   </div>
 
   <div style="padding:20px 16px;max-width:800px;margin:0 auto;display:flex;flex-direction:column;gap:18px">
+    <sc-if value="{{ announceDetailLoading }}">
+      <div class="pub-banner is-busy" role="status"><span class="pub-spinner" aria-hidden="true"></span><span>Loading broadcast…</span></div>
+    </sc-if>
+
+    <!-- The selected announcement—not a sample campaign—owns every buyer-facing field. -->
+    <sc-if value="{{ hasActiveAnnouncement }}">
+      <article class="card-premium" style="padding:0;overflow:hidden">
+        <sc-if value="{{ activeAnnouncementCard.hasMedia }}">
+          <img src="{{ activeAnnouncementCard.coverUrl }}" alt="{{ activeAnnouncementCard.title }}" style="width:100%;max-height:380px;display:block;object-fit:cover" loading="lazy" decoding="async">
+        </sc-if>
+        <div style="padding:22px;display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px"><span class="tag tag-accent" style="font-weight:800">{{ activeAnnouncementCard.badge || 'BROADCAST' }}</span><span style="font:600 11px/1 var(--font-body);color:var(--color-text-muted)">{{ activeAnnouncementCard.storeName || 'LOUMOO verified seller' }}</span></div>
+          <h1 style="margin:0;font-size:clamp(24px,4vw,34px);line-height:1.12;letter-spacing:-.035em">{{ activeAnnouncementCard.title }}</h1>
+          <sc-if value="{{ activeAnnouncementCard.body }}"><p style="margin:0;font:400 15px/1.65 var(--font-body);color:var(--color-text-secondary)">{{ activeAnnouncementCard.body }}</p></sc-if>
+          <sc-if value="{{ activeAnnouncementCard.highlights && activeAnnouncementCard.highlights.length }}"><div style="display:flex;flex-wrap:wrap;gap:8px"><sc-for list="{{ activeAnnouncementCard.highlights }}" as="item"><span class="tag tag-neutral">✓ {{ item.label }}</span></sc-for></div></sc-if>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;padding-top:14px;border-top:1px solid var(--color-divider)"><span style="font:800 18px/1 var(--font-heading);color:var(--color-accent)">{{ activeAnnouncementCard.priceLine }}</span><button onClick="{{ () => contactSellerWhatsApp({ sellerName: activeAnnouncementCard.storeName, productTitle: activeAnnouncementCard.title, price: activeAnnouncementCard.priceLine }) }}" class="btn btn-primary" style="height:42px;padding:0 16px">{{ activeAnnouncementCard.ctaLabel || 'Contact seller' }} →</button></div>
+        </div>
+      </article>
+    </sc-if>
+
+    <!-- Retained temporarily for source-history context, never rendered. -->
+    <sc-if value="{{ false }}">
 
     <!-- Merchant Header Card -->
     <div class="card-premium" style="display:flex;align-items:center;justify-content:space-between">
@@ -464,6 +486,7 @@
       </div>
 
     </div>
+    </sc-if>
 
   </div>
 </div>

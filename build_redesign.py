@@ -8062,6 +8062,31 @@ class Component extends DCLogic {
     if (!p) p = (this.state.catalogProducts || []).find((x) => x && x.id === id) || null;
     return p || {};
   };
+  // The pool of real products (curated data + live catalogue) that belong to a
+  // top-level category slug. Powers the category drill-down grid so no category
+  // ever renders a blank screen. Returns raw product objects (no view formatting).
+  _categoryProductPool = (slug) => {
+    if (!slug || slug === 'all') return [];
+    const MAP = {
+      electronics: ['electronics','smartphones','laptops','audio','wearables','gaming','power_accessories','tech'],
+      fashion: ['fashion','footwear','clothing','shoes','watches_jewelry','apparel','streetwear'],
+      home: ['home','home_living','furniture','appliances','kitchen','decor'],
+      automotive: ['automotive','cars','auto_parts','vehicles','motorbike'],
+      services: ['services','tech_repairs','creative_services','education','repairs'],
+      hotels: ['hotels','hospitality','hotel_rooms','furnished_studios'],
+      travel: ['travel','travel_bus','travel_flights','travel_trains'],
+      real_estate: ['real_estate','residential_property','commercial_property','property'],
+      banks: ['banks','finance','financial'],
+      digital: ['digital','software','courses','ebooks'],
+      supermarket: ['supermarket','beauty','grocery','fmcg','cosmetics']
+    };
+    const cats = MAP[slug] || [slug];
+    const seen = {}, merged = [];
+    const add = (p) => { if (p && p.id && !seen[p.id]) { seen[p.id] = 1; merged.push(p); } };
+    try { if (typeof PRODUCTS_DATA !== 'undefined') Object.keys(PRODUCTS_DATA).forEach((k) => add(Object.assign({ id: k }, PRODUCTS_DATA[k]))); } catch (e) {}
+    (this.state.catalogProducts || []).forEach(add);
+    return merged.filter((p) => cats.indexOf(String(p.category || '').toLowerCase()) !== -1);
+  };
   _wishlistEntry = (id, name) => {
     const p = this._resolveProduct(id);
     const priceStr = p.salePrice || p.price || '';
@@ -10489,6 +10514,10 @@ class Component extends DCLogic {
     });
 
     const fmt = n => String(n).replace(/\\B(?=(\\d{3})+(?!\\d))/g, ' ');
+    // Local asset paths in seed/curated data sometimes carry raw spaces and
+    // ampersands (e.g. "telephone&PC"), which break the URL and 404 the image.
+    // Encode them defensively (already-encoded %20 is left untouched).
+    const encImg = (u) => u ? String(u).replace(/ /g, '%20').replace(/&/g, '%26') : '';
     // Real cart totals derived from the line items in the bag.
     const cartList = this.state.cartItems || [];
     const cartSubtotal = cartList.reduce((a, it) => a + (Number(it.priceXaf) || 0) * (Number(it.qty) || 1), 0);
@@ -12691,6 +12720,34 @@ class Component extends DCLogic {
         this.setState({ activeCategorySlug: catSlug, activeSubcategorySlug: 'all', categorySearchQuery: '' });
         this.go('category');
       },
+
+      // ── Data-driven category drill-down grid ────────────────────────────
+      // Every category resolves to real products (curated + live catalogue),
+      // so categories without a bespoke editorial block never render blank.
+      categoryProductCards: this._categoryProductPool(this.state.activeCategorySlug || 'all').map((p) => ({
+        id: p.id,
+        title: p.title || p.name || 'Untitled listing',
+        imageUrl: encImg(p.coverImage || p.imageUrl || p.image || (p.images && p.images[0]) || ''),
+        priceLabel: p.salePrice || p.price || (p.priceNumeric ? ('XAF ' + fmt(p.priceNumeric)) : (p.base_price_minor ? ('XAF ' + fmt(p.base_price_minor)) : 'Ask price')),
+        strikeLabel: (p.salePrice && p.price) ? p.price : '',
+        ratingLabel: '★ ' + (p.rating != null ? p.rating : '4.9'),
+        storeLabel: (p.storeName || p.merchant || p.store || 'LOUMOO verified seller') + (p.merchantCity ? (' · ' + p.merchantCity) : ''),
+        verified: Boolean(p.verified)
+      })),
+      categoryDisplayName: (() => {
+        const NAMES = { electronics: 'Electronics & Technology', fashion: 'Fashion & Luxury', hotels: 'Hospitality & Stays', travel: 'Travel & Mobility', services: 'Professional Services', automotive: 'Vehicles & Automotive', real_estate: 'Real Estate & Property', banks: 'Banks & Financial Services', home: 'Home & Living', digital: 'Digital Products', supermarket: 'Supermarket & Essentials' };
+        return NAMES[this.state.activeCategorySlug || 'all'] || 'this category';
+      })(),
+      categoryHasPartnerStores: ['electronics','services','hotels','travel'].indexOf(this.state.activeCategorySlug || 'all') !== -1,
+      categoryUsesDataGrid: (() => {
+        const slug = this.state.activeCategorySlug || 'all';
+        return slug !== 'all' && ['electronics','hotels','travel','services'].indexOf(slug) === -1;
+      })(),
+      categoryShowEmptyState: (() => {
+        const slug = this.state.activeCategorySlug || 'all';
+        if (slug === 'all' || ['electronics','hotels','travel','services'].indexOf(slug) !== -1) return false;
+        return this._categoryProductPool(slug).length === 0;
+      })(),
 
       // Category Search Match helpers
       categoryHasQuery: Boolean((this.state.categorySearchQuery || '').trim()),
