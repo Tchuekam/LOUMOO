@@ -12431,7 +12431,7 @@ class Component extends DCLogic {
         return {
           id: h.id, name: h.name, area: h.area, star: h.star,
           ratingLabel: '★ ' + h.rating, reviews: h.reviews, image: encImg(h.image), tagline: h.tagline,
-          amenities: h.amenities,
+          amenities: h.amenities.map((a) => ({ label: a })),
           rooms: h.rooms.map((r, i) => ({ index: i, name: r.name, features: r.features, priceLabel: 'XAF ' + fmt(r.price), strikeLabel: r.strike ? ('XAF ' + fmt(r.strike)) : '', selected: i === ri })),
           nights: nights, nightsLabel: nights + (nights === 1 ? ' night' : ' nights'),
           checkInLabel: this._hotelDateLabel(this.state.hotelCheckIn),

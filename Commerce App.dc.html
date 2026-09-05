@@ -8366,7 +8366,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   <dc-import name="OrderScreens" dcProps="{{ viewProps }}"></dc-import>
 </sc-if>
 
-<sc-if value="{{ is.hotelSearch || is.hotelDetail || is.hotelBooking }}">
+<sc-if value="{{ is.hotelSearch || is.hotelDetail || is.hotelBooking || is.hotelVoucher }}">
   <dc-import name="HotelScreens" dcProps="{{ viewProps }}"></dc-import>
 </sc-if>
 
@@ -15068,7 +15068,52 @@ class Component extends DCLogic {
       openHotelSearch: () => this.go('hotelSearch'),
       hotelCity: this.state.hotelCity,
       updateHotelCity: (e) => this.setState({ hotelCity: e && e.target ? e.target.value : e }),
-      openHotelDetail: () => this.go('hotelDetail'),
+
+      // Data-driven search cards — every card opens its own hotel (was: all
+      // eight cards hardcoded to open Krystal Palace).
+      hotelPopularCards: (() => {
+        const map = (h) => ({ id: h.id, name: h.name, area: h.area, star: h.star, ratingLabel: '★ ' + h.rating, reviews: h.reviews, image: encImg(h.image), priceLabel: 'XAF ' + fmt(Math.min.apply(null, h.rooms.map((r) => r.price))) });
+        return Object.keys(HOTELS_DATA).map((k) => HOTELS_DATA[k]).sort((a, b) => b.rating - a.rating).map(map);
+      })(),
+      hotelAllCards: (() => {
+        const city = this.state.hotelCity || '';
+        const map = (h) => ({ id: h.id, name: h.name, area: h.area, star: h.star, ratingLabel: '★ ' + h.rating, reviews: h.reviews, image: encImg(h.image), priceLabel: 'XAF ' + fmt(Math.min.apply(null, h.rooms.map((r) => r.price))) });
+        const all = Object.keys(HOTELS_DATA).map((k) => HOTELS_DATA[k]);
+        const inCity = all.filter((h) => h.city === city);
+        return (inCity.length ? inCity : all).map(map);
+      })(),
+
+      openHotelDetail: (id) => {
+        const hid = (typeof id === 'string' && HOTELS_DATA[id]) ? id : (this.state.hotelSelectedId || 'krystal_palace');
+        this.setState({ hotelSelectedId: hid, hotelRoomIndex: 0 });
+        this.go('hotelDetail');
+      },
+      selectHotelRoom: (idx) => this.setState({ hotelRoomIndex: Number(idx) || 0 }),
+      hotelCheckIn: this.state.hotelCheckIn,
+      hotelCheckOut: this.state.hotelCheckOut,
+      updateHotelCheckIn: (e) => this.setState({ hotelCheckIn: e && e.target ? e.target.value : e }),
+      updateHotelCheckOut: (e) => this.setState({ hotelCheckOut: e && e.target ? e.target.value : e }),
+      hotelGuests: this.state.hotelGuests || 2,
+      incHotelGuests: () => this.setState((s) => ({ hotelGuests: Math.min(9, (s.hotelGuests || 2) + 1) })),
+      decHotelGuests: () => this.setState((s) => ({ hotelGuests: Math.max(1, (s.hotelGuests || 2) - 1) })),
+
+      hotelDetailCard: (() => {
+        const h = HOTELS_DATA[this.state.hotelSelectedId] || HOTELS_DATA.krystal_palace;
+        const ri = Math.min(this.state.hotelRoomIndex || 0, h.rooms.length - 1);
+        const nights = this._hotelNights(this.state.hotelCheckIn, this.state.hotelCheckOut);
+        return {
+          id: h.id, name: h.name, area: h.area, star: h.star,
+          ratingLabel: '★ ' + h.rating, reviews: h.reviews, image: encImg(h.image), tagline: h.tagline,
+          amenities: h.amenities.map((a) => ({ label: a })),
+          rooms: h.rooms.map((r, i) => ({ index: i, name: r.name, features: r.features, priceLabel: 'XAF ' + fmt(r.price), strikeLabel: r.strike ? ('XAF ' + fmt(r.strike)) : '', selected: i === ri })),
+          nights: nights, nightsLabel: nights + (nights === 1 ? ' night' : ' nights'),
+          checkInLabel: this._hotelDateLabel(this.state.hotelCheckIn),
+          checkOutLabel: this._hotelDateLabel(this.state.hotelCheckOut),
+          guests: this.state.hotelGuests || 2,
+          totalLabel: 'XAF ' + fmt(h.rooms[ri].price * nights)
+        };
+      })(),
+
       openHotelBooking: () => {
         const updates = {};
         if (!this.state.hotelGuestName) {
@@ -15085,30 +15130,72 @@ class Component extends DCLogic {
       hotelGuestPhone: this.state.hotelGuestPhone !== undefined ? this.state.hotelGuestPhone : (this.state.regPhone ? (this.state.regPhone.startsWith('+') ? this.state.regPhone : ('+237 ' + this.state.regPhone)) : '+237 690 12 34 56'),
       updateHotelGuestName: (e) => this.setState({ hotelGuestName: e && e.target ? e.target.value : e }),
       updateHotelGuestPhone: (e) => this.setState({ hotelGuestPhone: e && e.target ? e.target.value : e }),
+
+      hotelBookingSummary: (() => {
+        const h = HOTELS_DATA[this.state.hotelSelectedId] || HOTELS_DATA.krystal_palace;
+        const ri = Math.min(this.state.hotelRoomIndex || 0, h.rooms.length - 1);
+        const nights = this._hotelNights(this.state.hotelCheckIn, this.state.hotelCheckOut);
+        const room = h.rooms[ri];
+        const subtotal = room.price * nights;
+        const escrow = 3000;
+        return {
+          hotelName: h.name, area: h.area, image: encImg(h.image),
+          roomName: room.name, roomFeatures: room.features,
+          nights: nights, nightsLabel: nights + (nights === 1 ? ' night' : ' nights'), guests: this.state.hotelGuests || 2,
+          checkInLabel: this._hotelDateLabel(this.state.hotelCheckIn), checkOutLabel: this._hotelDateLabel(this.state.hotelCheckOut),
+          perNightLabel: 'XAF ' + fmt(room.price), subtotalLabel: 'XAF ' + fmt(subtotal),
+          escrowLabel: 'XAF ' + fmt(escrow), totalLabel: 'XAF ' + fmt(subtotal + escrow),
+          payLabel: 'Confirm & Pay XAF ' + fmt(subtotal + escrow) + ' with MoMo'
+        };
+      })(),
+
       submitHotelReservation: () => {
-        const guestName = this.state.hotelGuestName || (this.state.regFirstName ? (this.state.regFirstName + ' ' + (this.state.regLastName || '')).trim() : 'Rostand Tchuekam');
-        const guestPhone = this.state.hotelGuestPhone || (this.state.regPhone ? (this.state.regPhone.startsWith('+') ? this.state.regPhone : ('+237 ' + this.state.regPhone)) : '+237 690 12 34 56');
+        const h = HOTELS_DATA[this.state.hotelSelectedId] || HOTELS_DATA.krystal_palace;
+        const ri = Math.min(this.state.hotelRoomIndex || 0, h.rooms.length - 1);
+        const room = h.rooms[ri];
+        const nights = this._hotelNights(this.state.hotelCheckIn, this.state.hotelCheckOut);
+        const guestName = this.state.hotelGuestName || 'Guest';
+        const guestPhone = this.state.hotelGuestPhone || '';
+        const total = room.price * nights + 3000;
         const trip = {
-          reference: 'LMT-HTL-' + Math.floor(100000 + Math.random() * 900000),
-          passenger: guestName,
-          phone: guestPhone,
-          hotelName: 'Hôtel Les Cascades du Tara (Kribi)',
-          roomType: 'Ocean Deluxe King Room',
-          nights: 3,
-          amount: 195000,
-          currency: 'XAF',
-          fromCode: 'KBI',
-          toCode: 'HTL',
-          type: 'hotel',
-          departureTime: '15 Oct 2026',
-          status: 'confirmed',
-          createdAt: Date.now()
+          reference: 'LM-HTL-' + Math.floor(100000 + Math.random() * 900000),
+          type: 'hotel', passenger: guestName, phone: guestPhone,
+          hotelId: h.id, hotelName: h.name, area: h.area, image: h.image,
+          roomType: room.name, roomFeatures: room.features,
+          checkIn: this.state.hotelCheckIn, checkOut: this.state.hotelCheckOut,
+          nights: nights, guests: this.state.hotelGuests || 2,
+          amount: total, currency: 'XAF', status: 'confirmed', createdAt: Date.now()
         };
         const trips = [trip].concat(this.state.trips || []);
         this.setState({ trips, lastTrip: trip });
         this._persistTrips(trips);
-        this.toast('Hotel reservation confirmed for ' + guestName + '! Voucher generated.');
-        this.go('travelTicket');
+        try { if (typeof this._pushNotif === 'function') this._pushNotif({ tone: 'success', title: 'Reservation confirmed', body: h.name + ' · ' + room.name + ' · ' + nights + (nights === 1 ? ' night' : ' nights') }); } catch (e) {}
+        this.toast('Reservation confirmed at ' + h.name);
+        this.go('hotelVoucher');
+      },
+      hotelVoucher: (() => {
+        const t = this.state.lastTrip || {};
+        const h = HOTELS_DATA[t.hotelId] || null;
+        return {
+          ref: t.reference || 'LM-HTL-000000',
+          hotelName: t.hotelName || (h && h.name) || 'Your hotel',
+          area: t.area || (h && h.area) || '',
+          image: encImg(t.image || (h && h.image) || ''),
+          roomType: t.roomType || 'Room', roomFeatures: t.roomFeatures || '',
+          checkInLabel: this._hotelDateLabel(t.checkIn), checkOutLabel: this._hotelDateLabel(t.checkOut),
+          nights: t.nights || 1, nightsLabel: (t.nights || 1) + ((t.nights || 1) === 1 ? ' night' : ' nights'),
+          guests: t.guests || 1, guestName: t.passenger || 'Guest',
+          totalLabel: 'XAF ' + fmt(t.amount || 0),
+          isHotel: t.type === 'hotel'
+        };
+      })(),
+      downloadHotelVoucher: () => this.toast('Voucher saved to My Trips'),
+      shareHotelVoucher: () => {
+        const t = this.state.lastTrip || {};
+        try {
+          const msg = 'My LOUMOO reservation at ' + (t.hotelName || 'hotel') + ' (' + (t.roomType || '') + '), ref ' + (t.reference || '') + '.';
+          window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+        } catch (e) { this.toast('Could not open WhatsApp'); }
       },
 
       // ══════════════════════════════════════════════════════════════════
@@ -16618,14 +16705,14 @@ class Component extends DCLogic {
       isNavHome: ['home', 'category', 'bestpicks', 'freeday', 'notifications', 'search', 'product', 'cart', 'chat'].includes(s),
       isNavStore: ['store', 'business', 'sellerPublicPage'].includes(s),
       isNavVs: ['vs', 'vsCompare'].includes(s),
-      isNavTravel: ['travel', 'travelBus', 'travelPackages', 'travelVisa', 'travelResults', 'travelDetail', 'travelPassenger', 'hotelSearch', 'hotelDetail', 'hotelBooking'].includes(s),
+      isNavTravel: ['travel', 'travelBus', 'travelPackages', 'travelVisa', 'travelResults', 'travelDetail', 'travelPassenger', 'travelTicket', 'hotelSearch', 'hotelDetail', 'hotelBooking', 'hotelVoucher'].includes(s),
       isNavAnnounce: ['announce', 'announceCampaigns', 'announceDetail'].includes(s),
       isNavProfile: ['profile', 'seller', 'orders', 'settings', 'accountDashboard', 'editProfile', 'addresses', 'notificationPreferences', 'privacySettings', 'securitySettings', 'followedStores', 'userActivity', 'publicUserProfile', 'signIn', 'forgotPassword', 'resetPassword', 'verifyEmail'].includes(s),
       navHome: this.navColor('home', 'category', 'bestpicks', 'freeday', 'notifications', 'search', 'product', 'cart', 'chat'),
       navStore: this.navColor('store', 'business', 'sellerPublicPage'),
       navVs: this.navColor('vs', 'vsCompare'),
       navUpload: this.navColor('publishIntent', 'publishStudio', 'publishReview', 'publishSuccess', 'myListings'),
-      navTravel: this.navColor('travel', 'travelBus', 'travelPackages', 'travelVisa', 'travelResults', 'travelDetail', 'travelPassenger', 'hotelSearch', 'hotelDetail', 'hotelBooking'),
+      navTravel: this.navColor('travel', 'travelBus', 'travelPackages', 'travelVisa', 'travelResults', 'travelDetail', 'travelPassenger', 'travelTicket', 'hotelSearch', 'hotelDetail', 'hotelBooking', 'hotelVoucher'),
       navAnnounce: this.navColor('announce', 'announceCampaigns', 'announceDetail'),
       navProfile: this.navColor('profile', 'seller', 'orders', 'settings', 'accountDashboard', 'editProfile', 'addresses', 'notificationPreferences', 'privacySettings', 'securitySettings', 'followedStores', 'userActivity', 'publicUserProfile', 'signIn', 'forgotPassword', 'resetPassword', 'verifyEmail'),
       setScroller: (el) => {
