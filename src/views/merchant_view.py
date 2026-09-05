@@ -975,14 +975,27 @@ _TEMPLATE = """
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
       </button>
       <div>
-        <h4 style="margin:0;font-size:16px">Seller Studio</h4>
-        <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary)">Merchant Dashboard &amp; Inventory</div>
+        <h4 style="margin:0;font-size:16px">{{ currentStoreName || 'Seller Studio' }}</h4>
+        <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary)">{{ currentStoreCategoryLabel }} · Merchant Dashboard</div>
       </div>
     </div>
     <button onClick="{{ handleSellClick }}" class="btn btn-primary" style="height:36px;padding:0 14px;font-size:12px;cursor:pointer">+ POST LISTING</button>
   </div>
 
   <div style="padding:16px;max-width:960px;margin:0 auto;display:flex;flex-direction:column;gap:16px">
+
+    <!-- Storefront Quick Link Bar -->
+    <div style="background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px">
+      <div style="display:flex;align-items:center;gap:8px;min-width:0;overflow:hidden">
+        <span class="tag {{ sellerStatus === 'READY' ? 'tag-accent' : 'tag-neutral' }}" style="font-size:9.5px;font-weight:700;padding:2px 6px">
+          {{ sellerStatus === 'READY' ? 'LIVE' : 'SETUP' }}
+        </span>
+        <span style="font:600 12px/1.2 var(--font-body);color:var(--color-text);text-overflow:ellipsis;white-space:nowrap;overflow:hidden">loumoo.cm/s/{{ currentStoreSlug || 'store' }}</span>
+      </div>
+      <button onClick="{{ openPublicStorefront }}" class="tag tag-accent" style="cursor:pointer;font-size:10.5px;font-weight:700;padding:3px 10px;flex-shrink:0">
+        Preview Storefront ↗
+      </button>
+    </div>
     
     <!-- Revenue leads; the rest supports it. -->
     <div class="surface-raised" style="padding:20px 18px 18px">
@@ -1074,10 +1087,13 @@ _TEMPLATE = """
       </div>
 
       <sc-if value="{{ sellerLiveCount > 0 }}">
-        <div style="display:flex;flex-direction:column;gap:10px">
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--color-divider);font-size:12.5px">
-            <span>{{ currentProductTitle || 'Active Listing' }} (In Stock)</span>
-            <span class="tag tag-accent" style="min-height:20px;padding:2px 6px;font-size:10px">LIVE</span>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:var(--color-surface-subtle);border-radius:var(--radius-sm);border:1px solid var(--color-divider)">
+            <div style="display:flex;align-items:center;gap:8px">
+              <span class="tag tag-accent" style="min-height:20px;padding:2px 8px;font-size:10px;font-weight:700">ACTIVE</span>
+              <span style="font:600 13px/1.2 var(--font-body);color:var(--color-text)">{{ sellerLiveCount }} published listing{{ sellerLiveCount > 1 ? 's' : '' }} in catalogue</span>
+            </div>
+            <button onClick="{{ on.myListings }}" class="tag tag-neutral" style="font-size:10.5px;cursor:pointer">Manage →</button>
           </div>
         </div>
       </sc-if>

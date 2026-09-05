@@ -171,7 +171,7 @@
       .then(function (res) { return res.json(); })
       .then(function (res) {
         if (res.status === 'error' || res.error) {
-          throw new Error(res.message || 'Sign in failed');
+          throw new Error(res.message || (res.error && res.error.message) || 'That email or password is incorrect.');
         }
         var token = res.data && (res.data.token || res.data.accessToken);
         if (token) {
@@ -187,6 +187,58 @@
         }
         throw new Error('No token returned');
       });
+    },
+
+    requestPasswordReset: function (emailAddress) {
+      var email = String(emailAddress || state.currentEmail || '').trim().toLowerCase();
+      state.currentEmail = email;
+
+      return fetch('/api/v1/auth/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email })
+      })
+      .then(function (res) { return res.json(); })
+      .then(function (res) {
+        if (res.status === 'error' || res.error) {
+          throw new Error(res.message || (res.error && res.error.message) || 'Could not send reset code');
+        }
+        return true;
+      });
+    },
+
+    confirmPasswordReset: function (code, newPassword) {
+      var cleanCode = String(code || '').trim().replace(/[^0-9]/g, '');
+      var email = state.currentEmail;
+
+      return fetch('/api/v1/auth/reset-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email, code: cleanCode, newPassword: newPassword })
+      })
+      .then(function (res) { return res.json(); })
+      .then(function (res) {
+        if (res.status === 'error' || res.error) {
+          throw new Error(res.message || (res.error && res.error.message) || 'Could not reset password');
+        }
+        var token = res.data && (res.data.token || res.data.accessToken);
+        if (token) {
+          state.session = { token: token };
+          state.user = res.data.user;
+          var api = getApi();
+          if (api) api.setAuthToken(token);
+          if (typeof localStorage !== 'undefined') {
+            localStorage.setItem('loumoo_token', token);
+          }
+          emit();
+          return state.session;
+        }
+        throw new Error('Password reset succeeded, but no session was returned.');
+      });
+    },
+
+    resetPassword: function (code, newPassword) {
+      return this.confirmPasswordReset(code, newPassword);
     },
 
     signOut: function () {

@@ -282,74 +282,132 @@ def get_store_business_view():
      05.09 STORE ANALYTICS (is.storeAnalytics)
      ══════════════════════════════════════════════════════════════════════ -->
 <sc-if value="{{ is.storeAnalytics }}">
-<div style="padding-bottom:32px">
+<div style="padding-bottom:48px">
 
-  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
-    <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;flex-shrink:0">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
-    </button>
-    <div style="flex:1;min-width:0">
-      <h4 style="margin:0;font-size:16px">Store Analytics &amp; Reports</h4>
-      <div style="font:400 11px/1.2 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Real-time revenue, traffic and conversion metrics</div>
+  <!-- Header with Calm Spacing & Refresh -->
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
+    <div style="display:flex;align-items:center;gap:12px;min-width:0">
+      <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;flex-shrink:0">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+      <div style="min-width:0">
+        <h4 style="margin:0;font-size:16px;text-overflow:ellipsis;white-space:nowrap;overflow:hidden">{{ currentStoreName || 'Storefront' }} Analytics</h4>
+        <div style="font:400 11px/1.2 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Real-time revenue, traffic &amp; inventory performance</div>
+      </div>
     </div>
+    <button onClick="{{ refreshStoreAnalytics }}" class="tag tag-neutral" style="cursor:pointer;display:flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:4px 10px">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg>
+      <span>Refresh</span>
+    </button>
   </div>
 
   <div style="padding:16px;max-width:960px;margin:0 auto;display:flex;flex-direction:column;gap:16px">
 
-    <!-- Period Filter Pills -->
+    <!-- Period Filter Chips (Supermarket Style) -->
     <div class="hs" style="gap:8px">
-      <button onClick="{{ setAnalyticsPeriodToday }}" class="tag {{ analyticsPeriod === 'today' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">Today</button>
-      <button onClick="{{ setAnalyticsPeriod7d }}" class="tag {{ analyticsPeriod === '7d' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">Last 7 Days</button>
-      <button onClick="{{ setAnalyticsPeriod30d }}" class="tag {{ analyticsPeriod === '30d' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">Last 30 Days</button>
-      <button onClick="{{ setAnalyticsPeriod90d }}" class="tag {{ analyticsPeriod === '90d' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">Last 90 Days</button>
+      <button onClick="{{ setAnalyticsPeriodToday }}" class="tag {{ analyticsPeriod === 'today' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer;font-weight:700">Today</button>
+      <button onClick="{{ setAnalyticsPeriod7d }}" class="tag {{ analyticsPeriod === '7d' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer;font-weight:700">Last 7 Days</button>
+      <button onClick="{{ setAnalyticsPeriod30d }}" class="tag {{ analyticsPeriod === '30d' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer;font-weight:700">Last 30 Days</button>
+      <button onClick="{{ setAnalyticsPeriod90d }}" class="tag {{ analyticsPeriod === '90d' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer;font-weight:700">Last 90 Days</button>
     </div>
 
-    <!-- Scorecards Grid -->
+    <!-- 1. Hero Performance Card (Supermarket Style Tactile Overview + Mini Sparkline Histogram) -->
+    <div class="card-premium" style="padding:22px;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-lg);position:relative;overflow:hidden">
+      <div style="display:flex;flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px">
+        <div style="min-width:240px;flex:1">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+            <span style="font:800 11px/1 var(--font-heading);letter-spacing:0.08em;color:var(--color-text-muted);text-transform:uppercase">Performance Overview</span>
+            <span class="tag tag-accent" style="font-size:9.5px;font-weight:700;padding:2px 6px">ESCROW SETTLED</span>
+          </div>
+          <div style="font:800 32px/1.1 var(--font-heading);color:var(--color-text);letter-spacing:-0.02em">
+            {{ analyticsRevenueFormatted || '0 XAF' }}
+          </div>
+          <div style="font:500 12px/1.4 var(--font-body);color:var(--color-text-secondary);margin-top:6px">
+            {{ analyticsOrdersCount || 0 }} completed orders · Escrow protected payouts
+          </div>
+        </div>
+
+        <!-- Tactile Micro Bar Matrix (Inspired by Supermarket Dashboard Activity Histogram) -->
+        <div style="background:var(--color-surface-subtle);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:12px 14px;width:240px;height:95px;display:flex;flex-direction:column;justify-content:space-between;flex-shrink:0">
+          <div style="display:flex;align-items:center;justify-content:space-between;font-size:11px;font-weight:700;color:var(--color-text-muted)">
+            <span>Activity Trends</span>
+            <span style="color:var(--color-text)">{{ analyticsPeriodLabel || 'This Period' }}</span>
+          </div>
+          <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:4px;height:45px">
+            <div style="flex:1;background:var(--color-neutral-300);height:30%;border-radius:2px"></div>
+            <div style="flex:1;background:var(--color-neutral-300);height:55%;border-radius:2px"></div>
+            <div style="flex:1;background:var(--color-neutral-300);height:40%;border-radius:2px"></div>
+            <div style="flex:1;background:var(--color-neutral-300);height:75%;border-radius:2px"></div>
+            <div style="flex:1;background:var(--color-accent);height:90%;border-radius:2px"></div>
+            <div style="flex:1;background:var(--color-neutral-300);height:65%;border-radius:2px"></div>
+            <div style="flex:1;background:var(--color-neutral-300);height:50%;border-radius:2px"></div>
+            <div style="flex:1;background:var(--color-neutral-300);height:80%;border-radius:2px"></div>
+            <div style="flex:1;background:var(--color-neutral-300);height:100%;border-radius:2px"></div>
+            <div style="flex:1;background:var(--color-neutral-300);height:60%;border-radius:2px"></div>
+            <div style="flex:1;background:var(--color-neutral-300);height:40%;border-radius:2px"></div>
+            <div style="flex:1;background:var(--color-accent);height:75%;border-radius:2px"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Headline Figures Grid (Tactile Scorecards) -->
     <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px">
       <div class="card-premium" style="padding:16px">
-        <div style="font:700 11px/1 var(--font-heading);color:var(--color-text-muted);text-transform:uppercase">TOTAL REVENUE</div>
-        <div style="font:800 22px/1 var(--font-heading);color:var(--color-text);margin:8px 0 4px">{{ analyticsRevenueFormatted }}</div>
-        <div style="font:600 11px/1 var(--font-body);color:var(--color-success)">+18.4% vs prev period</div>
+        <div style="font:700 11px/1 var(--font-heading);color:var(--color-text-muted);text-transform:uppercase;letter-spacing:0.04em">TOTAL REVENUE</div>
+        <div style="font:800 20px/1 var(--font-heading);color:var(--color-text);margin:8px 0 4px">{{ analyticsRevenueFormatted || '0 XAF' }}</div>
+        <div style="font:500 11px/1 var(--font-body);color:var(--color-text-secondary)">Net earnings</div>
       </div>
 
       <div class="card-premium" style="padding:16px">
-        <div style="font:700 11px/1 var(--font-heading);color:var(--color-text-muted);text-transform:uppercase">ORDERS PROCESSED</div>
-        <div style="font:800 22px/1 var(--font-heading);color:var(--color-accent);margin:8px 0 4px">{{ analyticsOrdersCount }} Orders</div>
-        <div style="font:500 11px/1 var(--font-body);color:var(--color-text-secondary)">Escrow protected</div>
+        <div style="font:700 11px/1 var(--font-heading);color:var(--color-text-muted);text-transform:uppercase;letter-spacing:0.04em">ORDERS COMPLETED</div>
+        <div style="font:800 20px/1 var(--font-heading);color:var(--color-accent);margin:8px 0 4px">{{ analyticsOrdersCount || 0 }} Orders</div>
+        <div style="font:500 11px/1 var(--font-body);color:var(--color-text-secondary)">Fulfilled &amp; delivered</div>
       </div>
 
       <div class="card-premium" style="padding:16px">
-        <div style="font:700 11px/1 var(--font-heading);color:var(--color-text-muted);text-transform:uppercase">STOREFRONT VIEWS</div>
-        <div style="font:800 22px/1 var(--font-heading);color:var(--color-text);margin:8px 0 4px">{{ analyticsViewsCount }}</div>
-        <div style="font:600 11px/1 var(--font-body);color:var(--color-success)">{{ analyticsUniqueVisitors }} unique visitors</div>
+        <div style="font:700 11px/1 var(--font-heading);color:var(--color-text-muted);text-transform:uppercase;letter-spacing:0.04em">STOREFRONT VIEWS</div>
+        <div style="font:800 20px/1 var(--font-heading);color:var(--color-text);margin:8px 0 4px">{{ analyticsViewsCount || 0 }}</div>
+        <div style="font:500 11px/1 var(--font-body);color:var(--color-text-secondary)">Listing impressions</div>
       </div>
 
       <div class="card-premium" style="padding:16px">
-        <div style="font:700 11px/1 var(--font-heading);color:var(--color-text-muted);text-transform:uppercase">CONVERSION RATE</div>
-        <div style="font:800 22px/1 var(--font-heading);color:var(--color-text);margin:8px 0 4px">{{ analyticsConversionRate }}%</div>
-        <div style="font:500 11px/1 var(--font-body);color:var(--color-text-secondary)">Market avg: 2.1%</div>
+        <div style="font:700 11px/1 var(--font-heading);color:var(--color-text-muted);text-transform:uppercase;letter-spacing:0.04em">LIVE INVENTORY</div>
+        <div style="font:800 20px/1 var(--font-heading);color:var(--color-text);margin:8px 0 4px">{{ sellerLiveCount || 0 }} Items</div>
+        <div style="font:500 11px/1 var(--font-body);color:var(--color-text-secondary)">Active in marketplace</div>
       </div>
     </div>
 
-    <!-- Top Products Breakdown -->
-    <div class="card-premium" style="display:flex;flex-direction:column;gap:12px">
-      <div style="font:700 12px/1 var(--font-heading);letter-spacing:.08em;color:var(--color-text-muted);text-transform:uppercase">Top Performing Inventory</div>
-
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--color-divider)">
-        <div>
-          <div style="font:700 13.5px/1.2 var(--font-heading);color:var(--color-text)">Apple MacBook Air 13” M2</div>
-          <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">18 units sold · Douala &amp; Yaoundé</div>
-        </div>
-        <div style="font:800 14px/1 var(--font-heading);color:var(--color-text)">XAF 13 410 000</div>
+    <!-- 3. Top Performing Inventory Breakdown -->
+    <div class="card-premium" style="display:flex;flex-direction:column;gap:12px;padding:20px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="font:700 12px/1 var(--font-heading);letter-spacing:.08em;color:var(--color-text-muted);text-transform:uppercase">Top Performing Inventory</div>
+        <button onClick="{{ on.myListings }}" style="border:none;background:transparent;font:700 11.5px/1 var(--font-heading);color:var(--color-accent);cursor:pointer">All listings →</button>
       </div>
 
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0">
-        <div>
-          <div style="font:700 13.5px/1.2 var(--font-heading);color:var(--color-text)">Anker 737 Power Bank (24k mAh)</div>
-          <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">24 units sold · National Delivery</div>
+      <!-- When real order sales exist -->
+      <sc-if value="{{ analyticsHasTopProducts }}">
+        <div style="display:flex;flex-direction:column;gap:0">
+          <sc-for list="{{ analyticsTopProducts }}" as="prod">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--color-divider)">
+              <div style="min-width:0;flex:1;padding-right:12px">
+                <div style="font:700 13.5px/1.2 var(--font-heading);color:var(--color-text);text-overflow:ellipsis;white-space:nowrap;overflow:hidden">{{ prod.title }}</div>
+                <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">{{ prod.salesCount }} unit{{ prod.salesCount > 1 ? 's' : '' }} sold</div>
+              </div>
+              <div style="font:800 14px/1 var(--font-heading);color:var(--color-text);white-space:nowrap">{{ prod.revenueFormatted }}</div>
+            </div>
+          </sc-for>
         </div>
-        <div style="font:800 14px/1 var(--font-heading);color:var(--color-text)">XAF 1 488 000</div>
-      </div>
+      </sc-if>
+
+      <!-- Clean, honest empty state when no sales yet -->
+      <sc-if value="{{ !analyticsHasTopProducts }}">
+        <div style="padding:28px 16px;text-align:center;background:var(--color-surface-subtle);border-radius:var(--radius-md);border:1px dashed var(--color-divider)">
+          <div style="font:700 13.5px/1.3 var(--font-heading);color:var(--color-text);margin-bottom:4px">No sales recorded for this period yet</div>
+          <div style="font:400 12px/1.4 var(--font-body);color:var(--color-text-secondary);max-width:380px;margin:0 auto 14px">Share your boutique link with your customers or publish new listings to generate orders across Cameroon.</div>
+          <button onClick="{{ handleSellClick }}" class="btn btn-primary" style="height:36px;padding:0 18px;font-size:12px;cursor:pointer">+ PUBLISH A LISTING</button>
+        </div>
+      </sc-if>
     </div>
 
   </div>

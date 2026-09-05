@@ -105,9 +105,9 @@ function capabilitiesFor(state, opts = {}) {
     canReview: accountReady,
     canRecommend: accountReady,
     canPurchase: accountReady,
-    canStartSelling: accountReady,
+    canStartSelling: verified,
     // Seller & Team capabilities:
-    canManageStore: sellerReady || state === ACCOUNT_STATES.SELLER_VERIFICATION_REQUIRED,
+    canManageStore: sellerReady || state === ACCOUNT_STATES.SELLER_VERIFICATION_REQUIRED || verified,
     canManageOrganization: accountReady,
     canCreateListing: sellerReady,
     canUploadListingMedia: sellerReady,

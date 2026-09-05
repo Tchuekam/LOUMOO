@@ -13,6 +13,7 @@
 const ProfileRepository = require('../infrastructure/ProfileRepository');
 const ClerkIdentityProvider = require('../infrastructure/ClerkIdentityProvider');
 const OnboardingRepository = require('../infrastructure/OnboardingRepository');
+const StoreRepository = require('../../store/infrastructure/StoreRepository');
 const config = require('../../../config/env');
 const logger = require('../../../shared/logging/logger');
 const {
@@ -118,6 +119,19 @@ class AccountStateService {
       profileRow = profile;
     } else if (identity && shouldResync(profileRow, opts.forceClerkRefresh)) {
       profileRow = await ProfileRepository.syncFromClerk(profileRow, identity);
+    }
+
+    // Self-heal primary_store_id if the user owns a store in iam.stores
+    if (!profileRow.primary_store_id) {
+      try {
+        const owned = await StoreRepository.findOwnedBy(profileRow.id);
+        if (owned && owned.length > 0) {
+          profileRow.primary_store_id = owned[0].id;
+          ProfileRepository.update(profileRow.id, { primary_store_id: owned[0].id }, profileRow.clerk_user_id).catch(() => {});
+        }
+      } catch (err) {
+        logger.warn(`[AccountStateService] Store resolution notice: ${err.message}`);
+      }
     }
 
     const completedSteps = await OnboardingRepository.completedStepKeys(profileRow.id);

@@ -75,7 +75,8 @@ class CreateStoreUseCase {
     const existing = await StoreRepository.findOwnedBy(principal.id);
     if (existing.length > 0) {
       throw new ConflictError('You already have a LOUMOO boutique.', {
-        storeId: existing[0].id
+        storeId: existing[0].id,
+        store: existing[0]
       });
     }
 

@@ -552,7 +552,7 @@ def get_home_view():
             <span class="na-card-rating">{{ prod.ratingLabel }}</span>
             <span class="na-card-store-label">{{ prod.storeLabel }}</span>
           </div>
-          <h4 class="loumoo-card-title na-card-title">{{ prod.title }}</h4>
+          <h3 class="loumoo-card-title na-card-title">{{ prod.title }}</h3>
           <div class="loumoo-card-tagline na-card-tagline">{{ prod.tagline }}</div>
           <div class="loumoo-card-bottom-row" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px">
             <span class="loumoo-card-price-val" style="font:800 15px/1 var(--font-heading);color:var(--color-text)">{{ prod.priceLabel }}</span>
@@ -594,7 +594,7 @@ def get_home_view():
             <span class="na-card-rating">★ 4.9</span>
             <span class="na-card-store-label">Armonía Milano · Bonapriso</span>
           </div>
-          <h4 class="loumoo-card-title na-card-title">Armonía Double-Monk Shoes</h4>
+          <h3 class="loumoo-card-title na-card-title">Armonía Double-Monk Shoes</h3>
           <div class="loumoo-card-tagline na-card-tagline">Glossy Italian box calfskin · Gold buckle accents.</div>
           <div class="loumoo-card-bottom-row">
             <div class="loumoo-card-pricing-block">
@@ -629,7 +629,7 @@ def get_home_view():
             <span class="na-card-rating">★ 4.8</span>
             <span class="na-card-store-label">Maison Danbaoly · Akwa</span>
           </div>
-          <h4 class="loumoo-card-title na-card-title">Danbaoly Crimson Tote</h4>
+          <h3 class="loumoo-card-title na-card-title">Danbaoly Crimson Tote</h3>
           <div class="loumoo-card-tagline na-card-tagline">Textured calfskin with bow tie & star charm.</div>
           <div class="loumoo-card-bottom-row">
             <div class="loumoo-card-pricing-block">
@@ -664,7 +664,7 @@ def get_home_view():
             <span class="na-card-rating">★ 4.9</span>
             <span class="na-card-store-label">Pedro Flagship · Yaoundé</span>
           </div>
-          <h4 class="loumoo-card-title na-card-title">Pedro Heritage Rucksack</h4>
+          <h3 class="loumoo-card-title na-card-title">Pedro Heritage Rucksack</h3>
           <div class="loumoo-card-tagline na-card-tagline">Ivory, cognac tan & sky blue commuter pack.</div>
           <div class="loumoo-card-bottom-row">
             <div class="loumoo-card-pricing-block">
@@ -699,7 +699,7 @@ def get_home_view():
             <span class="na-card-rating">★ 4.9</span>
             <span class="na-card-store-label">SoundWave · Douala Grand Mall</span>
           </div>
-          <h4 class="loumoo-card-title na-card-title">boAt Stone 1400 Crimson</h4>
+          <h3 class="loumoo-card-title na-card-title">boAt Stone 1400 Crimson</h3>
           <div class="loumoo-card-tagline na-card-tagline">70W dynamic stereo audio · RGB bass radiator.</div>
           <div class="loumoo-card-bottom-row">
             <div class="loumoo-card-pricing-block">
@@ -734,7 +734,7 @@ def get_home_view():
             <span class="na-card-rating">★ 5.0</span>
             <span class="na-card-store-label">Pixel Hub Cameroon · Akwa</span>
           </div>
-          <h4 class="loumoo-card-title na-card-title">Google Pixel 10 Pro 5G</h4>
+          <h3 class="loumoo-card-title na-card-title">Google Pixel 10 Pro 5G</h3>
           <div class="loumoo-card-tagline na-card-tagline">Tensor G5 Silicon · Studio AI Triple Camera.</div>
           <div class="loumoo-card-bottom-row">
             <div class="loumoo-card-pricing-block">
@@ -769,7 +769,7 @@ def get_home_view():
             <span class="na-card-rating">★ 5.0</span>
             <span class="na-card-store-label">Bella Donna Boutique · Bonanjo</span>
           </div>
-          <h4 class="loumoo-card-title na-card-title">Amina Muaddi Sunburst Duo</h4>
+          <h3 class="loumoo-card-title na-card-title">Amina Muaddi Sunburst Duo</h3>
           <div class="loumoo-card-tagline na-card-tagline">Orange satin crystal pumps with matching quilted bag.</div>
           <div class="loumoo-card-bottom-row">
             <div class="loumoo-card-pricing-block">
@@ -804,7 +804,7 @@ def get_home_view():
             <span class="na-card-rating">★ 5.0</span>
             <span class="na-card-store-label">NOIRE Atelier · Bastos, Yaoundé</span>
           </div>
-          <h4 class="loumoo-card-title na-card-title">NOIRE Alligator Birkin</h4>
+          <h3 class="loumoo-card-title na-card-title">NOIRE Alligator Birkin</h3>
           <div class="loumoo-card-tagline na-card-tagline">Crocodile-embossed leather with 24K gold lock.</div>
           <div class="loumoo-card-bottom-row">
             <div class="loumoo-card-pricing-block">
@@ -839,7 +839,7 @@ def get_home_view():
             <span class="na-card-rating">★ 4.8</span>
             <span class="na-card-store-label">Glamour Steps · Douala Grand Mall</span>
           </div>
-          <h4 class="loumoo-card-title na-card-title">Bigtree Emerald Stilettos</h4>
+          <h3 class="loumoo-card-title na-card-title">Bigtree Emerald Stilettos</h3>
           <div class="loumoo-card-tagline na-card-tagline">10cm crocodile patent stiletto with gold buckle.</div>
           <div class="loumoo-card-bottom-row">
             <div class="loumoo-card-pricing-block">
@@ -874,7 +874,7 @@ def get_home_view():
             <span class="na-card-rating">★ 4.9</span>
             <span class="na-card-store-label">Sartorial Douala · Bali</span>
           </div>
-          <h4 class="loumoo-card-title na-card-title">Artisan Chunky Brogues</h4>
+          <h3 class="loumoo-card-title na-card-title">Artisan Chunky Brogues</h3>
           <div class="loumoo-card-tagline na-card-tagline">Full-grain box calfskin with commando lug sole.</div>
           <div class="loumoo-card-bottom-row">
             <div class="loumoo-card-pricing-block">
@@ -909,7 +909,7 @@ def get_home_view():
             <span class="na-card-rating">★ 5.0</span>
             <span class="na-card-store-label">L’Artisan Parfumeur · Yaoundé</span>
           </div>
-          <h4 class="loumoo-card-title na-card-title">Tobacco Vanille 30ml</h4>
+          <h3 class="loumoo-card-title na-card-title">Tobacco Vanille 30ml</h3>
           <div class="loumoo-card-tagline na-card-tagline">Madagascar vanilla blossoms, cedar & star anise.</div>
           <div class="loumoo-card-bottom-row">
             <div class="loumoo-card-pricing-block">
@@ -944,7 +944,7 @@ def get_home_view():
             <span class="na-card-rating">★ 4.9</span>
             <span class="na-card-store-label">Prestige Bijoux · Bonapriso</span>
           </div>
-          <h4 class="loumoo-card-title na-card-title">Crystal Infinity Parure</h4>
+          <h3 class="loumoo-card-title na-card-title">Crystal Infinity Parure</h3>
           <div class="loumoo-card-tagline na-card-tagline">Rhodium-plated infinity necklace & drop earrings.</div>
           <div class="loumoo-card-bottom-row">
             <div class="loumoo-card-pricing-block">
@@ -1471,7 +1471,7 @@ def get_home_view():
 
     <div class="lifestyle-video-grid">
       <!-- 1. Party Decor Ideas -->
-      <div onClick="{{ () => openVideoModal('Party Decor & Vibes', 'Polished birthday and celebration decor ideas for lifestyle creators', 'EVENT DECOR', './Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%2010%20Beautiful%20birthday%20party%20decor%20ideas%20that%20help%20you%20create%20a%20polished%20look%20with%20very%20simple%20and%20affordable%20details%20for%20creato.mp4') }}" data-hover-video="true" class="lifestyle-card" aria-label="Play Party Decor & Vibes video">
+      <button type="button" onClick="{{ () => openVideoModal('Party Decor & Vibes', 'Polished birthday and celebration decor ideas for lifestyle creators', 'EVENT DECOR', './Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%2010%20Beautiful%20birthday%20party%20decor%20ideas%20that%20help%20you%20create%20a%20polished%20look%20with%20very%20simple%20and%20affordable%20details%20for%20creato.mp4') }}" data-hover-video="true" class="lifestyle-card" aria-label="Play Party Decor & Vibes video">
         <video src="./Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%2010%20Beautiful%20birthday%20party%20decor%20ideas%20that%20help%20you%20create%20a%20polished%20look%20with%20very%20simple%20and%20affordable%20details%20for%20creato.mp4" poster="./Assets/_processed/capturelife_party_decor_poster.jpg" muted loop playsinline preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;transition:transform 0.4s ease;pointer-events:none"></video>
         <div class="lifestyle-card-scrim" style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.05) 45%, rgba(0,0,0,0.85) 100%);pointer-events:none;z-index:1"></div>
         <div class="lifestyle-card-pill" style="position:relative;z-index:2;display:flex;justify-content:flex-end">
@@ -1481,10 +1481,10 @@ def get_home_view():
           <div style="font:800 13.5px/1.2 var(--font-heading);color:#ffffff;text-shadow:0 1px 4px rgba(0,0,0,0.8)">Party Decor Ideas</div>
           <div style="font:500 11px/1 var(--font-body);color:rgba(255,255,255,0.85);margin-top:3px;text-shadow:0 1px 3px rgba(0,0,0,0.8)">Polished Creator Details</div>
         </div>
-      </div>
+      </button>
 
       <!-- 2. Dreamy Hair Care -->
-      <div onClick="{{ () => openVideoModal('Dreamy Hair Care', 'Natural curls and intentional hair care routines for everyday beauty', 'GLOW & BEAUTY', './Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%20Explore%20Dreamy%20curly%20hair%20care%20ideas%20for%20your%20next%20inspiration%20board%20designed%20for%20people%20who%20want%20results%20that%20look%20intentional.mp4') }}" data-hover-video="true" class="lifestyle-card" aria-label="Play Dreamy Hair Care video">
+      <button type="button" onClick="{{ () => openVideoModal('Dreamy Hair Care', 'Natural curls and intentional hair care routines for everyday beauty', 'GLOW & BEAUTY', './Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%20Explore%20Dreamy%20curly%20hair%20care%20ideas%20for%20your%20next%20inspiration%20board%20designed%20for%20people%20who%20want%20results%20that%20look%20intentional.mp4') }}" data-hover-video="true" class="lifestyle-card" aria-label="Play Dreamy Hair Care video">
         <video src="./Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%20Explore%20Dreamy%20curly%20hair%20care%20ideas%20for%20your%20next%20inspiration%20board%20designed%20for%20people%20who%20want%20results%20that%20look%20intentional.mp4" poster="./Assets/_processed/capturelife_hair_care_poster.jpg" muted loop playsinline preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;transition:transform 0.4s ease;pointer-events:none"></video>
         <div class="lifestyle-card-scrim" style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.05) 45%, rgba(0,0,0,0.85) 100%);pointer-events:none;z-index:1"></div>
         <div class="lifestyle-card-pill" style="position:relative;z-index:2;display:flex;justify-content:flex-end">
@@ -1494,10 +1494,10 @@ def get_home_view():
           <div style="font:800 13.5px/1.2 var(--font-heading);color:#ffffff;text-shadow:0 1px 4px rgba(0,0,0,0.8)">Dreamy Hair Care</div>
           <div style="font:500 11px/1 var(--font-body);color:rgba(255,255,255,0.85);margin-top:3px;text-shadow:0 1px 3px rgba(0,0,0,0.8)">Natural Texture & Styling</div>
         </div>
-      </div>
+      </button>
 
       <!-- 3. Daily Inspiration Notes -->
-      <div onClick="{{ () => openVideoModal('Daily Inspiration Notes', 'Fresh mindful notes and journaling ideas to keep things grounded', 'CREATIVE NOTES', './Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%20Fresh%20democracy%20notes%20with%20charm%20and%20useful%20ideas%20for%20daily%20inspiration%20that%20keep%20things%20grounded-pin-id-857654322816019216.mp4') }}" data-hover-video="true" class="lifestyle-card" aria-label="Play Daily Inspiration Notes video">
+      <button type="button" onClick="{{ () => openVideoModal('Daily Inspiration Notes', 'Fresh mindful notes and journaling ideas to keep things grounded', 'CREATIVE NOTES', './Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%20Fresh%20democracy%20notes%20with%20charm%20and%20useful%20ideas%20for%20daily%20inspiration%20that%20keep%20things%20grounded-pin-id-857654322816019216.mp4') }}" data-hover-video="true" class="lifestyle-card" aria-label="Play Daily Inspiration Notes video">
         <video src="./Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%20Fresh%20democracy%20notes%20with%20charm%20and%20useful%20ideas%20for%20daily%20inspiration%20that%20keep%20things%20grounded-pin-id-857654322816019216.mp4" poster="./Assets/_processed/capturelife_creative_notes_poster.jpg" muted loop playsinline preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;transition:transform 0.4s ease;pointer-events:none"></video>
         <div class="lifestyle-card-scrim" style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.05) 45%, rgba(0,0,0,0.85) 100%);pointer-events:none;z-index:1"></div>
         <div class="lifestyle-card-pill" style="position:relative;z-index:2;display:flex;justify-content:flex-end">
@@ -1507,10 +1507,10 @@ def get_home_view():
           <div style="font:800 13.5px/1.2 var(--font-heading);color:#ffffff;text-shadow:0 1px 4px rgba(0,0,0,0.8)">Daily Inspiration Notes</div>
           <div style="font:500 11px/1 var(--font-body);color:rgba(255,255,255,0.85);margin-top:3px;text-shadow:0 1px 3px rgba(0,0,0,0.8)">Grounded Thoughts & Charm</div>
         </div>
-      </div>
+      </button>
 
       <!-- 4. Budget Desk Setup -->
-      <div onClick="{{ () => openVideoModal('Budget Desk Setup', 'Budget-friendly office desk styling ideas and workspace inspiration', 'DESK STYLING', './Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%20Try%20Budget-friendly%20office%20desk%20styling%20for%20your%20next%20Pinterest%20save%20built%20around%20ideas%20that%20are%20easy%20to%20save%20and%20revisit%20later.mp4') }}" data-hover-video="true" class="lifestyle-card" aria-label="Play Budget Desk Setup video">
+      <button type="button" onClick="{{ () => openVideoModal('Budget Desk Setup', 'Budget-friendly office desk styling ideas and workspace inspiration', 'DESK STYLING', './Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%20Try%20Budget-friendly%20office%20desk%20styling%20for%20your%20next%20Pinterest%20save%20built%20around%20ideas%20that%20are%20easy%20to%20save%20and%20revisit%20later.mp4') }}" data-hover-video="true" class="lifestyle-card" aria-label="Play Budget Desk Setup video">
         <video src="./Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%20Try%20Budget-friendly%20office%20desk%20styling%20for%20your%20next%20Pinterest%20save%20built%20around%20ideas%20that%20are%20easy%20to%20save%20and%20revisit%20later.mp4" poster="./Assets/_processed/capturelife_desk_styling_poster.jpg" muted loop playsinline preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;transition:transform 0.4s ease;pointer-events:none"></video>
         <div class="lifestyle-card-scrim" style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.05) 45%, rgba(0,0,0,0.85) 100%);pointer-events:none;z-index:1"></div>
         <div class="lifestyle-card-pill" style="position:relative;z-index:2;display:flex;justify-content:flex-end">
@@ -1520,7 +1520,7 @@ def get_home_view():
           <div style="font:800 13.5px/1.2 var(--font-heading);color:#ffffff;text-shadow:0 1px 4px rgba(0,0,0,0.8)">Budget Desk Setup</div>
           <div style="font:500 11px/1 var(--font-body);color:rgba(255,255,255,0.85);margin-top:3px;text-shadow:0 1px 3px rgba(0,0,0,0.8)">Smart Workspace Aesthetics</div>
         </div>
-      </div>
+      </button>
     </div>
 
     <!-- ── 09: BLACK FRIDAY EXPERIENCE (Preserved & Elevated) ── -->
@@ -1572,7 +1572,7 @@ def get_home_view():
             <img src="./Assets/_processed/acessories_gadgets_apple_air_pod_max_airpodmax_apple_keysho_16.png" alt="Apple AirPods Max" loading="lazy">
           </div>
           <div class="loumoo-card-body">
-            <h4 class="loumoo-card-title">Apple AirPods Max</h4>
+            <h3 class="loumoo-card-title">Apple AirPods Max</h3>
             <div class="loumoo-card-tagline">High-fidelity over-ear with Active Noise Cancellation &amp; Spatial Audio.</div>
             <div class="loumoo-card-rating-row">
               <span>★ 4.8</span>
@@ -1605,7 +1605,7 @@ def get_home_view():
             <img src="./Assets/fashion/Look%20at%20this%20new%20Nike%20Air%20Force.jfif" alt="Nike Air Force 1 &#x27;07" loading="lazy">
           </div>
           <div class="loumoo-card-body">
-            <h4 class="loumoo-card-title">Nike Air Force 1 &#x27;07</h4>
+            <h3 class="loumoo-card-title">Nike Air Force 1 &#x27;07</h3>
             <div class="loumoo-card-tagline">Triple White &#x27;07. The iconic AF1 leather silhouette.</div>
             <div class="loumoo-card-rating-row">
               <span>★ 4.8</span>
@@ -1638,7 +1638,7 @@ def get_home_view():
             <img src="./Assets/acessories&gadgets/DJI%20Osmo%20Pocket%203.jfif" alt="DJI Osmo Pocket 3" loading="lazy">
           </div>
           <div class="loumoo-card-body">
-            <h4 class="loumoo-card-title">DJI Osmo Pocket 3</h4>
+            <h3 class="loumoo-card-title">DJI Osmo Pocket 3</h3>
             <div class="loumoo-card-tagline">1-inch sensor. 4K/120fps. 3-axis gimbal stabilisation.</div>
             <div class="loumoo-card-rating-row">
               <span>★ 4.9</span>
@@ -1671,7 +1671,7 @@ def get_home_view():
             <img src="./Assets/telephone&PC/Samsung%20Galaxy%20S26%20Ultra%2C.jfif" alt="Galaxy S26 Ultra" loading="lazy">
           </div>
           <div class="loumoo-card-body">
-            <h4 class="loumoo-card-title">Galaxy S26 Ultra</h4>
+            <h3 class="loumoo-card-title">Galaxy S26 Ultra</h3>
             <div class="loumoo-card-tagline">256GB Titanium · 200MP Galaxy AI camera &amp; built-in S Pen.</div>
             <div class="loumoo-card-rating-row">
               <span>★ 4.9</span>
@@ -1704,7 +1704,7 @@ def get_home_view():
             <img src="./Assets/telephone&PC/Macbook.jfif" alt="MacBook Air 13” M2" loading="lazy">
           </div>
           <div class="loumoo-card-body">
-            <h4 class="loumoo-card-title">MacBook Air 13” M2</h4>
+            <h3 class="loumoo-card-title">MacBook Air 13” M2</h3>
             <div class="loumoo-card-tagline">Apple Silicon M2 · 8GB / 256GB SSD · Space Grey.</div>
             <div class="loumoo-card-rating-row">
               <span>★ 4.9</span>
@@ -1737,7 +1737,7 @@ def get_home_view():
             <img src="./Assets/telephone&PC/iPhone%2017%20Pro%20Max%20Colors%20%E2%80%93%20Every%20Stunning%20Finish%20in%20One%20Premium%20Look%20%F0%9F%93%B1%E2%9C%A8.jfif" alt="iPhone 17 Pro Max" loading="lazy">
           </div>
           <div class="loumoo-card-body">
-            <h4 class="loumoo-card-title">iPhone 17 Pro Max</h4>
+            <h3 class="loumoo-card-title">iPhone 17 Pro Max</h3>
             <div class="loumoo-card-tagline">A19 Pro · 6.9-inch ProMotion · 48MP Pro triple camera.</div>
             <div class="loumoo-card-rating-row">
               <span>★ 4.9</span>

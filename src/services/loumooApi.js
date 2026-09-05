@@ -46,6 +46,17 @@
     return null;
   }
 
+  function safeSessionStorage() {
+    try {
+      if (typeof sessionStorage !== 'undefined' && sessionStorage) return sessionStorage;
+    } catch (e) { /* blocked by privacy settings */ }
+    return null;
+  }
+
+  function tokenStorage() {
+    return safeSessionStorage() || safeStorage();
+  }
+
   function baseUrl() {
     if (hasWindow() && window.LOUMOO_API_URL) return window.LOUMOO_API_URL;
     if (hasWindow()) return '';           // same-origin: server/index.js serves the app
@@ -98,8 +109,8 @@
   }
 
   function LoumooApiClient() {
-    var store = safeStorage();
-    this.token = store ? store.getItem(TOKEN_KEY) : null;
+    var store = tokenStorage();
+    this.token = store ? (store.getItem(TOKEN_KEY) || store.getItem('loumoo_supabase_session_token')) : null;
     this._tokenProvider = null;
     this._inflight = {};
   }
@@ -109,12 +120,11 @@
   /* ---------------------------------------------------------------------- */
 
   /**
-   * Registers the live session-token source (Clerk).
+   * Registers the live Supabase session-token source.
    *
-   * Clerk session tokens are short-lived and refreshed by its SDK, so the
-   * client asks for a fresh one per request instead of caching a copy that
-   * silently expires. A stored token remains only as a same-tab fallback for
-   * environments where the Clerk SDK is unavailable.
+   * Supabase access tokens are short-lived and refreshed by the auth service;
+   * the client asks for a fresh token per request instead of silently using an
+   * expired cached copy.
    */
   LoumooApiClient.prototype.setTokenProvider = function (fn) {
     this._tokenProvider = typeof fn === 'function' ? fn : null;
@@ -134,11 +144,13 @@
 
   LoumooApiClient.prototype.setAuthToken = function (token) {
     this.token = token || null;
-    var store = safeStorage();
+    var store = tokenStorage();
     if (!store) return;
     try {
       if (token) store.setItem(TOKEN_KEY, token);
       else store.removeItem(TOKEN_KEY);
+      var legacy = safeStorage();
+      if (legacy && legacy !== store) legacy.removeItem(TOKEN_KEY);
     } catch (e) { /* quota / private mode */ }
   };
 
@@ -156,6 +168,10 @@
     this.setAuthToken(null);
     this._inflight = {};
     var store = safeStorage();
+    var sessionStore = safeSessionStorage();
+    if (sessionStore) {
+      try { sessionStore.removeItem(TOKEN_KEY); } catch (e) { /* noop */ }
+    }
     if (!store) return;
     try {
       store.removeItem('loumoo_auth_user');
@@ -235,7 +251,7 @@
   /* ====================================================================== */
 
   /**
-   * GET /api/v1/auth/config — the browser-safe bootstrap (Clerk publishable
+   * GET /api/v1/auth/config — the browser-safe Supabase bootstrap
    * key, which verification channels this deployment actually supports).
    */
   LoumooApiClient.prototype.getAuthConfig = function () {
@@ -243,7 +259,7 @@
   };
 
   /**
-   * POST /api/v1/auth/session — called once, immediately after Clerk
+   * POST /api/v1/auth/session — called once after Supabase
    * authenticates the browser. Provisions the LOUMOO profile on first sign-in
    * and returns the authoritative account state.
    *
@@ -285,7 +301,7 @@
     return this.request('/api/v1/auth/verification');
   };
 
-  /** Re-reads Clerk server-side and mirrors the result. */
+  /** Re-reads Supabase-backed verification state. */
   LoumooApiClient.prototype.refreshVerification = function () {
     return this.request('/api/v1/auth/verification/refresh', { method: 'POST' });
   };
@@ -397,7 +413,7 @@
   LoumooApiClient.prototype.getMe = function () {
     var self = this;
     // Skip the round trip only when there is genuinely no credential to try —
-    // the live provider (Clerk) is consulted, not just the stored fallback.
+    // the live Supabase provider is consulted, not just browser state.
     return this.resolveToken().then(function (token) {
       if (!token) return null;
       return self._fetchMe();
@@ -612,6 +628,10 @@
   /* --- 05.01 Create a store --- */
   LoumooApiClient.prototype.createStore = function (payload) {
     return this.request('/api/v1/stores', { method: 'POST', body: payload });
+  };
+
+  LoumooApiClient.prototype.getMyStore = function () {
+    return this.request('/api/v1/stores/me');
   };
 
   /* --- 05.03 Store management --- */
@@ -958,6 +978,45 @@
       method: 'POST',
       rawBody: fileOrBuffer,
       headers: { 'Content-Type': (fileOrBuffer && fileOrBuffer.type) || 'application/octet-stream' }
+    });
+  };
+
+  /* ══════════════════════════════════════════════════════════════════════════
+     12. STORE & MERCHANT SDK
+     ══════════════════════════════════════════════════════════════════════════ */
+
+  LoumooApiClient.prototype.getMyStore = function () {
+    return this.request('/api/v1/stores/me');
+  };
+
+  LoumooApiClient.prototype.getStore = function (storeId) {
+    if (!storeId || storeId === 'me' || storeId === 'mine') {
+      return this.request('/api/v1/stores/me');
+    }
+    return this.request('/api/v1/stores/' + encodeURIComponent(storeId));
+  };
+
+  LoumooApiClient.prototype.createStore = function (payload) {
+    return this.request('/api/v1/stores', {
+      method: 'POST',
+      body: payload
+    });
+  };
+
+  LoumooApiClient.prototype.getStoreAnalytics = function (storeIdOrPeriod, optionalPeriod) {
+    var hasStoreId = Boolean(optionalPeriod);
+    var storeId = hasStoreId ? storeIdOrPeriod : null;
+    var period = optionalPeriod || storeIdOrPeriod || '30d';
+    if (storeId) {
+      return this.request('/api/v1/stores/' + encodeURIComponent(storeId) + '/analytics' + qs({ period: period }));
+    }
+    return this.request('/api/v1/stores/analytics' + qs({ period: period }));
+  };
+
+  LoumooApiClient.prototype.updateStore = function (storeId, payload) {
+    return this.request('/api/v1/stores/' + encodeURIComponent(storeId), {
+      method: 'PATCH',
+      body: payload
     });
   };
 

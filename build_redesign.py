@@ -33,10 +33,11 @@ from src.views.public_profile_view import get_public_profile_view
 
 # Define Master Header & Styles
 header_and_styles = """<!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LOUMOO Universal Commerce Marketplace</title>
 <script src="./support.js"></script>
 <!-- Keep the critical API/auth bridges non-blocking; they execute before
      DOMContentLoaded, which is when the DC runtime mounts the app. The
@@ -2971,6 +2972,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 }
 
 .lifestyle-card {
+  appearance: none;
   position: relative;
   aspect-ratio: 16 / 10;
   border-radius: 18px;
@@ -2985,6 +2987,8 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   transition: transform 0.22s var(--ease-spring), box-shadow 0.22s ease;
   border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  font: inherit;
+  text-align: left;
 }
 .lifestyle-card:hover {
   transform: translateY(-3px);
@@ -3642,7 +3646,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   font: 800 10.5px/1.2 var(--font-heading);
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--color-accent);
+  color: #0056b3;
 }
 
 .loumoo-rail-title {
@@ -3667,7 +3671,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 
 .loumoo-rail-action-link {
   font: 700 13px/1 var(--font-heading);
-  color: var(--color-accent);
+  color: #0056b3;
   background: none;
   border: none;
   cursor: pointer;
@@ -5724,12 +5728,12 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   </span>
 </div>
 
-<div class="scr" ref="{{ setScroller }}">
+<main class="scr" ref="{{ setScroller }}">
 """
 
 # Define Master Footer, Navigation & Script Logic
 footer_and_scripts = """
-</div>
+</main>
 
 <sc-if value="{{ showNav }}" hint-placeholder-val="{{ true }}">
 <div class="bottom-nav-mobile">
@@ -5895,7 +5899,7 @@ const SCREENS = [
   'home','search','filters','voice','category','bestpicks','freeday','notifications','chat','threadAi','threadSeller',
   'product','cart','checkout','paying','success','orders','store','business','brand','vs','vsCompare','visual',
   'visualScan','visualResults','myListings','travel','travelBus',
-  'travelPackages','travelVisa','travelResults','travelDetail','travelPassenger','travelTicket','announce','announceCampaigns','announceDetail',
+  'travelPackages','travelVisa','travelResults','travelDetail','travelPassenger','travelTicket','hotelVoucher','announce','announceCampaigns','announceDetail',
   'profile','seller','settings','payFailed','networkError','saved','transactions','loading',
   'onboardWelcome','onboardType','onboardIdentity','onboardOtp','onboardAdaptive','onboardBuyer','onboardSeller','onboardBusiness','onboardVerify','onboardReview','onboardSuccess',
   // Phase A — Account access (returning users)
@@ -5978,7 +5982,7 @@ const NO_NAV = [
   'voice','filters','payFailed','networkError','loading',
   'onboardWelcome','onboardType','onboardIdentity','onboardOtp','onboardAdaptive','onboardBuyer','onboardSeller','onboardBusiness','onboardVerify','onboardReview','onboardSuccess',
   'signIn','forgotPassword','resetPassword','verifyEmail',
-  'editProfile','addAddress','editAddress','deleteAccount','refundRequest','writeReview','sellerOrderDetail','hotelBooking',
+  'editProfile','addAddress','editAddress','deleteAccount','refundRequest','writeReview','sellerOrderDetail','hotelBooking','hotelVoucher',
   'createStore','storeOnboarding','storeSettings','storeVerification','storeAnalytics',
   'publishIntent','publishStudio','publishReview','publishSuccess',
   'publicUserProfile','sellerPublicPage'
@@ -7708,9 +7712,6 @@ class Component extends DCLogic {
     emailVerifyCooldown: 0,
 
     userRole: 'buyer',
-    // Empty, not seeded. These were pre-filled with a real person's name,
-    // phone and email, which any signed-in account whose own fields were blank
-    // then displayed as its own.
     regFirstName: '',
     regLastName: '',
     regAvatar: '',
@@ -7840,6 +7841,7 @@ class Component extends DCLogic {
     hotelCity: 'kribi',
     hotelGuestName: 'Rostand Tchuekam',
     hotelGuestPhone: '+237 690 12 34 56',
+    hotelReservation: null,
 
     // ── Travel & Mobility Ecosystem State ──
     travelServiceTab: 'bus',
@@ -7857,24 +7859,25 @@ class Component extends DCLogic {
     createStoreError: '',
     storeOnboardingPercentage: 75,
     storeVerificationStatusLabel: 'DRAFT',
-    verLegalName: 'Orca Electronics SARL',
-    verBusinessType: 'pro',
-    verRccm: 'RC/DLA/2023/B/1842',
-    verNiu: 'M052112345678A',
+    verLegalName: '',
+    verBusinessType: 'individual',
+    verRccm: '',
+    verNiu: '',
     verDocAttached: false,
     analyticsPeriod: '30d',
-    analyticsRevenueFormatted: '4 250 000 XAF',
-    analyticsOrdersCount: 48,
-    analyticsViewsCount: '12 400',
-    analyticsUniqueVisitors: '8 928',
-    analyticsConversionRate: '3.14',
-    storeTagline: 'Premium Electronics · Certified Apple & Dell Partner',
-    storeWarrantyPolicy: '12-month warranty on all electronics',
+    analyticsRevenueFormatted: '0 XAF',
+    analyticsOrdersCount: 0,
+    analyticsViewsCount: '0',
+    analyticsUniqueVisitors: '0',
+    analyticsConversionRate: '0.0',
+    analyticsTopProducts: [],
+    storeTagline: '',
+    storeWarrantyPolicy: '',
     storeOpenStatusBadge: 'OPEN',
     storeOpenTime: '08:00',
     storeCloseTime: '18:30',
-    storeLocationStreet: 'Boulevard de la Liberté, Akwa Commercial Zone',
-    storeLocationLandmark: 'Next to Total Akwa Roundabout',
+    storeLocationStreet: '',
+    storeLocationLandmark: '',
 
     // ── Stores & Brands Discovery / Storefront State ──
     storeSearchQuery: '',
@@ -8750,7 +8753,37 @@ class Component extends DCLogic {
         storeApi.getStore(ownStoreId).then(st => {
           if (this._unmounted || !st) return;
           const store = st.store || st;
-          this.setState({ store: store });
+          this.setState({
+            store: store,
+            primaryStoreId: store.id || ownStoreId,
+            currentStoreName: store.name || this.state.currentStoreName,
+            currentStoreSlug: store.slug || '',
+            currentStoreCategory: store.categoryId || store.category_id || store.category || 'general'
+          });
+          // Also fetch live store analytics so Seller Studio and Analytics cards are populated with real data!
+          if (typeof storeApi.getStoreAnalytics === 'function') {
+            storeApi.getStoreAnalytics(ownStoreId, this.state.analyticsPeriod || '30d').then(an => {
+              if (this._unmounted || !an) return;
+              const d = an.data || an;
+              const summary = d.summary || {};
+              const top = Array.isArray(d.topSellingProducts) ? d.topSellingProducts.map(p => ({
+                id: p.id,
+                title: p.title,
+                salesCount: p.salesCount || 0,
+                revenueFormatted: (Number(p.revenueXaf) || 0).toLocaleString('fr-FR') + ' XAF'
+              })) : [];
+              this.setState({
+                analyticsRevenueFormatted: summary.totalRevenueFormatted || ((Number(summary.totalRevenueXaf) || 0).toLocaleString('fr-FR') + ' XAF'),
+                analyticsOrdersCount: summary.totalOrders || 0,
+                analyticsViewsCount: String(summary.totalStoreViews || 0),
+                analyticsTopProducts: top,
+                sellerRevenue: summary.totalRevenueFormatted || ((Number(summary.totalRevenueXaf) || 0).toLocaleString('fr-FR') + ' XAF'),
+                sellerActiveOrdersCount: summary.totalOrders || 0,
+                sellerStoreViewsCount: summary.totalStoreViews || 0,
+                sellerLiveCount: summary.totalPublishedListings != null ? summary.totalPublishedListings : this.state.sellerLiveCount
+              });
+            }).catch(() => {});
+          }
         }).catch(() => {
           // Screens fall back to a neutral label rather than a wrong one.
           this._loadedStoreId = null;
@@ -8842,7 +8875,7 @@ class Component extends DCLogic {
    */
   _onScreenEnter(screen) {
     if (screen === 'announce') {
-      this.loadAnnouncements();
+      this.ensureAnnouncements();
     } else if (screen === 'myListings') {
       this.loadSellerListings();
     } else if (screen === 'publishIntent') {
@@ -9677,6 +9710,10 @@ class Component extends DCLogic {
 
         if (guard) guard.invalidate();
         pub.clearLocal();
+        // A newly published broadcast is the one legitimate reason to make
+        // the next Announce visit fetch again. Ordinary route changes keep
+        // using the warm feed above.
+        if (this.state.pubDraft && this.state.pubDraft.intent === 'BROADCAST') this._announceFeedLoadedKey = null;
 
         const finished = Object.assign({}, this.state.pubDraft, {
           remoteId: published.id || this.state.pubDraft.remoteId,
@@ -9851,6 +9888,21 @@ class Component extends DCLogic {
      `publication_card` the studio previewed.
      ══════════════════════════════════════════════════════════════════════ */
 
+  /** A query fingerprint lets the feed stay warm between route visits. */
+  _announcementFeedKey() {
+    return JSON.stringify({
+      type: this.state.announceFilter || 'all',
+      search: String(this.state.announceSearch || '').trim().toLowerCase()
+    });
+  }
+
+  /** Load only when the visible query has changed or an explicit refresh asks for it. */
+  ensureAnnouncements() {
+    const key = this._announcementFeedKey();
+    if (this._announceFeedLoadedKey === key) return Promise.resolve();
+    return this.loadAnnouncements({ force: true });
+  }
+
   /** The buyer-facing broadcast feed. */
   loadAnnouncements(options) {
     const api = getApi();
@@ -9858,6 +9910,11 @@ class Component extends DCLogic {
 
     const opts = options || {};
     const append = Boolean(opts.append);
+    const key = this._announcementFeedKey();
+    if (!append && !opts.force && this._announceFeedLoadedKey === key) return Promise.resolve();
+    if (this._announceFeedRequest && this._announceFeedRequest.key === key && !append) {
+      return this._announceFeedRequest.promise;
+    }
     const offset = append ? (this.state.announcements || []).length : 0;
 
     this.setState({ announceLoading: true, announceError: '' });
@@ -9868,10 +9925,13 @@ class Component extends DCLogic {
     }
     if (this.state.announceSearch) params.search = this.state.announceSearch;
 
-    return api.getAnnouncementFeed(params)
+    const requestId = (this._announceFeedRequestId || 0) + 1;
+    this._announceFeedRequestId = requestId;
+    const request = api.getAnnouncementFeed(params)
       .then(res => {
-        if (this._unmounted) return;
+        if (this._unmounted || requestId !== this._announceFeedRequestId) return;
         const items = (res && res.announcements) || [];
+        if (!append) this._announceFeedLoadedKey = key;
         this.setState(st => ({
           announcements: append ? (st.announcements || []).concat(items) : items,
           announceTotal: (res && res.total) || items.length,
@@ -9879,9 +9939,11 @@ class Component extends DCLogic {
         }));
       })
       .catch(err => {
-        if (this._unmounted) return;
+        if (this._unmounted || requestId !== this._announceFeedRequestId) return;
         this.setState({ announceLoading: false, announceError: friendlyError(err) });
       });
+    this._announceFeedRequest = { key: key, promise: request };
+    return request;
   }
 
   /** Opens one broadcast and records the view, which is what feeds analytics. */
@@ -9889,7 +9951,7 @@ class Component extends DCLogic {
     const api = getApi();
     if (!id) return;
 
-    this.setState({ activeAnnouncementId: id, announceDetailLoading: true });
+    this.setState({ activeAnnouncementId: id, activeAnnouncement: null, announceDetailLoading: true, announceError: '' });
     this.go('announceDetail');
 
     if (!api) return;
@@ -11223,6 +11285,15 @@ class Component extends DCLogic {
       handleSellClick,
       currentStoreName: (this.state.store && this.state.store.name) || this.state.regBusinessName || 'Your Boutique',
       hasOwnStore: Boolean(this.state.primaryStoreId),
+      currentStoreSlug: (this.state.store && this.state.store.slug) || (this.state.primaryStoreId ? this.state.primaryStoreId.replace('store_', '') : 'store'),
+      openPublicStorefront: () => {
+        const slug = (this.state.store && this.state.store.slug) || '';
+        if (typeof window !== 'undefined' && slug) {
+          window.open('/s/' + encodeURIComponent(slug), '_blank');
+        } else {
+          this.toast('Storefront URL: /s/' + (slug || 'store'));
+        }
+      },
       currentStoreCategoryLabel: (() => {
         const LABELS = { electronics:'Electronics & Tech', fashion:'Fashion & Apparel', home:'Home & Living',
           services:'Professional Services', hotels:'Hospitality', hospitality:'Hospitality', food:'Food & Grocery',
@@ -12191,23 +12262,59 @@ class Component extends DCLogic {
       openStoreOnboarding: () => this.go('storeOnboarding'),
       openStoreSettings: () => this.go('storeSettings'),
       openStoreVerification: () => this.go('storeVerification'),
-      openStoreAnalytics: () => {
-        this.go('storeAnalytics');
+      refreshStoreAnalytics: () => {
+        const period = this.state.analyticsPeriod || '30d';
         const api = getApi();
-        if (api) {
-          api.getStoreAnalytics(this.state.primaryStoreId, this.state.analyticsPeriod).then(r => {
-            if (r && r.data && r.data.summary && !this._unmounted) {
-              this.setState({
-                analyticsRevenueFormatted: r.data.summary.totalRevenueFormatted || this.state.analyticsRevenueFormatted,
-                analyticsOrdersCount: r.data.summary.totalOrders || this.state.analyticsOrdersCount,
-                analyticsViewsCount: String(r.data.summary.totalStoreViews || this.state.analyticsViewsCount),
-                analyticsUniqueVisitors: String(r.data.summary.uniqueVisitors || this.state.analyticsUniqueVisitors),
-                analyticsConversionRate: String(r.data.summary.conversionRate || this.state.analyticsConversionRate)
-              });
-            }
+        const storeId = this.state.primaryStoreId;
+        if (api && storeId && typeof api.getStoreAnalytics === 'function') {
+          api.getStoreAnalytics(storeId, period).then(r => {
+            if (this._unmounted || !r) return;
+            const data = (r && r.data) || r;
+            const summary = data.summary || {};
+            const top = Array.isArray(data.topSellingProducts) ? data.topSellingProducts.map(item => ({
+              id: item.id,
+              title: item.title,
+              salesCount: item.salesCount || 0,
+              revenueFormatted: (Number(item.revenueXaf) || 0).toLocaleString('fr-FR') + ' XAF'
+            })) : [];
+            this.setState({
+              analyticsRevenueFormatted: summary.totalRevenueFormatted || ((Number(summary.totalRevenueXaf) || 0).toLocaleString('fr-FR') + ' XAF'),
+              analyticsOrdersCount: summary.totalOrders || 0,
+              analyticsViewsCount: String(summary.totalStoreViews || 0),
+              analyticsTopProducts: top
+            });
+            this.toast('Storefront analytics refreshed');
           }).catch(() => {});
         }
       },
+      openStoreAnalytics: () => {
+        this.go('storeAnalytics');
+        const period = this.state.analyticsPeriod || '30d';
+        const api = getApi();
+        const storeId = this.state.primaryStoreId;
+        if (api && storeId && typeof api.getStoreAnalytics === 'function') {
+          api.getStoreAnalytics(storeId, period).then(r => {
+            if (this._unmounted || !r) return;
+            const data = (r && r.data) || r;
+            const summary = data.summary || {};
+            const top = Array.isArray(data.topSellingProducts) ? data.topSellingProducts.map(item => ({
+              id: item.id,
+              title: item.title,
+              salesCount: item.salesCount || 0,
+              revenueFormatted: (Number(item.revenueXaf) || 0).toLocaleString('fr-FR') + ' XAF'
+            })) : [];
+            this.setState({
+              analyticsRevenueFormatted: summary.totalRevenueFormatted || ((Number(summary.totalRevenueXaf) || 0).toLocaleString('fr-FR') + ' XAF'),
+              analyticsOrdersCount: summary.totalOrders || 0,
+              analyticsViewsCount: String(summary.totalStoreViews || 0),
+              analyticsTopProducts: top
+            });
+          }).catch(() => {});
+        }
+      },
+      analyticsTopProducts: this.state.analyticsTopProducts || [],
+      analyticsHasTopProducts: (this.state.analyticsTopProducts || []).length > 0,
+      analyticsPeriodLabel: this.state.analyticsPeriod === 'today' ? 'Today' : this.state.analyticsPeriod === '7d' ? 'Last 7 Days' : this.state.analyticsPeriod === '90d' ? 'Last 90 Days' : 'Last 30 Days',
       createStoreName: this.state.createStoreName,
       createStoreCategory: this.state.createStoreCategory,
       createStoreDesc: this.state.createStoreDesc,
@@ -12242,9 +12349,25 @@ class Component extends DCLogic {
           description: this.state.createStoreDesc,
           city: this.state.createStoreCity,
           phoneNumber: this.state.createStorePhone
-        }).then(done).catch(err => {
+        }).then(res => {
+          const store = (res && res.data) || res;
+          const storeId = (store && store.id) || null;
+          if (storeId) {
+            this.setState({ primaryStoreId: storeId, store: store });
+          }
+          this._syncAccountState(true);
+          this.setState({ createStoreBusy: false });
+          this.toast('Storefront created! Finish setup to go live.');
+          this.go('storeOnboarding');
+        }).catch(err => {
           if (!this._unmounted) {
-            if (err && (err.code === 'CONFLICT' || /already have a LOUMOO boutique/i.test(err.message || ''))) {
+            const conflictStoreId = (err && err.details && err.details.storeId) || null;
+            const conflictStore = (err && err.details && err.details.store) || null;
+            if (conflictStoreId || (err && (err.code === 'CONFLICT' || /already have a LOUMOO boutique/i.test(err.message || '')))) {
+              if (conflictStoreId) {
+                this.setState({ primaryStoreId: conflictStoreId, store: conflictStore || this.state.store });
+              }
+              this._syncAccountState(true);
               this.setState({ createStoreBusy: false });
               this.toast('You already have an active boutique! Opening your studio...');
               this.go('seller');
@@ -12358,10 +12481,54 @@ class Component extends DCLogic {
       analyticsViewsCount: this.state.analyticsViewsCount,
       analyticsUniqueVisitors: this.state.analyticsUniqueVisitors,
       analyticsConversionRate: this.state.analyticsConversionRate,
-      setAnalyticsPeriodToday: () => this.setState({ analyticsPeriod: 'today' }),
-      setAnalyticsPeriod7d: () => this.setState({ analyticsPeriod: '7d' }),
-      setAnalyticsPeriod30d: () => this.setState({ analyticsPeriod: '30d' }),
-      setAnalyticsPeriod90d: () => this.setState({ analyticsPeriod: '90d' }),
+      setAnalyticsPeriodToday: () => {
+        this.setState({ analyticsPeriod: 'today' });
+        const api = getApi();
+        if (api && this.state.primaryStoreId) {
+          api.getStoreAnalytics(this.state.primaryStoreId, 'today').then(r => {
+            const d = (r && r.data) || r;
+            const s = d.summary || {};
+            const top = Array.isArray(d.topSellingProducts) ? d.topSellingProducts.map(item => ({ id: item.id, title: item.title, salesCount: item.salesCount || 0, revenueFormatted: (Number(item.revenueXaf) || 0).toLocaleString('fr-FR') + ' XAF' })) : [];
+            this.setState({ analyticsRevenueFormatted: s.totalRevenueFormatted || ((Number(s.totalRevenueXaf) || 0).toLocaleString('fr-FR') + ' XAF'), analyticsOrdersCount: s.totalOrders || 0, analyticsViewsCount: String(s.totalStoreViews || 0), analyticsTopProducts: top });
+          }).catch(() => {});
+        }
+      },
+      setAnalyticsPeriod7d: () => {
+        this.setState({ analyticsPeriod: '7d' });
+        const api = getApi();
+        if (api && this.state.primaryStoreId) {
+          api.getStoreAnalytics(this.state.primaryStoreId, '7d').then(r => {
+            const d = (r && r.data) || r;
+            const s = d.summary || {};
+            const top = Array.isArray(d.topSellingProducts) ? d.topSellingProducts.map(item => ({ id: item.id, title: item.title, salesCount: item.salesCount || 0, revenueFormatted: (Number(item.revenueXaf) || 0).toLocaleString('fr-FR') + ' XAF' })) : [];
+            this.setState({ analyticsRevenueFormatted: s.totalRevenueFormatted || ((Number(s.totalRevenueXaf) || 0).toLocaleString('fr-FR') + ' XAF'), analyticsOrdersCount: s.totalOrders || 0, analyticsViewsCount: String(s.totalStoreViews || 0), analyticsTopProducts: top });
+          }).catch(() => {});
+        }
+      },
+      setAnalyticsPeriod30d: () => {
+        this.setState({ analyticsPeriod: '30d' });
+        const api = getApi();
+        if (api && this.state.primaryStoreId) {
+          api.getStoreAnalytics(this.state.primaryStoreId, '30d').then(r => {
+            const d = (r && r.data) || r;
+            const s = d.summary || {};
+            const top = Array.isArray(d.topSellingProducts) ? d.topSellingProducts.map(item => ({ id: item.id, title: item.title, salesCount: item.salesCount || 0, revenueFormatted: (Number(item.revenueXaf) || 0).toLocaleString('fr-FR') + ' XAF' })) : [];
+            this.setState({ analyticsRevenueFormatted: s.totalRevenueFormatted || ((Number(s.totalRevenueXaf) || 0).toLocaleString('fr-FR') + ' XAF'), analyticsOrdersCount: s.totalOrders || 0, analyticsViewsCount: String(s.totalStoreViews || 0), analyticsTopProducts: top });
+          }).catch(() => {});
+        }
+      },
+      setAnalyticsPeriod90d: () => {
+        this.setState({ analyticsPeriod: '90d' });
+        const api = getApi();
+        if (api && this.state.primaryStoreId) {
+          api.getStoreAnalytics(this.state.primaryStoreId, '90d').then(r => {
+            const d = (r && r.data) || r;
+            const s = d.summary || {};
+            const top = Array.isArray(d.topSellingProducts) ? d.topSellingProducts.map(item => ({ id: item.id, title: item.title, salesCount: item.salesCount || 0, revenueFormatted: (Number(item.revenueXaf) || 0).toLocaleString('fr-FR') + ' XAF' })) : [];
+            this.setState({ analyticsRevenueFormatted: s.totalRevenueFormatted || ((Number(s.totalRevenueXaf) || 0).toLocaleString('fr-FR') + ' XAF'), analyticsOrdersCount: s.totalOrders || 0, analyticsViewsCount: String(s.totalStoreViews || 0), analyticsTopProducts: top });
+          }).catch(() => {});
+        }
+      },
       storeTagline: this.state.storeTagline,
       storeWarrantyPolicy: this.state.storeWarrantyPolicy,
       storeOpenStatusBadge: this.state.storeOpenStatusBadge,
@@ -13106,7 +13273,7 @@ class Component extends DCLogic {
           pubSuccessAction: (key) => {
             const id = (this.state.pubDraft && this.state.pubDraft.remoteId) || null;
             if (key === 'view') {
-              if (isBroadcast) { this.setState({ activeAnnouncementId: id }); this.go('announceDetail'); }
+              if (isBroadcast && id) this.openAnnouncement(id);
               else if (id) this.openProduct(id);
               return;
             }
@@ -13161,6 +13328,12 @@ class Component extends DCLogic {
 
         return {
           /* ---------- Announce ---------- */
+          activeAnnouncementCard: pub && this.state.activeAnnouncement
+            ? pub.cardFromAnnouncement(this.state.activeAnnouncement, ctx)
+            : null,
+          hasActiveAnnouncement: Boolean(this.state.activeAnnouncement),
+          activeAnnouncementId: this.state.activeAnnouncementId || '',
+          announceDetailLoading: this.state.announceDetailLoading,
           announceCards: pub
             ? (this.state.announcements || []).map(a => pub.cardFromAnnouncement(a, ctx))
             : [],
@@ -13176,19 +13349,17 @@ class Component extends DCLogic {
             active: f.key === (this.state.announceFilter || 'all')
           })),
           setAnnounceFilter: (key) => {
-            this.setState({ announceFilter: key, announcements: [] });
-            this.loadAnnouncements();
+            this.setState({ announceFilter: key, announcements: [] }, () => this.ensureAnnouncements());
           },
           setAnnounceSearch: (value) => {
             this.setState({ announceSearch: value });
             if (this._announceSearchTimer) clearTimeout(this._announceSearchTimer);
             this._announceSearchTimer = setTimeout(() => {
               if (this._unmounted) return;
-              this.setState({ announcements: [] });
-              this.loadAnnouncements();
+              this.setState({ announcements: [] }, () => this.ensureAnnouncements());
             }, 400);
           },
-          reloadAnnouncements: () => this.loadAnnouncements(),
+          reloadAnnouncements: () => this.loadAnnouncements({ force: true }),
           loadMoreAnnouncements: () => this.loadAnnouncements({ append: true }),
           openAnnouncement: (id) => this.openAnnouncement(id),
 
@@ -14052,8 +14223,9 @@ def _write_screen_chunk(name, markup):
     # owns navigation/state and passes its already-derived view projection via
     # `dcProps`, so the split changes loading boundaries without changing UX.
     chunk = (
-        '<!DOCTYPE html>\n<html>\n<head>\n<meta charset="utf-8">\n'
+        '<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n'
         '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
+        '<title>LOUMOO Screen</title>\n'
         '</head>\n<body>\n<x-dc>\n'
         + _optimize_media_markup(markup)
         + '\n</x-dc>\n'

@@ -24,7 +24,51 @@ const StoreAnalyticsUseCase = require('../../application/StoreAnalyticsUseCase')
 const StoreSettingsUseCase = require('../../application/StoreSettingsUseCase');
 const StoreHoursUseCase = require('../../application/StoreHoursUseCase');
 const StoreLocationUseCase = require('../../application/StoreLocationUseCase');
+const StoreRepository = require('../../infrastructure/StoreRepository');
 const PublicProfileService = require('../../../identity/application/PublicProfileService');
+
+// ── CURRENT USER'S STORE ──
+// GET /api/v1/stores/me or /api/v1/stores/mine
+const getMyStoreHandler = async (req, res, next) => {
+  try {
+    const owned = await StoreRepository.findOwnedBy(req.principal.id);
+    const store = owned && owned.length > 0 ? owned[0] : null;
+    res.json({ status: 'success', data: { store } });
+  } catch (err) {
+    next(err);
+  }
+};
+router.get('/me', requireAuth, getMyStoreHandler);
+router.get('/mine', requireAuth, getMyStoreHandler);
+
+// GET /api/v1/stores/analytics — current seller's store analytics
+router.get('/analytics', requireAuth, async (req, res, next) => {
+  try {
+    const owned = await StoreRepository.findOwnedBy(req.principal.id);
+    if (!owned || owned.length === 0) {
+      return res.json({
+        status: 'success',
+        data: {
+          summary: {
+            totalRevenueXaf: 0,
+            totalRevenueFormatted: '0 XAF',
+            totalOrders: 0,
+            totalStoreViews: 0,
+            uniqueVisitors: 0,
+            conversionRate: '0.0'
+          },
+          period: req.query.period || '30d',
+          topSellingProducts: []
+        }
+      });
+    }
+    const store = owned[0];
+    const analytics = await StoreAnalyticsUseCase.getAnalytics(store, req.query.period);
+    res.json({ status: 'success', data: analytics });
+  } catch (err) {
+    next(err);
+  }
+});
 
 // ── 05.06 CATEGORIES (PUBLIC) ──
 // GET /api/v1/stores/categories

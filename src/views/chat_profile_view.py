@@ -300,6 +300,65 @@ def get_chat_and_profile_view():
       </div>
     </section>
 
+    <!-- Dedicated Boutique / Storefront Card -->
+    <sc-if value="{{ hasOwnStore }}">
+    <div class="card-premium" style="margin-top:16px;padding:18px 20px;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-lg);position:relative;overflow:hidden">
+      <div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--color-accent),#008060)"></div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px">
+        <div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font:800 11px/1 var(--font-heading);letter-spacing:0.06em;color:var(--color-accent);text-transform:uppercase">My Boutique Storefront</span>
+            <span class="tag {{ sellerStatus === 'READY' ? 'tag-accent' : 'tag-neutral' }}" style="font-size:10px;font-weight:700;padding:2px 8px">
+              {{ sellerStatus === 'READY' ? 'ACTIVE &amp; LIVE' : 'ONBOARDING' }}
+            </span>
+          </div>
+          <h3 style="margin:6px 0 2px;font:800 18px/1.2 var(--font-heading);color:var(--color-text)">{{ currentStoreName }}</h3>
+          <div style="font:400 12px/1.4 var(--font-body);color:var(--color-text-secondary)">{{ currentStoreCategoryLabel }} · Verified Merchant</div>
+        </div>
+        <div style="width:44px;height:44px;border-radius:var(--radius-md);background:var(--color-surface-subtle);border:1px solid var(--color-divider);display:flex;align-items:center;justify-content:center;color:var(--color-accent);flex-shrink:0">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/><path d="M2 7h20"/><circle cx="12" cy="12" r="2"/></svg>
+        </div>
+      </div>
+
+      <!-- Public storefront link preview bar -->
+      <div style="background:var(--color-surface-subtle);border:1px solid var(--color-divider);border-radius:var(--radius-sm);padding:8px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:14px">
+        <div style="display:flex;align-items:center;gap:6px;min-width:0;overflow:hidden">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--color-text-muted);flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="2" x2="22" y1="12" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          <span style="font:600 12px/1 var(--font-body);color:var(--color-text);text-overflow:ellipsis;white-space:nowrap;overflow:hidden">loumoo.cm/s/{{ currentStoreSlug || 'store' }}</span>
+        </div>
+        <button onClick="{{ openPublicStorefront }}" class="tag tag-accent" style="cursor:pointer;font-size:10.5px;font-weight:700;padding:3px 10px;flex-shrink:0">
+          Preview ↗
+        </button>
+      </div>
+
+      <!-- Store CTA buttons -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <button onClick="{{ on.seller }}" class="btn btn-primary" style="height:38px;font-size:12px;font-weight:700;gap:6px;cursor:pointer">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg>
+          SELLER STUDIO →
+        </button>
+        <button onClick="{{ openStoreSettings }}" class="btn btn-secondary" style="height:38px;font-size:12px;font-weight:600;gap:6px;cursor:pointer">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+          Settings
+        </button>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- Merchant Entry when user does NOT have a boutique -->
+    <sc-if value="{{ !hasOwnStore }}">
+    <div class="card-premium" style="margin-top:16px;padding:18px 20px;background:var(--color-surface);border:1px dashed var(--color-divider);border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:space-between;gap:14px">
+      <div style="flex:1;min-width:0">
+        <div style="font:800 11px/1 var(--font-heading);letter-spacing:0.06em;color:var(--color-accent);text-transform:uppercase">Start Selling</div>
+        <h3 style="margin:4px 0 4px;font:700 15px/1.3 var(--font-heading);color:var(--color-text)">Open Your LOUMOO Boutique</h3>
+        <p style="margin:0;font:400 12px/1.4 var(--font-body);color:var(--color-text-secondary)">Sell products, services or rooms across Cameroon with verified merchant status and escrow protection.</p>
+      </div>
+      <button onClick="{{ openCreateStore }}" class="btn btn-primary" style="height:38px;padding:0 16px;font-size:12px;font-weight:700;flex-shrink:0;cursor:pointer">
+        + OPEN BOUTIQUE
+      </button>
+    </div>
+    </sc-if>
+
     <!-- Quick tiles -->
     <div class="prof-tiles">
       <button onClick="{{ on.orders }}" aria-label="Go to My Orders" class="prof-tile">

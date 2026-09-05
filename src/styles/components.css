@@ -717,7 +717,7 @@ a:focus:not(:focus-visible) {
   font: 800 11px/1 var(--font-heading);
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--color-accent);
+  color: #0056b3;
 }
 
 .loumoo-rail-title {
@@ -741,7 +741,7 @@ a:focus:not(:focus-visible) {
 
 .loumoo-rail-action-link {
   font: 700 12.5px/1 var(--font-heading);
-  color: var(--color-accent);
+  color: #0056b3;
   text-decoration: none;
   background: transparent;
   border: none;

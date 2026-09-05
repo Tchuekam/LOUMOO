@@ -361,9 +361,11 @@ router.post('/verify-otp', async (req, res, next) => {
       }
 
       if (userId) {
-        // Existing account — mark the address confirmed.
+        // Existing account — mark the address confirmed and update password if provided.
         try {
-          await admin.auth.admin.updateUserById(userId, { email_confirm: true });
+          const updatePayload = { email_confirm: true };
+          if (password) updatePayload.password = password;
+          await admin.auth.admin.updateUserById(userId, updatePayload);
         } catch (e) {
           logger.debug(`[SupabaseUser] confirm note: ${e.message}`);
         }
@@ -465,10 +467,33 @@ router.post('/verify-otp', async (req, res, next) => {
 router.post('/login', async (req, res, next) => {
   try {
     const { email, password } = req.body || {};
-    const cleanEmail = String(email || '').trim().toLowerCase();
+    let cleanEmail = String(email || '').trim().toLowerCase();
+
+    // If identifier is not an email, try resolving account email by phone number
+    if (cleanEmail && !cleanEmail.includes('@')) {
+      const cleanPhone = cleanEmail.replace(/[^0-9+]/g, '');
+      if (cleanPhone) {
+        try {
+          const admin = SupabaseDatabase.getAdmin();
+          const { data: matchedProfile } = await admin
+            .schema('iam')
+            .from('profiles')
+            .select('email')
+            .or(`phone_number.eq.${cleanPhone},phone_number.eq.+${cleanPhone.replace(/^\+/, '')},phone_number.eq.+237${cleanPhone.replace(/^(\+?237)?/, '')}`)
+            .is('deleted_at', null)
+            .limit(1)
+            .maybeSingle();
+          if (matchedProfile && matchedProfile.email) {
+            cleanEmail = matchedProfile.email;
+          }
+        } catch (phoneErr) {
+          logger.debug(`[Auth] phone lookup note: ${phoneErr.message}`);
+        }
+      }
+    }
 
     if (!cleanEmail || !cleanEmail.includes('@')) {
-      throw new ValidationError('Enter the email address on your account.');
+      throw new ValidationError('Enter the email address or phone number on your account.');
     }
     if (!password) {
       throw new ValidationError('Enter your password.');
@@ -571,6 +596,155 @@ router.post('/login', async (req, res, next) => {
           email: cleanEmail,
           firstName: meta.first_name || '',
           lastName: meta.last_name || ''
+        },
+        accountState: AccountStateService.toClientState(principal, accountState)
+      }
+    });
+  } catch (err) { next(err); }
+});
+
+/* ── Password Reset (request OTP) ────────────────────────────────── */
+router.post('/forgot-password', async (req, res, next) => {
+  try {
+    const { email } = req.body || {};
+    let cleanEmail = String(email || '').trim().toLowerCase();
+
+    if (!cleanEmail.includes('@')) {
+      const cleanPhone = cleanEmail.replace(/[^0-9+]/g, '');
+      if (cleanPhone) {
+        try {
+          const admin = SupabaseDatabase.getAdmin();
+          const { data: matchedProfile } = await admin
+            .schema('iam')
+            .from('profiles')
+            .select('email')
+            .or(`phone_number.eq.${cleanPhone},phone_number.eq.+${cleanPhone.replace(/^\+/, '')},phone_number.eq.+237${cleanPhone.replace(/^(\+?237)?/, '')}`)
+            .is('deleted_at', null)
+            .limit(1)
+            .maybeSingle();
+          if (matchedProfile && matchedProfile.email) {
+            cleanEmail = matchedProfile.email;
+          }
+        } catch (phoneErr) {
+          logger.debug(`[Auth] phone lookup note: ${phoneErr.message}`);
+        }
+      }
+    }
+
+    if (!cleanEmail || !cleanEmail.includes('@')) {
+      throw new ValidationError('Enter a valid email address.');
+    }
+
+    // Prepare and dispatch 6-digit OTP to user email
+    const result = await prepareAndSendOtp({
+      email: cleanEmail,
+      subject: 'Your LOUMOO password recovery code',
+      intro: 'Here is your 6-digit recovery code to reset your password:',
+      ip: requestSource(req)
+    });
+
+    res.json({
+      status: 'success',
+      message: 'If an account exists, a recovery code has been sent.',
+      data: {
+        devOtp: config.isDevelopment && result.code ? result.code : undefined
+      }
+    });
+  } catch (err) { next(err); }
+});
+
+/* ── Password Reset (confirm code & update password) ─────────────── */
+router.post('/reset-password', async (req, res, next) => {
+  try {
+    const { email, code, newPassword } = req.body || {};
+    const cleanEmail = String(email || '').trim().toLowerCase();
+    const cleanCode = String(code || '').trim().replace(/[^0-9]/g, '');
+
+    if (!cleanEmail || !cleanCode) {
+      throw new ValidationError('Email and 6-digit recovery code are required.');
+    }
+    if (!newPassword || newPassword.length < 8) {
+      throw new ValidationError('Your password must be at least 8 characters.');
+    }
+
+    const INVALID = 'That recovery code is invalid or has expired. Please request a new one.';
+    const cached = await CacheService.get(cleanEmail, OTP_NAMESPACE);
+    if (!cached) {
+      throw new AuthenticationError(INVALID);
+    }
+
+    const nowMs = Date.now();
+    const expired = cached.expiresAt && nowMs > cached.expiresAt;
+    const lockedOut = (cached.attempts || 0) >= OTP_MAX_ATTEMPTS;
+    if (expired || lockedOut) {
+      await CacheService.delete(cleanEmail, OTP_NAMESPACE);
+      throw new AuthenticationError(INVALID);
+    }
+
+    if (!OtpSecurity.verifyOtp(cleanCode, cached.otpHash)) {
+      const attempts = (cached.attempts || 0) + 1;
+      if (attempts >= OTP_MAX_ATTEMPTS) {
+        await CacheService.delete(cleanEmail, OTP_NAMESPACE);
+      } else {
+        const remainingTtl = Math.max(1, Math.ceil((cached.expiresAt - nowMs) / 1000));
+        await CacheService.set(cleanEmail, { ...cached, attempts }, remainingTtl, OTP_NAMESPACE);
+      }
+      throw new AuthenticationError(INVALID);
+    }
+
+    // Consume OTP code
+    await CacheService.delete(cleanEmail, OTP_NAMESPACE);
+
+    const admin = SupabaseDatabase.getAdmin();
+    if (!admin || !admin.auth || !admin.auth.admin) {
+      throw new InfrastructureError('Identity', 'Authentication provider is currently unavailable.');
+    }
+
+    const userId = await resolveAuthUserId(admin, cleanEmail);
+    if (!userId) {
+      throw new AuthenticationError('Account not found.');
+    }
+
+    // Authoritative password update in Supabase
+    const { error: updateErr } = await admin.auth.admin.updateUserById(userId, {
+      password: newPassword,
+      email_confirm: true
+    });
+    if (updateErr) {
+      logger.error(`[Auth] Failed to update password for ${cleanEmail}: ${updateErr.message}`);
+      throw new InfrastructureError('Identity', 'Could not update password. Please try again.');
+    }
+
+    const { profile } = await ProfileRepository.getOrCreateForClerkUser({
+      clerkUserId: userId,
+      email: cleanEmail
+    });
+
+    const sessionToken = issueSessionToken({
+      userId,
+      email: cleanEmail,
+      firstName: profile.first_name,
+      lastName: profile.last_name,
+      phone: profile.phone_number,
+      city: profile.city
+    });
+
+    await ProfileRepository.recordLogin(profile.id, userId);
+    const { principal, accountState } = await AccountStateService.resolve(userId, { source: 'supabase' });
+
+    logger.info(`[Auth] User ${cleanEmail} reset password and signed in`);
+
+    res.json({
+      status: 'success',
+      message: 'Password updated successfully.',
+      data: {
+        token: sessionToken,
+        accessToken: sessionToken,
+        user: {
+          id: userId,
+          email: cleanEmail,
+          firstName: profile.first_name || '',
+          lastName: profile.last_name || ''
         },
         accountState: AccountStateService.toClientState(principal, accountState)
       }

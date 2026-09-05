@@ -232,8 +232,12 @@ class AdaptiveOnboardingUseCase {
       if (s.source !== 'declared' || !s.value) continue;
       if (s.type === 'category' && s.value.id && buyerish) interests.add(s.value.id);
       if (s.type === 'priority' && s.value.id && buyerish) priorities.add(s.value.id);
-      if (s.type === 'seller_type' && s.value.id && principal.sellerType === 'individual') {
+      if (s.type === 'seller_type' && s.value.id) {
         patch.seller_type = s.value.id;
+        patch.primary_role = 'seller';
+        if (principal.sellerStatus !== 'READY') {
+          patch.seller_status = 'ONBOARDING';
+        }
       }
     }
 
@@ -279,11 +283,22 @@ class AdaptiveOnboardingUseCase {
       goalType: goal.goal_type
     });
 
+    const profilePatch = {};
     if (principal.adaptiveStatus !== 'COMPLETED') {
-      await ProfileRepository.update(principal.id, {
-        adaptive_status: 'COMPLETED',
-        adaptive_completed_at: new Date().toISOString()
-      }, principal.clerkUserId);
+      profilePatch.adaptive_status = 'COMPLETED';
+      profilePatch.adaptive_completed_at = new Date().toISOString();
+    }
+    if (['sell', 'growth'].includes(ctx.intent)) {
+      profilePatch.primary_role = 'seller';
+      if (principal.sellerStatus !== 'READY') {
+        profilePatch.seller_status = 'ONBOARDING';
+      }
+      if (ctx.sellerType && !principal.sellerType) {
+        profilePatch.seller_type = ctx.sellerType;
+      }
+    }
+    if (Object.keys(profilePatch).length > 0) {
+      await ProfileRepository.update(principal.id, profilePatch, principal.clerkUserId);
     }
 
     logger.info(`[Adaptive] user=${principal.id} COMPLETED mission="${title}"`);
