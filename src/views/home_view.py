@@ -445,8 +445,8 @@ def get_home_view():
       <!-- 1. Hotels -->
       <button onClick="{ () => openCategory('hotels') }" class="cat-squircle-card" aria-label="Category Hotels & Accommodations">
         <div class="cat-squircle-icon-wrap" style="background:#fff;border:1px solid rgba(0,0,0,0.06);overflow:hidden;padding:2px">
-          <img src="./Assets/Travel&Hotel/Krystal%20Palace%20Hotel%20Douala.jfif" alt="Hotels" style="width:100%;height:100%;object-fit:cover;border-radius:12px">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 22v-6.57"/><path d="M12 11h.01"/><path d="M12 7h.01"/><path d="M14 15.43V22"/><path d="M15 11h.01"/><path d="M15 7h.01"/><path d="M16 16h2a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/><path d="M18 22v-4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v4"/><path d="M8 22v-6.57"/><path d="M9 11h.01"/><path d="M9 7h.01"/></svg>
+          <img src="./Assets/Travel&Hotel/Krystal%20Palace%20Hotel%20Douala.jfif" alt="Hotels" style="width:100%;height:100%;object-fit:cover;border-radius:12px" loading="lazy" decoding="async" onerror="this.style.display='none';if(this.nextElementSibling)this.nextElementSibling.style.display='block';">
+          <svg style="display:none" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 22v-6.57"/><path d="M12 11h.01"/><path d="M12 7h.01"/><path d="M14 15.43V22"/><path d="M15 11h.01"/><path d="M15 7h.01"/><path d="M16 16h2a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/><path d="M18 22v-4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v4"/><path d="M8 22v-6.57"/><path d="M9 11h.01"/><path d="M9 7h.01"/></svg>
         </div>
         <span class="cat-squircle-label">Hotels</span>
       </button>
@@ -454,8 +454,8 @@ def get_home_view():
       <!-- 2. Banks / Finance -->
       <button onClick="{ () => openCategory('banks') }" class="cat-squircle-card" aria-label="Category Banks & Real Estate">
         <div class="cat-squircle-icon-wrap" style="background:#fff;border:1px solid rgba(0,0,0,0.06);overflow:hidden;padding:4px">
-          <img src="./Assets/LOGO%20icons/Bank%20Icon%20stock%20vector_%20Illustration%20of%20savings,%20symbol%20-%2031873148.jfif" alt="Banks" style="width:100%;height:100%;object-fit:contain">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/><path d="M6 14h2"/><path d="M12 14h6"/></svg>
+          <img src="./Assets/_processed/logo_icons_bank_icon_stock_vector_illustration_of_s_27.png" alt="Banks" style="width:100%;height:100%;object-fit:contain" loading="lazy" decoding="async" onerror="this.style.display='none';if(this.nextElementSibling)this.nextElementSibling.style.display='block';">
+          <svg style="display:none" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/><path d="M6 14h2"/><path d="M12 14h6"/></svg>
         </div>
         <span class="cat-squircle-label">Banks</span>
       </button>
@@ -463,8 +463,8 @@ def get_home_view():
       <!-- 3. Fashion -->
       <button onClick="{ () => openCategory('fashion') }" class="cat-squircle-card" aria-label="Category Fashion & Luxury">
         <div class="cat-squircle-icon-wrap" style="background:#fff;border:1px solid rgba(0,0,0,0.06);overflow:hidden;padding:4px">
-          <img src="./Assets/LOGO%20icons/women%27s%20fashion%20logo%20vector%20design.jfif" alt="Fashion" style="width:100%;height:100%;object-fit:contain">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/></svg>
+          <img src="./Assets/_processed/logo_icons_fashion.png" alt="Fashion" style="width:100%;height:100%;object-fit:contain" loading="lazy" decoding="async" onerror="this.style.display='none';if(this.nextElementSibling)this.nextElementSibling.style.display='block';">
+          <svg style="display:none" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/></svg>
         </div>
         <span class="cat-squircle-label">Fashion</span>
       </button>
@@ -472,8 +472,8 @@ def get_home_view():
       <!-- 4. Shoes -->
       <button onClick="{ () => openCategory('fashion') }" class="cat-squircle-card" aria-label="Category Shoes & Sneakers">
         <div class="cat-squircle-icon-wrap" style="background:#fff;border:1px solid rgba(0,0,0,0.06);overflow:hidden;padding:4px">
-          <img src="./Assets/LOGO%20icons/Men%27s%20shoes%20logo%20icon%20design%20illustration%20_%20Premium%20Vector.jfif" alt="Shoes" style="width:100%;height:100%;object-fit:contain">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 17h20v2H2zM4 17l2-6 5-1 4 4 5-1 2 4"/></svg>
+          <img src="./Assets/_processed/logo_icons_men_s_shoes_logo_icon_design_illustratio_49.png" alt="Shoes" style="width:100%;height:100%;object-fit:contain" loading="lazy" decoding="async" onerror="this.style.display='none';if(this.nextElementSibling)this.nextElementSibling.style.display='block';">
+          <svg style="display:none" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 17h20v2H2zM4 17l2-6 5-1 4 4 5-1 2 4"/></svg>
         </div>
         <span class="cat-squircle-label">Shoes</span>
       </button>
@@ -481,8 +481,8 @@ def get_home_view():
       <!-- 5. Tech -->
       <button onClick="{ () => openCategory('electronics') }" class="cat-squircle-card" aria-label="Category Technology & Gadgets">
         <div class="cat-squircle-icon-wrap" style="background:#fff;border:1px solid rgba(0,0,0,0.06);overflow:hidden;padding:4px">
-          <img src="./Assets/_processed/logo_icons_itel_42.png" alt="Tech" style="width:100%;height:100%;object-fit:contain">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect width="18" height="12" x="3" y="4" rx="2"/><line x1="2" x2="22" y1="20" y2="20"/></svg>
+          <img src="./Assets/_processed/logo_icons_itel_42.png" alt="Tech" style="width:100%;height:100%;object-fit:contain" loading="lazy" decoding="async" onerror="this.style.display='none';if(this.nextElementSibling)this.nextElementSibling.style.display='block';">
+          <svg style="display:none" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect width="18" height="12" x="3" y="4" rx="2"/><line x1="2" x2="22" y1="20" y2="20"/></svg>
         </div>
         <span class="cat-squircle-label">Tech</span>
       </button>
@@ -490,8 +490,8 @@ def get_home_view():
       <!-- 6. Markets -->
       <button onClick="{ () => openCategory('store') }" class="cat-squircle-card" aria-label="Category Markets & Stores">
         <div class="cat-squircle-icon-wrap" style="background:#fff;border:1px solid rgba(0,0,0,0.06);overflow:hidden;padding:4px">
-          <img src="./Assets/_processed/logo_icons_market_logo_design_logo_logodesigner_mar_47.png" alt="Markets" style="width:100%;height:100%;object-fit:contain">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+          <img src="./Assets/_processed/logo_icons_market_logo_design_logo_logodesigner_mar_47.png" alt="Markets" style="width:100%;height:100%;object-fit:contain" loading="lazy" decoding="async" onerror="this.style.display='none';if(this.nextElementSibling)this.nextElementSibling.style.display='block';">
+          <svg style="display:none" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
         </div>
         <span class="cat-squircle-label">Markets</span>
       </button>
@@ -499,8 +499,8 @@ def get_home_view():
       <!-- 7. Travel -->
       <button onClick="{ on.travel }" class="cat-squircle-card" aria-label="Category Travel & Flights">
         <div class="cat-squircle-icon-wrap" style="background:#fff;border:1px solid rgba(0,0,0,0.06);overflow:hidden;padding:4px">
-          <img src="./Assets/LOGO%20icons/Travel%20logo%20image%20_%20Premium%20Vector.jfif" alt="Travel" style="width:100%;height:100%;object-fit:contain">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1z"/></svg>
+          <img src="./Assets/_processed/logo_icons_travel_logo_image_premium_vector_62.png" alt="Travel" style="width:100%;height:100%;object-fit:contain" loading="lazy" decoding="async" onerror="this.style.display='none';if(this.nextElementSibling)this.nextElementSibling.style.display='block';">
+          <svg style="display:none" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1z"/></svg>
         </div>
         <span class="cat-squircle-label">Travel</span>
       </button>
@@ -508,8 +508,8 @@ def get_home_view():
       <!-- 8. Services -->
       <button onClick="{ () => openCategory('services') }" class="cat-squircle-card" aria-label="Category Professional Services">
         <div class="cat-squircle-icon-wrap" style="background:#fff;border:1px solid rgba(0,0,0,0.06);overflow:hidden;padding:4px">
-          <img src="./Assets/_processed/logo_icons_lettering_service_screwdriver_and_wrench_45.png" alt="Services" style="width:100%;height:100%;object-fit:contain">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg>
+          <img src="./Assets/_processed/logo_icons_lettering_service_screwdriver_and_wrench_45.png" alt="Services" style="width:100%;height:100%;object-fit:contain" loading="lazy" decoding="async" onerror="this.style.display='none';if(this.nextElementSibling)this.nextElementSibling.style.display='block';">
+          <svg style="display:none" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg>
         </div>
         <span class="cat-squircle-label">Services</span>
       </button>
@@ -522,47 +522,6 @@ def get_home_view():
         <span class="cat-squircle-label" style="line-height:1.1">Explore All<br>Categories</span>
       </button>
     </div>
-
-    <!-- ── 03.5: LIVE CATALOGUE RAIL (real products from GET /api/v1/products) ── -->
-    <sc-if value="{{ catalogHasCards }}">
-    <div class="editorial-section-header" style="display:flex;align-items:center;justify-content:space-between;padding:16px 0 12px">
-      <div>
-        <h2 class="editorial-section-title">Live on LOUMOO</h2>
-        <div style="font:500 13px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Straight from the marketplace catalogue — verified Cameroonian sellers</div>
-      </div>
-      <div style="display:flex;align-items:center;gap:8px">
-        <button onClick="{{ () => scrollRail('liveCatalogueRail', -320) }}" class="loumoo-rail-nav-btn" aria-label="Previous items">‹</button>
-        <button onClick="{{ () => scrollRail('liveCatalogueRail', 320) }}" class="loumoo-rail-nav-btn" aria-label="Next items">›</button>
-      </div>
-    </div>
-    <div id="liveCatalogueRail" class="new-arrivals-rail" style="display:flex;flex-direction:row;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;gap:18px;margin-bottom:32px;padding:4px 4px 16px 4px">
-      <sc-for list="{{ catalogCards }}" as="prod">
-      <div onClick="{{ () => openProduct(prod.id) }}" class="loumoo-media-card na-card" style="cursor:pointer" aria-label="View product">
-        <div class="na-card-media-wrap">
-          <sc-if value="{{ prod.badge }}"><span class="loumoo-card-badge badge-pill-sale">{{ prod.badge }}</span></sc-if>
-          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist(prod.id, prod.title); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted(prod.id) ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted(prod.id) ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-          </button>
-          <img src="{{ prod.imageUrl }}" alt="{{ prod.title }}" loading="lazy" class="na-card-img">
-          <div class="na-card-transition-fade"></div>
-        </div>
-        <div class="na-card-transition-line"></div>
-        <div class="loumoo-card-body na-card-body">
-          <div class="na-card-brand-row">
-            <span class="na-card-rating">{{ prod.ratingLabel }}</span>
-            <span class="na-card-store-label">{{ prod.storeLabel }}</span>
-          </div>
-          <h3 class="loumoo-card-title na-card-title">{{ prod.title }}</h3>
-          <div class="loumoo-card-tagline na-card-tagline">{{ prod.tagline }}</div>
-          <div class="loumoo-card-bottom-row" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px">
-            <span class="loumoo-card-price-val" style="font:800 15px/1 var(--font-heading);color:var(--color-text)">{{ prod.priceLabel }}</span>
-            <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); addToCart(prod.id); } }}" class="btn btn-primary" style="height:32px;padding:0 12px;font-size:11.5px;font-weight:700;flex-shrink:0" aria-label="Add to bag">+ Bag</button>
-          </div>
-        </div>
-      </div>
-      </sc-for>
-    </div>
-    </sc-if>
 
     <!-- ── 04: NEW ARRIVALS PRODUCT RAIL (Single Line Horizontal Scroll) ── -->
     <div class="editorial-section-header" style="display:flex;align-items:center;justify-content:space-between;padding:16px 0 12px">
@@ -1602,7 +1561,7 @@ def get_home_view():
             <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('nike_air_force_1', 'Nike Air Force 1 &#x27;07'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save Nike Air Force 1 &#x27;07 to wishlist">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('nike_air_force_1') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('nike_air_force_1') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
             </button>
-            <img src="./Assets/fashion/Look%20at%20this%20new%20Nike%20Air%20Force.jfif" alt="Nike Air Force 1 &#x27;07" loading="lazy">
+            <img src="./Assets/fashion/shoes/Look%20at%20this%20new%20Nike%20Air%20Force.jfif" alt="Nike Air Force 1 &#x27;07" loading="lazy">
           </div>
           <div class="loumoo-card-body">
             <h3 class="loumoo-card-title">Nike Air Force 1 &#x27;07</h3>
@@ -1668,7 +1627,7 @@ def get_home_view():
             <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('galaxy_s26_ultra', 'Galaxy S26 Ultra'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save Galaxy S26 Ultra to wishlist">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('galaxy_s26_ultra') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('galaxy_s26_ultra') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
             </button>
-            <img src="./Assets/telephone&PC/Samsung%20Galaxy%20S26%20Ultra%2C.jfif" alt="Galaxy S26 Ultra" loading="lazy">
+            <img src="./Assets/telephone&PC/phoneBrands.image/Samsung%20Galaxy%20S26%20Ultra%2C.jfif" alt="Galaxy S26 Ultra" loading="lazy">
           </div>
           <div class="loumoo-card-body">
             <h3 class="loumoo-card-title">Galaxy S26 Ultra</h3>
@@ -1734,7 +1693,7 @@ def get_home_view():
             <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('iphone_17_pro_max', 'iPhone 17 Pro Max'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save iPhone 17 Pro Max to wishlist">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('iphone_17_pro_max') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('iphone_17_pro_max') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
             </button>
-            <img src="./Assets/telephone&PC/iPhone%2017%20Pro%20Max%20Colors%20%E2%80%93%20Every%20Stunning%20Finish%20in%20One%20Premium%20Look%20%F0%9F%93%B1%E2%9C%A8.jfif" alt="iPhone 17 Pro Max" loading="lazy">
+            <img src="./Assets/telephone&PC/phoneBrands.image/iPhone%2017%20Pro%20Max%20Colors%20%E2%80%93%20Every%20Stunning%20Finish%20in%20One%20Premium%20Look%20%F0%9F%93%B1%E2%9C%A8.jfif" alt="iPhone 17 Pro Max" loading="lazy">
           </div>
           <div class="loumoo-card-body">
             <h3 class="loumoo-card-title">iPhone 17 Pro Max</h3>
@@ -1928,7 +1887,7 @@ def get_home_view():
             <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('nike_air_force_1', 'Nike Air Force 1'); } }}" class="wishlist-float-btn" aria-label="Save Nike Air Force 1 to wishlist">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('nike_air_force_1') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('nike_air_force_1') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
             </button>
-            <img src="./Assets/fashion/Look%20at%20this%20new%20Nike%20Air%20Force.jfif" alt="Nike Air Force 1 &#x27;07" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+            <img src="./Assets/fashion/shoes/Look%20at%20this%20new%20Nike%20Air%20Force.jfif" alt="Nike Air Force 1 &#x27;07" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
           </div>
           <div class="disc-card-body">
             <div class="disc-card-name">Nike Air Force 1</div>
@@ -1942,7 +1901,7 @@ def get_home_view():
             <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('chelsea_boots', 'Chelsea Boots'); } }}" class="wishlist-float-btn" aria-label="Save Chelsea Boots to wishlist">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('chelsea_boots') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('chelsea_boots') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
             </button>
-            <img src="./Assets/fashion/Kraasa%20Men%27s%20Slip%20On%20Fashion%20Chelsea%20Boots.jfif" alt="Kraasa Suede Chelsea Ankle Boots" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+            <img src="./Assets/fashion/shoes/Kraasa%20Men%27s%20Slip%20On%20Fashion%20Chelsea%20Boots.jfif" alt="Kraasa Suede Chelsea Ankle Boots" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
           </div>
           <div class="disc-card-body">
             <div class="disc-card-name">Chelsea Boots</div>
@@ -1956,7 +1915,7 @@ def get_home_view():
             <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('dress_loafers', 'Dress Loafers'); } }}" class="wishlist-float-btn" aria-label="Save Dress Loafers to wishlist">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('dress_loafers') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('dress_loafers') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
             </button>
-            <img src="./Assets/fashion/Timeless%20Elegance%20Luxury%20Black%20&%20White%20Dress%20Loafers.jfif" alt="Timeless Black &amp; White Dress Loafers" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+            <img src="./Assets/fashion/shoes/Timeless%20Elegance%20Luxury%20Black%20&%20White%20Dress%20Loafers.jfif" alt="Timeless Black &amp; White Dress Loafers" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
           </div>
           <div class="disc-card-body">
             <div class="disc-card-name">Dress Loafers</div>
@@ -1970,7 +1929,7 @@ def get_home_view():
             <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('leather_satchel', 'Leather Satchel'); } }}" class="wishlist-float-btn" aria-label="Save Leather Satchel to wishlist">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('leather_satchel') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('leather_satchel') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
             </button>
-            <img src="./Assets/fashion/Luxury%20Designer%20Leather%20Satchels%20&%20Monogram%20Clutches%20_%20Handbag%20Collection.jfif" alt="Designer Monogram Leather Satchel" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+            <img src="./Assets/fashion/handbag/Luxury%20Designer%20Leather%20Satchels%20&%20Monogram%20Clutches%20_%20Handbag%20Collection.jfif" alt="Designer Monogram Leather Satchel" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
           </div>
           <div class="disc-card-body">
             <div class="disc-card-name">Leather Satchel</div>
@@ -1984,7 +1943,7 @@ def get_home_view():
             <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('stiletto_heels', 'Banquet Stilettos'); } }}" class="wishlist-float-btn" aria-label="Save Banquet Stilettos to wishlist">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('stiletto_heels') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('stiletto_heels') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
             </button>
-            <img src="./Assets/fashion/Shoes%20Women%2010%20Cm%20Metal%20Buckle%20Ladies%20Pumps%20Luxury%20Womens%20Banquet%20Shoes%20Stilettos%20High%20Heels%20Women%20Sexy%20Party%20Shoes.jfif" alt="Metal-Buckle Banquet Stiletto Heels" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+            <img src="./Assets/fashion/shoes/Shoes%20Women%2010%20Cm%20Metal%20Buckle%20Ladies%20Pumps%20Luxury%20Womens%20Banquet%20Shoes%20Stilettos%20High%20Heels%20Women%20Sexy%20Party%20Shoes.jfif" alt="Metal-Buckle Banquet Stiletto Heels" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
           </div>
           <div class="disc-card-body">
             <div class="disc-card-name">Banquet Stilettos</div>
@@ -2016,7 +1975,7 @@ def get_home_view():
             <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('iphone_17_pro_max', 'iPhone 17 Pro Max'); } }}" class="wishlist-float-btn" aria-label="Save iPhone 17 Pro Max to wishlist">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('iphone_17_pro_max') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('iphone_17_pro_max') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
             </button>
-            <img src="./Assets/telephone&PC/iPhone%2017%20Pro%20Max%20Colors%20%E2%80%93%20Every%20Stunning%20Finish%20in%20One%20Premium%20Look%20%F0%9F%93%B1%E2%9C%A8.jfif" alt="Apple iPhone 17 Pro Max 256GB" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+            <img src="./Assets/telephone&PC/phoneBrands.image/iPhone%2017%20Pro%20Max%20Colors%20%E2%80%93%20Every%20Stunning%20Finish%20in%20One%20Premium%20Look%20%F0%9F%93%B1%E2%9C%A8.jfif" alt="Apple iPhone 17 Pro Max 256GB" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
           </div>
           <div class="disc-card-body">
             <div class="disc-card-name">iPhone 17 Pro Max</div>
@@ -2030,7 +1989,7 @@ def get_home_view():
             <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('na_pixel_10_pro_05', 'Pixel 10 Pro XL'); } }}" class="wishlist-float-btn" aria-label="Save Pixel 10 Pro XL to wishlist">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('na_pixel_10_pro_05') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('na_pixel_10_pro_05') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
             </button>
-            <img src="./Assets/telephone&PC/Google%20Pixel%2010%20Pro%20XL%20_%20Latest%20Google%20Smartphone%20with%20Advanced%20Camera%20&%20AI%20Features.jfif" alt="Google Pixel 10 Pro XL" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+            <img src="./Assets/telephone&PC/phoneBrands.image/Google%20Pixel%2010%20Pro%20XL%20_%20Latest%20Google%20Smartphone%20with%20Advanced%20Camera%20&%20AI%20Features.jfif" alt="Google Pixel 10 Pro XL" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
           </div>
           <div class="disc-card-body">
             <div class="disc-card-name">Pixel 10 Pro XL</div>
@@ -2159,7 +2118,7 @@ def get_home_view():
       </div>
       <div class="africa-banner-right">
         <div class="africa-banner-img-frame" style="position:relative;width:100%;max-width:380px;height:250px;border-radius:20px;overflow:hidden;background:#f1ebef;margin-left:auto">
-          <img src="./Assets/fashion/THE%20UNPUNISHABLE%20WOMAN.jfif" alt="THE UNPUNISHABLE WOMAN — LOUMOO African Fashion" style="width:100%;height:100%;object-fit:cover;object-position:center 20%;display:block;transition:transform 0.4s ease">
+          <img src="./Assets/fashion/EnsembleModel/THE%20UNPUNISHABLE%20WOMAN.jfif" alt="THE UNPUNISHABLE WOMAN — LOUMOO African Fashion" style="width:100%;height:100%;object-fit:cover;object-position:center 20%;display:block;transition:transform 0.4s ease">
           <div style="position:absolute;bottom:12px;left:14px;display:flex;align-items:center;gap:6px">
             <span style="background:rgba(26,21,35,0.75);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#ffffff;font:800 11px/1 var(--font-heading);padding:5px 12px;border-radius:9999px;letter-spacing:0.04em;text-transform:uppercase">The Unpunishable Woman</span>
           </div>
@@ -2193,7 +2152,7 @@ def get_home_view():
           <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('ps5_slim', 'PlayStation 5'); } }}" class="wishlist-float-btn" aria-label="Save PlayStation 5 to wishlist">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('ps5_slim') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('ps5_slim') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
           </button>
-          <img src="./Assets/telephone&PC/316800155055565523.jfif" alt="Sony PlayStation 5 Slim" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+          <img src="./Assets/telephone&PC/phoneBrands.image/316800155055565523.jfif" alt="Sony PlayStation 5 Slim" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
         </div>
         <div class="disc-card-body">
           <div class="disc-card-name">PlayStation 5</div>
@@ -2221,7 +2180,7 @@ def get_home_view():
           <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('galaxy_s26_ultra', 'Galaxy S26 Ultra'); } }}" class="wishlist-float-btn" aria-label="Save Galaxy S26 Ultra to wishlist">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('galaxy_s26_ultra') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('galaxy_s26_ultra') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
           </button>
-          <img src="./Assets/telephone&PC/Samsung%20Galaxy%20S26%20Ultra%2C.jfif" alt="Samsung Galaxy S26 Ultra 256GB" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+          <img src="./Assets/telephone&PC/phoneBrands.image/Samsung%20Galaxy%20S26%20Ultra%2C.jfif" alt="Samsung Galaxy S26 Ultra 256GB" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
         </div>
         <div class="disc-card-body">
           <div class="disc-card-name">Galaxy S26 Ultra</div>
@@ -2314,7 +2273,7 @@ def get_home_view():
           <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('tecno_camon40', 'TECNO Camon 40'); } }}" class="wishlist-float-btn" aria-label="Save TECNO Camon 40 to wishlist">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('tecno_camon40') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('tecno_camon40') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
           </button>
-          <img src="./Assets/telephone&PC/TECNO%20CAMON%2040%20Series_%20Redefining%20Imagery%20with%C2%A0TECNO%C2%A0AI.jfif" alt="TECNO Camon 40 Series 256GB" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+          <img src="./Assets/telephone&PC/phoneBrands.image/TECNO%20CAMON%2040%20Series_%20Redefining%20Imagery%20with%C2%A0TECNO%C2%A0AI.jfif" alt="TECNO Camon 40 Series 256GB" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
         </div>
         <div class="disc-card-body">
           <div class="disc-card-name">TECNO Camon 40</div>
@@ -2328,7 +2287,7 @@ def get_home_view():
           <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('na_pixel_10_pro_05', 'Pixel 10 Pro XL'); } }}" class="wishlist-float-btn" aria-label="Save Pixel 10 Pro XL to wishlist">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('na_pixel_10_pro_05') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('na_pixel_10_pro_05') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
           </button>
-          <img src="./Assets/telephone&PC/Google%20Pixel%2010%20Pro%20XL%20_%20Latest%20Google%20Smartphone%20with%20Advanced%20Camera%20&%20AI%20Features.jfif" alt="Google Pixel 10 Pro XL" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+          <img src="./Assets/telephone&PC/phoneBrands.image/Google%20Pixel%2010%20Pro%20XL%20_%20Latest%20Google%20Smartphone%20with%20Advanced%20Camera%20&%20AI%20Features.jfif" alt="Google Pixel 10 Pro XL" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
         </div>
         <div class="disc-card-body">
           <div class="disc-card-name">Pixel 10 Pro XL</div>
@@ -2356,7 +2315,7 @@ def get_home_view():
               <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('ankara_palazzo', 'Ankara Palazzo'); } }}" class="wishlist-float-btn" aria-label="Save Ankara Palazzo to wishlist">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('ankara_palazzo') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('ankara_palazzo') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
               </button>
-              <img src="./Assets/fashion/100%25%20Cotton%20Ankara%20Palazzo%20Pants.jfif" alt="100% Cotton Ankara Palazzo Trousers" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+              <img src="./Assets/fashion/EnsembleModel/100%25%20Cotton%20Ankara%20Palazzo%20Pants.jfif" alt="100% Cotton Ankara Palazzo Trousers" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
             </div>
             <div class="disc-card-body">
               <div class="disc-card-name">Ankara Palazzo</div>
@@ -2370,7 +2329,7 @@ def get_home_view():
               <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('artisan_sandals', 'Woven Sandals'); } }}" class="wishlist-float-btn" aria-label="Save Woven Sandals to wishlist">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('artisan_sandals') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('artisan_sandals') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
               </button>
-              <img src="./Assets/fashion/Men%20brown%20leather%20strap%20sandal%20handmade%20barefoot%20woven%20band%20summer%20footwear%20casual%20everyday%20comfort%20Arabian%20style%20Middle%20East%20men%20sandal.jfif" alt="Handmade Woven Leather Sandals" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+              <img src="./Assets/fashion/shoes/Men%20brown%20leather%20strap%20sandal%20handmade%20barefoot%20woven%20band%20summer%20footwear%20casual%20everyday%20comfort%20Arabian%20style%20Middle%20East%20men%20sandal.jfif" alt="Handmade Woven Leather Sandals" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
             </div>
             <div class="disc-card-body">
               <div class="disc-card-name">Woven Sandals</div>
@@ -2384,7 +2343,7 @@ def get_home_view():
               <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('beaded_bracelet', 'Beaded Bracelet'); } }}" class="wishlist-float-btn" aria-label="Save Beaded Bracelet to wishlist">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ isWishlisted('beaded_bracelet') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('beaded_bracelet') ? 'var(--color-accent-sale)' : 'var(--color-text-secondary)' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
               </button>
-              <img src="./Assets/necklace&ring/Men%20Charm%20Black%20Spartan%20Helmet%20Beaded%20Natural%20Stone%20Adjustable%20Macrame%20Bracelets%20_%20eBay.jfif" alt="Natural Stone Beaded Warrior Bracelet" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
+              <img src="./Assets/jelweries/bracelet/Men%20Charm%20Black%20Spartan%20Helmet%20Beaded%20Natural%20Stone%20Adjustable%20Macrame%20Bracelets%20_%20eBay.jfif" alt="Natural Stone Beaded Warrior Bracelet" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease">
             </div>
             <div class="disc-card-body">
               <div class="disc-card-name">Beaded Bracelet</div>
@@ -2560,6 +2519,47 @@ def get_home_view():
         </div>
       </sc-if>
     </div>
+
+    <!-- ── 09.5: LIVE ON LOUMOO MARKETPLACE RAIL (BOTTOM OF PAGE) ── -->
+    <sc-if value="{{ catalogHasCards }}">
+    <div class="editorial-section-header" style="display:flex;align-items:center;justify-content:space-between;padding:24px 0 12px;margin-top:28px">
+      <div>
+        <h2 class="editorial-section-title">Live on LOUMOO</h2>
+        <div style="font:500 13px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Straight from the marketplace catalogue — verified Cameroonian sellers</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <button onClick="{{ () => scrollRail('liveCatalogueRail', -320) }}" class="loumoo-rail-nav-btn" aria-label="Previous items">‹</button>
+        <button onClick="{{ () => scrollRail('liveCatalogueRail', 320) }}" class="loumoo-rail-nav-btn" aria-label="Next items">›</button>
+      </div>
+    </div>
+    <div id="liveCatalogueRail" class="new-arrivals-rail" style="display:flex;flex-direction:row;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;gap:18px;margin-bottom:32px;padding:4px 4px 16px 4px">
+      <sc-for list="{{ catalogCards }}" as="prod">
+      <div onClick="{{ () => openProduct(prod.id) }}" class="loumoo-media-card na-card" style="cursor:pointer" aria-label="View product">
+        <div class="na-card-media-wrap">
+          <sc-if value="{{ prod.badge }}"><span class="loumoo-card-badge badge-pill-sale">{{ prod.badge }}</span></sc-if>
+          <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist(prod.id, prod.title); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted(prod.id) ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted(prod.id) ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          </button>
+          <img src="{{ prod.imageUrl }}" alt="{{ prod.title }}" loading="lazy" class="na-card-img">
+          <div class="na-card-transition-fade"></div>
+        </div>
+        <div class="na-card-transition-line"></div>
+        <div class="loumoo-card-body na-card-body">
+          <div class="na-card-brand-row">
+            <span class="na-card-rating">{{ prod.ratingLabel }}</span>
+            <span class="na-card-store-label">{{ prod.storeLabel }}</span>
+          </div>
+          <h3 class="loumoo-card-title na-card-title">{{ prod.title }}</h3>
+          <div class="loumoo-card-tagline na-card-tagline">{{ prod.tagline }}</div>
+          <div class="loumoo-card-bottom-row" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px">
+            <span class="loumoo-card-price-val" style="font:800 15px/1 var(--font-heading);color:var(--color-text)">{{ prod.priceLabel }}</span>
+            <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); addToCart(prod.id); } }}" class="btn btn-primary" style="height:32px;padding:0 12px;font-size:11.5px;font-weight:700;flex-shrink:0" aria-label="Add to bag">+ Bag</button>
+          </div>
+        </div>
+      </div>
+      </sc-for>
+    </div>
+    </sc-if>
 
     <!-- ── 10: LOUMOO UNIVERSAL ECOSYSTEM PANORAMA (BOTTOM DISCOVERY HUB) ── -->
     <div style="margin:40px 0 20px;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-lg);padding:24px 20px;box-shadow:var(--shadow-sm)">

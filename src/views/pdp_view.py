@@ -158,16 +158,23 @@ def get_product_view():
               <span class="kicker">{{ currentProductBrand ? currentProductBrand.toUpperCase() : 'VERIFIED' }} · {{ (currentProductConditionLabel || 'Brand New').toUpperCase() }}</span>
               <h1 style="font-size:clamp(20px, 2.4vw, 26px);margin:6px 0 10px;line-height:1.2">{{ currentProductTitle }}</h1>
               
-              <!-- Ratings & Verified Social Proof Row -->
+              <!-- Ratings & social proof (honest — shows real data only) -->
               <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap">
-                <div style="display:flex;align-items:center;gap:4px;color:#eab308;font:700 13px/1 var(--font-heading)">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                  <span>{{ currentProductRating }}</span>
-                </div>
-                <span style="color:var(--color-text-muted)">•</span>
-                <span style="color:var(--color-text-secondary);font-size:12.5px">{{ currentProductReviewCount }} Verified Reviews</span>
-                <span style="color:var(--color-text-muted)">•</span>
-                <span style="font:700 12.5px/1 var(--font-body);color:var(--color-success)">{{ currentProductSoldCount }}+ Sold</span>
+                <sc-if value="{{ currentProductHasReviews }}">
+                  <div style="display:flex;align-items:center;gap:4px;color:#eab308;font:700 13px/1 var(--font-heading)">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    <span>{{ currentProductRating }}</span>
+                  </div>
+                  <span style="color:var(--color-text-muted)">•</span>
+                  <span style="color:var(--color-text-secondary);font-size:12.5px">{{ currentProductReviewCount }} verified review(s)</span>
+                </sc-if>
+                <sc-if value="{{ currentProductHasSold }}">
+                  <span style="color:var(--color-text-muted)">•</span>
+                  <span style="font:700 12.5px/1 var(--font-body);color:var(--color-success)">{{ currentProductSoldCount }}+ sold</span>
+                </sc-if>
+                <sc-if value="{{ !currentProductHasReviews && !currentProductHasSold }}">
+                  <span style="display:inline-flex;align-items:center;gap:5px;font:700 11.5px/1 var(--font-heading);color:var(--color-accent);background:var(--color-accent-100);padding:5px 10px;border-radius:var(--radius-pill)">✦ New arrival · Verified boutique</span>
+                </sc-if>
               </div>
 
               <!-- Price & Discount Tag -->
@@ -194,6 +201,12 @@ def get_product_view():
               </button>
             </div>
 
+            <!-- Buy now — straight to escrow checkout -->
+            <button onClick="{{ buyNowProduct }}" class="btn" style="width:100%;height:48px;font-size:14px;font-weight:800;background:var(--color-text);color:var(--color-surface);border:none;border-radius:var(--radius-md);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+              <span>Buy now · pay on delivery</span>
+            </button>
+
             <!-- Escrow Trust Note -->
             <div style="display:flex;align-items:flex-start;gap:10px;background:var(--color-surface-subtle);border:1px solid var(--color-divider);border-radius:12px;padding:12px 14px">
               <div style="color:var(--color-accent);flex-shrink:0;margin-top:2px">
@@ -201,6 +214,26 @@ def get_product_view():
               </div>
               <div style="font:400 12px/1.4 var(--font-body);color:var(--color-text-secondary)">
                 <strong style="color:var(--color-text)">LOUMOO Escrow Guarantee:</strong> Payment is held securely and only released to the boutique once you inspect and approve your delivery.
+              </div>
+            </div>
+
+            <!-- Purchase assurance (platform guarantees — reassures the buyer) -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+              <div style="display:flex;align-items:flex-start;gap:8px;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:10px;padding:10px 12px">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="2" style="flex-shrink:0;margin-top:1px"><path d="M1 3h15v13H1z"/><path d="M16 8h4l3 3v5h-7z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                <span style="font:600 11.5px/1.35 var(--font-body);color:var(--color-text-secondary)">Same-day delivery in Douala &amp; Yaoundé</span>
+              </div>
+              <div style="display:flex;align-items:flex-start;gap:8px;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:10px;padding:10px 12px">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="2" style="flex-shrink:0;margin-top:1px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+                <span style="font:600 11.5px/1.35 var(--font-body);color:var(--color-text-secondary)">100% authentic · seller-backed warranty</span>
+              </div>
+              <div style="display:flex;align-items:flex-start;gap:8px;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:10px;padding:10px 12px">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="2" style="flex-shrink:0;margin-top:1px"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+                <span style="font:600 11.5px/1.35 var(--font-body);color:var(--color-text-secondary)">Easy 7-day returns on eligible items</span>
+              </div>
+              <div style="display:flex;align-items:flex-start;gap:8px;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:10px;padding:10px 12px">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="2" style="flex-shrink:0;margin-top:1px"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                <span style="font:600 11.5px/1.35 var(--font-body);color:var(--color-text-secondary)">MoMo · Orange Money · Cash on delivery</span>
               </div>
             </div>
 
@@ -293,37 +326,22 @@ def get_product_view():
               <button onClick="{{ openWriteReview }}" class="btn btn-secondary btn-sm" style="height:34px;padding:0 14px;font-size:12px;font-weight:700;cursor:pointer">✍️ Write a review</button>
             </div>
 
-            <div style="display:grid;grid-template-columns:120px 1fr;gap:20px;align-items:center;padding:16px 0;border-bottom:1px solid var(--color-divider)">
-              <div style="text-align:center">
-                <div style="font:800 38px/1 var(--font-heading);color:var(--color-text)">{{ currentProductRating }}</div>
-                <div style="color:#eab308;margin:6px 0;font-size:15px">★★★★★</div>
-                <div style="font:500 11.5px/1 var(--font-body);color:var(--color-text-secondary)">{{ currentProductReviewCount }} ratings</div>
+            <sc-if value="{{ currentProductHasReviews }}">
+              <div style="display:flex;align-items:center;gap:18px;padding:8px 0 16px;border-bottom:1px solid var(--color-divider)">
+                <div style="text-align:center">
+                  <div style="font:800 38px/1 var(--font-heading);color:var(--color-text)">{{ currentProductRating }}</div>
+                  <div style="color:#eab308;margin:6px 0;font-size:15px">★★★★★</div>
+                  <div style="font:500 11.5px/1 var(--font-body);color:var(--color-text-secondary)">{{ currentProductReviewCount }} rating(s)</div>
+                </div>
+                <div style="flex:1;font:400 13px/1.5 var(--font-body);color:var(--color-text-secondary)">Ratings come from buyers who completed an escrow-protected purchase on LOUMOO.</div>
               </div>
+            </sc-if>
 
-              <div class="pdp-rating-breakdown">
-                <div class="pdp-rating-bar-row">
-                  <span style="width:24px">5★</span>
-                  <div class="pdp-rating-bar-track"><div class="pdp-rating-bar-fill" style="width:88%"></div></div>
-                  <span style="width:30px;text-align:right">88%</span>
-                </div>
-                <div class="pdp-rating-bar-row">
-                  <span style="width:24px">4★</span>
-                  <div class="pdp-rating-bar-track"><div class="pdp-rating-bar-fill" style="width:10%"></div></div>
-                  <span style="width:30px;text-align:right">10%</span>
-                </div>
-                <div class="pdp-rating-bar-row">
-                  <span style="width:24px">3★</span>
-                  <div class="pdp-rating-bar-track"><div class="pdp-rating-bar-fill" style="width:2%"></div></div>
-                  <span style="width:30px;text-align:right">2%</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Your submitted reviews (dynamic, newest first) -->
+            <!-- Real submitted reviews (newest first) -->
             <sc-if value="{{ myReviewsCount }}">
             <div style="display:flex;flex-direction:column;gap:14px;margin-top:16px">
               <sc-for list="{{ myReviewsForProduct }}" as="rev">
-              <div style="background:var(--color-accent-50, var(--color-surface-subtle));border-radius:12px;padding:14px;border:1px solid var(--color-accent-200)">
+              <div style="background:var(--color-surface-subtle);border-radius:12px;padding:14px;border:1px solid var(--color-divider)">
                 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
                   <span style="font:700 13px/1 var(--font-heading);color:var(--color-text)">{{ rev.author }} · <span style="color:var(--color-accent);font-weight:600">You</span></span>
                   <span style="color:#eab308;font-size:12px">{{ rev.starsLabel }}</span>
@@ -335,28 +353,16 @@ def get_product_view():
             </div>
             </sc-if>
 
-            <!-- Buyer Testimonial Snippets -->
-            <div style="display:flex;flex-direction:column;gap:14px;margin-top:16px">
-              <div style="background:var(--color-surface-subtle);border-radius:12px;padding:14px;border:1px solid var(--color-divider)">
-                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-                  <span style="font:700 13px/1 var(--font-heading);color:var(--color-text)">Emile K. (Douala, Bonapriso)</span>
-                  <span style="color:#eab308;font-size:12px">★★★★★</span>
+            <!-- Honest empty state — no fabricated testimonials -->
+            <sc-if value="{{ !currentProductHasReviews }}">
+              <div style="text-align:center;padding:28px 16px;display:flex;flex-direction:column;align-items:center;gap:10px">
+                <div style="width:52px;height:52px;border-radius:50%;background:var(--color-surface-subtle);display:flex;align-items:center;justify-content:center;color:var(--color-text-muted)">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                 </div>
-                <div style="font:400 13px/1.45 var(--font-body);color:var(--color-text-secondary)">
-                  “Order arrived in less than 3 hours via express courier. Inspected the sealed packaging before releasing escrow payment. Pristine authentic condition!”
-                </div>
+                <div style="font:700 15px/1.3 var(--font-heading);color:var(--color-text)">No reviews yet</div>
+                <div style="font:400 13px/1.5 var(--font-body);color:var(--color-text-secondary);max-width:340px">Be the first to review this product after your escrow-protected purchase.</div>
               </div>
-
-              <div style="background:var(--color-surface-subtle);border-radius:12px;padding:14px;border:1px solid var(--color-divider)">
-                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-                  <span style="font:700 13px/1 var(--font-heading);color:var(--color-text)">Sandrine T. (Yaoundé, Bastos)</span>
-                  <span style="color:#eab308;font-size:12px">★★★★★</span>
-                </div>
-                <div style="font:400 13px/1.45 var(--font-body);color:var(--color-text-secondary)">
-                  “Exceptional quality and seller responsiveness on LOUMOO chat. The camera resolution and stabilization are truly world-class.”
-                </div>
-              </div>
-            </div>
+            </sc-if>
           </div>
 
         </div>
@@ -367,11 +373,12 @@ def get_product_view():
       <div class="pdp-sticky-bar">
         <div>
           <div style="font:800 17px/1.1 var(--font-heading);color:var(--color-text)">{{ currentProductPrice }}</div>
-          <div style="font:500 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Same-Day Escrow Delivery</div>
+          <div style="font:500 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Escrow-protected · pay on delivery</div>
         </div>
-        <button onClick="{{ addToCart }}" class="btn btn-primary" style="height:44px;padding:0 22px;font-size:13px;font-weight:700">
-          ADD TO BAG
-        </button>
+        <div style="display:flex;align-items:center;gap:8px">
+          <button onClick="{{ addToCart }}" class="btn btn-secondary" style="height:44px;padding:0 16px;font-size:13px;font-weight:700">Add to bag</button>
+          <button onClick="{{ buyNowProduct }}" class="btn btn-primary" style="height:44px;padding:0 18px;font-size:13px;font-weight:800">Buy now</button>
+        </div>
       </div>
 
     </sc-if>

@@ -465,20 +465,28 @@
         
         <div class="hs" style="gap:8px;padding-bottom:4px">
           <button onClick="{{ () => selectSubcategory('all') }}" class="tag {{ isSubcatAll ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">
-            All Listings
+            All Listings ({{ isCategoryElectronics ? (electronicsTotalCount || 224) : (categoryTotalCount || 24) }})
           </button>
 
           <sc-if value="{{ isCategoryElectronics }}">
-            <button onClick="{{ () => selectSubcategory('laptops') }}" class="tag {{ activeSubcategorySlug === 'laptops' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">💻 Laptops (84)</button>
-            <button onClick="{{ () => selectSubcategory('smartphones') }}" class="tag {{ activeSubcategorySlug === 'smartphones' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">📱 Smartphones (142)</button>
-            <button onClick="{{ () => selectSubcategory('audio') }}" class="tag {{ activeSubcategorySlug === 'audio' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">🎧 Pro Audio &amp; ANC (96)</button>
-            <button onClick="{{ () => selectSubcategory('power_accessories') }}" class="tag {{ activeSubcategorySlug === 'power_accessories' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">⚡ Power &amp; GaN (88)</button>
+            <button onClick="{{ () => selectSubcategory('smartphones') }}" class="tag {{ activeSubcategorySlug === 'smartphones' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">📱 Smartphones ({{ subcatSmartphonesCount || 174 }})</button>
+            <button onClick="{{ () => selectSubcategory('power_accessories') }}" class="tag {{ activeSubcategorySlug === 'power_accessories' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">⚡ Power &amp; Accessories ({{ subcatPowerCount || 37 }})</button>
+            <button onClick="{{ () => selectSubcategory('audio') }}" class="tag {{ activeSubcategorySlug === 'audio' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">🎧 Pro Audio &amp; ANC ({{ subcatAudioCount || 19 }})</button>
+            <button onClick="{{ () => selectSubcategory('laptops') }}" class="tag {{ activeSubcategorySlug === 'laptops' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">💻 Laptops &amp; PC ({{ subcatLaptopsCount || 12 }})</button>
           </sc-if>
 
           <sc-if value="{{ isCategoryFashion }}">
-            <button onClick="{{ () => selectSubcategory('footwear') }}" class="tag {{ activeSubcategorySlug === 'footwear' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">👟 Footwear &amp; Sneakers (185)</button>
-            <button onClick="{{ () => selectSubcategory('clothing') }}" class="tag {{ activeSubcategorySlug === 'clothing' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">👗 Apparel &amp; Streetwear (95)</button>
-            <button onClick="{{ () => selectSubcategory('watches_jewelry') }}" class="tag {{ activeSubcategorySlug === 'watches_jewelry' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">⌚ Watches &amp; Jewelry (40)</button>
+            <button onClick="{{ () => selectSubcategory('footwear') }}" class="tag {{ activeSubcategorySlug === 'footwear' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">👟 Footwear &amp; Sneakers ({{ subcatFootwearCount || 81 }})</button>
+            <button onClick="{{ () => selectSubcategory('clothing') }}" class="tag {{ activeSubcategorySlug === 'clothing' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">👗 Apparel &amp; Streetwear ({{ subcatClothingCount || 68 }})</button>
+            <button onClick="{{ () => selectSubcategory('bags') }}" class="tag {{ activeSubcategorySlug === 'bags' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">👜 Luxury Bags &amp; Leather ({{ subcatBagsCount || 38 }})</button>
+            <button onClick="{{ () => selectSubcategory('watches_jewelry') }}" class="tag {{ activeSubcategorySlug === 'watches_jewelry' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">⌚ Watches &amp; Jewelry ({{ subcatWatchesCount || 0 }})</button>
+          </sc-if>
+
+          <sc-if value="{{ isCategoryHome }}">
+            <button onClick="{{ () => selectSubcategory('appliances') }}" class="tag {{ activeSubcategorySlug === 'appliances' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">⚡ Petit Électroménager ({{ subcatAppliancesCount || 14 }})</button>
+            <button onClick="{{ () => selectSubcategory('cookware') }}" class="tag {{ activeSubcategorySlug === 'cookware' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">🍳 Casseroles &amp; Poêles ({{ subcatCookwareCount || 10 }})</button>
+            <button onClick="{{ () => selectSubcategory('tableware') }}" class="tag {{ activeSubcategorySlug === 'tableware' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">🍽️ Vaisselle &amp; Services ({{ subcatTablewareCount || 17 }})</button>
+            <button onClick="{{ () => selectSubcategory('home_care') }}" class="tag {{ activeSubcategorySlug === 'home_care' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">🧺 Entretien &amp; Rangement ({{ subcatHomeCareCount || 6 }})</button>
           </sc-if>
 
           <sc-if value="{{ isCategoryHotels }}">
@@ -585,144 +593,7 @@
 
         <div class="home-grid" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:20px;margin-top:16px">
           
-          <!-- Electronics Product Grid -->
-          <sc-if value="{{ isCategoryElectronics }}">
-            <sc-if value="{{ isSubcatAll || activeSubcategorySlug === 'laptops' }}">
-              <div onClick="{{ () => openProduct('macbook_m2') }}" class="loumoo-media-card" aria-label="View MacBook Air M2 13">
-                <div class="loumoo-card-media-cutout">
-                  <span class="loumoo-card-badge badge-pill-sale">Save 75.000 FCFA</span>
-                  <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('macbook_m2', 'MacBook Air M2 13'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('macbook_m2') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('macbook_m2') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-                  </button>
-                  <img src="./Assets/telephone%26PC/Macbook.jfif" alt="MacBook Air M2 13" loading="lazy" decoding="async">
-                </div>
-                <div class="loumoo-card-body">
-                  <h4 class="loumoo-card-title">MacBook Air 13” M2 (Space Grey)</h4>
-                  <div class="loumoo-card-tagline">Orca Electronics · Akwa Tech Corridor, Douala</div>
-                  <div class="loumoo-card-rating-row">
-                    <span>★ 4.9</span>
-                    <span class="loumoo-card-rating-text">(94 reviews) · Official Apple 1-Yr</span>
-                  </div>
-                  <div class="loumoo-card-bottom-row">
-                    <div class="loumoo-card-pricing-block">
-                      <span class="loumoo-card-price-prefix">From</span>
-                      <div class="loumoo-card-price-main">
-                        <span class="loumoo-card-price-val">745.000 FCFA</span>
-                        <span class="loumoo-card-price-strike">820.000 FCFA</span>
-                      </div>
-                      <div class="loumoo-card-trust-pill">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                        <span>✓ Glotelho Ref: 820.000 FCFA</span>
-                      </div>
-                    </div>
-                    <button class="loumoo-card-pill-btn" aria-label="Buy MacBook Air M2">Buy now</button>
-                  </div>
-                </div>
-              </div>
-            </sc-if>
 
-            <sc-if value="{{ isSubcatAll || activeSubcategorySlug === 'audio' }}">
-              <div onClick="{{ () => openProduct('sony_xm5') }}" class="loumoo-media-card" aria-label="View Apple AirPods Max">
-                <div class="loumoo-card-media-cutout">
-                  <span class="loumoo-card-badge badge-pill-new">Studio Hi-Fi</span>
-                  <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('sony_xm5', 'Apple AirPods Max'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('sony_xm5') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('sony_xm5') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-                  </button>
-                  <img src="./Assets/_processed/acessories_gadgets_apple_air_pod_max_airpodmax_apple_keysho_16.png" alt="Apple AirPods Max" loading="lazy" decoding="async">
-                </div>
-                <div class="loumoo-card-body">
-                  <h4 class="loumoo-card-title">Apple AirPods Max (Space Gray)</h4>
-                  <div class="loumoo-card-tagline">Digital Corner · Bonapriso, Douala</div>
-                  <div class="loumoo-card-rating-row">
-                    <span>★ 4.9</span>
-                    <span class="loumoo-card-rating-text">(78 reviews) · Authentic Apple</span>
-                  </div>
-                  <div class="loumoo-card-bottom-row">
-                    <div class="loumoo-card-pricing-block">
-                      <span class="loumoo-card-price-prefix">From</span>
-                      <div class="loumoo-card-price-main">
-                        <span class="loumoo-card-price-val">395.000 FCFA</span>
-                        <span class="loumoo-card-price-strike">450.000 FCFA</span>
-                      </div>
-                      <div class="loumoo-card-trust-pill">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                        <span>✓ Glotelho Ref: 450.000 FCFA</span>
-                      </div>
-                    </div>
-                    <button class="loumoo-card-pill-btn" aria-label="Buy Apple AirPods Max">Buy now</button>
-                  </div>
-                </div>
-              </div>
-            </sc-if>
-
-            <sc-if value="{{ isSubcatAll || activeSubcategorySlug === 'smartphones' }}">
-              <div onClick="{{ () => openProduct('galaxy_s24_ultra') }}" class="loumoo-media-card" aria-label="View Samsung Galaxy S26 Ultra">
-                <div class="loumoo-card-media-cutout">
-                  <span class="loumoo-card-badge badge-pill-sale">Save 110.000 FCFA</span>
-                  <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('galaxy_s24_ultra', 'Samsung Galaxy S26 Ultra'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('galaxy_s24_ultra') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('galaxy_s24_ultra') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-                  </button>
-                  <img src="./Assets/telephone%26PC/SAMSUNG%20S26%20ULTRA%20%F0%9F%94%A5%20BUY%20IT%20FOR%20YOU%20%F0%9F%91%87.jfif" alt="Samsung Galaxy S26 Ultra" loading="lazy" decoding="async">
-                </div>
-                <div class="loumoo-card-body">
-                  <h4 class="loumoo-card-title">Samsung Galaxy S26 Ultra (512GB)</h4>
-                  <div class="loumoo-card-tagline">Mboppi Mobile Hub · Douala</div>
-                  <div class="loumoo-card-rating-row">
-                    <span>★ 4.9</span>
-                    <span class="loumoo-card-rating-text">(165 reviews) · Galaxy AI</span>
-                  </div>
-                  <div class="loumoo-card-bottom-row">
-                    <div class="loumoo-card-pricing-block">
-                      <span class="loumoo-card-price-prefix">From</span>
-                      <div class="loumoo-card-price-main">
-                        <span class="loumoo-card-price-val">810.000 FCFA</span>
-                        <span class="loumoo-card-price-strike">920.000 FCFA</span>
-                      </div>
-                      <div class="loumoo-card-trust-pill">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                        <span>✓ Glotelho Ref: 920.000 FCFA</span>
-                      </div>
-                    </div>
-                    <button class="loumoo-card-pill-btn" aria-label="Buy Samsung Galaxy S26 Ultra">Buy now</button>
-                  </div>
-                </div>
-              </div>
-            </sc-if>
-
-            <sc-if value="{{ isSubcatAll || activeSubcategorySlug === 'power_accessories' }}">
-              <div onClick="{{ () => openProduct('anker_737') }}" class="loumoo-media-card" aria-label="View Oraimo SpaceBuds">
-                <div class="loumoo-card-media-cutout">
-                  <span class="loumoo-card-badge badge-pill-new">Hot Gadget</span>
-                  <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist('anker_737', 'Oraimo SpaceBuds'); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted('anker_737') ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted('anker_737') ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-                  </button>
-                  <img src="./Assets/acessories%26gadgets/Created%20a%20Poster%20Ad%20of%20%40oraimoclub%20SpaceBuds%20%F0%9F%92%9A%E2%80%A6.jfif" alt="Oraimo SpaceBuds" loading="lazy" decoding="async">
-                </div>
-                <div class="loumoo-card-body">
-                  <h4 class="loumoo-card-title">Oraimo SpaceBuds Hybrid ANC</h4>
-                  <div class="loumoo-card-tagline">Oraimo Official Store · Akwa, Douala</div>
-                  <div class="loumoo-card-rating-row">
-                    <span>★ 4.8</span>
-                    <span class="loumoo-card-rating-text">(214 reviews) · 50dB Hybrid ANC</span>
-                  </div>
-                  <div class="loumoo-card-bottom-row">
-                    <div class="loumoo-card-pricing-block">
-                      <span class="loumoo-card-price-prefix">From</span>
-                      <div class="loumoo-card-price-main">
-                        <span class="loumoo-card-price-val">21.500 FCFA</span>
-                        <span class="loumoo-card-price-strike">26.500 FCFA</span>
-                      </div>
-                      <div class="loumoo-card-trust-pill">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                        <span>✓ Oraimo CM Ref: 26.500 FCFA</span>
-                      </div>
-                    </div>
-                    <button class="loumoo-card-pill-btn" aria-label="Buy Oraimo SpaceBuds">Buy now</button>
-                  </div>
-                </div>
-              </div>
-            </sc-if>
-          </sc-if>
 
           <!-- Hospitality / Hotels Listings (Scenario B: Lifestyle presentation) -->
           <sc-if value="{{ isCategoryHotels }}">
@@ -825,7 +696,7 @@
             <div onClick="{{ () => openProduct('iphone_15_pro') }}" class="loumoo-media-card" aria-label="Book Screen Replacement">
               <div class="loumoo-card-media-cutout">
                 <span class="loumoo-card-badge badge-pill-sale">Same Day Repair</span>
-                <img src="./Assets/LOGO%20icons/Lettering%20service%20screwdriver%20and%20wrench%20symbol%20for%20repair%20and%20service%20_%20Premium%20Vector.jfif" alt="iPhone Screen Replacement" loading="lazy" decoding="async">
+                <img src="./Assets/_processed/logo_icons_lettering_service_screwdriver_and_wrench_45.png" alt="iPhone Screen Replacement" loading="lazy" decoding="async">
               </div>
               <div class="loumoo-card-body">
                 <h4 class="loumoo-card-title">Certified Smartphone & Tech Repairs</h4>
@@ -857,7 +728,8 @@
             <sc-for list="{{ categoryProductCards }}" as="card">
               <div onClick="{{ () => openProduct(card.id) }}" class="loumoo-media-card" aria-label="{{ card.title }}">
                 <div class="loumoo-card-media-cutout">
-                  <sc-if value="{{ card.verified }}"><span class="loumoo-card-badge">✓ Verified</span></sc-if>
+                  <sc-if value="{{ card.badge }}"><span class="loumoo-card-badge">{{ card.badge }}</span></sc-if>
+                  <sc-if value="{{ !card.badge && card.verified }}"><span class="loumoo-card-badge">✓ Verified</span></sc-if>
                   <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist(card.id, card.title); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted(card.id) ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted(card.id) ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
                   </button>
@@ -874,7 +746,7 @@
                         <sc-if value="{{ card.strikeLabel }}"><span class="loumoo-card-price-strike">{{ card.strikeLabel }}</span></sc-if>
                       </div>
                     </div>
-                    <button class="loumoo-card-pill-btn" aria-label="View listing">View</button>
+                    <button class="loumoo-card-pill-btn" aria-label="Buy {{ card.title }}">Buy now</button>
                   </div>
                 </div>
               </div>

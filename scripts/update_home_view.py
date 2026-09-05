@@ -50,12 +50,12 @@ img_african_skincare = encode_asset('./Assets/perfume&lotion/MEET THE 4 AFRICAN-
 img_agate = encode_asset('./Assets/necklace&ring/Black Agate Bracelet, Energy Balancing Men\'s Bracelet, Stainless Steel Men\'s Jewelry, Gift for Father_Husband.jfif')
 img_ps5 = encode_asset('./Assets/telephone&PC/316800155055565523.jfif')
 
-logo_bank = encode_asset('./Assets/LOGO icons/Bank Icon stock vector_ Illustration of savings, symbol - 31873148.jfif')
-logo_fashion = encode_asset("./Assets/LOGO icons/women's fashion logo vector design.jfif")
-logo_shoes = encode_asset("./Assets/LOGO icons/Men's shoes logo icon design illustration _ Premium Vector.jfif")
+logo_bank = encode_asset('./Assets/_processed/logo_icons_bank_icon_stock_vector_illustration_of_s_27.png')
+logo_fashion = encode_asset('./Assets/_processed/logo_icons_fashion.png')
+logo_shoes = encode_asset('./Assets/_processed/logo_icons_men_s_shoes_logo_icon_design_illustratio_49.png')
 logo_tech = encode_asset('./Assets/_processed/logo_icons_itel_42.png')
-logo_market = encode_asset('./Assets/LOGO icons/Market Logo Design _#logo #logodesigner #marketing.jfif')
-logo_travel = encode_asset('./Assets/LOGO icons/Travel logo image _ Premium Vector.jfif')
+logo_market = encode_asset('./Assets/_processed/logo_icons_market_logo_design_logo_logodesigner_mar_47.png')
+logo_travel = encode_asset('./Assets/_processed/logo_icons_travel_logo_image_premium_vector_62.png')
 logo_service = encode_asset('./Assets/_processed/logo_icons_lettering_service_screwdriver_and_wrench_45.png')
 
 # 1. Hero Slide 0: DJI Osmo Pocket 3 Creator Combo

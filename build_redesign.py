@@ -6229,119 +6229,12807 @@ const HOTELS_DATA = {
 };
 
 const PRODUCTS_DATA = {
-  'chelsea_boots': {
-    id: 'chelsea_boots',
-    title: "Kraasa Suede Chelsea Ankle Boots",
-    brand: "Kraasa",
-    category: 'fashion',
-    categoryLabel: "Men's Boots",
-    conditionLabel: "Brand New · Boxed",
-    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
-    badge: "STREET LUXE",
-    rating: '4.7',
-    reviewCount: 61,
-    soldCount: 88,
-    price: 'XAF 42.000',
-    salePrice: 'XAF 56.000',
-    storeName: "Kraasa Official",
+
+  "home_lot_de_4_allume_gaz_de_cuisine_rechargea": {
+    id: "home_lot_de_4_allume_gaz_de_cuisine_rechargea",
+    title: "Lot de 4 Allume-Gaz de Cuisine Rechargeables S\u00e9curit\u00e9",
+    brand: "Flamme S\u00e9curit\u00e9",
+    category: "home",
+    categoryLabel: "Cookware & Kitchen Utensils",
+    subcategory: "cookware",
+    conditionLabel: "Neuf sous emballage d'origine \u00b7 Garantie 12 Mois",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "-25% PROMO",
+    rating: "4.8",
+    reviewCount: 23,
+    soldCount: 46,
+    price: "XAF 12.000",
+    salePrice: "XAF 8.900",
+    storeName: "Orca Deco Akwa",
     storeCity: "Akwa, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/ElectroMenage/1051309106737295211.jfif",
+    images: [
+      "./Assets/ElectroMenage/1051309106737295211.jfif"
+    ],
+    attributes: [
+      { key: "Type", val: "Allume-Gaz \u00e0 \u00c9tincelle Pi\u00e9zo\u00e9lectrique" },
+      { key: "Rechargeable", val: "Rechargeable au gaz butane universel" },
+      { key: "S\u00e9curit\u00e9", val: "Long bec en acier chrom\u00e9 anti-br\u00fblures" }
+    ],
+    description: "Lot de 4 briquets allume-gaz grande longueur avec loquet de s\u00e9curit\u00e9 enfant et flamme r\u00e9glable. Id\u00e9al pour gazini\u00e8res, r\u00e9chauds et barbecues. Garanti 100% authentique par Orca Deco Akwa avec protection escrow LOUMOO."
+  },
+
+  "home_set_11_ustensiles_de_cuisine_silicone_ma": {
+    id: "home_set_11_ustensiles_de_cuisine_silicone_ma",
+    title: "Set 11 Ustensiles de Cuisine Silicone & Manche Bois d'Acacia",
+    brand: "Chef Master Pro",
+    category: "home",
+    categoryLabel: "Cookware & Kitchen Utensils",
+    subcategory: "cookware",
+    conditionLabel: "Neuf sous emballage d'origine \u00b7 Garantie 12 Mois",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "-23% PROMO",
+    rating: "4.9",
+    reviewCount: 28,
+    soldCount: 57,
+    price: "XAF 24.000",
+    salePrice: "XAF 18.500",
+    storeName: "Electro Confort Bonapriso",
+    storeCity: "Bonapriso, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/ElectroMenage/1054053487767242642.jfif",
+    images: [
+      "./Assets/ElectroMenage/1054053487767242642.jfif"
+    ],
+    attributes: [
+      { key: "Mat\u00e9riaux", val: "Silicone Alimentaire Sans BPA & Bois d'Acacia" },
+      { key: "R\u00e9sistance", val: "Thermor\u00e9sistant de -40\u00b0C \u00e0 +230\u00b0C" },
+      { key: "Contenu", val: "Spatules, fouet, pince, louche + pot de rangement" }
+    ],
+    description: "Ensemble complet d'ustensiles anti-rayures pour po\u00eales et casseroles en t\u00e9flon. Manches ergonomiques en bois massif isolant de la chaleur. Garanti 100% authentique par Electro Confort Bonapriso avec protection escrow LOUMOO."
+  },
+
+  "home_pack_essentiel_cuisine_decoupe_batterie": {
+    id: "home_pack_essentiel_cuisine_decoupe_batterie",
+    title: "Pack Essentiel Cuisine & D\u00e9coupe Batterie Antiadh\u00e9sive",
+    brand: "Home Starter",
+    category: "home",
+    categoryLabel: "Cookware & Kitchen Utensils",
+    subcategory: "cookware",
+    conditionLabel: "Neuf sous emballage d'origine \u00b7 Garantie 12 Mois",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "-22% SOLDE",
+    rating: "4.7",
+    reviewCount: 33,
+    soldCount: 68,
+    price: "XAF 58.000",
+    salePrice: "XAF 45.000",
+    storeName: "Bazar Yaound\u00e9 Bastos",
+    storeCity: "Bastos, Yaound\u00e9",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/ElectroMenage/21%20College%20Apartment%20Kitchen%20Essentials%20_%20The%20Best%E2%80%A6.jfif",
+    images: [
+      "./Assets/ElectroMenage/21%20College%20Apartment%20Kitchen%20Essentials%20_%20The%20Best%E2%80%A6.jfif"
+    ],
+    attributes: [
+      { key: "Composition", val: "Po\u00eale, faitout, bloc de couteaux et accessoires" },
+      { key: "Rev\u00eatement", val: "Granite antiadh\u00e9sif triple couche sans PFOA" },
+      { key: "Compatibilit\u00e9", val: "Tous feux dont gaz et induction" }
+    ],
+    description: "Kit complet id\u00e9al pour \u00e9quiper un appartement ou une cuisine moderne. Ustensiles de haute durabilit\u00e9 faciles \u00e0 nettoyer. Garanti 100% authentique par Bazar Yaound\u00e9 Bastos avec protection escrow LOUMOO."
+  },
+
+  "home_coffret_de_4_verres_pilsner_hauts_en_cri": {
+    id: "home_coffret_de_4_verres_pilsner_hauts_en_cri",
+    title: "Coffret de 4 Verres Pilsner Hauts en Cristal Clair 450ml",
+    brand: "Cristal d'Arques",
+    category: "home",
+    categoryLabel: "Dinnerware & Glassware",
+    subcategory: "tableware",
+    conditionLabel: "Neuf sous emballage d'origine \u00b7 Garantie 12 Mois",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "-23% PROMO",
+    rating: "4.8",
+    reviewCount: 38,
+    soldCount: 79,
+    price: "XAF 18.000",
+    salePrice: "XAF 13.900",
+    storeName: "Maison du M\u00e9nage Mboppi",
+    storeCity: "Mboppi, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/ElectroMenage/33636642186243p%20229%C3%97229%20pixels.jfif",
+    images: [
+      "./Assets/ElectroMenage/33636642186243p%20229%C3%97229%20pixels.jfif"
+    ],
+    attributes: [
+      { key: "Capacit\u00e9", val: "450 ml par verre" },
+      { key: "Mat\u00e9riau", val: "Verre cristallin haute transparence" },
+      { key: "Usage", val: "Bi\u00e8res fra\u00eeches, cocktails et boissons gazeuses" }
+    ],
+    description: "Ensemble de 4 verres hauts pilsner \u00e0 base lourde et bord fin pour une d\u00e9gustation optimale de boissons fra\u00eeches et cocktails. Garanti 100% authentique par Maison du M\u00e9nage Mboppi avec protection escrow LOUMOO."
+  },
+
+  "home_mortier_pilon_traditionnel_en_bois_deben": {
+    id: "home_mortier_pilon_traditionnel_en_bois_deben",
+    title: "Mortier & Pilon Traditionnel en Bois d'\u00c9b\u00e8ne Massif",
+    brand: "Artisanat Cameroun",
+    category: "home",
+    categoryLabel: "Cookware & Kitchen Utensils",
+    subcategory: "cookware",
+    conditionLabel: "Neuf sous emballage d'origine \u00b7 Garantie 12 Mois",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "-25% ARTISANAL",
+    rating: "4.9",
+    reviewCount: 43,
+    soldCount: 90,
+    price: "XAF 18.000",
+    salePrice: "XAF 13.500",
+    storeName: "Quincaillerie Centrale Bonanjo",
+    storeCity: "Bonanjo, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/ElectroMenage/400820435565463249.jfif",
+    images: [
+      "./Assets/ElectroMenage/400820435565463249.jfif"
+    ],
+    attributes: [
+      { key: "Essence", val: "Bois dur d'\u00e9b\u00e8ne naturel poli" },
+      { key: "Finition", val: "Huile v\u00e9g\u00e9tale alimentaire naturelle" },
+      { key: "Usage", val: "Pilage traditionnel d'\u00e9pices, ail, gingembre et sauces" }
+    ],
+    description: "Mortier et pilon sculpt\u00e9s \u00e0 la main dans du bois massif local de haute densit\u00e9. Pr\u00e9serve toute l'intensit\u00e9 des ar\u00f4mes sans r\u00e9sidus. Garanti 100% authentique par Quincaillerie Centrale Bonanjo avec protection escrow LOUMOO."
+  },
+
+  "home_service_de_18_assiettes_coupe_en_porcela": {
+    id: "home_service_de_18_assiettes_coupe_en_porcela",
+    title: "Service de 18 Assiettes Coupe en Porcelaine Blanche H\u00f4tellerie",
+    brand: "Lumina Table",
+    category: "home",
+    categoryLabel: "Dinnerware & Glassware",
+    subcategory: "tableware",
+    conditionLabel: "Neuf sous emballage d'origine \u00b7 Garantie 12 Mois",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "-21% SOLDE",
+    rating: "4.7",
+    reviewCount: 48,
+    soldCount: 101,
+    price: "XAF 48.000",
+    salePrice: "XAF 38.000",
+    storeName: "Comptoir \u00c9lectrom\u00e9nager Yaound\u00e9",
+    storeCity: "March\u00e9 Central, Yaound\u00e9",
+    storeRating: "4.7",
+    storeVerified: true,
+    coverImage: "./Assets/ElectroMenage/430938258086644459.jfif",
+    images: [
+      "./Assets/ElectroMenage/430938258086644459.jfif"
+    ],
+    attributes: [
+      { key: "Composition", val: "18 Assiettes plates 26 cm" },
+      { key: "Porcelaine", val: "Renforc\u00e9e anti-\u00e9br\u00e9chures vitrifi\u00e9e" },
+      { key: "Entretien", val: "Compatible lave-vaisselle et micro-ondes" }
+    ],
+    description: "Service d'assiettes rondes coupe en porcelaine d'un blanc pur. Design intemporel pour r\u00e9ceptions, familles et tables raffin\u00e9es. Garanti 100% authentique par Comptoir \u00c9lectrom\u00e9nager Yaound\u00e9 avec protection escrow LOUMOO."
+  },
+
+  "home_set_de_6_bols_canneles_ceramique_blanche": {
+    id: "home_set_de_6_bols_canneles_ceramique_blanche",
+    title: "Set de 6 Bols Cannel\u00e9s C\u00e9ramique Blanche Bord Noir 600ml",
+    brand: "Hashem Home",
+    category: "home",
+    categoryLabel: "Dinnerware & Glassware",
+    subcategory: "tableware",
+    conditionLabel: "Neuf sous emballage d'origine \u00b7 Garantie 12 Mois",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "-23% PROMO",
+    rating: "4.8",
+    reviewCount: 53,
+    soldCount: 112,
+    price: "XAF 22.000",
+    salePrice: "XAF 16.900",
+    storeName: "Douala Home Living",
+    storeCity: "Bonamoussadi, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/ElectroMenage/454159943687437403.jfif",
+    images: [
+      "./Assets/ElectroMenage/454159943687437403.jfif"
+    ],
+    attributes: [
+      { key: "Contenance", val: "600 ml par bol" },
+      { key: "Finition", val: "C\u00e9ramique \u00e9maill\u00e9e cannel\u00e9e avec filet noir" },
+      { key: "Usage", val: "C\u00e9r\u00e9ales, soupes, salades et desserts" }
+    ],
+    description: "Six bols en c\u00e9ramique moderne au relief cannel\u00e9 \u00e9l\u00e9gant et liser\u00e9 noir contrast\u00e9. Grande contenance et prise en main agr\u00e9able. Garanti 100% authentique par Douala Home Living avec protection escrow LOUMOO."
+  },
+
+  "home_cafetiere_combinee_programmable_12_tasse": {
+    id: "home_cafetiere_combinee_programmable_12_tasse",
+    title: "Cafeti\u00e8re Combin\u00e9e Programmable 12 Tasses & Expresso Inox",
+    brand: "Cuisinart Pro",
+    category: "home",
+    categoryLabel: "Small Kitchen Appliances",
+    subcategory: "appliances",
+    conditionLabel: "Neuf sous emballage d'origine \u00b7 Garantie 12 Mois",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "-20% VENTE FLASH",
+    rating: "4.9",
+    reviewCount: 58,
+    soldCount: 123,
+    price: "XAF 95.000",
+    salePrice: "XAF 76.000",
+    storeName: "Kamer Cuisine Pro",
+    storeCity: "B\u00e9panda, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/ElectroMenage/498070040049332988.jfif",
+    images: [
+      "./Assets/ElectroMenage/498070040049332988.jfif"
+    ],
+    attributes: [
+      { key: "Puissance", val: "1050 Watts \u00b7 Pompe 15 Bars" },
+      { key: "Fonctionnalit\u00e9", val: "Verseuse 12 tasses + extraction expresso monodose" },
+      { key: "Panneau", val: "\u00c9cran LCD digital et programmation 24h" }
+    ],
+    description: "La station caf\u00e9 ultime pour la maison : carafe familiale 12 tasses et distribution expresso rapide. Finition inox bross\u00e9 premium. Garanti 100% authentique par Kamer Cuisine Pro avec protection escrow LOUMOO."
+  },
+
+  "home_coffret_prestige_2_verres_a_vin_cristal": {
+    id: "home_coffret_prestige_2_verres_a_vin_cristal",
+    title: "Coffret Prestige 2 Verres \u00e0 Vin Cristal avec Pied Strass",
+    brand: "Luxe & Cristal",
+    category: "home",
+    categoryLabel: "Dinnerware & Glassware",
+    subcategory: "tableware",
+    conditionLabel: "Neuf sous emballage d'origine \u00b7 Garantie 12 Mois",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "-24% PRESTIGE",
+    rating: "4.7",
+    reviewCount: 63,
+    soldCount: 134,
+    price: "XAF 38.000",
+    salePrice: "XAF 28.900",
+    storeName: "Orca Deco Akwa",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/ElectroMenage/553520610451888841%20%281%29.jfif",
+    images: [
+      "./Assets/ElectroMenage/553520610451888841%20%281%29.jfif"
+    ],
+    attributes: [
+      { key: "Mat\u00e9riau", val: "Cristal sans plomb haute brillance" },
+      { key: "Tige", val: "Incrustation de strass scintillants haute joaillerie" },
+      { key: "Pr\u00e9sentation", val: "Coffret cadeau capitonn\u00e9 de satin" }
+    ],
+    description: "Verres \u00e0 pied somptueux incrust\u00e9s de cristaux \u00e9tincelants. Un chef-d'\u0153uvre de raffinement pour vos d\u00eeners romantiques et grandes c\u00e9l\u00e9brations. Garanti 100% authentique par Orca Deco Akwa avec protection escrow LOUMOO."
+  },
+
+  "home_service_de_table_ceramique_carree_bicolo": {
+    id: "home_service_de_table_ceramique_carree_bicolo",
+    title: "Service de Table C\u00e9ramique Carr\u00e9e Bicolore 16 Pi\u00e8ces",
+    brand: "Earthy Studio",
+    category: "home",
+    categoryLabel: "Dinnerware & Glassware",
+    subcategory: "tableware",
+    conditionLabel: "Neuf sous emballage d'origine \u00b7 Garantie 12 Mois",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "-21% SOLDE",
+    rating: "4.8",
+    reviewCount: 68,
+    soldCount: 145,
+    price: "XAF 49.000",
+    salePrice: "XAF 38.500",
+    storeName: "Electro Confort Bonapriso",
+    storeCity: "Bonapriso, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/ElectroMenage/592786369694234428.jfif",
+    images: [
+      "./Assets/ElectroMenage/592786369694234428.jfif"
+    ],
+    attributes: [
+      { key: "Pi\u00e8ces", val: "4 assiettes plates, 4 assiettes dessert, 4 bols, 4 mugs" },
+      { key: "Design", val: "Carr\u00e9 contemporain \u00e9maill\u00e9 d\u00e9grad\u00e9 moka/cr\u00e8me" },
+      { key: "Durabilit\u00e9", val: "Gr\u00e8s haute cuisson r\u00e9sistant aux chocs" }
+    ],
+    description: "Service complet 16 pi\u00e8ces au profil carr\u00e9 moderne. Teintes naturelles chaudes moka et sable qui subliment toutes vos pr\u00e9sentations culinaires. Garanti 100% authentique par Electro Confort Bonapriso avec protection escrow LOUMOO."
+  },
+
+  "home_machine_a_laver_semi_automatique_double": {
+    id: "home_machine_a_laver_semi_automatique_double",
+    title: "Machine \u00e0 Laver Semi-Automatique Double Bac LG 7.5kg",
+    brand: "LG Electronics",
+    category: "home",
+    categoryLabel: "Home Care & Organization",
+    subcategory: "home_care",
+    conditionLabel: "Neuf sous emballage d'origine \u00b7 Garantie 12 Mois",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "-17% PROMO",
+    rating: "4.9",
+    reviewCount: 73,
+    soldCount: 156,
+    price: "XAF 185.000",
+    salePrice: "XAF 154.000",
+    storeName: "Bazar Yaound\u00e9 Bastos",
+    storeCity: "Bastos, Yaound\u00e9",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/ElectroMenage/599189925409873702.jfif",
+    images: [
+      "./Assets/ElectroMenage/599189925409873702.jfif"
+    ],
+    attributes: [
+      { key: "Capacit\u00e9 Lavage", val: "7.5 kg linge sec" },
+      { key: "Essorage", val: "Turbine Wind Jet Dry haute vitesse 1300 tr/min" },
+      { key: "Technologie", val: "Moteur Roller Jet Pulsator ultra-efficace" }
+    ],
+    description: "Machine \u00e0 laver double bac robuste et \u00e9conome en eau et \u00e9lectricit\u00e9. Id\u00e9ale pour les familles \u00e0 Douala et Yaound\u00e9 avec protection anti-rats int\u00e9gr\u00e9e. Garanti 100% authentique par Bazar Yaound\u00e9 Bastos avec protection escrow LOUMOO."
+  },
+
+  "home_service_de_vaisselle_complete_gres_noir": {
+    id: "home_service_de_vaisselle_complete_gres_noir",
+    title: "Service de Vaisselle Compl\u00e8te Gr\u00e8s Noir Mat 32 Pi\u00e8ces",
+    brand: "BlackStone Luxe",
+    category: "home",
+    categoryLabel: "Dinnerware & Glassware",
+    subcategory: "tableware",
+    conditionLabel: "Neuf sous emballage d'origine \u00b7 Garantie 12 Mois",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "-22% TENDANCE",
+    rating: "4.7",
+    reviewCount: 78,
+    soldCount: 167,
+    price: "XAF 88.000",
+    salePrice: "XAF 69.000",
+    storeName: "Maison du M\u00e9nage Mboppi",
+    storeCity: "Mboppi, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/ElectroMenage/637963103509446052.jfif",
+    images: [
+      "./Assets/ElectroMenage/637963103509446052.jfif"
+    ],
+    attributes: [
+      { key: "Pi\u00e8ces", val: "8 assiettes plates, 8 assiettes creuses, 8 bols, 8 mugs" },
+      { key: "Finition", val: "Gr\u00e8s noir \u00e9b\u00e8ne mat textur\u00e9 anti-traces" },
+      { key: "Qualit\u00e9", val: "Vitrification haute temp\u00e9rature sans plomb" }
+    ],
+    description: "Service de table complet 8 personnes en gr\u00e8s noir mat moderne. L'esth\u00e9tique gastronomique par excellence pour sublimer votre salle \u00e0 manger. Garanti 100% authentique par Maison du M\u00e9nage Mboppi avec protection escrow LOUMOO."
+  },
+
+  "home_service_de_table_carre_porcelaine_blanch": {
+    id: "home_service_de_table_carre_porcelaine_blanch",
+    title: "Service de Table Carr\u00e9 Porcelaine Blanche & Coupelles 20 Pi\u00e8ces",
+    brand: "Table & Co",
+    category: "home",
+    categoryLabel: "Dinnerware & Glassware",
+    subcategory: "tableware",
+    conditionLabel: "Neuf sous emballage d'origine \u00b7 Garantie 12 Mois",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "-22% PROMO",
+    rating: "4.8",
+    reviewCount: 83,
+    soldCount: 178,
+    price: "XAF 54.000",
+    salePrice: "XAF 42.000",
+    storeName: "Quincaillerie Centrale Bonanjo",
+    storeCity: "Bonanjo, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/ElectroMenage/651685008571760700.jfif",
+    images: [
+      "./Assets/ElectroMenage/651685008571760700.jfif"
+    ],
+    attributes: [
+      { key: "Pi\u00e8ces", val: "Assiettes carr\u00e9es plates, assiettes \u00e0 dessert et coupelles" },
+      { key: "Mat\u00e9riau", val: "Porcelaine blanche lustr\u00e9e ultra-r\u00e9sistante" },
+      { key: "Design", val: "Forme g\u00e9om\u00e9trique contemporaine \u00e9pur\u00e9e" }
+    ],
+    description: "\u00c9l\u00e9gance minimaliste pour ce service de table carr\u00e9 moderne en porcelaine fine. Empilement facile et r\u00e9sistance exceptionnelle au quotidien. Garanti 100% authentique par Quincaillerie Centrale Bonanjo avec protection escrow LOUMOO."
+  },
+
+  "home_bouteille_isotherme_a_pompe_inox_double": {
+    id: "home_bouteille_isotherme_a_pompe_inox_double",
+    title: "Bouteille Isotherme \u00e0 Pompe Inox Double Paroi 3.0 Litres",
+    brand: "Thermos Master",
+    category: "home",
+    categoryLabel: "Home Care & Organization",
+    subcategory: "home_care",
+    conditionLabel: "Neuf sous emballage d'origine \u00b7 Garantie 12 Mois",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "-23% PROMO",
+    rating: "4.9",
+    reviewCount: 88,
+    soldCount: 39,
+    price: "XAF 28.000",
+    salePrice: "XAF 21.500",
+    storeName: "Comptoir \u00c9lectrom\u00e9nager Yaound\u00e9",
+    storeCity: "March\u00e9 Central, Yaound\u00e9",
+    storeRating: "4.7",
+    storeVerified: true,
+    coverImage: "./Assets/ElectroMenage/725642558709743083.jfif",
+    images: [
+      "./Assets/ElectroMenage/725642558709743083.jfif"
+    ],
+    attributes: [
+      { key: "Capacit\u00e9", val: "3.0 Litres" },
+      { key: "Isolation", val: "Double paroi sous vide inox 304 alimentaire" },
+      { key: "Performance", val: "Maintien chaud 24h \u00b7 Maintien froid 36h" }
+    ],
+    description: "Distributeur isotherme \u00e0 levier de pompe puissant et poign\u00e9e de transport ergonomique. Conserve caf\u00e9, th\u00e9 et infusions br\u00fblants toute la journ\u00e9e. Garanti 100% authentique par Comptoir \u00c9lectrom\u00e9nager Yaound\u00e9 avec protection escrow LOUMOO."
+  },
+
+  "home_coffret_de_6_verres_a_whisky_cristal_tai": {
+    id: "home_coffret_de_6_verres_a_whisky_cristal_tai",
+    title: "Coffret de 6 Verres \u00e0 Whisky Cristal Taill\u00e9 G\u00e9om\u00e9trique 300ml",
+    brand: "Bohemia Crystal",
+    category: "home",
+    categoryLabel: "Dinnerware & Glassware",
+    subcategory: "tableware",
+    conditionLabel: "Neuf sous emballage d'origine \u00b7 Garantie 12 Mois",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "-25% PROMO",
+    rating: "4.7",
+    reviewCount: 93,
+    soldCount: 50,
+    price: "XAF 26.000",
+    salePrice: "XAF 19.500",
+    storeName: "Douala Home Living",
+    storeCity: "Bonamoussadi, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/ElectroMenage/730990583248787606.jfif",
+    images: [
+      "./Assets/ElectroMenage/730990583248787606.jfif"
+    ],
+    attributes: [
+      { key: "Nombre de verres", val: "6 verres Old Fashioned 300 ml" },
+      { key: "Motif", val: "Taille g\u00e9om\u00e9trique en diamant et chevrons" },
+      { key: "Base", val: "Fond lourd \u00e9quilibr\u00e9 pour d\u00e9gustation sur glace" }
+    ],
+    description: "Coffret d'exception comprenant 6 verres \u00e0 whisky en cristal taill\u00e9 aux reflets \u00e9clatants. Base lourde et prise en main statutaire pour votre bar. Garanti 100% authentique par Douala Home Living avec protection escrow LOUMOO."
+  },
+
+  "home_pichet_carafe_en_verre_borosilicate_avec": {
+    id: "home_pichet_carafe_en_verre_borosilicate_avec",
+    title: "Pichet Carafe en Verre Borosilicate avec Couvercle 1.8L",
+    brand: "Cristal Fresh",
+    category: "home",
+    categoryLabel: "Dinnerware & Glassware",
+    subcategory: "tableware",
+    conditionLabel: "Neuf sous emballage d'origine \u00b7 Garantie 12 Mois",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "-23% PROMO",
+    rating: "4.8",
+    reviewCount: 18,
+    soldCount: 61,
+    price: "XAF 15.000",
+    salePrice: "XAF 11.500",
+    storeName: "Kamer Cuisine Pro",
+    storeCity: "B\u00e9panda, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/ElectroMenage/785667097511560743.jfif",
+    images: [
+      "./Assets/ElectroMenage/785667097511560743.jfif"
+    ],
+    attributes: [
+      { key: "Contenance", val: "1800 ml (1.8 Litre)" },
+      { key: "Verre", val: "Borosilicate r\u00e9sistant aux chocs thermiques (0 \u00e0 100\u00b0C)" },
+      { key: "Bec", val: "Bec verseur anti-goutte avec couvercle ajust\u00e9" }
+    ],
+    description: "Carafe d'eau et de jus raffin\u00e9e en verre borosilicate ultra-l\u00e9ger et transparent. Parfaite pour l'eau fra\u00eeche, le jus de bissap ou le th\u00e9 glac\u00e9. Garanti 100% authentique par Kamer Cuisine Pro avec protection escrow LOUMOO."
+  },
+
+  "home_set_de_3_poeles_antiadhesives_granit_tri": {
+    id: "home_set_de_3_poeles_antiadhesives_granit_tri",
+    title: "Set de 3 Po\u00eales Antiadh\u00e9sives Granit Triple Couche (20-24-28cm)",
+    brand: "T-Fal Expert",
+    category: "home",
+    categoryLabel: "Cookware & Kitchen Utensils",
+    subcategory: "cookware",
+    conditionLabel: "Neuf sous emballage d'origine \u00b7 Garantie 12 Mois",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "-23% VENTE FLASH",
+    rating: "4.9",
+    reviewCount: 23,
+    soldCount: 72,
+    price: "XAF 35.000",
+    salePrice: "XAF 26.900",
+    storeName: "Orca Deco Akwa",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/ElectroMenage/795800196703207345.jfif",
+    images: [
+      "./Assets/ElectroMenage/795800196703207345.jfif"
+    ],
+    attributes: [
+      { key: "Dimensions", val: "Diam\u00e8tres 20 cm, 24 cm et 28 cm" },
+      { key: "Rev\u00eatement", val: "Rev\u00eatement min\u00e9ral antiadh\u00e9sif sans PFOA ni plomb" },
+      { key: "Manche", val: "Bak\u00e9lite athermique effet soft-touch" }
+    ],
+    description: "Trio de po\u00eales antiadh\u00e9sives indispensables pour saisir viandes, poissons et omelettes sans aucune mati\u00e8re grasse collante. Nettoyage instantan\u00e9. Garanti 100% authentique par Orca Deco Akwa avec protection escrow LOUMOO."
+  },
+
+  "home_batterie_3_marmites_faitouts_antiadhesiv": {
+    id: "home_batterie_3_marmites_faitouts_antiadhesiv",
+    title: "Batterie 3 Marmites Faitouts Antiadh\u00e9sives & Couvercles Verre",
+    brand: "Royalty Line",
+    category: "home",
+    categoryLabel: "Cookware & Kitchen Utensils",
+    subcategory: "cookware",
+    conditionLabel: "Neuf sous emballage d'origine \u00b7 Garantie 12 Mois",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "-22% PROMO",
+    rating: "4.7",
+    reviewCount: 28,
+    soldCount: 83,
+    price: "XAF 45.000",
+    salePrice: "XAF 34.900",
+    storeName: "Electro Confort Bonapriso",
+    storeCity: "Bonapriso, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/ElectroMenage/795800196703207348.jfif",
+    images: [
+      "./Assets/ElectroMenage/795800196703207348.jfif"
+    ],
+    attributes: [
+      { key: "Tailles", val: "Marmites 20cm (2.5L), 24cm (4.5L), 28cm (6.5L)" },
+      { key: "Couvercles", val: "Verre tremp\u00e9 avec valve d'\u00e9chappement vapeur" },
+      { key: "Base", val: "Fond capsul\u00e9 \u00e9pais diffusion thermique rapide" }
+    ],
+    description: "Batterie de cuisine premium 3 marmites en fonte d'aluminium avec couvercles transparents. Id\u00e9ale pour mijoter sauces tomates, ndol\u00e8 et rago\u00fbts. Garanti 100% authentique par Electro Confort Bonapriso avec protection escrow LOUMOO."
+  },
+
+  "home_ensemble_de_3_soupieres_isothermes_ceram": {
+    id: "home_ensemble_de_3_soupieres_isothermes_ceram",
+    title: "Ensemble de 3 Soupi\u00e8res Isothermes C\u00e9ramique Marbre & Or",
+    brand: "Imperial Banquet",
+    category: "home",
+    categoryLabel: "Dinnerware & Glassware",
+    subcategory: "tableware",
+    conditionLabel: "Neuf sous emballage d'origine \u00b7 Garantie 12 Mois",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "-23% PRESTIGE",
+    rating: "4.8",
+    reviewCount: 33,
+    soldCount: 94,
+    price: "XAF 58.000",
+    salePrice: "XAF 44.500",
+    storeName: "Bazar Yaound\u00e9 Bastos",
+    storeCity: "Bastos, Yaound\u00e9",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/ElectroMenage/924363892250290685.jfif",
+    images: [
+      "./Assets/ElectroMenage/924363892250290685.jfif"
+    ],
+    attributes: [
+      { key: "Ensemble", val: "3 Plats de service gigognes avec couvercles" },
+      { key: "Finition", val: "C\u00e9ramique marbr\u00e9e blanche et filigrane dor\u00e9" },
+      { key: "Maintien", val: "Garde les plats au chaud pendant plus de 4 heures" }
+    ],
+    description: "Magnifique trio de plats de service chauds en c\u00e9ramique marbr\u00e9e rehauss\u00e9e de liser\u00e9s dor\u00e9s. La pi\u00e8ce ma\u00eetresse de vos r\u00e9ceptions et d\u00e9jeuners de f\u00eate. Garanti 100% authentique par Bazar Yaound\u00e9 Bastos avec protection escrow LOUMOO."
+  },
+
+  "home_lot_de_2_pinces_de_cuisine_grillade_inox": {
+    id: "home_lot_de_2_pinces_de_cuisine_grillade_inox",
+    title: "Lot de 2 Pinces de Cuisine & Grillade Inox M\u00e9canisme Verrou",
+    brand: "Master Grill",
+    category: "home",
+    categoryLabel: "Cookware & Kitchen Utensils",
+    subcategory: "cookware",
+    conditionLabel: "Neuf sous emballage d'origine \u00b7 Garantie 12 Mois",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "-29% PROMO",
+    rating: "4.9",
+    reviewCount: 38,
+    soldCount: 105,
+    price: "XAF 14.000",
+    salePrice: "XAF 9.900",
+    storeName: "Maison du M\u00e9nage Mboppi",
+    storeCity: "Mboppi, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/ElectroMenage/953707658585814211.jfif",
+    images: [
+      "./Assets/ElectroMenage/953707658585814211.jfif"
+    ],
+    attributes: [
+      { key: "Tailles", val: "1 Pince 23 cm + 1 Pince 30 cm" },
+      { key: "Acier", val: "Acier inoxydable 18/8 bross\u00e9 r\u00e9sistant" },
+      { key: "Syst\u00e8me", val: "Anneau de verrouillage pour rangement compact" }
+    ],
+    description: "Pinces professionnelles dentel\u00e9es pour manipuler grillades, fritures et r\u00f4tis en toute s\u00e9curit\u00e9 sans percer les viandes. Ressort robuste en acier. Garanti 100% authentique par Maison du M\u00e9nage Mboppi avec protection escrow LOUMOO."
+  },
+
+  "home_grand_service_de_table_royal_porcelaine": {
+    id: "home_grand_service_de_table_royal_porcelaine",
+    title: "Grand Service de Table Royal Porcelaine Fine 60 Pi\u00e8ces",
+    brand: "Maison Porcelaine",
+    category: "home",
+    categoryLabel: "Dinnerware & Glassware",
+    subcategory: "tableware",
+    conditionLabel: "Neuf sous emballage d'origine \u00b7 Garantie 12 Mois",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "-20% LUXE",
+    rating: "4.7",
+    reviewCount: 43,
+    soldCount: 116,
+    price: "XAF 155.000",
+    salePrice: "XAF 124.000",
+    storeName: "Quincaillerie Centrale Bonanjo",
+    storeCity: "Bonanjo, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/ElectroMenage/985584699708736656.jfif",
+    images: [
+      "./Assets/ElectroMenage/985584699708736656.jfif"
+    ],
+    attributes: [
+      { key: "Composition", val: "Service complet 60 pi\u00e8ces pour 12 convives" },
+      { key: "\u00c9l\u00e9ments", val: "Assiettes plates, creuses, \u00e0 dessert, bols et raviers" },
+      { key: "Finition", val: "Porcelaine d'os brillante blanche anti-rayures" }
+    ],
+    description: "Le grand service de table familial par excellence. 60 pi\u00e8ces raffin\u00e9es con\u00e7ues pour accueillir jusqu'\u00e0 12 invit\u00e9s lors de banquets m\u00e9morables. Garanti 100% authentique par Quincaillerie Centrale Bonanjo avec protection escrow LOUMOO."
+  },
+
+  "home_presse_agrumes_electrique_inox_eurolux_p": {
+    id: "home_presse_agrumes_electrique_inox_eurolux_p",
+    title: "Presse-Agrumes \u00c9lectrique Inox Eurolux Poign\u00e9e Soft-Grip",
+    brand: "Eurolux Gourmet",
+    category: "home",
+    categoryLabel: "Small Kitchen Appliances",
+    subcategory: "appliances",
+    conditionLabel: "Neuf sous emballage d'origine \u00b7 Garantie 12 Mois",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "-23% VENTE FLASH",
+    rating: "4.8",
+    reviewCount: 48,
+    soldCount: 127,
+    price: "XAF 42.000",
+    salePrice: "XAF 32.500",
+    storeName: "Comptoir \u00c9lectrom\u00e9nager Yaound\u00e9",
+    storeCity: "March\u00e9 Central, Yaound\u00e9",
+    storeRating: "4.7",
+    storeVerified: true,
+    coverImage: "./Assets/ElectroMenage/996351117589237551.jfif",
+    images: [
+      "./Assets/ElectroMenage/996351117589237551.jfif"
+    ],
+    attributes: [
+      { key: "Moteur", val: "160 Watts silencieux \u00e0 couple puissant" },
+      { key: "M\u00e9canisme", val: "Bras de levier articul\u00e9 sans effort manuel" },
+      { key: "Bec", val: "Bec en acier inox avec valve anti-goutte" }
+    ],
+    description: "Pressez oranges, citrons et pamplemousses jusqu'\u00e0 la derni\u00e8re goutte en quelques secondes gr\u00e2ce au bras de pression assist\u00e9 sans \u00e9claboussures. Garanti 100% authentique par Comptoir \u00c9lectrom\u00e9nager Yaound\u00e9 avec protection escrow LOUMOO."
+  },
+
+  "home_grille_pain_electrique_2_fentes_mondial": {
+    id: "home_grille_pain_electrique_2_fentes_mondial",
+    title: "Grille-Pain \u00c9lectrique 2 Fentes Mondial Toast Due Black",
+    brand: "Mondial Home",
+    category: "home",
+    categoryLabel: "Small Kitchen Appliances",
+    subcategory: "appliances",
+    conditionLabel: "Neuf sous emballage d'origine \u00b7 Garantie 12 Mois",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "-22% PROMO",
+    rating: "4.9",
+    reviewCount: 53,
+    soldCount: 138,
+    price: "XAF 28.000",
+    salePrice: "XAF 21.900",
+    storeName: "Douala Home Living",
+    storeCity: "Bonamoussadi, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/ElectroMenage/998532548607221441.jfif",
+    images: [
+      "./Assets/ElectroMenage/998532548607221441.jfif"
+    ],
+    attributes: [
+      { key: "Puissance", val: "800 Watts \u00b7 6 Niveaux de dorage" },
+      { key: "Fentes", val: "Fentes extra-larges pour pain de mie et baguettes" },
+      { key: "Tiroir", val: "Ramasse-miettes amovible pour nettoyage facile" }
+    ],
+    description: "Toaster noir laqu\u00e9 \u00e9l\u00e9gant et rapide. R\u00f4tit vos tartines uniform\u00e9ment le matin avec fonction arr\u00eat automatique et \u00e9jection assist\u00e9e. Garanti 100% authentique par Douala Home Living avec protection escrow LOUMOO."
+  },
+
+  "home_extracteur_centrifuge_fruits_entiers_aco": {
+    id: "home_extracteur_centrifuge_fruits_entiers_aco",
+    title: "Extracteur Centrifuge Fruits Entiers ACOQOOS 800W Inox",
+    brand: "ACOQOOS",
+    category: "home",
+    categoryLabel: "Small Kitchen Appliances",
+    subcategory: "appliances",
+    conditionLabel: "Neuf sous emballage d'origine \u00b7 Garantie 12 Mois",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "-23% SOLDE",
+    rating: "4.7",
+    reviewCount: 58,
+    soldCount: 149,
+    price: "XAF 65.000",
+    salePrice: "XAF 49.900",
+    storeName: "Kamer Cuisine Pro",
+    storeCity: "B\u00e9panda, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/ElectroMenage/ACOQOOS%20Juicer%20Machines,%20Juicers%20Whole%20Fruit%20and%E2%80%A6.jfif",
+    images: [
+      "./Assets/ElectroMenage/ACOQOOS%20Juicer%20Machines,%20Juicers%20Whole%20Fruit%20and%E2%80%A6.jfif"
+    ],
+    attributes: [
+      { key: "Puissance", val: "800W Moteur cuivre \u00e0 2 vitesses + Pulse" },
+      { key: "Goulotte", val: "Large goulotte d'insertion 75 mm pour fruits entiers" },
+      { key: "Filtre", val: "Tamis microm\u00e9trique en acier chirurgical 304" }
+    ],
+    description: "Obtenez un jus frais et vitamin\u00e9 sans d\u00e9coupe pr\u00e9alable. Moteur puissant capable d'extraire pommes, carottes et ananas en quelques secondes. Garanti 100% authentique par Kamer Cuisine Pro avec protection escrow LOUMOO."
+  },
+
+  "home_menagere_de_couverts_inox_20_pieces_onei": {
+    id: "home_menagere_de_couverts_inox_20_pieces_onei",
+    title: "M\u00e9nag\u00e8re de Couverts Inox 20 Pi\u00e8ces Oneida Hyde Park",
+    brand: "Oneida Cutlery",
+    category: "home",
+    categoryLabel: "Dinnerware & Glassware",
+    subcategory: "tableware",
+    conditionLabel: "Neuf sous emballage d'origine \u00b7 Garantie 12 Mois",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "-24% PROMO",
+    rating: "4.8",
+    reviewCount: 63,
+    soldCount: 160,
+    price: "XAF 38.000",
+    salePrice: "XAF 29.000",
+    storeName: "Orca Deco Akwa",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/ElectroMenage/Amazon_com%20_%20Oneida%20Hyde%20Park%2020%20Piece%20Everyday%E2%80%A6.jfif",
+    images: [
+      "./Assets/ElectroMenage/Amazon_com%20_%20Oneida%20Hyde%20Park%2020%20Piece%20Everyday%E2%80%A6.jfif"
+    ],
+    attributes: [
+      { key: "Composition", val: "4 Fourchettes, 4 couteaux, 4 cuill\u00e8res \u00e0 soupe, 4 \u00e0 dessert, 4 \u00e0 caf\u00e9" },
+      { key: "Inox", val: "Acier inoxydable 18/0 poli miroir haute r\u00e9sistance" },
+      { key: "Entretien", val: "R\u00e9siste \u00e0 la corrosion et lavable au lave-vaisselle" }
+    ],
+    description: "Couverts de table au design galb\u00e9 et \u00e9l\u00e9gant par Oneida. \u00c9quilibre parfait en main pour vos repas de tous les jours comme pour vos r\u00e9ceptions. Garanti 100% authentique par Orca Deco Akwa avec protection escrow LOUMOO."
+  },
+
+  "home_mousseur_a_lait_electrique_rechargeable": {
+    id: "home_mousseur_a_lait_electrique_rechargeable",
+    title: "Mousseur \u00e0 Lait \u00c9lectrique Rechargeable USB Double Fouet",
+    brand: "Caf\u00e9 Barista",
+    category: "home",
+    categoryLabel: "Small Kitchen Appliances",
+    subcategory: "appliances",
+    conditionLabel: "Neuf sous emballage d'origine \u00b7 Garantie 12 Mois",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "-32% FLASH",
+    rating: "4.9",
+    reviewCount: 68,
+    soldCount: 171,
+    price: "XAF 14.000",
+    salePrice: "XAF 9.500",
+    storeName: "Electro Confort Bonapriso",
+    storeCity: "Bonapriso, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/ElectroMenage/Amazon_com_%20Milk%20Frother%20Rechargeable%20Handheld%E2%80%A6.jfif",
+    images: [
+      "./Assets/ElectroMenage/Amazon_com_%20Milk%20Frother%20Rechargeable%20Handheld%E2%80%A6.jfif"
+    ],
+    attributes: [
+      { key: "Batterie", val: "Rechargeable USB-C lithium 1200 mAh" },
+      { key: "Vitesses", val: "3 Vitesses de rotation r\u00e9glables (jusqu'\u00e0 12 000 tr/min)" },
+      { key: "Embouts", val: "1 Fouet ballon mousse + 1 fouet spirale cappuccino" }
+    ],
+    description: "Cr\u00e9ez une mousse onctueuse et dense pour cappuccinos, lattes et chocolats chauds en moins de 15 secondes. Silencieux et autonome. Garanti 100% authentique par Electro Confort Bonapriso avec protection escrow LOUMOO."
+  },
+
+  "home_blender_extracteur_nutritionnel_haute_vi": {
+    id: "home_blender_extracteur_nutritionnel_haute_vi",
+    title: "Blender & Extracteur Nutritionnel Haute Vitesse 1000W",
+    brand: "NutriBlend Pro",
+    category: "home",
+    categoryLabel: "Small Kitchen Appliances",
+    subcategory: "appliances",
+    conditionLabel: "Neuf sous emballage d'origine \u00b7 Garantie 12 Mois",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "-24% PROMO",
+    rating: "4.7",
+    reviewCount: 73,
+    soldCount: 182,
+    price: "XAF 55.000",
+    salePrice: "XAF 42.000",
+    storeName: "Bazar Yaound\u00e9 Bastos",
+    storeCity: "Bastos, Yaound\u00e9",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/ElectroMenage/Blending%20and%20juicing%20both%20are%20good%20for%20your%20health%E2%80%A6.jfif",
+    images: [
+      "./Assets/ElectroMenage/Blending%20and%20juicing%20both%20are%20good%20for%20your%20health%E2%80%A6.jfif"
+    ],
+    attributes: [
+      { key: "Puissance", val: "1000 Watts \u00e0 24 000 tr/min" },
+      { key: "Lames", val: "6 Lames en acier japonais dentel\u00e9 broyage de glace" },
+      { key: "Gobelet", val: "Bol en Tritan sans BPA 1.2L avec couvercle nomade" }
+    ],
+    description: "Blender ultra-performant con\u00e7u pour pulv\u00e9riser graines, fruits surgel\u00e9s et l\u00e9gumes fibreux. Vos smoothies et velout\u00e9s soyeux en un clin d'\u0153il. Garanti 100% authentique par Bazar Yaound\u00e9 Bastos avec protection escrow LOUMOO."
+  },
+
+  "home_extracteur_de_jus_a_froid_silencieux_mas": {
+    id: "home_extracteur_de_jus_a_froid_silencieux_mas",
+    title: "Extracteur de Jus \u00e0 Froid Silencieux Masticating Cold Press",
+    brand: "VitalPress",
+    category: "home",
+    categoryLabel: "Small Kitchen Appliances",
+    subcategory: "appliances",
+    conditionLabel: "Neuf sous emballage d'origine \u00b7 Garantie 12 Mois",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "-22% BIEN-\u00caTRE",
+    rating: "4.8",
+    reviewCount: 78,
+    soldCount: 43,
+    price: "XAF 78.000",
+    salePrice: "XAF 61.000",
+    storeName: "Maison du M\u00e9nage Mboppi",
+    storeCity: "Mboppi, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/ElectroMenage/Cold%20Press%20Juicer%20Machine%20for%20Fresh%20Juice%20and%20Modern%20Kitchen%20Countertops.jfif",
+    images: [
+      "./Assets/ElectroMenage/Cold%20Press%20Juicer%20Machine%20for%20Fresh%20Juice%20and%20Modern%20Kitchen%20Countertops.jfif"
+    ],
+    attributes: [
+      { key: "Extraction", val: "Pression lente \u00e0 froid 60 tr/min sans oxydation" },
+      { key: "Rendement", val: "Jusqu'\u00e0 90% d'extraction de jus pur" },
+      { key: "Bruit", val: "Moteur ultra-silencieux inf\u00e9rieur \u00e0 55 dB" }
+    ],
+    description: "Conservez 100% des enzymes, vitamines et min\u00e9raux de vos fruits et l\u00e9gumes verts gr\u00e2ce \u00e0 la technologie de pression lente sans \u00e9chauffement. Garanti 100% authentique par Maison du M\u00e9nage Mboppi avec protection escrow LOUMOO."
+  },
+
+  "home_coffret_essentiel_reception_cuisine_serv": {
+    id: "home_coffret_essentiel_reception_cuisine_serv",
+    title: "Coffret Essentiel R\u00e9ception Cuisine & Service Mariage",
+    brand: "Atelier Reception",
+    category: "home",
+    categoryLabel: "Cookware & Kitchen Utensils",
+    subcategory: "cookware",
+    conditionLabel: "Neuf sous emballage d'origine \u00b7 Garantie 12 Mois",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "-23% CADEAU",
+    rating: "4.9",
+    reviewCount: 83,
+    soldCount: 54,
+    price: "XAF 75.000",
+    salePrice: "XAF 58.000",
+    storeName: "Quincaillerie Centrale Bonanjo",
+    storeCity: "Bonanjo, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/ElectroMenage/How%20to%20Use%20Your%20Wedding%20Style%20to%20Figure%20out%20What%20to%20Register%20For%20_%20A%20Practical%20Wedding.jfif",
+    images: [
+      "./Assets/ElectroMenage/How%20to%20Use%20Your%20Wedding%20Style%20to%20Figure%20out%20What%20to%20Register%20For%20_%20A%20Practical%20Wedding.jfif"
+    ],
+    attributes: [
+      { key: "Ensemble", val: "Po\u00eales en c\u00e9ramique, faitouts et vaisselle d'apparat" },
+      { key: "Qualit\u00e9", val: "Rev\u00eatement renforc\u00e9 sans produits toxiques" },
+      { key: "Style", val: "Tons pastel cr\u00e8me et or pour trousseau nuptial" }
+    ],
+    description: "Pack de prestige r\u00e9unissant ustensiles de cuisson raffin\u00e9s et vaisselle de r\u00e9ception. Le cadeau parfait pour jeunes mari\u00e9s et nouveaux foyers. Garanti 100% authentique par Quincaillerie Centrale Bonanjo avec protection escrow LOUMOO."
+  },
+
+  "home_defroisseur_vapeur_portatif_compact_if_d": {
+    id: "home_defroisseur_vapeur_portatif_compact_if_d",
+    title: "D\u00e9froisseur Vapeur Portatif Compact iF Design Award 1200W",
+    brand: "Snail Steam",
+    category: "home",
+    categoryLabel: "Home Care & Organization",
+    subcategory: "home_care",
+    conditionLabel: "Neuf sous emballage d'origine \u00b7 Garantie 12 Mois",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "-23% INNOVATION",
+    rating: "4.7",
+    reviewCount: 88,
+    soldCount: 65,
+    price: "XAF 35.000",
+    salePrice: "XAF 26.900",
+    storeName: "Comptoir \u00c9lectrom\u00e9nager Yaound\u00e9",
+    storeCity: "March\u00e9 Central, Yaound\u00e9",
+    storeRating: "4.7",
+    storeVerified: true,
+    coverImage: "./Assets/ElectroMenage/iF%20Design%20-%20Small%20snail%20hand-held%20ironing%20machine.jfif",
+    images: [
+      "./Assets/ElectroMenage/iF%20Design%20-%20Small%20snail%20hand-held%20ironing%20machine.jfif"
+    ],
+    attributes: [
+      { key: "Puissance", val: "1200 Watts \u00b7 Pr\u00eat en 25 secondes" },
+      { key: "Semelle", val: "Plaque chauffante c\u00e9ramique anti-adh\u00e9rente" },
+      { key: "Format", val: "Ultra-l\u00e9ger 650g pliable pour voyage et quotidien" }
+    ],
+    description: "D\u00e9froisseur \u00e0 main prim\u00e9 par le prix iF Design. \u00c9limine les plis instantan\u00e9ment sur cintres ou \u00e0 plat sans planche \u00e0 repasser. Indispensable pour vos voyages. Garanti 100% authentique par Comptoir \u00c9lectrom\u00e9nager Yaound\u00e9 avec protection escrow LOUMOO."
+  },
+
+  "home_robot_patissier_multifonction_kitchenaid": {
+    id: "home_robot_patissier_multifonction_kitchenaid",
+    title: "Robot P\u00e2tissier Multifonction KitchenAid Artisan 4.8L",
+    brand: "KitchenAid",
+    category: "home",
+    categoryLabel: "Small Kitchen Appliances",
+    subcategory: "appliances",
+    conditionLabel: "Neuf sous emballage d'origine \u00b7 Garantie 12 Mois",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "-17% PREMIUM",
+    rating: "4.8",
+    reviewCount: 93,
+    soldCount: 76,
+    price: "XAF 275.000",
+    salePrice: "XAF 229.000",
+    storeName: "Douala Home Living",
+    storeCity: "Bonamoussadi, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/ElectroMenage/KitchenAid%20Artisan%20vs_%20Professional%20Mixers%20%2810%20Differences%29%20-%20Prudent%20Reviews.jfif",
+    images: [
+      "./Assets/ElectroMenage/KitchenAid%20Artisan%20vs_%20Professional%20Mixers%20%2810%20Differences%29%20-%20Prudent%20Reviews.jfif"
+    ],
+    attributes: [
+      { key: "Bol", val: "Acier inoxydable 4.8 Litres avec poign\u00e9e ergonomique" },
+      { key: "Moteur", val: "300W Transmission directe plan\u00e9taire robuste" },
+      { key: "Accessoires", val: "Crochet p\u00e9trisseur, fouet \u00e0 fils et batteur plat inclus" }
+    ],
+    description: "L'ic\u00f4ne mondiale de la p\u00e2tisserie et de la boulangerie. Mouvement plan\u00e9taire d'une pr\u00e9cision l\u00e9gendaire pour p\u00e9trir p\u00e2tes \u00e0 pain, brioches et g\u00e2teaux. Garanti 100% authentique par Douala Home Living avec protection escrow LOUMOO."
+  },
+
+  "home_station_expresso_infusion_barista_maison": {
+    id: "home_station_expresso_infusion_barista_maison",
+    title: "Station Expresso & Infusion Barista Maison Inox Vintage",
+    brand: "Barista Art",
+    category: "home",
+    categoryLabel: "Small Kitchen Appliances",
+    subcategory: "appliances",
+    conditionLabel: "Neuf sous emballage d'origine \u00b7 Garantie 12 Mois",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "-20% SOLDE",
+    rating: "4.9",
+    reviewCount: 18,
+    soldCount: 87,
+    price: "XAF 85.000",
+    salePrice: "XAF 68.000",
+    storeName: "Kamer Cuisine Pro",
+    storeCity: "B\u00e9panda, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/ElectroMenage/Make%20Great%20Coffee%20at%20Home.jfif",
+    images: [
+      "./Assets/ElectroMenage/Make%20Great%20Coffee%20at%20Home.jfif"
+    ],
+    attributes: [
+      { key: "Syst\u00e8me", val: "Porte-filtre 58 mm professionnel et buse vapeur" },
+      { key: "Pression", val: "Thermobloc 15 Bars extraction cr\u00e9meuse" },
+      { key: "Buse", val: "Buse vapeur orientable pour latte art" }
+    ],
+    description: "Devenez le barista de votre maison. Extrayez des expressos intenses avec une crema dor\u00e9e et pr\u00e9parez vos cappuccinos comme dans un caf\u00e9 italien. Garanti 100% authentique par Kamer Cuisine Pro avec protection escrow LOUMOO."
+  },
+
+  "home_service_6_assiettes_a_dessert_porcelaine": {
+    id: "home_service_6_assiettes_a_dessert_porcelaine",
+    title: "Service 6 Assiettes \u00e0 Dessert Porcelaine MALACASA Amparo",
+    brand: "MALACASA",
+    category: "home",
+    categoryLabel: "Dinnerware & Glassware",
+    subcategory: "tableware",
+    conditionLabel: "Neuf sous emballage d'origine \u00b7 Garantie 12 Mois",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "-24% PROMO",
+    rating: "4.7",
+    reviewCount: 23,
+    soldCount: 98,
+    price: "XAF 25.000",
+    salePrice: "XAF 18.900",
+    storeName: "Orca Deco Akwa",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/ElectroMenage/MALACASA,%20Serie%20Amparo,%206%20teilig%20Set%20Cremewei%C3%9F%20Porzellan%20Kuchenteller%20Dessertteller%20Fr%C3%BCst%C3%BCksteller%208%20Zoll%20_%2020,5x20,5x1,8cm%20f%C3%BCr%206%20Personen,%20AMPARO-6DP-S,%206%20Teilig%20Dessertteller.jfif",
+    images: [
+      "./Assets/ElectroMenage/MALACASA,%20Serie%20Amparo,%206%20teilig%20Set%20Cremewei%C3%9F%20Porzellan%20Kuchenteller%20Dessertteller%20Fr%C3%BCst%C3%BCksteller%208%20Zoll%20_%2020,5x20,5x1,8cm%20f%C3%BCr%206%20Personen,%20AMPARO-6DP-S,%206%20Teilig%20Dessertteller.jfif"
+    ],
+    attributes: [
+      { key: "Dimensions", val: "20.5 x 20.5 cm par assiette" },
+      { key: "Porcelaine", val: "Porcelaine blanc cr\u00e8me Serie Amparo" },
+      { key: "Nombre", val: "Lot de 6 assiettes \u00e0 dessert et petit-d\u00e9jeuner" }
+    ],
+    description: "Assiettes carr\u00e9es aux courbes douces en porcelaine fine blanc cr\u00e8me. Apportent une touche de modernit\u00e9 \u00e9l\u00e9gante \u00e0 tous vos desserts et go\u00fbters. Garanti 100% authentique par Orca Deco Akwa avec protection escrow LOUMOO."
+  },
+
+  "home_presse_citron_manuel_en_verre_cannele_so": {
+    id: "home_presse_citron_manuel_en_verre_cannele_so",
+    title: "Presse-Citron Manuel en Verre Cannel\u00e9 & Socle Verseur",
+    brand: "Kitchen Craft",
+    category: "home",
+    categoryLabel: "Cookware & Kitchen Utensils",
+    subcategory: "cookware",
+    conditionLabel: "Neuf sous emballage d'origine \u00b7 Garantie 12 Mois",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "-27% PROMO",
+    rating: "4.8",
+    reviewCount: 28,
+    soldCount: 109,
+    price: "XAF 9.500",
+    salePrice: "XAF 6.900",
+    storeName: "Electro Confort Bonapriso",
+    storeCity: "Bonapriso, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/ElectroMenage/Manual%20Citrus%20Juicer%20for%20Fresh%20Juice%20Without%20the%20Mess.jfif",
+    images: [
+      "./Assets/ElectroMenage/Manual%20Citrus%20Juicer%20for%20Fresh%20Juice%20Without%20the%20Mess.jfif"
+    ],
+    attributes: [
+      { key: "Mati\u00e8re", val: "Verre tremp\u00e9 \u00e9pais haute r\u00e9sistance" },
+      { key: "C\u00f4ne", val: "C\u00f4ne cannel\u00e9 optimis\u00e9 extraction pulpe" },
+      { key: "Bec", val: "Bec verseur et anse de maintien lat\u00e9rale" }
+    ],
+    description: "L'outil traditionnel ind\u00e9modable pour extraire rapidement le jus d'un citron ou d'une lime sans p\u00e9pins pour vos vinaigrettes et marinades. Garanti 100% authentique par Electro Confort Bonapriso avec protection escrow LOUMOO."
+  },
+
+  "home_extracteur_de_jus_slow_juicer_grande_gou": {
+    id: "home_extracteur_de_jus_slow_juicer_grande_gou",
+    title: "Extracteur de Jus Slow Juicer Grande Goulotte Moteur Cuivre",
+    brand: "PowerPress",
+    category: "home",
+    categoryLabel: "Small Kitchen Appliances",
+    subcategory: "appliances",
+    conditionLabel: "Neuf sous emballage d'origine \u00b7 Garantie 12 Mois",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "-24% VENTE FLASH",
+    rating: "4.9",
+    reviewCount: 33,
+    soldCount: 120,
+    price: "XAF 72.000",
+    salePrice: "XAF 55.000",
+    storeName: "Bazar Yaound\u00e9 Bastos",
+    storeCity: "Bastos, Yaound\u00e9",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/ElectroMenage/Powerful%20Slow%20Cold%20Press%20Juicer%20with%20Large%20Feed%20Chute%20Recipe%20for%20Vegetables%20Fruits%20Single%20Serve%20Juicec%20Extractor%20Machines%20-%20AliExpress%201420.jfif",
+    images: [
+      "./Assets/ElectroMenage/Powerful%20Slow%20Cold%20Press%20Juicer%20with%20Large%20Feed%20Chute%20Recipe%20for%20Vegetables%20Fruits%20Single%20Serve%20Juicec%20Extractor%20Machines%20-%20AliExpress%201420.jfif"
+    ],
+    attributes: [
+      { key: "Vitesse", val: "55 tr/min vitesse lente pr\u00e9servatrice d'antioxydants" },
+      { key: "Goulotte", val: "Goulotte 80 mm fruits et l\u00e9gumes non d\u00e9coup\u00e9s" },
+      { key: "Nettoyage", val: "D\u00e9montage en 3 pi\u00e8ces avec brosse incluse" }
+    ],
+    description: "Extracteur vertical compact \u00e0 vis sans fin renforc\u00e9e. S\u00e9pare parfaitement la pulpe s\u00e8che du jus pur pour un rendement vitaminique maximal. Garanti 100% authentique par Bazar Yaound\u00e9 Bastos avec protection escrow LOUMOO."
+  },
+
+  "home_presse_fruits_et_legumes_compact_nutrime": {
+    id: "home_presse_fruits_et_legumes_compact_nutrime",
+    title: "Presse Fruits et L\u00e9gumes Compact \u2013 Nutriments Pr\u00e9serv\u00e9s",
+    brand: "NutriSqueeze",
+    category: "home",
+    categoryLabel: "Small Kitchen Appliances",
+    subcategory: "appliances",
+    conditionLabel: "Neuf sous emballage d'origine \u00b7 Garantie 12 Mois",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "-23% PROMO",
+    rating: "4.7",
+    reviewCount: 38,
+    soldCount: 131,
+    price: "XAF 48.000",
+    salePrice: "XAF 37.000",
+    storeName: "Maison du M\u00e9nage Mboppi",
+    storeCity: "Mboppi, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/ElectroMenage/Presse%20Fruits%20et%20Fibres%20%E2%80%93%20Nutriments%20Pr%C3%A9serv%C3%A9s.jfif",
+    images: [
+      "./Assets/ElectroMenage/Presse%20Fruits%20et%20Fibres%20%E2%80%93%20Nutriments%20Pr%C3%A9serv%C3%A9s.jfif"
+    ],
+    attributes: [
+      { key: "Technologie", val: "Vis de pressage h\u00e9lico\u00efdale en c\u00e9ramique/composite" },
+      { key: "Format", val: "Design vertical ultra-compact gain de place" },
+      { key: "S\u00e9curit\u00e9", val: "Verrouillage automatique intelligent" }
+    ],
+    description: "Appareil compact id\u00e9al pour les jus du matin. Pr\u00e9parez des jus de gingembre, curcuma, ananas et carottes frais en quelques minutes. Garanti 100% authentique par Maison du M\u00e9nage Mboppi avec protection escrow LOUMOO."
+  },
+
+  "home_service_de_porcelaine_blanche_a_bords_fe": {
+    id: "home_service_de_porcelaine_blanche_a_bords_fe",
+    title: "Service de Porcelaine Blanche \u00e0 Bords Festonn\u00e9s 24 Pi\u00e8ces",
+    brand: "Royal Table",
+    category: "home",
+    categoryLabel: "Dinnerware & Glassware",
+    subcategory: "tableware",
+    conditionLabel: "Neuf sous emballage d'origine \u00b7 Garantie 12 Mois",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "-23% PROMO",
+    rating: "4.8",
+    reviewCount: 43,
+    soldCount: 142,
+    price: "XAF 62.000",
+    salePrice: "XAF 48.000",
+    storeName: "Quincaillerie Centrale Bonanjo",
+    storeCity: "Bonanjo, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/ElectroMenage/SET%20HII%20IPO%20YA%20KUTOSHAAAA%20%E2%98%8E%EF%B8%8FCall_watsup_%20%28+255%29%E2%80%A6.jfif",
+    images: [
+      "./Assets/ElectroMenage/SET%20HII%20IPO%20YA%20KUTOSHAAAA%20%E2%98%8E%EF%B8%8FCall_watsup_%20%28+255%29%E2%80%A6.jfif"
+    ],
+    attributes: [
+      { key: "Contenu", val: "Grand plat de pr\u00e9sentation, assiettes plates et raviers creux" },
+      { key: "Porcelaine", val: "Porcelaine vitrifi\u00e9e \u00e0 relief festonn\u00e9 ondul\u00e9" },
+      { key: "Usage", val: "Table de f\u00eate, r\u00e9ceptions familiales et traiteur" }
+    ],
+    description: "Service complet aux lignes ondul\u00e9es \u00e9l\u00e9gantes. Pr\u00e9sentez vos poissons brais\u00e9s, poulets r\u00f4tis et accompagnements avec distinction. Garanti 100% authentique par Quincaillerie Centrale Bonanjo avec protection escrow LOUMOO."
+  },
+
+  "home_blender_electrique_bol_en_verre_15l_hami": {
+    id: "home_blender_electrique_bol_en_verre_15l_hami",
+    title: "Blender \u00c9lectrique Bol en Verre 1.5L Hamilton Beach 700W",
+    brand: "Hamilton Beach",
+    category: "home",
+    categoryLabel: "Small Kitchen Appliances",
+    subcategory: "appliances",
+    conditionLabel: "Neuf sous emballage d'origine \u00b7 Garantie 12 Mois",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "-23% VENTE FLASH",
+    rating: "4.9",
+    reviewCount: 48,
+    soldCount: 153,
+    price: "XAF 52.000",
+    salePrice: "XAF 39.900",
+    storeName: "Comptoir \u00c9lectrom\u00e9nager Yaound\u00e9",
+    storeCity: "March\u00e9 Central, Yaound\u00e9",
+    storeRating: "4.7",
+    storeVerified: true,
+    coverImage: "./Assets/ElectroMenage/Smart%20Kitchen.jfif",
+    images: [
+      "./Assets/ElectroMenage/Smart%20Kitchen.jfif"
+    ],
+    attributes: [
+      { key: "Puissance", val: "700 Watts de puissance de cr\u00eate" },
+      { key: "Bol", val: "Verre \u00e9pais borosilicate 1.5L thermor\u00e9sistant" },
+      { key: "Commandes", val: "4 Boutons multifonctions + fonction Pulse" }
+    ],
+    description: "Le classique am\u00e9ricain reconnu pour sa robustesse. \u00c9quip\u00e9 du syst\u00e8me Wave-Action qui ram\u00e8ne en continu les aliments vers les lames pour un mixage lisse. Garanti 100% authentique par Comptoir \u00c9lectrom\u00e9nager Yaound\u00e9 avec protection escrow LOUMOO."
+  },
+
+  "home_gobelet_smoothie_iced_coffee_en_verre_co": {
+    id: "home_gobelet_smoothie_iced_coffee_en_verre_co",
+    title: "Gobelet Smoothie & Iced Coffee en Verre Couvercle Bambou 550ml",
+    brand: "EcoLiving",
+    category: "home",
+    categoryLabel: "Dinnerware & Glassware",
+    subcategory: "tableware",
+    conditionLabel: "Neuf sous emballage d'origine \u00b7 Garantie 12 Mois",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "-31% PROMO",
+    rating: "4.7",
+    reviewCount: 53,
+    soldCount: 164,
+    price: "XAF 8.500",
+    salePrice: "XAF 5.900",
+    storeName: "Douala Home Living",
+    storeCity: "Bonamoussadi, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/ElectroMenage/Smoothie%20Glass.jfif",
+    images: [
+      "./Assets/ElectroMenage/Smoothie%20Glass.jfif"
+    ],
+    attributes: [
+      { key: "Contenance", val: "550 ml" },
+      { key: "Accessoires", val: "Couvercle en bambou naturel avec joint silicone + paille en verre" },
+      { key: "Usage", val: "Smoothies, caf\u00e9s glac\u00e9s, th\u00e9s boba et jus frais" }
+    ],
+    description: "Verre canette tendance et \u00e9cologique pour emporter vos boissons fra\u00eeches partout. Couvercle \u00e9tanche en bambou et paille lavable r\u00e9utilisable. Garanti 100% authentique par Douala Home Living avec protection escrow LOUMOO."
+  },
+
+  "home_presse_a_repasser_vapeur_support_telesco": {
+    id: "home_presse_a_repasser_vapeur_support_telesco",
+    title: "Presse \u00e0 Repasser Vapeur & Support T\u00e9lescopique Speedy Press",
+    brand: "Speedy Press",
+    category: "home",
+    categoryLabel: "Home Care & Organization",
+    subcategory: "home_care",
+    conditionLabel: "Neuf sous emballage d'origine \u00b7 Garantie 12 Mois",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "-21% SOLDE",
+    rating: "4.8",
+    reviewCount: 58,
+    soldCount: 175,
+    price: "XAF 125.000",
+    salePrice: "XAF 99.000",
+    storeName: "Kamer Cuisine Pro",
+    storeCity: "B\u00e9panda, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/ElectroMenage/Speedy%20Press%20Steam%20Press%20Stand%20-%20Steam%20Press%20Telescopic%20Iron%20Stand%20for%20Speedy%20Press%20Compact%2022_%20Iron%20Press%20%E2%80%93%20Makes%20Steaming%20Garments%20Quicker%20&%20Easier.jfif",
+    images: [
+      "./Assets/ElectroMenage/Speedy%20Press%20Steam%20Press%20Stand%20-%20Steam%20Press%20Telescopic%20Iron%20Stand%20for%20Speedy%20Press%20Compact%2022_%20Iron%20Press%20%E2%80%93%20Makes%20Steaming%20Garments%20Quicker%20&%20Easier.jfif"
+    ],
+    attributes: [
+      { key: "Pression", val: "Pression automatique \u00e9quivalente \u00e0 45 kg" },
+      { key: "Surface", val: "Plateau chauffant t\u00e9flonn\u00e9 65 x 26 cm" },
+      { key: "Support", val: "Pied m\u00e9tallique t\u00e9lescopique pliable avec panier \u00e0 linge" }
+    ],
+    description: "Repassez vos boubous, chemises, draps et pantalons 5 fois plus vite qu'au fer ordinaire. Vapeur puissante et support stable r\u00e9glable en hauteur. Garanti 100% authentique par Kamer Cuisine Pro avec protection escrow LOUMOO."
+  },
+
+  "home_ecumoire_araignee_inox_manche_bois_pour": {
+    id: "home_ecumoire_araignee_inox_manche_bois_pour",
+    title: "\u00c9cumoire Araign\u00e9e Inox Manche Bois pour Fritures & Beignets",
+    brand: "Cuisine d'Afrique",
+    category: "home",
+    categoryLabel: "Cookware & Kitchen Utensils",
+    subcategory: "cookware",
+    conditionLabel: "Neuf sous emballage d'origine \u00b7 Garantie 12 Mois",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "-32% PROMO",
+    rating: "4.9",
+    reviewCount: 63,
+    soldCount: 36,
+    price: "XAF 12.500",
+    salePrice: "XAF 8.500",
+    storeName: "Orca Deco Akwa",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/ElectroMenage/stainless%20steel%20spider%20strainer%20with%20wooden%20handle%20for%20deep%20frying.jfif",
+    images: [
+      "./Assets/ElectroMenage/stainless%20steel%20spider%20strainer%20with%20wooden%20handle%20for%20deep%20frying.jfif"
+    ],
+    attributes: [
+      { key: "Diam\u00e8tre", val: "Panier araign\u00e9e 18 cm en fil d'inox tress\u00e9" },
+      { key: "Manche", val: "Manche long en bois dur isolant de 40 cm" },
+      { key: "Usage", val: "Friture beignets, frites, plantains et \u00e9gouttage express" }
+    ],
+    description: "\u00c9cumoire araign\u00e9e professionnelle id\u00e9ale pour \u00e9goutter beignets koki, plantains frits et viandes croustillantes sans retenir l'huile. Manche en bois anti-chauffe. Garanti 100% authentique par Orca Deco Akwa avec protection escrow LOUMOO."
+  },
+
+  "home_cristal_luminescent_dambiance_decoratif": {
+    id: "home_cristal_luminescent_dambiance_decoratif",
+    title: "Cristal Luminescent d'Ambiance D\u00e9coratif Chambre & Nuit",
+    brand: "Lumina Glow",
+    category: "home",
+    categoryLabel: "Home Care & Organization",
+    subcategory: "home_care",
+    conditionLabel: "Neuf sous emballage d'origine \u00b7 Garantie 12 Mois",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "-34% PROMO",
+    rating: "4.7",
+    reviewCount: 68,
+    soldCount: 47,
+    price: "XAF 9.000",
+    salePrice: "XAF 5.900",
+    storeName: "Electro Confort Bonapriso",
+    storeCity: "Bonapriso, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/ElectroMenage/Stone%20Pendant%20Glow%20In%20The%20Dark%20Necklace%20_%20SHEIN%E2%80%A6.jfif",
+    images: [
+      "./Assets/ElectroMenage/Stone%20Pendant%20Glow%20In%20The%20Dark%20Necklace%20_%20SHEIN%E2%80%A6.jfif"
+    ],
+    attributes: [
+      { key: "Effet", val: "Phosphorescence bleue azur longue dur\u00e9e" },
+      { key: "Recharge", val: "Se recharge \u00e0 la lumi\u00e8re du jour ou lampe UV" },
+      { key: "Usage", val: "D\u00e9coration nocturne, veilleuse de chevet ou ornement" }
+    ],
+    description: "Pierre cristalline phosphorescente diffusant une douce lueur bleut\u00e9e apaisante dans le noir. Id\u00e9ale pour cr\u00e9er une ambiance f\u00e9erique dans votre chambre. Garanti 100% authentique par Electro Confort Bonapriso avec protection escrow LOUMOO."
+  },
+
+  "home_lot_de_6_mugs_ceramique_a_pois_avec_arbr": {
+    id: "home_lot_de_6_mugs_ceramique_a_pois_avec_arbr",
+    title: "Lot de 6 Mugs C\u00e9ramique \u00e0 Pois avec Arbre de Rangement Inox",
+    brand: "Comfort Home",
+    category: "home",
+    categoryLabel: "Dinnerware & Glassware",
+    subcategory: "tableware",
+    conditionLabel: "Neuf sous emballage d'origine \u00b7 Garantie 12 Mois",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "-23% PROMO",
+    rating: "4.8",
+    reviewCount: 73,
+    soldCount: 58,
+    price: "XAF 26.000",
+    salePrice: "XAF 19.900",
+    storeName: "Bazar Yaound\u00e9 Bastos",
+    storeCity: "Bastos, Yaound\u00e9",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/ElectroMenage/The%20Best%20Gifts%20For%20the%20Introverts%20in%20Your%20Life.jfif",
+    images: [
+      "./Assets/ElectroMenage/The%20Best%20Gifts%20For%20the%20Introverts%20in%20Your%20Life.jfif"
+    ],
+    attributes: [
+      { key: "Contenu", val: "6 Tasses de 320 ml aux coloris assortis + support en acier chrom\u00e9" },
+      { key: "Mati\u00e8re", val: "C\u00e9ramique \u00e9maill\u00e9e de haute qualit\u00e9" },
+      { key: "Gain de place", val: "Support vertical sur pied pour plan de travail ordonn\u00e9" }
+    ],
+    description: "Ensemble gai et color\u00e9 de 6 mugs \u00e0 pois sur support rotatif chrom\u00e9. Donne instantan\u00e9ment du charme et de la convivialit\u00e9 \u00e0 votre coin caf\u00e9. Garanti 100% authentique par Bazar Yaound\u00e9 Bastos avec protection escrow LOUMOO."
+  },
+
+  "home_fut_de_stockage_hermetique_60l_alimentai": {
+    id: "home_fut_de_stockage_hermetique_60l_alimentai",
+    title: "F\u00fbt de Stockage Herm\u00e9tique 60L Alimentaire avec Cerclage Inox",
+    brand: "WAZHOU Industrial",
+    category: "home",
+    categoryLabel: "Home Care & Organization",
+    subcategory: "home_care",
+    conditionLabel: "Neuf sous emballage d'origine \u00b7 Garantie 12 Mois",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "-23% ROBUSTE",
+    rating: "4.9",
+    reviewCount: 78,
+    soldCount: 69,
+    price: "XAF 36.000",
+    salePrice: "XAF 27.900",
+    storeName: "Maison du M\u00e9nage Mboppi",
+    storeCity: "Mboppi, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/ElectroMenage/WAZHOU%20Large%20Plastic%20Blue%20Open%20Top%20Storage%20Barrel%20Drum%20Keg%20with%20Lid%20and%20Latch%20Ring,%20Food%20Grade%20for%20Shipping,%20Air%20Tight%20Industrial%20Storage%20Container.jfif",
+    images: [
+      "./Assets/ElectroMenage/WAZHOU%20Large%20Plastic%20Blue%20Open%20Top%20Storage%20Barrel%20Drum%20Keg%20with%20Lid%20and%20Latch%20Ring,%20Food%20Grade%20for%20Shipping,%20Air%20Tight%20Industrial%20Storage%20Container.jfif"
+    ],
+    attributes: [
+      { key: "Volume", val: "60 Litres" },
+      { key: "Mati\u00e8re", val: "Poly\u00e9thyl\u00e8ne haute densit\u00e9 (PEHD) alimentaire sans BPA" },
+      { key: "Fermeture", val: "Couvercle joint \u00e9tanche avec cerclage m\u00e9tallique \u00e0 levier" }
+    ],
+    description: "Baril herm\u00e9tique de stockage alimentaire renforc\u00e9 pour r\u00e9serve d'eau, farine, riz et c\u00e9r\u00e9ales. Protection totale contre l'humidit\u00e9, l'air et les nuisibles. Garanti 100% authentique par Maison du M\u00e9nage Mboppi avec protection escrow LOUMOO."
+  },
+
+  "home_extracteur_centrifuge_double_bec_nspouce": {
+    id: "home_extracteur_centrifuge_double_bec_nspouce",
+    title: "Extracteur Centrifuge Double Bec Nspouce 800W Inox Bross\u00e9",
+    brand: "Nspouce Kitchen",
+    category: "home",
+    categoryLabel: "Small Kitchen Appliances",
+    subcategory: "appliances",
+    conditionLabel: "Neuf sous emballage d'origine \u00b7 Garantie 12 Mois",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "-24% VENTE FLASH",
+    rating: "4.7",
+    reviewCount: 83,
+    soldCount: 80,
+    price: "XAF 68.000",
+    salePrice: "XAF 52.000",
+    storeName: "Quincaillerie Centrale Bonanjo",
+    storeCity: "Bonanjo, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/ElectroMenage/%E2%9A%A0%EF%B8%8FCopyright%20Notice_%20This%20image%20is%20a%20photography%E2%80%A6.jfif",
+    images: [
+      "./Assets/ElectroMenage/%E2%9A%A0%EF%B8%8FCopyright%20Notice_%20This%20image%20is%20a%20photography%E2%80%A6.jfif"
+    ],
+    attributes: [
+      { key: "Puissance", val: "800 Watts \u00b7 Vitesse de rotation 18 000 tr/min" },
+      { key: "Corps", val: "Acier inoxydable bross\u00e9 anti-traces" },
+      { key: "Bec", val: "Double sortie jus et pulpe avec pichet collecteur inclus" }
+    ],
+    description: "Extracteur centrifuge ultra-rapide Nspouce. Pressez grenades, oranges, pommes et pamplemousses en continu avec une clart\u00e9 de jus exemplaire. Garanti 100% authentique par Quincaillerie Centrale Bonanjo avec protection escrow LOUMOO."
+  },
+
+  "home_presse_agrumes_grenades_manuel_a_levier": {
+    id: "home_presse_agrumes_grenades_manuel_a_levier",
+    title: "Presse-Agrumes & Grenades Manuel \u00e0 Levier Acier Chrom\u00e9",
+    brand: "Titan Squeeze",
+    category: "home",
+    categoryLabel: "Small Kitchen Appliances",
+    subcategory: "appliances",
+    conditionLabel: "Neuf sous emballage d'origine \u00b7 Garantie 12 Mois",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "-25% PROMO",
+    rating: "4.8",
+    reviewCount: 88,
+    soldCount: 91,
+    price: "XAF 38.000",
+    salePrice: "XAF 28.500",
+    storeName: "Comptoir \u00c9lectrom\u00e9nager Yaound\u00e9",
+    storeCity: "March\u00e9 Central, Yaound\u00e9",
+    storeRating: "4.7",
+    storeVerified: true,
+    coverImage: "./Assets/ElectroMenage/%F0%9F%8D%8B%20WASTING%20Juice_%20This%20$6%20Gadget%20Captures%20EVERY%20Drop%21.jfif",
+    images: [
+      "./Assets/ElectroMenage/%F0%9F%8D%8B%20WASTING%20Juice_%20This%20$6%20Gadget%20Captures%20EVERY%20Drop%21.jfif"
+    ],
+    attributes: [
+      { key: "Structure", val: "Fonte d'acier chrom\u00e9 robuste et c\u00f4ne inox 304" },
+      { key: "Pression", val: "Levier d\u00e9multiplicateur de force m\u00e9canique" },
+      { key: "Stabilit\u00e9", val: "Pied ventouse antid\u00e9rapant pour plan de travail" }
+    ],
+    description: "Presse-agrumes professionnel de bar \u00e0 levier m\u00e9canique. Extrait jusqu'\u00e0 la derni\u00e8re goutte de jus d'orange et de grenade sans effort et sans \u00e9lectricit\u00e9. Garanti 100% authentique par Comptoir \u00c9lectrom\u00e9nager Yaound\u00e9 avec protection escrow LOUMOO."
+  },
+
+  "home_lot_de_24_assiettes_rondes_porcelaine_bl": {
+    id: "home_lot_de_24_assiettes_rondes_porcelaine_bl",
+    title: "Lot de 24 Assiettes Rondes Porcelaine Blanche H\u00f4teli\u00e8re 24cm",
+    brand: "Horeca Blanc",
+    category: "home",
+    categoryLabel: "Dinnerware & Glassware",
+    subcategory: "tableware",
+    conditionLabel: "Neuf sous emballage d'origine \u00b7 Garantie 12 Mois",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "-23% LOT PRO",
+    rating: "4.9",
+    reviewCount: 93,
+    soldCount: 102,
+    price: "XAF 55.000",
+    salePrice: "XAF 42.500",
+    storeName: "Douala Home Living",
+    storeCity: "Bonamoussadi, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/ElectroMenage/%F0%9F%AB%A7.jfif",
+    images: [
+      "./Assets/ElectroMenage/%F0%9F%AB%A7.jfif"
+    ],
+    attributes: [
+      { key: "Quantit\u00e9", val: "24 Assiettes plates 24 cm de diam\u00e8tre" },
+      { key: "Mati\u00e8re", val: "Porcelaine vitrifi\u00e9e r\u00e9sistante aux chocs thermiques" },
+      { key: "Usage", val: "Familles nombreuses, banquets, r\u00e9unions et traiteurs" }
+    ],
+    description: "Lot \u00e9conomique de 24 assiettes rondes classiques blanches. Id\u00e9al pour servir de grandes tabl\u00e9es lors des \u00e9v\u00e9nements familiaux et c\u00e9r\u00e9monies. Garanti 100% authentique par Douala Home Living avec protection escrow LOUMOO."
+  },
+
+  "fash_chaussures_de_ville_luxe_confort": {
+    id: "fash_chaussures_de_ville_luxe_confort",
+    title: "Chaussures de Ville Luxe & Confort",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.8",
+    reviewCount: 29,
+    soldCount: 53,
+    price: "XAF 32.750",
+    salePrice: "XAF 38.500",
+    storeName: "Kamer Luxe Bonapriso",
+    storeCity: "Bonapriso, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/%23MenStyle%20%23MensFashion%20%23CorporateStyle%20%23MensShoe%E2%80%A6.jfif",
+    images: [
+      "./Assets/fashion/shoes/%23MenStyle%20%23MensFashion%20%23CorporateStyle%20%23MensShoe%E2%80%A6.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Chaussures de Ville Luxe & Confort. Sourced by Kamer Luxe Bonapriso with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_chaussures_de_ville_luxe_confort_2": {
+    id: "fash_chaussures_de_ville_luxe_confort_2",
+    title: "Chaussures de Ville Luxe & Confort",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.9",
+    reviewCount: 36,
+    soldCount: 66,
+    price: "XAF 33.500",
+    salePrice: "XAF 39.500",
+    storeName: "Maison Wax Bastos",
+    storeCity: "Bastos, Yaound\u00e9",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/1043005594943059380.jfif",
+    images: [
+      "./Assets/fashion/shoes/1043005594943059380.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Chaussures de Ville Luxe & Confort. Sourced by Maison Wax Bastos with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_chaussures_de_ville_luxe_confort_3": {
+    id: "fash_chaussures_de_ville_luxe_confort_3",
+    title: "Chaussures de Ville Luxe & Confort",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.7",
+    reviewCount: 43,
+    soldCount: 79,
+    price: "XAF 34.250",
+    salePrice: "XAF 40.000",
+    storeName: "Boutique Glamour Akwa",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/1044975919818250931.jfif",
+    images: [
+      "./Assets/fashion/shoes/1044975919818250931.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Chaussures de Ville Luxe & Confort. Sourced by Boutique Glamour Akwa with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_classic_brown_brogue_oxfords_with_chunky": {
+    id: "fash_classic_brown_brogue_oxfords_with_chunky",
+    title: "Classic Brown Brogue Oxfords with Chunky Sole _ Stylish Dress",
+    brand: "Milano Sartoriale",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "ITALIAN LEATHER",
+    rating: "4.8",
+    reviewCount: 50,
+    soldCount: 92,
+    price: "XAF 51.600",
+    salePrice: "XAF 60.500",
+    storeName: "Douala Leather Craft",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/Classic%20Brown%20Brogue%20Oxfords%20with%20Chunky%20Sole%20_%20Stylish%20Dress%20Shoes%20for%20Modern%20Men.jfif",
+    images: [
+      "./Assets/fashion/shoes/Classic%20Brown%20Brogue%20Oxfords%20with%20Chunky%20Sole%20_%20Stylish%20Dress%20Shoes%20for%20Modern%20Men.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Classic Brown Brogue Oxfords with Chunky Sole _ Stylish Dress. Sourced by Douala Leather Craft with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_chaussures_de_ville_luxe_confort_4": {
+    id: "fash_chaussures_de_ville_luxe_confort_4",
+    title: "Chaussures de Ville Luxe & Confort",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.9",
+    reviewCount: 57,
+    soldCount: 105,
+    price: "XAF 35.750",
+    salePrice: "XAF 42.000",
+    storeName: "Mboppi Fashion Hub",
+    storeCity: "Mboppi, Douala",
+    storeRating: "4.7",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/1085015735224818048.jfif",
+    images: [
+      "./Assets/fashion/shoes/1085015735224818048.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Chaussures de Ville Luxe & Confort. Sourced by Mboppi Fashion Hub with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_chaussures_de_ville_luxe_confort_5": {
+    id: "fash_chaussures_de_ville_luxe_confort_5",
+    title: "Chaussures de Ville Luxe & Confort",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.7",
+    reviewCount: 64,
+    soldCount: 118,
+    price: "XAF 36.500",
+    salePrice: "XAF 43.000",
+    storeName: "Urban Kicks Bonamoussadi",
+    storeCity: "Bonamoussadi, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/1088041591244826033.jfif",
+    images: [
+      "./Assets/fashion/shoes/1088041591244826033.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Chaussures de Ville Luxe & Confort. Sourced by Urban Kicks Bonamoussadi with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_chaussures_de_ville_luxe_confort_6": {
+    id: "fash_chaussures_de_ville_luxe_confort_6",
+    title: "Chaussures de Ville Luxe & Confort",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.8",
+    reviewCount: 71,
+    soldCount: 131,
+    price: "XAF 37.250",
+    salePrice: "XAF 43.500",
+    storeName: "Atelier Haute Couture Yaound\u00e9",
+    storeCity: "March\u00e9 Central, Yaound\u00e9",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/1092756297115666978.jfif",
+    images: [
+      "./Assets/fashion/shoes/1092756297115666978.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Chaussures de Ville Luxe & Confort. Sourced by Atelier Haute Couture Yaound\u00e9 with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_sandalias_planas_de_mango_que_vamos_a_re": {
+    id: "fash_sandalias_planas_de_mango_que_vamos_a_re",
+    title: "sandalias planas de Mango que vamos a repetir sin parar porque",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.9",
+    reviewCount: 78,
+    soldCount: 144,
+    price: "XAF 38.000",
+    salePrice: "XAF 44.500",
+    storeName: "Cameroun Prestige Maroquinerie",
+    storeCity: "Bonanjo, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/11%20sandalias%20planas%20de%20Mango%20que%20vamos%20a%20repetir%20sin%20parar%20porque%20quedan%20genial%20con%20vestidos%20midi.jfif",
+    images: [
+      "./Assets/fashion/shoes/11%20sandalias%20planas%20de%20Mango%20que%20vamos%20a%20repetir%20sin%20parar%20porque%20quedan%20genial%20con%20vestidos%20midi.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: sandalias planas de Mango que vamos a repetir sin parar porque. Sourced by Cameroun Prestige Maroquinerie with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_chaussures_de_ville_luxe_confort_7": {
+    id: "fash_chaussures_de_ville_luxe_confort_7",
+    title: "Chaussures de Ville Luxe & Confort",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.7",
+    reviewCount: 85,
+    soldCount: 157,
+    price: "XAF 38.750",
+    salePrice: "XAF 45.500",
+    storeName: "Kamer Luxe Bonapriso",
+    storeCity: "Bonapriso, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/1196337402525526.jfif",
+    images: [
+      "./Assets/fashion/shoes/1196337402525526.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Chaussures de Ville Luxe & Confort. Sourced by Kamer Luxe Bonapriso with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_chaussures_de_ville_luxe_confort_8": {
+    id: "fash_chaussures_de_ville_luxe_confort_8",
+    title: "Chaussures de Ville Luxe & Confort",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.8",
+    reviewCount: 92,
+    soldCount: 170,
+    price: "XAF 39.500",
+    salePrice: "XAF 46.500",
+    storeName: "Maison Wax Bastos",
+    storeCity: "Bastos, Yaound\u00e9",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/1337074888100196.jfif",
+    images: [
+      "./Assets/fashion/shoes/1337074888100196.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Chaussures de Ville Luxe & Confort. Sourced by Maison Wax Bastos with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_chaussures_de_ville_luxe_confort_9": {
+    id: "fash_chaussures_de_ville_luxe_confort_9",
+    title: "Chaussures de Ville Luxe & Confort",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.9",
+    reviewCount: 99,
+    soldCount: 183,
+    price: "XAF 40.250",
+    salePrice: "XAF 47.000",
+    storeName: "Boutique Glamour Akwa",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/14847873764807413.jfif",
+    images: [
+      "./Assets/fashion/shoes/14847873764807413.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Chaussures de Ville Luxe & Confort. Sourced by Boutique Glamour Akwa with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_chaussures_de_ville_luxe_confort_10": {
+    id: "fash_chaussures_de_ville_luxe_confort_10",
+    title: "Chaussures de Ville Luxe & Confort",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.7",
+    reviewCount: 106,
+    soldCount: 196,
+    price: "XAF 41.000",
+    salePrice: "XAF 48.000",
+    storeName: "Douala Leather Craft",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/180214422583898458.jfif",
+    images: [
+      "./Assets/fashion/shoes/180214422583898458.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Chaussures de Ville Luxe & Confort. Sourced by Douala Leather Craft with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_men_s_thick_sole_high_top_low_top_therma": {
+    id: "fash_men_s_thick_sole_high_top_low_top_therma",
+    title: "Men s Thick Sole High-Top & Low-Top Thermal-Lined Casual",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.8",
+    reviewCount: 113,
+    soldCount: 209,
+    price: "XAF 41.750",
+    salePrice: "XAF 49.000",
+    storeName: "Mboppi Fashion Hub",
+    storeCity: "Mboppi, Douala",
+    storeRating: "4.7",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/2025%20Men%27s%20Thick%20Sole%20High-Top%20&%20Low-Top%20Thermal-Lined%20Casual%20Athletic%20Sneakers,%20Skate%20Shoes,%20Fashion.jfif",
+    images: [
+      "./Assets/fashion/shoes/2025%20Men%27s%20Thick%20Sole%20High-Top%20&%20Low-Top%20Thermal-Lined%20Casual%20Athletic%20Sneakers,%20Skate%20Shoes,%20Fashion.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Men s Thick Sole High-Top & Low-Top Thermal-Lined Casual. Sourced by Mboppi Fashion Hub with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_chaussures_de_ville_luxe_confort_11": {
+    id: "fash_chaussures_de_ville_luxe_confort_11",
+    title: "Chaussures de Ville Luxe & Confort",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.9",
+    reviewCount: 120,
+    soldCount: 222,
+    price: "XAF 42.500",
+    salePrice: "XAF 50.000",
+    storeName: "Urban Kicks Bonamoussadi",
+    storeCity: "Bonamoussadi, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/2885187254655137.jfif",
+    images: [
+      "./Assets/fashion/shoes/2885187254655137.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Chaussures de Ville Luxe & Confort. Sourced by Urban Kicks Bonamoussadi with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_chaussures_de_ville_luxe_confort_12": {
+    id: "fash_chaussures_de_ville_luxe_confort_12",
+    title: "Chaussures de Ville Luxe & Confort",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.7",
+    reviewCount: 127,
+    soldCount: 235,
+    price: "XAF 43.250",
+    salePrice: "XAF 51.000",
+    storeName: "Atelier Haute Couture Yaound\u00e9",
+    storeCity: "March\u00e9 Central, Yaound\u00e9",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/3166662233441836.jfif",
+    images: [
+      "./Assets/fashion/shoes/3166662233441836.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Chaussures de Ville Luxe & Confort. Sourced by Atelier Haute Couture Yaound\u00e9 with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_chaussures_de_ville_luxe_confort_13": {
+    id: "fash_chaussures_de_ville_luxe_confort_13",
+    title: "Chaussures de Ville Luxe & Confort",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.8",
+    reviewCount: 24,
+    soldCount: 248,
+    price: "XAF 44.000",
+    salePrice: "XAF 51.500",
+    storeName: "Cameroun Prestige Maroquinerie",
+    storeCity: "Bonanjo, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/319755642316663217.jfif",
+    images: [
+      "./Assets/fashion/shoes/319755642316663217.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Chaussures de Ville Luxe & Confort. Sourced by Cameroun Prestige Maroquinerie with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_flat_sandals_you_ll_want_to_wear_24_7_th": {
+    id: "fash_flat_sandals_you_ll_want_to_wear_24_7_th",
+    title: "Flat Sandals You ll Want to Wear 24_7 This Summer",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.9",
+    reviewCount: 31,
+    soldCount: 261,
+    price: "XAF 44.750",
+    salePrice: "XAF 52.500",
+    storeName: "Kamer Luxe Bonapriso",
+    storeCity: "Bonapriso, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/32%20Flat%20Sandals%20You%27ll%20Want%20to%20Wear%2024_7%20This%20Summer.jfif",
+    images: [
+      "./Assets/fashion/shoes/32%20Flat%20Sandals%20You%27ll%20Want%20to%20Wear%2024_7%20This%20Summer.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Flat Sandals You ll Want to Wear 24_7 This Summer. Sourced by Kamer Luxe Bonapriso with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_chaussures_de_ville_luxe_confort_14": {
+    id: "fash_chaussures_de_ville_luxe_confort_14",
+    title: "Chaussures de Ville Luxe & Confort",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.7",
+    reviewCount: 38,
+    soldCount: 274,
+    price: "XAF 45.500",
+    salePrice: "XAF 53.500",
+    storeName: "Maison Wax Bastos",
+    storeCity: "Bastos, Yaound\u00e9",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/510666045269914111.jfif",
+    images: [
+      "./Assets/fashion/shoes/510666045269914111.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Chaussures de Ville Luxe & Confort. Sourced by Maison Wax Bastos with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_chaussures_de_ville_luxe_confort_15": {
+    id: "fash_chaussures_de_ville_luxe_confort_15",
+    title: "Chaussures de Ville Luxe & Confort",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.8",
+    reviewCount: 45,
+    soldCount: 47,
+    price: "XAF 46.250",
+    salePrice: "XAF 54.500",
+    storeName: "Boutique Glamour Akwa",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/58687601390873391.jfif",
+    images: [
+      "./Assets/fashion/shoes/58687601390873391.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Chaussures de Ville Luxe & Confort. Sourced by Boutique Glamour Akwa with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_chaussures_de_ville_luxe_confort_16": {
+    id: "fash_chaussures_de_ville_luxe_confort_16",
+    title: "Chaussures de Ville Luxe & Confort",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.9",
+    reviewCount: 52,
+    soldCount: 60,
+    price: "XAF 47.000",
+    salePrice: "XAF 55.000",
+    storeName: "Douala Leather Craft",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/5911043262732682.jfif",
+    images: [
+      "./Assets/fashion/shoes/5911043262732682.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Chaussures de Ville Luxe & Confort. Sourced by Douala Leather Craft with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_chaussures_de_ville_luxe_confort_17": {
+    id: "fash_chaussures_de_ville_luxe_confort_17",
+    title: "Chaussures de Ville Luxe & Confort",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.7",
+    reviewCount: 59,
+    soldCount: 73,
+    price: "XAF 47.750",
+    salePrice: "XAF 56.000",
+    storeName: "Mboppi Fashion Hub",
+    storeCity: "Mboppi, Douala",
+    storeRating: "4.7",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/59883870039061652.jfif",
+    images: [
+      "./Assets/fashion/shoes/59883870039061652.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Chaussures de Ville Luxe & Confort. Sourced by Mboppi Fashion Hub with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_chaussures_de_ville_luxe_confort_18": {
+    id: "fash_chaussures_de_ville_luxe_confort_18",
+    title: "Chaussures de Ville Luxe & Confort",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.8",
+    reviewCount: 66,
+    soldCount: 86,
+    price: "XAF 48.500",
+    salePrice: "XAF 57.000",
+    storeName: "Urban Kicks Bonamoussadi",
+    storeCity: "Bonamoussadi, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/68748883869.jfif",
+    images: [
+      "./Assets/fashion/shoes/68748883869.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Chaussures de Ville Luxe & Confort. Sourced by Urban Kicks Bonamoussadi with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_chaussures_de_ville_luxe_confort_19": {
+    id: "fash_chaussures_de_ville_luxe_confort_19",
+    title: "Chaussures de Ville Luxe & Confort",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.9",
+    reviewCount: 73,
+    soldCount: 99,
+    price: "XAF 49.250",
+    salePrice: "XAF 58.000",
+    storeName: "Atelier Haute Couture Yaound\u00e9",
+    storeCity: "March\u00e9 Central, Yaound\u00e9",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/7107311904535720.jfif",
+    images: [
+      "./Assets/fashion/shoes/7107311904535720.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Chaussures de Ville Luxe & Confort. Sourced by Atelier Haute Couture Yaound\u00e9 with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_chaussures_de_ville_luxe_confort_20": {
+    id: "fash_chaussures_de_ville_luxe_confort_20",
+    title: "Chaussures de Ville Luxe & Confort",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.7",
+    reviewCount: 80,
+    soldCount: 112,
+    price: "XAF 32.000",
+    salePrice: "XAF 37.500",
+    storeName: "Cameroun Prestige Maroquinerie",
+    storeCity: "Bonanjo, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/759982505892538744.jfif",
+    images: [
+      "./Assets/fashion/shoes/759982505892538744.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Chaussures de Ville Luxe & Confort. Sourced by Cameroun Prestige Maroquinerie with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_chaussures_de_ville_luxe_confort_21": {
+    id: "fash_chaussures_de_ville_luxe_confort_21",
+    title: "Chaussures de Ville Luxe & Confort",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.8",
+    reviewCount: 87,
+    soldCount: 125,
+    price: "XAF 32.750",
+    salePrice: "XAF 38.500",
+    storeName: "Kamer Luxe Bonapriso",
+    storeCity: "Bonapriso, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/7599893115357996.jfif",
+    images: [
+      "./Assets/fashion/shoes/7599893115357996.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Chaussures de Ville Luxe & Confort. Sourced by Kamer Luxe Bonapriso with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_chaussures_de_ville_luxe_confort_22": {
+    id: "fash_chaussures_de_ville_luxe_confort_22",
+    title: "Chaussures de Ville Luxe & Confort",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.9",
+    reviewCount: 94,
+    soldCount: 138,
+    price: "XAF 33.500",
+    salePrice: "XAF 39.500",
+    storeName: "Maison Wax Bastos",
+    storeCity: "Bastos, Yaound\u00e9",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/761038037065429590.jfif",
+    images: [
+      "./Assets/fashion/shoes/761038037065429590.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Chaussures de Ville Luxe & Confort. Sourced by Maison Wax Bastos with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_chaussures_de_ville_luxe_confort_23": {
+    id: "fash_chaussures_de_ville_luxe_confort_23",
+    title: "Chaussures de Ville Luxe & Confort",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.7",
+    reviewCount: 101,
+    soldCount: 151,
+    price: "XAF 34.250",
+    salePrice: "XAF 40.000",
+    storeName: "Boutique Glamour Akwa",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/763712049329398808.jfif",
+    images: [
+      "./Assets/fashion/shoes/763712049329398808.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Chaussures de Ville Luxe & Confort. Sourced by Boutique Glamour Akwa with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_chaussures_de_ville_luxe_confort_24": {
+    id: "fash_chaussures_de_ville_luxe_confort_24",
+    title: "Chaussures de Ville Luxe & Confort",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.8",
+    reviewCount: 108,
+    soldCount: 164,
+    price: "XAF 35.000",
+    salePrice: "XAF 41.000",
+    storeName: "Douala Leather Craft",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/8022105581820542.jfif",
+    images: [
+      "./Assets/fashion/shoes/8022105581820542.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Chaussures de Ville Luxe & Confort. Sourced by Douala Leather Craft with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_chaussures_de_ville_luxe_confort_25": {
+    id: "fash_chaussures_de_ville_luxe_confort_25",
+    title: "Chaussures de Ville Luxe & Confort",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.9",
+    reviewCount: 115,
+    soldCount: 177,
+    price: "XAF 35.750",
+    salePrice: "XAF 42.000",
+    storeName: "Mboppi Fashion Hub",
+    storeCity: "Mboppi, Douala",
+    storeRating: "4.7",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/8303580559293175.jfif",
+    images: [
+      "./Assets/fashion/shoes/8303580559293175.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Chaussures de Ville Luxe & Confort. Sourced by Mboppi Fashion Hub with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_chaussures_de_ville_luxe_confort_26": {
+    id: "fash_chaussures_de_ville_luxe_confort_26",
+    title: "Chaussures de Ville Luxe & Confort",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.7",
+    reviewCount: 122,
+    soldCount: 190,
+    price: "XAF 36.500",
+    salePrice: "XAF 43.000",
+    storeName: "Urban Kicks Bonamoussadi",
+    storeCity: "Bonamoussadi, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/879046421013337573.jfif",
+    images: [
+      "./Assets/fashion/shoes/879046421013337573.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Chaussures de Ville Luxe & Confort. Sourced by Urban Kicks Bonamoussadi with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_chaussures_de_ville_luxe_confort_27": {
+    id: "fash_chaussures_de_ville_luxe_confort_27",
+    title: "Chaussures de Ville Luxe & Confort",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.8",
+    reviewCount: 129,
+    soldCount: 203,
+    price: "XAF 37.250",
+    salePrice: "XAF 43.500",
+    storeName: "Atelier Haute Couture Yaound\u00e9",
+    storeCity: "March\u00e9 Central, Yaound\u00e9",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/899242250616041955.jfif",
+    images: [
+      "./Assets/fashion/shoes/899242250616041955.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Chaussures de Ville Luxe & Confort. Sourced by Atelier Haute Couture Yaound\u00e9 with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_chaussures_de_ville_luxe_confort_28": {
+    id: "fash_chaussures_de_ville_luxe_confort_28",
+    title: "Chaussures de Ville Luxe & Confort",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.9",
+    reviewCount: 26,
+    soldCount: 216,
+    price: "XAF 38.000",
+    salePrice: "XAF 44.500",
+    storeName: "Cameroun Prestige Maroquinerie",
+    storeCity: "Bonanjo, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/922815779912381428.jfif",
+    images: [
+      "./Assets/fashion/shoes/922815779912381428.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Chaussures de Ville Luxe & Confort. Sourced by Cameroun Prestige Maroquinerie with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_chaussures_de_ville_luxe_confort_29": {
+    id: "fash_chaussures_de_ville_luxe_confort_29",
+    title: "Chaussures de Ville Luxe & Confort",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.7",
+    reviewCount: 33,
+    soldCount: 229,
+    price: "XAF 38.750",
+    salePrice: "XAF 45.500",
+    storeName: "Kamer Luxe Bonapriso",
+    storeCity: "Bonapriso, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/929782285556020487.jfif",
+    images: [
+      "./Assets/fashion/shoes/929782285556020487.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Chaussures de Ville Luxe & Confort. Sourced by Kamer Luxe Bonapriso with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_chaussures_de_ville_luxe_confort_30": {
+    id: "fash_chaussures_de_ville_luxe_confort_30",
+    title: "Chaussures de Ville Luxe & Confort",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.8",
+    reviewCount: 40,
+    soldCount: 242,
+    price: "XAF 39.500",
+    salePrice: "XAF 46.500",
+    storeName: "Maison Wax Bastos",
+    storeCity: "Bastos, Yaound\u00e9",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/953778027323002446.jfif",
+    images: [
+      "./Assets/fashion/shoes/953778027323002446.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Chaussures de Ville Luxe & Confort. Sourced by Maison Wax Bastos with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_chaussures_de_ville_luxe_confort_31": {
+    id: "fash_chaussures_de_ville_luxe_confort_31",
+    title: "Chaussures de Ville Luxe & Confort",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.9",
+    reviewCount: 47,
+    soldCount: 255,
+    price: "XAF 40.250",
+    salePrice: "XAF 47.000",
+    storeName: "Boutique Glamour Akwa",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/976014550480059555.jfif",
+    images: [
+      "./Assets/fashion/shoes/976014550480059555.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Chaussures de Ville Luxe & Confort. Sourced by Boutique Glamour Akwa with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_chaussures_de_ville_luxe_confort_32": {
+    id: "fash_chaussures_de_ville_luxe_confort_32",
+    title: "Chaussures de Ville Luxe & Confort",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.7",
+    reviewCount: 54,
+    soldCount: 268,
+    price: "XAF 41.000",
+    salePrice: "XAF 48.000",
+    storeName: "Douala Leather Craft",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/977070081662467213.jfif",
+    images: [
+      "./Assets/fashion/shoes/977070081662467213.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Chaussures de Ville Luxe & Confort. Sourced by Douala Leather Craft with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_chaussures_de_ville_luxe_confort_33": {
+    id: "fash_chaussures_de_ville_luxe_confort_33",
+    title: "Chaussures de Ville Luxe & Confort",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.8",
+    reviewCount: 61,
+    soldCount: 41,
+    price: "XAF 41.750",
+    salePrice: "XAF 49.000",
+    storeName: "Mboppi Fashion Hub",
+    storeCity: "Mboppi, Douala",
+    storeRating: "4.7",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/992691942861609761.jfif",
+    images: [
+      "./Assets/fashion/shoes/992691942861609761.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Chaussures de Ville Luxe & Confort. Sourced by Mboppi Fashion Hub with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_available_in_different_sizes": {
+    id: "fash_available_in_different_sizes",
+    title: "Available in different sizes",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.9",
+    reviewCount: 68,
+    soldCount: 54,
+    price: "XAF 42.500",
+    salePrice: "XAF 50.000",
+    storeName: "Urban Kicks Bonamoussadi",
+    storeCity: "Bonamoussadi, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/Available%20in%20different%20sizes.jfif",
+    images: [
+      "./Assets/fashion/shoes/Available%20in%20different%20sizes.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Available in different sizes. Sourced by Urban Kicks Bonamoussadi with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_casual_flats": {
+    id: "fash_casual_flats",
+    title: "Casual flats",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.7",
+    reviewCount: 75,
+    soldCount: 67,
+    price: "XAF 43.250",
+    salePrice: "XAF 51.000",
+    storeName: "Atelier Haute Couture Yaound\u00e9",
+    storeCity: "March\u00e9 Central, Yaound\u00e9",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/Casual%20flats.jfif",
+    images: [
+      "./Assets/fashion/shoes/Casual%20flats.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Casual flats. Sourced by Atelier Haute Couture Yaound\u00e9 with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_church_s_rhonda_sandal": {
+    id: "fash_church_s_rhonda_sandal",
+    title: "Church s Rhonda Sandal",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.8",
+    reviewCount: 82,
+    soldCount: 80,
+    price: "XAF 44.000",
+    salePrice: "XAF 51.500",
+    storeName: "Cameroun Prestige Maroquinerie",
+    storeCity: "Bonanjo, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/Church%27s%20Rhonda%20Sandal.jfif",
+    images: [
+      "./Assets/fashion/shoes/Church%27s%20Rhonda%20Sandal.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Church s Rhonda Sandal. Sourced by Cameroun Prestige Maroquinerie with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_clasyy_set": {
+    id: "fash_clasyy_set",
+    title: "clasyy set",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.9",
+    reviewCount: 89,
+    soldCount: 93,
+    price: "XAF 44.750",
+    salePrice: "XAF 52.500",
+    storeName: "Kamer Luxe Bonapriso",
+    storeCity: "Bonapriso, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/clasyy%20set.jfif",
+    images: [
+      "./Assets/fashion/shoes/clasyy%20set.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: clasyy set. Sourced by Kamer Luxe Bonapriso with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_elegant_floral_flat_sandals_for_women": {
+    id: "fash_elegant_floral_flat_sandals_for_women",
+    title: "Elegant Floral Flat Sandals for Women _ Chic Summer Footwear",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.7",
+    reviewCount: 96,
+    soldCount: 106,
+    price: "XAF 45.500",
+    salePrice: "XAF 53.500",
+    storeName: "Maison Wax Bastos",
+    storeCity: "Bastos, Yaound\u00e9",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/Elegant%20Floral%20Flat%20Sandals%20for%20Women%20_%20Chic%20Summer%20Footwear.jfif",
+    images: [
+      "./Assets/fashion/shoes/Elegant%20Floral%20Flat%20Sandals%20for%20Women%20_%20Chic%20Summer%20Footwear.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Elegant Floral Flat Sandals for Women _ Chic Summer Footwear. Sourced by Maison Wax Bastos with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_elevate_your_summer_wardrobe_with_these": {
+    id: "fash_elevate_your_summer_wardrobe_with_these",
+    title: "Elevate your summer wardrobe with these must-have",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.8",
+    reviewCount: 103,
+    soldCount: 119,
+    price: "XAF 46.250",
+    salePrice: "XAF 54.500",
+    storeName: "Boutique Glamour Akwa",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/Elevate%20your%20summer%20wardrobe%20with%20these%20must-have%E2%80%A6.jfif",
+    images: [
+      "./Assets/fashion/shoes/Elevate%20your%20summer%20wardrobe%20with%20these%20must-have%E2%80%A6.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Elevate your summer wardrobe with these must-have. Sourced by Boutique Glamour Akwa with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_fall_neutrals_x_femme": {
+    id: "fash_fall_neutrals_x_femme",
+    title: "Fall Neutrals x FEMME_",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.9",
+    reviewCount: 110,
+    soldCount: 132,
+    price: "XAF 47.000",
+    salePrice: "XAF 55.000",
+    storeName: "Douala Leather Craft",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/Fall%20Neutrals%20x%20FEMME_.jfif",
+    images: [
+      "./Assets/fashion/shoes/Fall%20Neutrals%20x%20FEMME_.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Fall Neutrals x FEMME_. Sourced by Douala Leather Craft with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_femmes_satine_talon_stiletto_sandales_es": {
+    id: "fash_femmes_satine_talon_stiletto_sandales_es",
+    title: "Femmes Satin\u00e9 Talon stiletto Sandales Escarpins",
+    brand: "Bella Donna",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "BANQUET GLAM",
+    rating: "4.7",
+    reviewCount: 117,
+    soldCount: 145,
+    price: "XAF 50.000",
+    salePrice: "XAF 59.000",
+    storeName: "Mboppi Fashion Hub",
+    storeCity: "Mboppi, Douala",
+    storeRating: "4.7",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/Femmes%20Satin%C3%A9%20Talon%20stiletto%20Sandales%20Escarpins%E2%80%A6.jfif",
+    images: [
+      "./Assets/fashion/shoes/Femmes%20Satin%C3%A9%20Talon%20stiletto%20Sandales%20Escarpins%E2%80%A6.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Femmes Satin\u00e9 Talon stiletto Sandales Escarpins. Sourced by Mboppi Fashion Hub with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_handmade_men_s_oxford_red_sole_shoes_for": {
+    id: "fash_handmade_men_s_oxford_red_sole_shoes_for",
+    title: "Handmade Men s Oxford Red Sole Shoes - Formal Business Casual",
+    brand: "Milano Sartoriale",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "ITALIAN LEATHER",
+    rating: "4.8",
+    reviewCount: 124,
+    soldCount: 158,
+    price: "XAF 64.400",
+    salePrice: "XAF 75.500",
+    storeName: "Urban Kicks Bonamoussadi",
+    storeCity: "Bonamoussadi, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/Handmade%20Men%27s%20Oxford%20Red%20Sole%20Shoes%20-%20Formal%20Business%20Casual%20Brogue%20Party%20Dress%20Shoes.jfif",
+    images: [
+      "./Assets/fashion/shoes/Handmade%20Men%27s%20Oxford%20Red%20Sole%20Shoes%20-%20Formal%20Business%20Casual%20Brogue%20Party%20Dress%20Shoes.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Handmade Men s Oxford Red Sole Shoes - Formal Business Casual. Sourced by Urban Kicks Bonamoussadi with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_how_to_match_leather_bags_with_shoes_and": {
+    id: "fash_how_to_match_leather_bags_with_shoes_and",
+    title: "How to Match Leather Bags With Shoes and Belts Without Overdoing",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.9",
+    reviewCount: 131,
+    soldCount: 171,
+    price: "XAF 49.250",
+    salePrice: "XAF 58.000",
+    storeName: "Atelier Haute Couture Yaound\u00e9",
+    storeCity: "March\u00e9 Central, Yaound\u00e9",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/How%20to%20Match%20Leather%20Bags%20With%20Shoes%20and%20Belts%20Without%20Overdoing%20It_.jfif",
+    images: [
+      "./Assets/fashion/shoes/How%20to%20Match%20Leather%20Bags%20With%20Shoes%20and%20Belts%20Without%20Overdoing%20It_.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: How to Match Leather Bags With Shoes and Belts Without Overdoing. Sourced by Atelier Haute Couture Yaound\u00e9 with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_kraasa_men_s_slip_on_fashion_chelsea_boo": {
+    id: "fash_kraasa_men_s_slip_on_fashion_chelsea_boo",
+    title: "Kraasa Men s Slip On Fashion Chelsea Boots",
+    brand: "Kraasa London",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "SUEDE LEATHER",
+    rating: "4.7",
+    reviewCount: 28,
+    soldCount: 184,
+    price: "XAF 49.200",
+    salePrice: "XAF 58.000",
+    storeName: "Cameroun Prestige Maroquinerie",
+    storeCity: "Bonanjo, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/Kraasa%20Men%27s%20Slip%20On%20Fashion%20Chelsea%20Boots.jfif",
+    images: [
+      "./Assets/fashion/shoes/Kraasa%20Men%27s%20Slip%20On%20Fashion%20Chelsea%20Boots.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Kraasa Men s Slip On Fashion Chelsea Boots. Sourced by Cameroun Prestige Maroquinerie with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_chaussures_de_ville_luxe_confort_34": {
+    id: "fash_chaussures_de_ville_luxe_confort_34",
+    title: "Chaussures de Ville Luxe & Confort",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.8",
+    reviewCount: 35,
+    soldCount: 197,
+    price: "XAF 32.750",
+    salePrice: "XAF 38.500",
+    storeName: "Kamer Luxe Bonapriso",
+    storeCity: "Bonapriso, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/kram.jfif",
+    images: [
+      "./Assets/fashion/shoes/kram.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Chaussures de Ville Luxe & Confort. Sourced by Kamer Luxe Bonapriso with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_look_at_this_new_nike_air_force": {
+    id: "fash_look_at_this_new_nike_air_force",
+    title: "Look at this new Nike Air Force",
+    brand: "Nike Cameroon",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "ORIGINAL DROP",
+    rating: "4.9",
+    reviewCount: 42,
+    soldCount: 210,
+    price: "XAF 55.000",
+    salePrice: "XAF 64.500",
+    storeName: "Maison Wax Bastos",
+    storeCity: "Bastos, Yaound\u00e9",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/Look%20at%20this%20new%20Nike%20Air%20Force.jfif",
+    images: [
+      "./Assets/fashion/shoes/Look%20at%20this%20new%20Nike%20Air%20Force.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Look at this new Nike Air Force. Sourced by Maison Wax Bastos with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_luxuriose_elegante_grune_sommerschuhe_ne": {
+    id: "fash_luxuriose_elegante_grune_sommerschuhe_ne",
+    title: "Luxuri\u00f6se, elegante gr\u00fcne Sommerschuhe, neue High Heels,",
+    brand: "Bella Donna",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "BANQUET GLAM",
+    rating: "4.7",
+    reviewCount: 49,
+    soldCount: 223,
+    price: "XAF 34.800",
+    salePrice: "XAF 41.000",
+    storeName: "Boutique Glamour Akwa",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/Luxuri%C3%B6se,%20elegante%20gr%C3%BCne%20Sommerschuhe,%20neue%20High%20Heels,%20modische%20Joker-Sandalen%20mit%20Strassschnalle%20f%C3%BCr%20Damen.jfif",
+    images: [
+      "./Assets/fashion/shoes/Luxuri%C3%B6se,%20elegante%20gr%C3%BCne%20Sommerschuhe,%20neue%20High%20Heels,%20modische%20Joker-Sandalen%20mit%20Strassschnalle%20f%C3%BCr%20Damen.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Luxuri\u00f6se, elegante gr\u00fcne Sommerschuhe, neue High Heels,. Sourced by Boutique Glamour Akwa with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_luxury_black_bow_high_heels___elegant_pa": {
+    id: "fash_luxury_black_bow_high_heels___elegant_pa",
+    title: "Luxury Black Bow High Heels _ Elegant Party & Wedding Pumps",
+    brand: "Bella Donna",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "BANQUET GLAM",
+    rating: "4.8",
+    reviewCount: 56,
+    soldCount: 236,
+    price: "XAF 35.600",
+    salePrice: "XAF 42.000",
+    storeName: "Douala Leather Craft",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/Luxury%20Black%20Bow%20High%20Heels%20_%20Elegant%20Party%20&%20Wedding%20Pumps%20%F0%9F%91%A0%E2%9C%A8.jfif",
+    images: [
+      "./Assets/fashion/shoes/Luxury%20Black%20Bow%20High%20Heels%20_%20Elegant%20Party%20&%20Wedding%20Pumps%20%F0%9F%91%A0%E2%9C%A8.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Luxury Black Bow High Heels _ Elegant Party & Wedding Pumps. Sourced by Douala Leather Craft with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_maroon_slides": {
+    id: "fash_maroon_slides",
+    title: "Maroon Slides",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.9",
+    reviewCount: 63,
+    soldCount: 249,
+    price: "XAF 35.750",
+    salePrice: "XAF 42.000",
+    storeName: "Mboppi Fashion Hub",
+    storeCity: "Mboppi, Douala",
+    storeRating: "4.7",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/Maroon%20Slides.jfif",
+    images: [
+      "./Assets/fashion/shoes/Maroon%20Slides.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Maroon Slides. Sourced by Mboppi Fashion Hub with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_men_brown_leather_strap_sandal_handmade": {
+    id: "fash_men_brown_leather_strap_sandal_handmade",
+    title: "Men brown leather strap sandal handmade barefoot woven band",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.7",
+    reviewCount: 70,
+    soldCount: 262,
+    price: "XAF 36.500",
+    salePrice: "XAF 43.000",
+    storeName: "Urban Kicks Bonamoussadi",
+    storeCity: "Bonamoussadi, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/Men%20brown%20leather%20strap%20sandal%20handmade%20barefoot%20woven%20band%20summer%20footwear%20casual%20everyday%20comfort%20Arabian%20style%20Middle%20East%20men%20sandal.jfif",
+    images: [
+      "./Assets/fashion/shoes/Men%20brown%20leather%20strap%20sandal%20handmade%20barefoot%20woven%20band%20summer%20footwear%20casual%20everyday%20comfort%20Arabian%20style%20Middle%20East%20men%20sandal.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Men brown leather strap sandal handmade barefoot woven band. Sourced by Urban Kicks Bonamoussadi with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_men_leather_shoes_men_business_casual_dr": {
+    id: "fash_men_leather_shoes_men_business_casual_dr",
+    title: "Men Leather Shoes Men Business Casual Dress Shoes Business Casual",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.8",
+    reviewCount: 77,
+    soldCount: 275,
+    price: "XAF 37.250",
+    salePrice: "XAF 43.500",
+    storeName: "Atelier Haute Couture Yaound\u00e9",
+    storeCity: "March\u00e9 Central, Yaound\u00e9",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/Men%20Leather%20Shoes%20Men%20Business%20Casual%20Dress%20Shoes%20Business%20Casual.jfif",
+    images: [
+      "./Assets/fashion/shoes/Men%20Leather%20Shoes%20Men%20Business%20Casual%20Dress%20Shoes%20Business%20Casual.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Men Leather Shoes Men Business Casual Dress Shoes Business Casual. Sourced by Atelier Haute Couture Yaound\u00e9 with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_men_palm_slipper_buy_comfortable_slipper": {
+    id: "fash_men_palm_slipper_buy_comfortable_slipper",
+    title: "Men palm slipper Buy comfortable slippers to wear",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.9",
+    reviewCount: 84,
+    soldCount: 48,
+    price: "XAF 38.000",
+    salePrice: "XAF 44.500",
+    storeName: "Cameroun Prestige Maroquinerie",
+    storeCity: "Bonanjo, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/Men%20palm%20slipper%20Buy%20comfortable%20slippers%20to%20wear%E2%80%A6.jfif",
+    images: [
+      "./Assets/fashion/shoes/Men%20palm%20slipper%20Buy%20comfortable%20slippers%20to%20wear%E2%80%A6.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Men palm slipper Buy comfortable slippers to wear. Sourced by Cameroun Prestige Maroquinerie with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_men_s_dress_shoes_for_sale___ebay": {
+    id: "fash_men_s_dress_shoes_for_sale___ebay",
+    title: "Men s Dress Shoes for sale _ eBay",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.7",
+    reviewCount: 91,
+    soldCount: 61,
+    price: "XAF 38.750",
+    salePrice: "XAF 45.500",
+    storeName: "Kamer Luxe Bonapriso",
+    storeCity: "Bonapriso, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/Men%27s%20Dress%20Shoes%20for%20sale%20_%20eBay.jfif",
+    images: [
+      "./Assets/fashion/shoes/Men%27s%20Dress%20Shoes%20for%20sale%20_%20eBay.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Men s Dress Shoes for sale _ eBay. Sourced by Kamer Luxe Bonapriso with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_men_s_shoes_sneakers": {
+    id: "fash_men_s_shoes_sneakers",
+    title: "Men s Shoes & Sneakers",
+    brand: "Nike Cameroon",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "ORIGINAL DROP",
+    rating: "4.8",
+    reviewCount: 98,
+    soldCount: 74,
+    price: "XAF 63.800",
+    salePrice: "XAF 75.000",
+    storeName: "Maison Wax Bastos",
+    storeCity: "Bastos, Yaound\u00e9",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/Men%27s%20Shoes%20&%20Sneakers.jfif",
+    images: [
+      "./Assets/fashion/shoes/Men%27s%20Shoes%20&%20Sneakers.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Men s Shoes & Sneakers. Sourced by Maison Wax Bastos with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_men_s_sports_shoes_men_s_casual_shoes_fa": {
+    id: "fash_men_s_sports_shoes_men_s_casual_shoes_fa",
+    title: "Men s Sports Shoes, Men s Casual Shoes, Fashionable And",
+    brand: "Nike Cameroon",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "ORIGINAL DROP",
+    rating: "4.9",
+    reviewCount: 105,
+    soldCount: 87,
+    price: "XAF 64.900",
+    salePrice: "XAF 76.500",
+    storeName: "Boutique Glamour Akwa",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/Men%27s%20Sports%20Shoes,%20Men%27s%20Casual%20Shoes,%20Fashionable%20And%20Personalized%20Street%20Student%20Handsome%20Shoes,%20Lace%20Up%20Men%27s%20Shoes,%20Men%27s%20Board%20Shoes.jfif",
+    images: [
+      "./Assets/fashion/shoes/Men%27s%20Sports%20Shoes,%20Men%27s%20Casual%20Shoes,%20Fashionable%20And%20Personalized%20Street%20Student%20Handsome%20Shoes,%20Lace%20Up%20Men%27s%20Shoes,%20Men%27s%20Board%20Shoes.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Men s Sports Shoes, Men s Casual Shoes, Fashionable And. Sourced by Boutique Glamour Akwa with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_metallic_leather_heeled_sandals_golden_p": {
+    id: "fash_metallic_leather_heeled_sandals_golden_p",
+    title: "Metallic leather heeled sandals Golden Prada - Women _",
+    brand: "Bella Donna",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "BANQUET GLAM",
+    rating: "4.7",
+    reviewCount: 112,
+    soldCount: 100,
+    price: "XAF 42.000",
+    salePrice: "XAF 49.500",
+    storeName: "Douala Leather Craft",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/Metallic%20leather%20heeled%20sandals%20Golden%20Prada%20-%20Women%20_%20Printemps_com.jfif",
+    images: [
+      "./Assets/fashion/shoes/Metallic%20leather%20heeled%20sandals%20Golden%20Prada%20-%20Women%20_%20Printemps_com.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Metallic leather heeled sandals Golden Prada - Women _. Sourced by Douala Leather Craft with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_nike_air_force_1_is_waiting_for_you": {
+    id: "fash_nike_air_force_1_is_waiting_for_you",
+    title: "Nike Air Force 1 is Waiting For You___",
+    brand: "Nike Cameroon",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "ORIGINAL DROP",
+    rating: "4.8",
+    reviewCount: 119,
+    soldCount: 113,
+    price: "XAF 67.100",
+    salePrice: "XAF 79.000",
+    storeName: "Mboppi Fashion Hub",
+    storeCity: "Mboppi, Douala",
+    storeRating: "4.7",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/Nike%20Air%20Force%201%20is%20Waiting%20For%20You___.jfif",
+    images: [
+      "./Assets/fashion/shoes/Nike%20Air%20Force%201%20is%20Waiting%20For%20You___.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Nike Air Force 1 is Waiting For You___. Sourced by Mboppi Fashion Hub with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_nike_air_jordan": {
+    id: "fash_nike_air_jordan",
+    title: "Nike Air Jordan",
+    brand: "Nike Cameroon",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "ORIGINAL DROP",
+    rating: "4.9",
+    reviewCount: 126,
+    soldCount: 126,
+    price: "XAF 68.200",
+    salePrice: "XAF 80.000",
+    storeName: "Urban Kicks Bonamoussadi",
+    storeCity: "Bonamoussadi, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/Nike%20Air%20Jordan.jfif",
+    images: [
+      "./Assets/fashion/shoes/Nike%20Air%20Jordan.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Nike Air Jordan. Sourced by Urban Kicks Bonamoussadi with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_nike_air": {
+    id: "fash_nike_air",
+    title: "Nike Air",
+    brand: "Nike Cameroon",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "ORIGINAL DROP",
+    rating: "4.7",
+    reviewCount: 23,
+    soldCount: 139,
+    price: "XAF 69.300",
+    salePrice: "XAF 81.500",
+    storeName: "Atelier Haute Couture Yaound\u00e9",
+    storeCity: "March\u00e9 Central, Yaound\u00e9",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/Nike%20Air%20%F0%9F%A4%8D.jfif",
+    images: [
+      "./Assets/fashion/shoes/Nike%20Air%20%F0%9F%A4%8D.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Nike Air. Sourced by Atelier Haute Couture Yaound\u00e9 with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_nike_s_joyride_collection_is_designed_to": {
+    id: "fash_nike_s_joyride_collection_is_designed_to",
+    title: "Nike s Joyride Collection Is Designed to Make Your Running",
+    brand: "Nike Cameroon",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "ORIGINAL DROP",
+    rating: "4.8",
+    reviewCount: 30,
+    soldCount: 152,
+    price: "XAF 70.400",
+    salePrice: "XAF 83.000",
+    storeName: "Cameroun Prestige Maroquinerie",
+    storeCity: "Bonanjo, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/Nike%27s%20Joyride%20Collection%20Is%20Designed%20to%20Make%20Your%20Running%20Routine%20Easier%20Than%20Ever.jfif",
+    images: [
+      "./Assets/fashion/shoes/Nike%27s%20Joyride%20Collection%20Is%20Designed%20to%20Make%20Your%20Running%20Routine%20Easier%20Than%20Ever.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Nike s Joyride Collection Is Designed to Make Your Running. Sourced by Cameroun Prestige Maroquinerie with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_nike_inc": {
+    id: "fash_nike_inc",
+    title: "NIKE, Inc_",
+    brand: "Nike Cameroon",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "ORIGINAL DROP",
+    rating: "4.9",
+    reviewCount: 37,
+    soldCount: 165,
+    price: "XAF 71.500",
+    salePrice: "XAF 84.000",
+    storeName: "Kamer Luxe Bonapriso",
+    storeCity: "Bonapriso, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/NIKE,%20Inc_.jfif",
+    images: [
+      "./Assets/fashion/shoes/NIKE,%20Inc_.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: NIKE, Inc_. Sourced by Kamer Luxe Bonapriso with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_chaussures_de_ville_luxe_confort_35": {
+    id: "fash_chaussures_de_ville_luxe_confort_35",
+    title: "Chaussures de Ville Luxe & Confort",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.7",
+    reviewCount: 44,
+    soldCount: 178,
+    price: "XAF 45.500",
+    salePrice: "XAF 53.500",
+    storeName: "Maison Wax Bastos",
+    storeCity: "Bastos, Yaound\u00e9",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/NIKE.jfif",
+    images: [
+      "./Assets/fashion/shoes/NIKE.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Chaussures de Ville Luxe & Confort. Sourced by Maison Wax Bastos with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_patent_calfskin_oxford": {
+    id: "fash_patent_calfskin_oxford",
+    title: "Patent calfskin Oxford",
+    brand: "Milano Sartoriale",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "ITALIAN LEATHER",
+    rating: "4.8",
+    reviewCount: 51,
+    soldCount: 191,
+    price: "XAF 58.300",
+    salePrice: "XAF 68.500",
+    storeName: "Boutique Glamour Akwa",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/Patent%20calfskin%20Oxford.jfif",
+    images: [
+      "./Assets/fashion/shoes/Patent%20calfskin%20Oxford.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Patent calfskin Oxford. Sourced by Boutique Glamour Akwa with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_pink_pumps___color__pink___size__6": {
+    id: "fash_pink_pumps___color__pink___size__6",
+    title: "Pink Pumps _ Color_ Pink _ Size_ 6",
+    brand: "Bella Donna",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "BANQUET GLAM",
+    rating: "4.9",
+    reviewCount: 58,
+    soldCount: 204,
+    price: "XAF 48.400",
+    salePrice: "XAF 57.000",
+    storeName: "Douala Leather Craft",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/Pink%20Pumps%20_%20Color_%20Pink%20_%20Size_%206.jfif",
+    images: [
+      "./Assets/fashion/shoes/Pink%20Pumps%20_%20Color_%20Pink%20_%20Size_%206.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Pink Pumps _ Color_ Pink _ Size_ 6. Sourced by Douala Leather Craft with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_reebok": {
+    id: "fash_reebok",
+    title: "Reebok",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.7",
+    reviewCount: 65,
+    soldCount: 217,
+    price: "XAF 47.750",
+    salePrice: "XAF 56.000",
+    storeName: "Mboppi Fashion Hub",
+    storeCity: "Mboppi, Douala",
+    storeRating: "4.7",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/Reebok.jfif",
+    images: [
+      "./Assets/fashion/shoes/Reebok.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Reebok. Sourced by Mboppi Fashion Hub with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_sandales_femme_a_talon_compense_epais_de": {
+    id: "fash_sandales_femme_a_talon_compense_epais_de",
+    title: "Sandales femme \u00e0 talon compens\u00e9 \u00e9pais, design de",
+    brand: "Bella Donna",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "BANQUET GLAM",
+    rating: "4.8",
+    reviewCount: 72,
+    soldCount: 230,
+    price: "XAF 50.000",
+    salePrice: "XAF 59.000",
+    storeName: "Urban Kicks Bonamoussadi",
+    storeCity: "Bonamoussadi, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/Sandales%20femme%20%C3%A0%20talon%20compens%C3%A9%20%C3%A9pais,%20design%20de%E2%80%A6.jfif",
+    images: [
+      "./Assets/fashion/shoes/Sandales%20femme%20%C3%A0%20talon%20compens%C3%A9%20%C3%A9pais,%20design%20de%E2%80%A6.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Sandales femme \u00e0 talon compens\u00e9 \u00e9pais, design de. Sourced by Urban Kicks Bonamoussadi with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_scarpin_feminino_bico_fino_de_salto_alto": {
+    id: "fash_scarpin_feminino_bico_fino_de_salto_alto",
+    title: "Scarpin Feminino Bico Fino de Salto Alto com Tira no Tornozelo,",
+    brand: "Bella Donna",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "BANQUET GLAM",
+    rating: "4.9",
+    reviewCount: 79,
+    soldCount: 243,
+    price: "XAF 50.800",
+    salePrice: "XAF 59.500",
+    storeName: "Atelier Haute Couture Yaound\u00e9",
+    storeCity: "March\u00e9 Central, Yaound\u00e9",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/Scarpin%20Feminino%20Bico%20Fino%20de%20Salto%20Alto%20com%20Tira%20no%20Tornozelo,%20Antiderrapante,%20Dur%C3%A1vel,%20Confort%C3%A1vel%20para%20Festa,%20Uso%20Di%C3%A1rio,%20Casual,%20Primavera_Outono.jfif",
+    images: [
+      "./Assets/fashion/shoes/Scarpin%20Feminino%20Bico%20Fino%20de%20Salto%20Alto%20com%20Tira%20no%20Tornozelo,%20Antiderrapante,%20Dur%C3%A1vel,%20Confort%C3%A1vel%20para%20Festa,%20Uso%20Di%C3%A1rio,%20Casual,%20Primavera_Outono.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Scarpin Feminino Bico Fino de Salto Alto com Tira no Tornozelo,. Sourced by Atelier Haute Couture Yaound\u00e9 with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_chaussures_de_ville_luxe_confort_36": {
+    id: "fash_chaussures_de_ville_luxe_confort_36",
+    title: "Chaussures de Ville Luxe & Confort",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.7",
+    reviewCount: 86,
+    soldCount: 256,
+    price: "XAF 32.000",
+    salePrice: "XAF 37.500",
+    storeName: "Cameroun Prestige Maroquinerie",
+    storeCity: "Bonanjo, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/shoe.jfif",
+    images: [
+      "./Assets/fashion/shoes/shoe.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Chaussures de Ville Luxe & Confort. Sourced by Cameroun Prestige Maroquinerie with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_shoes_women_10_cm_metal_buckle_ladies_pu": {
+    id: "fash_shoes_women_10_cm_metal_buckle_ladies_pu",
+    title: "Shoes Women 10 Cm Metal Buckle Ladies Pumps Luxury Womens",
+    brand: "Bella Donna",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "BANQUET GLAM",
+    rating: "4.8",
+    reviewCount: 93,
+    soldCount: 269,
+    price: "XAF 52.400",
+    salePrice: "XAF 61.500",
+    storeName: "Kamer Luxe Bonapriso",
+    storeCity: "Bonapriso, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/Shoes%20Women%2010%20Cm%20Metal%20Buckle%20Ladies%20Pumps%20Luxury%20Womens%20Banquet%20Shoes%20Stilettos%20High%20Heels%20Women%20Sexy%20Party%20Shoes.jfif",
+    images: [
+      "./Assets/fashion/shoes/Shoes%20Women%2010%20Cm%20Metal%20Buckle%20Ladies%20Pumps%20Luxury%20Womens%20Banquet%20Shoes%20Stilettos%20High%20Heels%20Women%20Sexy%20Party%20Shoes.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Shoes Women 10 Cm Metal Buckle Ladies Pumps Luxury Womens. Sourced by Kamer Luxe Bonapriso with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_spring_summer_fashionable_bowknot_chunky": {
+    id: "fash_spring_summer_fashionable_bowknot_chunky",
+    title: "Spring_Summer Fashionable Bowknot Chunky High Heel Sandals For",
+    brand: "Bella Donna",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "BANQUET GLAM",
+    rating: "4.9",
+    reviewCount: 100,
+    soldCount: 42,
+    price: "XAF 53.200",
+    salePrice: "XAF 62.500",
+    storeName: "Maison Wax Bastos",
+    storeCity: "Bastos, Yaound\u00e9",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/Spring_Summer%20Fashionable%20Bowknot%20Chunky%20High%20Heel%20Sandals%20For%20Women%20Valentines.jfif",
+    images: [
+      "./Assets/fashion/shoes/Spring_Summer%20Fashionable%20Bowknot%20Chunky%20High%20Heel%20Sandals%20For%20Women%20Valentines.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Spring_Summer Fashionable Bowknot Chunky High Heel Sandals For. Sourced by Maison Wax Bastos with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_stand_tall_stay_bold_the_chunky_heel": {
+    id: "fash_stand_tall_stay_bold_the_chunky_heel",
+    title: "Stand tall, stay bold the chunky heel",
+    brand: "Bella Donna",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "BANQUET GLAM",
+    rating: "4.7",
+    reviewCount: 107,
+    soldCount: 55,
+    price: "XAF 34.000",
+    salePrice: "XAF 40.000",
+    storeName: "Boutique Glamour Akwa",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/Stand%20tall,%20stay%20bold%20%E2%80%94%20the%20chunky%20heel%E2%80%A6.jfif",
+    images: [
+      "./Assets/fashion/shoes/Stand%20tall,%20stay%20bold%20%E2%80%94%20the%20chunky%20heel%E2%80%A6.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Stand tall, stay bold the chunky heel. Sourced by Boutique Glamour Akwa with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_stepping_into_elegance": {
+    id: "fash_stepping_into_elegance",
+    title: "Stepping into elegance_",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.8",
+    reviewCount: 114,
+    soldCount: 68,
+    price: "XAF 35.000",
+    salePrice: "XAF 41.000",
+    storeName: "Douala Leather Craft",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/Stepping%20into%20elegance_.jfif",
+    images: [
+      "./Assets/fashion/shoes/Stepping%20into%20elegance_.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Stepping into elegance_. Sourced by Douala Leather Craft with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_stilettos_de_charol_con_punta_fina_elega": {
+    id: "fash_stilettos_de_charol_con_punta_fina_elega",
+    title: "Stilettos de Charol con Punta Fina - Elegancia en Rojo",
+    brand: "Bella Donna",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "BANQUET GLAM",
+    rating: "4.9",
+    reviewCount: 121,
+    soldCount: 81,
+    price: "XAF 35.600",
+    salePrice: "XAF 42.000",
+    storeName: "Mboppi Fashion Hub",
+    storeCity: "Mboppi, Douala",
+    storeRating: "4.7",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/Stilettos%20de%20Charol%20con%20Punta%20Fina%20-%20Elegancia%20en%20Rojo.jfif",
+    images: [
+      "./Assets/fashion/shoes/Stilettos%20de%20Charol%20con%20Punta%20Fina%20-%20Elegancia%20en%20Rojo.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Stilettos de Charol con Punta Fina - Elegancia en Rojo. Sourced by Mboppi Fashion Hub with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_timeless_elegance_luxury_black_white_dre": {
+    id: "fash_timeless_elegance_luxury_black_white_dre",
+    title: "Timeless Elegance Luxury Black & White Dress Loafers",
+    brand: "Milano Sartoriale",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "ITALIAN LEATHER",
+    rating: "4.7",
+    reviewCount: 128,
+    soldCount: 94,
+    price: "XAF 68.200",
+    salePrice: "XAF 80.000",
+    storeName: "Urban Kicks Bonamoussadi",
+    storeCity: "Bonamoussadi, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/Timeless%20Elegance%20Luxury%20Black%20&%20White%20Dress%20Loafers.jfif",
+    images: [
+      "./Assets/fashion/shoes/Timeless%20Elegance%20Luxury%20Black%20&%20White%20Dress%20Loafers.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Timeless Elegance Luxury Black & White Dress Loafers. Sourced by Urban Kicks Bonamoussadi with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_vintage_style_shoes": {
+    id: "fash_vintage_style_shoes",
+    title: "Vintage Style Shoes",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.8",
+    reviewCount: 25,
+    soldCount: 107,
+    price: "XAF 37.250",
+    salePrice: "XAF 43.500",
+    storeName: "Atelier Haute Couture Yaound\u00e9",
+    storeCity: "March\u00e9 Central, Yaound\u00e9",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/Vintage%20Style%20Shoes.jfif",
+    images: [
+      "./Assets/fashion/shoes/Vintage%20Style%20Shoes.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Vintage Style Shoes. Sourced by Atelier Haute Couture Yaound\u00e9 with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_what_color_is_your_favorite__dm_to_order": {
+    id: "fash_what_color_is_your_favorite__dm_to_order",
+    title: "What Color is your favorite_ Dm to order or click",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.9",
+    reviewCount: 32,
+    soldCount: 120,
+    price: "XAF 38.000",
+    salePrice: "XAF 44.500",
+    storeName: "Cameroun Prestige Maroquinerie",
+    storeCity: "Bonanjo, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/What%20Color%20is%20your%20favorite_%20Dm%20to%20order%20or%20click%E2%80%A6.jfif",
+    images: [
+      "./Assets/fashion/shoes/What%20Color%20is%20your%20favorite_%20Dm%20to%20order%20or%20click%E2%80%A6.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: What Color is your favorite_ Dm to order or click. Sourced by Cameroun Prestige Maroquinerie with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_women_s_designer_footwear": {
+    id: "fash_women_s_designer_footwear",
+    title: "Women s Designer Footwear",
+    brand: "Maroquinerie Akwa",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "VERIFIED",
+    rating: "4.7",
+    reviewCount: 39,
+    soldCount: 133,
+    price: "XAF 38.750",
+    salePrice: "XAF 45.500",
+    storeName: "Kamer Luxe Bonapriso",
+    storeCity: "Bonapriso, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/Women%27s%20Designer%20Footwear.jfif",
+    images: [
+      "./Assets/fashion/shoes/Women%27s%20Designer%20Footwear.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Women s Designer Footwear. Sourced by Kamer Luxe Bonapriso with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_women_s_high_heel_sandals_ladies_casual": {
+    id: "fash_women_s_high_heel_sandals_ladies_casual",
+    title: "Women s High Heel Sandals, Ladies Casual Outdoor Open Toe",
+    brand: "Bella Donna",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "BANQUET GLAM",
+    rating: "4.8",
+    reviewCount: 46,
+    soldCount: 146,
+    price: "XAF 39.600",
+    salePrice: "XAF 46.500",
+    storeName: "Maison Wax Bastos",
+    storeCity: "Bastos, Yaound\u00e9",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/Women%27s%20High%20Heel%20Sandals,%20Ladies%20Casual%20Outdoor%20Open%20Toe%20Sandals,%20Fashion%20Casual%20Chunky%20Heel%20Flat%20Sandals,%20Commuter%20Slip-On%20Beach%20Slippers.jfif",
+    images: [
+      "./Assets/fashion/shoes/Women%27s%20High%20Heel%20Sandals,%20Ladies%20Casual%20Outdoor%20Open%20Toe%20Sandals,%20Fashion%20Casual%20Chunky%20Heel%20Flat%20Sandals,%20Commuter%20Slip-On%20Beach%20Slippers.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Women s High Heel Sandals, Ladies Casual Outdoor Open Toe. Sourced by Maison Wax Bastos with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_elegant_heels__step_into_sophistication": {
+    id: "fash_elegant_heels__step_into_sophistication",
+    title: "_Elegant Heels_ Step into Sophistication and Style_",
+    brand: "Bella Donna",
+    category: "fashion",
+    categoryLabel: "Footwear & Sneakers",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "BANQUET GLAM",
+    rating: "4.9",
+    reviewCount: 53,
+    soldCount: 159,
+    price: "XAF 40.400",
+    salePrice: "XAF 47.500",
+    storeName: "Boutique Glamour Akwa",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/_Elegant%20Heels_%20Step%20into%20Sophistication%20and%20Style_.jfif",
+    images: [
+      "./Assets/fashion/shoes/_Elegant%20Heels_%20Step%20into%20Sophistication%20and%20Style_.jfif"
+    ],
+    attributes: [
+      { key: "Material", val: "Full-Grain Leather & Premium Composite" },
+      { key: "Origin", val: "Imported \u00b7 Certified Cameroon Stock" },
+      { key: "Sizes Available", val: "EU 39 \u00b7 40 \u00b7 41 \u00b7 42 \u00b7 43 \u00b7 44 \u00b7 45" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: _Elegant Heels_ Step into Sophistication and Style_. Sourced by Boutique Glamour Akwa with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_robe_de_soiree_elegante_haute_couture": {
+    id: "fash_robe_de_soiree_elegante_haute_couture",
+    title: "Robe de Soir\u00e9e \u00c9l\u00e9gante Haute Couture",
+    brand: "Atelier Prestige",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "HAUTE COUTURE",
+    rating: "4.7",
+    reviewCount: 60,
+    soldCount: 172,
+    price: "XAF 64.800",
+    salePrice: "XAF 76.000",
+    storeName: "Douala Leather Craft",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/dresses/1025202302696782341.jfif",
+    images: [
+      "./Assets/fashion/dresses/1025202302696782341.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Robe de Soir\u00e9e \u00c9l\u00e9gante Haute Couture. Sourced by Douala Leather Craft with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_robe_de_soiree_elegante_haute_couture_2": {
+    id: "fash_robe_de_soiree_elegante_haute_couture_2",
+    title: "Robe de Soir\u00e9e \u00c9l\u00e9gante Haute Couture",
+    brand: "Atelier Prestige",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "HAUTE COUTURE",
+    rating: "4.8",
+    reviewCount: 67,
+    soldCount: 185,
+    price: "XAF 66.000",
+    salePrice: "XAF 77.500",
+    storeName: "Mboppi Fashion Hub",
+    storeCity: "Mboppi, Douala",
+    storeRating: "4.7",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/dresses/1050464681842347581.jfif",
+    images: [
+      "./Assets/fashion/dresses/1050464681842347581.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Robe de Soir\u00e9e \u00c9l\u00e9gante Haute Couture. Sourced by Mboppi Fashion Hub with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_robe_de_soiree_elegante_haute_couture_3": {
+    id: "fash_robe_de_soiree_elegante_haute_couture_3",
+    title: "Robe de Soir\u00e9e \u00c9l\u00e9gante Haute Couture",
+    brand: "Atelier Prestige",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "HAUTE COUTURE",
+    rating: "4.9",
+    reviewCount: 74,
+    soldCount: 198,
+    price: "XAF 67.200",
+    salePrice: "XAF 79.000",
+    storeName: "Urban Kicks Bonamoussadi",
+    storeCity: "Bonamoussadi, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/dresses/1092122978543958082.jfif",
+    images: [
+      "./Assets/fashion/dresses/1092122978543958082.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Robe de Soir\u00e9e \u00c9l\u00e9gante Haute Couture. Sourced by Urban Kicks Bonamoussadi with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_robe_de_soiree_elegante_haute_couture_4": {
+    id: "fash_robe_de_soiree_elegante_haute_couture_4",
+    title: "Robe de Soir\u00e9e \u00c9l\u00e9gante Haute Couture",
+    brand: "Atelier Prestige",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "HAUTE COUTURE",
+    rating: "4.7",
+    reviewCount: 81,
+    soldCount: 211,
+    price: "XAF 68.400",
+    salePrice: "XAF 80.500",
+    storeName: "Atelier Haute Couture Yaound\u00e9",
+    storeCity: "March\u00e9 Central, Yaound\u00e9",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/dresses/1093952565758374765.jfif",
+    images: [
+      "./Assets/fashion/dresses/1093952565758374765.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Robe de Soir\u00e9e \u00c9l\u00e9gante Haute Couture. Sourced by Atelier Haute Couture Yaound\u00e9 with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_robe_de_soiree_elegante_haute_couture_5": {
+    id: "fash_robe_de_soiree_elegante_haute_couture_5",
+    title: "Robe de Soir\u00e9e \u00c9l\u00e9gante Haute Couture",
+    brand: "Atelier Prestige",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "HAUTE COUTURE",
+    rating: "4.8",
+    reviewCount: 88,
+    soldCount: 224,
+    price: "XAF 69.600",
+    salePrice: "XAF 82.000",
+    storeName: "Cameroun Prestige Maroquinerie",
+    storeCity: "Bonanjo, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/dresses/1098456165396285510.jfif",
+    images: [
+      "./Assets/fashion/dresses/1098456165396285510.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Robe de Soir\u00e9e \u00c9l\u00e9gante Haute Couture. Sourced by Cameroun Prestige Maroquinerie with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_robe_de_soiree_elegante_haute_couture_6": {
+    id: "fash_robe_de_soiree_elegante_haute_couture_6",
+    title: "Robe de Soir\u00e9e \u00c9l\u00e9gante Haute Couture",
+    brand: "Atelier Prestige",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "HAUTE COUTURE",
+    rating: "4.9",
+    reviewCount: 95,
+    soldCount: 237,
+    price: "XAF 70.800",
+    salePrice: "XAF 83.500",
+    storeName: "Kamer Luxe Bonapriso",
+    storeCity: "Bonapriso, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/dresses/1134203487427633078.jfif",
+    images: [
+      "./Assets/fashion/dresses/1134203487427633078.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Robe de Soir\u00e9e \u00c9l\u00e9gante Haute Couture. Sourced by Kamer Luxe Bonapriso with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_robe_de_soiree_elegante_haute_couture_7": {
+    id: "fash_robe_de_soiree_elegante_haute_couture_7",
+    title: "Robe de Soir\u00e9e \u00c9l\u00e9gante Haute Couture",
+    brand: "Atelier Prestige",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "HAUTE COUTURE",
+    rating: "4.7",
+    reviewCount: 102,
+    soldCount: 250,
+    price: "XAF 36.000",
+    salePrice: "XAF 42.000",
+    storeName: "Maison Wax Bastos",
+    storeCity: "Bastos, Yaound\u00e9",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/dresses/1139973724453649896.jfif",
+    images: [
+      "./Assets/fashion/dresses/1139973724453649896.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Robe de Soir\u00e9e \u00c9l\u00e9gante Haute Couture. Sourced by Maison Wax Bastos with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_robe_de_soiree_elegante_haute_couture_8": {
+    id: "fash_robe_de_soiree_elegante_haute_couture_8",
+    title: "Robe de Soir\u00e9e \u00c9l\u00e9gante Haute Couture",
+    brand: "Atelier Prestige",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "HAUTE COUTURE",
+    rating: "4.8",
+    reviewCount: 109,
+    soldCount: 263,
+    price: "XAF 37.200",
+    salePrice: "XAF 43.500",
+    storeName: "Boutique Glamour Akwa",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/dresses/12525705209690776.jfif",
+    images: [
+      "./Assets/fashion/dresses/12525705209690776.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Robe de Soir\u00e9e \u00c9l\u00e9gante Haute Couture. Sourced by Boutique Glamour Akwa with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_robe_de_soiree_elegante_haute_couture_9": {
+    id: "fash_robe_de_soiree_elegante_haute_couture_9",
+    title: "Robe de Soir\u00e9e \u00c9l\u00e9gante Haute Couture",
+    brand: "Atelier Prestige",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "HAUTE COUTURE",
+    rating: "4.9",
+    reviewCount: 116,
+    soldCount: 276,
+    price: "XAF 38.400",
+    salePrice: "XAF 45.000",
+    storeName: "Douala Leather Craft",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/dresses/356558495521838826.jfif",
+    images: [
+      "./Assets/fashion/dresses/356558495521838826.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Robe de Soir\u00e9e \u00c9l\u00e9gante Haute Couture. Sourced by Douala Leather Craft with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_robe_de_soiree_elegante_haute_couture_10": {
+    id: "fash_robe_de_soiree_elegante_haute_couture_10",
+    title: "Robe de Soir\u00e9e \u00c9l\u00e9gante Haute Couture",
+    brand: "Atelier Prestige",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "HAUTE COUTURE",
+    rating: "4.7",
+    reviewCount: 123,
+    soldCount: 49,
+    price: "XAF 39.600",
+    salePrice: "XAF 46.500",
+    storeName: "Mboppi Fashion Hub",
+    storeCity: "Mboppi, Douala",
+    storeRating: "4.7",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/dresses/57491332741134293.jfif",
+    images: [
+      "./Assets/fashion/dresses/57491332741134293.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Robe de Soir\u00e9e \u00c9l\u00e9gante Haute Couture. Sourced by Mboppi Fashion Hub with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_saiful": {
+    id: "fash_saiful",
+    title: "saiful",
+    brand: "Atelier Prestige",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "HAUTE COUTURE",
+    rating: "4.8",
+    reviewCount: 130,
+    soldCount: 62,
+    price: "XAF 40.800",
+    salePrice: "XAF 48.000",
+    storeName: "Urban Kicks Bonamoussadi",
+    storeCity: "Bonamoussadi, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/dresses/saiful.jfif",
+    images: [
+      "./Assets/fashion/dresses/saiful.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: saiful. Sourced by Urban Kicks Bonamoussadi with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_robe_de_soiree_elegante_haute_couture_11": {
+    id: "fash_robe_de_soiree_elegante_haute_couture_11",
+    title: "Robe de Soir\u00e9e \u00c9l\u00e9gante Haute Couture",
+    brand: "Atelier Prestige",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "HAUTE COUTURE",
+    rating: "4.9",
+    reviewCount: 27,
+    soldCount: 75,
+    price: "XAF 42.000",
+    salePrice: "XAF 49.500",
+    storeName: "Atelier Haute Couture Yaound\u00e9",
+    storeCity: "March\u00e9 Central, Yaound\u00e9",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/dresses/72902087714414908.jfif",
+    images: [
+      "./Assets/fashion/dresses/72902087714414908.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Robe de Soir\u00e9e \u00c9l\u00e9gante Haute Couture. Sourced by Atelier Haute Couture Yaound\u00e9 with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_robe_de_soiree_elegante_haute_couture_12": {
+    id: "fash_robe_de_soiree_elegante_haute_couture_12",
+    title: "Robe de Soir\u00e9e \u00c9l\u00e9gante Haute Couture",
+    brand: "Atelier Prestige",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "HAUTE COUTURE",
+    rating: "4.7",
+    reviewCount: 34,
+    soldCount: 88,
+    price: "XAF 43.200",
+    salePrice: "XAF 50.500",
+    storeName: "Cameroun Prestige Maroquinerie",
+    storeCity: "Bonanjo, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/dresses/759349187192147298.jfif",
+    images: [
+      "./Assets/fashion/dresses/759349187192147298.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Robe de Soir\u00e9e \u00c9l\u00e9gante Haute Couture. Sourced by Cameroun Prestige Maroquinerie with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_robe_de_soiree_elegante_haute_couture_13": {
+    id: "fash_robe_de_soiree_elegante_haute_couture_13",
+    title: "Robe de Soir\u00e9e \u00c9l\u00e9gante Haute Couture",
+    brand: "Atelier Prestige",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "HAUTE COUTURE",
+    rating: "4.8",
+    reviewCount: 41,
+    soldCount: 101,
+    price: "XAF 44.400",
+    salePrice: "XAF 52.000",
+    storeName: "Kamer Luxe Bonapriso",
+    storeCity: "Bonapriso, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/dresses/846184217509644645.jfif",
+    images: [
+      "./Assets/fashion/dresses/846184217509644645.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Robe de Soir\u00e9e \u00c9l\u00e9gante Haute Couture. Sourced by Kamer Luxe Bonapriso with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_robe_de_soiree_elegante_haute_couture_14": {
+    id: "fash_robe_de_soiree_elegante_haute_couture_14",
+    title: "Robe de Soir\u00e9e \u00c9l\u00e9gante Haute Couture",
+    brand: "Atelier Prestige",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "HAUTE COUTURE",
+    rating: "4.9",
+    reviewCount: 48,
+    soldCount: 114,
+    price: "XAF 45.600",
+    salePrice: "XAF 53.500",
+    storeName: "Maison Wax Bastos",
+    storeCity: "Bastos, Yaound\u00e9",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/dresses/922815779908756186.jfif",
+    images: [
+      "./Assets/fashion/dresses/922815779908756186.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Robe de Soir\u00e9e \u00c9l\u00e9gante Haute Couture. Sourced by Maison Wax Bastos with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_robe_de_soiree_elegante_haute_couture_15": {
+    id: "fash_robe_de_soiree_elegante_haute_couture_15",
+    title: "Robe de Soir\u00e9e \u00c9l\u00e9gante Haute Couture",
+    brand: "Atelier Prestige",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "HAUTE COUTURE",
+    rating: "4.7",
+    reviewCount: 55,
+    soldCount: 127,
+    price: "XAF 46.800",
+    salePrice: "XAF 55.000",
+    storeName: "Boutique Glamour Akwa",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/dresses/951455858801044403.jfif",
+    images: [
+      "./Assets/fashion/dresses/951455858801044403.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Robe de Soir\u00e9e \u00c9l\u00e9gante Haute Couture. Sourced by Boutique Glamour Akwa with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_robe_de_soiree_elegante_haute_couture_16": {
+    id: "fash_robe_de_soiree_elegante_haute_couture_16",
+    title: "Robe de Soir\u00e9e \u00c9l\u00e9gante Haute Couture",
+    brand: "Atelier Prestige",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "HAUTE COUTURE",
+    rating: "4.8",
+    reviewCount: 62,
+    soldCount: 140,
+    price: "XAF 48.000",
+    salePrice: "XAF 56.500",
+    storeName: "Douala Leather Craft",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/dresses/969048044843254535.jfif",
+    images: [
+      "./Assets/fashion/dresses/969048044843254535.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Robe de Soir\u00e9e \u00c9l\u00e9gante Haute Couture. Sourced by Douala Leather Craft with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_robe_de_soiree_elegante_haute_couture_17": {
+    id: "fash_robe_de_soiree_elegante_haute_couture_17",
+    title: "Robe de Soir\u00e9e \u00c9l\u00e9gante Haute Couture",
+    brand: "Atelier Prestige",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "HAUTE COUTURE",
+    rating: "4.9",
+    reviewCount: 69,
+    soldCount: 153,
+    price: "XAF 49.200",
+    salePrice: "XAF 58.000",
+    storeName: "Mboppi Fashion Hub",
+    storeCity: "Mboppi, Douala",
+    storeRating: "4.7",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/dresses/991284568003877993.jfif",
+    images: [
+      "./Assets/fashion/dresses/991284568003877993.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Robe de Soir\u00e9e \u00c9l\u00e9gante Haute Couture. Sourced by Mboppi Fashion Hub with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_antoniosclothing_casual_outfit_for_men": {
+    id: "fash_antoniosclothing_casual_outfit_for_men",
+    title: "AntoniosClothing casual outfit for men",
+    brand: "Kamer Streetwear",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "STREETWEAR",
+    rating: "4.7",
+    reviewCount: 76,
+    soldCount: 166,
+    price: "XAF 27.200",
+    salePrice: "XAF 32.000",
+    storeName: "Urban Kicks Bonamoussadi",
+    storeCity: "Bonamoussadi, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/dresses/AntoniosClothing%20casual%20outfit%20for%20men.jfif",
+    images: [
+      "./Assets/fashion/dresses/AntoniosClothing%20casual%20outfit%20for%20men.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: AntoniosClothing casual outfit for men. Sourced by Urban Kicks Bonamoussadi with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_astrilon_co": {
+    id: "fash_astrilon_co",
+    title: "Astrilon Co",
+    brand: "Atelier Prestige",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "HAUTE COUTURE",
+    rating: "4.8",
+    reviewCount: 83,
+    soldCount: 179,
+    price: "XAF 51.600",
+    salePrice: "XAF 60.500",
+    storeName: "Atelier Haute Couture Yaound\u00e9",
+    storeCity: "March\u00e9 Central, Yaound\u00e9",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/dresses/Astrilon%20Co.jfif",
+    images: [
+      "./Assets/fashion/dresses/Astrilon%20Co.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Astrilon Co. Sourced by Atelier Haute Couture Yaound\u00e9 with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_available_in_colors_and_size_s_price_250": {
+    id: "fash_available_in_colors_and_size_s_price_250",
+    title: "Available in colors and size s Price_250gh",
+    brand: "Atelier Prestige",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "HAUTE COUTURE",
+    rating: "4.9",
+    reviewCount: 90,
+    soldCount: 192,
+    price: "XAF 52.800",
+    salePrice: "XAF 62.000",
+    storeName: "Cameroun Prestige Maroquinerie",
+    storeCity: "Bonanjo, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/dresses/Available%20in%20colors%20and%20size%E2%80%99s%20%20Price_250gh.jfif",
+    images: [
+      "./Assets/fashion/dresses/Available%20in%20colors%20and%20size%E2%80%99s%20%20Price_250gh.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Available in colors and size s Price_250gh. Sourced by Cameroun Prestige Maroquinerie with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_classic_kimono_and_trouser_aso_oke": {
+    id: "fash_classic_kimono_and_trouser_aso_oke",
+    title: "classic kimono and trouser Aso oke",
+    brand: "Maison Wax Bastos",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "AUTHENTIC WAX",
+    rating: "4.7",
+    reviewCount: 97,
+    soldCount: 205,
+    price: "XAF 63.500",
+    salePrice: "XAF 74.500",
+    storeName: "Kamer Luxe Bonapriso",
+    storeCity: "Bonapriso, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/dresses/classic%20kimono%20and%20trouser%20Aso%20oke.jfif",
+    images: [
+      "./Assets/fashion/dresses/classic%20kimono%20and%20trouser%20Aso%20oke.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: classic kimono and trouser Aso oke. Sourced by Kamer Luxe Bonapriso with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_clothes2026": {
+    id: "fash_clothes2026",
+    title: "clothes2026",
+    brand: "Atelier Prestige",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "HAUTE COUTURE",
+    rating: "4.8",
+    reviewCount: 104,
+    soldCount: 218,
+    price: "XAF 55.200",
+    salePrice: "XAF 65.000",
+    storeName: "Maison Wax Bastos",
+    storeCity: "Bastos, Yaound\u00e9",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/dresses/clothes2026.jfif",
+    images: [
+      "./Assets/fashion/dresses/clothes2026.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: clothes2026. Sourced by Maison Wax Bastos with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_flowing_clothes": {
+    id: "fash_flowing_clothes",
+    title: "flowing clothes",
+    brand: "Atelier Prestige",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "HAUTE COUTURE",
+    rating: "4.9",
+    reviewCount: 111,
+    soldCount: 231,
+    price: "XAF 56.400",
+    salePrice: "XAF 66.500",
+    storeName: "Boutique Glamour Akwa",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/dresses/flowing%20clothes.jfif",
+    images: [
+      "./Assets/fashion/dresses/flowing%20clothes.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: flowing clothes. Sourced by Boutique Glamour Akwa with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_for_the_men": {
+    id: "fash_for_the_men",
+    title: "For the Men",
+    brand: "Atelier Prestige",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "HAUTE COUTURE",
+    rating: "4.7",
+    reviewCount: 118,
+    soldCount: 244,
+    price: "XAF 57.600",
+    salePrice: "XAF 67.500",
+    storeName: "Douala Leather Craft",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/dresses/For%20the%20Men.jfif",
+    images: [
+      "./Assets/fashion/dresses/For%20the%20Men.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: For the Men. Sourced by Douala Leather Craft with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_men_fashion_outfit_collection": {
+    id: "fash_men_fashion_outfit_collection",
+    title: "men fashion outfit collection",
+    brand: "Atelier Prestige",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "HAUTE COUTURE",
+    rating: "4.8",
+    reviewCount: 125,
+    soldCount: 257,
+    price: "XAF 58.800",
+    salePrice: "XAF 69.000",
+    storeName: "Mboppi Fashion Hub",
+    storeCity: "Mboppi, Douala",
+    storeRating: "4.7",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/dresses/men%20fashion%20outfit%20collection.jfif",
+    images: [
+      "./Assets/fashion/dresses/men%20fashion%20outfit%20collection.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: men fashion outfit collection. Sourced by Mboppi Fashion Hub with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_men_slim_stand_collar_single_jacket_flor": {
+    id: "fash_men_slim_stand_collar_single_jacket_flor",
+    title: "Men Slim Stand Collar Single Jacket Floral Emboss Striped Blazer",
+    brand: "Atelier Prestige",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "HAUTE COUTURE",
+    rating: "4.9",
+    reviewCount: 22,
+    soldCount: 270,
+    price: "XAF 60.000",
+    salePrice: "XAF 70.500",
+    storeName: "Urban Kicks Bonamoussadi",
+    storeCity: "Bonamoussadi, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/dresses/Men%20Slim%20Stand%20Collar%20Single%20Jacket%20Floral%20Emboss%20Striped%20Blazer%20New%20Chinese%20Style%20Office%20Evening.jfif",
+    images: [
+      "./Assets/fashion/dresses/Men%20Slim%20Stand%20Collar%20Single%20Jacket%20Floral%20Emboss%20Striped%20Blazer%20New%20Chinese%20Style%20Office%20Evening.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Men Slim Stand Collar Single Jacket Floral Emboss Striped Blazer. Sourced by Urban Kicks Bonamoussadi with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_men_s_black_knit_co_ord_set___premium_su": {
+    id: "fash_men_s_black_knit_co_ord_set___premium_su",
+    title: "Men s Black Knit Co-Ord Set _ Premium Summer Polo & Shorts Outfit",
+    brand: "Atelier Prestige",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "HAUTE COUTURE",
+    rating: "4.7",
+    reviewCount: 29,
+    soldCount: 43,
+    price: "XAF 61.200",
+    salePrice: "XAF 72.000",
+    storeName: "Atelier Haute Couture Yaound\u00e9",
+    storeCity: "March\u00e9 Central, Yaound\u00e9",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/dresses/Men%27s%20Black%20Knit%20Co-Ord%20Set%20_%20Premium%20Summer%20Polo%20&%20Shorts%20Outfit.jfif",
+    images: [
+      "./Assets/fashion/dresses/Men%27s%20Black%20Knit%20Co-Ord%20Set%20_%20Premium%20Summer%20Polo%20&%20Shorts%20Outfit.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Men s Black Knit Co-Ord Set _ Premium Summer Polo & Shorts Outfit. Sourced by Atelier Haute Couture Yaound\u00e9 with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_men_s_ribbed_athleisure_set___elevate_yo": {
+    id: "fash_men_s_ribbed_athleisure_set___elevate_yo",
+    title: "Men s Ribbed Athleisure Set __Elevate your casual",
+    brand: "Kamer Streetwear",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "STREETWEAR",
+    rating: "4.8",
+    reviewCount: 36,
+    soldCount: 56,
+    price: "XAF 33.200",
+    salePrice: "XAF 39.000",
+    storeName: "Cameroun Prestige Maroquinerie",
+    storeCity: "Bonanjo, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/dresses/Men%27s%20Ribbed%20Athleisure%20Set%20__Elevate%20your%20casual%E2%80%A6.jfif",
+    images: [
+      "./Assets/fashion/dresses/Men%27s%20Ribbed%20Athleisure%20Set%20__Elevate%20your%20casual%E2%80%A6.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Men s Ribbed Athleisure Set __Elevate your casual. Sourced by Cameroun Prestige Maroquinerie with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_pinterest": {
+    id: "fash_pinterest",
+    title: "Pinterest",
+    brand: "Atelier Prestige",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "HAUTE COUTURE",
+    rating: "4.9",
+    reviewCount: 43,
+    soldCount: 69,
+    price: "XAF 63.600",
+    salePrice: "XAF 75.000",
+    storeName: "Kamer Luxe Bonapriso",
+    storeCity: "Bonapriso, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/dresses/Pinterest.jfif",
+    images: [
+      "./Assets/fashion/dresses/Pinterest.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Pinterest. Sourced by Kamer Luxe Bonapriso with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_stylish": {
+    id: "fash_stylish",
+    title: "Stylish",
+    brand: "Atelier Prestige",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "HAUTE COUTURE",
+    rating: "4.7",
+    reviewCount: 50,
+    soldCount: 82,
+    price: "XAF 64.800",
+    salePrice: "XAF 76.000",
+    storeName: "Maison Wax Bastos",
+    storeCity: "Bastos, Yaound\u00e9",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/dresses/Stylish.jfif",
+    images: [
+      "./Assets/fashion/dresses/Stylish.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Stylish. Sourced by Maison Wax Bastos with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_yahweh_men_s_hooded_sweatshirt": {
+    id: "fash_yahweh_men_s_hooded_sweatshirt",
+    title: "Yahweh Men s Hooded Sweatshirt",
+    brand: "Kamer Streetwear",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "STREETWEAR",
+    rating: "4.8",
+    reviewCount: 57,
+    soldCount: 95,
+    price: "XAF 35.000",
+    salePrice: "XAF 41.000",
+    storeName: "Boutique Glamour Akwa",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/dresses/Yahweh%20Men%E2%80%99s%20Hooded%20Sweatshirt.jfif",
+    images: [
+      "./Assets/fashion/dresses/Yahweh%20Men%E2%80%99s%20Hooded%20Sweatshirt.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Yahweh Men s Hooded Sweatshirt. Sourced by Boutique Glamour Akwa with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_zebra_inspired_agbada_design": {
+    id: "fash_zebra_inspired_agbada_design",
+    title: "Zebra inspired Agbada design",
+    brand: "Atelier Prestige",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "HAUTE COUTURE",
+    rating: "4.9",
+    reviewCount: 64,
+    soldCount: 108,
+    price: "XAF 67.200",
+    salePrice: "XAF 79.000",
+    storeName: "Douala Leather Craft",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/dresses/Zebra%20inspired%20Agbada%20design.jfif",
+    images: [
+      "./Assets/fashion/dresses/Zebra%20inspired%20Agbada%20design.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Zebra inspired Agbada design. Sourced by Douala Leather Craft with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_zrgoth_men_s_casual_versatile_minimalist": {
+    id: "fash_zrgoth_men_s_casual_versatile_minimalist",
+    title: "Zrgoth Men s Casual Versatile Minimalist American Style English",
+    brand: "Kamer Streetwear",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "STREETWEAR",
+    rating: "4.7",
+    reviewCount: 71,
+    soldCount: 121,
+    price: "XAF 36.200",
+    salePrice: "XAF 42.500",
+    storeName: "Mboppi Fashion Hub",
+    storeCity: "Mboppi, Douala",
+    storeRating: "4.7",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/dresses/%F0%9F%9B%92Zrgoth%20Men%27s%20Casual%20Versatile%20Minimalist%20American%20Style%20English%20Slogan%20Element.jfif",
+    images: [
+      "./Assets/fashion/dresses/%F0%9F%9B%92Zrgoth%20Men%27s%20Casual%20Versatile%20Minimalist%20American%20Style%20English%20Slogan%20Element.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Zrgoth Men s Casual Versatile Minimalist American Style English. Sourced by Mboppi Fashion Hub with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_cotton_ankara_palazzo_pants": {
+    id: "fash_cotton_ankara_palazzo_pants",
+    title: "Cotton Ankara Palazzo Pants",
+    brand: "Maison Wax Bastos",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "AUTHENTIC WAX",
+    rating: "4.8",
+    reviewCount: 78,
+    soldCount: 134,
+    price: "XAF 77.800",
+    salePrice: "XAF 91.500",
+    storeName: "Urban Kicks Bonamoussadi",
+    storeCity: "Bonamoussadi, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/EnsembleModel/100%25%20Cotton%20Ankara%20Palazzo%20Pants.jfif",
+    images: [
+      "./Assets/fashion/EnsembleModel/100%25%20Cotton%20Ankara%20Palazzo%20Pants.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Cotton Ankara Palazzo Pants. Sourced by Urban Kicks Bonamoussadi with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_ensemble_chic_africain_wax_soie": {
+    id: "fash_ensemble_chic_africain_wax_soie",
+    title: "Ensemble Chic Africain Wax & Soie",
+    brand: "Maison Wax Bastos",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "AUTHENTIC WAX",
+    rating: "4.9",
+    reviewCount: 85,
+    soldCount: 147,
+    price: "XAF 78.900",
+    salePrice: "XAF 93.000",
+    storeName: "Atelier Haute Couture Yaound\u00e9",
+    storeCity: "March\u00e9 Central, Yaound\u00e9",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/EnsembleModel/1078049229570911678.jfif",
+    images: [
+      "./Assets/fashion/EnsembleModel/1078049229570911678.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Ensemble Chic Africain Wax & Soie. Sourced by Atelier Haute Couture Yaound\u00e9 with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_ensemble_chic_africain_wax_soie_2": {
+    id: "fash_ensemble_chic_africain_wax_soie_2",
+    title: "Ensemble Chic Africain Wax & Soie",
+    brand: "Maison Wax Bastos",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "AUTHENTIC WAX",
+    rating: "4.7",
+    reviewCount: 92,
+    soldCount: 160,
+    price: "XAF 80.000",
+    salePrice: "XAF 94.000",
+    storeName: "Cameroun Prestige Maroquinerie",
+    storeCity: "Bonanjo, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/EnsembleModel/1125968743464736.jfif",
+    images: [
+      "./Assets/fashion/EnsembleModel/1125968743464736.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Ensemble Chic Africain Wax & Soie. Sourced by Cameroun Prestige Maroquinerie with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_ensemble_chic_africain_wax_soie_3": {
+    id: "fash_ensemble_chic_africain_wax_soie_3",
+    title: "Ensemble Chic Africain Wax & Soie",
+    brand: "Maison Wax Bastos",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "AUTHENTIC WAX",
+    rating: "4.8",
+    reviewCount: 99,
+    soldCount: 173,
+    price: "XAF 81.100",
+    salePrice: "XAF 95.500",
+    storeName: "Kamer Luxe Bonapriso",
+    storeCity: "Bonapriso, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/EnsembleModel/1688918606436976.jfif",
+    images: [
+      "./Assets/fashion/EnsembleModel/1688918606436976.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Ensemble Chic Africain Wax & Soie. Sourced by Kamer Luxe Bonapriso with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_ensemble_chic_africain_wax_soie_4": {
+    id: "fash_ensemble_chic_africain_wax_soie_4",
+    title: "Ensemble Chic Africain Wax & Soie",
+    brand: "Maison Wax Bastos",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "AUTHENTIC WAX",
+    rating: "4.9",
+    reviewCount: 106,
+    soldCount: 186,
+    price: "XAF 82.200",
+    salePrice: "XAF 96.500",
+    storeName: "Maison Wax Bastos",
+    storeCity: "Bastos, Yaound\u00e9",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/EnsembleModel/20195898327568519.jfif",
+    images: [
+      "./Assets/fashion/EnsembleModel/20195898327568519.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Ensemble Chic Africain Wax & Soie. Sourced by Maison Wax Bastos with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_ensemble_chic_africain_wax_soie_5": {
+    id: "fash_ensemble_chic_africain_wax_soie_5",
+    title: "Ensemble Chic Africain Wax & Soie",
+    brand: "Maison Wax Bastos",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "AUTHENTIC WAX",
+    rating: "4.7",
+    reviewCount: 113,
+    soldCount: 199,
+    price: "XAF 38.300",
+    salePrice: "XAF 45.000",
+    storeName: "Boutique Glamour Akwa",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/EnsembleModel/26880929021915841.jfif",
+    images: [
+      "./Assets/fashion/EnsembleModel/26880929021915841.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Ensemble Chic Africain Wax & Soie. Sourced by Boutique Glamour Akwa with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_ensemble_chic_africain_wax_soie_6": {
+    id: "fash_ensemble_chic_africain_wax_soie_6",
+    title: "Ensemble Chic Africain Wax & Soie",
+    brand: "Maison Wax Bastos",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "AUTHENTIC WAX",
+    rating: "4.8",
+    reviewCount: 120,
+    soldCount: 212,
+    price: "XAF 39.400",
+    salePrice: "XAF 46.000",
+    storeName: "Douala Leather Craft",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/EnsembleModel/3237030978022868.jfif",
+    images: [
+      "./Assets/fashion/EnsembleModel/3237030978022868.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Ensemble Chic Africain Wax & Soie. Sourced by Douala Leather Craft with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_ensemble_chic_africain_wax_soie_7": {
+    id: "fash_ensemble_chic_africain_wax_soie_7",
+    title: "Ensemble Chic Africain Wax & Soie",
+    brand: "Maison Wax Bastos",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "AUTHENTIC WAX",
+    rating: "4.9",
+    reviewCount: 127,
+    soldCount: 225,
+    price: "XAF 40.500",
+    salePrice: "XAF 47.500",
+    storeName: "Mboppi Fashion Hub",
+    storeCity: "Mboppi, Douala",
+    storeRating: "4.7",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/EnsembleModel/808959151859250801.jfif",
+    images: [
+      "./Assets/fashion/EnsembleModel/808959151859250801.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Ensemble Chic Africain Wax & Soie. Sourced by Mboppi Fashion Hub with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_k_views_1_3k_reactions_____tep_fashion_a": {
+    id: "fash_k_views_1_3k_reactions_____tep_fashion_a",
+    title: "K views 1_3K reactions _ _ Tep Fashion and Styles",
+    brand: "Atelier Prestige",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "HAUTE COUTURE",
+    rating: "4.7",
+    reviewCount: 24,
+    soldCount: 238,
+    price: "XAF 43.200",
+    salePrice: "XAF 50.500",
+    storeName: "Urban Kicks Bonamoussadi",
+    storeCity: "Bonamoussadi, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/EnsembleModel/83K%20views%20%C2%B7%201_3K%20reactions%20_%20%23beautiful%20%23luxury%20%23styleinspiration%20%23ankara%20%23ElegantStyle%20%23explorepage%20%23tepfashionandstyles%20_%20Tep%20Fashion%20and%20Styles.jfif",
+    images: [
+      "./Assets/fashion/EnsembleModel/83K%20views%20%C2%B7%201_3K%20reactions%20_%20%23beautiful%20%23luxury%20%23styleinspiration%20%23ankara%20%23ElegantStyle%20%23explorepage%20%23tepfashionandstyles%20_%20Tep%20Fashion%20and%20Styles.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: K views 1_3K reactions _ _ Tep Fashion and Styles. Sourced by Urban Kicks Bonamoussadi with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_ensemble_chic_africain_wax_soie_8": {
+    id: "fash_ensemble_chic_africain_wax_soie_8",
+    title: "Ensemble Chic Africain Wax & Soie",
+    brand: "Maison Wax Bastos",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "AUTHENTIC WAX",
+    rating: "4.8",
+    reviewCount: 31,
+    soldCount: 251,
+    price: "XAF 42.700",
+    salePrice: "XAF 50.000",
+    storeName: "Atelier Haute Couture Yaound\u00e9",
+    storeCity: "March\u00e9 Central, Yaound\u00e9",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/EnsembleModel/842173199113522569.jfif",
+    images: [
+      "./Assets/fashion/EnsembleModel/842173199113522569.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Ensemble Chic Africain Wax & Soie. Sourced by Atelier Haute Couture Yaound\u00e9 with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_ensemble_chic_africain_wax_soie_9": {
+    id: "fash_ensemble_chic_africain_wax_soie_9",
+    title: "Ensemble Chic Africain Wax & Soie",
+    brand: "Maison Wax Bastos",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "AUTHENTIC WAX",
+    rating: "4.9",
+    reviewCount: 38,
+    soldCount: 264,
+    price: "XAF 43.800",
+    salePrice: "XAF 51.500",
+    storeName: "Cameroun Prestige Maroquinerie",
+    storeCity: "Bonanjo, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/EnsembleModel/901282944163655107.jfif",
+    images: [
+      "./Assets/fashion/EnsembleModel/901282944163655107.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Ensemble Chic Africain Wax & Soie. Sourced by Cameroun Prestige Maroquinerie with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_african_fashion_outfit_inspiration": {
+    id: "fash_african_fashion_outfit_inspiration",
+    title: "African fashion outfit inspiration",
+    brand: "Atelier Prestige",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "HAUTE COUTURE",
+    rating: "4.7",
+    reviewCount: 45,
+    soldCount: 277,
+    price: "XAF 46.800",
+    salePrice: "XAF 55.000",
+    storeName: "Kamer Luxe Bonapriso",
+    storeCity: "Bonapriso, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/EnsembleModel/African%20fashion%20outfit%20inspiration.jfif",
+    images: [
+      "./Assets/fashion/EnsembleModel/African%20fashion%20outfit%20inspiration.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: African fashion outfit inspiration. Sourced by Kamer Luxe Bonapriso with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_african_gown_outfit_inspiration": {
+    id: "fash_african_gown_outfit_inspiration",
+    title: "African gown outfit inspiration",
+    brand: "Atelier Prestige",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "HAUTE COUTURE",
+    rating: "4.8",
+    reviewCount: 52,
+    soldCount: 50,
+    price: "XAF 48.000",
+    salePrice: "XAF 56.500",
+    storeName: "Maison Wax Bastos",
+    storeCity: "Bastos, Yaound\u00e9",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/EnsembleModel/African%20gown%20outfit%20inspiration.jfif",
+    images: [
+      "./Assets/fashion/EnsembleModel/African%20gown%20outfit%20inspiration.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: African gown outfit inspiration. Sourced by Maison Wax Bastos with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_birthday_design": {
+    id: "fash_birthday_design",
+    title: "birthday design",
+    brand: "Atelier Prestige",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "HAUTE COUTURE",
+    rating: "4.9",
+    reviewCount: 59,
+    soldCount: 63,
+    price: "XAF 49.200",
+    salePrice: "XAF 58.000",
+    storeName: "Boutique Glamour Akwa",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/EnsembleModel/birthday%20design.jfif",
+    images: [
+      "./Assets/fashion/EnsembleModel/birthday%20design.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: birthday design. Sourced by Boutique Glamour Akwa with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_blueprints_for_a_future_that_doesn_t_exi": {
+    id: "fash_blueprints_for_a_future_that_doesn_t_exi",
+    title: "BLUEprints for a future that doesn t exist yet__On",
+    brand: "Atelier Prestige",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "HAUTE COUTURE",
+    rating: "4.7",
+    reviewCount: 66,
+    soldCount: 76,
+    price: "XAF 50.400",
+    salePrice: "XAF 59.000",
+    storeName: "Douala Leather Craft",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/EnsembleModel/BLUEprints%20for%20a%20future%20that%20doesn%E2%80%99t%20exist%20yet__On%E2%80%A6.jfif",
+    images: [
+      "./Assets/fashion/EnsembleModel/BLUEprints%20for%20a%20future%20that%20doesn%E2%80%99t%20exist%20yet__On%E2%80%A6.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: BLUEprints for a future that doesn t exist yet__On. Sourced by Douala Leather Craft with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_burkina_traditional_weeding_dresses_luil": {
+    id: "fash_burkina_traditional_weeding_dresses_luil",
+    title: "Burkina Traditional weeding dresses Luili Pend\u00e9",
+    brand: "Maison Wax Bastos",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "AUTHENTIC WAX",
+    rating: "4.8",
+    reviewCount: 73,
+    soldCount: 89,
+    price: "XAF 49.300",
+    salePrice: "XAF 58.000",
+    storeName: "Mboppi Fashion Hub",
+    storeCity: "Mboppi, Douala",
+    storeRating: "4.7",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/EnsembleModel/Burkina%20Traditional%20weeding%20dresses%20Luili%20Pend%C3%A9.jfif",
+    images: [
+      "./Assets/fashion/EnsembleModel/Burkina%20Traditional%20weeding%20dresses%20Luili%20Pend%C3%A9.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Burkina Traditional weeding dresses Luili Pend\u00e9. Sourced by Mboppi Fashion Hub with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_deadline_is_tomorrow_and_your_thread_is": {
+    id: "fash_deadline_is_tomorrow_and_your_thread_is",
+    title: "Deadline Is Tomorrow and Your Thread Is Fighting You",
+    brand: "Atelier Prestige",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "HAUTE COUTURE",
+    rating: "4.9",
+    reviewCount: 80,
+    soldCount: 102,
+    price: "XAF 52.800",
+    salePrice: "XAF 62.000",
+    storeName: "Urban Kicks Bonamoussadi",
+    storeCity: "Bonamoussadi, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/EnsembleModel/Deadline%20Is%20Tomorrow%20and%20Your%20Thread%20Is%20Fighting%20You%20%F0%9F%98%82%F0%9F%A7%B5.jfif",
+    images: [
+      "./Assets/fashion/EnsembleModel/Deadline%20Is%20Tomorrow%20and%20Your%20Thread%20Is%20Fighting%20You%20%F0%9F%98%82%F0%9F%A7%B5.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Deadline Is Tomorrow and Your Thread Is Fighting You. Sourced by Urban Kicks Bonamoussadi with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_djec_fashion_cameroon": {
+    id: "fash_djec_fashion_cameroon",
+    title: "Djec Fashion - Cameroon",
+    brand: "Maison Wax Bastos",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "AUTHENTIC WAX",
+    rating: "4.7",
+    reviewCount: 87,
+    soldCount: 115,
+    price: "XAF 51.500",
+    salePrice: "XAF 60.500",
+    storeName: "Atelier Haute Couture Yaound\u00e9",
+    storeCity: "March\u00e9 Central, Yaound\u00e9",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/EnsembleModel/Djec%20Fashion%20-%20Cameroon%20%F0%9F%87%A8%F0%9F%87%B2.jfif",
+    images: [
+      "./Assets/fashion/EnsembleModel/Djec%20Fashion%20-%20Cameroon%20%F0%9F%87%A8%F0%9F%87%B2.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Djec Fashion - Cameroon. Sourced by Atelier Haute Couture Yaound\u00e9 with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_dressed_in_heritage_captured_elegance_in": {
+    id: "fash_dressed_in_heritage_captured_elegance_in",
+    title: "Dressed in heritage, captured elegance in every",
+    brand: "Atelier Prestige",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "HAUTE COUTURE",
+    rating: "4.8",
+    reviewCount: 94,
+    soldCount: 128,
+    price: "XAF 55.200",
+    salePrice: "XAF 65.000",
+    storeName: "Cameroun Prestige Maroquinerie",
+    storeCity: "Bonanjo, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/EnsembleModel/Dressed%20in%20heritage,%20captured%20elegance%20in%20every%E2%80%A6.jfif",
+    images: [
+      "./Assets/fashion/EnsembleModel/Dressed%20in%20heritage,%20captured%20elegance%20in%20every%E2%80%A6.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Dressed in heritage, captured elegance in every. Sourced by Cameroun Prestige Maroquinerie with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_elegance": {
+    id: "fash_elegance",
+    title: "Elegance",
+    brand: "Atelier Prestige",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "HAUTE COUTURE",
+    rating: "4.9",
+    reviewCount: 101,
+    soldCount: 141,
+    price: "XAF 56.400",
+    salePrice: "XAF 66.500",
+    storeName: "Kamer Luxe Bonapriso",
+    storeCity: "Bonapriso, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/EnsembleModel/Elegance.jfif",
+    images: [
+      "./Assets/fashion/EnsembleModel/Elegance.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Elegance. Sourced by Kamer Luxe Bonapriso with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_green_agbada_set": {
+    id: "fash_green_agbada_set",
+    title: "Green agbada set",
+    brand: "Atelier Prestige",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "HAUTE COUTURE",
+    rating: "4.7",
+    reviewCount: 108,
+    soldCount: 154,
+    price: "XAF 57.600",
+    salePrice: "XAF 67.500",
+    storeName: "Maison Wax Bastos",
+    storeCity: "Bastos, Yaound\u00e9",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/EnsembleModel/Green%20agbada%20set.jfif",
+    images: [
+      "./Assets/fashion/EnsembleModel/Green%20agbada%20set.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Green agbada set. Sourced by Maison Wax Bastos with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_happy_birthday_sha": {
+    id: "fash_happy_birthday_sha",
+    title: "happy birthday sha",
+    brand: "Atelier Prestige",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "HAUTE COUTURE",
+    rating: "4.8",
+    reviewCount: 115,
+    soldCount: 167,
+    price: "XAF 58.800",
+    salePrice: "XAF 69.000",
+    storeName: "Boutique Glamour Akwa",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/EnsembleModel/happy%20birthday%20sha.jfif",
+    images: [
+      "./Assets/fashion/EnsembleModel/happy%20birthday%20sha.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: happy birthday sha. Sourced by Boutique Glamour Akwa with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_luxury_black_agbada_with_gold_embroidery": {
+    id: "fash_luxury_black_agbada_with_gold_embroidery",
+    title: "Luxury Black Agbada with Gold Embroidery for Men _ Traditional",
+    brand: "Maison Wax Bastos",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "AUTHENTIC WAX",
+    rating: "4.9",
+    reviewCount: 122,
+    soldCount: 180,
+    price: "XAF 57.000",
+    salePrice: "XAF 67.000",
+    storeName: "Douala Leather Craft",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/EnsembleModel/Luxury%20Black%20Agbada%20with%20Gold%20Embroidery%20for%20Men%20_%20Traditional%20African%20Attire.jfif",
+    images: [
+      "./Assets/fashion/EnsembleModel/Luxury%20Black%20Agbada%20with%20Gold%20Embroidery%20for%20Men%20_%20Traditional%20African%20Attire.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Luxury Black Agbada with Gold Embroidery for Men _ Traditional. Sourced by Douala Leather Craft with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_mirror_mirror_on_the_wall_featuring": {
+    id: "fash_mirror_mirror_on_the_wall_featuring",
+    title: "Mirror mirror on the wall_Featuring",
+    brand: "Atelier Prestige",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "HAUTE COUTURE",
+    rating: "4.7",
+    reviewCount: 129,
+    soldCount: 193,
+    price: "XAF 61.200",
+    salePrice: "XAF 72.000",
+    storeName: "Mboppi Fashion Hub",
+    storeCity: "Mboppi, Douala",
+    storeRating: "4.7",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/EnsembleModel/Mirror%20mirror%20on%20the%20wall_Featuring%E2%80%A6.jfif",
+    images: [
+      "./Assets/fashion/EnsembleModel/Mirror%20mirror%20on%20the%20wall_Featuring%E2%80%A6.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Mirror mirror on the wall_Featuring. Sourced by Mboppi Fashion Hub with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_modern_christian_apparel_graphic": {
+    id: "fash_modern_christian_apparel_graphic",
+    title: "Modern Christian Apparel Graphic",
+    brand: "Atelier Prestige",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "HAUTE COUTURE",
+    rating: "4.8",
+    reviewCount: 26,
+    soldCount: 206,
+    price: "XAF 62.400",
+    salePrice: "XAF 73.500",
+    storeName: "Urban Kicks Bonamoussadi",
+    storeCity: "Bonamoussadi, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/EnsembleModel/Modern%20Christian%20Apparel%20Graphic.jfif",
+    images: [
+      "./Assets/fashion/EnsembleModel/Modern%20Christian%20Apparel%20Graphic.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Modern Christian Apparel Graphic. Sourced by Urban Kicks Bonamoussadi with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_negg_reis_vanel": {
+    id: "fash_negg_reis_vanel",
+    title: "Negg - Reis Vanel",
+    brand: "Atelier Prestige",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "HAUTE COUTURE",
+    rating: "4.9",
+    reviewCount: 33,
+    soldCount: 219,
+    price: "XAF 63.600",
+    salePrice: "XAF 75.000",
+    storeName: "Atelier Haute Couture Yaound\u00e9",
+    storeCity: "March\u00e9 Central, Yaound\u00e9",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/EnsembleModel/Negg%20-%20Reis%20Vanel%20%281%29.jfif",
+    images: [
+      "./Assets/fashion/EnsembleModel/Negg%20-%20Reis%20Vanel%20%281%29.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Negg - Reis Vanel. Sourced by Atelier Haute Couture Yaound\u00e9 with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_owambe_vintage_birthday_shoot": {
+    id: "fash_owambe_vintage_birthday_shoot",
+    title: "Owambe vintage birthday shoot",
+    brand: "Atelier Prestige",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "HAUTE COUTURE",
+    rating: "4.7",
+    reviewCount: 40,
+    soldCount: 232,
+    price: "XAF 64.800",
+    salePrice: "XAF 76.000",
+    storeName: "Cameroun Prestige Maroquinerie",
+    storeCity: "Bonanjo, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/EnsembleModel/Owambe%20vintage%20birthday%20shoot.jfif",
+    images: [
+      "./Assets/fashion/EnsembleModel/Owambe%20vintage%20birthday%20shoot.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Owambe vintage birthday shoot. Sourced by Cameroun Prestige Maroquinerie with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_the_unpunishable_woman": {
+    id: "fash_the_unpunishable_woman",
+    title: "THE UNPUNISHABLE WOMAN",
+    brand: "Atelier Prestige",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "HAUTE COUTURE",
+    rating: "4.8",
+    reviewCount: 47,
+    soldCount: 245,
+    price: "XAF 66.000",
+    salePrice: "XAF 77.500",
+    storeName: "Kamer Luxe Bonapriso",
+    storeCity: "Bonapriso, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/EnsembleModel/THE%20UNPUNISHABLE%20WOMAN.jfif",
+    images: [
+      "./Assets/fashion/EnsembleModel/THE%20UNPUNISHABLE%20WOMAN.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: THE UNPUNISHABLE WOMAN. Sourced by Kamer Luxe Bonapriso with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_this_is_what_royalty_wears": {
+    id: "fash_this_is_what_royalty_wears",
+    title: "This is what royalty wears",
+    brand: "Atelier Prestige",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "HAUTE COUTURE",
+    rating: "4.9",
+    reviewCount: 54,
+    soldCount: 258,
+    price: "XAF 67.200",
+    salePrice: "XAF 79.000",
+    storeName: "Maison Wax Bastos",
+    storeCity: "Bastos, Yaound\u00e9",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/EnsembleModel/This%20is%20what%20royalty%20wears.jfif",
+    images: [
+      "./Assets/fashion/EnsembleModel/This%20is%20what%20royalty%20wears.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: This is what royalty wears. Sourced by Maison Wax Bastos with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_tolamo_motswana": {
+    id: "fash_tolamo_motswana",
+    title: "Tolamo Motswana",
+    brand: "Atelier Prestige",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "HAUTE COUTURE",
+    rating: "4.7",
+    reviewCount: 61,
+    soldCount: 271,
+    price: "XAF 68.400",
+    salePrice: "XAF 80.500",
+    storeName: "Boutique Glamour Akwa",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/EnsembleModel/Tolamo%20Motswana.jfif",
+    images: [
+      "./Assets/fashion/EnsembleModel/Tolamo%20Motswana.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Tolamo Motswana. Sourced by Boutique Glamour Akwa with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_ultimate_traditional_design_by_ernest_fu": {
+    id: "fash_ultimate_traditional_design_by_ernest_fu",
+    title: "Ultimate Traditional Design by Ernest Fuh Muoh - Cameroon",
+    brand: "Maison Wax Bastos",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "AUTHENTIC WAX",
+    rating: "4.8",
+    reviewCount: 68,
+    soldCount: 44,
+    price: "XAF 65.800",
+    salePrice: "XAF 77.500",
+    storeName: "Douala Leather Craft",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/EnsembleModel/Ultimate%20Traditional%20Design%20by%20Ernest%20Fuh%20Muoh%20-%20Cameroon%20%F0%9F%87%A8%F0%9F%87%B2.jfif",
+    images: [
+      "./Assets/fashion/EnsembleModel/Ultimate%20Traditional%20Design%20by%20Ernest%20Fuh%20Muoh%20-%20Cameroon%20%F0%9F%87%A8%F0%9F%87%B2.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Ultimate Traditional Design by Ernest Fuh Muoh - Cameroon. Sourced by Douala Leather Craft with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_where_would_you_wear_this_to": {
+    id: "fash_where_would_you_wear_this_to",
+    title: "where would you wear this to",
+    brand: "Atelier Prestige",
+    category: "fashion",
+    categoryLabel: "Apparel & Streetwear",
+    subcategory: "clothing",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "HAUTE COUTURE",
+    rating: "4.9",
+    reviewCount: 75,
+    soldCount: 57,
+    price: "XAF 70.800",
+    salePrice: "XAF 83.500",
+    storeName: "Mboppi Fashion Hub",
+    storeCity: "Mboppi, Douala",
+    storeRating: "4.7",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/EnsembleModel/where%20would%20you%20wear%20this%20to.jfif",
+    images: [
+      "./Assets/fashion/EnsembleModel/where%20would%20you%20wear%20this%20to.jfif"
+    ],
+    attributes: [
+      { key: "Fabric", val: "100% Genuine Wax Hollandais / Satin Soie" },
+      { key: "Cut & Fit", val: "Tailored Regular & Bespoke Fit" },
+      { key: "Care", val: "Dry Clean or Gentle Cold Handwash" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: where would you wear this to. Sourced by Mboppi Fashion Hub with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_sac_a_main_cuir_haut_de_gamme": {
+    id: "fash_sac_a_main_cuir_haut_de_gamme",
+    title: "Sac \u00e0 Main Cuir Haut de Gamme",
+    brand: "Scelto Leather",
+    category: "fashion",
+    categoryLabel: "Luxury Bags & Leather",
+    subcategory: "bags",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "GENUINE LEATHER",
+    rating: "4.7",
+    reviewCount: 82,
+    soldCount: 70,
+    price: "XAF 50.000",
+    salePrice: "XAF 59.000",
+    storeName: "Urban Kicks Bonamoussadi",
+    storeCity: "Bonamoussadi, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/handbag/1092052609666507472.jfif",
+    images: [
+      "./Assets/fashion/handbag/1092052609666507472.jfif"
+    ],
+    attributes: [
+      { key: "Leather Type", val: "Genuine Saffiano & Vegan Top-Grain Leather" },
+      { key: "Hardware", val: "Gold-Tone Anti-Tarnish Metal Alloy" },
+      { key: "Compartments", val: "Multi-Pocket Organizer & Padded Sleeve" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Sac \u00e0 Main Cuir Haut de Gamme. Sourced by Urban Kicks Bonamoussadi with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_sac_a_main_cuir_haut_de_gamme_2": {
+    id: "fash_sac_a_main_cuir_haut_de_gamme_2",
+    title: "Sac \u00e0 Main Cuir Haut de Gamme",
+    brand: "Scelto Leather",
+    category: "fashion",
+    categoryLabel: "Luxury Bags & Leather",
+    subcategory: "bags",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "GENUINE LEATHER",
+    rating: "4.8",
+    reviewCount: 89,
+    soldCount: 83,
+    price: "XAF 50.900",
+    salePrice: "XAF 60.000",
+    storeName: "Atelier Haute Couture Yaound\u00e9",
+    storeCity: "March\u00e9 Central, Yaound\u00e9",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/handbag/1092052609666675013.jfif",
+    images: [
+      "./Assets/fashion/handbag/1092052609666675013.jfif"
+    ],
+    attributes: [
+      { key: "Leather Type", val: "Genuine Saffiano & Vegan Top-Grain Leather" },
+      { key: "Hardware", val: "Gold-Tone Anti-Tarnish Metal Alloy" },
+      { key: "Compartments", val: "Multi-Pocket Organizer & Padded Sleeve" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Sac \u00e0 Main Cuir Haut de Gamme. Sourced by Atelier Haute Couture Yaound\u00e9 with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_sac_a_main_cuir_haut_de_gamme_3": {
+    id: "fash_sac_a_main_cuir_haut_de_gamme_3",
+    title: "Sac \u00e0 Main Cuir Haut de Gamme",
+    brand: "Scelto Leather",
+    category: "fashion",
+    categoryLabel: "Luxury Bags & Leather",
+    subcategory: "bags",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "GENUINE LEATHER",
+    rating: "4.9",
+    reviewCount: 96,
+    soldCount: 96,
+    price: "XAF 51.800",
+    salePrice: "XAF 61.000",
+    storeName: "Cameroun Prestige Maroquinerie",
+    storeCity: "Bonanjo, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/handbag/1093037772060905485.jfif",
+    images: [
+      "./Assets/fashion/handbag/1093037772060905485.jfif"
+    ],
+    attributes: [
+      { key: "Leather Type", val: "Genuine Saffiano & Vegan Top-Grain Leather" },
+      { key: "Hardware", val: "Gold-Tone Anti-Tarnish Metal Alloy" },
+      { key: "Compartments", val: "Multi-Pocket Organizer & Padded Sleeve" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Sac \u00e0 Main Cuir Haut de Gamme. Sourced by Cameroun Prestige Maroquinerie with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_sac_a_main_cuir_haut_de_gamme_4": {
+    id: "fash_sac_a_main_cuir_haut_de_gamme_4",
+    title: "Sac \u00e0 Main Cuir Haut de Gamme",
+    brand: "Scelto Leather",
+    category: "fashion",
+    categoryLabel: "Luxury Bags & Leather",
+    subcategory: "bags",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "GENUINE LEATHER",
+    rating: "4.7",
+    reviewCount: 103,
+    soldCount: 109,
+    price: "XAF 52.700",
+    salePrice: "XAF 62.000",
+    storeName: "Kamer Luxe Bonapriso",
+    storeCity: "Bonapriso, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/handbag/1107041152187417006.jfif",
+    images: [
+      "./Assets/fashion/handbag/1107041152187417006.jfif"
+    ],
+    attributes: [
+      { key: "Leather Type", val: "Genuine Saffiano & Vegan Top-Grain Leather" },
+      { key: "Hardware", val: "Gold-Tone Anti-Tarnish Metal Alloy" },
+      { key: "Compartments", val: "Multi-Pocket Organizer & Padded Sleeve" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Sac \u00e0 Main Cuir Haut de Gamme. Sourced by Kamer Luxe Bonapriso with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_sac_a_main_cuir_haut_de_gamme_5": {
+    id: "fash_sac_a_main_cuir_haut_de_gamme_5",
+    title: "Sac \u00e0 Main Cuir Haut de Gamme",
+    brand: "Scelto Leather",
+    category: "fashion",
+    categoryLabel: "Luxury Bags & Leather",
+    subcategory: "bags",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "GENUINE LEATHER",
+    rating: "4.8",
+    reviewCount: 110,
+    soldCount: 122,
+    price: "XAF 53.600",
+    salePrice: "XAF 63.000",
+    storeName: "Maison Wax Bastos",
+    storeCity: "Bastos, Yaound\u00e9",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/handbag/1119426051155871292.jfif",
+    images: [
+      "./Assets/fashion/handbag/1119426051155871292.jfif"
+    ],
+    attributes: [
+      { key: "Leather Type", val: "Genuine Saffiano & Vegan Top-Grain Leather" },
+      { key: "Hardware", val: "Gold-Tone Anti-Tarnish Metal Alloy" },
+      { key: "Compartments", val: "Multi-Pocket Organizer & Padded Sleeve" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Sac \u00e0 Main Cuir Haut de Gamme. Sourced by Maison Wax Bastos with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_sac_a_main_cuir_haut_de_gamme_6": {
+    id: "fash_sac_a_main_cuir_haut_de_gamme_6",
+    title: "Sac \u00e0 Main Cuir Haut de Gamme",
+    brand: "Scelto Leather",
+    category: "fashion",
+    categoryLabel: "Luxury Bags & Leather",
+    subcategory: "bags",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "GENUINE LEATHER",
+    rating: "4.9",
+    reviewCount: 117,
+    soldCount: 135,
+    price: "XAF 54.500",
+    salePrice: "XAF 64.000",
+    storeName: "Boutique Glamour Akwa",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/handbag/18858892187428553.jfif",
+    images: [
+      "./Assets/fashion/handbag/18858892187428553.jfif"
+    ],
+    attributes: [
+      { key: "Leather Type", val: "Genuine Saffiano & Vegan Top-Grain Leather" },
+      { key: "Hardware", val: "Gold-Tone Anti-Tarnish Metal Alloy" },
+      { key: "Compartments", val: "Multi-Pocket Organizer & Padded Sleeve" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Sac \u00e0 Main Cuir Haut de Gamme. Sourced by Boutique Glamour Akwa with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_sac_a_main_cuir_haut_de_gamme_7": {
+    id: "fash_sac_a_main_cuir_haut_de_gamme_7",
+    title: "Sac \u00e0 Main Cuir Haut de Gamme",
+    brand: "Scelto Leather",
+    category: "fashion",
+    categoryLabel: "Luxury Bags & Leather",
+    subcategory: "bags",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "GENUINE LEATHER",
+    rating: "4.7",
+    reviewCount: 124,
+    soldCount: 148,
+    price: "XAF 55.400",
+    salePrice: "XAF 65.000",
+    storeName: "Douala Leather Craft",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/handbag/309904018130526217.jfif",
+    images: [
+      "./Assets/fashion/handbag/309904018130526217.jfif"
+    ],
+    attributes: [
+      { key: "Leather Type", val: "Genuine Saffiano & Vegan Top-Grain Leather" },
+      { key: "Hardware", val: "Gold-Tone Anti-Tarnish Metal Alloy" },
+      { key: "Compartments", val: "Multi-Pocket Organizer & Padded Sleeve" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Sac \u00e0 Main Cuir Haut de Gamme. Sourced by Douala Leather Craft with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_sac_a_main_cuir_haut_de_gamme_8": {
+    id: "fash_sac_a_main_cuir_haut_de_gamme_8",
+    title: "Sac \u00e0 Main Cuir Haut de Gamme",
+    brand: "Scelto Leather",
+    category: "fashion",
+    categoryLabel: "Luxury Bags & Leather",
+    subcategory: "bags",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "GENUINE LEATHER",
+    rating: "4.8",
+    reviewCount: 131,
+    soldCount: 161,
+    price: "XAF 56.300",
+    salePrice: "XAF 66.000",
+    storeName: "Mboppi Fashion Hub",
+    storeCity: "Mboppi, Douala",
+    storeRating: "4.7",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/handbag/533113674660499741.jfif",
+    images: [
+      "./Assets/fashion/handbag/533113674660499741.jfif"
+    ],
+    attributes: [
+      { key: "Leather Type", val: "Genuine Saffiano & Vegan Top-Grain Leather" },
+      { key: "Hardware", val: "Gold-Tone Anti-Tarnish Metal Alloy" },
+      { key: "Compartments", val: "Multi-Pocket Organizer & Padded Sleeve" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Sac \u00e0 Main Cuir Haut de Gamme. Sourced by Mboppi Fashion Hub with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_sac_a_main_cuir_haut_de_gamme_9": {
+    id: "fash_sac_a_main_cuir_haut_de_gamme_9",
+    title: "Sac \u00e0 Main Cuir Haut de Gamme",
+    brand: "Scelto Leather",
+    category: "fashion",
+    categoryLabel: "Luxury Bags & Leather",
+    subcategory: "bags",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "GENUINE LEATHER",
+    rating: "4.9",
+    reviewCount: 28,
+    soldCount: 174,
+    price: "XAF 57.200",
+    salePrice: "XAF 67.000",
+    storeName: "Urban Kicks Bonamoussadi",
+    storeCity: "Bonamoussadi, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/handbag/793689134375790960.jfif",
+    images: [
+      "./Assets/fashion/handbag/793689134375790960.jfif"
+    ],
+    attributes: [
+      { key: "Leather Type", val: "Genuine Saffiano & Vegan Top-Grain Leather" },
+      { key: "Hardware", val: "Gold-Tone Anti-Tarnish Metal Alloy" },
+      { key: "Compartments", val: "Multi-Pocket Organizer & Padded Sleeve" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Sac \u00e0 Main Cuir Haut de Gamme. Sourced by Urban Kicks Bonamoussadi with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_sac_a_main_cuir_haut_de_gamme_10": {
+    id: "fash_sac_a_main_cuir_haut_de_gamme_10",
+    title: "Sac \u00e0 Main Cuir Haut de Gamme",
+    brand: "Scelto Leather",
+    category: "fashion",
+    categoryLabel: "Luxury Bags & Leather",
+    subcategory: "bags",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "GENUINE LEATHER",
+    rating: "4.7",
+    reviewCount: 35,
+    soldCount: 187,
+    price: "XAF 58.100",
+    salePrice: "XAF 68.500",
+    storeName: "Atelier Haute Couture Yaound\u00e9",
+    storeCity: "March\u00e9 Central, Yaound\u00e9",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/handbag/932526666667944045.jfif",
+    images: [
+      "./Assets/fashion/handbag/932526666667944045.jfif"
+    ],
+    attributes: [
+      { key: "Leather Type", val: "Genuine Saffiano & Vegan Top-Grain Leather" },
+      { key: "Hardware", val: "Gold-Tone Anti-Tarnish Metal Alloy" },
+      { key: "Compartments", val: "Multi-Pocket Organizer & Padded Sleeve" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Sac \u00e0 Main Cuir Haut de Gamme. Sourced by Atelier Haute Couture Yaound\u00e9 with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_mochila_amarilla": {
+    id: "fash_mochila_amarilla",
+    title: "mochila amarilla",
+    brand: "Rimowa Studio",
+    category: "fashion",
+    categoryLabel: "Luxury Bags & Leather",
+    subcategory: "bags",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "EXECUTIVE TRAVEL",
+    rating: "4.8",
+    reviewCount: 42,
+    soldCount: 200,
+    price: "XAF 52.000",
+    salePrice: "XAF 61.000",
+    storeName: "Cameroun Prestige Maroquinerie",
+    storeCity: "Bonanjo, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/sac%20a%20dos/mochila%20amarilla.jfif",
+    images: [
+      "./Assets/fashion/sac%20a%20dos/mochila%20amarilla.jfif"
+    ],
+    attributes: [
+      { key: "Leather Type", val: "Genuine Saffiano & Vegan Top-Grain Leather" },
+      { key: "Hardware", val: "Gold-Tone Anti-Tarnish Metal Alloy" },
+      { key: "Compartments", val: "Multi-Pocket Organizer & Padded Sleeve" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: mochila amarilla. Sourced by Cameroun Prestige Maroquinerie with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_commissioned_work_for_scelto_luxury_bags": {
+    id: "fash_commissioned_work_for_scelto_luxury_bags",
+    title: "Commissioned work for Scelto Luxury Bags ft",
+    brand: "Maison Maroquin",
+    category: "fashion",
+    categoryLabel: "Luxury Bags & Leather",
+    subcategory: "bags",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "LUXURY EDITION",
+    rating: "4.9",
+    reviewCount: 49,
+    soldCount: 213,
+    price: "XAF 54.300",
+    salePrice: "XAF 64.000",
+    storeName: "Kamer Luxe Bonapriso",
+    storeCity: "Bonapriso, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/handbag/Commissioned%20work%20for%20Scelto%20Luxury%20Bags%20ft%E2%80%A6.jfif",
+    images: [
+      "./Assets/fashion/handbag/Commissioned%20work%20for%20Scelto%20Luxury%20Bags%20ft%E2%80%A6.jfif"
+    ],
+    attributes: [
+      { key: "Leather Type", val: "Genuine Saffiano & Vegan Top-Grain Leather" },
+      { key: "Hardware", val: "Gold-Tone Anti-Tarnish Metal Alloy" },
+      { key: "Compartments", val: "Multi-Pocket Organizer & Padded Sleeve" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Commissioned work for Scelto Luxury Bags ft. Sourced by Kamer Luxe Bonapriso with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_designer_inspired_bags_trending_in_the_u": {
+    id: "fash_designer_inspired_bags_trending_in_the_u",
+    title: "Designer-Inspired Bags Trending in the USA _ Stylish, Affordable",
+    brand: "Maison Maroquin",
+    category: "fashion",
+    categoryLabel: "Luxury Bags & Leather",
+    subcategory: "bags",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "LUXURY EDITION",
+    rating: "4.7",
+    reviewCount: 56,
+    soldCount: 226,
+    price: "XAF 55.600",
+    salePrice: "XAF 65.500",
+    storeName: "Maison Wax Bastos",
+    storeCity: "Bastos, Yaound\u00e9",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/handbag/Designer-Inspired%20Bags%20Trending%20in%20the%20USA%20_%20Stylish,%20Affordable%20Dupe%20Handbags.jfif",
+    images: [
+      "./Assets/fashion/handbag/Designer-Inspired%20Bags%20Trending%20in%20the%20USA%20_%20Stylish,%20Affordable%20Dupe%20Handbags.jfif"
+    ],
+    attributes: [
+      { key: "Leather Type", val: "Genuine Saffiano & Vegan Top-Grain Leather" },
+      { key: "Hardware", val: "Gold-Tone Anti-Tarnish Metal Alloy" },
+      { key: "Compartments", val: "Multi-Pocket Organizer & Padded Sleeve" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Designer-Inspired Bags Trending in the USA _ Stylish, Affordable. Sourced by Maison Wax Bastos with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_fashion": {
+    id: "fash_fashion",
+    title: "fashion",
+    brand: "Scelto Leather",
+    category: "fashion",
+    categoryLabel: "Luxury Bags & Leather",
+    subcategory: "bags",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "GENUINE LEATHER",
+    rating: "4.8",
+    reviewCount: 63,
+    soldCount: 239,
+    price: "XAF 37.700",
+    salePrice: "XAF 44.000",
+    storeName: "Boutique Glamour Akwa",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/handbag/fashion.jfif",
+    images: [
+      "./Assets/fashion/handbag/fashion.jfif"
+    ],
+    attributes: [
+      { key: "Leather Type", val: "Genuine Saffiano & Vegan Top-Grain Leather" },
+      { key: "Hardware", val: "Gold-Tone Anti-Tarnish Metal Alloy" },
+      { key: "Compartments", val: "Multi-Pocket Organizer & Padded Sleeve" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: fashion. Sourced by Boutique Glamour Akwa with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_green_bag_ai_design": {
+    id: "fash_green_bag_ai_design",
+    title: "Green Bag AI Design",
+    brand: "Scelto Leather",
+    category: "fashion",
+    categoryLabel: "Luxury Bags & Leather",
+    subcategory: "bags",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "GENUINE LEATHER",
+    rating: "4.9",
+    reviewCount: 70,
+    soldCount: 252,
+    price: "XAF 38.600",
+    salePrice: "XAF 45.500",
+    storeName: "Douala Leather Craft",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/handbag/Green%20Bag%20AI%20Design.jfif",
+    images: [
+      "./Assets/fashion/handbag/Green%20Bag%20AI%20Design.jfif"
+    ],
+    attributes: [
+      { key: "Leather Type", val: "Genuine Saffiano & Vegan Top-Grain Leather" },
+      { key: "Hardware", val: "Gold-Tone Anti-Tarnish Metal Alloy" },
+      { key: "Compartments", val: "Multi-Pocket Organizer & Padded Sleeve" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Green Bag AI Design. Sourced by Douala Leather Craft with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_hermes": {
+    id: "fash_hermes",
+    title: "Hermes",
+    brand: "Maison Maroquin",
+    category: "fashion",
+    categoryLabel: "Luxury Bags & Leather",
+    subcategory: "bags",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "LUXURY EDITION",
+    rating: "4.7",
+    reviewCount: 77,
+    soldCount: 265,
+    price: "XAF 59.500",
+    salePrice: "XAF 70.000",
+    storeName: "Mboppi Fashion Hub",
+    storeCity: "Mboppi, Douala",
+    storeRating: "4.7",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/handbag/Hermes.jfif",
+    images: [
+      "./Assets/fashion/handbag/Hermes.jfif"
+    ],
+    attributes: [
+      { key: "Leather Type", val: "Genuine Saffiano & Vegan Top-Grain Leather" },
+      { key: "Hardware", val: "Gold-Tone Anti-Tarnish Metal Alloy" },
+      { key: "Compartments", val: "Multi-Pocket Organizer & Padded Sleeve" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Hermes. Sourced by Mboppi Fashion Hub with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_kwanpen__handmade_luxury_fountain_pens_c": {
+    id: "fash_kwanpen__handmade_luxury_fountain_pens_c",
+    title: "KWANPEN_ Handmade Luxury Fountain Pens & Collectible Writing",
+    brand: "Maison Maroquin",
+    category: "fashion",
+    categoryLabel: "Luxury Bags & Leather",
+    subcategory: "bags",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "LUXURY EDITION",
+    rating: "4.8",
+    reviewCount: 84,
+    soldCount: 278,
+    price: "XAF 60.800",
+    salePrice: "XAF 71.500",
+    storeName: "Urban Kicks Bonamoussadi",
+    storeCity: "Bonamoussadi, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/handbag/KWANPEN_%20Handmade%20Luxury%20Fountain%20Pens%20&%20Collectible%20Writing%20Instruments.jfif",
+    images: [
+      "./Assets/fashion/handbag/KWANPEN_%20Handmade%20Luxury%20Fountain%20Pens%20&%20Collectible%20Writing%20Instruments.jfif"
+    ],
+    attributes: [
+      { key: "Leather Type", val: "Genuine Saffiano & Vegan Top-Grain Leather" },
+      { key: "Hardware", val: "Gold-Tone Anti-Tarnish Metal Alloy" },
+      { key: "Compartments", val: "Multi-Pocket Organizer & Padded Sleeve" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: KWANPEN_ Handmade Luxury Fountain Pens & Collectible Writing. Sourced by Urban Kicks Bonamoussadi with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_luxury_ai_accessories_campaign": {
+    id: "fash_luxury_ai_accessories_campaign",
+    title: "Luxury AI Accessories Campaign",
+    brand: "Maison Maroquin",
+    category: "fashion",
+    categoryLabel: "Luxury Bags & Leather",
+    subcategory: "bags",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "LUXURY EDITION",
+    rating: "4.9",
+    reviewCount: 91,
+    soldCount: 51,
+    price: "XAF 62.100",
+    salePrice: "XAF 73.000",
+    storeName: "Atelier Haute Couture Yaound\u00e9",
+    storeCity: "March\u00e9 Central, Yaound\u00e9",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/handbag/Luxury%20AI%20Accessories%20Campaign.jfif",
+    images: [
+      "./Assets/fashion/handbag/Luxury%20AI%20Accessories%20Campaign.jfif"
+    ],
+    attributes: [
+      { key: "Leather Type", val: "Genuine Saffiano & Vegan Top-Grain Leather" },
+      { key: "Hardware", val: "Gold-Tone Anti-Tarnish Metal Alloy" },
+      { key: "Compartments", val: "Multi-Pocket Organizer & Padded Sleeve" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Luxury AI Accessories Campaign. Sourced by Atelier Haute Couture Yaound\u00e9 with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_luxury_designer_leather_satchels_monogra": {
+    id: "fash_luxury_designer_leather_satchels_monogra",
+    title: "Luxury Designer Leather Satchels & Monogram Clutches _ Handbag",
+    brand: "Maison Maroquin",
+    category: "fashion",
+    categoryLabel: "Luxury Bags & Leather",
+    subcategory: "bags",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "LUXURY EDITION",
+    rating: "4.7",
+    reviewCount: 98,
+    soldCount: 64,
+    price: "XAF 63.400",
+    salePrice: "XAF 74.500",
+    storeName: "Cameroun Prestige Maroquinerie",
+    storeCity: "Bonanjo, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/handbag/Luxury%20Designer%20Leather%20Satchels%20&%20Monogram%20Clutches%20_%20Handbag%20Collection.jfif",
+    images: [
+      "./Assets/fashion/handbag/Luxury%20Designer%20Leather%20Satchels%20&%20Monogram%20Clutches%20_%20Handbag%20Collection.jfif"
+    ],
+    attributes: [
+      { key: "Leather Type", val: "Genuine Saffiano & Vegan Top-Grain Leather" },
+      { key: "Hardware", val: "Gold-Tone Anti-Tarnish Metal Alloy" },
+      { key: "Compartments", val: "Multi-Pocket Organizer & Padded Sleeve" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Luxury Designer Leather Satchels & Monogram Clutches _ Handbag. Sourced by Cameroun Prestige Maroquinerie with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_mira_black_leather_bag_everyday_elegance": {
+    id: "fash_mira_black_leather_bag_everyday_elegance",
+    title: "Mira black leather bag everyday elegance",
+    brand: "Scelto Leather",
+    category: "fashion",
+    categoryLabel: "Luxury Bags & Leather",
+    subcategory: "bags",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "GENUINE LEATHER",
+    rating: "4.8",
+    reviewCount: 105,
+    soldCount: 77,
+    price: "XAF 43.100",
+    salePrice: "XAF 50.500",
+    storeName: "Kamer Luxe Bonapriso",
+    storeCity: "Bonapriso, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/handbag/Mira%20black%20leather%20bag%20%E2%80%94%20everyday%20elegance.jfif",
+    images: [
+      "./Assets/fashion/handbag/Mira%20black%20leather%20bag%20%E2%80%94%20everyday%20elegance.jfif"
+    ],
+    attributes: [
+      { key: "Leather Type", val: "Genuine Saffiano & Vegan Top-Grain Leather" },
+      { key: "Hardware", val: "Gold-Tone Anti-Tarnish Metal Alloy" },
+      { key: "Compartments", val: "Multi-Pocket Organizer & Padded Sleeve" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Mira black leather bag everyday elegance. Sourced by Kamer Luxe Bonapriso with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_ryzen_world_pu_leather_latest_stylish_ha": {
+    id: "fash_ryzen_world_pu_leather_latest_stylish_ha",
+    title: "Ryzen World PU Leather Latest Stylish Handbags for Women s",
+    brand: "Scelto Leather",
+    category: "fashion",
+    categoryLabel: "Luxury Bags & Leather",
+    subcategory: "bags",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "GENUINE LEATHER",
+    rating: "4.9",
+    reviewCount: 112,
+    soldCount: 90,
+    price: "XAF 44.000",
+    salePrice: "XAF 51.500",
+    storeName: "Maison Wax Bastos",
+    storeCity: "Bastos, Yaound\u00e9",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/handbag/Ryzen%20World%20PU%20Leather%20Latest%20Stylish%20Handbags%20for%20Women%27s%20Ladies%20Combo%20of%203%20Blue_mangnet%20Clo___.jfif",
+    images: [
+      "./Assets/fashion/handbag/Ryzen%20World%20PU%20Leather%20Latest%20Stylish%20Handbags%20for%20Women%27s%20Ladies%20Combo%20of%203%20Blue_mangnet%20Clo___.jfif"
+    ],
+    attributes: [
+      { key: "Leather Type", val: "Genuine Saffiano & Vegan Top-Grain Leather" },
+      { key: "Hardware", val: "Gold-Tone Anti-Tarnish Metal Alloy" },
+      { key: "Compartments", val: "Multi-Pocket Organizer & Padded Sleeve" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Ryzen World PU Leather Latest Stylish Handbags for Women s. Sourced by Maison Wax Bastos with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_this_navy_luxury_bag_is_trending_in_2026": {
+    id: "fash_this_navy_luxury_bag_is_trending_in_2026",
+    title: "This Navy Luxury Bag is Trending in 2026",
+    brand: "Maison Maroquin",
+    category: "fashion",
+    categoryLabel: "Luxury Bags & Leather",
+    subcategory: "bags",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "LUXURY EDITION",
+    rating: "4.7",
+    reviewCount: 119,
+    soldCount: 103,
+    price: "XAF 67.300",
+    salePrice: "XAF 79.000",
+    storeName: "Boutique Glamour Akwa",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/handbag/This%20Navy%20Luxury%20Bag%20is%20Trending%20in%202026%20%E2%9C%A8.jfif",
+    images: [
+      "./Assets/fashion/handbag/This%20Navy%20Luxury%20Bag%20is%20Trending%20in%202026%20%E2%9C%A8.jfif"
+    ],
+    attributes: [
+      { key: "Leather Type", val: "Genuine Saffiano & Vegan Top-Grain Leather" },
+      { key: "Hardware", val: "Gold-Tone Anti-Tarnish Metal Alloy" },
+      { key: "Compartments", val: "Multi-Pocket Organizer & Padded Sleeve" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: This Navy Luxury Bag is Trending in 2026. Sourced by Boutique Glamour Akwa with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_yogodlns_women_fur_ball_ornaments_totes": {
+    id: "fash_yogodlns_women_fur_ball_ornaments_totes",
+    title: "Yogodlns Women Fur Ball Ornaments Totes Zipper Medium Handbag",
+    brand: "Scelto Leather",
+    category: "fashion",
+    categoryLabel: "Luxury Bags & Leather",
+    subcategory: "bags",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "GENUINE LEATHER",
+    rating: "4.8",
+    reviewCount: 126,
+    soldCount: 116,
+    price: "XAF 45.800",
+    salePrice: "XAF 54.000",
+    storeName: "Douala Leather Craft",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/handbag/Yogodlns%20Women%20Fur%20Ball%20Ornaments%20Totes%20Zipper%20Medium%20Handbag%20Hotsale%20Lady%20Party%20Purse%20Shoulder%20Messenger%20Crossbody%20Bags%20Color%20Black%20Size%2030x12x21cm.jfif",
+    images: [
+      "./Assets/fashion/handbag/Yogodlns%20Women%20Fur%20Ball%20Ornaments%20Totes%20Zipper%20Medium%20Handbag%20Hotsale%20Lady%20Party%20Purse%20Shoulder%20Messenger%20Crossbody%20Bags%20Color%20Black%20Size%2030x12x21cm.jfif"
+    ],
+    attributes: [
+      { key: "Leather Type", val: "Genuine Saffiano & Vegan Top-Grain Leather" },
+      { key: "Hardware", val: "Gold-Tone Anti-Tarnish Metal Alloy" },
+      { key: "Compartments", val: "Multi-Pocket Organizer & Padded Sleeve" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Yogodlns Women Fur Ball Ornaments Totes Zipper Medium Handbag. Sourced by Douala Leather Craft with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_trending_bags_you_ll_regret_skipping": {
+    id: "fash_trending_bags_you_ll_regret_skipping",
+    title: "Trending Bags You ll Regret Skipping",
+    brand: "Scelto Leather",
+    category: "fashion",
+    categoryLabel: "Luxury Bags & Leather",
+    subcategory: "bags",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "GENUINE LEATHER",
+    rating: "4.9",
+    reviewCount: 23,
+    soldCount: 129,
+    price: "XAF 46.700",
+    salePrice: "XAF 55.000",
+    storeName: "Mboppi Fashion Hub",
+    storeCity: "Mboppi, Douala",
+    storeRating: "4.7",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/handbag/%E2%8F%B3%20Trending%20Bags%20You%E2%80%99ll%20Regret%20Skipping.jfif",
+    images: [
+      "./Assets/fashion/handbag/%E2%8F%B3%20Trending%20Bags%20You%E2%80%99ll%20Regret%20Skipping.jfif"
+    ],
+    attributes: [
+      { key: "Leather Type", val: "Genuine Saffiano & Vegan Top-Grain Leather" },
+      { key: "Hardware", val: "Gold-Tone Anti-Tarnish Metal Alloy" },
+      { key: "Compartments", val: "Multi-Pocket Organizer & Padded Sleeve" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Trending Bags You ll Regret Skipping. Sourced by Mboppi Fashion Hub with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_sac_a_dos_cuir_urbain_voyage": {
+    id: "fash_sac_a_dos_cuir_urbain_voyage",
+    title: "Sac \u00e0 Dos Cuir Urbain & Voyage",
+    brand: "Rimowa Studio",
+    category: "fashion",
+    categoryLabel: "Luxury Bags & Leather",
+    subcategory: "bags",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "EXECUTIVE TRAVEL",
+    rating: "4.7",
+    reviewCount: 30,
+    soldCount: 142,
+    price: "XAF 41.200",
+    salePrice: "XAF 48.500",
+    storeName: "Urban Kicks Bonamoussadi",
+    storeCity: "Bonamoussadi, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/sac%20a%20dos/1008313804090414708.jfif",
+    images: [
+      "./Assets/fashion/sac%20a%20dos/1008313804090414708.jfif"
+    ],
+    attributes: [
+      { key: "Leather Type", val: "Genuine Saffiano & Vegan Top-Grain Leather" },
+      { key: "Hardware", val: "Gold-Tone Anti-Tarnish Metal Alloy" },
+      { key: "Compartments", val: "Multi-Pocket Organizer & Padded Sleeve" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Sac \u00e0 Dos Cuir Urbain & Voyage. Sourced by Urban Kicks Bonamoussadi with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_sac_a_dos_cuir_urbain_voyage_2": {
+    id: "fash_sac_a_dos_cuir_urbain_voyage_2",
+    title: "Sac \u00e0 Dos Cuir Urbain & Voyage",
+    brand: "Rimowa Studio",
+    category: "fashion",
+    categoryLabel: "Luxury Bags & Leather",
+    subcategory: "bags",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "EXECUTIVE TRAVEL",
+    rating: "4.8",
+    reviewCount: 37,
+    soldCount: 155,
+    price: "XAF 42.000",
+    salePrice: "XAF 49.500",
+    storeName: "Atelier Haute Couture Yaound\u00e9",
+    storeCity: "March\u00e9 Central, Yaound\u00e9",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/sac%20a%20dos/1108448527058851619.jfif",
+    images: [
+      "./Assets/fashion/sac%20a%20dos/1108448527058851619.jfif"
+    ],
+    attributes: [
+      { key: "Leather Type", val: "Genuine Saffiano & Vegan Top-Grain Leather" },
+      { key: "Hardware", val: "Gold-Tone Anti-Tarnish Metal Alloy" },
+      { key: "Compartments", val: "Multi-Pocket Organizer & Padded Sleeve" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Sac \u00e0 Dos Cuir Urbain & Voyage. Sourced by Atelier Haute Couture Yaound\u00e9 with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_sac_a_dos_cuir_urbain_voyage_3": {
+    id: "fash_sac_a_dos_cuir_urbain_voyage_3",
+    title: "Sac \u00e0 Dos Cuir Urbain & Voyage",
+    brand: "Rimowa Studio",
+    category: "fashion",
+    categoryLabel: "Luxury Bags & Leather",
+    subcategory: "bags",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "EXECUTIVE TRAVEL",
+    rating: "4.9",
+    reviewCount: 44,
+    soldCount: 168,
+    price: "XAF 42.800",
+    salePrice: "XAF 50.500",
+    storeName: "Cameroun Prestige Maroquinerie",
+    storeCity: "Bonanjo, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/sac%20a%20dos/306033737202926588.jfif",
+    images: [
+      "./Assets/fashion/sac%20a%20dos/306033737202926588.jfif"
+    ],
+    attributes: [
+      { key: "Leather Type", val: "Genuine Saffiano & Vegan Top-Grain Leather" },
+      { key: "Hardware", val: "Gold-Tone Anti-Tarnish Metal Alloy" },
+      { key: "Compartments", val: "Multi-Pocket Organizer & Padded Sleeve" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Sac \u00e0 Dos Cuir Urbain & Voyage. Sourced by Cameroun Prestige Maroquinerie with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_sac_a_dos_cuir_urbain_voyage_4": {
+    id: "fash_sac_a_dos_cuir_urbain_voyage_4",
+    title: "Sac \u00e0 Dos Cuir Urbain & Voyage",
+    brand: "Rimowa Studio",
+    category: "fashion",
+    categoryLabel: "Luxury Bags & Leather",
+    subcategory: "bags",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "EXECUTIVE TRAVEL",
+    rating: "4.7",
+    reviewCount: 51,
+    soldCount: 181,
+    price: "XAF 43.600",
+    salePrice: "XAF 51.000",
+    storeName: "Kamer Luxe Bonapriso",
+    storeCity: "Bonapriso, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/sac%20a%20dos/693202567701885532.jfif",
+    images: [
+      "./Assets/fashion/sac%20a%20dos/693202567701885532.jfif"
+    ],
+    attributes: [
+      { key: "Leather Type", val: "Genuine Saffiano & Vegan Top-Grain Leather" },
+      { key: "Hardware", val: "Gold-Tone Anti-Tarnish Metal Alloy" },
+      { key: "Compartments", val: "Multi-Pocket Organizer & Padded Sleeve" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Sac \u00e0 Dos Cuir Urbain & Voyage. Sourced by Kamer Luxe Bonapriso with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_sac_a_dos_cuir_urbain_voyage_5": {
+    id: "fash_sac_a_dos_cuir_urbain_voyage_5",
+    title: "Sac \u00e0 Dos Cuir Urbain & Voyage",
+    brand: "Rimowa Studio",
+    category: "fashion",
+    categoryLabel: "Luxury Bags & Leather",
+    subcategory: "bags",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "EXECUTIVE TRAVEL",
+    rating: "4.8",
+    reviewCount: 58,
+    soldCount: 194,
+    price: "XAF 44.400",
+    salePrice: "XAF 52.000",
+    storeName: "Maison Wax Bastos",
+    storeCity: "Bastos, Yaound\u00e9",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/sac%20a%20dos/738731145148022713.jfif",
+    images: [
+      "./Assets/fashion/sac%20a%20dos/738731145148022713.jfif"
+    ],
+    attributes: [
+      { key: "Leather Type", val: "Genuine Saffiano & Vegan Top-Grain Leather" },
+      { key: "Hardware", val: "Gold-Tone Anti-Tarnish Metal Alloy" },
+      { key: "Compartments", val: "Multi-Pocket Organizer & Padded Sleeve" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Sac \u00e0 Dos Cuir Urbain & Voyage. Sourced by Maison Wax Bastos with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_sac_a_dos_cuir_urbain_voyage_6": {
+    id: "fash_sac_a_dos_cuir_urbain_voyage_6",
+    title: "Sac \u00e0 Dos Cuir Urbain & Voyage",
+    brand: "Rimowa Studio",
+    category: "fashion",
+    categoryLabel: "Luxury Bags & Leather",
+    subcategory: "bags",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "EXECUTIVE TRAVEL",
+    rating: "4.9",
+    reviewCount: 65,
+    soldCount: 207,
+    price: "XAF 45.200",
+    salePrice: "XAF 53.000",
+    storeName: "Boutique Glamour Akwa",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/sac%20a%20dos/865817097103776423.jfif",
+    images: [
+      "./Assets/fashion/sac%20a%20dos/865817097103776423.jfif"
+    ],
+    attributes: [
+      { key: "Leather Type", val: "Genuine Saffiano & Vegan Top-Grain Leather" },
+      { key: "Hardware", val: "Gold-Tone Anti-Tarnish Metal Alloy" },
+      { key: "Compartments", val: "Multi-Pocket Organizer & Padded Sleeve" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Sac \u00e0 Dos Cuir Urbain & Voyage. Sourced by Boutique Glamour Akwa with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_an_imaginary_photoshoot_for_louis_vuitto": {
+    id: "fash_an_imaginary_photoshoot_for_louis_vuitto",
+    title: "An imaginary photoshoot for Louis Vuitton",
+    brand: "Maison Maroquin",
+    category: "fashion",
+    categoryLabel: "Luxury Bags & Leather",
+    subcategory: "bags",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "LUXURY EDITION",
+    rating: "4.7",
+    reviewCount: 72,
+    soldCount: 220,
+    price: "XAF 79.000",
+    salePrice: "XAF 93.000",
+    storeName: "Douala Leather Craft",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/sac%20a%20dos/An%20imaginary%20photoshoot%20for%20Louis%20Vuitton%E2%80%A6.jfif",
+    images: [
+      "./Assets/fashion/sac%20a%20dos/An%20imaginary%20photoshoot%20for%20Louis%20Vuitton%E2%80%A6.jfif"
+    ],
+    attributes: [
+      { key: "Leather Type", val: "Genuine Saffiano & Vegan Top-Grain Leather" },
+      { key: "Hardware", val: "Gold-Tone Anti-Tarnish Metal Alloy" },
+      { key: "Compartments", val: "Multi-Pocket Organizer & Padded Sleeve" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: An imaginary photoshoot for Louis Vuitton. Sourced by Douala Leather Craft with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_bag_modern_minimal_product_design": {
+    id: "fash_bag_modern_minimal_product_design",
+    title: "Bag, Modern, Minimal, Product Design",
+    brand: "Rimowa Studio",
+    category: "fashion",
+    categoryLabel: "Luxury Bags & Leather",
+    subcategory: "bags",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "EXECUTIVE TRAVEL",
+    rating: "4.8",
+    reviewCount: 79,
+    soldCount: 233,
+    price: "XAF 46.800",
+    salePrice: "XAF 55.000",
+    storeName: "Mboppi Fashion Hub",
+    storeCity: "Mboppi, Douala",
+    storeRating: "4.7",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/sac%20a%20dos/Bag,%20Modern,%20Minimal,%20Product%20Design.jfif",
+    images: [
+      "./Assets/fashion/sac%20a%20dos/Bag,%20Modern,%20Minimal,%20Product%20Design.jfif"
+    ],
+    attributes: [
+      { key: "Leather Type", val: "Genuine Saffiano & Vegan Top-Grain Leather" },
+      { key: "Hardware", val: "Gold-Tone Anti-Tarnish Metal Alloy" },
+      { key: "Compartments", val: "Multi-Pocket Organizer & Padded Sleeve" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Bag, Modern, Minimal, Product Design. Sourced by Mboppi Fashion Hub with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_green_bag": {
+    id: "fash_green_bag",
+    title: "Green bag",
+    brand: "Rimowa Studio",
+    category: "fashion",
+    categoryLabel: "Luxury Bags & Leather",
+    subcategory: "bags",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "EXECUTIVE TRAVEL",
+    rating: "4.9",
+    reviewCount: 86,
+    soldCount: 246,
+    price: "XAF 47.600",
+    salePrice: "XAF 56.000",
+    storeName: "Urban Kicks Bonamoussadi",
+    storeCity: "Bonamoussadi, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/sac%20a%20dos/Green%20bag.jfif",
+    images: [
+      "./Assets/fashion/sac%20a%20dos/Green%20bag.jfif"
+    ],
+    attributes: [
+      { key: "Leather Type", val: "Genuine Saffiano & Vegan Top-Grain Leather" },
+      { key: "Hardware", val: "Gold-Tone Anti-Tarnish Metal Alloy" },
+      { key: "Compartments", val: "Multi-Pocket Organizer & Padded Sleeve" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Green bag. Sourced by Urban Kicks Bonamoussadi with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_laptop_bag__thoughtfully_crafted_to_keep": {
+    id: "fash_laptop_bag__thoughtfully_crafted_to_keep",
+    title: "Laptop Bag _Thoughtfully crafted to keep your",
+    brand: "Rimowa Studio",
+    category: "fashion",
+    categoryLabel: "Luxury Bags & Leather",
+    subcategory: "bags",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "EXECUTIVE TRAVEL",
+    rating: "4.7",
+    reviewCount: 93,
+    soldCount: 259,
+    price: "XAF 48.400",
+    salePrice: "XAF 57.000",
+    storeName: "Atelier Haute Couture Yaound\u00e9",
+    storeCity: "March\u00e9 Central, Yaound\u00e9",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/sac%20a%20dos/Laptop%20Bag%20_Thoughtfully%20crafted%20to%20keep%20your%E2%80%A6.jfif",
+    images: [
+      "./Assets/fashion/sac%20a%20dos/Laptop%20Bag%20_Thoughtfully%20crafted%20to%20keep%20your%E2%80%A6.jfif"
+    ],
+    attributes: [
+      { key: "Leather Type", val: "Genuine Saffiano & Vegan Top-Grain Leather" },
+      { key: "Hardware", val: "Gold-Tone Anti-Tarnish Metal Alloy" },
+      { key: "Compartments", val: "Multi-Pocket Organizer & Padded Sleeve" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Laptop Bag _Thoughtfully crafted to keep your. Sourced by Atelier Haute Couture Yaound\u00e9 with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_never_still_travel_bags_accessories_for": {
+    id: "fash_never_still_travel_bags_accessories_for",
+    title: "Never Still Travel Bags & Accessories for Men & Women _ RIMOWA",
+    brand: "Maison Maroquin",
+    category: "fashion",
+    categoryLabel: "Luxury Bags & Leather",
+    subcategory: "bags",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "LUXURY EDITION",
+    rating: "4.8",
+    reviewCount: 100,
+    soldCount: 272,
+    price: "XAF 84.200",
+    salePrice: "XAF 99.000",
+    storeName: "Cameroun Prestige Maroquinerie",
+    storeCity: "Bonanjo, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/sac%20a%20dos/Never%20Still%20Travel%20Bags%20&%20Accessories%20for%20Men%20&%20Women%20_%20RIMOWA.jfif",
+    images: [
+      "./Assets/fashion/sac%20a%20dos/Never%20Still%20Travel%20Bags%20&%20Accessories%20for%20Men%20&%20Women%20_%20RIMOWA.jfif"
+    ],
+    attributes: [
+      { key: "Leather Type", val: "Genuine Saffiano & Vegan Top-Grain Leather" },
+      { key: "Hardware", val: "Gold-Tone Anti-Tarnish Metal Alloy" },
+      { key: "Compartments", val: "Multi-Pocket Organizer & Padded Sleeve" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Never Still Travel Bags & Accessories for Men & Women _ RIMOWA. Sourced by Cameroun Prestige Maroquinerie with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_theme__product_photography___at_soar_soa": {
+    id: "fash_theme__product_photography___at_soar_soa",
+    title: "Theme_ Product photography __At SOAR soar__ng",
+    brand: "Rimowa Studio",
+    category: "fashion",
+    categoryLabel: "Luxury Bags & Leather",
+    subcategory: "bags",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "EXECUTIVE TRAVEL",
+    rating: "4.9",
+    reviewCount: 107,
+    soldCount: 45,
+    price: "XAF 50.000",
+    salePrice: "XAF 59.000",
+    storeName: "Kamer Luxe Bonapriso",
+    storeCity: "Bonapriso, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/sac%20a%20dos/Theme_%20Product%20photography%20__At%20SOAR%20@soar__ng%E2%80%A6.jfif",
+    images: [
+      "./Assets/fashion/sac%20a%20dos/Theme_%20Product%20photography%20__At%20SOAR%20@soar__ng%E2%80%A6.jfif"
+    ],
+    attributes: [
+      { key: "Leather Type", val: "Genuine Saffiano & Vegan Top-Grain Leather" },
+      { key: "Hardware", val: "Gold-Tone Anti-Tarnish Metal Alloy" },
+      { key: "Compartments", val: "Multi-Pocket Organizer & Padded Sleeve" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: Theme_ Product photography __At SOAR soar__ng. Sourced by Kamer Luxe Bonapriso with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_tumi_voyageur_celina__the_rosewood_icon": {
+    id: "fash_tumi_voyageur_celina__the_rosewood_icon",
+    title: "TUMI Voyageur Celina_ The Rosewood Icon of Luxury Travel & Work",
+    brand: "Maison Maroquin",
+    category: "fashion",
+    categoryLabel: "Luxury Bags & Leather",
+    subcategory: "bags",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "LUXURY EDITION",
+    rating: "4.7",
+    reviewCount: 114,
+    soldCount: 58,
+    price: "XAF 46.800",
+    salePrice: "XAF 55.000",
+    storeName: "Maison Wax Bastos",
+    storeCity: "Bastos, Yaound\u00e9",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/sac%20a%20dos/TUMI%20Voyageur%20Celina_%20The%20Rosewood%20Icon%20of%20Luxury%20Travel%20&%20Work.jfif",
+    images: [
+      "./Assets/fashion/sac%20a%20dos/TUMI%20Voyageur%20Celina_%20The%20Rosewood%20Icon%20of%20Luxury%20Travel%20&%20Work.jfif"
+    ],
+    attributes: [
+      { key: "Leather Type", val: "Genuine Saffiano & Vegan Top-Grain Leather" },
+      { key: "Hardware", val: "Gold-Tone Anti-Tarnish Metal Alloy" },
+      { key: "Compartments", val: "Multi-Pocket Organizer & Padded Sleeve" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: TUMI Voyageur Celina_ The Rosewood Icon of Luxury Travel & Work. Sourced by Maison Wax Bastos with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+
+  "fash_master_quality_____tbm_the_bag_master": {
+    id: "fash_master_quality_____tbm_the_bag_master",
+    title: "_Master Quality_ _ _TBM The Bag Master_ __High",
+    brand: "Rimowa Studio",
+    category: "fashion",
+    categoryLabel: "Luxury Bags & Leather",
+    subcategory: "bags",
+    conditionLabel: "Neuf avec \u00e9tiquette \u00b7 Qualit\u00e9 V\u00e9rifi\u00e9e",
+    fulfillmentLabel: "Douala & Yaound\u00e9 Express Delivery (24h-48h)",
+    badge: "EXECUTIVE TRAVEL",
+    rating: "4.8",
+    reviewCount: 121,
+    soldCount: 71,
+    price: "XAF 51.600",
+    salePrice: "XAF 60.500",
+    storeName: "Boutique Glamour Akwa",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/sac%20a%20dos/_Master%20%20Quality_%20_%F0%9F%8E%80%20%20_TBM%20The%20Bag%20Master_%20__High%E2%80%A6.jfif",
+    images: [
+      "./Assets/fashion/sac%20a%20dos/_Master%20%20Quality_%20_%F0%9F%8E%80%20%20_TBM%20The%20Bag%20Master_%20__High%E2%80%A6.jfif"
+    ],
+    attributes: [
+      { key: "Leather Type", val: "Genuine Saffiano & Vegan Top-Grain Leather" },
+      { key: "Hardware", val: "Gold-Tone Anti-Tarnish Metal Alloy" },
+      { key: "Compartments", val: "Multi-Pocket Organizer & Padded Sleeve" }
+    ],
+    description: "Premium Cameroonian verified fashion piece: _Master Quality_ _ _TBM The Bag Master_ __High. Sourced by Boutique Glamour Akwa with guaranteed authentic craftsmanship and full LOUMOO Escrow protection."
+  },
+  'tank_300_phone': {
+    id: 'tank_300_phone',
+    title: 'Unihertz Tank 300 Rugged Smartphone (128GB)',
+    brand: 'Unihertz',
+    category: 'electronics',
+    categoryLabel: 'Rugged Smartphones',
+    conditionLabel: 'Occasion Propre · Testé & Garanti',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'HEAVY DUTY',
+    rating: '4.7',
+    reviewCount: 34,
+    soldCount: 62,
+    price: 'XAF 49.900',
+    salePrice: 'XAF 57.000',
+    storeName: 'Mboppi Mobile Hub',
+    storeCity: 'Douala, Mboppi',
     storeRating: '4.7',
     storeVerified: true,
-    coverImage: './Assets/fashion/Kraasa%20Men%27s%20Slip%20On%20Fashion%20Chelsea%20Boots.jfif',
-    images: ['./Assets/fashion/Kraasa%20Men%27s%20Slip%20On%20Fashion%20Chelsea%20Boots.jfif'],
+    coverImage: './Assets/telephone&PC/phoneBrands.image/They%20made%20a%206_39mm%20thin%20phone%20with%20a%205600mAh%E2%80%A6.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/They%20made%20a%206_39mm%20thin%20phone%20with%20a%205600mAh%E2%80%A6.jfif'],
     attributes: [
-      { key: "Upper", val: "Premium Micro-Suede" },
-      { key: "Sole", val: "Anti-Slip TPR Rubber" },
-      { key: "Fit", val: "Slip-On Elastic Gusset" },
-      { key: "Season", val: "All-Season" }
+      { key: 'Storage & RAM', val: '128GB ROM · 8GB RAM' },
+      { key: 'Battery', val: 'Huge 10000+ mAh Ultra-Endurance' },
+      { key: 'Durability', val: 'IP68 / IP69K Waterproof & Shockproof' }
     ],
-    description: "Slip-on Chelsea boots in soft micro-suede with elastic side gussets and a grippy rubber sole — an easy pairing for denim or tailored trousers."
+    description: 'Heavy-duty rugged smartphone built for construction, travel and field work with massive battery longevity and drop protection.'
   },
-  'dress_loafers': {
-    id: 'dress_loafers',
-    title: "Timeless Black & White Dress Loafers",
-    brand: "Armonía Milano",
-    category: 'fashion',
-    categoryLabel: "Men's Formal Footwear",
-    conditionLabel: "Handcrafted",
+
+  'oppo_reno_5_pro': {
+    id: 'oppo_reno_5_pro',
+    title: 'OPPO Reno 5 Pro 5G (512GB)',
+    brand: 'OPPO',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: "Occasion Propre · Afficheur D'origine",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'BEST VALUE',
+    rating: '4.8',
+    reviewCount: 42,
+    soldCount: 78,
+    price: 'XAF 89.900',
+    salePrice: 'XAF 103.000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Oppo%20Reno8%20T%205G%20Mobile%20full%20Review%20and%20Price.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Oppo%20Reno8%20T%205G%20Mobile%20full%20Review%20and%20Price.jfif'],
+    attributes: [
+      { key: 'Storage & RAM', val: '512GB Storage · 12GB RAM' },
+      { key: 'Display', val: '6.55" 90Hz Curved Super AMOLED' },
+      { key: 'Camera', val: '64MP AI Quad Video Camera' }
+    ],
+    description: 'Smooth curved AMOLED display, AI highlight video, 65W SuperVOOC flash charge and massive 512GB storage capacity.'
+  },
+
+  'xiaomi_mi_11_ultra_256': {
+    id: 'xiaomi_mi_11_ultra_256',
+    title: 'Xiaomi Mi 11 Ultra 5G (256GB)',
+    brand: 'Xiaomi',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: "Occasion Propre · Afficheur D'origine",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'CERAMIC PRO',
+    rating: '4.9',
+    reviewCount: 56,
+    soldCount: 92,
+    price: 'XAF 149.900',
+    salePrice: 'XAF 172.000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/XIAOMI%20Mi%2011%20Pro.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/XIAOMI%20Mi%2011%20Pro.jfif'],
+    attributes: [
+      { key: 'Camera', val: '50MP GN2 1/1.12" Sensor + 48MP 120X Periscope' },
+      { key: 'Rear Screen', val: '1.1" AMOLED Rear Selfie Preview Display' },
+      { key: 'Body', val: 'Premium Ceramic Body (Scratch Resistant)' }
+    ],
+    description: 'Ultimate camera phone with colossal 1/1.12-inch GN2 sensor, rear mini AMOLED display, Harman Kardon audio and ceramic back.'
+  },
+
+  'pixel_2xl_64': {
+    id: 'pixel_2xl_64',
+    title: 'Google Pixel 2 XL (64GB)',
+    brand: 'Google',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: "Occasion Propre · Afficheur D'origine",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'CLASSIC PIXEL',
+    rating: '4.6',
+    reviewCount: 28,
+    soldCount: 50,
+    price: 'XAF 50.000',
+    salePrice: 'XAF 57.000',
+    storeName: 'Pixel Hub Cameroon',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Google%20Pixel%208%20-%20Unlocked%20Android%20Smartphone%20with%20Advanced%20Pixel%20Camera.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Google%20Pixel%208%20-%20Unlocked%20Android%20Smartphone%20with%20Advanced%20Pixel%20Camera.jfif'],
+    attributes: [
+      { key: 'Storage & RAM', val: '64GB ROM · 4GB RAM' },
+      { key: 'Display', val: '6.0" P-OLED QHD+' },
+      { key: 'Camera', val: '12.2MP Dual Pixel OIS' }
+    ],
+    description: 'Original Google computational photography, pure Android interface, stereo speakers and durable aluminium chassis.'
+  },
+
+  'pixel_3_128': {
+    id: 'pixel_3_128',
+    title: 'Google Pixel 3 (128GB)',
+    brand: 'Google',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: "Occasion Propre · Afficheur D'origine",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'COMPACT PRO',
+    rating: '4.7',
+    reviewCount: 31,
+    soldCount: 65,
+    price: 'XAF 65.000',
+    salePrice: 'XAF 74.000',
+    storeName: 'Pixel Hub Cameroon',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/896075657152876073.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/896075657152876073.jfif'],
+    attributes: [
+      { key: 'Storage & RAM', val: '128GB ROM · 4GB RAM' },
+      { key: 'Screen', val: '5.5" FHD+ Flexible OLED' },
+      { key: 'Processor', val: 'Snapdragon 845' }
+    ],
+    description: 'Compact flagship with legendary HDR+ processing, dual selfie cameras with group selfie wide lens and 128GB storage.'
+  },
+
+  'pixel_3xl_64': {
+    id: 'pixel_3xl_64',
+    title: 'Google Pixel 3 XL (64GB)',
+    brand: 'Google',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: "Occasion Propre · Afficheur D'origine",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'VERIFIED',
+    rating: '4.7',
+    reviewCount: 35,
+    soldCount: 72,
+    price: 'XAF 70.000',
+    salePrice: 'XAF 80.000',
+    storeName: 'Pixel Hub Cameroon',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/871798440392018101.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/871798440392018101.jfif'],
+    attributes: [
+      { key: 'Storage & RAM', val: '64GB ROM · 4GB RAM' },
+      { key: 'Display', val: '6.3" QHD+ OLED' },
+      { key: 'Audio', val: 'Dual Front-Firing Stereo' }
+    ],
+    description: 'Large QHD+ OLED panel with outstanding dynamic range, wireless charging, and original factory screen in immaculate condition.'
+  },
+
+  'pixel_4a_128': {
+    id: 'pixel_4a_128',
+    title: 'Google Pixel 4a (128GB)',
+    brand: 'Google',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: "Occasion Propre · Afficheur D'origine",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'BATTERY EFFICIENCY',
+    rating: '4.8',
+    reviewCount: 48,
+    soldCount: 105,
+    price: 'XAF 80.000',
+    salePrice: 'XAF 92.000',
+    storeName: 'Pixel Hub Cameroon',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/705165254199686022.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/705165254199686022.jfif'],
+    attributes: [
+      { key: 'Storage & RAM', val: '128GB ROM · 6GB RAM' },
+      { key: 'Display', val: '5.81" Punch-Hole OLED' },
+      { key: 'Jack', val: '3.5mm Headphone Port' }
+    ],
+    description: 'Lightweight everyday champion with 128GB storage, bright OLED punch-hole screen, 3.5mm audio jack and stellar low-light camera.'
+  },
+
+  'pixel_4a_5g_128': {
+    id: 'pixel_4a_5g_128',
+    title: 'Google Pixel 4a 5G (128GB)',
+    brand: 'Google',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: "Occasion Propre · Afficheur D'origine",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: '5G DUAL CAM',
+    rating: '4.8',
+    reviewCount: 50,
+    soldCount: 118,
+    price: 'XAF 85.000',
+    salePrice: 'XAF 97.000',
+    storeName: 'Pixel Hub Cameroon',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/633387442884704.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/633387442884704.jfif'],
+    attributes: [
+      { key: 'Storage & RAM', val: '128GB ROM · 6GB RAM' },
+      { key: 'Camera', val: 'Dual 12.2MP + 16MP Ultra-Wide' },
+      { key: 'Screen', val: '6.2" OLED FHD+' }
+    ],
+    description: 'Fast 5G connectivity paired with an ultra-wide lens, 3885 mAh battery, and clean Google software.'
+  },
+
+  'pixel_5_128': {
+    id: 'pixel_5_128',
+    title: 'Google Pixel 5 (128GB / 8GB RAM)',
+    brand: 'Google',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: "Occasion Propre · Afficheur D'origine",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: '90HZ COMPACT',
+    rating: '4.8',
+    reviewCount: 62,
+    soldCount: 140,
+    price: 'XAF 90.000',
+    salePrice: 'XAF 103.000',
+    storeName: 'Pixel Hub Cameroon',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/573012752597161931.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/573012752597161931.jfif'],
+    attributes: [
+      { key: 'Storage & RAM', val: '128GB ROM · 8GB RAM' },
+      { key: 'Display', val: '6.0" 90Hz Smooth OLED' },
+      { key: 'Build', val: '100% Recycled Aluminum IP68' }
+    ],
+    description: 'Symmetrical slim bezels, 90Hz fluid OLED, IP68 water resistance, reverse wireless charging and 8GB RAM.'
+  },
+
+  'pixel_5a_128': {
+    id: 'pixel_5a_128',
+    title: 'Google Pixel 5a 5G (128GB)',
+    brand: 'Google',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: "Occasion Propre · Afficheur D'origine",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'MONSTER BATTERY',
+    rating: '4.8',
+    reviewCount: 54,
+    soldCount: 122,
+    price: 'XAF 90.000',
+    salePrice: 'XAF 103.000',
+    storeName: 'Pixel Hub Cameroon',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/429249408258680360.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/429249408258680360.jfif'],
+    attributes: [
+      { key: 'Battery', val: '4680 mAh Long-Life Cell' },
+      { key: 'Display', val: '6.34" OLED FHD+' },
+      { key: 'Protection', val: 'IP67 Water & Dust Resistance' }
+    ],
+    description: 'Best-in-class battery life for the Pixel 5 generation, larger 6.34-inch OLED display and IP67 certified casing.'
+  },
+
+  'pixel_6a_128': {
+    id: 'pixel_6a_128',
+    title: 'Google Pixel 6a (128GB / Tensor G1)',
+    brand: 'Google',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: "Occasion Propre · Afficheur D'origine",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'TENSOR POWER',
+    rating: '4.8',
+    reviewCount: 78,
+    soldCount: 190,
+    price: 'XAF 100.000',
+    salePrice: 'XAF 114.000',
+    storeName: 'Pixel Hub Cameroon',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/405535141469102311.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/405535141469102311.jfif'],
+    attributes: [
+      { key: 'Processor', val: 'Google Tensor G1 with Titan M2' },
+      { key: 'Camera', val: 'Magic Eraser & Real Tone' },
+      { key: 'Storage & RAM', val: '128GB UFS 3.1 · 6GB LPDDR5' }
+    ],
+    description: 'Google Tensor flagship processor in an accessible form factor with Magic Eraser, Live Translate and Real Tone skin tone reproduction.'
+  },
+
+  'pixel_6_128': {
+    id: 'pixel_6_128',
+    title: 'Google Pixel 6 (128GB / 50MP Main)',
+    brand: 'Google',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: "Occasion Propre · Afficheur D'origine",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'POPULAR',
+    rating: '4.8',
+    reviewCount: 90,
+    soldCount: 210,
+    price: 'XAF 110.000',
+    salePrice: 'XAF 126.000',
+    storeName: 'Pixel Hub Cameroon',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/20547742048353423.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/20547742048353423.jfif'],
+    attributes: [
+      { key: 'Camera', val: '50MP GN1 Main + 12MP Ultra-Wide' },
+      { key: 'Display', val: '6.4" 90Hz Smooth Display' },
+      { key: 'Processor', val: 'Google Tensor G1' }
+    ],
+    description: 'Iconic camera visor design, large 50MP sensor with 150% more light capture, and fluid 90Hz display.'
+  },
+
+  'pixel_6_pro_128': {
+    id: 'pixel_6_pro_128',
+    title: 'Google Pixel 6 Pro (128GB / 12GB RAM)',
+    brand: 'Google',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: "Occasion Propre · Afficheur D'origine",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'PRO 120HZ',
+    rating: '4.9',
+    reviewCount: 85,
+    soldCount: 175,
+    price: 'XAF 130.000',
+    salePrice: 'XAF 149.000',
+    storeName: 'Pixel Hub Cameroon',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/139611657203176408.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/139611657203176408.jfif'],
+    attributes: [
+      { key: 'Display', val: '6.7" QHD+ LTPO OLED 120Hz' },
+      { key: 'Telephoto', val: '48MP 4X Optical Periscope Zoom' },
+      { key: 'RAM', val: '12GB High-Speed RAM' }
+    ],
+    description: 'Curved 120Hz LTPO QHD+ screen, 4x optical periscope telephoto lens with 20x Super Res Zoom, and 12GB RAM.'
+  },
+
+  'pixel_6_pro_256': {
+    id: 'pixel_6_pro_256',
+    title: 'Google Pixel 6 Pro (256GB / 12GB RAM)',
+    brand: 'Google',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: "Occasion Propre · Afficheur D'origine",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'HIGH STORAGE',
+    rating: '4.9',
+    reviewCount: 65,
+    soldCount: 130,
+    price: 'XAF 150.000',
+    salePrice: 'XAF 172.000',
+    storeName: 'Pixel Hub Cameroon',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/139611657203176408.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/139611657203176408.jfif'],
+    attributes: [
+      { key: 'Storage & RAM', val: '256GB ROM · 12GB RAM' },
+      { key: 'Camera', val: 'Triple Studio Pro Array with 4X Zoom' },
+      { key: 'Screen', val: '6.7" QHD+ 120Hz LTPO' }
+    ],
+    description: 'Max-capacity Pixel 6 Pro with 256GB storage, pro camera array and buttery-smooth 120Hz display.'
+  },
+
+  'pixel_7a_128': {
+    id: 'pixel_7a_128',
+    title: 'Google Pixel 7a (128GB / Tensor G2)',
+    brand: 'Google',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: "Occasion Propre · Afficheur D'origine",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'TENSOR G2',
+    rating: '4.8',
+    reviewCount: 72,
+    soldCount: 160,
+    price: 'XAF 120.000',
+    salePrice: 'XAF 138.000',
+    storeName: 'Pixel Hub Cameroon',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Pixel%208%20en%202025%20_%20c%E2%80%99est%20valid%C3%A9%20_.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Pixel%208%20en%202025%20_%20c%E2%80%99est%20valid%C3%A9%20_.jfif'],
+    attributes: [
+      { key: 'Camera', val: '64MP Quad Bayer + 13MP Ultra-Wide' },
+      { key: 'Display', val: '6.1" 90Hz OLED' },
+      { key: 'Chip', val: 'Google Tensor G2 + Titan M2' }
+    ],
+    description: 'Enhanced 64MP camera, wireless charging support, face unlock, and Google Tensor G2 AI processing.'
+  },
+
+  'pixel_7_128': {
+    id: 'pixel_7_128',
+    title: 'Google Pixel 7 (128GB / Matte Aluminum)',
+    brand: 'Google',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: "Occasion Propre · Afficheur D'origine",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'VERIFIED',
+    rating: '4.9',
+    reviewCount: 96,
+    soldCount: 220,
+    price: 'XAF 130.000',
+    salePrice: 'XAF 149.000',
+    storeName: 'Pixel Hub Cameroon',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Erstes%20Hands-on_%20So%20f%C3%BChlt%20sich%20das%20Google%20Pixel%208%20an.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Erstes%20Hands-on_%20So%20f%C3%BChlt%20sich%20das%20Google%20Pixel%208%20an.jfif'],
+    attributes: [
+      { key: 'Design', val: 'Zirconia Matte Aluminum Camera Bar' },
+      { key: 'Display', val: '6.3" 90Hz FHD+ (25% brighter)' },
+      { key: 'Security', val: 'Face Unlock & Under-Display Fingerprint' }
+    ],
+    description: 'Refined matte aluminum camera bar, 25% brighter display for outdoor viewing, and 72-hour Extreme Battery Saver.'
+  },
+
+  'pixel_7_pro_128': {
+    id: 'pixel_7_pro_128',
+    title: 'Google Pixel 7 Pro (128GB / 5X Telephoto)',
+    brand: 'Google',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: "Occasion Propre · Afficheur D'origine",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'PRO 5X ZOOM',
+    rating: '4.9',
+    reviewCount: 104,
+    soldCount: 240,
+    price: 'XAF 150.000',
+    salePrice: 'XAF 172.000',
+    storeName: 'Pixel Hub Cameroon',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Amazon_com_%20Google%20Pixel%208%20Pro%20-%20Unlocked%20Android%E2%80%A6.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Amazon_com_%20Google%20Pixel%208%20Pro%20-%20Unlocked%20Android%E2%80%A6.jfif'],
+    attributes: [
+      { key: 'Zoom', val: '5x Optical Zoom · 30x Super Res Zoom' },
+      { key: 'Macro', val: 'Macro Focus Down to 3cm' },
+      { key: 'Display', val: '6.7" QHD+ 120Hz LTPO' }
+    ],
+    description: 'Polished aluminum frame, 5x optical telephoto lens, Macro Focus photography, and 12GB RAM.'
+  },
+
+  'pixel_7_pro_256': {
+    id: 'pixel_7_pro_256',
+    title: 'Google Pixel 7 Pro (256GB / 12GB RAM)',
+    brand: 'Google',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: "Occasion Propre · Afficheur D'origine",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'TOP SPEC',
+    rating: '4.9',
+    reviewCount: 88,
+    soldCount: 180,
+    price: 'XAF 170.000',
+    salePrice: 'XAF 195.000',
+    storeName: 'Pixel Hub Cameroon',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Amazon_com_%20Google%20Pixel%208%20Pro%20-%20Unlocked%20Android%E2%80%A6%20%281%29.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Amazon_com_%20Google%20Pixel%208%20Pro%20-%20Unlocked%20Android%E2%80%A6%20%281%29.jfif'],
+    attributes: [
+      { key: 'Storage & RAM', val: '256GB ROM · 12GB RAM' },
+      { key: 'Display', val: '6.7" QHD+ LTPO 120Hz' },
+      { key: 'Cinematic', val: 'Cinematic Blur Video Mode' }
+    ],
+    description: '256GB top storage tier with 30x Super Res Zoom, Cinematic Blur video recording, and original factory screen.'
+  },
+
+  'pixel_8a_128': {
+    id: 'pixel_8a_128',
+    title: 'Google Pixel 8a (128GB / Tensor G3)',
+    brand: 'Google',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: "Occasion Propre · Afficheur D'origine",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'ACTUA DISPLAY',
+    rating: '4.8',
+    reviewCount: 68,
+    soldCount: 150,
+    price: 'XAF 140.000',
+    salePrice: 'XAF 161.000',
+    storeName: 'Pixel Hub Cameroon',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Google%20Pixel%208%20-%20Unlocked%20Android%20Smartphone%20with%20Advanced%20Pixel%20Camera.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Google%20Pixel%208%20-%20Unlocked%20Android%20Smartphone%20with%20Advanced%20Pixel%20Camera.jfif'],
+    attributes: [
+      { key: 'Processor', val: 'Google Tensor G3 (Generative AI on device)' },
+      { key: 'Display', val: '6.1" Actua OLED 120Hz' },
+      { key: 'AI Tools', val: 'Best Take, Audio Magic Eraser' }
+    ],
+    description: 'Tensor G3 powerhouse with 120Hz Actua display, rounded ergonomic matte back, Best Take and Audio Magic Eraser.'
+  },
+
+  'pixel_8_128': {
+    id: 'pixel_8_128',
+    title: 'Google Pixel 8 (128GB / Actua Display)',
+    brand: 'Google',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: "Occasion Propre · Afficheur D'origine",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'GEMINI READY',
+    rating: '4.9',
+    reviewCount: 110,
+    soldCount: 260,
+    price: 'XAF 160.000',
+    salePrice: 'XAF 184.000',
+    storeName: 'Pixel Hub Cameroon',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Pixel%208%20en%202025%20_%20c%E2%80%99est%20valid%C3%A9%20_.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Pixel%208%20en%202025%20_%20c%E2%80%99est%20valid%C3%A9%20_.jfif'],
+    attributes: [
+      { key: 'Screen', val: '6.2" Actua OLED 120Hz (2000 nits)' },
+      { key: 'Camera', val: '50MP Main with f/1.68 Aperture' },
+      { key: 'Updates', val: '7 Years of OS & Security Updates' }
+    ],
+    description: 'Super compact form factor with 2000-nit Actua OLED screen, Tensor G3 silicon and 7 years of official Android updates.'
+  },
+
+  'pixel_8_pro_128': {
+    id: 'pixel_8_pro_128',
+    title: 'Google Pixel 8 Pro (128GB / Super Actua)',
+    brand: 'Google',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: "Occasion Propre · Afficheur D'origine",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'MINT PRO',
+    rating: '4.9',
+    reviewCount: 140,
+    soldCount: 310,
+    price: 'XAF 200.000',
+    salePrice: 'XAF 229.000',
+    storeName: 'Pixel Hub Cameroon',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Google%20Pixel%208%20Pro%20-%20Unlocked%20Android%20Smartphone%20with%20Telephoto%20Lens%20and%20Super%20Actua%20Display%20-%2024-Hour%20Battery%20-%20Mint%20-%20128%20GB.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Google%20Pixel%208%20Pro%20-%20Unlocked%20Android%20Smartphone%20with%20Telephoto%20Lens%20and%20Super%20Actua%20Display%20-%2024-Hour%20Battery%20-%20Mint%20-%20128%20GB.jfif'],
+    attributes: [
+      { key: 'Display', val: '6.7" Super Actua LTPO 1-120Hz (2400 nits)' },
+      { key: 'Camera', val: '50MP Main + 48MP Ultrawide + 48MP 5X Tele' },
+      { key: 'Sensor', val: 'Built-In Object Temperature Sensor' }
+    ],
+    description: 'Flat 2400-nit Super Actua display, matte rear glass, pro camera controls, Video Boost with Night Sight, and temperature sensor.'
+  },
+
+  'pixel_8_pro_256': {
+    id: 'pixel_8_pro_256',
+    title: 'Google Pixel 8 Pro (256GB / Obsidian Black)',
+    brand: 'Google',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: "Occasion Propre · Afficheur D'origine",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'FLAGSHIP 256G',
+    rating: '4.9',
+    reviewCount: 118,
+    soldCount: 270,
+    price: 'XAF 250.000',
+    salePrice: 'XAF 287.000',
+    storeName: 'Pixel Hub Cameroon',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/UNBOXED%20%20Google%20Pixel%208pro%20256GB%20%E2%9A%AB%EF%B8%8F.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/UNBOXED%20%20Google%20Pixel%208pro%20256GB%20%E2%9A%AB%EF%B8%8F.jfif'],
+    attributes: [
+      { key: 'Storage & RAM', val: '256GB ROM · 12GB LPDDR5X' },
+      { key: 'Video', val: 'Video Boost with Night Sight & Audio Eraser' },
+      { key: 'Display', val: '6.7" Super Actua 1-120Hz' }
+    ],
+    description: '256GB Obsidian Black flagship with Pro camera controls, computational Night Sight Video, and pristine original display.'
+  },
+
+  'pixel_9a_128': {
+    id: 'pixel_9a_128',
+    title: 'Google Pixel 9a (128GB / Gemini Nano)',
+    brand: 'Google',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Neuf Scellé · Boîte Originale',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'NEW ARRIVAL',
+    rating: '4.9',
+    reviewCount: 44,
+    soldCount: 80,
+    price: 'XAF 250.000',
+    salePrice: 'XAF 287.000',
+    storeName: 'Pixel Hub Cameroon',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Google%20Pixel%209,%20The%20Complete%20Lineup.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Google%20Pixel%209,%20The%20Complete%20Lineup.jfif'],
+    attributes: [
+      { key: 'Processor', val: 'Google Tensor G4 Chipset' },
+      { key: 'AI', val: 'Gemini Live On-Device Assistant' },
+      { key: 'Display', val: '6.3" Actua OLED 120Hz' }
+    ],
+    description: 'Latest generation Tensor G4 architecture with flush rear design, Gemini Nano AI integration and all-day battery.'
+  },
+
+  'pixel_9_128': {
+    id: 'pixel_9_128',
+    title: 'Google Pixel 9 (128GB / 12GB RAM)',
+    brand: 'Google',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Neuf Scellé · Boîte Originale',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'NEW GENERATION',
+    rating: '5.0',
+    reviewCount: 58,
+    soldCount: 110,
+    price: 'XAF 300.000',
+    salePrice: 'XAF 345.000',
+    storeName: 'Pixel Hub Cameroon',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Which%20one%20would%20you%20pick_%20Google%20Pixel%209,%20Pixel%209%E2%80%A6.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Which%20one%20would%20you%20pick_%20Google%20Pixel%209,%20Pixel%209%E2%80%A6.jfif'],
+    attributes: [
+      { key: 'RAM', val: '12GB Dedicated for Gemini AI' },
+      { key: 'Camera', val: '50MP Main + 48MP Macro Ultrawide' },
+      { key: 'Screen', val: '6.3" Actua OLED (2700 nits peak)' }
+    ],
+    description: 'Stunning flat satin metal sides, 2700-nit Actua screen, Pixel Studio generative image creation, and Add Me photo compositing.'
+  },
+
+  'pixel_9_pro_128': {
+    id: 'pixel_9_pro_128',
+    title: 'Google Pixel 9 Pro (128GB / 16GB RAM)',
+    brand: 'Google',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: 'Neuf Scellé · Boîte Originale',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'GEMINI PRO',
+    rating: '5.0',
+    reviewCount: 62,
+    soldCount: 125,
+    price: 'XAF 350.000',
+    salePrice: 'XAF 402.000',
+    storeName: 'Pixel Hub Cameroon',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Which%20one%20would%20you%20pick_%20Google%20Pixel%209,%20Pixel%209%E2%80%A6.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Which%20one%20would%20you%20pick_%20Google%20Pixel%209,%20Pixel%209%E2%80%A6.jfif'],
+    attributes: [
+      { key: 'RAM', val: '16GB LPDDR5X (Gemini Pro Enabled)' },
+      { key: 'Display', val: '6.3" Super Actua 1-120Hz (3000 nits)' },
+      { key: 'Camera', val: '50MP + 48MP UW + 48MP 5X Zoom + 42MP Selfie' }
+    ],
+    description: 'Pro camera suite in a compact 6.3-inch format. Features 3000 nits Super Actua LTPO display, 8K video upscaling, and 16GB RAM.'
+  },
+
+  'pixel_9_pro_xl_128': {
+    id: 'pixel_9_pro_xl_128',
+    title: 'Google Pixel 9 Pro XL (128GB / 16GB RAM)',
+    brand: 'Google',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: 'Neuf Scellé · Boîte Originale',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'ULTIMATE PRO',
+    rating: '5.0',
+    reviewCount: 74,
+    soldCount: 145,
+    price: 'XAF 400.000',
+    salePrice: 'XAF 459.000',
+    storeName: 'Pixel Hub Cameroon',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Google%20Pixel%2010%20Pro%20XL%20_%20Latest%20Google%20Smartphone%20with%20Advanced%20Camera%20&%20AI%20Features.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Google%20Pixel%2010%20Pro%20XL%20_%20Latest%20Google%20Smartphone%20with%20Advanced%20Camera%20&%20AI%20Features.jfif'],
+    attributes: [
+      { key: 'Screen', val: '6.8" Super Actua LTPO 1-120Hz' },
+      { key: 'Charging', val: '37W Ultra-Fast Charge (70% in 30 mins)' },
+      { key: 'Memory', val: '16GB RAM · 128GB Storage' }
+    ],
+    description: 'Largest 6.8-inch Super Actua display, rapid charging up to 70% in 30 mins, 42MP front selfie camera with autofocus, and 16GB memory.'
+  },
+
+  'pixel_9_pro_xl_256': {
+    id: 'pixel_9_pro_xl_256',
+    title: 'Google Pixel 9 Pro XL (256GB / 16GB RAM)',
+    brand: 'Google',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: 'Neuf Scellé · Boîte Originale',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'MAX FLAGSHIP',
+    rating: '5.0',
+    reviewCount: 80,
+    soldCount: 160,
+    price: 'XAF 450.000',
+    salePrice: 'XAF 517.000',
+    storeName: 'Pixel Hub Cameroon',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/_Google%20Pixel%2011%20Pro%20XL%20is%20HERE%20%E2%80%93%20120x%20Zoom%20&%20Gemini%20AI%21%20%F0%9F%98%B1%F0%9F%93%B1_.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/_Google%20Pixel%2011%20Pro%20XL%20is%20HERE%20%E2%80%93%20120x%20Zoom%20&%20Gemini%20AI%21%20%F0%9F%98%B1%F0%9F%93%B1_.jfif'],
+    attributes: [
+      { key: 'Storage & RAM', val: '256GB Storage · 16GB RAM' },
+      { key: 'Display', val: '6.8" Super Actua (3000 nits peak)' },
+      { key: 'Video', val: '8K Video Boost with Super Res Zoom' }
+    ],
+    description: 'Flagship XL format with 256GB storage, pro audio recording with Audio Magic Eraser, and titanium framing.'
+  },
+
+  'pixel_9_pro_fold_256': {
+    id: 'pixel_9_pro_fold_256',
+    title: 'Google Pixel 9 Pro Fold (256GB / 16GB RAM)',
+    brand: 'Google',
+    category: 'electronics',
+    categoryLabel: 'Foldable Smartphones',
+    conditionLabel: 'Neuf Scellé · Boîte Originale',
+    fulfillmentLabel: 'Free Insured Express Courier',
+    badge: 'FOLDABLE LUXE',
+    rating: '5.0',
+    reviewCount: 42,
+    soldCount: 35,
+    price: 'XAF 500.000',
+    salePrice: 'XAF 575.000',
+    storeName: 'Pixel Hub Cameroon',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Google%20Pixel%209%20Pro%20Fold%20_%20The%20Ultimate%20Cinematic%20Foldable%20Phone.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Google%20Pixel%209%20Pro%20Fold%20_%20The%20Ultimate%20Cinematic%20Foldable%20Phone.jfif'],
+    attributes: [
+      { key: 'Inner Display', val: '8.0" Super Actua Flex OLED 120Hz' },
+      { key: 'Outer Display', val: '6.3" Actua OLED 120Hz Cover' },
+      { key: 'Hinge', val: 'Fluid Friction Gearless Aerospace Hinge' }
+    ],
+    description: 'Thinnest foldable in its class. Huge 8.0-inch Super Actua inner canvas unfolds completely flat for unprecedented productivity.'
+  },
+
+  'tecno_pop_20_64': {
+    id: 'tecno_pop_20_64',
+    title: 'TECNO Pop 20 (64GB / 8GB Extended)',
+    brand: 'TECNO',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'SMART BUDGET',
+    rating: '4.6',
+    reviewCount: 52,
+    soldCount: 130,
+    price: 'XAF 85.000',
+    salePrice: 'XAF 97.000',
+    storeName: 'TECNO Official Cameroon',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/%F0%9F%93%B1%F0%9F%94%A5%20Tecno%20Camon%2050%20PRO%20%E2%80%94%20Amazing%20Daraz%20Deal%21%20%F0%9F%94%A5.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/%F0%9F%93%B1%F0%9F%94%A5%20Tecno%20Camon%2050%20PRO%20%E2%80%94%20Amazing%20Daraz%20Deal%21%20%F0%9F%94%A5.jfif'],
+    attributes: [
+      { key: 'Memory', val: '64GB ROM · 4GB + 4GB Extended RAM' },
+      { key: 'Battery', val: '5000 mAh All-Day Endurance' },
+      { key: 'Display', val: '6.6" 90Hz Dot-in Display' }
+    ],
+    description: 'Reliable everyday smartphone with smooth 90Hz screen, 5000 mAh battery, and modern Dynamic Port notifications.'
+  },
+
+  'tecno_pop_20_128': {
+    id: 'tecno_pop_20_128',
+    title: 'TECNO Pop 20 (128GB / 8GB Extended)',
+    brand: 'TECNO',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'DOUBLE STORAGE',
+    rating: '4.7',
+    reviewCount: 58,
+    soldCount: 145,
+    price: 'XAF 100.000',
+    salePrice: 'XAF 114.000',
+    storeName: 'TECNO Official Cameroon',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Tecno%20Camon%2050%20Pro.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Tecno%20Camon%2050%20Pro.jfif'],
+    attributes: [
+      { key: 'Storage & RAM', val: '128GB ROM · 4GB + 4GB Extended RAM' },
+      { key: 'Audio', val: 'Dual Stereo Speakers with DTS' },
+      { key: 'Security', val: 'Fingerprint Sensor + Face Unlock' }
+    ],
+    description: 'Upgraded 128GB storage edition with loud stereo sound, 5000 mAh battery, and 12-month official manufacturer warranty.'
+  },
+
+  'tecno_spark_40_pro_plus': {
+    id: 'tecno_spark_40_pro_plus',
+    title: 'TECNO Spark 40 Pro+ (128GB / 8GB RAM)',
+    brand: 'TECNO',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'CURVED AMOLED',
+    rating: '4.8',
+    reviewCount: 64,
+    soldCount: 160,
+    price: 'XAF 130.000',
+    salePrice: 'XAF 149.000',
+    storeName: 'TECNO Official Cameroon',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/TECNO%20CAMON%2040%20Series_%20Redefining%20Imagery%20with%C2%A0TECNO%C2%A0AI.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/TECNO%20CAMON%2040%20Series_%20Redefining%20Imagery%20with%C2%A0TECNO%C2%A0AI.jfif'],
+    attributes: [
+      { key: 'Display', val: '6.78" 120Hz 3D Curved AMOLED' },
+      { key: 'Camera', val: '108MP Ultra-Clear Main Camera' },
+      { key: 'Charge', val: '33W Super Charge Type-C' }
+    ],
+    description: 'Ultra-slim 3D curved 120Hz AMOLED display with Corning Gorilla Glass 5, 108MP high-resolution photography, and 33W charging.'
+  },
+
+  'tecno_spark_50_128': {
+    id: 'tecno_spark_50_128',
+    title: 'TECNO Spark 50 (128GB)',
+    brand: 'TECNO',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'NEW LAUNCH',
+    rating: '4.7',
+    reviewCount: 40,
+    soldCount: 95,
+    price: 'XAF 115.000',
+    salePrice: 'XAF 132.000',
+    storeName: 'TECNO Official Cameroon',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Tecno%20Camon%2050%20Pro%205G%20_%206_78_%20AMOLED%20144Hz%20_%20MediaTek%20Dimensity%207400%20Ultimate.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Tecno%20Camon%2050%20Pro%205G%20_%206_78_%20AMOLED%20144Hz%20_%20MediaTek%20Dimensity%207400%20Ultimate.jfif'],
+    attributes: [
+      { key: 'Screen', val: '6.7" 120Hz Punch-Hole Display' },
+      { key: 'Processor', val: 'Octa-Core Gaming Chipset' },
+      { key: 'Battery', val: '5000 mAh + Fast Charge' }
+    ],
+    description: 'Next-gen Spark series smartphone with fluid 120Hz screen, robust dual camera setup, and long-lasting 5000 mAh cell.'
+  },
+
+  'tecno_spark_50_256': {
+    id: 'tecno_spark_50_256',
+    title: 'TECNO Spark 50 (256GB / Max Storage)',
+    brand: 'TECNO',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: '256GB CAPACITY',
+    rating: '4.8',
+    reviewCount: 50,
+    soldCount: 120,
+    price: 'XAF 120.000',
+    salePrice: 'XAF 138.000',
+    storeName: 'TECNO Official Cameroon',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Tecno%20Camon%2050%20PRO%20Ai%204G%20LTE%20%28256GB%20+%208GB%20RAM%29%20Unlocked%20Dual%20SIM%20Smartphone%20-%20Malachite%20Green.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Tecno%20Camon%2050%20PRO%20Ai%204G%20LTE%20%28256GB%20+%208GB%20RAM%29%20Unlocked%20Dual%20SIM%20Smartphone%20-%20Malachite%20Green.jfif'],
+    attributes: [
+      { key: 'Storage & RAM', val: '256GB Storage · 8GB + 8GB Extended RAM' },
+      { key: 'Audio', val: 'DTS Dual Speakers' },
+      { key: 'Design', val: 'Starry Finish Scratch Resistant Glass' }
+    ],
+    description: 'Massive 256GB capacity at unmatched value. Store thousands of photos, videos, and heavy applications with zero lag.'
+  },
+
+  'tecno_camon_50_256': {
+    id: 'tecno_camon_50_256',
+    title: 'TECNO Camon 50 (256GB / 16GB RAM)',
+    brand: 'TECNO',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'AI CAMERA',
+    rating: '4.9',
+    reviewCount: 70,
+    soldCount: 155,
+    price: 'XAF 200.000',
+    salePrice: 'XAF 229.000',
+    storeName: 'TECNO Official Cameroon',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Tecno%20Camon%2050%20Pro%20Arrives%20with%20Premium%20Build,%20Powerful%20Cameras,%20and%20Dynamic%20Island%20For%20Under%20$350.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Tecno%20Camon%2050%20Pro%20Arrives%20with%20Premium%20Build,%20Powerful%20Cameras,%20and%20Dynamic%20Island%20For%20Under%20$350.jfif'],
+    attributes: [
+      { key: 'Camera', val: '50MP Sony Sensor with OIS + 50MP Selfie' },
+      { key: 'Display', val: '6.78" 120Hz Curved AMOLED' },
+      { key: 'Memory', val: '256GB ROM · 16GB Total RAM' }
+    ],
+    description: 'Professional portrait photography driven by TECNO AI PolarAce engine, OIS stabilization and crystal-clear 50MP selfie lens.'
+  },
+
+  'infinix_smart_10_128': {
+    id: 'infinix_smart_10_128',
+    title: 'Infinix Smart 10 (128GB)',
+    brand: 'Infinix',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'BEST ENTRY',
+    rating: '4.6',
+    reviewCount: 38,
+    soldCount: 85,
+    price: 'XAF 80.000',
+    salePrice: 'XAF 92.000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Smartphone%20Celular%20Infinix%20Hot%2060%20Pro%20256GB,%208GB%20RAM,%20Tela%206,78%20polegadas%20AMOLED%20144%20Hz,%20C%C3%A2mera%2050%20MP,%20Bateria%205160%20mAh,%20NFC,%20Dual%20SIM.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Smartphone%20Celular%20Infinix%20Hot%2060%20Pro%20256GB,%208GB%20RAM,%20Tela%206,78%20polegadas%20AMOLED%20144%20Hz,%20C%C3%A2mera%2050%20MP,%20Bateria%205160%20mAh,%20NFC,%20Dual%20SIM.jfif'],
+    attributes: [
+      { key: 'Storage & RAM', val: '128GB ROM · 4GB + 4GB Extended RAM' },
+      { key: 'Display', val: '6.6" 90Hz Sunlight Readable' },
+      { key: 'Battery', val: '5000 mAh + Type-C' }
+    ],
+    description: 'Affordable smartphone with 128GB storage, 90Hz high refresh rate screen, 300% volume boost and all-day endurance.'
+  },
+
+  'infinix_hot_60i_128': {
+    id: 'infinix_hot_60i_128',
+    title: 'Infinix Hot 60i (128GB / 8GB RAM)',
+    brand: 'Infinix',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'HOT DEAL',
+    rating: '4.7',
+    reviewCount: 45,
+    soldCount: 110,
+    price: 'XAF 95.000',
+    salePrice: 'XAF 109.000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/INFINIX%20INFINIX%20HOT%2060%20PRO%20+%208RAM%20256GB%20MISTY%20VIOLET%20_%20Falabella%20Chile.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/INFINIX%20INFINIX%20HOT%2060%20PRO%20+%208RAM%20256GB%20MISTY%20VIOLET%20_%20Falabella%20Chile.jfif'],
+    attributes: [
+      { key: 'Screen', val: '6.7" 120Hz Punch-Hole Screen' },
+      { key: 'Camera', val: '50MP Dual AI Camera' },
+      { key: 'Audio', val: 'Dual Speakers with DTS' }
+    ],
+    description: 'High-refresh 120Hz punch-hole screen, 50MP clear portrait sensor, and stylish slim design with glowing ring flash.'
+  },
+
+  'infinix_hot_60i_256': {
+    id: 'infinix_hot_60i_256',
+    title: 'Infinix Hot 60i (256GB / 8GB RAM)',
+    brand: 'Infinix',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: '256GB STORAGE',
+    rating: '4.8',
+    reviewCount: 50,
+    soldCount: 125,
+    price: 'XAF 120.000',
+    salePrice: 'XAF 138.000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/INFINIX%20INFINIX%20HOT%2060%20PRO%20+%208RAM%20256GB%20MISTY%20VIOLET%20_%20Falabella%20Chile%20%281%29.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/INFINIX%20INFINIX%20HOT%2060%20PRO%20+%208RAM%20256GB%20MISTY%20VIOLET%20_%20Falabella%20Chile%20%281%29.jfif'],
+    attributes: [
+      { key: 'Storage', val: '256GB Internal High Speed ROM' },
+      { key: 'RAM', val: '8GB RAM (+8GB Dynamic Boost)' },
+      { key: 'Battery', val: '5000 mAh with 18W Fast Charging' }
+    ],
+    description: 'Massive 256GB space for all files and media, 16GB total dynamic RAM, and smooth everyday multitasking.'
+  },
+
+  'infinix_hot_60_pro_plus_128': {
+    id: 'infinix_hot_60_pro_plus_128',
+    title: 'Infinix Hot 60 Pro+ (128GB / 8GB RAM)',
+    brand: 'Infinix',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'SLIM 5.95MM',
+    rating: '4.8',
+    reviewCount: 60,
+    soldCount: 140,
+    price: 'XAF 125.000',
+    salePrice: 'XAF 143.000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/LIVE%20Exclusive%20-%20Infinix%20HOT%2060%20Pro+%20%28up%20to%2016GB%20%5B8GB%20+%20256GB%5D%205_95mm%20Slimmest%20%281%20yr%20local%20warranty%29.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/LIVE%20Exclusive%20-%20Infinix%20HOT%2060%20Pro+%20%28up%20to%2016GB%20%5B8GB%20+%20256GB%5D%205_95mm%20Slimmest%20%281%20yr%20local%20warranty%29.jfif'],
+    attributes: [
+      { key: 'Thickness', val: 'Ultra-Thin 5.95mm Curved Body' },
+      { key: 'Display', val: '6.78" 120Hz 3D Curved AMOLED' },
+      { key: 'Sound', val: 'Dual JBL Tuned Stereo Speakers' }
+    ],
+    description: 'World-class 5.95mm ultra-slim 3D curved AMOLED smartphone with dual JBL tuned speakers and 108MP camera.'
+  },
+
+  'infinix_hot_60_pro_plus_256': {
+    id: 'infinix_hot_60_pro_plus_256',
+    title: 'Infinix Hot 60 Pro+ (256GB / 8GB RAM)',
+    brand: 'Infinix',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'BEST SELLER',
+    rating: '4.9',
+    reviewCount: 85,
+    soldCount: 210,
+    price: 'XAF 140.000',
+    salePrice: 'XAF 161.000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Celular%20Infinix%20Hot%2060%20Pro%20Plus%20256gb%208gb%20De%20Ram%20Desbloqueado%20Titanium%20Silver%20_%20Gris%20_%20Coppel_com.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Celular%20Infinix%20Hot%2060%20Pro%20Plus%20256gb%208gb%20De%20Ram%20Desbloqueado%20Titanium%20Silver%20_%20Gris%20_%20Coppel_com.jfif'],
+    attributes: [
+      { key: 'Processor', val: 'Helio G100 Ultimate 6nm Gaming Chip' },
+      { key: 'Display', val: '6.78" 120Hz Curved AMOLED with Gorilla Glass' },
+      { key: 'Storage & RAM', val: '256GB Storage · 8GB + 8GB RAM' }
+    ],
+    description: 'Titanium Silver finish, Helio G100 Ultimate processor, 108MP super-night camera, and 33W fast charging.'
+  },
+
+  'infinix_note_edge_256': {
+    id: 'infinix_note_edge_256',
+    title: 'Infinix Note Edge 5G (256GB / 8GB RAM)',
+    brand: 'Infinix',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'CYBER MECHA',
+    rating: '4.9',
+    reviewCount: 76,
+    soldCount: 180,
+    price: 'XAF 205.000',
+    salePrice: 'XAF 235.000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Infinix%20NOTE%20Edge%208GB_256GB%20Lunar%20Titanium.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Infinix%20NOTE%20Edge%208GB_256GB%20Lunar%20Titanium.jfif'],
+    attributes: [
+      { key: 'Lighting', val: 'Active Halo Dynamic Mecha RGB Glow' },
+      { key: 'Display', val: '6.78" 144Hz FHD+ Bezel-Less AMOLED' },
+      { key: 'Charging', val: '68W All-Round FastCharge 2.0' }
+    ],
+    description: 'Cyberpunk aesthetic with Active Halo RGB notification lighting, 144Hz AMOLED bezel-less screen, and 68W fast charge.'
+  },
+
+  'oppo_a53_256': {
+    id: 'oppo_a53_256',
+    title: 'OPPO A53 (256GB / 8GB RAM)',
+    brand: 'OPPO',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Occasion Propre · Testé & Garanti',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'VALUE HERO',
+    rating: '4.6',
+    reviewCount: 44,
+    soldCount: 90,
+    price: 'XAF 50.000',
+    salePrice: 'XAF 57.000',
+    storeName: 'Mboppi Mobile Hub',
+    storeCity: 'Douala, Mboppi',
+    storeRating: '4.7',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Oppo.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Oppo.jfif'],
+    attributes: [
+      { key: 'Storage & RAM', val: '256GB ROM · 8GB RAM' },
+      { key: 'Screen', val: '6.5" 90Hz Neo-Display' },
+      { key: 'Battery', val: '5000 mAh with 18W Fast Charge' }
+    ],
+    description: 'Smooth 90Hz Neo-Display, 5000 mAh battery, dual stereo speakers, and spacious 256GB storage capacity.'
+  },
+
+  'oppo_a53s_256': {
+    id: 'oppo_a53s_256',
+    title: 'OPPO A53s 5G (256GB / 8GB RAM)',
+    brand: 'OPPO',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Occasion Propre · Testé & Garanti',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: '5G VALUE',
+    rating: '4.7',
+    reviewCount: 39,
+    soldCount: 80,
+    price: 'XAF 60.000',
+    salePrice: 'XAF 69.000',
+    storeName: 'Mboppi Mobile Hub',
+    storeCity: 'Douala, Mboppi',
+    storeRating: '4.7',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Oppo%20Reno%208T.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Oppo%20Reno%208T.jfif'],
+    attributes: [
+      { key: 'Network', val: 'Dual SIM 5G Supported' },
+      { key: 'Storage & RAM', val: '256GB ROM · 8GB RAM' },
+      { key: 'Processor', val: 'MediaTek Dimensity 700 5G' }
+    ],
+    description: 'Next-gen 5G connectivity on a budget, dual SIM support, AI triple camera, and 256GB built-in storage.'
+  },
+
+  'oppo_a55s_256': {
+    id: 'oppo_a55s_256',
+    title: 'OPPO A55s 5G (256GB / 8GB RAM)',
+    brand: 'OPPO',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Occasion Propre · Testé & Garanti',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'SLIM PROFILE',
+    rating: '4.7',
+    reviewCount: 36,
+    soldCount: 75,
+    price: 'XAF 65.000',
+    salePrice: 'XAF 74.000',
+    storeName: 'Mboppi Mobile Hub',
+    storeCity: 'Douala, Mboppi',
+    storeRating: '4.7',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Oppo%20Reno%208T%20coming%20in%204G_5G%20flavors.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Oppo%20Reno%208T%20coming%20in%204G_5G%20flavors.jfif'],
+    attributes: [
+      { key: 'Storage & RAM', val: '256GB ROM · 8GB RAM' },
+      { key: 'Protection', val: 'IPX8 Waterproof Body' },
+      { key: 'Battery', val: '4000 mAh Slim Form Factor' }
+    ],
+    description: 'Ultra-lightweight IPX8 waterproof smartphone with 256GB storage, smooth display, and reliable everyday cameras.'
+  },
+
+  'oppo_a56_256': {
+    id: 'oppo_a56_256',
+    title: 'OPPO A56 5G (256GB / 8GB RAM)',
+    brand: 'OPPO',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Occasion Propre · Testé & Garanti',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'OCTA-CORE',
+    rating: '4.7',
+    reviewCount: 42,
+    soldCount: 95,
+    price: 'XAF 70.000',
+    salePrice: 'XAF 80.000',
+    storeName: 'Mboppi Mobile Hub',
+    storeCity: 'Douala, Mboppi',
+    storeRating: '4.7',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Oppo%20Reno%208T%205G%20%28Refurbished%29.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Oppo%20Reno%208T%205G%20%28Refurbished%29.jfif'],
+    attributes: [
+      { key: 'Processor', val: 'Dimensity 700 5G (7nm)' },
+      { key: 'Storage & RAM', val: '256GB ROM · 8GB RAM' },
+      { key: 'Security', val: 'Side Fingerprint Sensor' }
+    ],
+    description: 'Fast 5G processing with octa-core 7nm Dimensity chip, 5000 mAh battery, and side-mounted fingerprint scanner.'
+  },
+
+  'oppo_reno_256': {
+    id: 'oppo_reno_256',
+    title: 'OPPO Reno Classic (256GB)',
+    brand: 'OPPO',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: "Occasion Propre · Afficheur D'origine",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'SHARK FIN CAM',
+    rating: '4.7',
+    reviewCount: 50,
+    soldCount: 100,
+    price: 'XAF 70.000',
+    salePrice: 'XAF 80.000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Oppo%20Reno8%20T%204G%20announced_%20100MP%20camera,%208GB%20RAM%E2%80%A6.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Oppo%20Reno8%20T%204G%20announced_%20100MP%20camera,%208GB%20RAM%E2%80%A6.jfif'],
+    attributes: [
+      { key: 'Camera', val: 'Motorized Shark Fin Pop-Up Camera' },
+      { key: 'Display', val: 'Panoramic Bezel-Less AMOLED' },
+      { key: 'Storage & RAM', val: '256GB ROM · 8GB RAM' }
+    ],
+    description: 'True notchless panoramic AMOLED screen with motorized pivot shark-fin pop-up camera and pristine original screen.'
+  },
+
+  'oppo_reno_6_256': {
+    id: 'oppo_reno_6_256',
+    title: 'OPPO Reno 6 5G (256GB / Retro Design)',
+    brand: 'OPPO',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: "Occasion Propre · Afficheur D'origine",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'RENO GLOW',
+    rating: '4.8',
+    reviewCount: 64,
+    soldCount: 135,
+    price: 'XAF 85.000',
+    salePrice: 'XAF 97.000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Oppo%20Reno8%20T%205G%20announced_%20108MP%20camera,%208GB%20RAM-%20Price%20and%20Review.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Oppo%20Reno8%20T%205G%20announced_%20108MP%20camera,%208GB%20RAM-%20Price%20and%20Review.jfif'],
+    attributes: [
+      { key: 'Design', val: 'Ultra-Slim Flat-Edge Retro Reno Glow' },
+      { key: 'Camera', val: '64MP AI Bokeh Flare Portrait Video' },
+      { key: 'Charging', val: '65W SuperVOOC 2.0 (100% in 28m)' }
+    ],
+    description: 'Flat-edge retro matte Reno Glow finish, Bokeh Flare portrait video, 65W SuperVOOC rapid charging, and 256GB storage.'
+  },
+
+  'oppo_reno_8_256': {
+    id: 'oppo_reno_8_256',
+    title: 'OPPO Reno 8 5G (256GB / Sony IMX766)',
+    brand: 'OPPO',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: "Occasion Propre · Afficheur D'origine",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'STREAMLINED UNIBODY',
+    rating: '4.8',
+    reviewCount: 72,
+    soldCount: 150,
+    price: 'XAF 100.000',
+    salePrice: 'XAF 114.000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/OPPO%20Reno8%20Pro%205G.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/OPPO%20Reno8%20Pro%205G.jfif'],
+    attributes: [
+      { key: 'Camera', val: 'Dual Sony Flagship Sensors (IMX766 + IMX709)' },
+      { key: 'Charging', val: '80W SUPERVOOC (50% in 11m)' },
+      { key: 'Processor', val: 'MediaTek Dimensity 1300 (6nm)' }
+    ],
+    description: 'Streamlined unibody design, Dual Sony flagship sensors, ultra-fast 80W charging (50% in 11 mins), and Dimensity 1300 power.'
+  },
+
+  'oneplus_ace_2_pro_256': {
+    id: 'oneplus_ace_2_pro_256',
+    title: 'OnePlus Ace 2 Pro 5G (256GB / 16GB RAM)',
+    brand: 'OnePlus',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: 'Occasion Propre · Testé & Garanti',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'SNAPDRAGON 8 GEN 2',
+    rating: '4.9',
+    reviewCount: 70,
+    soldCount: 140,
+    price: 'XAF 170.000',
+    salePrice: 'XAF 195.000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/OnePlus%20Ace%202%20Launch%20Date%20Confirmed.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/OnePlus%20Ace%202%20Launch%20Date%20Confirmed.jfif'],
+    attributes: [
+      { key: 'Processor', val: 'Snapdragon 8 Gen 2 Flagship (4nm)' },
+      { key: 'Charging', val: '150W SUPERVOOC Fast Charge' },
+      { key: 'Display', val: '6.74" 1.5K 120Hz 3D AMOLED' }
+    ],
+    description: 'Extreme performance with Snapdragon 8 Gen 2, 150W ultra charge (100% in 17m), aerospace cooling and 1.5K 120Hz screen.'
+  },
+
+  'oneplus_ace_2_pro_512': {
+    id: 'oneplus_ace_2_pro_512',
+    title: 'OnePlus Ace 2 Pro 5G (512GB / 16GB RAM)',
+    brand: 'OnePlus',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: 'Occasion Propre · Testé & Garanti',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: '512GB PERFORMANCE',
+    rating: '4.9',
+    reviewCount: 62,
+    soldCount: 120,
+    price: 'XAF 185.000',
+    salePrice: 'XAF 212.000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/OnePlus%20Ace%202%20Pro%20%C3%96zellikleri%20ve%20Fiyat%C4%B1%20-%20Teloji.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/OnePlus%20Ace%202%20Pro%20%C3%96zellikleri%20ve%20Fiyat%C4%B1%20-%20Teloji.jfif'],
+    attributes: [
+      { key: 'Storage & RAM', val: '512GB UFS 4.0 · 16GB LPDDR5X' },
+      { key: 'Camera', val: '50MP Sony IMX890 with OIS' },
+      { key: 'Battery', val: '5000 mAh Dual-Cell' }
+    ],
+    description: '512GB UFS 4.0 high-speed memory, Sony IMX890 OIS camera, 150W charging and pristine aerospace cooling system.'
+  },
+
+  'oneplus_ace_2_pro_1tb': {
+    id: 'oneplus_ace_2_pro_1tb',
+    title: 'OnePlus Ace 2 Pro 5G (1TB Storage / 24GB RAM)',
+    brand: 'OnePlus',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: 'Occasion Propre · Testé & Garanti',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: '1TB MONSTER',
+    rating: '5.0',
+    reviewCount: 50,
+    soldCount: 90,
+    price: 'XAF 230.000',
+    salePrice: 'XAF 264.000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/OnePlus%20Ace%202%20Pro_%20Confirmed%20Specs,%20Features,%20and%E2%80%A6.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/OnePlus%20Ace%202%20Pro_%20Confirmed%20Specs,%20Features,%20and%E2%80%A6.jfif'],
+    attributes: [
+      { key: 'Storage', val: '1024GB (1 Terabyte) UFS 4.0' },
+      { key: 'RAM', val: '24GB LPDDR5X Ultra-RAM' },
+      { key: 'Engine', val: 'Snapdragon 8 Gen 2 Peak' }
+    ],
+    description: "World's highest spec phone: 1TB ultra-fast storage, unprecedented 24GB RAM, and 150W supersonic charging."
+  },
+
+  'oneplus_11r_256': {
+    id: 'oneplus_11r_256',
+    title: 'OnePlus 11R 5G (256GB / 16GB RAM)',
+    brand: 'OnePlus',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: 'Occasion Propre · Testé & Garanti',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'ALERT SLIDER',
+    rating: '4.8',
+    reviewCount: 55,
+    soldCount: 115,
+    price: 'XAF 170.000',
+    salePrice: 'XAF 195.000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/All%20the%20characteristics%20of%20OnePlus%20Ace2%20Pro%20on%20the%20eve%20of%20the%20premiere.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/All%20the%20characteristics%20of%20OnePlus%20Ace2%20Pro%20on%20the%20eve%20of%20the%20premiere.jfif'],
+    attributes: [
+      { key: 'Processor', val: 'Snapdragon 8+ Gen 1 5G' },
+      { key: 'Slider', val: 'Signature 3-Position Alert Slider' },
+      { key: 'Charging', val: '100W SUPERVOOC Power' }
+    ],
+    description: 'Signature OnePlus Alert Slider, 100W fast charge, 50MP Sony IMX890 sensor and curved 120Hz Super Fluid AMOLED.'
+  },
+
+  'oneplus_11r_512': {
+    id: 'oneplus_11r_512',
+    title: 'OnePlus 11R 5G (512GB / Galactic Silver)',
+    brand: 'OnePlus',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: 'Occasion Propre · Testé & Garanti',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'SILVER LUXE',
+    rating: '4.9',
+    reviewCount: 48,
+    soldCount: 98,
+    price: 'XAF 180.000',
+    salePrice: 'XAF 206.000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/All%20the%20characteristics%20of%20OnePlus%20Ace2%20Pro%20on%20the%20eve%20of%20the%20premiere.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/All%20the%20characteristics%20of%20OnePlus%20Ace2%20Pro%20on%20the%20eve%20of%20the%20premiere.jfif'],
+    attributes: [
+      { key: 'Storage & RAM', val: '512GB Storage · 16GB RAM' },
+      { key: 'Display', val: '6.74" 120Hz Super Fluid AMOLED' },
+      { key: 'Cooling', val: 'Cryo-Velocity Vapor Chamber' }
+    ],
+    description: 'Galactic Silver edition with 512GB storage, large 5000 mAh dual-cell battery, and Cryo-Velocity VC cooling.'
+  },
+
+  'huawei_p20_pro_256': {
+    id: 'huawei_p20_pro_256',
+    title: 'Huawei P20 Pro (256GB / 8GB RAM)',
+    brand: 'Huawei',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: "Neuf sans carton · Afficheur D'origine",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'LEICA TRIPLE',
+    rating: '4.7',
+    reviewCount: 35,
+    soldCount: 80,
+    price: 'XAF 60.000',
+    salePrice: 'XAF 69.000',
+    storeName: 'Bafoussam Tech Hub',
+    storeCity: 'Bafoussam Centre',
+    storeRating: '4.8',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Huawei%20P30%20Pro.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Huawei%20P30%20Pro.jfif'],
+    attributes: [
+      { key: 'Camera', val: '40MP Leica Triple Camera with Master AI' },
+      { key: 'Storage & RAM', val: '256GB Storage · 8GB RAM' },
+      { key: 'Battery', val: '4000 mAh SuperCharge' }
+    ],
+    description: 'The pioneer of Night Mode photography: 40MP Leica triple camera, twilight gradient finish, and 256GB storage.'
+  },
+
+  'huawei_mate_10_pro_256': {
+    id: 'huawei_mate_10_pro_256',
+    title: 'Huawei Mate 10 Pro (256GB / 6GB RAM)',
+    brand: 'Huawei',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: "Neuf sans carton · Afficheur D'origine",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'BUSINESS MATE',
+    rating: '4.6',
+    reviewCount: 30,
+    soldCount: 65,
+    price: 'XAF 60.000',
+    salePrice: 'XAF 69.000',
+    storeName: 'Bafoussam Tech Hub',
+    storeCity: 'Bafoussam Centre',
+    storeRating: '4.8',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Huawei%20P30%20Pro%20%281%29.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Huawei%20P30%20Pro%20%281%29.jfif'],
+    attributes: [
+      { key: 'Display', val: '6.0" OLED HDR10 Screen' },
+      { key: 'Camera', val: '20MP + 12MP Leica Dual f/1.6 Lenses' },
+      { key: 'Build', val: 'IP67 Water & Dust Resistance' }
+    ],
+    description: 'Legendary business flagship with dual f/1.6 Leica lenses, desktop mode projection, and 4000 mAh battery.'
+  },
+
+  'huawei_mate_20_pro_128': {
+    id: 'huawei_mate_20_pro_128',
+    title: 'Huawei Mate 20 Pro (128GB / 3D Face Unlock)',
+    brand: 'Huawei',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: "Neuf sans carton · Afficheur D'origine",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: '3D BIOMETRIC',
+    rating: '4.8',
+    reviewCount: 42,
+    soldCount: 90,
+    price: 'XAF 70.000',
+    salePrice: 'XAF 80.000',
+    storeName: 'Bafoussam Tech Hub',
+    storeCity: 'Bafoussam Centre',
+    storeRating: '4.8',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/huawei%20p30%20pro%20-%2020190325.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/huawei%20p30%20pro%20-%2020190325.jfif'],
+    attributes: [
+      { key: 'Biometrics', val: '3D Structured Light Face Unlock + In-Display Fingerprint' },
+      { key: 'Display', val: '6.39" 2K Curved OLED (3120x1440)' },
+      { key: 'Charging', val: '40W SuperCharge + 15W Wireless' }
+    ],
+    description: '2K curved OLED display, hardware 3D face recognition, 40MP Leica matrix camera, and reverse wireless charging.'
+  },
+
+  'huawei_mate_20_pro_256': {
+    id: 'huawei_mate_20_pro_256',
+    title: 'Huawei Mate 20 Pro (256GB / 8GB RAM)',
+    brand: 'Huawei',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: "Neuf sans carton · Afficheur D'origine",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'HIGH STORAGE',
+    rating: '4.8',
+    reviewCount: 38,
+    soldCount: 78,
+    price: 'XAF 90.000',
+    salePrice: 'XAF 103.000',
+    storeName: 'Bafoussam Tech Hub',
+    storeCity: 'Bafoussam Centre',
+    storeRating: '4.8',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/huawei%20p30%20pro%20-%2020190325.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/huawei%20p30%20pro%20-%2020190325.jfif'],
+    attributes: [
+      { key: 'Storage & RAM', val: '256GB Storage · 8GB RAM' },
+      { key: 'Display', val: '6.39" 2K OLED HDR' },
+      { key: 'Protection', val: 'IP68 Certified Water Resistant' }
+    ],
+    description: '256GB upgraded edition of the Mate 20 Pro with 8GB RAM, 2K curved display, and 3D facial authentication.'
+  },
+
+  'huawei_p30_lite_128': {
+    id: 'huawei_p30_lite_128',
+    title: 'Huawei P30 Lite (128GB / 48MP Triple)',
+    brand: 'Huawei',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: "Neuf sans carton · Afficheur D'origine",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'GOOGLE PLAY READY',
+    rating: '4.6',
+    reviewCount: 50,
+    soldCount: 110,
+    price: 'XAF 50.000',
+    salePrice: 'XAF 57.000',
+    storeName: 'Bafoussam Tech Hub',
+    storeCity: 'Bafoussam Centre',
+    storeRating: '4.8',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Huawei%20P30%20Pro.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Huawei%20P30%20Pro.jfif'],
+    attributes: [
+      { key: 'Google', val: 'Official Google Play Services Pre-Installed' },
+      { key: 'Camera', val: '48MP AI Ultra-Wide Triple Camera' },
+      { key: 'Storage', val: '128GB ROM + MicroSD slot' }
+    ],
+    description: 'Slim, lightweight chassis with pre-installed official Google Play Services, 48MP triple camera and 128GB memory.'
+  },
+
+  'huawei_p30_pro_128': {
+    id: 'huawei_p30_pro_128',
+    title: 'Huawei P30 Pro (128GB / 8GB RAM)',
+    brand: 'Huawei',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: "Neuf sans carton · Afficheur D'origine",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: '50X PERISCOPE',
+    rating: '4.9',
+    reviewCount: 85,
+    soldCount: 195,
+    price: 'XAF 75.000',
+    salePrice: 'XAF 86.000',
+    storeName: 'Bafoussam Tech Hub',
+    storeCity: 'Bafoussam Centre',
+    storeRating: '4.8',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Huawei%20P30%20Pro%20New%20Edition%20Dual%20Sim%20256GB%20Breathing%20Crystal%20VOG-L29%20Neu%20OVP%20%20%20_%20eBay.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Huawei%20P30%20Pro%20New%20Edition%20Dual%20Sim%20256GB%20Breathing%20Crystal%20VOG-L29%20Neu%20OVP%20%20%20_%20eBay.jfif'],
+    attributes: [
+      { key: 'Camera', val: 'Leica Quad Camera with 5x Optical / 50x Digital Periscope' },
+      { key: 'Sensor', val: 'SuperSpectrum RYYB Sensor (ISO 409600)' },
+      { key: 'Services', val: 'Full Official Google Play Services' }
+    ],
+    description: 'The camera legend with RYYB night vision, 50x periscope zoom, 40W charging and pre-installed Google Mobile Services.'
+  },
+
+  'huawei_p30_pro_256': {
+    id: 'huawei_p30_pro_256',
+    title: 'Huawei P30 Pro (256GB / Breathing Crystal)',
+    brand: 'Huawei',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: "Neuf sans carton · Afficheur D'origine",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'BREATHING CRYSTAL',
+    rating: '4.9',
+    reviewCount: 92,
+    soldCount: 210,
+    price: 'XAF 85.000',
+    salePrice: 'XAF 97.000',
+    storeName: 'Bafoussam Tech Hub',
+    storeCity: 'Bafoussam Centre',
+    storeRating: '4.8',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Huawei%20P30%20Pro%20New%20Edition%20Dual%20Sim%20256GB%20Breathing%20Crystal%20VOG-L29%20Neu%20OVP%20%20%20_%20eBay.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Huawei%20P30%20Pro%20New%20Edition%20Dual%20Sim%20256GB%20Breathing%20Crystal%20VOG-L29%20Neu%20OVP%20%20%20_%20eBay.jfif'],
+    attributes: [
+      { key: 'Color', val: 'Breathing Crystal 9-Layer Nano-Optical Finish' },
+      { key: 'Storage & RAM', val: '256GB Storage · 8GB RAM' },
+      { key: 'Screen', val: '6.47" Curved OLED FHD+' }
+    ],
+    description: 'Iconic Breathing Crystal finish with 256GB storage, RYYB low-light sensor, 5x optical periscope, and Google Play.'
+  },
+
+  'huawei_p30_pro_512': {
+    id: 'huawei_p30_pro_512',
+    title: 'Huawei P30 Pro (512GB / Top Collector)',
+    brand: 'Huawei',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: "Neuf sans carton · Afficheur D'origine",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: '512GB EDITION',
+    rating: '5.0',
+    reviewCount: 45,
+    soldCount: 90,
+    price: 'XAF 110.000',
+    salePrice: 'XAF 126.000',
+    storeName: 'Bafoussam Tech Hub',
+    storeCity: 'Bafoussam Centre',
+    storeRating: '4.8',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Huawei%20P30%20Pro%20New%20Edition%20Dual%20Sim%20256GB%20Breathing%20Crystal%20VOG-L29%20Neu%20OVP%20%20%20_%20eBay.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Huawei%20P30%20Pro%20New%20Edition%20Dual%20Sim%20256GB%20Breathing%20Crystal%20VOG-L29%20Neu%20OVP%20%20%20_%20eBay.jfif'],
+    attributes: [
+      { key: 'Storage & RAM', val: '512GB Storage · 8GB RAM' },
+      { key: 'Zoom', val: '5x Optical / 10x Hybrid / 50x Periscope' },
+      { key: 'Protection', val: 'IP68 Water & Dust Certified' }
+    ],
+    description: 'Rare 512GB edition of the iconic P30 Pro with Leica quad optics, Google services and massive storage space.'
+  },
+
+  'redmi_a3_pro_128': {
+    id: 'redmi_a3_pro_128',
+    title: 'Xiaomi Redmi A3 Pro (128GB / 4GB RAM)',
+    brand: 'Xiaomi',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'PREMIUM CIRCULAR DECO',
+    rating: '4.6',
+    reviewCount: 35,
+    soldCount: 70,
+    price: 'XAF 80.000',
+    salePrice: 'XAF 92.000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Redmi%2013%20Pro.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Redmi%2013%20Pro.jfif'],
+    attributes: [
+      { key: 'Display', val: '6.71" 90Hz Smooth Display with Gorilla Glass' },
+      { key: 'Design', val: 'Luxury Circular Camera Deco Glass Body' },
+      { key: 'Storage', val: '128GB ROM + Expandable' }
+    ],
+    description: 'Refined circular luxury camera housing, 90Hz display with DC dimming, and 5000 mAh battery with Type-C.'
+  },
+
+  'redmi_a7_64': {
+    id: 'redmi_a7_64',
+    title: 'Xiaomi Redmi A7 (64GB / 3GB RAM)',
+    brand: 'Xiaomi',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'ENTRY CHAMPION',
+    rating: '4.6',
+    reviewCount: 28,
+    soldCount: 60,
+    price: 'XAF 80.000',
+    salePrice: 'XAF 92.000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Redmi%2013%20Pro%20%281%29.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Redmi%2013%20Pro%20%281%29.jfif'],
+    attributes: [
+      { key: 'Screen', val: '6.5" Eye-Care HD+ Display' },
+      { key: 'Battery', val: '5000 mAh Battery' },
+      { key: 'System', val: 'Xiaomi HyperOS' }
+    ],
+    description: 'Compact modern entry device powered by clean Xiaomi HyperOS with all-day battery reliability.'
+  },
+
+  'redmi_a7_pro_128': {
+    id: 'redmi_a7_pro_128',
+    title: 'Xiaomi Redmi A7 Pro (128GB / 4GB RAM)',
+    brand: 'Xiaomi',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'VALUE PRO',
+    rating: '4.7',
+    reviewCount: 34,
+    soldCount: 80,
+    price: 'XAF 95.000',
+    salePrice: 'XAF 109.000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Redmi%2013%20Pro%20%282%29.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Redmi%2013%20Pro%20%282%29.jfif'],
+    attributes: [
+      { key: 'Storage & RAM', val: '128GB ROM · 4GB RAM' },
+      { key: 'Display', val: '6.6" 90Hz Fluid Screen' },
+      { key: 'Security', val: 'Side Fingerprint Sensor' }
+    ],
+    description: '128GB storage edition with 90Hz high refresh rate screen, side-mounted biometric scanner, and HyperOS.'
+  },
+
+  'redmi_15c_128': {
+    id: 'redmi_15c_128',
+    title: 'Xiaomi Redmi 15c (128GB / 8GB Total RAM)',
+    brand: 'Xiaomi',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: '50MP AI CAMERA',
+    rating: '4.7',
+    reviewCount: 48,
+    soldCount: 110,
+    price: 'XAF 100.000',
+    salePrice: 'XAF 114.000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Redmi%20Note%2013%20Pro.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Redmi%20Note%2013%20Pro.jfif'],
+    attributes: [
+      { key: 'Screen', val: '6.88" 120Hz Ultra-Large Display' },
+      { key: 'Camera', val: '50MP Ultra-Clear Main Sensor' },
+      { key: 'Battery', val: '5160 mAh with 18W Fast Charging' }
+    ],
+    description: 'Large 6.88-inch 120Hz display with TÜV Rheinland low blue light certification, 50MP AI camera and 5160 mAh cell.'
+  },
+
+  'redmi_15c_256': {
+    id: 'redmi_15c_256',
+    title: 'Xiaomi Redmi 15c (256GB / 16GB Total RAM)',
+    brand: 'Xiaomi',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: '16GB RAM POWER',
+    rating: '4.8',
+    reviewCount: 56,
+    soldCount: 130,
+    price: 'XAF 120.000',
+    salePrice: 'XAF 138.000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Redmi%20Note%2013%20Pro%20%281%29.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Redmi%20Note%2013%20Pro%20%281%29.jfif'],
+    attributes: [
+      { key: 'Storage & RAM', val: '256GB ROM · 8GB + 8GB Memory Extension' },
+      { key: 'Display', val: '6.88" 120Hz Immersive Screen' },
+      { key: 'Design', val: 'Glass-Feel Elegant Back Cover' }
+    ],
+    description: 'Huge 256GB storage capacity, 16GB effective RAM, 120Hz refresh rate and ultra-long standby time.'
+  },
+
+  'redmi_15_256': {
+    id: 'redmi_15_256',
+    title: 'Xiaomi Redmi 15 (256GB / 16GB Total RAM)',
+    brand: 'Xiaomi',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'HYPEROS 2026',
+    rating: '4.8',
+    reviewCount: 60,
+    soldCount: 140,
+    price: 'XAF 125.000',
+    salePrice: 'XAF 143.000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Redmi%20Note%2015%20Pro%20Series%20Gets%20New%20Colors%20for%20New%20Year%202026.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Redmi%20Note%2015%20Pro%20Series%20Gets%20New%20Colors%20for%20New%20Year%202026.jfif'],
+    attributes: [
+      { key: 'Display', val: '6.79" 90Hz FHD+ DotDisplay' },
+      { key: 'Processor', val: 'Helio G91-Ultra 108MP Processor' },
+      { key: 'Camera', val: '108MP Pro-Grade Main Sensor' }
+    ],
+    description: '108MP pro-grade photography on an FHD+ resolution display with glass back construction and 33W fast charge.'
+  },
+
+  'redmi_note_14_128': {
+    id: 'redmi_note_14_128',
+    title: 'Xiaomi Redmi Note 14 5G (128GB / 8GB RAM)',
+    brand: 'Xiaomi',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: '5G AMOLED',
+    rating: '4.8',
+    reviewCount: 55,
+    soldCount: 125,
+    price: 'XAF 115.000',
+    salePrice: 'XAF 132.000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Xiaomi%20Redmi%20Note%2014%20Pro%205G%20Syst%C3%A8me%20Xiaomi%20HyperOS%20MTK%20Dimensity%207300-Ultra%208+256%20Go%20%C3%89cran%20AMOLED.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Xiaomi%20Redmi%20Note%2014%20Pro%205G%20Syst%C3%A8me%20Xiaomi%20HyperOS%20MTK%20Dimensity%207300-Ultra%208+256%20Go%20%C3%89cran%20AMOLED.jfif'],
+    attributes: [
+      { key: 'Screen', val: '6.67" 120Hz AMOLED (2100 nits)' },
+      { key: 'Camera', val: '50MP Sony LYT-600 with OIS' },
+      { key: 'Protection', val: 'IP64 Dust & Splash Resistance' }
+    ],
+    description: 'Sony LYT-600 camera with Optical Image Stabilization (OIS), 120Hz high-brightness AMOLED, and 45W fast charge.'
+  },
+
+  'redmi_note_15_128': {
+    id: 'redmi_note_15_128',
+    title: 'Xiaomi Redmi Note 15 5G (128GB / 8GB RAM)',
+    brand: 'Xiaomi',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'LATEST RELEASE',
+    rating: '4.8',
+    reviewCount: 45,
+    soldCount: 95,
+    price: 'XAF 125.000',
+    salePrice: 'XAF 143.000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/REDMI%20Note%2015%20Pro%205G%20%28Carbon%20Black,%208GB+REDMI%20Note%2015%20Pro%205G%20%28Carbon%20Black,%208GB+256GB%29.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/REDMI%20Note%2015%20Pro%205G%20%28Carbon%20Black,%208GB+REDMI%20Note%2015%20Pro%205G%20%28Carbon%20Black,%208GB+256GB%29.jfif'],
+    attributes: [
+      { key: 'Chipset', val: 'Next-Gen 6nm 5G Processor' },
+      { key: 'Display', val: '6.67" 120Hz CrystalRes AMOLED' },
+      { key: 'Battery', val: '5500 mAh + 45W Turbo Charge' }
+    ],
+    description: 'Latest generation Redmi Note with crystal-clear 120Hz display, 5500 mAh large battery, and AI photography enhancements.'
+  },
+
+  'redmi_note_15_256': {
+    id: 'redmi_note_15_256',
+    title: 'Xiaomi Redmi Note 15 5G (256GB / 12GB RAM)',
+    brand: 'Xiaomi',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'MAX PERFORMANCE',
+    rating: '4.9',
+    reviewCount: 50,
+    soldCount: 115,
+    price: 'XAF 145.000',
+    salePrice: 'XAF 166.000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/REDMI%20Note%2015%20Pro%205G%20%28Carbon%20Black,%208GB+REDMI%20Note%2015%20Pro%205G%20%28Carbon%20Black,%208GB+256GB%29.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/REDMI%20Note%2015%20Pro%205G%20%28Carbon%20Black,%208GB+REDMI%20Note%2015%20Pro%205G%20%28Carbon%20Black,%208GB+256GB%29.jfif'],
+    attributes: [
+      { key: 'Storage & RAM', val: '256GB ROM · 12GB RAM' },
+      { key: 'Display', val: '6.67" 120Hz Super AMOLED' },
+      { key: 'Charge', val: '45W HyperCharge' }
+    ],
+    description: '256GB storage tier with 12GB memory, stereo speakers with Dolby Atmos, and IP64 water-splash resistance.'
+  },
+
+  'redmi_note_15_pro_256': {
+    id: 'redmi_note_15_pro_256',
+    title: 'Xiaomi Redmi Note 15 Pro 5G (256GB / 12GB RAM)',
+    brand: 'Xiaomi',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'CURVED 1.5K',
+    rating: '4.9',
+    reviewCount: 65,
+    soldCount: 140,
+    price: 'XAF 175.000',
+    salePrice: 'XAF 201.000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/REDMI%20Note%2015%20Pro+%205G.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/REDMI%20Note%2015%20Pro+%205G.jfif'],
+    attributes: [
+      { key: 'Display', val: '1.5K 120Hz Curved AMOLED with Gorilla Glass Victus 2' },
+      { key: 'Camera', val: '50MP Sony LYT-700 OIS Flagship Sensor' },
+      { key: 'Durability', val: 'IP68 / IP69K Waterproof' }
+    ],
+    description: 'Curved 1.5K 120Hz screen, Sony LYT-700 OIS imaging, flagship IP68/IP69K water submersion rating, and 67W turbo charge.'
+  },
+
+  'redmi_note_15_pro_512': {
+    id: 'redmi_note_15_pro_512',
+    title: 'Xiaomi Redmi Note 15 Pro 5G (512GB / 12GB RAM)',
+    brand: 'Xiaomi',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: '512GB FLAGSHIP',
+    rating: '4.9',
+    reviewCount: 58,
+    soldCount: 120,
+    price: 'XAF 205.000',
+    salePrice: 'XAF 235.000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/REDMI%20Note%2015%20Pro+%205G%20%281%29.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/REDMI%20Note%2015%20Pro+%205G%20%281%29.jfif'],
+    attributes: [
+      { key: 'Storage & RAM', val: '512GB ROM · 12GB RAM' },
+      { key: 'Screen', val: '1.5K Curved AMOLED 3000 nits' },
+      { key: 'Charge', val: '67W Turbo Charge (100% in 35m)' }
+    ],
+    description: "Massive 512GB internal storage on Redmi's most durable curved flagship with 3000-nit peak brightness."
+  },
+
+  'redmi_note_14_pro_plus_256': {
+    id: 'redmi_note_14_pro_plus_256',
+    title: 'Xiaomi Redmi Note 14 Pro+ 5G (256GB / 12GB RAM)',
+    brand: 'Xiaomi',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: '90W CHARGE',
+    rating: '4.9',
+    reviewCount: 72,
+    soldCount: 150,
+    price: 'XAF 180.000',
+    salePrice: 'XAF 206.000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/XIAOMI%20REDMI%20NOTE%2014%20Pro%20Plus%20-%20Smartphone.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/XIAOMI%20REDMI%20NOTE%2014%20Pro%20Plus%20-%20Smartphone.jfif'],
+    attributes: [
+      { key: 'Processor', val: 'Snapdragon 7s Gen 3 (4nm TSMC)' },
+      { key: 'Camera', val: '50MP Light Hunter 800 OIS + 50MP Telephoto 2.5X' },
+      { key: 'Battery', val: '6200 mAh Silicon-Carbon with 90W Charge' }
+    ],
+    description: 'Colossal 6200 mAh silicon-carbon battery with 90W charging, 2.5x telephoto portrait lens, and IP68/IP69K rating.'
+  },
+
+  'redmi_note_14_pro_plus_512': {
+    id: 'redmi_note_14_pro_plus_512',
+    title: 'Xiaomi Redmi Note 14 Pro+ 5G (512GB / 12GB RAM)',
+    brand: 'Xiaomi',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'MAX FLAGSHIP',
+    rating: '5.0',
+    reviewCount: 65,
+    soldCount: 135,
+    price: 'XAF 235.000',
+    salePrice: 'XAF 270.000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Xiaomi%20Redmi%20Note%2014%20Pro+%205G%20%28Global%29.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Xiaomi%20Redmi%20Note%2014%20Pro+%205G%20%28Global%29.jfif'],
+    attributes: [
+      { key: 'Storage & RAM', val: '512GB ROM · 12GB RAM' },
+      { key: 'Battery', val: '6200 mAh High-Density Cell' },
+      { key: 'Camera', val: '50MP Light Hunter 800 + 50MP Tele' }
+    ],
+    description: 'Top 512GB storage version with Snapdragon 7s Gen 3, dual telephoto zoom, 90W fast charging and Gorilla Glass Victus 2.'
+  },
+
+  'redmi_note_15_pro_plus_256': {
+    id: 'redmi_note_15_pro_plus_256',
+    title: 'Xiaomi Redmi Note 15 Pro+ 5G (256GB / 12GB RAM)',
+    brand: 'Xiaomi',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: '120W CHARGE',
+    rating: '5.0',
+    reviewCount: 60,
+    soldCount: 120,
+    price: 'XAF 235.000',
+    salePrice: 'XAF 270.000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Xiaomi%20Redmi%20Note%2015%20Pro+%205G%208GB_256GB%20Black.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Xiaomi%20Redmi%20Note%2015%20Pro+%205G%208GB_256GB%20Black.jfif'],
+    attributes: [
+      { key: 'Charging', val: '120W HyperCharge (0 to 100% in 19 mins)' },
+      { key: 'Display', val: '6.67" 1.5K 120Hz Curved OLED' },
+      { key: 'Camera', val: '50MP OIS + 50MP Periscope' }
+    ],
+    description: 'Flagship 120W HyperCharge technology, 1.5K curved AMOLED, silicon-carbon battery and titanium trim.'
+  },
+
+  'redmi_note_15_pro_plus_512': {
+    id: 'redmi_note_15_pro_plus_512',
+    title: 'Xiaomi Redmi Note 15 Pro+ 5G (512GB / 12GB RAM)',
+    brand: 'Xiaomi',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'ULTIMATE SPEC',
+    rating: '5.0',
+    reviewCount: 52,
+    soldCount: 105,
+    price: 'XAF 270.000',
+    salePrice: 'XAF 310.000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Redmi%20note%2015%20pro%20plus%2012_256%20only%2037500_-%20with%E2%80%A6.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Redmi%20note%2015%20pro%20plus%2012_256%20only%2037500_-%20with%E2%80%A6.jfif'],
+    attributes: [
+      { key: 'Storage & RAM', val: '512GB ROM · 12GB LPDDR5X' },
+      { key: 'Power', val: '120W HyperCharge Dual-Cell' },
+      { key: 'Display', val: '1.5K 120Hz Dolby Vision' }
+    ],
+    description: 'The absolute peak of the Redmi Note 15 line: 512GB internal storage, 120W charging, and flagship-grade periscope imaging.'
+  },
+
+  'samsung_a06_64': {
+    id: 'samsung_a06_64',
+    title: 'Samsung Galaxy A06 (64GB / 4GB RAM)',
+    brand: 'Samsung',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'SAMSUNG OFFICIAL',
+    rating: '4.6',
+    reviewCount: 35,
+    soldCount: 80,
+    price: 'XAF 75.000',
+    salePrice: 'XAF 86.000',
+    storeName: 'Samsung Experience Store',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Amazon_com_%20Samsung%20Galaxy%20Phones.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Amazon_com_%20Samsung%20Galaxy%20Phones.jfif'],
+    attributes: [
+      { key: 'Screen', val: '6.7" PLS LCD HD+' },
+      { key: 'Battery', val: '5000 mAh + 25W Fast Charging' },
+      { key: 'Security', val: 'Samsung Knox Vault Protection' }
+    ],
+    description: 'Large 6.7-inch display, 5000 mAh long-life battery with 25W fast charge, dual cameras, and Samsung Knox security.'
+  },
+
+  'samsung_a06_128': {
+    id: 'samsung_a06_128',
+    title: 'Samsung Galaxy A06 (128GB / 4GB RAM)',
+    brand: 'Samsung',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: '128GB EDITION',
+    rating: '4.7',
+    reviewCount: 42,
+    soldCount: 95,
+    price: 'XAF 80.000',
+    salePrice: 'XAF 92.000',
+    storeName: 'Samsung Experience Store',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Amazon_com_%20Samsung%20Galaxy%20Phones.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Amazon_com_%20Samsung%20Galaxy%20Phones.jfif'],
+    attributes: [
+      { key: 'Storage & RAM', val: '128GB Storage · 4GB RAM' },
+      { key: 'Camera', val: '50MP Dual Camera System' },
+      { key: 'Battery', val: '5000 mAh' }
+    ],
+    description: 'Double the storage for photos and apps with 128GB capacity, 50MP main camera, and Samsung Knox protection.'
+  },
+
+  'samsung_a07_64': {
+    id: 'samsung_a07_64',
+    title: 'Samsung Galaxy A07 (64GB)',
+    brand: 'Samsung',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'NEW GENERATION',
+    rating: '4.7',
+    reviewCount: 30,
+    soldCount: 70,
+    price: 'XAF 80.000',
+    salePrice: 'XAF 92.000',
+    storeName: 'Samsung Experience Store',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Amazon_com_%20Samsung%20Galaxy%20Phones.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Amazon_com_%20Samsung%20Galaxy%20Phones.jfif'],
+    attributes: [
+      { key: 'Screen', val: '6.7" 90Hz Smooth Display' },
+      { key: 'Processor', val: 'Octa-Core Efficient Chip' },
+      { key: 'Battery', val: '5000 mAh' }
+    ],
+    description: 'Upgraded 90Hz high refresh screen, clean One UI interface, 5000 mAh battery, and 2 years of Android OS upgrades.'
+  },
+
+  'samsung_a07_128': {
+    id: 'samsung_a07_128',
+    title: 'Samsung Galaxy A07 (128GB)',
+    brand: 'Samsung',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'POPULAR',
+    rating: '4.7',
+    reviewCount: 38,
+    soldCount: 85,
+    price: 'XAF 90.000',
+    salePrice: 'XAF 103.000',
+    storeName: 'Samsung Experience Store',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Amazon_com_%20Samsung%20Galaxy%20Phones.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Amazon_com_%20Samsung%20Galaxy%20Phones.jfif'],
+    attributes: [
+      { key: 'Storage', val: '128GB Internal Storage' },
+      { key: 'Display', val: '6.7" 90Hz Fluid Screen' },
+      { key: 'Security', val: 'Side Fingerprint Reader' }
+    ],
+    description: '128GB storage edition with smooth 90Hz screen, 50MP high-res camera, and reliable Samsung warranty.'
+  },
+
+  'samsung_a14_128': {
+    id: 'samsung_a14_128',
+    title: 'Samsung Galaxy A14 (128GB / 4GB RAM)',
+    brand: 'Samsung',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'FHD+ DISPLAY',
+    rating: '4.7',
+    reviewCount: 55,
+    soldCount: 120,
+    price: 'XAF 70.000',
+    salePrice: 'XAF 80.000',
+    storeName: 'Samsung Experience Store',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Amazon_com_%20Samsung%20Galaxy%20Phones.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Amazon_com_%20Samsung%20Galaxy%20Phones.jfif'],
+    attributes: [
+      { key: 'Display', val: '6.6" FHD+ Infinity-V Display' },
+      { key: 'Camera', val: '50MP Triple Camera Array' },
+      { key: 'Battery', val: '5000 mAh' }
+    ],
+    description: 'Crisp FHD+ resolution screen, 50MP triple camera setup with ultra-wide lens, and 5000 mAh battery endurance.'
+  },
+
+  'samsung_a16_128': {
+    id: 'samsung_a16_128',
+    title: 'Samsung Galaxy A16 (128GB / 4GB RAM)',
+    brand: 'Samsung',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'SUPER AMOLED',
+    rating: '4.8',
+    reviewCount: 48,
+    soldCount: 105,
+    price: 'XAF 95.000',
+    salePrice: 'XAF 109.000',
+    storeName: 'Samsung Experience Store',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Amazon_com_%20Samsung%20Galaxy%20Phones.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Amazon_com_%20Samsung%20Galaxy%20Phones.jfif'],
+    attributes: [
+      { key: 'Display', val: '6.7" Super AMOLED 90Hz' },
+      { key: 'Support', val: '6 Years of OS & Security Updates' },
+      { key: 'Protection', val: 'IP54 Water & Dust Splashproof' }
+    ],
+    description: 'Super AMOLED vibrant colors, 6 full years of guaranteed OS & security updates, and IP54 splash resistance.'
+  },
+
+  'samsung_a16_256': {
+    id: 'samsung_a16_256',
+    title: 'Samsung Galaxy A16 (256GB / 8GB RAM)',
+    brand: 'Samsung',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: '256GB AMOLED',
+    rating: '4.8',
+    reviewCount: 52,
+    soldCount: 115,
+    price: 'XAF 125.000',
+    salePrice: 'XAF 143.000',
+    storeName: 'Samsung Experience Store',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Amazon_com_%20Samsung%20Galaxy%20Phones.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Amazon_com_%20Samsung%20Galaxy%20Phones.jfif'],
+    attributes: [
+      { key: 'Storage & RAM', val: '256GB Storage · 8GB RAM' },
+      { key: 'Display', val: '6.7" Super AMOLED 90Hz' },
+      { key: 'Updates', val: '6 Years Guaranteed Software Support' }
+    ],
+    description: '256GB spacious storage with 8GB RAM, vibrant 6.7-inch Super AMOLED screen, and 6 years of guaranteed updates.'
+  },
+
+  'samsung_a17_128': {
+    id: 'samsung_a17_128',
+    title: 'Samsung Galaxy A17 (128GB / 4GB RAM)',
+    brand: 'Samsung',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'NEW RELEASE',
+    rating: '4.8',
+    reviewCount: 40,
+    soldCount: 85,
+    price: 'XAF 105.000',
+    salePrice: 'XAF 120.000',
+    storeName: 'Samsung Experience Store',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Amazon_com_%20Samsung%20Galaxy%20Phones.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Amazon_com_%20Samsung%20Galaxy%20Phones.jfif'],
+    attributes: [
+      { key: 'Display', val: '6.7" Super AMOLED 120Hz' },
+      { key: 'Camera', val: '50MP OIS Stabilization Camera' },
+      { key: 'Knox', val: 'Hardware Knox Vault Vaulted' }
+    ],
+    description: 'Upgraded 120Hz Super AMOLED screen, 50MP camera with OIS stabilization, and hardware-level Knox Vault protection.'
+  },
+
+  'samsung_a17_256': {
+    id: 'samsung_a17_256',
+    title: 'Samsung Galaxy A17 (256GB / 8GB RAM)',
+    brand: 'Samsung',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'MAX A-SERIES',
+    rating: '4.9',
+    reviewCount: 46,
+    soldCount: 95,
+    price: 'XAF 135.000',
+    salePrice: 'XAF 155.000',
+    storeName: 'Samsung Experience Store',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Amazon_com_%20Samsung%20Galaxy%20Phones.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Amazon_com_%20Samsung%20Galaxy%20Phones.jfif'],
+    attributes: [
+      { key: 'Storage & RAM', val: '256GB Storage · 8GB RAM' },
+      { key: 'Screen', val: '6.7" Super AMOLED 120Hz' },
+      { key: 'Battery', val: '5000 mAh + 25W Fast Charge' }
+    ],
+    description: '256GB storage tier with 120Hz Super AMOLED panel, OIS camera stabilization, and 25W fast charging.'
+  },
+
+  'samsung_a26_128': {
+    id: 'samsung_a26_128',
+    title: 'Samsung Galaxy A26 5G (128GB / 6GB RAM)',
+    brand: 'Samsung',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: '5G POWER',
+    rating: '4.8',
+    reviewCount: 50,
+    soldCount: 105,
+    price: 'XAF 140.000',
+    salePrice: 'XAF 161.000',
+    storeName: 'Samsung Experience Store',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Amazon_com_%20Samsung%20Galaxy%20Phones.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Amazon_com_%20Samsung%20Galaxy%20Phones.jfif'],
+    attributes: [
+      { key: 'Network', val: 'Fast Dual 5G Bands' },
+      { key: 'Display', val: '6.6" 120Hz Super AMOLED' },
+      { key: 'Processor', val: 'Exynos 1380 5G Octa-Core' }
+    ],
+    description: 'High-performance Exynos 1380 5G processor, 120Hz Super AMOLED display, and 50MP OIS triple camera.'
+  },
+
+  'samsung_a26_256': {
+    id: 'samsung_a26_256',
+    title: 'Samsung Galaxy A26 5G (256GB / 8GB RAM)',
+    brand: 'Samsung',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'TOP VALUE 5G',
+    rating: '4.9',
+    reviewCount: 55,
+    soldCount: 120,
+    price: 'XAF 155.000',
+    salePrice: 'XAF 178.000',
+    storeName: 'Samsung Experience Store',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Amazon_com_%20Samsung%20Galaxy%20Phones.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Amazon_com_%20Samsung%20Galaxy%20Phones.jfif'],
+    attributes: [
+      { key: 'Storage & RAM', val: '256GB ROM · 8GB RAM' },
+      { key: 'Display', val: '6.6" 120Hz Super AMOLED' },
+      { key: 'Battery', val: '5000 mAh' }
+    ],
+    description: '256GB spacious memory, 8GB RAM, 120Hz Super AMOLED fluid display, and dual SIM 5G capability.'
+  },
+
+  'samsung_a53_128': {
+    id: 'samsung_a53_128',
+    title: 'Samsung Galaxy A53 5G (128GB / 8GB RAM)',
+    brand: 'Samsung',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'IP67 WATERPROOF',
+    rating: '4.8',
+    reviewCount: 80,
+    soldCount: 175,
+    price: 'XAF 120.000',
+    salePrice: 'XAF 138.000',
+    storeName: 'Samsung Experience Store',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/samsung.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/samsung.jfif'],
+    attributes: [
+      { key: 'Protection', val: 'IP67 Certified Water & Dust Resistant' },
+      { key: 'Camera', val: '64MP OIS Quad Camera' },
+      { key: 'Display', val: '6.5" 120Hz Super AMOLED' }
+    ],
+    description: 'IP67 waterproof rating (up to 1 meter for 30 minutes), 64MP OIS quad camera, and stereo speakers.'
+  },
+
+  'samsung_a36_256': {
+    id: 'samsung_a36_256',
+    title: 'Samsung Galaxy A36 5G (256GB / 8GB RAM)',
+    brand: 'Samsung',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'GALAXY AI 2026',
+    rating: '4.9',
+    reviewCount: 50,
+    soldCount: 110,
+    price: 'XAF 185.000',
+    salePrice: 'XAF 212.000',
+    storeName: 'Samsung Experience Store',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/samsung.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/samsung.jfif'],
+    attributes: [
+      { key: 'Design', val: 'Key Island Slim Glass Design' },
+      { key: 'Display', val: '6.6" 120Hz Super AMOLED (1000 nits)' },
+      { key: 'Protection', val: 'IP67 Water Resistance' }
+    ],
+    description: 'Modern Key Island frame design, 120Hz Super AMOLED screen, IP67 waterproof construction, and Circle to Search.'
+  },
+
+  'samsung_a56_256': {
+    id: 'samsung_a56_256',
+    title: 'Samsung Galaxy A56 5G (256GB / 8GB RAM)',
+    brand: 'Samsung',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'PREMIUM A-SERIES',
+    rating: '4.9',
+    reviewCount: 62,
+    soldCount: 130,
+    price: 'XAF 230.000',
+    salePrice: 'XAF 264.000',
+    storeName: 'Samsung Experience Store',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/samsung.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/samsung.jfif'],
+    attributes: [
+      { key: 'Frame', val: 'Metal Frame & Gorilla Glass Victus+' },
+      { key: 'Processor', val: 'Exynos 1580 (4nm Flagship Architecture)' },
+      { key: 'Camera', val: '50MP OIS + 12MP Ultra-Wide + 5MP Macro' }
+    ],
+    description: 'Metal side rails with Gorilla Glass Victus+, 4nm Exynos 1580 processor, pro-grade 50MP OIS camera, and Circle to Search.'
+  },
+
+  'samsung_a57_256': {
+    id: 'samsung_a57_256',
+    title: 'Samsung Galaxy A57 5G (256GB / 8GB RAM)',
+    brand: 'Samsung',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'A-SERIES PEAK',
+    rating: '5.0',
+    reviewCount: 45,
+    soldCount: 90,
+    price: 'XAF 245.000',
+    salePrice: 'XAF 281.000',
+    storeName: 'Samsung Experience Store',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/samsung.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/samsung.jfif'],
+    attributes: [
+      { key: 'Features', val: 'Full Galaxy AI On-Device Suite' },
+      { key: 'Display', val: '6.6" Super AMOLED 120Hz (1600 nits)' },
+      { key: 'Build', val: 'Armor Aluminum Frame IP68' }
+    ],
+    description: 'The pinnacle of the Galaxy A family with full Galaxy AI suite, Armor Aluminum frame, IP68 water resistance, and 45W fast charge.'
+  },
+
+  'samsung_s20_fe_5g': {
+    id: 'samsung_s20_fe_5g',
+    title: 'Samsung Galaxy S20 FE 5G (128GB)',
+    brand: 'Samsung',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: "Occasion Propre · Afficheur D'origine",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'FAN EDITION',
+    rating: '4.8',
+    reviewCount: 75,
+    soldCount: 160,
+    price: 'XAF 80.000',
+    salePrice: 'XAF 92.000',
+    storeName: 'Mboppi Mobile Hub',
+    storeCity: 'Douala, Mboppi',
+    storeRating: '4.7',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/samsung.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/samsung.jfif'],
+    attributes: [
+      { key: 'Processor', val: 'Qualcomm Snapdragon 865 5G' },
+      { key: 'Display', val: '6.5" 120Hz Super AMOLED' },
+      { key: 'Zoom', val: '30X Space Zoom with OIS' }
+    ],
+    description: 'Snapdragon 865 processor, 120Hz Super AMOLED flat screen, 30x Space Zoom, wireless charging, and IP68 waterproof.'
+  },
+
+  'samsung_s20_5g_128': {
+    id: 'samsung_s20_5g_128',
+    title: 'Samsung Galaxy S20 5G (128GB)',
+    brand: 'Samsung',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: "Occasion Propre · Afficheur D'origine",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'COMPACT 120HZ',
+    rating: '4.8',
+    reviewCount: 60,
+    soldCount: 130,
+    price: 'XAF 90.000',
+    salePrice: 'XAF 103.000',
+    storeName: 'Mboppi Mobile Hub',
+    storeCity: 'Douala, Mboppi',
+    storeRating: '4.7',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/samsung.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/samsung.jfif'],
+    attributes: [
+      { key: 'Display', val: '6.2" Dynamic AMOLED 2X 120Hz' },
+      { key: 'Video', val: '8K Video Recording' },
+      { key: 'RAM', val: '12GB LPDDR5 High Speed' }
+    ],
+    description: 'Compact premium flagship with 120Hz Dynamic AMOLED 2X display, 8K video capture, 12GB RAM, and 30x Space Zoom.'
+  },
+
+  'samsung_s20_ultra_128': {
+    id: 'samsung_s20_ultra_128',
+    title: 'Samsung Galaxy S20 Ultra 5G (128GB / 108MP)',
+    brand: 'Samsung',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: "Occasion Propre · Afficheur D'origine",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: '100X SPACE ZOOM',
+    rating: '4.8',
+    reviewCount: 70,
+    soldCount: 145,
+    price: 'XAF 110.000',
+    salePrice: 'XAF 126.000',
+    storeName: 'Mboppi Mobile Hub',
+    storeCity: 'Douala, Mboppi',
+    storeRating: '4.7',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/samsung.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/samsung.jfif'],
+    attributes: [
+      { key: 'Camera', val: '108MP Main + 48MP 100x Space Zoom' },
+      { key: 'Screen', val: '6.9" Dynamic AMOLED 2X 120Hz' },
+      { key: 'Battery', val: '5000 mAh with 45W Fast Charging' }
+    ],
+    description: 'Groundbreaking 100x Space Zoom, 108MP high-resolution sensor, massive 6.9-inch 120Hz screen, and 5000 mAh battery.'
+  },
+
+  'samsung_s21_5g_128': {
+    id: 'samsung_s21_5g_128',
+    title: 'Samsung Galaxy S21 5G (128GB)',
+    brand: 'Samsung',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: "Occasion Propre · Afficheur D'origine",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'CONTOUR CUT',
+    rating: '4.8',
+    reviewCount: 85,
+    soldCount: 190,
+    price: 'XAF 105.000',
+    salePrice: 'XAF 120.000',
+    storeName: 'Mboppi Mobile Hub',
+    storeCity: 'Douala, Mboppi',
+    storeRating: '4.7',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/samsung.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/samsung.jfif'],
+    attributes: [
+      { key: 'Design', val: 'Contour-Cut Camera Housing' },
+      { key: 'Display', val: '6.2" Dynamic AMOLED 2X 120Hz (1300 nits)' },
+      { key: 'Video', val: "Director's View Multi-Cam" }
+    ],
+    description: "Contour-cut metal camera housing, 120Hz adaptive Dynamic AMOLED display, 8K video, and Director's View."
+  },
+
+  'samsung_s21_plus_5g_128': {
+    id: 'samsung_s21_plus_5g_128',
+    title: 'Samsung Galaxy S21+ 5G (128GB)',
+    brand: 'Samsung',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: "Occasion Propre · Afficheur D'origine",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'GLASS BACK',
+    rating: '4.8',
+    reviewCount: 72,
+    soldCount: 155,
+    price: 'XAF 120.000',
+    salePrice: 'XAF 138.000',
+    storeName: 'Mboppi Mobile Hub',
+    storeCity: 'Douala, Mboppi',
+    storeRating: '4.7',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/samsung.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/samsung.jfif'],
+    attributes: [
+      { key: 'Screen', val: '6.7" Dynamic AMOLED 2X 120Hz' },
+      { key: 'Battery', val: '4800 mAh All-Day Endurance' },
+      { key: 'Build', val: 'Gorilla Glass Victus Back' }
+    ],
+    description: 'Larger 6.7-inch 120Hz screen with Gorilla Glass Victus back, 4800 mAh battery, and pro 64MP telephoto camera.'
+  },
+
+  'samsung_s21_plus_5g_256': {
+    id: 'samsung_s21_plus_5g_256',
+    title: 'Samsung Galaxy S21+ 5G (256GB / Phantom Black)',
+    brand: 'Samsung',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: "Occasion Propre · Afficheur D'origine",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: '256GB SPEC',
+    rating: '4.9',
+    reviewCount: 60,
+    soldCount: 130,
+    price: 'XAF 170.000',
+    salePrice: 'XAF 195.000',
+    storeName: 'Mboppi Mobile Hub',
+    storeCity: 'Douala, Mboppi',
+    storeRating: '4.7',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/samsung.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/samsung.jfif'],
+    attributes: [
+      { key: 'Storage & RAM', val: '256GB Storage · 8GB RAM' },
+      { key: 'Display', val: '6.7" 120Hz HDR10+' },
+      { key: 'Connectivity', val: 'Ultra-Wideband (UWB) Tech' }
+    ],
+    description: '256GB Phantom Black edition with UWB spatial awareness technology, 4800 mAh battery, and pristine original screen.'
+  },
+
+  'samsung_s21_ultra_128': {
+    id: 'samsung_s21_ultra_128',
+    title: 'Samsung Galaxy S21 Ultra 5G (128GB / Dual Zoom)',
+    brand: 'Samsung',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: "Occasion Propre · Afficheur D'origine",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'DUAL TELEPHOTO',
+    rating: '4.9',
+    reviewCount: 105,
+    soldCount: 220,
+    price: 'XAF 150.000',
+    salePrice: 'XAF 172.000',
+    storeName: 'Mboppi Mobile Hub',
+    storeCity: 'Douala, Mboppi',
+    storeRating: '4.7',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/samsung.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/samsung.jfif'],
+    attributes: [
+      { key: 'Cameras', val: 'Dual Telephoto (3x & 10x Optical) + 108MP Pro' },
+      { key: 'Stylus', val: 'S Pen Compatible Screen' },
+      { key: 'Display', val: '6.8" WQHD+ 120Hz at full resolution' }
+    ],
+    description: 'Dual telephoto optical zoom (3x & 10x), S Pen stylus support, 108MP camera, and 120Hz at full WQHD+ resolution.'
+  },
+
+  'samsung_s22_128': {
+    id: 'samsung_s22_128',
+    title: 'Samsung Galaxy S22 5G (128GB)',
+    brand: 'Samsung',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: "Occasion Propre · Afficheur D'origine",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'NIGHTOGRAPHY',
+    rating: '4.8',
+    reviewCount: 80,
+    soldCount: 170,
+    price: 'XAF 115.000',
+    salePrice: 'XAF 132.000',
+    storeName: 'Mboppi Mobile Hub',
+    storeCity: 'Douala, Mboppi',
+    storeRating: '4.7',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/samsung.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/samsung.jfif'],
+    attributes: [
+      { key: 'Build', val: 'Armor Aluminum Frame & Gorilla Glass Victus+' },
+      { key: 'Camera', val: '50MP Nightography Camera' },
+      { key: 'Screen', val: '6.1" Dynamic AMOLED 2X 120Hz' }
+    ],
+    description: 'Pocketable premium flagship with Armor Aluminum frame, 50MP Nightography sensor, and vibrant 120Hz screen.'
+  },
+
+  'samsung_s22_plus_128': {
+    id: 'samsung_s22_plus_128',
+    title: 'Samsung Galaxy S22+ 5G (128GB / 1750 nits)',
+    brand: 'Samsung',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: "Occasion Propre · Afficheur D'origine",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: '1750 NITS BRIGHT',
+    rating: '4.9',
+    reviewCount: 74,
+    soldCount: 155,
+    price: 'XAF 140.000',
+    salePrice: 'XAF 161.000',
+    storeName: 'Mboppi Mobile Hub',
+    storeCity: 'Douala, Mboppi',
+    storeRating: '4.7',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/samsung.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/samsung.jfif'],
+    attributes: [
+      { key: 'Brightness', val: '1750 nits Vision Booster Peak' },
+      { key: 'Charge', val: '45W Ultra-Fast Charging' },
+      { key: 'Display', val: '6.6" 120Hz Dynamic AMOLED' }
+    ],
+    description: 'Ultra-bright 1750-nit display with Vision Booster technology, 45W fast charging, and premium aluminum frame.'
+  },
+
+  'samsung_s22_ultra_128': {
+    id: 'samsung_s22_ultra_128',
+    title: 'Samsung Galaxy S22 Ultra 5G (128GB / Built-in S Pen)',
+    brand: 'Samsung',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: "Occasion Propre · Afficheur D'origine",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'BUILT-IN S PEN',
+    rating: '4.9',
+    reviewCount: 120,
+    soldCount: 250,
+    price: 'XAF 210.000',
+    salePrice: 'XAF 241.000',
+    storeName: 'Mboppi Mobile Hub',
+    storeCity: 'Douala, Mboppi',
+    storeRating: '4.7',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/samsung.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/samsung.jfif'],
+    attributes: [
+      { key: 'S Pen', val: 'Built-In Stylus with 2.8ms Ultra-Low Latency' },
+      { key: 'Camera', val: '108MP Quad Tele with Super Clear Glass' },
+      { key: 'Display', val: '6.8" Edge QHD+ Dynamic AMOLED 2X' }
+    ],
+    description: 'The Note reborn: integrated S Pen stylus with 2.8ms latency, 108MP Nightography quad camera, and 6.8-inch QHD+ display.'
+  },
+
+  'samsung_s22_ultra_256': {
+    id: 'samsung_s22_ultra_256',
+    title: 'Samsung Galaxy S22 Ultra 5G (256GB / 12GB RAM)',
+    brand: 'Samsung',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: "Occasion Propre · Afficheur D'origine",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'TOP NOTE PRO',
+    rating: '4.9',
+    reviewCount: 110,
+    soldCount: 235,
+    price: 'XAF 240.000',
+    salePrice: 'XAF 276.000',
+    storeName: 'Mboppi Mobile Hub',
+    storeCity: 'Douala, Mboppi',
+    storeRating: '4.7',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/samsung.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/samsung.jfif'],
+    attributes: [
+      { key: 'Storage & RAM', val: '256GB ROM · 12GB RAM' },
+      { key: 'Stylus', val: 'Integrated S Pen Note Experience' },
+      { key: 'Zoom', val: '100x Space Zoom (Dual OIS Teles)' }
+    ],
+    description: '256GB storage tier with 12GB RAM, integrated S Pen, dual optical zoom lenses (3x & 10x) and 100x Space Zoom.'
+  },
+
+  'samsung_s23_ultra_256': {
+    id: 'samsung_s23_ultra_256',
+    title: 'Samsung Galaxy S23 Ultra 5G (256GB / 200MP)',
+    brand: 'Samsung',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: "Occasion Propre · Afficheur D'origine",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: '200MP MONSTER',
+    rating: '5.0',
+    reviewCount: 135,
+    soldCount: 290,
+    price: 'XAF 300.000',
+    salePrice: 'XAF 345.000',
+    storeName: 'Mboppi Mobile Hub',
+    storeCity: 'Douala, Mboppi',
+    storeRating: '4.7',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/samsung.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/samsung.jfif'],
+    attributes: [
+      { key: 'Processor', val: 'Snapdragon 8 Gen 2 for Galaxy' },
+      { key: 'Camera', val: '200MP HP2 Sensor with Super QPD AF' },
+      { key: 'Battery', val: '5000 mAh Ultra Battery Life' }
+    ],
+    description: 'Custom Snapdragon 8 Gen 2 for Galaxy chip, revolutionary 200MP camera sensor, Astro Hyperlapse, and built-in S Pen.'
+  },
+
+  'samsung_s24_ultra_256': {
+    id: 'samsung_s24_ultra_256',
+    title: 'Samsung Galaxy S24 Ultra 5G (256GB / Galaxy AI)',
+    brand: 'Samsung',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Free Insured Express Courier',
+    badge: 'TITANIUM AI',
+    rating: '5.0',
+    reviewCount: 125,
+    soldCount: 240,
+    price: 'XAF 435.000',
+    salePrice: 'XAF 500.000',
+    storeName: 'Samsung Experience Store',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Samsung%20Galaxy%20S26%20Ultra,.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Samsung%20Galaxy%20S26%20Ultra,.jfif'],
+    attributes: [
+      { key: 'Body', val: 'Titanium Frame with Corning Gorilla Armor' },
+      { key: 'AI Suite', val: 'Live Translate, Note Assist & Circle to Search' },
+      { key: 'Display', val: '6.8" Flat QHD+ 120Hz Anti-Reflective' }
+    ],
+    description: 'Grade 2 Titanium frame with anti-reflective Gorilla Armor glass, flat 6.8-inch display, on-device Galaxy AI, and 200MP camera.'
+  },
+
+  'samsung_s25_ultra_512': {
+    id: 'samsung_s25_ultra_512',
+    title: 'Samsung Galaxy S25 Ultra 5G (512GB / Snapdragon 8 Elite)',
+    brand: 'Samsung',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Free Insured Express Courier',
+    badge: '512GB SCELLÉ',
+    rating: '5.0',
+    reviewCount: 90,
+    soldCount: 180,
+    price: 'XAF 570.000',
+    salePrice: 'XAF 655.000',
+    storeName: 'Samsung Experience Store',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Samsung%20Galaxy%20S26%20Ultra,.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Samsung%20Galaxy%20S26%20Ultra,.jfif'],
+    attributes: [
+      { key: 'Processor', val: 'Snapdragon 8 Elite 3nm (Galaxy Tuned)' },
+      { key: 'Camera', val: '200MP + 50MP UW + 50MP 5X + 50MP 3X All Quad Pro' },
+      { key: 'Storage', val: '512GB UFS 4.0 · 16GB RAM' }
+    ],
+    description: 'Extreme 3nm Snapdragon 8 Elite computing, rounded ergonomic titanium frame, quad 50MP+ pro camera system, and 512GB storage.'
+  },
+
+  'samsung_s26_ultra_256_duos': {
+    id: 'samsung_s26_ultra_256_duos',
+    title: 'Samsung Galaxy S26 Ultra 5G Duos (256GB / Dual Physical SIM)',
+    brand: 'Samsung',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Free Insured Express Courier',
+    badge: '2026 PINNACLE',
+    rating: '5.0',
+    reviewCount: 85,
+    soldCount: 150,
+    price: 'XAF 720.000',
+    salePrice: 'XAF 827.000',
+    storeName: 'Samsung Experience Store',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/SAMSUNG%20S26%20ULTRA%20%F0%9F%94%A5%20BUY%20IT%20FOR%20YOU%20%F0%9F%91%87.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/SAMSUNG%20S26%20ULTRA%20%F0%9F%94%A5%20BUY%20IT%20FOR%20YOU%20%F0%9F%91%87.jfif'],
+    attributes: [
+      { key: 'SIM', val: 'Dual Physical SIM (Duos) + eSIM' },
+      { key: 'Display', val: '6.9" Dynamic AMOLED 2X 120Hz (3000 nits)' },
+      { key: 'Camera', val: '200MP Next-Gen Sensor with AI ISP' }
+    ],
+    description: 'Dual physical SIM card edition for Cameroon & CEMAC roaming. Sealed factory box with official 12-month warranty.'
+  },
+
+  'samsung_s26_ultra_512_duos': {
+    id: 'samsung_s26_ultra_512_duos',
+    title: 'Samsung Galaxy S26 Ultra 5G Duos (512GB / Dual Physical SIM)',
+    brand: 'Samsung',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Free Insured Express Courier',
+    badge: 'DUOS 512GB',
+    rating: '5.0',
+    reviewCount: 78,
+    soldCount: 130,
+    price: 'XAF 820.000',
+    salePrice: 'XAF 942.000',
+    storeName: 'Samsung Experience Store',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Samsung%20Galaxy%20S26%20Ultra,.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Samsung%20Galaxy%20S26%20Ultra,.jfif'],
+    attributes: [
+      { key: 'Storage & SIM', val: '512GB UFS 4.0 · Dual Physical SIM Duos' },
+      { key: 'Build', val: 'Sculpted Grade 5 Titanium Housing' },
+      { key: 'Stylus', val: 'Smart AI S Pen Included' }
+    ],
+    description: '512GB Duos model with dual physical SIM slots, sculpted Grade 5 Titanium chassis, Smart S Pen, and 12-month official warranty.'
+  },
+
+  'samsung_s26_ultra_1tb_duos': {
+    id: 'samsung_s26_ultra_1tb_duos',
+    title: 'Samsung Galaxy S26 Ultra 5G Duos (1TB Storage / 16GB RAM)',
+    brand: 'Samsung',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Free Insured Express Courier',
+    badge: '1TB ULTIMATE',
+    rating: '5.0',
+    reviewCount: 60,
+    soldCount: 95,
+    price: 'XAF 950.000',
+    salePrice: 'XAF 1.092.000',
+    storeName: 'Samsung Experience Store',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/SAMSUNG%20S26%20ULTRA%20%F0%9F%94%A5%20BUY%20IT%20FOR%20YOU%20%F0%9F%91%87.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/SAMSUNG%20S26%20ULTRA%20%F0%9F%94%A5%20BUY%20IT%20FOR%20YOU%20%F0%9F%91%87.jfif'],
+    attributes: [
+      { key: 'Storage', val: '1024GB (1 Terabyte) Storage' },
+      { key: 'RAM & SIM', val: '16GB LPDDR5X · Dual SIM Duos' },
+      { key: 'Warranty', val: '12-Month Official VIP Warranty' }
+    ],
+    description: 'The masterwork of Galaxy: 1TB terabyte storage capacity, dual physical SIM slots, titanium frame, and VIP concierge warranty.'
+  },
+
+  'samsung_note_5_32': {
+    id: 'samsung_note_5_32',
+    title: 'Samsung Galaxy Note 5 (32GB / S Pen)',
+    brand: 'Samsung',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: "Occasion Propre · Afficheur D'origine",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'NOTE VINTAGE',
+    rating: '4.6',
+    reviewCount: 22,
+    soldCount: 50,
+    price: 'XAF 45.000',
+    salePrice: 'XAF 51.000',
+    storeName: 'Mboppi Mobile Hub',
+    storeCity: 'Douala, Mboppi',
+    storeRating: '4.7',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/samsung.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/samsung.jfif'],
+    attributes: [
+      { key: 'Screen', val: '5.7" Quad HD Super AMOLED' },
+      { key: 'Stylus', val: 'Clickable Ejection S Pen' },
+      { key: 'Storage', val: '32GB ROM · 4GB RAM' }
+    ],
+    description: 'Classic Galaxy Note with click-to-eject S Pen, Quad HD Super AMOLED display, and premium metal & curved glass back.'
+  },
+
+  'samsung_note_8_64': {
+    id: 'samsung_note_8_64',
+    title: 'Samsung Galaxy Note 8 (64GB / Dual OIS)',
+    brand: 'Samsung',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: "Occasion Propre · Afficheur D'origine",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'INFINITY DISPLAY',
+    rating: '4.7',
+    reviewCount: 40,
+    soldCount: 90,
+    price: 'XAF 75.000',
+    salePrice: 'XAF 86.000',
+    storeName: 'Mboppi Mobile Hub',
+    storeCity: 'Douala, Mboppi',
+    storeRating: '4.7',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/samsung.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/samsung.jfif'],
+    attributes: [
+      { key: 'Display', val: '6.3" QHD+ Curved Infinity Display' },
+      { key: 'Camera', val: 'Dual 12MP with World-First Dual OIS' },
+      { key: 'S Pen', val: 'Live Message & Screen-Off Memo' }
+    ],
+    description: 'Dual OIS telephoto camera, Screen-Off Memo S Pen, IP68 water resistance, and pristine curved Infinity Display.'
+  },
+
+  'samsung_note_9_128': {
+    id: 'samsung_note_9_128',
+    title: 'Samsung Galaxy Note 9 (128GB / Bluetooth S Pen)',
+    brand: 'Samsung',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: "Occasion Propre · Afficheur D'origine",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'BLUETOOTH S PEN',
+    rating: '4.8',
+    reviewCount: 55,
+    soldCount: 120,
+    price: 'XAF 90.000',
+    salePrice: 'XAF 103.000',
+    storeName: 'Mboppi Mobile Hub',
+    storeCity: 'Douala, Mboppi',
+    storeRating: '4.7',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/samsung.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/samsung.jfif'],
+    attributes: [
+      { key: 'Stylus', val: 'Bluetooth Low-Energy Remote Control S Pen' },
+      { key: 'Battery', val: '4000 mAh All-Day Power' },
+      { key: 'Audio', val: 'AKG Tuned Stereo Speakers' }
+    ],
+    description: 'Bluetooth remote control S Pen (shutter & presentation clicker), 4000 mAh battery, and notchless 6.4-inch QHD+ display.'
+  },
+
+  'samsung_note_20_128': {
+    id: 'samsung_note_20_128',
+    title: 'Samsung Galaxy Note 20 5G (128GB)',
+    brand: 'Samsung',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: "Occasion Propre · Afficheur D'origine",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'FLAT NOTE',
+    rating: '4.8',
+    reviewCount: 48,
+    soldCount: 105,
+    price: 'XAF 110.000',
+    salePrice: 'XAF 126.000',
+    storeName: 'Mboppi Mobile Hub',
+    storeCity: 'Douala, Mboppi',
+    storeRating: '4.7',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/samsung.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/samsung.jfif'],
+    attributes: [
+      { key: 'Screen', val: '6.7" Flat Super AMOLED Plus' },
+      { key: 'Camera', val: '64MP 3x Hybrid Optic Zoom' },
+      { key: 'S Pen', val: 'Anywhere Actions Air Gestures' }
+    ],
+    description: 'Flat 6.7-inch Super AMOLED Plus screen perfect for writing with S Pen anywhere gestures and 64MP 8K video camera.'
+  },
+
+  'samsung_note_20_ultra_128': {
+    id: 'samsung_note_20_ultra_128',
+    title: 'Samsung Galaxy Note 20 Ultra 5G (128GB / 120Hz)',
+    brand: 'Samsung',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: "Occasion Propre · Afficheur D'origine",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'MYSTIC BRONZE',
+    rating: '4.9',
+    reviewCount: 80,
+    soldCount: 170,
+    price: 'XAF 150.000',
+    salePrice: 'XAF 172.000',
+    storeName: 'Mboppi Mobile Hub',
+    storeCity: 'Douala, Mboppi',
+    storeRating: '4.7',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/samsung.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/samsung.jfif'],
+    attributes: [
+      { key: 'Display', val: '6.9" Dynamic AMOLED 2X 120Hz' },
+      { key: 'Latency', val: '9ms Ultra-Low S Pen Pen-on-Paper Feel' },
+      { key: 'Camera', val: '108MP + Laser Autofocus + 5x Optical Periscope' }
+    ],
+    description: '9ms ultra-low latency S Pen with true pen-on-paper response, 108MP camera with Laser AF sensor, and 120Hz Dynamic AMOLED 2X.'
+  },
+
+  'samsung_note_20_ultra_256': {
+    id: 'samsung_note_20_ultra_256',
+    title: 'Samsung Galaxy Note 20 Ultra 5G (256GB / 12GB RAM)',
+    brand: 'Samsung',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: "Occasion Propre · Afficheur D'origine",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: '256GB NOTE PEAK',
+    rating: '4.9',
+    reviewCount: 72,
+    soldCount: 150,
+    price: 'XAF 180.000',
+    salePrice: 'XAF 206.000',
+    storeName: 'Mboppi Mobile Hub',
+    storeCity: 'Douala, Mboppi',
+    storeRating: '4.7',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/samsung.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/samsung.jfif'],
+    attributes: [
+      { key: 'Storage & RAM', val: '256GB ROM · 12GB RAM' },
+      { key: 'Glass', val: 'Gorilla Glass Victus (First Generation)' },
+      { key: 'Video', val: 'Pro Video Mode with 24fps 8K' }
+    ],
+    description: 'Max-memory Note 20 Ultra with 256GB storage, 12GB RAM, 5x optical periscope zoom and 50x Space Zoom.'
+  },
+
+  'iphone_7_128': {
+    id: 'iphone_7_128',
+    title: 'Apple iPhone 7 (128GB)',
+    brand: 'Apple',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Occasion Propre · Batterie Vérifiée 90%+',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'VALUE IPHONE',
+    rating: '4.6',
+    reviewCount: 40,
+    soldCount: 90,
+    price: 'XAF 50.000',
+    salePrice: 'XAF 57.000',
+    storeName: 'iStore Cameroon',
+    storeCity: 'Bonapriso, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/amazing%20iphone.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/amazing%20iphone.jfif'],
+    attributes: [
+      { key: 'Storage', val: '128GB Storage' },
+      { key: 'Camera', val: '12MP OIS Camera with 4K Video' },
+      { key: 'Audio', val: 'Stereo Speakers & Touch ID' }
+    ],
+    description: 'Reliable entry iPhone with 128GB storage, Touch ID fingerprint security, optical stabilization camera, and checked battery.'
+  },
+
+  'iphone_7_256': {
+    id: 'iphone_7_256',
+    title: 'Apple iPhone 7 (256GB)',
+    brand: 'Apple',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Occasion Propre · Batterie Vérifiée 90%+',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: '256GB IPHONE',
+    rating: '4.6',
+    reviewCount: 35,
+    soldCount: 75,
+    price: 'XAF 55.000',
+    salePrice: 'XAF 63.000',
+    storeName: 'iStore Cameroon',
+    storeCity: 'Bonapriso, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/amazing%20iphone.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/amazing%20iphone.jfif'],
+    attributes: [
+      { key: 'Storage', val: '256GB High Capacity' },
+      { key: 'Chip', val: 'Apple A10 Fusion' },
+      { key: 'Build', val: 'IP67 Splash & Water Resistance' }
+    ],
+    description: 'High-capacity 256GB iPhone 7 with A10 Fusion chip, aluminum unibody, and crisp Retina display.'
+  },
+
+  'iphone_7_plus_128': {
+    id: 'iphone_7_plus_128',
+    title: 'Apple iPhone 7 Plus (128GB / Dual Camera)',
+    brand: 'Apple',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Occasion Propre · Batterie Vérifiée 90%+',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'PORTRAIT DUAL',
+    rating: '4.7',
+    reviewCount: 50,
+    soldCount: 110,
+    price: 'XAF 60.000',
+    salePrice: 'XAF 69.000',
+    storeName: 'iStore Cameroon',
+    storeCity: 'Bonapriso, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/amazing%20iphone.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/amazing%20iphone.jfif'],
+    attributes: [
+      { key: 'Screen', val: '5.5" Retina HD Display' },
+      { key: 'Camera', val: 'Dual 12MP Cameras with 2x Optical Zoom' },
+      { key: 'Battery', val: '2900 mAh Large Cell' }
+    ],
+    description: 'Dual-camera portrait mode pioneer with 2x optical zoom, 5.5-inch Retina HD screen, and long-lasting battery.'
+  },
+
+  'iphone_xr_64': {
+    id: 'iphone_xr_64',
+    title: 'Apple iPhone XR (64GB / Liquid Retina)',
+    brand: 'Apple',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Occasion Propre · Face ID OK',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'FACE ID',
+    rating: '4.7',
+    reviewCount: 70,
+    soldCount: 160,
+    price: 'XAF 85.000',
+    salePrice: 'XAF 97.000',
+    storeName: 'iStore Cameroon',
+    storeCity: 'Bonapriso, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Apple%20went%20colorful,%20we%20went%E2%80%A6.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Apple%20went%20colorful,%20we%20went%E2%80%A6.jfif'],
+    attributes: [
+      { key: 'Display', val: '6.1" Liquid Retina HD LCD' },
+      { key: 'Security', val: 'Advanced Face ID TrueDepth' },
+      { key: 'Chip', val: 'Apple A12 Bionic with Neural Engine' }
+    ],
+    description: 'All-screen design with Face ID, aerospace-grade aluminum and glass, wireless charging, and A12 Bionic chip.'
+  },
+
+  'iphone_xr_128': {
+    id: 'iphone_xr_128',
+    title: 'Apple iPhone XR (128GB / Liquid Retina)',
+    brand: 'Apple',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Occasion Propre · Face ID OK',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: '128GB SWEET SPOT',
+    rating: '4.8',
+    reviewCount: 85,
+    soldCount: 195,
+    price: 'XAF 90.000',
+    salePrice: 'XAF 103.000',
+    storeName: 'iStore Cameroon',
+    storeCity: 'Bonapriso, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Apple%20went%20colorful,%20we%20went%E2%80%A6.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Apple%20went%20colorful,%20we%20went%E2%80%A6.jfif'],
+    attributes: [
+      { key: 'Storage', val: '128GB ROM' },
+      { key: 'Battery', val: 'All-Day Endurance' },
+      { key: 'Camera', val: '12MP Smart HDR Portrait' }
+    ],
+    description: '128GB sweet-spot storage for iPhone XR with Smart HDR photography, Portrait Lighting, and Face ID.'
+  },
+
+  'iphone_11_64': {
+    id: 'iphone_11_64',
+    title: 'Apple iPhone 11 (64GB / Dual Ultra-Wide)',
+    brand: 'Apple',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Occasion Propre · Face ID OK',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'NIGHT MODE',
+    rating: '4.8',
+    reviewCount: 110,
+    soldCount: 260,
+    price: 'XAF 100.000',
+    salePrice: 'XAF 114.000',
+    storeName: 'iStore Cameroon',
+    storeCity: 'Bonapriso, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Apple%20doesn%E2%80%99t%20accidentally%20make%20you%20want%20their%E2%80%A6.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Apple%20doesn%E2%80%99t%20accidentally%20make%20you%20want%20their%E2%80%A6.jfif'],
+    attributes: [
+      { key: 'Camera', val: 'Dual 12MP Ultra-Wide & Wide with Night Mode' },
+      { key: 'Chip', val: 'Apple A13 Bionic' },
+      { key: 'Video', val: '4K Video at 60fps Extended Dynamic Range' }
+    ],
+    description: 'Dual-camera system with Ultra-Wide lens, Night Mode for low-light shots, A13 Bionic chip, and 4K video.'
+  },
+
+  'iphone_11_128': {
+    id: 'iphone_11_128',
+    title: 'Apple iPhone 11 (128GB / Dual Ultra-Wide)',
+    brand: 'Apple',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Occasion Propre · Face ID OK',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'MOST POPULAR',
+    rating: '4.8',
+    reviewCount: 145,
+    soldCount: 350,
+    price: 'XAF 110.000',
+    salePrice: 'XAF 126.000',
+    storeName: 'iStore Cameroon',
+    storeCity: 'Bonapriso, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Apple%20doesn%E2%80%99t%20accidentally%20make%20you%20want%20their%E2%80%A6.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Apple%20doesn%E2%80%99t%20accidentally%20make%20you%20want%20their%E2%80%A6.jfif'],
+    attributes: [
+      { key: 'Storage', val: '128GB Storage' },
+      { key: 'Screen', val: '6.1" Liquid Retina HD' },
+      { key: 'Audio', val: 'Spatial Audio with Dolby Atmos' }
+    ],
+    description: "Cameroon's best-selling iPhone configuration: 128GB storage, dual camera with Night Mode, and all-day battery."
+  },
+
+  'iphone_11_pro_64': {
+    id: 'iphone_11_pro_64',
+    title: 'Apple iPhone 11 Pro (64GB / Super Retina XDR)',
+    brand: 'Apple',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: 'Occasion Propre · Face ID OK',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'TRIPLE CAM PRO',
+    rating: '4.8',
+    reviewCount: 80,
+    soldCount: 180,
+    price: 'XAF 125.000',
+    salePrice: 'XAF 143.000',
+    storeName: 'iStore Cameroon',
+    storeCity: 'Bonapriso, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Apple%20doesn%E2%80%99t%20accidentally%20make%20you%20want%20their%E2%80%A6.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Apple%20doesn%E2%80%99t%20accidentally%20make%20you%20want%20their%E2%80%A6.jfif'],
+    attributes: [
+      { key: 'Display', val: '5.8" Super Retina XDR OLED (1200 nits)' },
+      { key: 'Camera', val: 'Triple 12MP Ultra-Wide, Wide & Telephoto' },
+      { key: 'Build', val: 'Textured Matte Glass & Stainless Steel' }
+    ],
+    description: 'Triple camera system with optical zoom, Super Retina XDR OLED screen, textured matte glass, and surgical steel frame.'
+  },
+
+  'iphone_11_pro_256': {
+    id: 'iphone_11_pro_256',
+    title: 'Apple iPhone 11 Pro (256GB / Midnight Green)',
+    brand: 'Apple',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: 'Occasion Propre · Face ID OK',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'MIDNIGHT GREEN',
+    rating: '4.9',
+    reviewCount: 95,
+    soldCount: 210,
+    price: 'XAF 135.000',
+    salePrice: 'XAF 155.000',
+    storeName: 'iStore Cameroon',
+    storeCity: 'Bonapriso, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Apple%20doesn%E2%80%99t%20accidentally%20make%20you%20want%20their%E2%80%A6.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Apple%20doesn%E2%80%99t%20accidentally%20make%20you%20want%20their%E2%80%A6.jfif'],
+    attributes: [
+      { key: 'Storage', val: '256GB ROM' },
+      { key: 'Color', val: 'Iconic Midnight Green Matte' },
+      { key: 'Screen', val: '5.8" Super Retina XDR OLED' }
+    ],
+    description: '256GB storage tier in iconic Midnight Green with pro triple camera and surgical stainless steel frame.'
+  },
+
+  'iphone_11_pm_64': {
+    id: 'iphone_11_pm_64',
+    title: 'Apple iPhone 11 Pro Max (64GB)',
+    brand: 'Apple',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: 'Occasion Propre · Face ID OK',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'MAX BATTERY',
+    rating: '4.8',
+    reviewCount: 85,
+    soldCount: 190,
+    price: 'XAF 135.000',
+    salePrice: 'XAF 155.000',
+    storeName: 'iStore Cameroon',
+    storeCity: 'Bonapriso, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Apple%20doesn%E2%80%99t%20accidentally%20make%20you%20want%20their%E2%80%A6.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Apple%20doesn%E2%80%99t%20accidentally%20make%20you%20want%20their%E2%80%A6.jfif'],
+    attributes: [
+      { key: 'Display', val: '6.5" Super Retina XDR OLED' },
+      { key: 'Battery', val: '3969 mAh Long-Run Battery' },
+      { key: 'Camera', val: 'Pro Triple Camera Array' }
+    ],
+    description: 'Massive 6.5-inch Super Retina XDR OLED display, incredible battery life, and pro triple-camera array.'
+  },
+
+  'iphone_11_pm_256': {
+    id: 'iphone_11_pm_256',
+    title: 'Apple iPhone 11 Pro Max (256GB)',
+    brand: 'Apple',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: 'Occasion Propre · Face ID OK',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'TOP PRO MAX',
+    rating: '4.9',
+    reviewCount: 100,
+    soldCount: 230,
+    price: 'XAF 140.000',
+    salePrice: 'XAF 161.000',
+    storeName: 'iStore Cameroon',
+    storeCity: 'Bonapriso, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Apple%20doesn%E2%80%99t%20accidentally%20make%20you%20want%20their%E2%80%A6.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Apple%20doesn%E2%80%99t%20accidentally%20make%20you%20want%20their%E2%80%A6.jfif'],
+    attributes: [
+      { key: 'Storage', val: '256GB ROM' },
+      { key: 'Display', val: '6.5" Super Retina XDR OLED' },
+      { key: 'Build', val: 'Surgical-Grade Stainless Steel' }
+    ],
+    description: '256GB capacity on the 6.5-inch flagship with triple 4K cameras, Night Mode, and deep audio with Dolby Atmos.'
+  },
+
+  'iphone_12_64': {
+    id: 'iphone_12_64',
+    title: 'Apple iPhone 12 (64GB / 5G Super Retina)',
+    brand: 'Apple',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Occasion Propre · Face ID OK',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: '5G OLED',
+    rating: '4.8',
+    reviewCount: 90,
+    soldCount: 210,
+    price: 'XAF 110.000',
+    salePrice: 'XAF 126.000',
+    storeName: 'iStore Cameroon',
+    storeCity: 'Bonapriso, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/amazing%20iphone.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/amazing%20iphone.jfif'],
+    attributes: [
+      { key: 'Display', val: '6.1" Super Retina XDR OLED with Ceramic Shield' },
+      { key: 'Chip', val: 'Apple A14 Bionic (5nm)' },
+      { key: 'MagSafe', val: 'MagSafe Wireless Accessories' }
+    ],
+    description: 'Flat-edge aerospace aluminum design, 4x better drop performance with Ceramic Shield, Super Retina XDR OLED, and 5G speed.'
+  },
+
+  'iphone_12_128': {
+    id: 'iphone_12_128',
+    title: 'Apple iPhone 12 (128GB / 5G Super Retina)',
+    brand: 'Apple',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Occasion Propre · Face ID OK',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: '128GB VALUE',
+    rating: '4.8',
+    reviewCount: 120,
+    soldCount: 280,
+    price: 'XAF 120.000',
+    salePrice: 'XAF 138.000',
+    storeName: 'iStore Cameroon',
+    storeCity: 'Bonapriso, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/amazing%20iphone.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/amazing%20iphone.jfif'],
+    attributes: [
+      { key: 'Storage', val: '128GB ROM' },
+      { key: 'Display', val: '6.1" Super Retina XDR OLED' },
+      { key: 'Video', val: 'Dolby Vision HDR Recording at 30fps' }
+    ],
+    description: '128GB storage on iPhone 12 with Dolby Vision video recording, Night Mode on all cameras, and MagSafe charging.'
+  },
+
+  'iphone_12_256': {
+    id: 'iphone_12_256',
+    title: 'Apple iPhone 12 (256GB / 5G Super Retina)',
+    brand: 'Apple',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Occasion Propre · Face ID OK',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: '256GB HIGH SPEC',
+    rating: '4.8',
+    reviewCount: 75,
+    soldCount: 160,
+    price: 'XAF 130.000',
+    salePrice: 'XAF 149.000',
+    storeName: 'iStore Cameroon',
+    storeCity: 'Bonapriso, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/amazing%20iphone.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/amazing%20iphone.jfif'],
+    attributes: [
+      { key: 'Storage', val: '256GB ROM' },
+      { key: 'Glass', val: 'Ceramic Shield Front' },
+      { key: 'Network', val: 'Sub-6GHz 5G Ultra-Fast' }
+    ],
+    description: 'Top 256GB capacity edition with A14 Bionic processing power and vivid Super Retina XDR OLED screen.'
+  },
+
+  'iphone_12_pro_128': {
+    id: 'iphone_12_pro_128',
+    title: 'Apple iPhone 12 Pro (128GB / LiDAR Scanner)',
+    brand: 'Apple',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: 'Occasion Propre · Face ID OK',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'LIDAR PRO',
+    rating: '4.9',
+    reviewCount: 98,
+    soldCount: 225,
+    price: 'XAF 160.000',
+    salePrice: 'XAF 184.000',
+    storeName: 'iStore Cameroon',
+    storeCity: 'Bonapriso, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/amazing%20iphone.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/amazing%20iphone.jfif'],
+    attributes: [
+      { key: 'LiDAR', val: 'LiDAR Scanner for 6x Faster Low-Light Autofocus' },
+      { key: 'Camera', val: 'Apple ProRAW & 4K 60fps Dolby Vision HDR' },
+      { key: 'Build', val: 'Surgical-Grade Stainless Steel' }
+    ],
+    description: 'Precision-machined stainless steel band, LiDAR scanner for Night Mode portraits and AR, and Apple ProRAW imaging.'
+  },
+
+  'iphone_12_pro_256': {
+    id: 'iphone_12_pro_256',
+    title: 'Apple iPhone 12 Pro (256GB / Pacific Blue)',
+    brand: 'Apple',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: 'Occasion Propre · Face ID OK',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'PACIFIC BLUE',
+    rating: '4.9',
+    reviewCount: 85,
+    soldCount: 195,
+    price: 'XAF 170.000',
+    salePrice: 'XAF 195.000',
+    storeName: 'iStore Cameroon',
+    storeCity: 'Bonapriso, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/amazing%20iphone.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/amazing%20iphone.jfif'],
+    attributes: [
+      { key: 'Storage', val: '256GB ROM' },
+      { key: 'Color', val: 'Pacific Blue Matte Glass' },
+      { key: 'Zoom', val: '4x Optical Zoom Range' }
+    ],
+    description: 'Pacific Blue signature colorway with 256GB storage, 4x optical zoom range, and pro video grading capabilities.'
+  },
+
+  'iphone_12_pm_128': {
+    id: 'iphone_12_pm_128',
+    title: 'Apple iPhone 12 Pro Max (128GB / Sensor-Shift OIS)',
+    brand: 'Apple',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: 'Occasion Propre · Face ID OK',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'SENSOR-SHIFT',
+    rating: '4.9',
+    reviewCount: 110,
+    soldCount: 250,
+    price: 'XAF 180.000',
+    salePrice: 'XAF 206.000',
+    storeName: 'iStore Cameroon',
+    storeCity: 'Bonapriso, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/amazing%20iphone.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/amazing%20iphone.jfif'],
+    attributes: [
+      { key: 'Screen', val: '6.7" Super Retina XDR OLED' },
+      { key: 'Camera', val: 'DSLR-Style Sensor-Shift Optical Image Stabilization' },
+      { key: 'Zoom', val: '5x Optical Zoom Range with 65mm Tele' }
+    ],
+    description: 'Largest 6.7-inch display, revolutionary Sensor-Shift stabilization on the main lens, and 2.5x telephoto portrait reach.'
+  },
+
+  'iphone_12_pm_256': {
+    id: 'iphone_12_pm_256',
+    title: 'Apple iPhone 12 Pro Max (256GB / Gold Finish)',
+    brand: 'Apple',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: 'Occasion Propre · Face ID OK',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'PRO MAX 256G',
+    rating: '4.9',
+    reviewCount: 95,
+    soldCount: 220,
+    price: 'XAF 200.000',
+    salePrice: 'XAF 229.000',
+    storeName: 'iStore Cameroon',
+    storeCity: 'Bonapriso, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/amazing%20iphone.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/amazing%20iphone.jfif'],
+    attributes: [
+      { key: 'Storage', val: '256GB ROM' },
+      { key: 'Display', val: '6.7" Super Retina XDR OLED (1200 nits)' },
+      { key: 'Battery', val: 'Up to 20 Hours Video Playback' }
+    ],
+    description: '256GB edition of the iPhone 12 Pro Max with pro camera performance, all-day battery life, and MagSafe.'
+  },
+
+  'iphone_12_pm_512': {
+    id: 'iphone_12_pm_512',
+    title: 'Apple iPhone 12 Pro Max (512GB / Top Tier)',
+    brand: 'Apple',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: 'Occasion Propre · Face ID OK',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: '512GB MAX',
+    rating: '5.0',
+    reviewCount: 60,
+    soldCount: 130,
+    price: 'XAF 220.000',
+    salePrice: 'XAF 252.000',
+    storeName: 'iStore Cameroon',
+    storeCity: 'Bonapriso, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/amazing%20iphone.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/amazing%20iphone.jfif'],
+    attributes: [
+      { key: 'Storage', val: '512GB High Capacity' },
+      { key: 'Video', val: 'Store Hours of 4K 60fps Dolby Vision Video' },
+      { key: 'Screen', val: '6.7" Super Retina XDR' }
+    ],
+    description: 'Massive 512GB tier for creators shooting extensive 4K Dolby Vision HDR footage and lossless Apple ProRAW photography.'
+  },
+
+  'iphone_13_128': {
+    id: 'iphone_13_128',
+    title: 'Apple iPhone 13 (128GB / Cinematic Mode)',
+    brand: 'Apple',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Occasion Propre · Face ID OK',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'CINEMATIC MODE',
+    rating: '4.9',
+    reviewCount: 130,
+    soldCount: 310,
+    price: 'XAF 160.000',
+    salePrice: 'XAF 184.000',
+    storeName: 'iStore Cameroon',
+    storeCity: 'Bonapriso, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/amazing%20iphone.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/amazing%20iphone.jfif'],
+    attributes: [
+      { key: 'Chip', val: 'Apple A15 Bionic (Lightning-Fast)' },
+      { key: 'Video', val: 'Cinematic Mode with Rack Focus Shallow Depth' },
+      { key: 'Screen', val: '6.1" Super Retina XDR (28% brighter)' }
+    ],
+    description: 'Cinematic Mode video with automatic rack focus, sensor-shift OIS, A15 Bionic chip, and 2.5 hours longer battery life.'
+  },
+
+  'iphone_13_256': {
+    id: 'iphone_13_256',
+    title: 'Apple iPhone 13 (256GB / Pink & Midnight)',
+    brand: 'Apple',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Occasion Propre · Face ID OK',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: '256GB HIGH VALUE',
+    rating: '4.9',
+    reviewCount: 90,
+    soldCount: 210,
+    price: 'XAF 170.000',
+    salePrice: 'XAF 195.000',
+    storeName: 'iStore Cameroon',
+    storeCity: 'Bonapriso, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/amazing%20iphone.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/amazing%20iphone.jfif'],
+    attributes: [
+      { key: 'Storage', val: '256GB ROM' },
+      { key: 'Display', val: '6.1" Super Retina XDR OLED' },
+      { key: 'Battery', val: '3240 mAh Extended Life' }
+    ],
+    description: '256GB storage for iPhone 13 with A15 Bionic, Cinematic Mode in 1080p 30fps, and photographic styles.'
+  },
+
+  'iphone_13_pro_128': {
+    id: 'iphone_13_pro_128',
+    title: 'Apple iPhone 13 Pro (128GB / 120Hz ProMotion)',
+    brand: 'Apple',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: 'Occasion Propre · Face ID OK',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'PROMOTION 120HZ',
+    rating: '4.9',
+    reviewCount: 105,
+    soldCount: 240,
+    price: 'XAF 220.000',
+    salePrice: 'XAF 252.000',
+    storeName: 'iStore Cameroon',
+    storeCity: 'Bonapriso, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/amazing%20iphone.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/amazing%20iphone.jfif'],
+    attributes: [
+      { key: 'Display', val: '6.1" Super Retina XDR with 120Hz ProMotion' },
+      { key: 'Macro', val: 'Macro Photography down to 2cm' },
+      { key: 'Zoom', val: '3x Optical Zoom Telephoto' }
+    ],
+    description: 'Fluid 120Hz ProMotion display, macro photography down to 2cm, 3x optical zoom, and 6-core A15 Bionic with 5-core GPU.'
+  },
+
+  'iphone_13_pro_256': {
+    id: 'iphone_13_pro_256',
+    title: 'Apple iPhone 13 Pro (256GB / Sierra Blue)',
+    brand: 'Apple',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: 'Occasion Propre · Face ID OK',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'SIERRA BLUE',
+    rating: '4.9',
+    reviewCount: 92,
+    soldCount: 215,
+    price: 'XAF 230.000',
+    salePrice: 'XAF 264.000',
+    storeName: 'iStore Cameroon',
+    storeCity: 'Bonapriso, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/amazing%20iphone.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/amazing%20iphone.jfif'],
+    attributes: [
+      { key: 'Storage', val: '256GB ROM (4K ProRes Enabled)' },
+      { key: 'ProRes', val: 'Full 4K ProRes Video Recording' },
+      { key: 'Screen', val: '6.1" ProMotion 120Hz' }
+    ],
+    description: 'Sierra Blue signature colorway with 256GB storage allowing full 4K ProRes video capture, 120Hz ProMotion, and 3x zoom.'
+  },
+
+  'iphone_13_pm_128': {
+    id: 'iphone_13_pm_128',
+    title: 'Apple iPhone 13 Pro Max (128GB / Legendary Battery)',
+    brand: 'Apple',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: 'Occasion Propre · Face ID OK',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'LEGENDARY BATTERY',
+    rating: '5.0',
+    reviewCount: 150,
+    soldCount: 340,
+    price: 'XAF 260.000',
+    salePrice: 'XAF 299.000',
+    storeName: 'iStore Cameroon',
+    storeCity: 'Bonapriso, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/amazing%20iphone.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/amazing%20iphone.jfif'],
+    attributes: [
+      { key: 'Battery', val: '4352 mAh Record-Breaking Endurance' },
+      { key: 'Display', val: '6.7" Super Retina XDR ProMotion 120Hz' },
+      { key: 'Zoom', val: '3x Optical Zoom / 6x Optical Range' }
+    ],
+    description: 'The battery king of modern iPhones with 4352 mAh cell, 6.7-inch 120Hz ProMotion screen, and triple pro camera array.'
+  },
+
+  'iphone_13_pm_256': {
+    id: 'iphone_13_pm_256',
+    title: 'Apple iPhone 13 Pro Max (256GB / Sierra Blue)',
+    brand: 'Apple',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: 'Occasion Propre · Face ID OK',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'PRO MAX 256G',
+    rating: '5.0',
+    reviewCount: 130,
+    soldCount: 295,
+    price: 'XAF 280.000',
+    salePrice: 'XAF 322.000',
+    storeName: 'iStore Cameroon',
+    storeCity: 'Bonapriso, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/amazing%20iphone.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/amazing%20iphone.jfif'],
+    attributes: [
+      { key: 'Storage', val: '256GB High-Speed Storage' },
+      { key: 'ProRes', val: 'Apple ProRes 4K HDR at 30fps' },
+      { key: 'Display', val: '6.7" ProMotion 120Hz OLED' }
+    ],
+    description: '256GB storage tier with 4K ProRes capture, 120Hz ProMotion, 3x telephoto zoom, and legendary multi-day battery life.'
+  },
+
+  'iphone_14_128': {
+    id: 'iphone_14_128',
+    title: 'Apple iPhone 14 (128GB / Action Mode)',
+    brand: 'Apple',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Occasion Propre · Face ID OK',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'ACTION MODE',
+    rating: '4.9',
+    reviewCount: 105,
+    soldCount: 240,
+    price: 'XAF 190.000',
+    salePrice: 'XAF 218.000',
+    storeName: 'iStore Cameroon',
+    storeCity: 'Bonapriso, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/iPhone%2017%20na%20promo%C3%A7%C3%A3o.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/iPhone%2017%20na%20promo%C3%A7%C3%A3o.jfif'],
+    attributes: [
+      { key: 'Action Mode', val: 'Gimbal-Like Smooth Action Mode Video' },
+      { key: 'Safety', val: 'Crash Detection & Emergency SOS' },
+      { key: 'Photonic', val: 'Photonic Engine for 2.5x Better Low-Light' }
+    ],
+    description: 'Gimbal-smooth Action Mode video recording, Photonic Engine computational image pipeline, Crash Detection, and all-day battery.'
+  },
+
+  'iphone_14_256': {
+    id: 'iphone_14_256',
+    title: 'Apple iPhone 14 (256GB / Starlight & Midnight)',
+    brand: 'Apple',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Occasion Propre · Face ID OK',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: '256GB VALUE',
+    rating: '4.9',
+    reviewCount: 88,
+    soldCount: 200,
+    price: 'XAF 210.000',
+    salePrice: 'XAF 241.000',
+    storeName: 'iStore Cameroon',
+    storeCity: 'Bonapriso, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/iPhone%2017%20na%20promo%C3%A7%C3%A3o.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/iPhone%2017%20na%20promo%C3%A7%C3%A3o.jfif'],
+    attributes: [
+      { key: 'Storage', val: '256GB Storage' },
+      { key: 'Selfie', val: '12MP TrueDepth Front Camera with Autofocus' },
+      { key: 'Chip', val: 'A15 Bionic with 5-Core GPU' }
+    ],
+    description: '256GB storage tier with autofocus selfie camera, Photonic Engine, Action Mode, and 5-core GPU performance.'
+  },
+
+  'iphone_14_plus_128': {
+    id: 'iphone_14_plus_128',
+    title: 'Apple iPhone 14 Plus (128GB / 6.7" Big Screen)',
+    brand: 'Apple',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Occasion Propre · Face ID OK',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'BIG SCREEN 6.7"',
+    rating: '4.9',
+    reviewCount: 82,
+    soldCount: 185,
+    price: 'XAF 200.000',
+    salePrice: 'XAF 229.000',
+    storeName: 'iStore Cameroon',
+    storeCity: 'Bonapriso, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/iPhone%2017%20na%20promo%C3%A7%C3%A3o.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/iPhone%2017%20na%20promo%C3%A7%C3%A3o.jfif'],
+    attributes: [
+      { key: 'Display', val: '6.7" Super Retina XDR OLED' },
+      { key: 'Battery', val: 'Up to 26 Hours Video Playback' },
+      { key: 'Video', val: 'Action Mode & Cinematic 4K 24fps' }
+    ],
+    description: 'Big 6.7-inch OLED canvas with best-in-class battery life in an ultra-lightweight aluminum unibody.'
+  },
+
+  'iphone_14_pro_128': {
+    id: 'iphone_14_pro_128',
+    title: 'Apple iPhone 14 Pro (128GB / Dynamic Island & 48MP)',
+    brand: 'Apple',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: 'Occasion Propre · Face ID OK',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'DYNAMIC ISLAND',
+    rating: '4.9',
+    reviewCount: 120,
+    soldCount: 270,
+    price: 'XAF 280.000',
+    salePrice: 'XAF 322.000',
+    storeName: 'iStore Cameroon',
+    storeCity: 'Bonapriso, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/iPhone%2017%20na%20promo%C3%A7%C3%A3o.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/iPhone%2017%20na%20promo%C3%A7%C3%A3o.jfif'],
+    attributes: [
+      { key: 'Island', val: 'Dynamic Island Interactive Alerts' },
+      { key: 'Camera', val: '48MP Quad-Pixel Main Sensor with 2x Crop' },
+      { key: 'Chip', val: 'Apple A16 Bionic (4nm)' }
+    ],
+    description: 'Revolutionary Dynamic Island, 48MP Quad-Pixel sensor with 2x optical crop, Always-On display, and A16 Bionic processor.'
+  },
+
+  'iphone_14_pro_256': {
+    id: 'iphone_14_pro_256',
+    title: 'Apple iPhone 14 Pro (256GB / Deep Purple)',
+    brand: 'Apple',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: 'Occasion Propre · Face ID OK',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'DEEP PURPLE',
+    rating: '5.0',
+    reviewCount: 110,
+    soldCount: 250,
+    price: 'XAF 300.000',
+    salePrice: 'XAF 345.000',
+    storeName: 'iStore Cameroon',
+    storeCity: 'Bonapriso, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/iPhone%2017%20na%20promo%C3%A7%C3%A3o.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/iPhone%2017%20na%20promo%C3%A7%C3%A3o.jfif'],
+    attributes: [
+      { key: 'Storage', val: '256GB ROM (Full 4K ProRes Video)' },
+      { key: 'Screen', val: 'Super Retina XDR (2000 nits peak outdoor)' },
+      { key: 'Color', val: 'Iconic Deep Purple' }
+    ],
+    description: 'Iconic Deep Purple edition with 256GB storage, 2000-nit peak outdoor brightness, Dynamic Island, and 48MP pro photography.'
+  },
+
+  'iphone_14_pm_128': {
+    id: 'iphone_14_pm_128',
+    title: 'Apple iPhone 14 Pro Max (128GB / Dynamic Island)',
+    brand: 'Apple',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: 'Occasion Propre · Face ID OK',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'MAX PRO DYNAMIC',
+    rating: '5.0',
+    reviewCount: 140,
+    soldCount: 320,
+    price: 'XAF 320.000',
+    salePrice: 'XAF 368.000',
+    storeName: 'iStore Cameroon',
+    storeCity: 'Bonapriso, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/iPhone%2017%20na%20promo%C3%A7%C3%A3o.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/iPhone%2017%20na%20promo%C3%A7%C3%A3o.jfif'],
+    attributes: [
+      { key: 'Display', val: '6.7" Super Retina XDR Always-On 120Hz' },
+      { key: 'Camera', val: '48MP Pro Quad-Pixel Array + 3x Telephoto' },
+      { key: 'Battery', val: '4323 mAh All-Day Power' }
+    ],
+    description: '6.7-inch Always-On ProMotion display, Dynamic Island, 48MP pro camera system, and surgical stainless steel frame.'
+  },
+
+  'iphone_14_pm_256': {
+    id: 'iphone_14_pm_256',
+    title: 'Apple iPhone 14 Pro Max (256GB / Space Black)',
+    brand: 'Apple',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: 'Occasion Propre · Face ID OK',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'TOP PRO MAX',
+    rating: '5.0',
+    reviewCount: 135,
+    soldCount: 305,
+    price: 'XAF 350.000',
+    salePrice: 'XAF 402.000',
+    storeName: 'iStore Cameroon',
+    storeCity: 'Bonapriso, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/iPhone%2017%20na%20promo%C3%A7%C3%A3o.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/iPhone%2017%20na%20promo%C3%A7%C3%A3o.jfif'],
+    attributes: [
+      { key: 'Storage', val: '256GB High-Speed Storage' },
+      { key: 'Video', val: '4K ProRes at 30fps & Action Mode' },
+      { key: 'Display', val: '6.7" 120Hz ProMotion Always-On' }
+    ],
+    description: '256GB Space Black flagship with 4K ProRes capture, Dynamic Island, 48MP computational photography, and multi-day battery.'
+  },
+
+  'iphone_15_128': {
+    id: 'iphone_15_128',
+    title: 'Apple iPhone 15 (128GB / Dynamic Island & USB-C)',
+    brand: 'Apple',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Occasion Propre · Face ID OK',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'USB-C UNIVERSAL',
+    rating: '4.9',
+    reviewCount: 115,
+    soldCount: 260,
+    price: 'XAF 270.000',
+    salePrice: 'XAF 310.000',
+    storeName: 'iStore Cameroon',
+    storeCity: 'Bonapriso, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/iphone%2015%20Pro%20Max%20-%20Best%20Features%20in%202025.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/iphone%2015%20Pro%20Max%20-%20Best%20Features%20in%202025.jfif'],
+    attributes: [
+      { key: 'Port', val: 'Universal USB-C Port Charging & Data' },
+      { key: 'Camera', val: '48MP Main Camera with 2x Telephoto Optical Quality' },
+      { key: 'Back', val: 'Color-Infused Back Glass with Matte Finish' }
+    ],
+    description: 'Universal USB-C connector, 48MP main camera with 2x optical telephoto crop, Dynamic Island, and color-infused matte glass back.'
+  },
+
+  'iphone_15_256': {
+    id: 'iphone_15_256',
+    title: 'Apple iPhone 15 (256GB / Black & Blue)',
+    brand: 'Apple',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Occasion Propre · Face ID OK',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: '256GB USB-C',
+    rating: '4.9',
+    reviewCount: 95,
+    soldCount: 210,
+    price: 'XAF 300.000',
+    salePrice: 'XAF 345.000',
+    storeName: 'iStore Cameroon',
+    storeCity: 'Bonapriso, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/iphone%2015%20Pro%20Max%20-%20Best%20Features%20in%202025.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/iphone%2015%20Pro%20Max%20-%20Best%20Features%20in%202025.jfif'],
+    attributes: [
+      { key: 'Storage', val: '256GB Storage' },
+      { key: 'Screen', val: '6.1" Super Retina XDR (2000 nits outdoor)' },
+      { key: 'Port', val: 'Universal USB-C' }
+    ],
+    description: '256GB storage edition with universal USB-C connectivity, Dynamic Island, and Next-Generation Portraits with Focus & Depth Control.'
+  },
+
+  'iphone_15_plus_128': {
+    id: 'iphone_15_plus_128',
+    title: 'Apple iPhone 15 Plus (128GB / 6.7" Long-Run)',
+    brand: 'Apple',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Occasion Propre · Face ID OK',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'PLUS BATTERY',
+    rating: '4.9',
+    reviewCount: 85,
+    soldCount: 190,
+    price: 'XAF 290.000',
+    salePrice: 'XAF 333.000',
+    storeName: 'iStore Cameroon',
+    storeCity: 'Bonapriso, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/iphone%2015%20Pro%20Max%20-%20Best%20Features%20in%202025.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/iphone%2015%20Pro%20Max%20-%20Best%20Features%20in%202025.jfif'],
+    attributes: [
+      { key: 'Display', val: '6.7" Super Retina XDR OLED' },
+      { key: 'Battery', val: 'Up to 26 Hours Video Playback' },
+      { key: 'Port', val: 'USB-C Charging' }
+    ],
+    description: 'Massive 6.7-inch Super Retina XDR display, colossal battery longevity, 48MP camera, and Dynamic Island.'
+  },
+
+  'iphone_15_pro_128': {
+    id: 'iphone_15_pro_128',
+    title: 'Apple iPhone 15 Pro (128GB / Aerospace Titanium)',
+    brand: 'Apple',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: 'Occasion Propre · Face ID OK',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'TITANIUM A17 PRO',
+    rating: '5.0',
+    reviewCount: 125,
+    soldCount: 280,
+    price: 'XAF 380.000',
+    salePrice: 'XAF 436.000',
+    storeName: 'iStore Cameroon',
+    storeCity: 'Bonapriso, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/iphone%2015%20Pro%20Max%20-%20Best%20Features%20in%202025.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/iphone%2015%20Pro%20Max%20-%20Best%20Features%20in%202025.jfif'],
+    attributes: [
+      { key: 'Material', val: 'Aerospace Grade 5 Titanium Body' },
+      { key: 'Chip', val: 'Apple A17 Pro (3nm Hardware Ray Tracing)' },
+      { key: 'Action Button', val: 'Customizable Action Button' }
+    ],
+    description: 'Featherweight Grade 5 Titanium body with contoured edges, Action Button, 3nm A17 Pro chip with console gaming ray tracing.'
+  },
+
+  'iphone_15_pro_256': {
+    id: 'iphone_15_pro_256',
+    title: 'Apple iPhone 15 Pro (256GB / Natural Titanium)',
+    brand: 'Apple',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: 'Occasion Propre · Face ID OK',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'NATURAL TITANIUM',
+    rating: '5.0',
+    reviewCount: 115,
+    soldCount: 255,
+    price: 'XAF 400.000',
+    salePrice: 'XAF 459.000',
+    storeName: 'iStore Cameroon',
+    storeCity: 'Bonapriso, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/iphone%2015%20Pro%20Max%20-%20Best%20Features%20in%202025.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/iphone%2015%20Pro%20Max%20-%20Best%20Features%20in%202025.jfif'],
+    attributes: [
+      { key: 'Storage', val: '256GB High Speed ROM (USB 3 10Gbps)' },
+      { key: 'Camera', val: '48MP Pro System with 24mm, 28mm, 35mm Focals' },
+      { key: 'Color', val: 'Natural Titanium' }
+    ],
+    description: 'Natural Titanium flagship with 256GB storage, USB 3 speeds up to 10Gbps, ProRes log recording to external SSD, and Action Button.'
+  },
+
+  'iphone_15_pm_256': {
+    id: 'iphone_15_pm_256',
+    title: 'Apple iPhone 15 Pro Max (256GB / 5x Tetraprism Zoom)',
+    brand: 'Apple',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: 'Occasion Propre · Face ID OK',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: '5X TETRAPRISM',
+    rating: '5.0',
+    reviewCount: 165,
+    soldCount: 380,
+    price: 'XAF 420.000',
+    salePrice: 'XAF 482.000',
+    storeName: 'iStore Cameroon',
+    storeCity: 'Bonapriso, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/iphone%2015%20Pro%20Max%20-%20Best%20Features%20in%202025.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/iphone%2015%20Pro%20Max%20-%20Best%20Features%20in%202025.jfif'],
+    attributes: [
+      { key: 'Zoom', val: '5x Optical Zoom 120mm Tetraprism Lens' },
+      { key: 'Chip', val: 'Apple A17 Pro (3nm)' },
+      { key: 'Build', val: 'Grade 5 Titanium (Lightest Pro Max)' }
+    ],
+    description: 'Exclusive 5x optical tetraprism telephoto lens (120mm focal length), Grade 5 Titanium body, USB 3 10Gbps transfer, and A17 Pro.'
+  },
+
+  'iphone_16_128': {
+    id: 'iphone_16_128',
+    title: 'Apple iPhone 16 (128GB / Camera Control & Apple Intelligence)',
+    brand: 'Apple',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'APPLE INTELLIGENCE',
+    rating: '5.0',
+    reviewCount: 85,
+    soldCount: 175,
+    price: 'XAF 350.000',
+    salePrice: 'XAF 402.000',
+    storeName: 'iStore Cameroon',
+    storeCity: 'Bonapriso, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/iPhone%2017%20Pro%20Max%20Colors%20%E2%80%93%20Every%20Stunning%20Finish%20in%20One%20Premium%20Look%20%F0%9F%93%B1%E2%9C%A8.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/iPhone%2017%20Pro%20Max%20Colors%20%E2%80%93%20Every%20Stunning%20Finish%20in%20One%20Premium%20Look%20%F0%9F%93%B1%E2%9C%A8.jfif'],
+    attributes: [
+      { key: 'Button', val: 'Tactile Camera Control Button with Haptics' },
+      { key: 'Chip', val: 'Apple A18 Chip (Built for Apple Intelligence)' },
+      { key: 'Camera', val: '48MP Fusion Camera with Spatial Photo/Video' }
+    ],
+    description: 'Brand new tactile Camera Control button, 3nm A18 chip designed for Apple Intelligence, and Spatial Video capture for Vision Pro.'
+  },
+
+  'iphone_16_256': {
+    id: 'iphone_16_256',
+    title: 'Apple iPhone 16 (256GB / Ultramarine & Teal)',
+    brand: 'Apple',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'ULTRAMARINE',
+    rating: '5.0',
+    reviewCount: 72,
+    soldCount: 150,
+    price: 'XAF 390.000',
+    salePrice: 'XAF 448.000',
+    storeName: 'iStore Cameroon',
+    storeCity: 'Bonapriso, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/iPhone%2017%20Pro%20Max%20Colors%20%E2%80%93%20Every%20Stunning%20Finish%20in%20One%20Premium%20Look%20%F0%9F%93%B1%E2%9C%A8.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/iPhone%2017%20Pro%20Max%20Colors%20%E2%80%93%20Every%20Stunning%20Finish%20in%20One%20Premium%20Look%20%F0%9F%93%B1%E2%9C%A8.jfif'],
+    attributes: [
+      { key: 'Storage', val: '256GB Storage' },
+      { key: 'Glass', val: 'Latest-Gen Ceramic Shield (2x Tougher Glass)' },
+      { key: 'Action Button', val: 'Action Button on Standard Models' }
+    ],
+    description: 'Vibrant Ultramarine saturated back glass, Camera Control button, Action Button, and 2x tougher latest-generation Ceramic Shield.'
+  },
+
+  'iphone_16_plus_128': {
+    id: 'iphone_16_plus_128',
+    title: 'Apple iPhone 16 Plus (128GB / Big Screen Battery Beast)',
+    brand: 'Apple',
+    category: 'electronics',
+    categoryLabel: 'Smartphones & 5G',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'PLUS BATTERY KING',
+    rating: '5.0',
+    reviewCount: 68,
+    soldCount: 140,
+    price: 'XAF 390.000',
+    salePrice: 'XAF 448.000',
+    storeName: 'iStore Cameroon',
+    storeCity: 'Bonapriso, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/iPhone%2017%20Pro%20Max%20Colors%20%E2%80%93%20Every%20Stunning%20Finish%20in%20One%20Premium%20Look%20%F0%9F%93%B1%E2%9C%A8.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/iPhone%2017%20Pro%20Max%20Colors%20%E2%80%93%20Every%20Stunning%20Finish%20in%20One%20Premium%20Look%20%F0%9F%93%B1%E2%9C%A8.jfif'],
+    attributes: [
+      { key: 'Display', val: '6.7" Super Retina XDR OLED (2000 nits)' },
+      { key: 'Battery', val: 'Up to 27 Hours Video Playback' },
+      { key: 'Camera Control', val: 'Capacitive Swipe Camera Button' }
+    ],
+    description: 'Massive 6.7-inch screen with all-day battery life, Camera Control button, A18 silicon, and Spatial Audio capture.'
+  },
+
+  'iphone_16_pm_256': {
+    id: 'iphone_16_pm_256',
+    title: 'Apple iPhone 16 Pro Max (256GB / Desert Titanium)',
+    brand: 'Apple',
+    category: 'electronics',
+    categoryLabel: 'Flagship Smartphones',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Free Insured Express Courier',
+    badge: 'DESERT TITANIUM',
+    rating: '5.0',
+    reviewCount: 140,
+    soldCount: 290,
+    price: 'XAF 550.000',
+    salePrice: 'XAF 632.000',
+    storeName: 'iStore Cameroon',
+    storeCity: 'Bonapriso, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/iPhone%2017%20Pro%20Max%20Colors%20%E2%80%93%20Every%20Stunning%20Finish%20in%20One%20Premium%20Look%20%F0%9F%93%B1%E2%9C%A8.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/iPhone%2017%20Pro%20Max%20Colors%20%E2%80%93%20Every%20Stunning%20Finish%20in%20One%20Premium%20Look%20%F0%9F%93%B1%E2%9C%A8.jfif'],
+    attributes: [
+      { key: 'Display', val: '6.9" Super Retina XDR with Thinnest Bezels Ever' },
+      { key: 'Chip', val: 'Apple A18 Pro (3nm 2nd Gen 6-Core GPU)' },
+      { key: 'Video', val: '4K 120fps Dolby Vision Slow Motion' }
+    ],
+    description: '6.9-inch borderless display with thinnest bezels in Apple history, 4K 120fps Dolby Vision slow-mo, Desert Titanium finish, and A18 Pro.'
+  },
+
+  'samsung_tab_s2_32': {
+    id: 'samsung_tab_s2_32',
+    title: 'Samsung Galaxy Tab S2 9.7 (32GB / Super AMOLED)',
+    brand: 'Samsung',
+    category: 'electronics',
+    categoryLabel: 'Tablets & E-Readers',
+    conditionLabel: 'Occasion Propre · Testé & Garanti',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'LIGHTWEIGHT TABLET',
+    rating: '4.6',
+    reviewCount: 28,
+    soldCount: 55,
+    price: 'XAF 50.000',
+    salePrice: 'XAF 57.000',
+    storeName: 'Mboppi Mobile Hub',
+    storeCity: 'Douala, Mboppi',
+    storeRating: '4.7',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/samsung.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/samsung.jfif'],
+    attributes: [
+      { key: 'Screen', val: '9.7" QXGA Super AMOLED (2048x1536)' },
+      { key: 'Weight', val: 'Ultra-Lightweight 389g (5.6mm thin)' },
+      { key: 'Storage', val: '32GB ROM + MicroSD up to 128GB' }
+    ],
+    description: 'Featherweight 5.6mm slim tablet with brilliant 9.7-inch Super AMOLED 4:3 display, ideal for reading, office work and streaming.'
+  },
+
+  'macbook_neo_13_a19': {
+    id: 'macbook_neo_13_a19',
+    title: 'Apple MacBook Neo 13" A19 Pro (12GB / 512GB SSD)',
+    brand: 'Apple',
+    category: 'electronics',
+    categoryLabel: 'Laptops & Computers',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Free Insured Express Courier',
+    badge: 'NEW ARRIVAL',
+    rating: '4.9',
+    reviewCount: 38,
+    soldCount: 65,
+    price: 'XAF 650.000',
+    salePrice: 'XAF 747.000',
+    storeName: 'iStore Cameroon',
+    storeCity: 'Bonapriso, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/Apple%20will%20launch%20a%20MacBook%20Neo%202%20next%20year%20with%20an%20A19%20Pro%20chip%20and%2012GB%20RAM.jfif',
+    images: ['./Assets/telephone&PC/Apple%20will%20launch%20a%20MacBook%20Neo%202%20next%20year%20with%20an%20A19%20Pro%20chip%20and%2012GB%20RAM.jfif'],
+    attributes: [
+      { key: 'Processor', val: 'Apple A19 Pro Neural Silicon' },
+      { key: 'Memory & Storage', val: '12GB Unified RAM · 512GB Ultra SSD' },
+      { key: 'Display', val: '13.6" Liquid Retina (500 nits, P3 Wide Color)' }
+    ],
+    description: 'Next-generation Apple silicon laptop engineered for on-device Apple Intelligence, fanless silent chassis, and all-day 22h battery life.'
+  },
+
+  'macbook_air_m2_midnight': {
+    id: 'macbook_air_m2_midnight',
+    title: 'Apple MacBook Air 13.6" M2 (8GB RAM / 256GB SSD Midnight)',
+    brand: 'Apple',
+    category: 'electronics',
+    categoryLabel: 'Laptops & Computers',
+    conditionLabel: 'Occasion Propre · Testé & Garanti',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'POPULAR LAPTOP',
+    rating: '4.8',
+    reviewCount: 54,
+    soldCount: 110,
+    price: 'XAF 590.000',
+    salePrice: 'XAF 678.000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/sticker%20laptop%20lenovo%20_%20Two%20MacBook%20Air%20M2%20Midnight%20Mockup%20-%20Free%20Download%20Images%20High%20Quality.jfif',
+    images: ['./Assets/telephone&PC/sticker%20laptop%20lenovo%20_%20Two%20MacBook%20Air%20M2%20Midnight%20Mockup%20-%20Free%20Download%20Images%20High%20Quality.jfif'],
+    attributes: [
+      { key: 'Chip', val: 'Apple M2 8-Core CPU / 8-Core GPU' },
+      { key: 'Color', val: 'Midnight Blue Anodized Finish' },
+      { key: 'Weight', val: '1.24 kg Ultra-Portable Form Factor' }
+    ],
+    description: 'Stunning Midnight finish MacBook Air powered by M2 chip. MagSafe charging, 1080p FaceTime HD camera, and four-speaker sound system.'
+  },
+
+  'macbook_12_retina_gold': {
+    id: 'macbook_12_retina_gold',
+    title: 'Apple MacBook 12" Retina Gold (Intel Core / 8GB / 256GB SSD)',
+    brand: 'Apple',
+    category: 'electronics',
+    categoryLabel: 'Laptops & Computers',
+    conditionLabel: 'Occasion Propre · Batterie Vérifiée',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'ULTRA LIGHT',
+    rating: '4.6',
+    reviewCount: 22,
+    soldCount: 45,
+    price: 'XAF 260.000',
+    salePrice: 'XAF 299.000',
+    storeName: 'Mboppi Mobile Hub',
+    storeCity: 'Douala, Mboppi',
+    storeRating: '4.7',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/This%20is%20the%20new%20gold%20MacBook%20_%20The%20Verge.jfif',
+    images: ['./Assets/telephone&PC/This%20is%20the%20new%20gold%20MacBook%20_%20The%20Verge.jfif'],
+    attributes: [
+      { key: 'Screen', val: '12" Edge-to-Edge Retina Display (2304x1440)' },
+      { key: 'Weight', val: '0.92 kg Featherlight Aluminum Body' },
+      { key: 'Portability', val: 'Fanless Silent Operation · Gold Edition' }
+    ],
+    description: 'Iconic featherlight gold MacBook weighing under 1 kg with vivid Retina display, ideal for mobile executives, students and travelers.'
+  },
+
+  'surface_laptop_5_touch': {
+    id: 'surface_laptop_5_touch',
+    title: 'Microsoft Surface Laptop 5 13.5" PixelSense Touch (16GB / 512GB)',
+    brand: 'Microsoft',
+    category: 'electronics',
+    categoryLabel: 'Laptops & Computers',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Free Insured Express Courier',
+    badge: 'TOUCHSCREEN',
+    rating: '4.8',
+    reviewCount: 29,
+    soldCount: 50,
+    price: 'XAF 420.000',
+    salePrice: 'XAF 482.000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/Microsoft%20Surface%20Laptop_%20Overview.jfif',
+    images: ['./Assets/telephone&PC/Microsoft%20Surface%20Laptop_%20Overview.jfif'],
+    attributes: [
+      { key: 'Display', val: '13.5" PixelSense 10-Point Multi-Touch' },
+      { key: 'Processor', val: '12th Gen Intel Core i7 EVO Platform' },
+      { key: 'Security', val: 'Windows Hello Face Authentication + TPM 2.0' }
+    ],
+    description: 'Sleek craftsmanship with vibrant PixelSense touchscreen, Omnisonic Dolby Atmos audio, and seamless Microsoft 365 integration.'
+  },
+
+  'surface_laptop_copilot_elite': {
+    id: 'surface_laptop_copilot_elite',
+    title: 'Microsoft Surface Laptop 7 Copilot+ PC (Snapdragon X Elite / 16GB)',
+    brand: 'Microsoft',
+    category: 'electronics',
+    categoryLabel: 'Laptops & Computers',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Free Insured Express Courier',
+    badge: 'AI COPILOT+',
+    rating: '4.9',
+    reviewCount: 35,
+    soldCount: 62,
+    price: 'XAF 490.000',
+    salePrice: 'XAF 563.000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/Choose%20Your%20Surface_%20Sleek%20Design,%20Stunning%20Colors.jfif',
+    images: ['./Assets/telephone&PC/Choose%20Your%20Surface_%20Sleek%20Design,%20Stunning%20Colors.jfif'],
+    attributes: [
+      { key: 'NPU AI', val: '45 TOPS Hexagon NPU for Copilot+ AI Experiences' },
+      { key: 'Battery', val: 'Up to 20 Hours Real-World Battery Life' },
+      { key: 'Chassis', val: 'Sapphire / Platinum Anodized Ultra-Thin Shell' }
+    ],
+    description: 'The fastest Copilot+ PC featuring Qualcomm Snapdragon X Elite, 45 TOPS on-device AI acceleration, and all-day performance.'
+  },
+
+  'lenovo_thinkpad_x1_carbon': {
+    id: 'lenovo_thinkpad_x1_carbon',
+    title: 'Lenovo ThinkPad X1 Carbon Gen 10 (16GB RAM / 512GB NVMe)',
+    brand: 'Lenovo',
+    category: 'electronics',
+    categoryLabel: 'Laptops & Computers',
+    conditionLabel: 'Occasion Propre · Testé & Garanti',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'MILITARY GRADE',
+    rating: '4.8',
+    reviewCount: 41,
+    soldCount: 80,
+    price: 'XAF 390.000',
+    salePrice: 'XAF 448.000',
+    storeName: 'Mboppi Mobile Hub',
+    storeCity: 'Douala, Mboppi',
+    storeRating: '4.7',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/425590233557488385.jfif',
+    images: ['./Assets/telephone&PC/425590233557488385.jfif'],
+    attributes: [
+      { key: 'Build', val: 'Carbon Fiber & Magnesium Alloy (MIL-STD-810H)' },
+      { key: 'Keyboard', val: 'Legendary ThinkPad Spill-Resistant Keyboard' },
+      { key: 'Security', val: 'Fingerprint Reader + ThinkShutter Camera' }
+    ],
+    description: 'Business executive ultrabook with military-tested ruggedness, featherlight carbon body, and world-class typing feel.'
+  },
+
+  'dell_xps_13_plus': {
+    id: 'dell_xps_13_plus',
+    title: 'Dell XPS 13 Plus 9320 (16GB RAM / 512GB SSD / OLED Touch)',
+    brand: 'Dell',
+    category: 'electronics',
+    categoryLabel: 'Laptops & Computers',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Free Insured Express Courier',
+    badge: 'INFINITYEDGE',
+    rating: '4.9',
+    reviewCount: 33,
+    soldCount: 58,
+    price: 'XAF 420.000',
+    salePrice: 'XAF 482.000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/669910513366910835.jfif',
+    images: ['./Assets/telephone&PC/669910513366910835.jfif'],
+    attributes: [
+      { key: 'Display', val: '13.4" 3.5K OLED InfinityEdge 400 nits' },
+      { key: 'Trackpad', val: 'Seamless Glass Touchpad with Haptic Response' },
+      { key: 'Audio', val: 'Quad-Speaker Studio Design with Waves MaxxAudio' }
+    ],
+    description: 'Futuristic edge-to-edge glass minimalist design, invisible haptic touchpad, capacitive touch function keys, and gorgeous 3.5K OLED.'
+  },
+
+  'hp_spectre_x360_2in1': {
+    id: 'hp_spectre_x360_2in1',
+    title: 'HP Spectre x360 2-in-1 Convertible (16GB RAM / 1TB SSD / Stylus)',
+    brand: 'HP',
+    category: 'electronics',
+    categoryLabel: 'Laptops & Computers',
+    conditionLabel: 'Occasion Propre · Testé & Garanti',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: '2-IN-1 OLED',
+    rating: '4.8',
+    reviewCount: 36,
+    soldCount: 68,
+    price: 'XAF 480.000',
+    salePrice: 'XAF 552.000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/7670261862254403.jfif',
+    images: ['./Assets/telephone&PC/7670261862254403.jfif'],
+    attributes: [
+      { key: 'Design', val: 'Gem-Cut CNC Aluminum 360-degree Hinge' },
+      { key: 'Display', val: '14" 3K2K OLED Touchscreen with HP Pen Support' },
+      { key: 'Audio', val: 'Quad Bang & Olufsen Custom Tuned Speakers' }
+    ],
+    description: 'Versatile 2-in-1 workstation laptop that flips into a digital drawing tablet with precision active stylus and OLED color accuracy.'
+  },
+
+  'apple_airtag_4pack': {
+    id: 'apple_airtag_4pack',
+    title: 'Apple AirTag (Pack de 4) Balise GPS & Localisation Précise',
+    brand: 'Apple',
+    category: 'electronics',
+    categoryLabel: 'Accessories & Gadgets',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'PRECISION FINDING',
+    rating: '4.9',
+    reviewCount: 74,
+    soldCount: 180,
+    price: 'XAF 45.000',
+    salePrice: 'XAF 51.000',
+    storeName: 'iStore Cameroon',
+    storeCity: 'Bonapriso, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/Best%20Selling%20Apple%20AirTag%21.jfif',
+    images: ['./Assets/telephone&PC/Best%20Selling%20Apple%20AirTag%21.jfif'],
+    attributes: [
+      { key: 'Chip', val: 'Apple U1 Ultra-Wideband (Precision Finding)' },
+      { key: 'Network', val: 'Apple Find My Network (Hundreds of Millions of Devices)' },
+      { key: 'Battery', val: 'Over 1 Year Battery Life with Replaceable CR2032' }
+    ],
+    description: 'Keep track of keys, wallet, luggage, and backpack in the Apple Find My app with ultra-wideband directional guidance.'
+  },
+
+  'apple_airtag_rugged_case': {
+    id: 'apple_airtag_rugged_case',
+    title: 'Coque Porte-Clé Robuste Anti-Choc avec Mousqueton pour Apple AirTag',
+    brand: 'Accessories',
+    category: 'electronics',
+    categoryLabel: 'Accessories & Gadgets',
+    conditionLabel: 'Brand New · Sealed Packaging',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'HEAVY DUTY',
+    rating: '4.7',
+    reviewCount: 38,
+    soldCount: 95,
+    price: 'XAF 12.000',
+    salePrice: 'XAF 13.000',
+    storeName: 'Mboppi Mobile Hub',
+    storeCity: 'Douala, Mboppi',
+    storeRating: '4.7',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/Introducing%20Rugged%20Keychain%20for%20AirTag%20in%20three%E2%80%A6.jfif',
+    images: ['./Assets/telephone&PC/Introducing%20Rugged%20Keychain%20for%20AirTag%20in%20three%E2%80%A6.jfif'],
+    attributes: [
+      { key: 'Material', val: 'Drop-Proof Polycarbonate + TPU Bumper' },
+      { key: 'Attachment', val: 'Heavy-Duty Carabiner Clip for Bags & Keys' },
+      { key: 'Protection', val: 'IP68 Waterproof Seal & Raised Edge Shield' }
+    ],
+    description: 'Military-grade protective case with secure twist-and-lock enclosure and rugged carabiner to fasten AirTags onto keys or luggage.'
+  },
+
+  'apple_airpods_max_wireless': {
+    id: 'apple_airpods_max_wireless',
+    title: 'Apple AirPods Max Casque Audio Sans Fil Réduction Active de Bruit',
+    brand: 'Apple',
+    category: 'electronics',
+    categoryLabel: 'Audio & Headphones',
+    conditionLabel: 'Occasion Propre · Testé & Garanti',
+    fulfillmentLabel: 'Free Insured Express Courier',
+    badge: 'SPATIAL AUDIO',
+    rating: '4.9',
+    reviewCount: 52,
+    soldCount: 90,
+    price: 'XAF 290.000',
+    salePrice: 'XAF 333.000',
+    storeName: 'iStore Cameroon',
+    storeCity: 'Bonapriso, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/acessories&gadgets/@apple%20Air%20Pod%20Max%20%F0%9F%8E%A7%20%20%23airpodmax%20%23apple%20%23keyshot.jfif',
+    images: ['./Assets/acessories&gadgets/@apple%20Air%20Pod%20Max%20%F0%9F%8E%A7%20%20%23airpodmax%20%23apple%20%23keyshot.jfif'],
+    attributes: [
+      { key: 'Audio', val: 'Apple-Designed Dynamic Driver with Computational Audio' },
+      { key: 'ANC', val: 'Pro-Level Active Noise Cancellation & Transparency Mode' },
+      { key: 'Build', val: 'Knit-Mesh Canopy & Anodized Aluminum Ear Cups' }
+    ],
+    description: 'Over-ear luxury listening with high-fidelity audio, personalized Spatial Audio with dynamic head tracking, and plush acoustic memory foam cushions.'
+  },
+
+  'apple_airpods_4_anc': {
+    id: 'apple_airpods_4_anc',
+    title: 'Apple AirPods 4 avec Réduction Active du Bruit (Boîtier USB-C MagSafe)',
+    brand: 'Apple',
+    category: 'electronics',
+    categoryLabel: 'Audio & Headphones',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'ANC IN OPEN-EAR',
+    rating: '4.9',
+    reviewCount: 65,
+    soldCount: 140,
+    price: 'XAF 120.000',
+    salePrice: 'XAF 138.000',
+    storeName: 'iStore Cameroon',
+    storeCity: 'Bonapriso, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/acessories&gadgets/Apple%20AirPods%204%20%F0%9F%8E%A7%20Active%20Noise%20Cancellation%20_%20Premium%20Sound%20for%20Less%21%20%F0%9F%8D%8E.jfif',
+    images: ['./Assets/acessories&gadgets/Apple%20AirPods%204%20%F0%9F%8E%A7%20Active%20Noise%20Cancellation%20_%20Premium%20Sound%20for%20Less%21%20%F0%9F%8D%8E.jfif'],
+    attributes: [
+      { key: 'Chip', val: 'Apple H2 Headphone Silicon' },
+      { key: 'ANC', val: 'First Open-Ear AirPods with Active Noise Cancellation' },
+      { key: 'Charging', val: 'Smallest Wireless Charging Case with Built-in Speaker' }
+    ],
+    description: 'Transformative acoustic architecture powered by H2 chip with open-ear Active Noise Cancellation, Adaptive Audio, and Conversation Awareness.'
+  },
+
+  'oraimo_spacebuds_anc': {
+    id: 'oraimo_spacebuds_anc',
+    title: 'Oraimo SpaceBuds Écouteurs Sans Fil Hybrides ANC 50dB + Mode Gaming',
+    brand: 'Oraimo',
+    category: 'electronics',
+    categoryLabel: 'Audio & Headphones',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'HYBRID ANC',
+    rating: '4.8',
+    reviewCount: 88,
+    soldCount: 220,
+    price: 'XAF 28.000',
+    salePrice: 'XAF 32.000',
+    storeName: 'Oraimo Official Cameroon',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.8',
+    storeVerified: true,
+    coverImage: './Assets/acessories&gadgets/Created%20a%20Poster%20Ad%20of%20@oraimoclub%20SpaceBuds%20%F0%9F%92%9A%E2%80%A6.jfif',
+    images: ['./Assets/acessories&gadgets/Created%20a%20Poster%20Ad%20of%20@oraimoclub%20SpaceBuds%20%F0%9F%92%9A%E2%80%A6.jfif'],
+    attributes: [
+      { key: 'ANC', val: '50dB Hybrid Active Noise Cancellation' },
+      { key: 'Battery', val: '40h Total Playtime with Fast Charge' },
+      { key: 'Latency', val: 'Ultra-Low Latency Game Mode for PUBG/COD' }
+    ],
+    description: 'Cyberpunk space design with 50dB hybrid noise reduction, HavyBass deep sound profiles, and 4-mic ENC for crystal-clear calls.'
+  },
+
+  'oraimo_watch_er_calling': {
+    id: 'oraimo_watch_er_calling',
+    title: 'Oraimo Watch ER Montre Connectée Écran AMOLED 1.43" Appels Bluetooth',
+    brand: 'Oraimo',
+    category: 'electronics',
+    categoryLabel: 'Smartwatches & Wearables',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'AMOLED DISPLAY',
+    rating: '4.7',
+    reviewCount: 62,
+    soldCount: 135,
+    price: 'XAF 32.000',
+    salePrice: 'XAF 36.000',
+    storeName: 'Oraimo Official Cameroon',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.8',
+    storeVerified: true,
+    coverImage: './Assets/acessories&gadgets/Oraimo%20Watch%20ER%20__Shop%20Now%E2%80%A6.jfif',
+    images: ['./Assets/acessories&gadgets/Oraimo%20Watch%20ER%20__Shop%20Now%E2%80%A6.jfif'],
+    attributes: [
+      { key: 'Screen', val: '1.43" HD AMOLED (466x466) Always-On Display' },
+      { key: 'Calls', val: 'Clear Bluetooth Calling with Built-in Mic & Speaker' },
+      { key: 'Waterproof', val: 'IP68 Water & Dust Resistant' }
+    ],
+    description: 'Sharp round AMOLED display with Bluetooth calling, 100+ sport modes, 24/7 heart rate and blood oxygen monitoring, and 7-day battery.'
+  },
+
+  'oraimo_fast_cable_3a_nylon': {
+    id: 'oraimo_fast_cable_3a_nylon',
+    title: 'Câble Oraimo 3A Fast Charge Renforcé Tressé Micro-USB & Type-C',
+    brand: 'Oraimo',
+    category: 'electronics',
+    categoryLabel: 'Accessories & Gadgets',
+    conditionLabel: 'Brand New · Sealed Packaging',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'EXTRA DURABLE',
+    rating: '4.7',
+    reviewCount: 140,
+    soldCount: 350,
+    price: 'XAF 4.500',
+    salePrice: 'XAF 5.000',
+    storeName: 'Oraimo Official Cameroon',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.8',
+    storeVerified: true,
+    coverImage: './Assets/acessories&gadgets/Africa%20hot%20sell%203a%20Fast%20Oraimo%20Data%20Cable%20Charging%20Micro-usb%20Cable%20for%20Android%20Mobile%20Phone%20infin___.jfif',
+    images: ['./Assets/acessories&gadgets/Africa%20hot%20sell%203a%20Fast%20Oraimo%20Data%20Cable%20Charging%20Micro-usb%20Cable%20for%20Android%20Mobile%20Phone%20infin___.jfif'],
+    attributes: [
+      { key: 'Current', val: '3A High-Speed Rapid Power Transmission' },
+      { key: 'Durability', val: '20,000+ Bend Lifespan Ballistic Braided Nylon' },
+      { key: 'Length', val: '1.2m Tangle-Free Cable with Aluminum Connectors' }
+    ],
+    description: 'Heavy-duty charging cable with 3A rapid charge output, high-speed data transfer, and 20,000-bend reinforced ballistic jacket.'
+  },
+
+  'power_bank_30000_4cables': {
+    id: 'power_bank_30000_4cables',
+    title: 'Batterie Externe Power Bank 30.000mAh avec 4 Câbles Intégrés Multi-Ports',
+    brand: 'Generic Pro',
+    category: 'electronics',
+    categoryLabel: 'Accessories & Gadgets',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: '30000MAH MONSTER',
+    rating: '4.8',
+    reviewCount: 95,
+    soldCount: 230,
+    price: 'XAF 22.000',
+    salePrice: 'XAF 25.000',
+    storeName: 'Mboppi Mobile Hub',
+    storeCity: 'Douala, Mboppi',
+    storeRating: '4.7',
+    storeVerified: true,
+    coverImage: './Assets/acessories&gadgets/pawer%20bank%20with%204%20Data%20cables%20best%20power%20bank.jfif',
+    images: ['./Assets/acessories&gadgets/pawer%20bank%20with%204%20Data%20cables%20best%20power%20bank.jfif'],
+    attributes: [
+      { key: 'Capacity', val: '30,000mAh High-Density Li-Polymer Cells' },
+      { key: 'Cables', val: '4 Built-in Cables (Type-C, Lightning, Micro-USB, USB-A)' },
+      { key: 'Display', val: 'Digital LED Exact Percentage Battery Meter' }
+    ],
+    description: 'Never carry loose cables again: built-in 4 cords for all phone brands, flashlight, dual input charging, and colossal 30,000mAh endurance.'
+  },
+
+  'jbl_flip_6_waterproof': {
+    id: 'jbl_flip_6_waterproof',
+    title: 'JBL Flip 6 Enceinte Bluetooth Portable Étanche IP67 Son Puissant 20W',
+    brand: 'JBL',
+    category: 'electronics',
+    categoryLabel: 'Audio & Headphones',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'IP67 WATERPROOF',
+    rating: '4.9',
+    reviewCount: 80,
+    soldCount: 165,
+    price: 'XAF 65.000',
+    salePrice: 'XAF 74.000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/acessories&gadgets/JBL%20Flip%206%20-%20F%C4%B1rat%20T%C3%BCz%C3%BCnkan.jfif',
+    images: ['./Assets/acessories&gadgets/JBL%20Flip%206%20-%20F%C4%B1rat%20T%C3%BCz%C3%BCnkan.jfif'],
+    attributes: [
+      { key: 'Sound', val: '2-Way Speaker System (Racetrack Woofer + Tweeter)' },
+      { key: 'Durability', val: 'IP67 Waterproof and Dustproof Body' },
+      { key: 'Battery', val: '12h Playtime with USB-C Fast Charge' }
+    ],
+    description: 'Loud, crystal-clear, powerful 2-way JBL Original Pro Sound with dual passive radiators and waterproof IP67 chassis for pool or beach.'
+  },
+
+  'jbl_tune_230nc_tws': {
+    id: 'jbl_tune_230nc_tws',
+    title: 'JBL Tune 230NC TWS Écouteurs Sans Fil Réduction de Bruit Active 40h',
+    brand: 'JBL',
+    category: 'electronics',
+    categoryLabel: 'Audio & Headphones',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'PURE BASS',
+    rating: '4.8',
+    reviewCount: 45,
+    soldCount: 110,
+    price: 'XAF 45.000',
+    salePrice: 'XAF 51.000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/acessories&gadgets/JBL%20Tune%20230NL%20Product%20Render%202.jfif',
+    images: ['./Assets/acessories&gadgets/JBL%20Tune%20230NL%20Product%20Render%202.jfif'],
+    attributes: [
+      { key: 'Audio', val: 'JBL Pure Bass Sound with 6.0mm Drivers' },
+      { key: 'ANC', val: 'Active Noise Cancelling with Smart Ambient' },
+      { key: 'Microphone', val: '4-Mic Technology for Perfect Voice Calls' }
+    ],
+    description: 'Ergonomic stick-closed earbuds delivering authentic JBL Pure Bass sound, active noise cancellation, and up to 40 hours battery.'
+  },
+
+  'mifa_a90_bluetooth_speaker_60w': {
+    id: 'mifa_a90_bluetooth_speaker_60w',
+    title: 'Mifa A90 Enceinte Bluetooth Nomade 60W Amplificateur Classe D & Basses',
+    brand: 'Mifa',
+    category: 'electronics',
+    categoryLabel: 'Audio & Headphones',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: '60W POWER',
+    rating: '4.8',
+    reviewCount: 51,
+    soldCount: 98,
+    price: 'XAF 55.000',
+    salePrice: 'XAF 63.000',
+    storeName: 'Mboppi Mobile Hub',
+    storeCity: 'Douala, Mboppi',
+    storeRating: '4.7',
+    storeVerified: true,
+    coverImage: './Assets/acessories&gadgets/mifa%20A90%20Bluetooth%20Speaker%2060W%20Output%20Power%20Bluetooth%20Speaker%20with%20Class%20D%20Amplifier%20Excellent%20Bass.jfif',
+    images: ['./Assets/acessories&gadgets/mifa%20A90%20Bluetooth%20Speaker%2060W%20Output%20Power%20Bluetooth%20Speaker%20with%20Class%20D%20Amplifier%20Excellent%20Bass.jfif'],
+    attributes: [
+      { key: 'Power', val: '60W RMS Class D Digital Amplifier Output' },
+      { key: 'Lighting', val: 'Dynamic RGB Rhythm Breathing Ring Lights' },
+      { key: 'Battery', val: '6600mAh Rechargeable Battery (Up to 30h Play)' }
+    ],
+    description: 'Booming 60W outdoor party speaker with dual bass radiators, rhythmic pulsing RGB illumination, and shoulder carry strap.'
+  },
+
+  'alexa_echo_dot_led_speaker': {
+    id: 'alexa_echo_dot_led_speaker',
+    title: 'Amazon Echo Dot Enceinte Intelligente Alexa avec Anneau LED Lumineux',
+    brand: 'Amazon',
+    category: 'electronics',
+    categoryLabel: 'Audio & Headphones',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'SMART HOME',
+    rating: '4.8',
+    reviewCount: 42,
+    soldCount: 85,
+    price: 'XAF 35.000',
+    salePrice: 'XAF 40.000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/acessories&gadgets/Alexa%20Smart%20Speaker%20with%20LED%20Light%20Ring%20%E2%80%93%20Compact%20Voice%20Assistant.jfif',
+    images: ['./Assets/acessories&gadgets/Alexa%20Smart%20Speaker%20with%20LED%20Light%20Ring%20%E2%80%93%20Compact%20Voice%20Assistant.jfif'],
+    attributes: [
+      { key: 'Voice', val: 'Built-in Alexa Multi-Language Voice Assistant' },
+      { key: 'Connectivity', val: 'Dual-Band Wi-Fi + Bluetooth 5.0 Audio' },
+      { key: 'Smart Home', val: 'Controls Smart Lights, TV & Plugs Wirelessly' }
+    ],
+    description: 'Voice-controlled smart hub speaker delivering crisp vocals and vibrant bass. Play Spotify, ask questions, set reminders, and automate lights.'
+  },
+
+  'dji_osmo_pocket_3_creator_combo': {
+    id: 'dji_osmo_pocket_3_creator_combo',
+    title: 'DJI Osmo Pocket 3 Creator Combo Caméra 4K 120fps Stabilisée 3 Axes',
+    brand: 'DJI',
+    category: 'electronics',
+    categoryLabel: 'Cameras & Drones',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Free Insured Express Courier',
+    badge: 'CREATOR PRO',
+    rating: '5.0',
+    reviewCount: 48,
+    soldCount: 72,
+    price: 'XAF 460.000',
+    salePrice: 'XAF 529.000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/acessories&gadgets/Dji%20_%20_%20Osmo%20Pocket%203%20Creator%20Combo%203-Axis%20Stabilized%204K%20Handheld%20Camera%20with%20Rotatable%20Touchscreen%20_%20Gray%20_%20Best%20Buy.jfif',
+    images: ['./Assets/acessories&gadgets/Dji%20_%20_%20Osmo%20Pocket%203%20Creator%20Combo%203-Axis%20Stabilized%204K%20Handheld%20Camera%20with%20Rotatable%20Touchscreen%20_%20Gray%20_%20Best%20Buy.jfif'],
+    attributes: [
+      { key: 'Sensor', val: '1-Inch CMOS Sensor 4K 120fps Slow Motion' },
+      { key: 'Screen', val: '2-Inch Rotatable OLED Touchscreen' },
+      { key: 'Audio', val: 'DJI Mic 2 Wireless Transmitter + Windscreen Included' }
+    ],
+    description: 'The gold standard handheld vlogging camera with massive 1-inch CMOS sensor, mechanical 3-axis gimbal stabilization, and DJI Mic 2 transmitter.'
+  },
+
+  'ordro_ep7_4k_wearable_cam': {
+    id: 'ordro_ep7_4k_wearable_cam',
+    title: 'Ordro EP7 Caméscope Frontal 4K 60fps POV Mains Libres YouTube & Vlog',
+    brand: 'Ordro',
+    category: 'electronics',
+    categoryLabel: 'Cameras & Drones',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'FIRST-PERSON POV',
+    rating: '4.7',
+    reviewCount: 27,
+    soldCount: 53,
+    price: 'XAF 95.000',
+    salePrice: 'XAF 109.000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/acessories&gadgets/Ordro%20EP7%20YouTube%20Video%20Vlog%20Camera%204K%2060fps%20Head%20Wearable%20WiFi%20POV%20Digital%20Action%20Camcorder.jfif',
+    images: ['./Assets/acessories&gadgets/Ordro%20EP7%20YouTube%20Video%20Vlog%20Camera%204K%2060fps%20Head%20Wearable%20WiFi%20POV%20Digital%20Action%20Camcorder.jfif'],
+    attributes: [
+      { key: 'POV Mount', val: 'Ergonomic Lightweight Headband Wearable Design' },
+      { key: 'Optics', val: '4K 60fps Ultra HD Video with Sony CMOS Sensor' },
+      { key: 'Control', val: 'Wi-Fi Live View App + Wrist Remote Control' }
+    ],
+    description: 'Head-mounted 4K POV camera for cooking, crafting, medical recording, travel vlogs, and sports with zero hands required.'
+  },
+
+  'wireless_lapel_mic_dual': {
+    id: 'wireless_lapel_mic_dual',
+    title: 'Microphone Cravate Sans Fil Professionnel Plug & Play Double Émetteur',
+    brand: 'AudioPro',
+    category: 'electronics',
+    categoryLabel: 'Accessories & Gadgets',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'CONTENT CREATOR',
+    rating: '4.8',
+    reviewCount: 67,
+    soldCount: 175,
+    price: 'XAF 18.000',
+    salePrice: 'XAF 20.000',
+    storeName: 'Mboppi Mobile Hub',
+    storeCity: 'Douala, Mboppi',
+    storeRating: '4.7',
+    storeVerified: true,
+    coverImage: './Assets/acessories&gadgets/Microfone%20Lapela%20Sem%20Fio%20Profissional%20para%20Smartphone,%20Microfone%20Sem%20Fio%20Plug%20and%20Play,%20Microfone___.jfif',
+    images: ['./Assets/acessories&gadgets/Microfone%20Lapela%20Sem%20Fio%20Profissional%20para%20Smartphone,%20Microfone%20Sem%20Fio%20Plug%20and%20Play,%20Microfone___.jfif'],
+    attributes: [
+      { key: 'Setup', val: 'Plug & Play No App Required (Type-C / Lightning)' },
+      { key: 'Range', val: '20m Stable Barrier-Free Wireless Transmission' },
+      { key: 'DSP', val: 'Intelligent Noise Reduction DSP Chip' }
+    ],
+    description: 'Dual lavalier wireless mics for TikTok, YouTube, interviews and podcast recording with real-time zero-delay auto sync.'
+  },
+
+  'ps5_dualsense_wireless_controller': {
+    id: 'ps5_dualsense_wireless_controller',
+    title: 'Manette Sans Fil Sony PlayStation 5 DualSense Haptique Originale',
+    brand: 'Sony',
+    category: 'electronics',
+    categoryLabel: 'Gaming & Consoles',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'OFFICIAL SONY',
+    rating: '5.0',
+    reviewCount: 92,
+    soldCount: 210,
+    price: 'XAF 45.000',
+    salePrice: 'XAF 51.000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/acessories&gadgets/ps5%20controller%20product%20photography.jfif',
+    images: ['./Assets/acessories&gadgets/ps5%20controller%20product%20photography.jfif'],
+    attributes: [
+      { key: 'Feedback', val: 'Immersive Haptic Feedback & Adaptive Triggers' },
+      { key: 'Audio', val: 'Built-in Microphone & 3.5mm Headset Jack' },
+      { key: 'Compatibility', val: 'PS5, PC Windows, Mac, iOS & Android' }
+    ],
+    description: 'Discover a deeper gaming experience with tactile vibrations, dynamic trigger tension, built-in mic, and signature two-tone ergonomic design.'
+  },
+
+  'smart_shaver_rotary_waterproof': {
+    id: 'smart_shaver_rotary_waterproof',
+    title: 'Rasoir Électrique Multifonction Homme Rotatif 3D & Tondeuse Étanche IPX7',
+    brand: 'Smart Groom',
+    category: 'electronics',
+    categoryLabel: 'Accessories & Gadgets',
+    conditionLabel: 'Brand New · Sealed Box',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'IPX7 WATERPROOF',
+    rating: '4.7',
+    reviewCount: 44,
+    soldCount: 105,
+    price: 'XAF 19.500',
+    salePrice: 'XAF 22.000',
+    storeName: 'Mboppi Mobile Hub',
+    storeCity: 'Douala, Mboppi',
+    storeRating: '4.7',
+    storeVerified: true,
+    coverImage: './Assets/acessories&gadgets/Smart%20Shaver.jfif',
+    images: ['./Assets/acessories&gadgets/Smart%20Shaver.jfif'],
+    attributes: [
+      { key: 'Blades', val: '3D Floating Triple Rotary Steel Precision Blades' },
+      { key: 'Battery', val: 'USB-C Rechargeable 90min Cordless Shaving' },
+      { key: 'Cleaning', val: '100% Whole-Body Washable Wet & Dry Shaving' }
+    ],
+    description: 'Close, smooth shave following facial contours with pop-up sideburn trimmer, LED power percentage indicator, and travel lock.'
+  },
+
+  'moto_360_smartwatch_steel': {
+    id: 'moto_360_smartwatch_steel',
+    title: 'Montre Connectée Motorola Moto 360 Premium Acier Inoxydable & Santé',
+    brand: 'Motorola',
+    category: 'electronics',
+    categoryLabel: 'Smartwatches & Wearables',
+    conditionLabel: 'Occasion Propre · Testé & Garanti',
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: 'CLASSIC STEEL',
+    rating: '4.6',
+    reviewCount: 31,
+    soldCount: 60,
+    price: 'XAF 48.000',
+    salePrice: 'XAF 55.000',
+    storeName: 'Orca Electronics Douala',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/acessories&gadgets/Could%20Motorola%27s%20new%20Moto%20360%20rival%20the%20Apple%E2%80%A6.jfif',
+    images: ['./Assets/acessories&gadgets/Could%20Motorola%27s%20new%20Moto%20360%20rival%20the%20Apple%E2%80%A6.jfif'],
+    attributes: [
+      { key: 'Design', val: 'Brushed Stainless Steel Casing with Leather Strap' },
+      { key: 'Display', val: 'Circular AMOLED 1.2" (390x390) Ambient Light Sensor' },
+      { key: 'Health', val: 'Optical Heart Rate, GPS, NFC & Google Fit' }
+    ],
+    description: 'Timeless circular luxury watch styling paired with smart notifications, continuous heart rate tracking, and premium interchangeable straps.'
+  },
+
+'tecno_camon_50_pro': {
+    id: 'tecno_camon_50_pro',
+    title: "TECNO Camon 50 Pro 5G (12GB / 512GB)",
+    brand: "TECNO",
+    category: 'electronics',
+    categoryLabel: "Smartphones & 5G",
+    conditionLabel: "Brand New · Sealed Box",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: "FLAGSHIP 2026",
+    rating: '4.9',
+    reviewCount: 84,
+    soldCount: 142,
+    price: 'XAF 225.000',
+    salePrice: 'XAF 260.000',
+    storeName: "TECNO Official Cameroon",
+    storeCity: "Akwa, Douala",
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/%28READY%29%20TECNO%20CAMON%2050%20PRO%205G%2012GB%20_%20512GB%20GARANSI%20RESMI.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/%28READY%29%20TECNO%20CAMON%2050%20PRO%205G%2012GB%20_%20512GB%20GARANSI%20RESMI.jfif'],
+    attributes: [
+      { key: "Display", val: '6.78" 1.5K AMOLED 144Hz' },
+      { key: "Processor", val: "MediaTek Dimensity 7400 Ultimate" },
+      { key: "Memory", val: "12GB RAM (+12GB Extended) · 512GB UFS 3.1" },
+      { key: "Camera", val: "50MP Sony LYT-700 OIS + 50MP Periscope 3X" },
+      { key: "Battery", val: "5500 mAh · 70W Ultra Fast Charge" }
+    ],
+    description: "Flagship portrait powerhouse featuring dual 50MP OIS cameras with TECNO AI imaging, 144Hz fluid curved AMOLED, and generous 512GB storage."
+  },
+
+'tecno_camon_40_premier': {
+    id: 'tecno_camon_40_premier',
+    title: "TECNO Camon 40 Premier AI 5G",
+    brand: "TECNO",
+    category: 'electronics',
+    categoryLabel: "Smartphones & 5G",
+    conditionLabel: "Brand New · Sealed Box",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: "BEST VALUE",
+    rating: '4.8',
+    reviewCount: 62,
+    soldCount: 97,
+    price: 'XAF 189.000',
+    salePrice: 'XAF 215.000',
+    storeName: "Orca Electronics Douala",
+    storeCity: "Akwa, Douala",
+    storeRating: '4.8',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/TECNO%20CAMON%2040%20Series_%20Redefining%20Imagery%20with%C2%A0TECNO%C2%A0AI.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/TECNO%20CAMON%2040%20Series_%20Redefining%20Imagery%20with%C2%A0TECNO%C2%A0AI.jfif'],
+    attributes: [
+      { key: "Display", val: '6.77" LTPO AMOLED 120Hz' },
+      { key: "Processor", val: "Dimensity 7050 5G Octa-Core" },
+      { key: "Memory", val: "8GB RAM · 256GB Storage" },
+      { key: "Camera", val: "50MP Triple Studio AI Camera" },
+      { key: "Battery", val: "5000 mAh · 45W Flash Charge" }
+    ],
+    description: "Sleek aerospace-grade back glass with TECNO AI PolarAce imaging system, all-day battery endurance and pristine 50MP night portrait performance."
+  },
+
+'infinix_hot_60_pro_plus': {
+    id: 'infinix_hot_60_pro_plus',
+    title: "Infinix Hot 60 Pro+ Titanium Silver (256GB / 8GB)",
+    brand: "Infinix",
+    category: 'electronics',
+    categoryLabel: "Smartphones & 5G",
+    conditionLabel: "Brand New · Sealed Box",
+    fulfillmentLabel: 'Same-Day Delivery in Douala',
+    badge: "SLIM TITANIUM",
+    rating: '4.8',
+    reviewCount: 78,
+    soldCount: 130,
+    price: 'XAF 145.000',
+    salePrice: 'XAF 170.000',
+    storeName: "Infinix Direct Bastos",
+    storeCity: "Bastos, Yaoundé",
+    storeRating: '4.8',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Celular%20Infinix%20Hot%2060%20Pro%20Plus%20256gb%208gb%20De%20Ram%20Desbloqueado%20Titanium%20Silver%20_%20Gris%20_%20Coppel_com.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Celular%20Infinix%20Hot%2060%20Pro%20Plus%20256gb%208gb%20De%20Ram%20Desbloqueado%20Titanium%20Silver%20_%20Gris%20_%20Coppel_com.jfif'],
+    attributes: [
+      { key: "Design", val: "6.8mm Ultra-Slim 3D Curved Titanium Finish" },
+      { key: "Display", val: '6.78" 120Hz AMOLED with Gorilla Glass' },
+      { key: "Processor", val: "Helio G100 Ultimate 6nm" },
+      { key: "Camera", val: "108MP Super-Night Quad Camera" },
+      { key: "Audio", val: "Dual JBL Stereo Speakers with DTS" }
+    ],
+    description: "The world's slimmest 3D-curved smartphone in its class. Featherlight titanium silver chassis, 108MP clarity and JBL precision acoustics."
+  },
+
+'infinix_note_edge_5g': {
+    id: 'infinix_note_edge_5g',
+    title: "Infinix Note Edge 5G Cyberpunk Edition",
+    brand: "Infinix",
+    category: 'electronics',
+    categoryLabel: "Gaming & 5G Phones",
+    conditionLabel: "Brand New · Sealed Box",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: "GAMING GRADE",
+    rating: '4.8',
+    reviewCount: 53,
+    soldCount: 89,
+    price: 'XAF 165.000',
+    salePrice: 'XAF 190.000',
+    storeName: "Bafoussam Tech Hub",
+    storeCity: "Bafoussam Centre",
+    storeRating: '4.8',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/infinix%20%20note%20edge%205g.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/infinix%20%20note%20edge%205g.jfif'],
+    attributes: [
+      { key: "Lighting", val: "Active Halo Dynamic Mecha RGB Glow" },
+      { key: "Display", val: '6.78" 144Hz FHD+ Bezel-Less AMOLED' },
+      { key: "Chipset", val: "Dimensity 7020 5G Gaming Engine" },
+      { key: "Cooling", val: "VC Liquid Cooling Chamber" },
+      { key: "Charge", val: "68W All-Round FastCharge 2.0" }
+    ],
+    description: "Engineered for uncompromising mobile gaming: 144Hz refresh rate, active halo notification pulse, and liquid vapor-chamber thermal control."
+  },
+
+'pixel_10_pro_fold': {
+    id: 'pixel_10_pro_fold',
+    title: "Google Pixel 10 Pro Fold (Obsidian / 256GB)",
+    brand: "Google",
+    category: 'electronics',
+    categoryLabel: "Foldable Flagships",
+    conditionLabel: "Brand New · Factory Unlocked",
+    fulfillmentLabel: 'Douala & Yaoundé VIP Concierge Hand-Delivery',
+    badge: "SPATIAL LUXURY",
+    rating: '4.9',
+    reviewCount: 41,
+    soldCount: 55,
+    price: 'XAF 980.000',
+    salePrice: 'XAF 1.150.000',
+    storeName: "Orca Electronics Douala",
+    storeCity: "Akwa, Douala",
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Google%20Pixel%2010%20Pro%20Fold%20%E2%80%93%20Future%20Foldable%20Smartphone%20%F0%9F%93%B1%F0%9F%94%A5.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Google%20Pixel%2010%20Pro%20Fold%20%E2%80%93%20Future%20Foldable%20Smartphone%20%F0%9F%93%B1%F0%9F%94%A5.jfif'],
+    attributes: [
+      { key: "Inner Screen", val: '8.0" Super Actua Flex OLED 120Hz' },
+      { key: "Outer Screen", val: '6.3" Actua OLED 120Hz Cover Display' },
+      { key: "Processor", val: "Google Tensor G5 with Pro Gemini Nano" },
+      { key: "Durability", val: "IPX8 Water & Dust Resistant Aerospace Hinge" },
+      { key: "Camera", val: "Pro Triple Camera with 5x Optical Telephoto" }
+    ],
+    description: "Google's revolutionary foldable flagship. Super-slim aerospace hinge, massive 8-inch workspace display and on-device Gemini AI processing."
+  },
+
+'pixel_11_pro_xl': {
+    id: 'pixel_11_pro_xl',
+    title: "Google Pixel 11 Pro XL AI Edition (512GB)",
+    brand: "Google",
+    category: 'electronics',
+    categoryLabel: "Smartphones & 5G",
+    conditionLabel: "Brand New · Factory Unlocked",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: "GEMINI PRO",
+    rating: '4.9',
+    reviewCount: 57,
+    soldCount: 76,
+    price: 'XAF 780.000',
+    salePrice: 'XAF 890.000',
+    storeName: "Orca Electronics Douala",
+    storeCity: "Akwa, Douala",
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Google%20Pixel%2011%20Pro%20XL%20%E2%80%94%20Google%27s%20Most%20Powerful%20Flagship%20Smartphone%20Yet%21.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Google%20Pixel%2011%20Pro%20XL%20%E2%80%94%20Google%27s%20Most%20Powerful%20Flagship%20Smartphone%20Yet%21.jfif'],
+    attributes: [
+      { key: "Display", val: '6.8" Super Actua LTPO 1-120Hz (3000 nits)' },
+      { key: "Processor", val: "Google Tensor G5 (Next-Gen 3nm)" },
+      { key: "RAM & ROM", val: "16GB LPDDR5X · 512GB Storage" },
+      { key: "Camera", val: "50MP Main + 48MP Ultrawide + 48MP 5x Tele" },
+      { key: "Support", val: "7 Years of Official Android & Feature Drops" }
+    ],
+    description: "Unrivalled camera intelligence and generative editing. Powered by Google Tensor 3nm silicon with 3000-nit outdoor brightness and 16GB RAM."
+  },
+
+'pixel_8_pro_mint': {
+    id: 'pixel_8_pro_mint',
+    title: "Google Pixel 8 Pro (128GB / Mint Edition)",
+    brand: "Google",
+    category: 'electronics',
+    categoryLabel: "Smartphones & 5G",
+    conditionLabel: "Brand New · Sealed Box",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: "CERTIFIED DEAL",
+    rating: '4.8',
+    reviewCount: 95,
+    soldCount: 180,
+    price: 'XAF 425.000',
+    salePrice: 'XAF 495.000',
+    storeName: "Bafoussam Tech Hub",
+    storeCity: "Bafoussam Centre",
+    storeRating: '4.8',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Google%20Pixel%208%20Pro%20-%20Unlocked%20Android%20Smartphone%20with%20Telephoto%20Lens%20and%20Super%20Actua%20Display%20-%2024-Hour%20Battery%20-%20Mint%20-%20128%20GB.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Google%20Pixel%208%20Pro%20-%20Unlocked%20Android%20Smartphone%20with%20Telephoto%20Lens%20and%20Super%20Actua%20Display%20-%2024-Hour%20Battery%20-%20Mint%20-%20128%20GB.jfif'],
+    attributes: [
+      { key: "Color", val: "Limited Mint Edition" },
+      { key: "Screen", val: '6.7" Super Actua OLED 1-120Hz' },
+      { key: "Camera", val: "50MP Main + 48MP Macro + Best Take / Magic Editor" },
+      { key: "Security", val: "Titan M2 Hardware Security Chip" },
+      { key: "Battery", val: "5050 mAh with 30W Fast Charging" }
+    ],
+    description: "The iconic Mint Edition Pixel 8 Pro. Studio-grade computational photography, Magic Audio Eraser, and all-day battery reliability."
+  },
+
+'oneplus_ace2_pro': {
+    id: 'oneplus_ace2_pro',
+    title: "OnePlus Ace 2 Pro 5G (16GB RAM / 512GB)",
+    brand: "OnePlus",
+    category: 'electronics',
+    categoryLabel: "Performance Flagships",
+    conditionLabel: "Brand New · Sealed Box",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: "ULTRA SPEED",
+    rating: '4.9',
+    reviewCount: 68,
+    soldCount: 114,
+    price: 'XAF 365.000',
+    salePrice: 'XAF 410.000',
+    storeName: "Orca Electronics Douala",
+    storeCity: "Akwa, Douala",
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/All%20the%20characteristics%20of%20OnePlus%20Ace2%20Pro%20on%20the%20eve%20of%20the%20premiere.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/All%20the%20characteristics%20of%20OnePlus%20Ace2%20Pro%20on%20the%20eve%20of%20the%20premiere.jfif'],
+    attributes: [
+      { key: "Processor", val: "Qualcomm Snapdragon 8 Gen 2 (4nm)" },
+      { key: "Memory", val: "16GB LPDDR5X RAM · 512GB UFS 4.0" },
+      { key: "Charging", val: "150W SUPERVOOC (0 to 100% in 17 min)" },
+      { key: "Display", val: '6.74" 1.5K 120Hz Curved OLED' },
+      { key: "Vibration", val: "Bionic Sensory Haptic Motor" }
+    ],
+    description: "Speed without compromise: 150W ultra-charging restores 100% in 17 minutes. Snapdragon 8 Gen 2 flagship processor with 16GB high-speed memory."
+  },
+
+'xiaomi_13_pro_leica': {
+    id: 'xiaomi_13_pro_leica',
+    title: "Xiaomi 13 Pro 5G with Leica Optics (256GB)",
+    brand: "Xiaomi",
+    category: 'electronics',
+    categoryLabel: "Pro Photography Phones",
+    conditionLabel: "Brand New · Sealed Box",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: "LEICA 1-INCH",
+    rating: '4.9',
+    reviewCount: 72,
+    soldCount: 98,
+    price: 'XAF 495.000',
+    salePrice: 'XAF 570.000',
+    storeName: "Orca Electronics Douala",
+    storeCity: "Akwa, Douala",
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Xiaomi%2013%20Pro.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Xiaomi%2013%20Pro.jfif'],
+    attributes: [
+      { key: "Sensor", val: '1.0" Sony IMX989 Leica Co-Engineered' },
+      { key: "Lenses", val: "Leica 75mm Floating Telephoto + 50MP Ultra-Wide" },
+      { key: "Screen", val: '6.73" 2K WQHD+ AMOLED 120Hz Dolby Vision' },
+      { key: "Charge", val: "120W HyperCharge + 50W Wireless" },
+      { key: "Material", val: "Bioceramic Back Cover (Scratch-Proof)" }
+    ],
+    description: "Authentic Leica photographic mastery featuring a massive 1-inch sensor, 75mm floating portrait lens, ceramic body and 120W HyperCharge."
+  },
+
+'huawei_p30_pro_edition': {
+    id: 'huawei_p30_pro_edition',
+    title: "Huawei P30 Pro New Edition (256GB / Breathing Crystal)",
+    brand: "Huawei",
+    category: 'electronics',
+    categoryLabel: "Flagship Classics",
+    conditionLabel: "Brand New · Original Packaging",
+    fulfillmentLabel: 'Douala Express Delivery',
+    badge: "LEGENDARY ZOOM",
+    rating: '4.8',
+    reviewCount: 110,
+    soldCount: 240,
+    price: 'XAF 245.000',
+    salePrice: 'XAF 285.000',
+    storeName: "Bafoussam Tech Hub",
+    storeCity: "Bafoussam Centre",
+    storeRating: '4.8',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Huawei%20P30%20Pro%20New%20Edition%20Dual%20Sim%20256GB%20Breathing%20Crystal%20VOG-L29%20Neu%20OVP%20%20%20_%20eBay.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Huawei%20P30%20Pro%20New%20Edition%20Dual%20Sim%20256GB%20Breathing%20Crystal%20VOG-L29%20Neu%20OVP%20%20%20_%20eBay.jfif'],
+    attributes: [
+      { key: "Zoom", val: "50x SuperZoom Periscope with OIS" },
+      { key: "Color", val: "Iconic Breathing Crystal Gradient" },
+      { key: "Memory", val: "8GB RAM · 256GB Internal Storage" },
+      { key: "Battery", val: "4200 mAh · 40W SuperCharge + Reverse Wireless" },
+      { key: "Services", val: "Full Google Mobile Services (GMS) Pre-Installed" }
+    ],
+    description: "The iconic Breathing Crystal flagship with native Google Play Services, 50x periscope telephoto zoom, and water-drop curved OLED display."
+  },
+
+'macbook_neo_13': {
+    id: 'macbook_neo_13',
+    title: "Apple MacBook Neo 13” A18 Pro (Liquid Retina)",
+    brand: "Apple",
+    category: 'electronics',
+    categoryLabel: "Laptops & Computers",
+    conditionLabel: "Brand New · Apple Warranty",
+    fulfillmentLabel: 'Douala & Yaoundé Express Hand-Delivery',
+    badge: "ULTRA COMPACT",
+    rating: '4.9',
+    reviewCount: 46,
+    soldCount: 62,
+    price: 'XAF 690.000',
+    salePrice: 'XAF 780.000',
+    storeName: "Orca Electronics Douala",
+    storeCity: "Akwa, Douala",
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/telephone&PC/MacBook%20neo.jfif',
+    images: ['./Assets/telephone&PC/MacBook%20neo.jfif'],
+    attributes: [
+      { key: "Processor", val: "Apple A18 Pro Bionic with 16-core Neural Engine" },
+      { key: "Display", val: '13.6" Liquid Retina with True Tone (500 nits)' },
+      { key: "Design", val: "Fanless Silent All-Aluminum Unibody (1.18 kg)" },
+      { key: "Battery", val: "Up to 18 Hours Continuous Video Playback" },
+      { key: "Audio", val: "Spatial Audio Four-Speaker Sound System" }
+    ],
+    description: "The thinnest, quietest MacBook ever built. Fanless silent architecture with Apple Neural Silicon, all-day 18-hour battery and vibrant True Tone display."
+  },
+
+'surface_laptop_sleek': {
+    id: 'surface_laptop_sleek',
+    title: "Microsoft Surface Laptop (PixelSense Touch / 16GB)",
+    brand: "Microsoft",
+    category: 'electronics',
+    categoryLabel: "Laptops & Computers",
+    conditionLabel: "Brand New · Sealed Box",
     fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
     badge: "EXECUTIVE",
     rating: '4.8',
-    reviewCount: 44,
+    reviewCount: 39,
     soldCount: 51,
-    price: 'XAF 48.000',
-    salePrice: 'XAF 62.000',
-    storeName: "Armonía Milano Boutique",
-    storeCity: "Bonapriso, Douala",
-    storeRating: '4.8',
-    storeVerified: true,
-    coverImage: './Assets/fashion/Timeless%20Elegance%20Luxury%20Black%20&%20White%20Dress%20Loafers.jfif',
-    images: ['./Assets/fashion/Timeless%20Elegance%20Luxury%20Black%20&%20White%20Dress%20Loafers.jfif'],
-    attributes: [
-      { key: "Material", val: "Two-Tone Patent Leather" },
-      { key: "Construction", val: "Blake-Stitched" },
-      { key: "Lining", val: "Full Leather" },
-      { key: "Occasion", val: "Black-Tie & Office" }
-    ],
-    description: "Two-tone spectator loafers in polished black-and-white leather, Blake-stitched with a leather sole. A statement of classic evening elegance."
-  },
-  'leather_satchel': {
-    id: 'leather_satchel',
-    title: "Designer Monogram Leather Satchel",
-    brand: "Maison Danbaoly",
-    category: 'fashion',
-    categoryLabel: "Women's Designer Bags",
-    conditionLabel: "Brand New · Dust Bag",
-    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
-    badge: "TRENDING",
-    rating: '4.8',
-    reviewCount: 73,
-    soldCount: 120,
-    price: 'XAF 55.000',
-    salePrice: 'XAF 72.000',
-    storeName: "Maison Danbaoly",
+    price: 'XAF 640.000',
+    salePrice: 'XAF 720.000',
+    storeName: "Orca Electronics Douala",
     storeCity: "Akwa, Douala",
     storeRating: '4.8',
     storeVerified: true,
-    coverImage: './Assets/fashion/Luxury%20Designer%20Leather%20Satchels%20&%20Monogram%20Clutches%20_%20Handbag%20Collection.jfif',
-    images: ['./Assets/fashion/Luxury%20Designer%20Leather%20Satchels%20&%20Monogram%20Clutches%20_%20Handbag%20Collection.jfif'],
+    coverImage: './Assets/telephone&PC/Choose%20Your%20Surface_%20Sleek%20Design,%20Stunning%20Colors.jfif',
+    images: ['./Assets/telephone&PC/Choose%20Your%20Surface_%20Sleek%20Design,%20Stunning%20Colors.jfif'],
     attributes: [
-      { key: "Material", val: "Structured Saffiano Leather" },
-      { key: "Hardware", val: "Gold-Tone" },
-      { key: "Strap", val: "Detachable Crossbody" },
-      { key: "Interior", val: "Suede-Lined Compartments" }
+      { key: "Screen", val: '13.5" 3:2 PixelSense Multi-Touch Display' },
+      { key: "Keyboard", val: "Signature Warm Alcantara or Anodized Metal" },
+      { key: "Processor", val: "Intel Core i7 13th Gen / Intel Evo Certified" },
+      { key: "Memory", val: "16GB LPDDR5x · 512GB Fast Removable SSD" },
+      { key: "Security", val: "Windows Hello Instant Facial Recognition" }
     ],
-    description: "A structured monogram satchel in Saffiano leather with gold hardware, top handles and a detachable strap — refined enough for the boardroom, roomy enough for daily life."
+    description: "Ultra-lightweight executive computing with a crisp 3:2 productivity touchscreen, whisper-quiet typing experience and instant facial sign-in."
   },
-  'stiletto_heels': {
-    id: 'stiletto_heels',
-    title: "Metal-Buckle Banquet Stiletto Heels",
-    brand: "Bigtree",
-    category: 'fashion',
-    categoryLabel: "Women's Luxury Heels",
-    conditionLabel: "Brand New",
-    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
-    badge: "PARTY EDIT",
-    rating: '4.6',
-    reviewCount: 58,
-    soldCount: 96,
+
+'oraimo_spacebuds': {
+    id: 'oraimo_spacebuds',
+    title: "Oraimo SpaceBuds Hybrid ANC Wireless Earbuds",
+    brand: "oraimo",
+    category: 'electronics',
+    categoryLabel: "Audio & Wearables",
+    conditionLabel: "Brand New · Official 1-Year Warranty",
+    fulfillmentLabel: 'Douala Express Same-Day Delivery',
+    badge: "POPULAR",
+    rating: '4.8',
+    reviewCount: 114,
+    soldCount: 295,
     price: 'XAF 38.000',
-    salePrice: 'XAF 52.000',
-    storeName: "Bigtree Footwear",
-    storeCity: "Bonanjo, Douala",
-    storeRating: '4.6',
+    salePrice: 'XAF 48.000',
+    storeName: "Orca Electronics Douala",
+    storeCity: "Akwa, Douala",
+    storeRating: '4.8',
     storeVerified: true,
-    coverImage: './Assets/fashion/Shoes%20Women%2010%20Cm%20Metal%20Buckle%20Ladies%20Pumps%20Luxury%20Womens%20Banquet%20Shoes%20Stilettos%20High%20Heels%20Women%20Sexy%20Party%20Shoes.jfif',
-    images: ['./Assets/fashion/Shoes%20Women%2010%20Cm%20Metal%20Buckle%20Ladies%20Pumps%20Luxury%20Womens%20Banquet%20Shoes%20Stilettos%20High%20Heels%20Women%20Sexy%20Party%20Shoes.jfif'],
+    coverImage: './Assets/acessories&gadgets/Created%20a%20Poster%20Ad%20of%20@oraimoclub%20SpaceBuds%20%F0%9F%92%9A%E2%80%A6.jfif',
+    images: ['./Assets/acessories&gadgets/Created%20a%20Poster%20Ad%20of%20@oraimoclub%20SpaceBuds%20%F0%9F%92%9A%E2%80%A6.jfif'],
     attributes: [
-      { key: "Heel Height", val: "10 cm Stiletto" },
-      { key: "Upper", val: "Glossy Patent" },
-      { key: "Accent", val: "Metal Buckle" },
-      { key: "Padding", val: "Cushioned Insole" }
+      { key: "Noise Cancelling", val: "50dB Hybrid Active Noise Cancellation (ANC)" },
+      { key: "Sound", val: "11mm Dynamic Bass Drivers with HavyBass™ Tech" },
+      { key: "Playtime", val: "Up to 40 Hours Total with Fast Charging Case" },
+      { key: "Calls", val: "4-Mic AI Deep Neural Network Noise Reduction" },
+      { key: "Resistance", val: "IP54 Dust and Water Resistance" }
     ],
-    description: "Glossy patent pumps on a 10 cm stiletto with a gold metal-buckle accent and a cushioned insole for all-night banquet wear."
+    description: "Immerse yourself in deep bass with 50dB Hybrid Active Noise Cancellation, 4-mic crystal clear call clarity and 40 hours of playtime."
   },
-  'iphone_17_pro_max': {
+
+'oraimo_fast_cable_3a': {
+    id: 'oraimo_fast_cable_3a',
+    title: "Oraimo 3A Heavy-Duty Fast Charging Micro-USB & Type-C Cable",
+    brand: "oraimo",
+    category: 'electronics',
+    categoryLabel: "Mobile Accessories",
+    conditionLabel: "Brand New · Genuine Packaging",
+    fulfillmentLabel: 'Douala & Yaoundé Delivery',
+    badge: "ESSENTIAL",
+    rating: '4.8',
+    reviewCount: 160,
+    soldCount: 480,
+    price: 'XAF 3.500',
+    salePrice: 'XAF 5.000',
+    storeName: "Orca Electronics Douala",
+    storeCity: "Akwa, Douala",
+    storeRating: '4.8',
+    storeVerified: true,
+    coverImage: './Assets/acessories&gadgets/Africa%20hot%20sell%203a%20Fast%20Oraimo%20Data%20Cable%20Charging%20Micro-usb%20Cable%20for%20Android%20Mobile%20Phone%20infin___.jfif',
+    images: ['./Assets/acessories&gadgets/Africa%20hot%20sell%203a%20Fast%20Oraimo%20Data%20Cable%20Charging%20Micro-usb%20Cable%20for%20Android%20Mobile%20Phone%20infin___.jfif'],
+    attributes: [
+      { key: "Output", val: "3.0A High-Speed Quick Charge Protocol" },
+      { key: "Material", val: "Reinforced Braided Nylon (20,000+ Bends Tested)" },
+      { key: "Data Transfer", val: "480 Mbps High-Speed Sync" },
+      { key: "Length", val: "1.2 Metres Tangle-Free Cable" },
+      { key: "Safety", val: "Over-Voltage and Temperature Protection Chip" }
+    ],
+    description: "Ultra-durable nylon braided cable with 3A fast charging, tested for over 20,000 flexes to withstand rugged everyday use across Cameroon."
+  },
+
+'alexa_echo_smart_speaker': {
+    id: 'alexa_echo_smart_speaker',
+    title: "Amazon Echo Dot Smart Speaker with LED Light Ring",
+    brand: "Amazon",
+    category: 'electronics',
+    categoryLabel: "Smart Home & Audio",
+    conditionLabel: "Brand New · Sealed Box",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: "SMART HOME",
+    rating: '4.7',
+    reviewCount: 52,
+    soldCount: 87,
+    price: 'XAF 45.000',
+    salePrice: 'XAF 55.000',
+    storeName: "Bafoussam Tech Hub",
+    storeCity: "Bafoussam Centre",
+    storeRating: '4.8',
+    storeVerified: true,
+    coverImage: './Assets/acessories&gadgets/Alexa%20Smart%20Speaker%20with%20LED%20Light%20Ring%20%E2%80%93%20Compact%20Voice%20Assistant.jfif',
+    images: ['./Assets/acessories&gadgets/Alexa%20Smart%20Speaker%20with%20LED%20Light%20Ring%20%E2%80%93%20Compact%20Voice%20Assistant.jfif'],
+    attributes: [
+      { key: "Audio", val: 'Front-Firing 1.73" Speaker with Deep Bass Output' },
+      { key: "Connectivity", val: "Dual-Band Wi-Fi 802.11a/b/g/n/ac & Bluetooth LE" },
+      { key: "Voice", val: "Built-In Alexa Voice Control (Music, Alarms, News)" },
+      { key: "Sensors", val: "Indoor Temperature Sensor & Motion Detection" },
+      { key: "Privacy", val: "Microphone Off Button with Multi-Color LED Indicator" }
+    ],
+    description: "Compact smart speaker with richer vocals and deeper bass. Stream your favorite tunes, check the weather, set prayer alarms and control smart lighting."
+  },
+
+'iphone_17_pro_max': {
     id: 'iphone_17_pro_max',
     title: "Apple iPhone 17 Pro Max 256GB",
     brand: "Apple",
@@ -6359,8 +19047,8 @@ const PRODUCTS_DATA = {
     storeCity: "Bonapriso, Douala",
     storeRating: '4.9',
     storeVerified: true,
-    coverImage: './Assets/telephone&PC/iPhone%2017%20Pro%20Max%20Colors%20%E2%80%93%20Every%20Stunning%20Finish%20in%20One%20Premium%20Look%20%F0%9F%93%B1%E2%9C%A8.jfif',
-    images: ['./Assets/telephone&PC/iPhone%2017%20Pro%20Max%20Colors%20%E2%80%93%20Every%20Stunning%20Finish%20in%20One%20Premium%20Look%20%F0%9F%93%B1%E2%9C%A8.jfif'],
+    coverImage: './Assets/telephone&PC/phoneBrands.image/iPhone%2017%20Pro%20Max%20Colors%20%E2%80%93%20Every%20Stunning%20Finish%20in%20One%20Premium%20Look%20%F0%9F%93%B1%E2%9C%A8.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/iPhone%2017%20Pro%20Max%20Colors%20%E2%80%93%20Every%20Stunning%20Finish%20in%20One%20Premium%20Look%20%F0%9F%93%B1%E2%9C%A8.jfif'],
     attributes: [
       { key: "Chip", val: "Apple A19 Pro" },
       { key: "Display", val: "6.9” LTPO ProMotion" },
@@ -6369,7 +19057,8 @@ const PRODUCTS_DATA = {
     ],
     description: "The most powerful iPhone yet: A19 Pro silicon, a 6.9-inch ProMotion display and a pro 48MP triple-camera system. Single physical SIM + eSIM, sealed with a 12-month local warranty."
   },
-  'surface_laptop': {
+
+'surface_laptop': {
     id: 'surface_laptop',
     title: "Microsoft Surface Laptop 13.8”",
     brand: "Microsoft",
@@ -6397,7 +19086,8 @@ const PRODUCTS_DATA = {
     ],
     description: "A sleek aluminium ultrabook with a 13.8-inch PixelSense touchscreen, all-day battery and Copilot-ready performance for work and study."
   },
-  'alexa_speaker': {
+
+'alexa_speaker': {
     id: 'alexa_speaker',
     title: "Alexa Smart Speaker with LED Ring",
     brand: "Amazon",
@@ -6425,7 +19115,8 @@ const PRODUCTS_DATA = {
     ],
     description: "A compact voice assistant with a 360-degree speaker and an expressive LED ring — play music, set timers and control smart-home devices hands-free."
   },
-  'apple_airtag': {
+
+'apple_airtag': {
     id: 'apple_airtag',
     title: "Apple AirTag Item Tracker",
     brand: "Apple",
@@ -6453,7 +19144,8 @@ const PRODUCTS_DATA = {
     ],
     description: "Keep track of keys, bags and luggage with precision Find My tracking, a year-long user-replaceable battery and IP67 water resistance."
   },
-  'airpods_4': {
+
+'airpods_4': {
     id: 'airpods_4',
     title: "Apple AirPods 4 (ANC)",
     brand: "Apple",
@@ -6481,7 +19173,8 @@ const PRODUCTS_DATA = {
     ],
     description: "AirPods 4 bring Active Noise Cancellation, the H2 chip and personalised spatial audio to Apple's most comfortable open-ear design."
   },
-  'galaxy_s26_ultra': {
+
+'galaxy_s26_ultra': {
     id: 'galaxy_s26_ultra',
     title: "Samsung Galaxy S26 Ultra 256GB",
     brand: "Samsung",
@@ -6499,8 +19192,8 @@ const PRODUCTS_DATA = {
     storeCity: "Akwa, Douala",
     storeRating: '4.9',
     storeVerified: true,
-    coverImage: './Assets/telephone&PC/Samsung%20Galaxy%20S26%20Ultra%2C.jfif',
-    images: ['./Assets/telephone&PC/Samsung%20Galaxy%20S26%20Ultra%2C.jfif'],
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Samsung%20Galaxy%20S26%20Ultra%2C.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Samsung%20Galaxy%20S26%20Ultra%2C.jfif'],
     attributes: [
       { key: "Display", val: "6.9” QHD+ AMOLED 120Hz" },
       { key: "Camera", val: "200MP Quad + AI" },
@@ -6509,7 +19202,8 @@ const PRODUCTS_DATA = {
     ],
     description: "Samsung's Galaxy AI flagship: a 200MP quad camera, a 6.9-inch QHD+ 120Hz display and the built-in S Pen. Sealed with a 12-month local warranty."
   },
-  'dji_osmo_pocket3': {
+
+'dji_osmo_pocket3': {
     id: 'dji_osmo_pocket3',
     title: "DJI Osmo Pocket 3 Creator Combo",
     brand: "DJI",
@@ -6537,7 +19231,8 @@ const PRODUCTS_DATA = {
     ],
     description: "A pocket cinema camera with a 1-inch sensor, 3-axis mechanical stabilisation and 4K/120fps — the Creator Combo adds a wireless mic and handle."
   },
-  'jbl_flip6': {
+
+'jbl_flip6': {
     id: 'jbl_flip6',
     title: "JBL Flip 6 Portable Speaker",
     brand: "JBL",
@@ -6565,7 +19260,8 @@ const PRODUCTS_DATA = {
     ],
     description: "Bold JBL Original Pro sound in a rugged IP67 waterproof body with 12-hour battery and PartyBoost multi-speaker pairing."
   },
-  'tecno_camon40': {
+
+'tecno_camon40': {
     id: 'tecno_camon40',
     title: "TECNO Camon 40 Series 256GB",
     brand: "TECNO",
@@ -6583,8 +19279,8 @@ const PRODUCTS_DATA = {
     storeCity: "Mvog-Mbi, Yaoundé",
     storeRating: '4.6',
     storeVerified: true,
-    coverImage: './Assets/telephone&PC/TECNO%20CAMON%2040%20Series_%20Redefining%20Imagery%20with%C2%A0TECNO%C2%A0AI.jfif',
-    images: ['./Assets/telephone&PC/TECNO%20CAMON%2040%20Series_%20Redefining%20Imagery%20with%C2%A0TECNO%C2%A0AI.jfif'],
+    coverImage: './Assets/telephone&PC/phoneBrands.image/TECNO%20CAMON%2040%20Series_%20Redefining%20Imagery%20with%C2%A0TECNO%C2%A0AI.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/TECNO%20CAMON%2040%20Series_%20Redefining%20Imagery%20with%C2%A0TECNO%C2%A0AI.jfif'],
     attributes: [
       { key: "Camera", val: "50MP TECNO AI" },
       { key: "Display", val: "6.8” AMOLED 120Hz" },
@@ -6593,119 +19289,8 @@ const PRODUCTS_DATA = {
     ],
     description: "TECNO's imaging flagship pairs a 50MP AI camera with a bright 6.8-inch AMOLED 120Hz display and a long-life 5200mAh battery."
   },
-  'ankara_palazzo': {
-    id: 'ankara_palazzo',
-    title: "100% Cotton Ankara Palazzo Trousers",
-    brand: "Loumoo Heritage",
-    category: 'fashion',
-    categoryLabel: "African Print Wear",
-    conditionLabel: "Handmade",
-    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
-    badge: "HERITAGE",
-    rating: '4.8',
-    reviewCount: 76,
-    soldCount: 143,
-    price: 'XAF 22.000',
-    salePrice: 'XAF 30.000',
-    storeName: "Douala Heritage Atelier",
-    storeCity: "New Bell, Douala",
-    storeRating: '4.8',
-    storeVerified: true,
-    coverImage: './Assets/fashion/100%25%20Cotton%20Ankara%20Palazzo%20Pants.jfif',
-    images: ['./Assets/fashion/100%25%20Cotton%20Ankara%20Palazzo%20Pants.jfif'],
-    attributes: [
-      { key: "Fabric", val: "100% Wax Cotton Ankara" },
-      { key: "Fit", val: "High-Waist Palazzo" },
-      { key: "Make", val: "Locally Tailored" },
-      { key: "Care", val: "Machine Wash Cold" }
-    ],
-    description: "Flowing high-waist palazzo trousers cut from genuine 100% cotton Ankara wax print, tailored locally for vivid colour and everyday comfort."
-  },
-  'artisan_sandals': {
-    id: 'artisan_sandals',
-    title: "Handmade Woven Leather Sandals",
-    brand: "Sahel Artisans",
-    category: 'fashion',
-    categoryLabel: "Artisan Footwear",
-    conditionLabel: "Handmade",
-    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
-    badge: "ARTISAN",
-    rating: '4.7',
-    reviewCount: 52,
-    soldCount: 97,
-    price: 'XAF 15.000',
-    salePrice: 'XAF 22.000',
-    storeName: "Sahel Leather Works",
-    storeCity: "Garoua",
-    storeRating: '4.7',
-    storeVerified: true,
-    coverImage: './Assets/fashion/Men%20brown%20leather%20strap%20sandal%20handmade%20barefoot%20woven%20band%20summer%20footwear%20casual%20everyday%20comfort%20Arabian%20style%20Middle%20East%20men%20sandal.jfif',
-    images: ['./Assets/fashion/Men%20brown%20leather%20strap%20sandal%20handmade%20barefoot%20woven%20band%20summer%20footwear%20casual%20everyday%20comfort%20Arabian%20style%20Middle%20East%20men%20sandal.jfif'],
-    attributes: [
-      { key: "Material", val: "Full-Grain Cowhide" },
-      { key: "Make", val: "Hand-Woven Band" },
-      { key: "Sole", val: "Stitched Leather" },
-      { key: "Style", val: "Barefoot Summer" }
-    ],
-    description: "Hand-woven full-grain leather sandals made by northern Cameroonian artisans — supple, breathable and built to last through seasons of wear."
-  },
-  'beaded_bracelet': {
-    id: 'beaded_bracelet',
-    title: "Natural Stone Beaded Warrior Bracelet",
-    brand: "Loumoo Heritage",
-    category: 'fashion',
-    categoryLabel: "Men's Jewelry",
-    conditionLabel: "Handmade",
-    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
-    badge: "HANDCRAFTED",
-    rating: '4.6',
-    reviewCount: 64,
-    soldCount: 128,
-    price: 'XAF 12.000',
-    salePrice: 'XAF 18.000',
-    storeName: "Douala Heritage Atelier",
-    storeCity: "New Bell, Douala",
-    storeRating: '4.6',
-    storeVerified: true,
-    coverImage: './Assets/necklace&ring/Men%20Charm%20Black%20Spartan%20Helmet%20Beaded%20Natural%20Stone%20Adjustable%20Macrame%20Bracelets%20_%20eBay.jfif',
-    images: ['./Assets/necklace&ring/Men%20Charm%20Black%20Spartan%20Helmet%20Beaded%20Natural%20Stone%20Adjustable%20Macrame%20Bracelets%20_%20eBay.jfif'],
-    attributes: [
-      { key: "Beads", val: "Natural Volcanic Stone" },
-      { key: "Charm", val: "Warrior Helmet" },
-      { key: "Clasp", val: "Adjustable Macramé" },
-      { key: "Fit", val: "One Size" }
-    ],
-    description: "An adjustable macramé bracelet strung with natural volcanic stone beads and a metal warrior-helmet charm — grounding, durable and easy to wear."
-  },
-  'shea_lotion': {
-    id: 'shea_lotion',
-    title: "Shea & Baobab Nourishing Body Lotion",
-    brand: "Nubian Glow",
-    category: 'beauty',
-    categoryLabel: "Skincare",
-    conditionLabel: "Brand New",
-    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
-    badge: "AFRICAN-OWNED",
-    rating: '4.9',
-    reviewCount: 188,
-    soldCount: 402,
-    price: 'XAF 9.500',
-    salePrice: 'XAF 14.000',
-    storeName: "Nubian Glow Beauty",
-    storeCity: "Bonapriso, Douala",
-    storeRating: '4.9',
-    storeVerified: true,
-    coverImage: './Assets/perfume&lotion/MEET%20THE%204%20AFRICAN-OWNED%20BRANDS%20BRIDGING%20THE%20GAP%20IN%20THE%20SKINCARE%20MARKET%20FOR%20DARKER%20CONSUMERS.jfif',
-    images: ['./Assets/perfume&lotion/MEET%20THE%204%20AFRICAN-OWNED%20BRANDS%20BRIDGING%20THE%20GAP%20IN%20THE%20SKINCARE%20MARKET%20FOR%20DARKER%20CONSUMERS.jfif'],
-    attributes: [
-      { key: "Key Actives", val: "Raw Shea & Baobab Oil" },
-      { key: "Skin Type", val: "Dry to Normal" },
-      { key: "Free From", val: "Parabens & Sulfates" },
-      { key: "Volume", val: "250ml" }
-    ],
-    description: "A rich shea-and-baobab body lotion from an African-owned label, formulated to deeply nourish and even melanin-rich skin without greasiness."
-  },
-  'power_bank': {
+
+'power_bank': {
     id: 'power_bank',
     title: "30000mAh Solar Power Bank + Cables",
     brand: "Oraimo",
@@ -6733,7 +19318,8 @@ const PRODUCTS_DATA = {
     ],
     description: "A high-capacity 30000mAh power bank with an emergency solar panel and four built-in cables — keep every device charged on the trail or off-grid."
   },
-  'action_cam': {
+
+'action_cam': {
     id: 'action_cam',
     title: "Ordro EP7 4K Wearable Action Camera",
     brand: "Ordro",
@@ -6761,7 +19347,8 @@ const PRODUCTS_DATA = {
     ],
     description: "A hands-free head-wearable 4K/60fps action camera with Wi-Fi — capture true point-of-view footage on hikes, rides and adventures."
   },
-  'lapel_mic': {
+
+'lapel_mic': {
     id: 'lapel_mic',
     title: "Wireless Lapel Microphone (Plug & Play)",
     brand: "Loumoo Audio",
@@ -6789,7 +19376,8 @@ const PRODUCTS_DATA = {
     ],
     description: "A plug-and-play wireless lavalier mic system for smartphones — crisp, low-latency audio for interviews, vlogs and live streams up to 20m away."
   },
-  'mifa_a90': {
+
+'mifa_a90': {
     id: 'mifa_a90',
     title: "Mifa A90 60W Rugged Bluetooth Speaker",
     brand: "Mifa",
@@ -6817,7 +19405,8 @@ const PRODUCTS_DATA = {
     ],
     description: "A hard-hitting 60W rugged speaker with a Class-D amplifier and deep bass — built to bring the party outdoors with up to 20 hours of playtime."
   },
-  'airpods_max': {
+
+'airpods_max': {
     id: 'airpods_max',
     title: "Apple AirPods Max Over-Ear",
     brand: "Apple",
@@ -6845,7 +19434,8 @@ const PRODUCTS_DATA = {
     ],
     description: "Apple's over-ear flagship: a custom high-fidelity driver, Active Noise Cancellation and immersive spatial audio in a machined aluminium design."
   },
-  'oraimo_airfryer': {
+
+'oraimo_airfryer': {
     id: 'oraimo_airfryer',
     title: "Oraimo Smart Air Fryer 5L",
     brand: "Oraimo",
@@ -6873,7 +19463,8 @@ const PRODUCTS_DATA = {
     ],
     description: "A 1500W 5-litre smart air fryer with a see-through cooking window and app control — crispy, low-oil meals with a tap from your phone."
   },
-  'cold_press_juicer': {
+
+'cold_press_juicer': {
     id: 'cold_press_juicer',
     title: "Slow Cold-Press Juicer Extractor",
     brand: "ACOQOOS",
@@ -6901,7 +19492,8 @@ const PRODUCTS_DATA = {
     ],
     description: "A slow masticating cold-press juicer with a wide whole-fruit chute — extract more juice and nutrients with less foam and heat for fresh daily juices."
   },
-  'espresso_maker': {
+
+'espresso_maker': {
     id: 'espresso_maker',
     title: "15-Bar Espresso Coffee Machine",
     brand: "Barista Pro",
@@ -6929,91 +19521,8 @@ const PRODUCTS_DATA = {
     ],
     description: "Café-quality espresso at home with a 15-bar Italian pump, a steam wand for silky microfoam and a stainless-steel build that lasts."
   },
-  'na_double_monk_01': {
-    id: 'na_double_monk_01',
-    title: 'Armonía Glossy Black Double-Monk Leather Shoes',
-    brand: 'Armonía Milano',
-    category: 'fashion',
-    categoryLabel: 'Men’s Luxury Footwear',
-    conditionLabel: 'Handcrafted · Box Calfskin',
-    fulfillmentLabel: 'Douala & Yaoundé Express 24h',
-    badge: 'LUXURY DERBY',
-    rating: '4.9',
-    reviewCount: 42,
-    soldCount: 38,
-    price: 'XAF 85 000',
-    salePrice: 'XAF 115 000',
-    storeName: 'Armonía Milano Boutique',
-    storeCity: 'Bonapriso, Douala',
-    storeRating: '4.9',
-    storeVerified: true,
-    coverImage: './Assets/_processed/new_arrivals_01.jpg',
-    images: ['./Assets/_processed/new_arrivals_01.jpg'],
-    attributes: [
-      { key: 'Material', val: 'Full-Grain Italian Box Calfskin Leather' },
-      { key: 'Hardware', val: 'Polished Dual Gold Buckles' },
-      { key: 'Construction', val: 'Blake-Stitched Leather Outsole' },
-      { key: 'Origin', val: 'Handmade in Milan, Italy' }
-    ],
-    description: 'Elevate your boardroom and evening presence with the Armonía Double-Monk Shoes. Cut from mirror-finish black Italian box calfskin with handcrafted brogue perforations on the toe cap. Finished with gold-tone dual buckle hardware and a durable Goodyear welted leather sole.'
-  },
-  'na_danbaoly_bag_02': {
-    id: 'na_danbaoly_bag_02',
-    title: 'Danbaoly Crimson Red Bow-Tie Structured Handbag',
-    brand: 'Danbaoly',
-    category: 'fashion',
-    categoryLabel: 'Women’s Designer Bags',
-    conditionLabel: 'Brand New · Dust Bag Included',
-    fulfillmentLabel: 'Nationwide Delivery',
-    badge: 'TRENDING LUXURY',
-    rating: '4.8',
-    reviewCount: 67,
-    soldCount: 112,
-    price: 'XAF 42 000',
-    salePrice: 'XAF 58 000',
-    storeName: 'Maison Danbaoly',
-    storeCity: 'Akwa, Douala',
-    storeRating: '4.8',
-    storeVerified: true,
-    coverImage: './Assets/_processed/new_arrivals_02.jpg',
-    images: ['./Assets/_processed/new_arrivals_02.jpg'],
-    attributes: [
-      { key: 'Material', val: 'Pebbled Calfskin Composite' },
-      { key: 'Accents', val: 'Structured Bow-Tie & 24K Star Charm' },
-      { key: 'Closure', val: 'Top Secure Zip with Dual Compartments' },
-      { key: 'Strap', val: 'Detachable Adjustable Crossbody Strap' }
-    ],
-    description: 'A striking statement of femininity and poise, the Danbaoly Crimson Tote features rich textured red leather, sculpted top handles, a signature bow-tie facade, and polished gold star pendant.'
-  },
-  'na_pedro_backpack_03': {
-    id: 'na_pedro_backpack_03',
-    title: 'Pedro Tri-Tone Heritage Urban Commuter Rucksack',
-    brand: 'Pedro Official',
-    category: 'fashion',
-    categoryLabel: 'Designer Backpacks & Rucksacks',
-    conditionLabel: 'Limited Release · Factory Sealed',
-    fulfillmentLabel: 'Same-Day Dispatch',
-    badge: 'LIMITED EDITION',
-    rating: '4.9',
-    reviewCount: 53,
-    soldCount: 41,
-    price: 'XAF 68 000',
-    salePrice: 'XAF 88 000',
-    storeName: 'Pedro Flagship Cameroon',
-    storeCity: 'Bastos, Yaoundé',
-    storeRating: '4.9',
-    storeVerified: true,
-    coverImage: './Assets/_processed/new_arrivals_03.jpg',
-    images: ['./Assets/_processed/new_arrivals_03.jpg'],
-    attributes: [
-      { key: 'Palette', val: 'Ivory White, Cognac Tan & Sky Blue' },
-      { key: 'Capacity', val: '18L (Padded 15.6” Laptop Sleeve)' },
-      { key: 'Closure', val: 'Drawstring & Dual Magnetic Buckles' },
-      { key: 'Exterior', val: 'Dual Gusseted Quick-Access Pockets' }
-    ],
-    description: 'Engineered for modern creative professionals, the Pedro Tri-Tone Rucksack blends retro heritage craftsmanship with contemporary ergonomics. Fits up to 16” MacBook Pro with ergonomic ventilated back padding.'
-  },
-  'na_boat_speaker_04': {
+
+'na_boat_speaker_04': {
     id: 'na_boat_speaker_04',
     title: 'boAt Stone 1400 Crimson Rugged 360° Speaker',
     brand: 'boAt Audio',
@@ -7041,7 +19550,8 @@ const PRODUCTS_DATA = {
     ],
     description: 'Unleash thunderous audio with the boAt Stone 1400. Featuring 70W dual drivers, twin passive bass radiators with pulsating RGB rings, and IPX7 rugged waterproof armor built for indoor studios and outdoor gatherings in Cameroon.'
   },
-  'na_pixel_10_pro_05': {
+
+'na_pixel_10_pro_05': {
     id: 'na_pixel_10_pro_05',
     title: 'Google Pixel 10 Pro 5G (Titanium Grey, 256GB)',
     brand: 'Google',
@@ -7059,8 +19569,8 @@ const PRODUCTS_DATA = {
     storeCity: 'Akwa, Douala',
     storeRating: '5.0',
     storeVerified: true,
-    coverImage: './Assets/telephone&PC/Google%20Pixel%2010%20Pro%20XL%20_%20Latest%20Google%20Smartphone%20with%20Advanced%20Camera%20&%20AI%20Features.jfif',
-    images: ['./Assets/telephone&PC/Google%20Pixel%2010%20Pro%20XL%20_%20Latest%20Google%20Smartphone%20with%20Advanced%20Camera%20&%20AI%20Features.jfif'],
+    coverImage: './Assets/telephone&PC/phoneBrands.image/Google%20Pixel%2010%20Pro%20XL%20_%20Latest%20Google%20Smartphone%20with%20Advanced%20Camera%20&%20AI%20Features.jfif',
+    images: ['./Assets/telephone&PC/phoneBrands.image/Google%20Pixel%2010%20Pro%20XL%20_%20Latest%20Google%20Smartphone%20with%20Advanced%20Camera%20&%20AI%20Features.jfif'],
     attributes: [
       { key: 'Processor', val: 'Google Tensor G5 (3nm Next-Gen Silicon)' },
       { key: 'Display', val: '6.7” Super Actua OLED 120Hz LTPO' },
@@ -7069,175 +19579,8 @@ const PRODUCTS_DATA = {
     ],
     description: 'The pinnacle of Google computational intelligence. Powered by the groundbreaking 3nm Tensor G5 chip with native on-device Gemini Nano, unmatched Pro camera zoom, and sculpted aeronautical-grade titanium framing.'
   },
-  'na_amina_muaddi_06': {
-    id: 'na_amina_muaddi_06',
-    title: 'Amina Muaddi Sunburst Orange Pumps & Quilted Bag Set',
-    brand: 'Amina Muaddi Paris',
-    category: 'fashion',
-    categoryLabel: 'Haute Couture Sets',
-    conditionLabel: 'Boutique Exclusive · Dust Bags & Box',
-    fulfillmentLabel: 'White Glove Concierge Delivery',
-    badge: 'CRYSTAL SUNBURST',
-    rating: '5.0',
-    reviewCount: 29,
-    soldCount: 15,
-    price: 'XAF 125 000',
-    salePrice: 'XAF 165 000',
-    storeName: 'Bella Donna Boutique',
-    storeCity: 'Bonanjo, Douala',
-    storeRating: '5.0',
-    storeVerified: true,
-    coverImage: './Assets/_processed/new_arrivals_06.jpg',
-    images: ['./Assets/_processed/new_arrivals_06.jpg'],
-    attributes: [
-      { key: 'Set Includes', val: 'Orange Satin Pumps + Quilted Top Handle Bag' },
-      { key: 'Embellishment', val: 'Swarovski Crystal Sunburst Brooch' },
-      { key: 'Heel', val: 'Sculptural 95mm Flared Martini Heel' },
-      { key: 'Origin', val: 'Artisan Crafted in Italy' }
-    ],
-    description: 'An iconic runway ensemble. Radiating vibrant mandarin orange duchess satin, anchored by Amina Muaddi’s signature crystal sunburst buckle and architectural flared martini heel, accompanied by a matching cannage-quilted handbag.'
-  },
-  'na_noire_birkin_07': {
-    id: 'na_noire_birkin_07',
-    title: 'NOIRE Matte Crocodile Birkin Luxury Top-Handle Handbag',
-    brand: 'NOIRE Haute Maroquinerie',
-    category: 'fashion',
-    categoryLabel: 'Ultra-Luxury Leather Goods',
-    conditionLabel: 'Atelier Edition · Clochette & Padlock',
-    fulfillmentLabel: 'Armored Escrow Courier Delivery',
-    badge: 'CROCO EMBOSSED',
-    rating: '5.0',
-    reviewCount: 17,
-    soldCount: 9,
-    price: 'XAF 195 000',
-    salePrice: 'XAF 260 000',
-    storeName: 'NOIRE Atelier Cameroon',
-    storeCity: 'Bastos, Yaoundé',
-    storeRating: '5.0',
-    storeVerified: true,
-    coverImage: './Assets/_processed/new_arrivals_07.jpg',
-    images: ['./Assets/_processed/new_arrivals_07.jpg'],
-    attributes: [
-      { key: 'Leather', val: 'Exotic Embossed Matte Porosus Leather' },
-      { key: 'Hardware', val: '24K Brushed Gold Plated Turn-Lock' },
-      { key: 'Dimensions', val: '30cm Width x 22cm Height x 16cm Depth' },
-      { key: 'Interior', val: 'Full Chevre Goatskin Lining with Zip Pocket' }
-    ],
-    description: 'The epitome of high-fashion prestige. The NOIRE 30 features exotic matte alligator grain in midnight black, polished 24K gold hardware with clochette and lock keys, and master artisan saddle stitching.'
-  },
-  'na_bigtree_heels_08': {
-    id: 'na_bigtree_heels_08',
-    title: 'Bigtree Emerald Alligator Patent 10cm Stiletto Pumps',
-    brand: 'Bigtree Shoes',
-    category: 'fashion',
-    categoryLabel: 'Women’s Luxury Heels',
-    conditionLabel: 'Brand New · Official Shoe Box',
-    fulfillmentLabel: 'Same-Day Dispatch',
-    badge: '10CM STILETTO',
-    rating: '4.8',
-    reviewCount: 85,
-    soldCount: 140,
-    price: 'XAF 38 000',
-    salePrice: 'XAF 52 000',
-    storeName: 'Glamour Steps Douala',
-    storeCity: 'Douala Grand Mall',
-    storeRating: '4.8',
-    storeVerified: true,
-    coverImage: './Assets/_processed/new_arrivals_08.jpg',
-    images: ['./Assets/_processed/new_arrivals_08.jpg'],
-    attributes: [
-      { key: 'Upper', val: 'Glossy Emerald Croc-Embossed Patent Leather' },
-      { key: 'Heel Height', val: '10cm (3.9 Inches) Precision Stiletto' },
-      { key: 'Accent', val: 'Sculpted Gold Metal Square Buckle' },
-      { key: 'Insole', val: 'Memory Foam Padded Arch Support' }
-    ],
-    description: 'Captivate the room in deep emerald green. Featuring high-gloss alligator patent leather, a sleek pointed toe framed by a polished gold metallic square buckle, and a razor-sharp 10cm stiletto heel.'
-  },
-  'na_artisan_brogue_09': {
-    id: 'na_artisan_brogue_09',
-    title: 'Artisan Lug-Sole Wingtip Brogue Derby Shoes (Black)',
-    brand: 'Sartorial Douala',
-    category: 'fashion',
-    categoryLabel: 'Men’s Heritage Footwear',
-    conditionLabel: 'Artisan Box Calfskin · With Shoe Trees',
-    fulfillmentLabel: 'Express Delivery Across Cameroon',
-    badge: 'COMMANDO LUG SOLE',
-    rating: '4.9',
-    reviewCount: 46,
-    soldCount: 33,
-    price: 'XAF 75 000',
-    salePrice: 'XAF 98 000',
-    storeName: 'Sartorial Douala Atelier',
-    storeCity: 'Bali, Douala',
-    storeRating: '4.9',
-    storeVerified: true,
-    coverImage: './Assets/_processed/new_arrivals_09.jpg',
-    images: ['./Assets/_processed/new_arrivals_09.jpg'],
-    attributes: [
-      { key: 'Leather', val: 'Full-Grain Box Calfskin with Medallion Brogue' },
-      { key: 'Sole', val: 'Lightweight Chunky Commando Lug Sole' },
-      { key: 'Welt', val: 'Storm-Welted 360° Water-Resistant Edging' },
-      { key: 'Lining', val: 'Vegetable-Tanned Cowhide Lining' }
-    ],
-    description: 'Modern rugged sophistication meets classic tailoring. Crafted from lustrous black box calfskin with wingtip broguing, set on an imposing yet featherweight chunky lug sole for maximum grip and comfort in any weather.'
-  },
-  'na_tobacco_vanille_10': {
-    id: 'na_tobacco_vanille_10',
-    title: 'Tobacco Vanille Artisanal Extrait De Parfum (30ml)',
-    brand: 'L’Artisan Parfumeur',
-    category: 'beauty',
-    categoryLabel: 'Niche Haute Parfumerie',
-    conditionLabel: 'Freshly Matured Batch · 30ml Atomizer',
-    fulfillmentLabel: 'Carefully Padded Same-Day Shipping',
-    badge: 'PURE EXTRAIT 30ML',
-    rating: '5.0',
-    reviewCount: 92,
-    soldCount: 165,
-    price: 'XAF 35 000',
-    salePrice: 'XAF 48 000',
-    storeName: 'L’Artisan Parfumeur Yaoundé',
-    storeCity: 'Bastos, Yaoundé',
-    storeRating: '5.0',
-    storeVerified: true,
-    coverImage: './Assets/_processed/new_arrivals_10.jpg',
-    images: ['./Assets/_processed/new_arrivals_10.jpg'],
-    attributes: [
-      { key: 'Concentration', val: 'Extrait De Parfum (35% Oil Concentration)' },
-      { key: 'Top Notes', val: 'Tobacco Leaf, Spiced Ginger, Star Anise' },
-      { key: 'Heart Notes', val: 'Tonka Bean, Tobacco Blossom, Vanilla, Cacao' },
-      { key: 'Base Notes', val: 'Dried Fruits, Woody Accord, Smoky Cedar' }
-    ],
-    description: 'An intoxicating, warm, and opulent olfactory journey. Featuring rare hand-harvested tobacco leaves steeped in rich Madagascar bourbon vanilla, sweet tonka beans, and smoky cedarwood. Delivers 16+ hours of projection.'
-  },
-  'na_infinity_necklace_11': {
-    id: 'na_infinity_necklace_11',
-    title: 'Swarovski Crystal Infinity Teardrop Necklace & Earrings Set',
-    brand: 'Prestige Bijoux',
-    category: 'fashion',
-    categoryLabel: 'Fine Bridal & Gala Jewelry',
-    conditionLabel: 'Brand New · Velvet Presentation Box',
-    fulfillmentLabel: 'Insured Escrow Courier Delivery',
-    badge: 'BRIDAL & GALA PARURE',
-    rating: '4.9',
-    reviewCount: 73,
-    soldCount: 54,
-    price: 'XAF 55 000',
-    salePrice: 'XAF 75 000',
-    storeName: 'Prestige Bijoux Bonapriso',
-    storeCity: 'Bonapriso, Douala',
-    storeRating: '4.9',
-    storeVerified: true,
-    coverImage: './Assets/_processed/new_arrivals_11.jpg',
-    images: ['./Assets/_processed/new_arrivals_11.jpg'],
-    attributes: [
-      { key: 'Metal', val: 'Hypoallergenic Rhodium Plated Platinum Finish' },
-      { key: 'Gems', val: 'Precision-Cut Swarovski CZ Pave Crystals' },
-      { key: 'Closure', val: 'Secure Lobster Clasp with Extension Chain' },
-      { key: 'Set Includes', val: 'Teardrop Statement Necklace + Matching Drop Earrings' }
-    ],
-    description: 'Dazzle at weddings, galas, and celebrations with this royal crystal parure. Featuring cascading infinity teardrop loops pavé-set with brilliant-cut crystals that catch every ray of light, complete with matching earrings.'
-  },
-  'insta360_x4': {
+
+'insta360_x4': {
     id: 'insta360_x4',
     title: 'Insta360 X4 8K 360° Waterproof Action Camera',
     brand: 'Insta360',
@@ -7259,7 +19602,7 @@ const PRODUCTS_DATA = {
     images: [
       './Assets/acessories&gadgets/DJI%20Osmo%20Pocket%203.jfif',
       './Assets/acessories&gadgets/Dji%20_%20_%20Osmo%20Pocket%203%20Creator%20Combo%203-Axis%20Stabilized%204K%20Handheld%20Camera%20with%20Rotatable%20Touchscreen%20_%20Gray%20_%20Best%20Buy.jfif',
-      './Assets/acessories&gadgets/Insta360%20Flow%20Pro.jfif'
+      './Assets/acessories&gadgets/Dji%20_%20_%20Osmo%20Pocket%203%20Creator%20Combo%203-Axis%20Stabilized%204K%20Handheld%20Camera%20with%20Rotatable%20Touchscreen%20_%20Gray%20_%20Best%20Buy.jfif'
     ],
     videoUrl: './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2010%20Aesthetic%20holiday%20table%20setting%20ideas%20that%20bring%20together%20comfort%20beauty%20and%20useful%20ideas%20you%20will%20actually%20try%20for%20people%20w.mp4',
     attributes: [
@@ -7272,7 +19615,8 @@ const PRODUCTS_DATA = {
     ],
     description: 'The revolutionary Insta360 X4 brings cinema-grade 8K 360-degree capture to your pocket. Featuring the all-new 5nm AI processing chip, FlowState stabilization, and invisible selfie stick algorithm for third-person drone-like perspectives. Native waterproofing up to 10 meters and 135 minutes battery endurance make it the ultimate gear for extreme sports, creator vlogs, and cinematic travel in Cameroon.'
   },
-  'iphone_15_pro': {
+
+'iphone_15_pro': {
     id: 'iphone_15_pro',
     title: 'Apple iPhone 15 Pro Max 256GB — Natural Titanium',
     brand: 'Apple',
@@ -7290,11 +19634,11 @@ const PRODUCTS_DATA = {
     storeCity: 'Douala, Akwa Commercial',
     storeRating: '4.9',
     storeVerified: true,
-    coverImage: './Assets/telephone&PC/iphone%2015%20Pro%20Max%20-%20Best%20Features%20in%202025.jfif',
+    coverImage: './Assets/telephone&PC/phoneBrands.image/iphone%2015%20Pro%20Max%20-%20Best%20Features%20in%202025.jfif',
     images: [
-      './Assets/telephone&PC/iphone%2015%20Pro%20Max%20-%20Best%20Features%20in%202025.jfif',
-      './Assets/telephone&PC/iPhone%2017%20Pro%20Max%20Colors%20%E2%80%93%20Every%20Stunning%20Finish%20in%20One%20Premium%20Look%20%F0%9F%93%B1%E2%9C%A8.jfif',
-      './Assets/telephone&PC/iPhone%2016%20Pro%20Max%20Desert%20Titanium.jfif'
+      './Assets/telephone&PC/phoneBrands.image/iphone%2015%20Pro%20Max%20-%20Best%20Features%20in%202025.jfif',
+      './Assets/telephone&PC/phoneBrands.image/iPhone%2017%20Pro%20Max%20Colors%20%E2%80%93%20Every%20Stunning%20Finish%20in%20One%20Premium%20Look%20%F0%9F%93%B1%E2%9C%A8.jfif',
+      './Assets/telephone&PC/phoneBrands.image/iphone%2015%20Pro%20Max%20-%20Best%20Features%20in%202025.jfif'
     ],
     videoUrl: './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2016%20Timeless%20entryway%20organization%20ideas%20that%20look%20expensive%20while%20staying%20practical%20realistic%20and%20beginner%20friendly%20for%20busy%20pe.mp4',
     attributes: [
@@ -7307,7 +19651,8 @@ const PRODUCTS_DATA = {
     ],
     description: 'Forged in titanium with the industry-leading A17 Pro chip. Features a customizable Action Button, next-generation portraits with focus and depth control, and 5x optical telephoto zoom. Comes sealed in box with 1-year official Apple international warranty and Loumoo Escrow guarantee.'
   },
-  'macbook_m2': {
+
+'macbook_m2': {
     id: 'macbook_m2',
     title: 'Apple MacBook Air 13” M2 (Space Grey) — 8GB / 256GB SSD',
     brand: 'Apple',
@@ -7342,7 +19687,8 @@ const PRODUCTS_DATA = {
     ],
     description: 'Redesigned around the next-generation M2 chip, the MacBook Air combines incredible speed and up to 18 hours of battery life inside an ultra-thin aluminium enclosure. Includes MagSafe 3 charging port, 1080p FaceTime HD camera, and Spatial Audio sound system.'
   },
-  'sony_xm5': {
+
+'sony_xm5': {
     id: 'sony_xm5',
     title: 'Sony WH-1000XM5 Wireless Noise-Canceling Headphones',
     brand: 'Sony',
@@ -7376,7 +19722,8 @@ const PRODUCTS_DATA = {
     ],
     description: 'Industry-leading noise cancellation with two processors and 8 microphones. Enjoy ultra-clear hands-free calling and magnificent high-resolution sound quality engineered with precision carbon fiber dome drivers.'
   },
-  'apple_watch_s9': {
+
+'apple_watch_s9': {
     id: 'apple_watch_s9',
     title: 'Apple Watch Series 9 GPS 45mm — Midnight Aluminum',
     brand: 'Apple',
@@ -7394,11 +19741,10 @@ const PRODUCTS_DATA = {
     storeCity: 'Douala, Akwa',
     storeRating: '4.9',
     storeVerified: true,
-    coverImage: './Assets/watch/Classic%20Rolex%20SeaDweller.jfif',
+    coverImage: './Assets/watch/smart/Now%20You%20Can%20Make%20Calls%20On%20Your%20Apple%20Watch%20Without%20Being%20Near%20Your%20iPhone.jfif',
     images: [
-      './Assets/watch/Classic%20Rolex%20SeaDweller.jfif',
-      './Assets/watch/Rolex%20Datejust%2041%20watch_%20Oystersteel%20and%20white%E2%80%A6.jfif',
-      './Assets/watch/Men%20Watch.jfif'
+      './Assets/watch/smart/Now%20You%20Can%20Make%20Calls%20On%20Your%20Apple%20Watch%20Without%20Being%20Near%20Your%20iPhone.jfif',
+      './Assets/watch/smart/69524387997565614.jfif'
     ],
     videoUrl: './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%20Beachy%20beach%20picnic%20thoughts%20and%20clever%20inspiration%20with%20timeless%20style%20to%20brighten%20your%20feed-pin-id-958000151964999370.mp4',
     attributes: [
@@ -7409,38 +19755,8 @@ const PRODUCTS_DATA = {
     ],
     description: 'Smarter, brighter, and mightier. Powered by the S9 SiP with a magical new double-tap gesture and a display that reaches up to 2000 nits — twice as bright as Series 8.'
   },
-  'nike_air_force_1': {
-    id: 'nike_air_force_1',
-    title: 'Nike Air Force 1 ‘07 Triple White Classic Edition',
-    brand: 'Nike',
-    category: 'fashion',
-    categoryLabel: 'Sneakers & Streetwear',
-    conditionLabel: 'Brand New · Original Box',
-    fulfillmentLabel: 'Express Delivery across Cameroon',
-    badge: 'ICONIC',
-    rating: '4.8',
-    reviewCount: 240,
-    soldCount: 190,
-    price: 'XAF 65 000',
-    salePrice: 'XAF 75 000',
-    storeName: 'Urban Kicks Bonamoussadi',
-    storeCity: 'Douala, Bonamoussadi',
-    storeRating: '4.8',
-    storeVerified: true,
-    coverImage: './Assets/fashion/Look%20at%20this%20new%20Nike%20Air%20Force.jfif',
-    images: [
-      './Assets/fashion/Look%20at%20this%20new%20Nike%20Air%20Force.jfif',
-      './Assets/fashion/Nike%20Air%20Force%201%20is%20Waiting%20For%20You___.jfif'
-    ],
-    videoUrl: './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2010%20Aesthetic%20holiday%20table%20setting%20ideas%20that%20bring%20together%20comfort%20beauty%20and%20useful%20ideas%20you%20will%20actually%20try%20for%20people%20w.mp4',
-    attributes: [
-      { key: 'Material', val: '100% Genuine Full-Grain Leather Upper' },
-      { key: 'Cushioning', val: 'Encapsulated Nike Air-Sole Cushioning Unit' },
-      { key: 'Outsole', val: 'Non-Marking Solid Rubber Traction Tread' }
-    ],
-    description: 'The radiance lives on in the Nike Air Force 1 07, the basketball icon that puts a fresh spin on what you know best: crisp leather, bold colors, and the perfect amount of flash.'
-  },
-  'galaxy_s24_ultra': {
+
+'galaxy_s24_ultra': {
     id: 'galaxy_s24_ultra',
     title: 'Samsung Galaxy S24 Ultra 5G 512GB (Titanium Gray)',
     brand: 'Samsung',
@@ -7458,11 +19774,11 @@ const PRODUCTS_DATA = {
     storeCity: 'Douala, Mboppi',
     storeRating: '4.7',
     storeVerified: true,
-    coverImage: './Assets/telephone&PC/SAMSUNG%20S26%20ULTRA%20%F0%9F%94%A5%20BUY%20IT%20FOR%20YOU%20%F0%9F%91%87.jfif',
+    coverImage: './Assets/telephone&PC/phoneBrands.image/SAMSUNG%20S26%20ULTRA%20%F0%9F%94%A5%20BUY%20IT%20FOR%20YOU%20%F0%9F%91%87.jfif',
     images: [
-      './Assets/telephone&PC/SAMSUNG%20S26%20ULTRA%20%F0%9F%94%A5%20BUY%20IT%20FOR%20YOU%20%F0%9F%91%87.jfif',
-      './Assets/telephone&PC/TECNO%20CAMON%2040%20Series_%20Redefining%20Imagery%20with%20%C2%A0TECNO%C2%A0AI.jfif',
-      './Assets/telephone&PC/Galaxy%20Ai.jfif'
+      './Assets/telephone&PC/phoneBrands.image/SAMSUNG%20S26%20ULTRA%20%F0%9F%94%A5%20BUY%20IT%20FOR%20YOU%20%F0%9F%91%87.jfif',
+      './Assets/telephone&PC/phoneBrands.image/Samsung%20Galaxy%20S26%20Ultra,.jfif',
+      './Assets/telephone&PC/phoneBrands.image/Amazon_com_%20Samsung%20Galaxy%20Phones.jfif'
     ],
     videoUrl: './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2016%20Timeless%20entryway%20organization%20ideas%20that%20look%20expensive%20while%20staying%20practical%20realistic%20and%20beginner%20friendly%20for%20busy%20pe.mp4',
     attributes: [
@@ -7473,7 +19789,8 @@ const PRODUCTS_DATA = {
     ],
     description: 'Unleash new levels of creativity and productivity with Galaxy AI. Built with a sturdy titanium frame and flat 6.8-inch display, accompanied by the iconic built-in S Pen.'
   },
-  'ps5_slim': {
+
+'ps5_slim': {
     id: 'ps5_slim',
     title: 'Sony PlayStation 5 Slim 1TB Disc Edition + DualSense Controller',
     brand: 'Sony PlayStation',
@@ -7491,10 +19808,10 @@ const PRODUCTS_DATA = {
     storeCity: 'Douala, Bonapriso',
     storeRating: '4.8',
     storeVerified: true,
-    coverImage: './Assets/telephone&PC/316800155055565523.jfif',
+    coverImage: './Assets/telephone&PC/phoneBrands.image/316800155055565523.jfif',
     images: [
-      './Assets/telephone&PC/316800155055565523.jfif',
-      './Assets/telephone&PC/PS5%20Slim.jfif'
+      './Assets/telephone&PC/phoneBrands.image/316800155055565523.jfif',
+      './Assets/acessories&gadgets/ps5%20controller%20product%20photography.jfif'
     ],
     videoUrl: './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2049%20Genius%20Guest%20Room%20Ideas-pin-id-1127588825467750602.mp4',
     attributes: [
@@ -7504,69 +19821,8 @@ const PRODUCTS_DATA = {
     ],
     description: 'Experience lightning-fast loading with an ultra-high speed SSD, deeper immersion with support for haptic feedback, adaptive triggers, and 3D Audio, and an all-new generation of incredible PlayStation games.'
   },
-  'rolex_submariner': {
-    id: 'rolex_submariner',
-    title: 'Rolex Submariner Date 41mm Oystersteel — Black Ceramic Bezel',
-    brand: 'Rolex',
-    category: 'fashion',
-    categoryLabel: 'Luxury Watches & Horology',
-    conditionLabel: 'Mint Condition · Box & Papers Included',
-    fulfillmentLabel: 'Insured Escrow Hand Delivery',
-    badge: 'CERTIFIED LUXURY',
-    rating: '5.0',
-    reviewCount: 31,
-    soldCount: 14,
-    price: 'XAF 7 850 000',
-    salePrice: '',
-    storeName: 'Geneva Horlogerie Akwa',
-    storeCity: 'Douala, Akwa',
-    storeRating: '5.0',
-    storeVerified: true,
-    coverImage: './Assets/watch/Rolex%20Datejust%2041%20watch_%20Oystersteel%20and%20white%E2%80%A6.jfif',
-    images: [
-      './Assets/watch/Rolex%20Datejust%2041%20watch_%20Oystersteel%20and%20white%E2%80%A6.jfif',
-      './Assets/watch/Classic%20Rolex%20SeaDweller.jfif'
-    ],
-    videoUrl: './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2094%20Clever%20Morning%20Routine%20Ideas-pin-id-641833384412737958.mp4',
-    attributes: [
-      { key: 'Movement', val: 'Calibre 3235 Perpetual Mechanical Self-Winding' },
-      { key: 'Case Diameter', val: '41mm Oystersteel with Cerachrom Ceramic Bezel' },
-      { key: 'Water Resistance', val: 'Waterproof to 300 meters (1000 feet)' }
-    ],
-    description: 'The benchmark among divers watches. Features the unidirectional rotatable Cerachrom bezel and solid-link Oyster bracelet with Glidelock extension system. Authenticity verified and backed by Loumoo Diamond Escrow.'
-  },
-  'bazin_boubou': {
-    id: 'bazin_boubou',
-    title: 'Royal Bazin Riche Grand Boubou — Hand-Embroidered Gold Thread',
-    brand: 'Maison du Bazin',
-    category: 'fashion',
-    categoryLabel: 'African Couture & Heritage',
-    conditionLabel: 'Brand New · Haute Couture',
-    fulfillmentLabel: 'Custom Tailored & Express Courier',
-    badge: 'HANDCRAFTED',
-    rating: '4.9',
-    reviewCount: 52,
-    soldCount: 37,
-    price: 'XAF 125 000',
-    salePrice: 'XAF 145 000',
-    storeName: 'Maison du Bazin & Soie',
-    storeCity: 'Yaoundé, Bastos',
-    storeRating: '4.9',
-    storeVerified: true,
-    coverImage: './Assets/fashion/100%25%20Cotton%20Ankara%20Palazzo%20Pants.jfif',
-    images: [
-      './Assets/fashion/100%25%20Cotton%20Ankara%20Palazzo%20Pants.jfif',
-      './Assets/fashion/#MenStyle%20#MensFashion%20#CorporateStyle%20#MensShoe%E2%80%A6.jfif'
-    ],
-    videoUrl: './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%20Beachy%20beach%20picnic%20thoughts%20and%20clever%20inspiration%20with%20timeless%20style%20to%20brighten%20your%20feed-pin-id-958000151964999370.mp4',
-    attributes: [
-      { key: 'Fabric', val: '100% Genuine Getzner Superior Cotton Damask' },
-      { key: 'Embroidery', val: 'Intricate Geometric Gold Metallic Thread' },
-      { key: 'Set Includes', val: '3 Pieces: Grand Boubou, Matching Tunic & Trousers' }
-    ],
-    description: 'Exquisite Cameroonian and West African formal ceremonial attire. Crafted from premium Getzner Bazin Riche with authentic wax shine and meticulous artisanal embroidery.'
-  },
-  'anker_737': {
+
+'anker_737': {
     id: 'anker_737',
     title: 'Anker 737 Power Bank (PowerCore 24K) 140W Fast Charger',
     brand: 'Anker',
@@ -7597,7 +19853,777 @@ const PRODUCTS_DATA = {
     ],
     description: 'Equipped with Power Delivery 3.1 and bi-directional technology to quickly recharge the portable charger or get a 140W ultra-powerful charge for MacBook Pro, iPhone, or Samsung Galaxy.'
   },
-  'sawa_hotel_suite': {
+
+'rolex_skydweller_green': {
+    id: 'rolex_skydweller_green',
+    title: "Rolex Sky-Dweller Annual Calendar (Mint Green Dial)",
+    brand: "Rolex",
+    category: 'fashion',
+    categoryLabel: "Luxury Horlogerie",
+    conditionLabel: "Certified Authentic · Box & Papers",
+    fulfillmentLabel: 'Armored Courier Hand-Delivery in Cameroon',
+    badge: "HAUTE HORLOGERIE",
+    rating: '5.0',
+    reviewCount: 29,
+    soldCount: 18,
+    price: 'XAF 14.500.000',
+    salePrice: 'XAF 16.000.000',
+    storeName: "Krystal Horlogerie",
+    storeCity: "Bonapriso, Douala",
+    storeRating: '5.0',
+    storeVerified: true,
+    coverImage: './Assets/watch/mechanic/Green%20Rolex%20SkyDweller.jfif',
+    images: ['./Assets/watch/mechanic/Green%20Rolex%20SkyDweller.jfif'],
+    attributes: [
+      { key: "Case", val: "42mm Oystersteel with 18ct White Gold Fluted Bezel" },
+      { key: "Complication", val: "Saros Annual Calendar with Dual Time Zone" },
+      { key: "Movement", val: "Calibre 9002 Perpetual Mechanical Automatic" },
+      { key: "Power Reserve", val: "Approximately 72 Hours" },
+      { key: "Waterproofness", val: "100 Metres / 330 Feet" }
+    ],
+    description: "The pinnacle of horological engineering for global travelers. Displays local and reference time simultaneously with Saros annual calendar in striking mint green."
+  },
+
+'rolex_seadweller_classic': {
+    id: 'rolex_seadweller_classic',
+    title: "Rolex Sea-Dweller Deepsea Professional Diver",
+    brand: "Rolex",
+    category: 'fashion',
+    categoryLabel: "Luxury Horlogerie",
+    conditionLabel: "Certified Authentic · Full Set",
+    fulfillmentLabel: 'Armored Courier Hand-Delivery in Cameroon',
+    badge: "EXTREME LUXURY",
+    rating: '5.0',
+    reviewCount: 22,
+    soldCount: 14,
+    price: 'XAF 11.200.000',
+    salePrice: 'XAF 12.800.000',
+    storeName: "Krystal Horlogerie",
+    storeCity: "Bonapriso, Douala",
+    storeRating: '5.0',
+    storeVerified: true,
+    coverImage: './Assets/watch/mechanic/Classic%20Rolex%20SeaDweller.jfif',
+    images: ['./Assets/watch/mechanic/Classic%20Rolex%20SeaDweller.jfif'],
+    attributes: [
+      { key: "Case", val: "43mm Oystersteel with Helium Escape Valve" },
+      { key: "Bezel", val: "Unidirectional 60-minute Cerachrom in Black Ceramic" },
+      { key: "Movement", val: "Rolex Calibre 3235 Superlative Chronometer" },
+      { key: "Crystal", val: "Scratch-Resistant Sapphire with Cyclops Lens" },
+      { key: "Depth", val: "Waterproof to 1,220 Metres (4,000 Feet)" }
+    ],
+    description: "The definitive deep-sea exploration instrument. Helium escape valve, Cerachrom ceramic bezel and Superlative Chronometer precision."
+  },
+
+'rolex_gmt_master2': {
+    id: 'rolex_gmt_master2',
+    title: "Rolex GMT-Master II Cerachrom Two-Tone",
+    brand: "Rolex",
+    category: 'fashion',
+    categoryLabel: "Luxury Horlogerie",
+    conditionLabel: "Certified Authentic · Full Set",
+    fulfillmentLabel: 'Armored Courier Hand-Delivery in Cameroon',
+    badge: "PILOT CHRONO",
+    rating: '4.9',
+    reviewCount: 35,
+    soldCount: 26,
+    price: 'XAF 12.800.000',
+    salePrice: 'XAF 14.000.000',
+    storeName: "Krystal Horlogerie",
+    storeCity: "Bonapriso, Douala",
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/watch/mechanic/Luxury%20Rolex%20GMT.jfif',
+    images: ['./Assets/watch/mechanic/Luxury%20Rolex%20GMT.jfif'],
+    attributes: [
+      { key: "Case", val: "40mm Oystersteel & 18ct Everose Gold" },
+      { key: "Bezel", val: "24-Hour Bidirectional Rotatable Cerachrom" },
+      { key: "Bracelet", val: "Oyster 3-Piece Solid Links with Easylink 5mm" },
+      { key: "Movement", val: "Calibre 3285 GMT Automatic" },
+      { key: "Precision", val: "-2/+2 sec/day after casing" }
+    ],
+    description: "Two-tone Everose Gold and Oystersteel with 24-hour rotatable Cerachrom bezel. Read two time zones at a glance with pilot-grade accuracy."
+  },
+
+'lange_sohne_honeygold': {
+    id: 'lange_sohne_honeygold',
+    title: "A. Lange & Söhne 1815 Rattrapante Honeygold",
+    brand: "A. Lange & Söhne",
+    category: 'fashion',
+    categoryLabel: "Haute Horlogerie",
+    conditionLabel: "Collector Edition · Numbered Box Set",
+    fulfillmentLabel: 'VIP Security Delivery with Certificate',
+    badge: "COLLECTOR PIECE",
+    rating: '5.0',
+    reviewCount: 15,
+    soldCount: 9,
+    price: 'XAF 22.000.000',
+    salePrice: 'XAF 25.000.000',
+    storeName: "Krystal Horlogerie",
+    storeCity: "Bonapriso, Douala",
+    storeRating: '5.0',
+    storeVerified: true,
+    coverImage: './Assets/watch/mechanic/A_%20Lange%20&%20S%C3%B6hne%201815%20Rattrapante%20Honeygold.jfif',
+    images: ['./Assets/watch/mechanic/A_%20Lange%20&%20S%C3%B6hne%201815%20Rattrapante%20Honeygold.jfif'],
+    attributes: [
+      { key: "Material", val: "Proprietary 18K Honeygold (Harder than Yellow Gold)" },
+      { key: "Complication", val: "Split-Seconds Split-Time Rattrapante Chronograph" },
+      { key: "Dial", val: "Black Solid Silver with Railway-Track Minuterie" },
+      { key: "Movement", val: "Manufacture Calibre L101.2 Hand-Engraved Balance Cock" },
+      { key: "Origin", val: "Glashütte, Germany" }
+    ],
+    description: "Rare Glashütte masterwork crafted in proprietary Honeygold with split-seconds split-time chronograph complication and hand-engraved movement."
+  },
+
+'gold_skeleton_executive_watch': {
+    id: 'gold_skeleton_executive_watch',
+    title: "Executive Rich Gold Skeleton Watch (Blue Dial)",
+    brand: "Armonía Milano",
+    category: 'fashion',
+    categoryLabel: "Men's Horlogerie",
+    conditionLabel: "Brand New · Luxury Gift Case",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: "SKELETON LUXE",
+    rating: '4.8',
+    reviewCount: 47,
+    soldCount: 83,
+    price: 'XAF 85.000',
+    salePrice: 'XAF 110.000',
+    storeName: "Armonía Milano Boutique",
+    storeCity: "Bonapriso, Douala",
+    storeRating: '4.8',
+    storeVerified: true,
+    coverImage: './Assets/watch/mechanic/Mens%20Watch%20Aesthetic%20%E2%80%93%20Rich%20Gold%20Skeleton%20Watch%20with%20Blue%20Dial%20Detail.jfif',
+    images: ['./Assets/watch/mechanic/Mens%20Watch%20Aesthetic%20%E2%80%93%20Rich%20Gold%20Skeleton%20Watch%20with%20Blue%20Dial%20Detail.jfif'],
+    attributes: [
+      { key: "Mechanism", val: "Visible Automatic Skeleton Movement" },
+      { key: "Plating", val: "18K Gold IP Vacuum Plating (Non-Fade)" },
+      { key: "Dial", val: "Royal Sunray Blue with Roman Numeral Indexes" },
+      { key: "Strap", val: "Solid Stainless Steel Link Bracelet with Butterfly Clasp" },
+      { key: "Waterproof", val: "30M Everyday Water Resistance" }
+    ],
+    description: "Exquisite mechanical architecture with open-heart skeleton dial, royal blue sunray accents and polished 18K gold IP plating."
+  },
+
+'minimalist_steel_dress_watch': {
+    id: 'minimalist_steel_dress_watch',
+    title: "Minimalist Stainless Steel Dress Watch",
+    brand: "Armonía Milano",
+    category: 'fashion',
+    categoryLabel: "Men's Horlogerie",
+    conditionLabel: "Brand New · Boxed",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: "TIMELESS",
+    rating: '4.7',
+    reviewCount: 58,
+    soldCount: 105,
+    price: 'XAF 65.000',
+    salePrice: 'XAF 80.000',
+    storeName: "Armonía Milano Boutique",
+    storeCity: "Bonapriso, Douala",
+    storeRating: '4.8',
+    storeVerified: true,
+    coverImage: './Assets/watch/mechanic/Minimalist%20stainless%20steel%20dress%20watch%20%E2%80%93%20sleek%20bracelet%20design%20for%20men%E2%80%99s%20formal%20&%20casual%20looks.jfif',
+    images: ['./Assets/watch/mechanic/Minimalist%20stainless%20steel%20dress%20watch%20%E2%80%93%20sleek%20bracelet%20design%20for%20men%E2%80%99s%20formal%20&%20casual%20looks.jfif'],
+    attributes: [
+      { key: "Profile", val: "7.5mm Ultra-Slim Contemporary Profile" },
+      { key: "Dial", val: "Clean Monochrome Face with Slim Baton Markers" },
+      { key: "Glass", val: "Hardened Mineral Crystal Glass" },
+      { key: "Movement", val: "Japanese Citizen Miyota Precision Quartz" },
+      { key: "Band", val: "Brushed & Polished Stainless Steel Bracelet" }
+    ],
+    description: "Ultra-slim 7.5mm stainless steel silhouette suited for tailored suits or weekend casuals. Built with Japanese Miyota quartz accuracy."
+  },
+
+'chelsea_boots': {
+    id: 'chelsea_boots',
+    title: "Kraasa Suede Chelsea Ankle Boots",
+    brand: "Kraasa",
+    category: 'fashion',
+    categoryLabel: "Men's Boots",
+    conditionLabel: "Brand New · Boxed",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: "STREET LUXE",
+    rating: '4.7',
+    reviewCount: 61,
+    soldCount: 88,
+    price: 'XAF 42.000',
+    salePrice: 'XAF 56.000',
+    storeName: "Kraasa Official",
+    storeCity: "Akwa, Douala",
+    storeRating: '4.7',
+    storeVerified: true,
+    coverImage: './Assets/fashion/shoes/Kraasa%20Men%27s%20Slip%20On%20Fashion%20Chelsea%20Boots.jfif',
+    images: ['./Assets/fashion/shoes/Kraasa%20Men%27s%20Slip%20On%20Fashion%20Chelsea%20Boots.jfif'],
+    attributes: [
+      { key: "Upper", val: "Premium Micro-Suede" },
+      { key: "Sole", val: "Anti-Slip TPR Rubber" },
+      { key: "Fit", val: "Slip-On Elastic Gusset" },
+      { key: "Season", val: "All-Season" }
+    ],
+    description: "Slip-on Chelsea boots in soft micro-suede with elastic side gussets and a grippy rubber sole — an easy pairing for denim or tailored trousers."
+  },
+
+'dress_loafers': {
+    id: 'dress_loafers',
+    title: "Timeless Black & White Dress Loafers",
+    brand: "Armonía Milano",
+    category: 'fashion',
+    categoryLabel: "Men's Formal Footwear",
+    conditionLabel: "Handcrafted",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: "EXECUTIVE",
+    rating: '4.8',
+    reviewCount: 44,
+    soldCount: 51,
+    price: 'XAF 48.000',
+    salePrice: 'XAF 62.000',
+    storeName: "Armonía Milano Boutique",
+    storeCity: "Bonapriso, Douala",
+    storeRating: '4.8',
+    storeVerified: true,
+    coverImage: './Assets/fashion/shoes/Timeless%20Elegance%20Luxury%20Black%20%26%20White%20Dress%20Loafers.jfif',
+    images: ['./Assets/fashion/shoes/Timeless%20Elegance%20Luxury%20Black%20%26%20White%20Dress%20Loafers.jfif'],
+    attributes: [
+      { key: "Material", val: "Two-Tone Patent Leather" },
+      { key: "Construction", val: "Blake-Stitched" },
+      { key: "Lining", val: "Full Leather" },
+      { key: "Occasion", val: "Black-Tie & Office" }
+    ],
+    description: "Two-tone spectator loafers in polished black-and-white leather, Blake-stitched with a leather sole. A statement of classic evening elegance."
+  },
+
+'leather_satchel': {
+    id: 'leather_satchel',
+    title: "Designer Monogram Leather Satchel",
+    brand: "Maison Danbaoly",
+    category: 'fashion',
+    categoryLabel: "Women's Designer Bags",
+    conditionLabel: "Brand New · Dust Bag",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: "TRENDING",
+    rating: '4.8',
+    reviewCount: 73,
+    soldCount: 120,
+    price: 'XAF 55.000',
+    salePrice: 'XAF 72.000',
+    storeName: "Maison Danbaoly",
+    storeCity: "Akwa, Douala",
+    storeRating: '4.8',
+    storeVerified: true,
+    coverImage: './Assets/fashion/handbag/Luxury%20Designer%20Leather%20Satchels%20%26%20Monogram%20Clutches%20_%20Handbag%20Collection.jfif',
+    images: ['./Assets/fashion/handbag/Luxury%20Designer%20Leather%20Satchels%20%26%20Monogram%20Clutches%20_%20Handbag%20Collection.jfif'],
+    attributes: [
+      { key: "Material", val: "Structured Saffiano Leather" },
+      { key: "Hardware", val: "Gold-Tone" },
+      { key: "Strap", val: "Detachable Crossbody" },
+      { key: "Interior", val: "Suede-Lined Compartments" }
+    ],
+    description: "A structured monogram satchel in Saffiano leather with gold hardware, top handles and a detachable strap — refined enough for the boardroom, roomy enough for daily life."
+  },
+
+'stiletto_heels': {
+    id: 'stiletto_heels',
+    title: "Metal-Buckle Banquet Stiletto Heels",
+    brand: "Bigtree",
+    category: 'fashion',
+    categoryLabel: "Women's Luxury Heels",
+    conditionLabel: "Brand New",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: "PARTY EDIT",
+    rating: '4.6',
+    reviewCount: 58,
+    soldCount: 96,
+    price: 'XAF 38.000',
+    salePrice: 'XAF 52.000',
+    storeName: "Bigtree Footwear",
+    storeCity: "Bonanjo, Douala",
+    storeRating: '4.6',
+    storeVerified: true,
+    coverImage: './Assets/fashion/shoes/Shoes%20Women%2010%20Cm%20Metal%20Buckle%20Ladies%20Pumps%20Luxury%20Womens%20Banquet%20Shoes%20Stilettos%20High%20Heels%20Women%20Sexy%20Party%20Shoes.jfif',
+    images: ['./Assets/fashion/shoes/Shoes%20Women%2010%20Cm%20Metal%20Buckle%20Ladies%20Pumps%20Luxury%20Womens%20Banquet%20Shoes%20Stilettos%20High%20Heels%20Women%20Sexy%20Party%20Shoes.jfif'],
+    attributes: [
+      { key: "Heel Height", val: "10 cm Stiletto" },
+      { key: "Upper", val: "Glossy Patent" },
+      { key: "Accent", val: "Metal Buckle" },
+      { key: "Padding", val: "Cushioned Insole" }
+    ],
+    description: "Glossy patent pumps on a 10 cm stiletto with a gold metal-buckle accent and a cushioned insole for all-night banquet wear."
+  },
+
+'ankara_palazzo': {
+    id: 'ankara_palazzo',
+    title: "100% Cotton Ankara Palazzo Trousers",
+    brand: "Loumoo Heritage",
+    category: 'fashion',
+    categoryLabel: "African Print Wear",
+    conditionLabel: "Handmade",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: "HERITAGE",
+    rating: '4.8',
+    reviewCount: 76,
+    soldCount: 143,
+    price: 'XAF 22.000',
+    salePrice: 'XAF 30.000',
+    storeName: "Douala Heritage Atelier",
+    storeCity: "New Bell, Douala",
+    storeRating: '4.8',
+    storeVerified: true,
+    coverImage: './Assets/fashion/EnsembleModel/100%25%20Cotton%20Ankara%20Palazzo%20Pants.jfif',
+    images: ['./Assets/fashion/EnsembleModel/100%25%20Cotton%20Ankara%20Palazzo%20Pants.jfif'],
+    attributes: [
+      { key: "Fabric", val: "100% Wax Cotton Ankara" },
+      { key: "Fit", val: "High-Waist Palazzo" },
+      { key: "Make", val: "Locally Tailored" },
+      { key: "Care", val: "Machine Wash Cold" }
+    ],
+    description: "Flowing high-waist palazzo trousers cut from genuine 100% cotton Ankara wax print, tailored locally for vivid colour and everyday comfort."
+  },
+
+'artisan_sandals': {
+    id: 'artisan_sandals',
+    title: "Handmade Woven Leather Sandals",
+    brand: "Sahel Artisans",
+    category: 'fashion',
+    categoryLabel: "Artisan Footwear",
+    conditionLabel: "Handmade",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: "ARTISAN",
+    rating: '4.7',
+    reviewCount: 52,
+    soldCount: 97,
+    price: 'XAF 15.000',
+    salePrice: 'XAF 22.000',
+    storeName: "Sahel Leather Works",
+    storeCity: "Garoua",
+    storeRating: '4.7',
+    storeVerified: true,
+    coverImage: './Assets/fashion/shoes/Men%20brown%20leather%20strap%20sandal%20handmade%20barefoot%20woven%20band%20summer%20footwear%20casual%20everyday%20comfort%20Arabian%20style%20Middle%20East%20men%20sandal.jfif',
+    images: ['./Assets/fashion/shoes/Men%20brown%20leather%20strap%20sandal%20handmade%20barefoot%20woven%20band%20summer%20footwear%20casual%20everyday%20comfort%20Arabian%20style%20Middle%20East%20men%20sandal.jfif'],
+    attributes: [
+      { key: "Material", val: "Full-Grain Cowhide" },
+      { key: "Make", val: "Hand-Woven Band" },
+      { key: "Sole", val: "Stitched Leather" },
+      { key: "Style", val: "Barefoot Summer" }
+    ],
+    description: "Hand-woven full-grain leather sandals made by northern Cameroonian artisans — supple, breathable and built to last through seasons of wear."
+  },
+
+'beaded_bracelet': {
+    id: 'beaded_bracelet',
+    title: "Natural Stone Beaded Warrior Bracelet",
+    brand: "Loumoo Heritage",
+    category: 'fashion',
+    categoryLabel: "Men's Jewelry",
+    conditionLabel: "Handmade",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: "HANDCRAFTED",
+    rating: '4.6',
+    reviewCount: 64,
+    soldCount: 128,
+    price: 'XAF 12.000',
+    salePrice: 'XAF 18.000',
+    storeName: "Douala Heritage Atelier",
+    storeCity: "New Bell, Douala",
+    storeRating: '4.6',
+    storeVerified: true,
+    coverImage: './Assets/jelweries/bracelet/Men%20Charm%20Black%20Spartan%20Helmet%20Beaded%20Natural%20Stone%20Adjustable%20Macrame%20Bracelets%20_%20eBay.jfif',
+    images: ['./Assets/jelweries/bracelet/Men%20Charm%20Black%20Spartan%20Helmet%20Beaded%20Natural%20Stone%20Adjustable%20Macrame%20Bracelets%20_%20eBay.jfif'],
+    attributes: [
+      { key: "Beads", val: "Natural Volcanic Stone" },
+      { key: "Charm", val: "Warrior Helmet" },
+      { key: "Clasp", val: "Adjustable Macramé" },
+      { key: "Fit", val: "One Size" }
+    ],
+    description: "An adjustable macramé bracelet strung with natural volcanic stone beads and a metal warrior-helmet charm — grounding, durable and easy to wear."
+  },
+
+'shea_lotion': {
+    id: 'shea_lotion',
+    title: "Shea & Baobab Nourishing Body Lotion",
+    brand: "Nubian Glow",
+    category: 'beauty',
+    categoryLabel: "Skincare",
+    conditionLabel: "Brand New",
+    fulfillmentLabel: 'Douala & Yaoundé Express Delivery',
+    badge: "AFRICAN-OWNED",
+    rating: '4.9',
+    reviewCount: 188,
+    soldCount: 402,
+    price: 'XAF 9.500',
+    salePrice: 'XAF 14.000',
+    storeName: "Nubian Glow Beauty",
+    storeCity: "Bonapriso, Douala",
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/perfume&lotion/MEET%20THE%204%20AFRICAN-OWNED%20BRANDS%20BRIDGING%20THE%20GAP%20IN%20THE%20SKINCARE%20MARKET%20FOR%20DARKER%20CONSUMERS.jfif',
+    images: ['./Assets/perfume&lotion/MEET%20THE%204%20AFRICAN-OWNED%20BRANDS%20BRIDGING%20THE%20GAP%20IN%20THE%20SKINCARE%20MARKET%20FOR%20DARKER%20CONSUMERS.jfif'],
+    attributes: [
+      { key: "Key Actives", val: "Raw Shea & Baobab Oil" },
+      { key: "Skin Type", val: "Dry to Normal" },
+      { key: "Free From", val: "Parabens & Sulfates" },
+      { key: "Volume", val: "250ml" }
+    ],
+    description: "A rich shea-and-baobab body lotion from an African-owned label, formulated to deeply nourish and even melanin-rich skin without greasiness."
+  },
+
+'na_double_monk_01': {
+    id: 'na_double_monk_01',
+    title: 'Armonía Glossy Black Double-Monk Leather Shoes',
+    brand: 'Armonía Milano',
+    category: 'fashion',
+    categoryLabel: 'Men’s Luxury Footwear',
+    conditionLabel: 'Handcrafted · Box Calfskin',
+    fulfillmentLabel: 'Douala & Yaoundé Express 24h',
+    badge: 'LUXURY DERBY',
+    rating: '4.9',
+    reviewCount: 42,
+    soldCount: 38,
+    price: 'XAF 85 000',
+    salePrice: 'XAF 115 000',
+    storeName: 'Armonía Milano Boutique',
+    storeCity: 'Bonapriso, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/_processed/new_arrivals_01.jpg',
+    images: ['./Assets/_processed/new_arrivals_01.jpg'],
+    attributes: [
+      { key: 'Material', val: 'Full-Grain Italian Box Calfskin Leather' },
+      { key: 'Hardware', val: 'Polished Dual Gold Buckles' },
+      { key: 'Construction', val: 'Blake-Stitched Leather Outsole' },
+      { key: 'Origin', val: 'Handmade in Milan, Italy' }
+    ],
+    description: 'Elevate your boardroom and evening presence with the Armonía Double-Monk Shoes. Cut from mirror-finish black Italian box calfskin with handcrafted brogue perforations on the toe cap. Finished with gold-tone dual buckle hardware and a durable Goodyear welted leather sole.'
+  },
+
+'na_danbaoly_bag_02': {
+    id: 'na_danbaoly_bag_02',
+    title: 'Danbaoly Crimson Red Bow-Tie Structured Handbag',
+    brand: 'Danbaoly',
+    category: 'fashion',
+    categoryLabel: 'Women’s Designer Bags',
+    conditionLabel: 'Brand New · Dust Bag Included',
+    fulfillmentLabel: 'Nationwide Delivery',
+    badge: 'TRENDING LUXURY',
+    rating: '4.8',
+    reviewCount: 67,
+    soldCount: 112,
+    price: 'XAF 42 000',
+    salePrice: 'XAF 58 000',
+    storeName: 'Maison Danbaoly',
+    storeCity: 'Akwa, Douala',
+    storeRating: '4.8',
+    storeVerified: true,
+    coverImage: './Assets/_processed/new_arrivals_02.jpg',
+    images: ['./Assets/_processed/new_arrivals_02.jpg'],
+    attributes: [
+      { key: 'Material', val: 'Pebbled Calfskin Composite' },
+      { key: 'Accents', val: 'Structured Bow-Tie & 24K Star Charm' },
+      { key: 'Closure', val: 'Top Secure Zip with Dual Compartments' },
+      { key: 'Strap', val: 'Detachable Adjustable Crossbody Strap' }
+    ],
+    description: 'A striking statement of femininity and poise, the Danbaoly Crimson Tote features rich textured red leather, sculpted top handles, a signature bow-tie facade, and polished gold star pendant.'
+  },
+
+'na_pedro_backpack_03': {
+    id: 'na_pedro_backpack_03',
+    title: 'Pedro Tri-Tone Heritage Urban Commuter Rucksack',
+    brand: 'Pedro Official',
+    category: 'fashion',
+    categoryLabel: 'Designer Backpacks & Rucksacks',
+    conditionLabel: 'Limited Release · Factory Sealed',
+    fulfillmentLabel: 'Same-Day Dispatch',
+    badge: 'LIMITED EDITION',
+    rating: '4.9',
+    reviewCount: 53,
+    soldCount: 41,
+    price: 'XAF 68 000',
+    salePrice: 'XAF 88 000',
+    storeName: 'Pedro Flagship Cameroon',
+    storeCity: 'Bastos, Yaoundé',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/_processed/new_arrivals_03.jpg',
+    images: ['./Assets/_processed/new_arrivals_03.jpg'],
+    attributes: [
+      { key: 'Palette', val: 'Ivory White, Cognac Tan & Sky Blue' },
+      { key: 'Capacity', val: '18L (Padded 15.6” Laptop Sleeve)' },
+      { key: 'Closure', val: 'Drawstring & Dual Magnetic Buckles' },
+      { key: 'Exterior', val: 'Dual Gusseted Quick-Access Pockets' }
+    ],
+    description: 'Engineered for modern creative professionals, the Pedro Tri-Tone Rucksack blends retro heritage craftsmanship with contemporary ergonomics. Fits up to 16” MacBook Pro with ergonomic ventilated back padding.'
+  },
+
+'na_amina_muaddi_06': {
+    id: 'na_amina_muaddi_06',
+    title: 'Amina Muaddi Sunburst Orange Pumps & Quilted Bag Set',
+    brand: 'Amina Muaddi Paris',
+    category: 'fashion',
+    categoryLabel: 'Haute Couture Sets',
+    conditionLabel: 'Boutique Exclusive · Dust Bags & Box',
+    fulfillmentLabel: 'White Glove Concierge Delivery',
+    badge: 'CRYSTAL SUNBURST',
+    rating: '5.0',
+    reviewCount: 29,
+    soldCount: 15,
+    price: 'XAF 125 000',
+    salePrice: 'XAF 165 000',
+    storeName: 'Bella Donna Boutique',
+    storeCity: 'Bonanjo, Douala',
+    storeRating: '5.0',
+    storeVerified: true,
+    coverImage: './Assets/_processed/new_arrivals_06.jpg',
+    images: ['./Assets/_processed/new_arrivals_06.jpg'],
+    attributes: [
+      { key: 'Set Includes', val: 'Orange Satin Pumps + Quilted Top Handle Bag' },
+      { key: 'Embellishment', val: 'Swarovski Crystal Sunburst Brooch' },
+      { key: 'Heel', val: 'Sculptural 95mm Flared Martini Heel' },
+      { key: 'Origin', val: 'Artisan Crafted in Italy' }
+    ],
+    description: 'An iconic runway ensemble. Radiating vibrant mandarin orange duchess satin, anchored by Amina Muaddi’s signature crystal sunburst buckle and architectural flared martini heel, accompanied by a matching cannage-quilted handbag.'
+  },
+
+'na_noire_birkin_07': {
+    id: 'na_noire_birkin_07',
+    title: 'NOIRE Matte Crocodile Birkin Luxury Top-Handle Handbag',
+    brand: 'NOIRE Haute Maroquinerie',
+    category: 'fashion',
+    categoryLabel: 'Ultra-Luxury Leather Goods',
+    conditionLabel: 'Atelier Edition · Clochette & Padlock',
+    fulfillmentLabel: 'Armored Escrow Courier Delivery',
+    badge: 'CROCO EMBOSSED',
+    rating: '5.0',
+    reviewCount: 17,
+    soldCount: 9,
+    price: 'XAF 195 000',
+    salePrice: 'XAF 260 000',
+    storeName: 'NOIRE Atelier Cameroon',
+    storeCity: 'Bastos, Yaoundé',
+    storeRating: '5.0',
+    storeVerified: true,
+    coverImage: './Assets/_processed/new_arrivals_07.jpg',
+    images: ['./Assets/_processed/new_arrivals_07.jpg'],
+    attributes: [
+      { key: 'Leather', val: 'Exotic Embossed Matte Porosus Leather' },
+      { key: 'Hardware', val: '24K Brushed Gold Plated Turn-Lock' },
+      { key: 'Dimensions', val: '30cm Width x 22cm Height x 16cm Depth' },
+      { key: 'Interior', val: 'Full Chevre Goatskin Lining with Zip Pocket' }
+    ],
+    description: 'The epitome of high-fashion prestige. The NOIRE 30 features exotic matte alligator grain in midnight black, polished 24K gold hardware with clochette and lock keys, and master artisan saddle stitching.'
+  },
+
+'na_bigtree_heels_08': {
+    id: 'na_bigtree_heels_08',
+    title: 'Bigtree Emerald Alligator Patent 10cm Stiletto Pumps',
+    brand: 'Bigtree Shoes',
+    category: 'fashion',
+    categoryLabel: 'Women’s Luxury Heels',
+    conditionLabel: 'Brand New · Official Shoe Box',
+    fulfillmentLabel: 'Same-Day Dispatch',
+    badge: '10CM STILETTO',
+    rating: '4.8',
+    reviewCount: 85,
+    soldCount: 140,
+    price: 'XAF 38 000',
+    salePrice: 'XAF 52 000',
+    storeName: 'Glamour Steps Douala',
+    storeCity: 'Douala Grand Mall',
+    storeRating: '4.8',
+    storeVerified: true,
+    coverImage: './Assets/_processed/new_arrivals_08.jpg',
+    images: ['./Assets/_processed/new_arrivals_08.jpg'],
+    attributes: [
+      { key: 'Upper', val: 'Glossy Emerald Croc-Embossed Patent Leather' },
+      { key: 'Heel Height', val: '10cm (3.9 Inches) Precision Stiletto' },
+      { key: 'Accent', val: 'Sculpted Gold Metal Square Buckle' },
+      { key: 'Insole', val: 'Memory Foam Padded Arch Support' }
+    ],
+    description: 'Captivate the room in deep emerald green. Featuring high-gloss alligator patent leather, a sleek pointed toe framed by a polished gold metallic square buckle, and a razor-sharp 10cm stiletto heel.'
+  },
+
+'na_artisan_brogue_09': {
+    id: 'na_artisan_brogue_09',
+    title: 'Artisan Lug-Sole Wingtip Brogue Derby Shoes (Black)',
+    brand: 'Sartorial Douala',
+    category: 'fashion',
+    categoryLabel: 'Men’s Heritage Footwear',
+    conditionLabel: 'Artisan Box Calfskin · With Shoe Trees',
+    fulfillmentLabel: 'Express Delivery Across Cameroon',
+    badge: 'COMMANDO LUG SOLE',
+    rating: '4.9',
+    reviewCount: 46,
+    soldCount: 33,
+    price: 'XAF 75 000',
+    salePrice: 'XAF 98 000',
+    storeName: 'Sartorial Douala Atelier',
+    storeCity: 'Bali, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/_processed/new_arrivals_09.jpg',
+    images: ['./Assets/_processed/new_arrivals_09.jpg'],
+    attributes: [
+      { key: 'Leather', val: 'Full-Grain Box Calfskin with Medallion Brogue' },
+      { key: 'Sole', val: 'Lightweight Chunky Commando Lug Sole' },
+      { key: 'Welt', val: 'Storm-Welted 360° Water-Resistant Edging' },
+      { key: 'Lining', val: 'Vegetable-Tanned Cowhide Lining' }
+    ],
+    description: 'Modern rugged sophistication meets classic tailoring. Crafted from lustrous black box calfskin with wingtip broguing, set on an imposing yet featherweight chunky lug sole for maximum grip and comfort in any weather.'
+  },
+
+'na_tobacco_vanille_10': {
+    id: 'na_tobacco_vanille_10',
+    title: 'Tobacco Vanille Artisanal Extrait De Parfum (30ml)',
+    brand: 'L’Artisan Parfumeur',
+    category: 'beauty',
+    categoryLabel: 'Niche Haute Parfumerie',
+    conditionLabel: 'Freshly Matured Batch · 30ml Atomizer',
+    fulfillmentLabel: 'Carefully Padded Same-Day Shipping',
+    badge: 'PURE EXTRAIT 30ML',
+    rating: '5.0',
+    reviewCount: 92,
+    soldCount: 165,
+    price: 'XAF 35 000',
+    salePrice: 'XAF 48 000',
+    storeName: 'L’Artisan Parfumeur Yaoundé',
+    storeCity: 'Bastos, Yaoundé',
+    storeRating: '5.0',
+    storeVerified: true,
+    coverImage: './Assets/_processed/new_arrivals_10.jpg',
+    images: ['./Assets/_processed/new_arrivals_10.jpg'],
+    attributes: [
+      { key: 'Concentration', val: 'Extrait De Parfum (35% Oil Concentration)' },
+      { key: 'Top Notes', val: 'Tobacco Leaf, Spiced Ginger, Star Anise' },
+      { key: 'Heart Notes', val: 'Tonka Bean, Tobacco Blossom, Vanilla, Cacao' },
+      { key: 'Base Notes', val: 'Dried Fruits, Woody Accord, Smoky Cedar' }
+    ],
+    description: 'An intoxicating, warm, and opulent olfactory journey. Featuring rare hand-harvested tobacco leaves steeped in rich Madagascar bourbon vanilla, sweet tonka beans, and smoky cedarwood. Delivers 16+ hours of projection.'
+  },
+
+'na_infinity_necklace_11': {
+    id: 'na_infinity_necklace_11',
+    title: 'Swarovski Crystal Infinity Teardrop Necklace & Earrings Set',
+    brand: 'Prestige Bijoux',
+    category: 'fashion',
+    categoryLabel: 'Fine Bridal & Gala Jewelry',
+    conditionLabel: 'Brand New · Velvet Presentation Box',
+    fulfillmentLabel: 'Insured Escrow Courier Delivery',
+    badge: 'BRIDAL & GALA PARURE',
+    rating: '4.9',
+    reviewCount: 73,
+    soldCount: 54,
+    price: 'XAF 55 000',
+    salePrice: 'XAF 75 000',
+    storeName: 'Prestige Bijoux Bonapriso',
+    storeCity: 'Bonapriso, Douala',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/_processed/new_arrivals_11.jpg',
+    images: ['./Assets/_processed/new_arrivals_11.jpg'],
+    attributes: [
+      { key: 'Metal', val: 'Hypoallergenic Rhodium Plated Platinum Finish' },
+      { key: 'Gems', val: 'Precision-Cut Swarovski CZ Pave Crystals' },
+      { key: 'Closure', val: 'Secure Lobster Clasp with Extension Chain' },
+      { key: 'Set Includes', val: 'Teardrop Statement Necklace + Matching Drop Earrings' }
+    ],
+    description: 'Dazzle at weddings, galas, and celebrations with this royal crystal parure. Featuring cascading infinity teardrop loops pavé-set with brilliant-cut crystals that catch every ray of light, complete with matching earrings.'
+  },
+
+'nike_air_force_1': {
+    id: 'nike_air_force_1',
+    title: 'Nike Air Force 1 ‘07 Triple White Classic Edition',
+    brand: 'Nike',
+    category: 'fashion',
+    categoryLabel: 'Sneakers & Streetwear',
+    conditionLabel: 'Brand New · Original Box',
+    fulfillmentLabel: 'Express Delivery across Cameroon',
+    badge: 'ICONIC',
+    rating: '4.8',
+    reviewCount: 240,
+    soldCount: 190,
+    price: 'XAF 65 000',
+    salePrice: 'XAF 75 000',
+    storeName: 'Urban Kicks Bonamoussadi',
+    storeCity: 'Douala, Bonamoussadi',
+    storeRating: '4.8',
+    storeVerified: true,
+    coverImage: './Assets/fashion/shoes/Look%20at%20this%20new%20Nike%20Air%20Force.jfif',
+    images: [
+      './Assets/fashion/shoes/Look%20at%20this%20new%20Nike%20Air%20Force.jfif',
+      './Assets/fashion/shoes/Nike%20Air%20Force%201%20is%20Waiting%20For%20You___.jfif'
+    ],
+    videoUrl: './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2010%20Aesthetic%20holiday%20table%20setting%20ideas%20that%20bring%20together%20comfort%20beauty%20and%20useful%20ideas%20you%20will%20actually%20try%20for%20people%20w.mp4',
+    attributes: [
+      { key: 'Material', val: '100% Genuine Full-Grain Leather Upper' },
+      { key: 'Cushioning', val: 'Encapsulated Nike Air-Sole Cushioning Unit' },
+      { key: 'Outsole', val: 'Non-Marking Solid Rubber Traction Tread' }
+    ],
+    description: 'The radiance lives on in the Nike Air Force 1 07, the basketball icon that puts a fresh spin on what you know best: crisp leather, bold colors, and the perfect amount of flash.'
+  },
+
+'rolex_submariner': {
+    id: 'rolex_submariner',
+    title: 'Rolex Submariner Date 41mm Oystersteel — Black Ceramic Bezel',
+    brand: 'Rolex',
+    category: 'fashion',
+    categoryLabel: 'Luxury Watches & Horology',
+    conditionLabel: 'Mint Condition · Box & Papers Included',
+    fulfillmentLabel: 'Insured Escrow Hand Delivery',
+    badge: 'CERTIFIED LUXURY',
+    rating: '5.0',
+    reviewCount: 31,
+    soldCount: 14,
+    price: 'XAF 7 850 000',
+    salePrice: '',
+    storeName: 'Geneva Horlogerie Akwa',
+    storeCity: 'Douala, Akwa',
+    storeRating: '5.0',
+    storeVerified: true,
+    coverImage: './Assets/watch/mechanic/Rolex%20Datejust%2041%20watch_%20Oystersteel%20and%20white%E2%80%A6.jfif',
+    images: [
+      './Assets/watch/mechanic/Rolex%20Datejust%2041%20watch_%20Oystersteel%20and%20white%E2%80%A6.jfif',
+      './Assets/watch/mechanic/Classic%20Rolex%20SeaDweller.jfif'
+    ],
+    videoUrl: './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2094%20Clever%20Morning%20Routine%20Ideas-pin-id-641833384412737958.mp4',
+    attributes: [
+      { key: 'Movement', val: 'Calibre 3235 Perpetual Mechanical Self-Winding' },
+      { key: 'Case Diameter', val: '41mm Oystersteel with Cerachrom Ceramic Bezel' },
+      { key: 'Water Resistance', val: 'Waterproof to 300 meters (1000 feet)' }
+    ],
+    description: 'The benchmark among divers watches. Features the unidirectional rotatable Cerachrom bezel and solid-link Oyster bracelet with Glidelock extension system. Authenticity verified and backed by Loumoo Diamond Escrow.'
+  },
+
+'bazin_boubou': {
+    id: 'bazin_boubou',
+    title: 'Royal Bazin Riche Grand Boubou — Hand-Embroidered Gold Thread',
+    brand: 'Maison du Bazin',
+    category: 'fashion',
+    categoryLabel: 'African Couture & Heritage',
+    conditionLabel: 'Brand New · Haute Couture',
+    fulfillmentLabel: 'Custom Tailored & Express Courier',
+    badge: 'HANDCRAFTED',
+    rating: '4.9',
+    reviewCount: 52,
+    soldCount: 37,
+    price: 'XAF 125 000',
+    salePrice: 'XAF 145 000',
+    storeName: 'Maison du Bazin & Soie',
+    storeCity: 'Yaoundé, Bastos',
+    storeRating: '4.9',
+    storeVerified: true,
+    coverImage: './Assets/fashion/EnsembleModel/100%25%20Cotton%20Ankara%20Palazzo%20Pants.jfif',
+    images: [
+      './Assets/fashion/EnsembleModel/100%25%20Cotton%20Ankara%20Palazzo%20Pants.jfif',
+      './Assets/fashion/shoes/#MenStyle%20#MensFashion%20#CorporateStyle%20#MensShoe%E2%80%A6.jfif'
+    ],
+    videoUrl: './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%20Beachy%20beach%20picnic%20thoughts%20and%20clever%20inspiration%20with%20timeless%20style%20to%20brighten%20your%20feed-pin-id-958000151964999370.mp4',
+    attributes: [
+      { key: 'Fabric', val: '100% Genuine Getzner Superior Cotton Damask' },
+      { key: 'Embroidery', val: 'Intricate Geometric Gold Metallic Thread' },
+      { key: 'Set Includes', val: '3 Pieces: Grand Boubou, Matching Tunic & Trousers' }
+    ],
+    description: 'Exquisite Cameroonian and West African formal ceremonial attire. Crafted from premium Getzner Bazin Riche with authentic wax shine and meticulous artisanal embroidery.'
+  },
+
+'sawa_hotel_suite': {
     id: 'sawa_hotel_suite',
     title: 'Hotel Sawa Douala — Presidential Executive Suite (Pool & Harbor View)',
     brand: 'Hotel Sawa',
@@ -7631,7 +20657,8 @@ const PRODUCTS_DATA = {
     ],
     description: 'Experience refined Cameroonian elegance in the heart of Bonanjo. The Presidential Executive Suite offers panoramic vistas over the Wouri River harbor, private Italian marble bath, dedicated butler service, and direct concierge dispatch.'
   },
-  'finexs_vip_bus': {
+
+'finexs_vip_bus': {
     id: 'finexs_vip_bus',
     title: 'Finexs Voyages VIP Coach Express — Douala Akwa ⇄ Yaoundé Mvan',
     brand: 'Finexs Voyages',
@@ -7664,7 +20691,8 @@ const PRODUCTS_DATA = {
     ],
     description: 'The premier VIP intercity transit line connecting Douala and Yaoundé. Enjoy spacious 2+1 reclining leather seats, uninterrupted climate control, on-board refreshments, and licensed professional drivers with GPS speed monitoring.'
   },
-  'it_consulting_service': {
+
+'it_consulting_service': {
     id: 'it_consulting_service',
     title: 'Senior Cloud Architecture & DevSecOps Engineering Consulting',
     brand: 'Ascendant Tech Labs',
@@ -7682,10 +20710,10 @@ const PRODUCTS_DATA = {
     storeCity: 'Douala, Bonapriso',
     storeRating: '5.0',
     storeVerified: true,
-    coverImage: './Assets/LOGO%20icons/Lettering%20service%20screwdriver%20and%20wrench%20symbol%20for%20repair%20and%20service%20_%20Premium%20Vector.jfif',
+    coverImage: './Assets/LOGO%20icons/SimpleIcons/Lettering%20service%20screwdriver%20and%20wrench%20symbol%20for%20repair%20and%20service%20_%20Premium%20Vector.jfif',
     images: [
-      './Assets/LOGO%20icons/Lettering%20service%20screwdriver%20and%20wrench%20symbol%20for%20repair%20and%20service%20_%20Premium%20Vector.jfif',
-      './Assets/telephone&PC/Starlink%20Mini%20Is%20A%20Backpack-Sized%20Satellite%20Internet%20Kit.jfif'
+      './Assets/LOGO%20icons/SimpleIcons/Lettering%20service%20screwdriver%20and%20wrench%20symbol%20for%20repair%20and%20service%20_%20Premium%20Vector.jfif',
+      './Assets/LOGO%20icons/SimpleIcons/Lettering%20service%20screwdriver%20and%20wrench%20symbol%20for%20repair%20and%20service%20_%20Premium%20Vector.jfif'
     ],
     videoUrl: './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2094%20Clever%20Morning%20Routine%20Ideas-pin-id-641833384412737958.mp4',
     attributes: [
@@ -7696,6 +20724,7 @@ const PRODUCTS_DATA = {
     ],
     description: 'High-impact enterprise engineering consulting for scalable digital platforms and FinTech solutions. Escrow funds are released strictly upon milestone deliverable sign-off.'
   }
+
 };
 
 /* Video playback controllers for seamless hover-to-play media cards */
@@ -8168,8 +21197,8 @@ class Component extends DCLogic {
     if (!slug || slug === 'all') return [];
     const MAP = {
       electronics: ['electronics','smartphones','laptops','audio','wearables','gaming','power_accessories','tech'],
-      fashion: ['fashion','footwear','clothing','shoes','watches_jewelry','apparel','streetwear'],
-      home: ['home','home_living','furniture','appliances','kitchen','decor'],
+      fashion: ['fashion','footwear','clothing','shoes','watches_jewelry','apparel','streetwear','bags','luxury'],
+      home: ['home','home_living','furniture','appliances','kitchen','decor','cookware','tableware','home_care'],
       automotive: ['automotive','cars','auto_parts','vehicles','motorbike'],
       services: ['services','tech_repairs','creative_services','education','repairs'],
       hotels: ['hotels','hospitality','hotel_rooms','furnished_studios'],
@@ -8185,6 +21214,58 @@ class Component extends DCLogic {
     try { if (typeof PRODUCTS_DATA !== 'undefined') Object.keys(PRODUCTS_DATA).forEach((k) => add(Object.assign({ id: k }, PRODUCTS_DATA[k]))); } catch (e) {}
     (this.state.catalogProducts || []).forEach(add);
     return merged.filter((p) => cats.indexOf(String(p.category || '').toLowerCase()) !== -1);
+  };
+  _matchesSubcategory = (p, sub) => {
+    if (!sub || sub === 'all') return true;
+    if (p.subcategory) return String(p.subcategory).toLowerCase() === sub;
+    const c = String(p.category || '').toLowerCase();
+    const cl = String(p.categoryLabel || '').toLowerCase();
+    const t = String(p.title || p.name || '').toLowerCase();
+    const subClean = sub.replace(/_/g, ' ');
+
+    if (sub === 'laptops') {
+      return ['laptop', 'macbook', 'surface', 'thinkpad', 'xps', 'spectre', 'ultrabook', 'computer', 'notebook', 'pc', 'workstation'].some(w => t.includes(w) || cl.includes(w));
+    }
+    if (sub === 'smartphones') {
+      if (['laptop', 'macbook', 'surface', 'thinkpad', 'headphone', 'earbud', 'speaker', 'airpod', 'watch', 'power bank', 'charger', 'cable'].some(w => t.includes(w) || cl.includes(w))) {
+        return false;
+      }
+      return ['phone', 'pixel', 'galaxy', 'iphone', 'tecno', 'infinix', 'redmi', 'xiaomi', 'oppo', 'huawei', 'oneplus', 'samsung', '5g', 'smartphone', 'duos', 'note'].some(w => t.includes(w) || cl.includes(w));
+    }
+    if (sub === 'audio') {
+      return ['headphone', 'earbud', 'audio', 'airpod', 'spacebud', 'speaker', 'jbl', 'mifa', 'alexa', 'sound', 'anc'].some(w => t.includes(w) || cl.includes(w));
+    }
+    if (sub === 'power_accessories') {
+      return ['power bank', 'charger', 'cable', 'gan', 'airtag', 'camera', 'cam', 'drone', 'mic', 'shaver', 'watch', 'smartwatch', 'ps5', 'dualsense', 'accessory', 'gadget', 'batterie', 'juicer', 'airfryer', 'espresso', 'smart living', 'appliance', 'living'].some(w => t.includes(w) || cl.includes(w));
+    }
+
+    if (sub === 'footwear') {
+      return ['footwear', 'shoe', 'sneaker', 'boot', 'heel', 'sandal', 'loafer', 'slip on'].some(w => t.includes(w) || cl.includes(w));
+    }
+    if (sub === 'clothing') {
+      return ['apparel', 'clothing', 'pant', 'dress', 'boubou', 'shirt', 'suit', 'couture', 'wear', 'palazzo'].some(w => t.includes(w) || cl.includes(w));
+    }
+    if (sub === 'bags') {
+      return ['bag', 'handbag', 'tote', 'satchel', 'backpack', 'sac', 'clutch', 'leather'].some(w => t.includes(w) || cl.includes(w));
+    }
+    if (sub === 'watches_jewelry') {
+      return ['watch', 'jewelry', 'ring', 'necklace', 'bracelet', 'rolex', 'horlogerie'].some(w => t.includes(w) || cl.includes(w));
+    }
+
+    if (sub === 'appliances') {
+      return ['appliance', 'électroménager', 'electromenage', 'blender', 'mixeur', 'friteuse', 'air fryer', 'cafetière', 'robot', 'hachoir', 'bouilloire', 'machine', 'presse-agrume', 'balance', 'gaufrier'].some(w => t.includes(w) || cl.includes(w));
+    }
+    if (sub === 'cookware') {
+      return ['cookware', 'poêle', 'casserole', 'marmite', 'batterie', 'ustensile', 'couteau', 'cuillère', 'wok', 'allume-gaz'].some(w => t.includes(w) || cl.includes(w));
+    }
+    if (sub === 'tableware') {
+      return ['tableware', 'assiette', 'service', 'porcelaine', 'verre', 'tasse', 'bol', 'vaisselle', 'couvert', 'ménagère', 'plat'].some(w => t.includes(w) || cl.includes(w));
+    }
+    if (sub === 'home_care') {
+      return ['home_care', 'care', 'aspirateur', 'balai', 'défroisseur', 'repassage', 'rangement', 'organisateur', 'panier', 'poubelle', 'sèche-cheveux', 'lisseur'].some(w => t.includes(w) || cl.includes(w));
+    }
+
+    return sub === c || cl.includes(subClean) || t.includes(subClean);
   };
   // Hotel date helpers: nights between two ISO dates, and a human label.
   _hotelNights = (ci, co) => {
@@ -10700,9 +23781,35 @@ class Component extends DCLogic {
       productError: this.state.productError || '',
       currentProduct: this.state.currentProduct,
       currentProductTitle: this.state.currentProduct ? this.state.currentProduct.title : 'Apple MacBook Air 13” (M2 Chip)',
-      currentProductPrice: this.state.currentProduct ? (this.state.currentProduct.price || ('XAF ' + fmt(this.state.currentProduct.base_price_minor || this.state.currentProduct.priceNumeric || 745000))) : ('XAF ' + fmt(line)),
-      currentProductSalePrice: this.state.currentProduct && this.state.currentProduct.salePrice ? this.state.currentProduct.salePrice : null,
-      currentProductBrand: this.state.currentProduct ? this.state.currentProduct.brand : 'Apple',
+      currentProductPrice: (() => {
+        const p = this.state.currentProduct;
+        if (!p) return ('XAF ' + fmt(line));
+        const rawP = p.price || (p.priceNumeric ? ('XAF ' + fmt(p.priceNumeric)) : (p.base_price_minor ? ('XAF ' + fmt(p.base_price_minor)) : ''));
+        const rawSale = p.salePrice || '';
+        if (rawSale && rawP && rawSale !== rawP) {
+          const n1 = parseInt(String(rawP).replace(/[^0-9]/g, ''), 10) || 0;
+          const n2 = parseInt(String(rawSale).replace(/[^0-9]/g, ''), 10) || 0;
+          if (n1 > 0 && n2 > 0 && n1 !== n2) {
+            return n1 < n2 ? rawP : rawSale;
+          }
+        }
+        return rawP || rawSale || ('XAF ' + fmt(line));
+      })(),
+      currentProductSalePrice: (() => {
+        const p = this.state.currentProduct;
+        if (!p) return null;
+        const rawP = p.price || (p.priceNumeric ? ('XAF ' + fmt(p.priceNumeric)) : (p.base_price_minor ? ('XAF ' + fmt(p.base_price_minor)) : ''));
+        const rawSale = p.salePrice || '';
+        if (rawSale && rawP && rawSale !== rawP) {
+          const n1 = parseInt(String(rawP).replace(/[^0-9]/g, ''), 10) || 0;
+          const n2 = parseInt(String(rawSale).replace(/[^0-9]/g, ''), 10) || 0;
+          if (n1 > 0 && n2 > 0 && n1 !== n2) {
+            return n1 < n2 ? rawSale : rawP;
+          }
+        }
+        return null;
+      })(),
+      currentProductBrand: (this.state.currentProduct && this.state.currentProduct.brand) || ((this.state.currentProduct && this.state.currentProduct.title) ? String(this.state.currentProduct.title).trim().split(' ')[0] : '') || 'LOUMOO',
       currentProductBadge: this.state.currentProduct && this.state.currentProduct.verified ? 'VERIFIED BOUTIQUE' : 'OFFICIAL PARTNER',
       currentProductCategoryLabel: this.state.currentProduct ? (this.state.currentProduct.category || 'Electronics') : 'Smartphones & Laptops',
       currentProductConditionLabel: this.state.currentProduct ? (String(this.state.currentProduct.condition || 'new').toUpperCase() + ' · SEALED') : 'BRAND NEW · SEALED',
@@ -12965,16 +26072,48 @@ class Component extends DCLogic {
       // ── Data-driven category drill-down grid ────────────────────────────
       // Every category resolves to real products (curated + live catalogue),
       // so categories without a bespoke editorial block never render blank.
-      categoryProductCards: this._categoryProductPool(this.state.activeCategorySlug || 'all').map((p) => ({
-        id: p.id,
-        title: p.title || p.name || 'Untitled listing',
-        imageUrl: encImg(p.coverImage || p.imageUrl || p.image || (p.images && p.images[0]) || ''),
-        priceLabel: p.salePrice || p.price || (p.priceNumeric ? ('XAF ' + fmt(p.priceNumeric)) : (p.base_price_minor ? ('XAF ' + fmt(p.base_price_minor)) : 'Ask price')),
-        strikeLabel: (p.salePrice && p.price) ? p.price : '',
-        ratingLabel: '★ ' + (p.rating != null ? p.rating : '4.9'),
-        storeLabel: (p.storeName || p.merchant || p.store || 'LOUMOO verified seller') + (p.merchantCity ? (' · ' + p.merchantCity) : ''),
-        verified: Boolean(p.verified)
-      })),
+      categoryProductCards: (() => {
+        const activeCat = this.state.activeCategorySlug || 'all';
+        const activeSub = this.state.activeSubcategorySlug || 'all';
+        let pool = this._categoryProductPool(activeCat);
+        if (activeSub !== 'all') {
+          pool = pool.filter(p => this._matchesSubcategory(p, activeSub));
+        }
+        const parseNum = (str) => {
+          const n = parseInt(String(str || '').replace(/[^0-9]/g, ''), 10);
+          return isNaN(n) ? 0 : n;
+        };
+        return pool.map((p) => {
+          const rawP = p.price || (p.priceNumeric ? ('XAF ' + fmt(p.priceNumeric)) : (p.base_price_minor ? ('XAF ' + fmt(p.base_price_minor)) : ''));
+          const rawSale = p.salePrice || '';
+          let heroPrice = rawP || 'Ask price';
+          let strikePrice = '';
+          if (rawSale && rawP && rawSale !== rawP) {
+            const n1 = parseNum(rawP);
+            const n2 = parseNum(rawSale);
+            if (n1 > 0 && n2 > 0 && n1 !== n2) {
+              heroPrice = n1 < n2 ? rawP : rawSale;
+              strikePrice = n1 < n2 ? rawSale : rawP;
+            } else {
+              heroPrice = rawSale;
+              strikePrice = rawP;
+            }
+          } else if (rawSale && !rawP) {
+            heroPrice = rawSale;
+          }
+          return {
+            id: p.id,
+            title: p.title || p.name || 'Untitled listing',
+            imageUrl: encImg(p.coverImage || p.imageUrl || p.image || (p.images && p.images[0]) || ''),
+            priceLabel: heroPrice,
+            strikeLabel: strikePrice,
+            ratingLabel: '★ ' + (p.rating != null ? p.rating : '4.9'),
+            storeLabel: (p.storeName || p.merchant || p.store || 'LOUMOO verified seller') + (p.merchantCity || p.storeCity ? (' · ' + (p.merchantCity || p.storeCity)) : ''),
+            badge: p.badge || (p.verified ? '✓ Verified' : ''),
+            verified: Boolean(p.verified)
+          };
+        });
+      })(),
       categoryDisplayName: (() => {
         const NAMES = { electronics: 'Electronics & Technology', fashion: 'Fashion & Luxury', hotels: 'Hospitality & Stays', travel: 'Travel & Mobility', services: 'Professional Services', automotive: 'Vehicles & Automotive', real_estate: 'Real Estate & Property', banks: 'Banks & Financial Services', home: 'Home & Living', digital: 'Digital Products', supermarket: 'Supermarket & Essentials' };
         return NAMES[this.state.activeCategorySlug || 'all'] || 'this category';
@@ -12982,13 +26121,28 @@ class Component extends DCLogic {
       categoryHasPartnerStores: ['electronics','services','hotels','travel'].indexOf(this.state.activeCategorySlug || 'all') !== -1,
       categoryUsesDataGrid: (() => {
         const slug = this.state.activeCategorySlug || 'all';
-        return slug !== 'all' && ['electronics','hotels','travel','services'].indexOf(slug) === -1;
+        return slug !== 'all' && ['hotels','travel','services'].indexOf(slug) === -1;
       })(),
       categoryShowEmptyState: (() => {
         const slug = this.state.activeCategorySlug || 'all';
-        if (slug === 'all' || ['electronics','hotels','travel','services'].indexOf(slug) !== -1) return false;
+        if (slug === 'all' || ['hotels','travel','services'].indexOf(slug) !== -1) return false;
         return this._categoryProductPool(slug).length === 0;
       })(),
+      subcatSmartphonesCount: this._categoryProductPool('electronics').filter(p => this._matchesSubcategory(p, 'smartphones')).length,
+      subcatPowerCount: this._categoryProductPool('electronics').filter(p => this._matchesSubcategory(p, 'power_accessories')).length,
+      subcatAudioCount: this._categoryProductPool('electronics').filter(p => this._matchesSubcategory(p, 'audio')).length,
+      subcatLaptopsCount: this._categoryProductPool('electronics').filter(p => this._matchesSubcategory(p, 'laptops')).length,
+      subcatFootwearCount: this._categoryProductPool('fashion').filter(p => this._matchesSubcategory(p, 'footwear')).length,
+      subcatClothingCount: this._categoryProductPool('fashion').filter(p => this._matchesSubcategory(p, 'clothing')).length,
+      subcatBagsCount: this._categoryProductPool('fashion').filter(p => this._matchesSubcategory(p, 'bags')).length,
+      subcatWatchesCount: this._categoryProductPool('fashion').filter(p => this._matchesSubcategory(p, 'watches_jewelry')).length,
+      subcatAppliancesCount: this._categoryProductPool('home').filter(p => this._matchesSubcategory(p, 'appliances')).length,
+      subcatCookwareCount: this._categoryProductPool('home').filter(p => this._matchesSubcategory(p, 'cookware')).length,
+      subcatTablewareCount: this._categoryProductPool('home').filter(p => this._matchesSubcategory(p, 'tableware')).length,
+      subcatHomeCareCount: this._categoryProductPool('home').filter(p => this._matchesSubcategory(p, 'home_care')).length,
+      electronicsTotalCount: this._categoryProductPool('electronics').length,
+      homeTotalCount: this._categoryProductPool('home').length,
+      categoryTotalCount: this._categoryProductPool(this.state.activeCategorySlug || 'all').length,
 
       // Category Search Match helpers
       categoryHasQuery: Boolean((this.state.categorySearchQuery || '').trim()),
@@ -13874,11 +27028,16 @@ class Component extends DCLogic {
       // The greeting is the AUTHENTICATED user's name. It used to fall back to
       // the literal 'Tchuekam', so every LOUMOO account was greeted by another
       // real person's name — and a signed-out visitor saw a name too.
-      userName: (this.state.sessionUser
-        && (this.state.sessionUser.firstName
-          || (this.state.sessionUser.fullName || '').split(' ')[0]))
-        || this.state.regFirstName
-        || '',
+      userName: (() => {
+        const u = this.state.sessionUser;
+        const candidate = (u && (u.firstName || (u.fullName || '').split(' ')[0]))
+          || this.state.regFirstName
+          || '';
+        if (candidate && !candidate.includes('@')) return candidate;
+        if (u && u.lastName && !u.lastName.includes('@')) return u.lastName;
+        if (this.state.regLastName && !this.state.regLastName.includes('@')) return this.state.regLastName;
+        return 'Member';
+      })(),
       showAds: this.props.showAds ?? true,
       cartCount: (this.state.cartItems || []).reduce((n, it) => n + (Number(it.qty) || 1), 0),
       cartHasItems: (this.state.cartItems || []).length > 0,
@@ -14081,6 +27240,19 @@ class Component extends DCLogic {
         this.setState({ cartItems: list });
         this._persistCart(list);
         this.toast('Added ' + name + ' to your bag');
+      },
+      // Buy now: add the open product to the bag and jump straight to checkout.
+      buyNowProduct: () => {
+        const id = this.state.currentProductId;
+        if (!id) { this.toast('Open a product to buy it'); return; }
+        const list = (this.state.cartItems || []).map((it) => ({ ...it }));
+        const qtyToAdd = Math.max(1, Number(this.state.qty) || 1);
+        const existing = list.find((it) => it.id === id);
+        if (existing) existing.qty = Math.min(99, (Number(existing.qty) || 1) + qtyToAdd);
+        else { const entry = this._cartEntry(id); entry.qty = qtyToAdd; list.push(entry); }
+        this.setState({ cartItems: list });
+        this._persistCart(list);
+        this.go('checkout');
       },
       incCartQty: (id) => {
         const list = (this.state.cartItems || []).map((it) => it.id === id ? { ...it, qty: Math.min(99, (Number(it.qty) || 1) + 1) } : it);
@@ -14351,29 +27523,54 @@ class Component extends DCLogic {
       loadProductDetails: (id) => this.loadProductDetails(id),
       
       currentProductTitle: (this.state.currentProduct && (this.state.currentProduct.title || this.state.currentProduct.name)) || 'Apple MacBook Air 13” M2',
-      currentProductBrand: (this.state.currentProduct && this.state.currentProduct.brand) || 'Apple',
+      currentProductBrand: (this.state.currentProduct && this.state.currentProduct.brand) || ((this.state.currentProduct && this.state.currentProduct.title) ? String(this.state.currentProduct.title).trim().split(' ')[0] : '') || 'LOUMOO',
       currentProductCategoryLabel: (this.state.currentProduct && (this.state.currentProduct.categoryLabel || this.state.currentProduct.category)) || 'Smartphones & Electronics',
       currentProductConditionLabel: (this.state.currentProduct && this.state.currentProduct.conditionLabel) || 'Brand New · Sealed Box',
       currentProductFulfillmentLabel: (this.state.currentProduct && this.state.currentProduct.fulfillmentLabel) || 'Same-Day Express Courier',
       currentProductBadge: (this.state.currentProduct && this.state.currentProduct.badge) || 'VERIFIED BOUTIQUE',
-      currentProductRating: (this.state.currentProduct && this.state.currentProduct.rating) || '4.9',
-      currentProductReviewCount: (this.state.currentProduct && this.state.currentProduct.reviewCount) || 128,
-      currentProductSoldCount: (this.state.currentProduct && this.state.currentProduct.soldCount) || 84,
-      currentProductPrice: (this.state.currentProduct && (this.state.currentProduct.priceFormatted || this.state.currentProduct.price)) || 'XAF 745 000',
-      currentProductSalePrice: (this.state.currentProduct && this.state.currentProduct.salePrice) || '',
+      currentProductRating: (this.state.currentProduct && this.state.currentProduct.rating != null) ? Number(this.state.currentProduct.rating).toFixed(1) : '5.0',
+      // Backend detail objects expose `reviewCount` (singular); catalog list
+      // items expose `reviewsCount` (plural). Accept either, then add the
+      // buyer's own locally-submitted reviews so the count stays truthful.
+      currentProductReviewCount: ((this.state.currentProduct && (this.state.currentProduct.reviewCount ?? this.state.currentProduct.reviewsCount)) || 0) + (this.state.reviews || []).filter((r) => r.productId === this.state.currentProductId).length,
+      currentProductHasReviews: (((this.state.currentProduct && (this.state.currentProduct.reviewCount ?? this.state.currentProduct.reviewsCount)) || 0) + (this.state.reviews || []).filter((r) => r.productId === this.state.currentProductId).length) > 0,
+      currentProductSoldCount: (this.state.currentProduct && this.state.currentProduct.soldCount) || 0,
+      currentProductHasSold: ((this.state.currentProduct && this.state.currentProduct.soldCount) || 0) > 0,
+      currentProductPrice: (() => {
+        const p = this.state.currentProduct;
+        if (!p) return 'XAF 745 000';
+        const rawP = p.priceFormatted || p.price || '';
+        const rawSale = p.salePrice || '';
+        if (rawSale && rawP && rawSale !== rawP) {
+          const n1 = parseInt(String(rawP).replace(/[^0-9]/g, ''), 10) || 0;
+          const n2 = parseInt(String(rawSale).replace(/[^0-9]/g, ''), 10) || 0;
+          if (n1 > 0 && n2 > 0 && n1 !== n2) {
+            return n1 < n2 ? rawP : rawSale;
+          }
+        }
+        return rawP || rawSale || 'XAF 745 000';
+      })(),
+      currentProductSalePrice: (() => {
+        const p = this.state.currentProduct;
+        if (!p) return '';
+        const rawP = p.priceFormatted || p.price || '';
+        const rawSale = p.salePrice || '';
+        if (rawSale && rawP && rawSale !== rawP) {
+          const n1 = parseInt(String(rawP).replace(/[^0-9]/g, ''), 10) || 0;
+          const n2 = parseInt(String(rawSale).replace(/[^0-9]/g, ''), 10) || 0;
+          if (n1 > 0 && n2 > 0 && n1 !== n2) {
+            return n1 < n2 ? rawSale : rawP;
+          }
+        }
+        return '';
+      })(),
       currentProductImages: (this.state.currentProduct && (this.state.currentProduct.images || (this.state.currentProduct.media && this.state.currentProduct.media.map(m => m.url)))) || [
         './Assets/telephone&PC/Macbook.jfif',
         './Assets/telephone&PC/Top%20MacBook%20&%20Laptop%20Aesthetic%20Ideas%202026%20%E2%9C%A8%20Cute%20Desk%20Setup,%20Productivity%20&%20Tech%20Inspiration.jfif',
         './Assets/telephone&PC/Microsoft%20Surface%20Laptop_%20Overview.jfif'
       ],
-      currentProductAttributesList: (this.state.currentProduct && this.state.currentProduct.attributes) || [
-        { key: 'Brand', val: 'Apple' },
-        { key: 'Processor', val: 'Apple M2 (8-core CPU)' },
-        { key: 'Storage', val: '256GB High-Speed SSD' },
-        { key: 'RAM', val: '8GB Unified Memory' },
-        { key: 'Warranty', val: '12-Month Official Apple' }
-      ],
-      currentProductDescription: (this.state.currentProduct && this.state.currentProduct.description) || 'Brand new sealed in box with 12-month Apple warranty. Instant pickup in Douala Akwa or express delivery across Cameroon.',
+      currentProductAttributesList: (this.state.currentProduct && this.state.currentProduct.attributes) || [],
+      currentProductDescription: (this.state.currentProduct && (this.state.currentProduct.description || this.state.currentProduct.shortDescription)) || '',
       productStoreName: (this.state.currentProduct && this.state.currentProduct.storeName) || 'Orca Electronics Douala',
       productStoreCity: (this.state.currentProduct && this.state.currentProduct.storeCity) || 'Douala, Akwa',
       productStoreRating: (this.state.currentProduct && this.state.currentProduct.storeRating) || '4.9',

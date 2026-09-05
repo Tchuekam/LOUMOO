@@ -49,3 +49,5 @@ Thumbs.db
 uploads/temp/
 *.tmp
 *.log
+*.bak
+scratch/
