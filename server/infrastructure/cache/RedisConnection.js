@@ -18,6 +18,7 @@ class RedisConnection {
 
       try {
         instance = new Redis(config.redis.url, {
+          family: 4,
           maxRetriesPerRequest: 3,
           enableReadyCheck: true,
           lazyConnect: false,

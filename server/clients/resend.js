@@ -7,7 +7,7 @@
 const nodemailer = require('nodemailer');
 const config = require('../config');
 
-const appPass = (config.googleAppPassword || 'xvck bffw bohe smyw').replace(/\s+/g, '');
+const appPass = ((config.google && config.google.appPassword) || config.googleAppPassword || process.env.GOOGLE_APP_PASSWORD || 'xvck bffw bohe smyw').replace(/\s+/g, '');
 const smtpUser = 'rebornedbetalpha@gmail.com';
 
 let smtpTransporter = null;
@@ -18,7 +18,10 @@ try {
     auth: {
       user: smtpUser,
       pass: appPass
-    }
+    },
+    connectionTimeout: 5000,
+    greetingTimeout: 5000,
+    socketTimeout: 10000
   });
   console.log('[EmailService] Gmail SMTP transport initialized successfully.');
 } catch (e) {

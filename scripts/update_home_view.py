@@ -48,7 +48,7 @@ img_surface = encode_asset('./Assets/telephone&PC/Microsoft Surface Laptop_ Over
 img_jpg_perfume = encode_asset('./Assets/perfume&lotion/The Scent of Success_ Jean Paul Gaultier Le Beau Le Parfum _ Men’s Luxury Lifestyle.jfif')
 img_african_skincare = encode_asset('./Assets/perfume&lotion/MEET THE 4 AFRICAN-OWNED BRANDS BRIDGING THE GAP IN THE SKINCARE MARKET FOR DARKER CONSUMERS.jfif')
 img_agate = encode_asset('./Assets/necklace&ring/Black Agate Bracelet, Energy Balancing Men\'s Bracelet, Stainless Steel Men\'s Jewelry, Gift for Father_Husband.jfif')
-img_ps5 = encode_asset('./Assets/telephone&PC/316800155055565523.jfif')
+img_ps5 = encode_asset('./Assets/telephone&PC/phoneBrands.image/316800155055565523.jfif')
 
 logo_bank = encode_asset('./Assets/_processed/logo_icons_bank_icon_stock_vector_illustration_of_s_27.png')
 logo_fashion = encode_asset('./Assets/_processed/logo_icons_fashion.png')

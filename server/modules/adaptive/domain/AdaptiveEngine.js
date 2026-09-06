@@ -109,11 +109,11 @@ function buildContext({ profile = {}, onboardingDraft = {}, answers = [], signal
     // A declared category (chip or legacy wizard interests) is final; an
     // inferred one from free text still deserves a one-tap confirmation.
     category: Boolean(ctx.category) || legacyInterests.length > 0,
-    categoryDeclared: Boolean(ctx.categoryDeclared) || legacyInterests.length > 0,
+    categoryDeclared: Boolean(ctx.categoryDeclared) || (ctx.category ? legacyInterests.includes(ctx.category) : legacyInterests.length > 0),
     useCase: Boolean(ctx.useCase),
     useCaseDeclared: Boolean(ctx.useCaseDeclared),
     priority: Boolean(ctx.priority) || legacyPriorities.length > 0,
-    priorityDeclared: Boolean(ctx.priorityDeclared) || legacyPriorities.length > 0,
+    priorityDeclared: Boolean(ctx.priorityDeclared) || (ctx.priority ? legacyPriorities.includes(ctx.priority) : legacyPriorities.length > 0),
     budget: Boolean(budgetRow),
     urgency: Boolean(urgencyRow),
     sellerType: Boolean(ctx.sellerType),

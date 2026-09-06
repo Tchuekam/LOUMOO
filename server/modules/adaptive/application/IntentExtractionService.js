@@ -90,9 +90,8 @@ async function extract(rawText, opts = {}) {
   const text = String(rawText || '').trim();
   if (!text) return { signals: [], provider: 'rules' };
 
-  // Deterministic baseline — always computed, so a failed LLM call is a
-  // non-event and tests stay hermetic.
-  const baseline = extractIntentSignals(text, { questionKey: opts.questionKey }).signals
+  const baselineResult = extractIntentSignals(text, { questionKey: opts.questionKey });
+  const baseline = (baselineResult.signals || [])
     .map(s => ({
       type: s.type,
       value: s.value,
@@ -100,6 +99,7 @@ async function extract(rawText, opts = {}) {
       source: 'inferred',
       provenance: { origin: `rules:${opts.questionKey || 'free_text'}`, engine: 'intent-extractor-v1' }
     }));
+  const summary = baselineResult.summary || {};
 
   if (AI_READY && !config.isTest) {
     try {
@@ -112,14 +112,14 @@ async function extract(rawText, opts = {}) {
           ...llm,
           ...baseline.filter(s => !llmTypes.has(s.type))
         ];
-        return { signals: merged, provider: 'llm' };
+        return { signals: merged, summary, provider: 'llm' };
       }
     } catch (err) {
       logger.warn(`[IntentExtraction] LLM extraction failed (${err.message}); using deterministic baseline.`);
     }
   }
 
-  return { signals: baseline, provider: 'rules' };
+  return { signals: baseline, summary, provider: 'rules' };
 }
 
 module.exports = { extract, AI_READY };

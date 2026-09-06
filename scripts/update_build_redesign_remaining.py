@@ -15,7 +15,7 @@ v_video3 = encode_asset('./Assets/LOUMOO VIDEOS/From Klickpin.com- 49 Genius Gue
 v_video4 = encode_asset('./Assets/LOUMOO VIDEOS/From Klickpin.com- 94 Clever Morning Routine Ideas-pin-id-641833384412737958.mp4')
 v_video5 = encode_asset('./Assets/LOUMOO VIDEOS/From Klickpin.com- Beachy beach picnic thoughts and clever inspiration with timeless style to brighten your feed-pin-id-958000151964999370.mp4')
 
-img_ps5 = encode_asset('./Assets/telephone&PC/316800155055565523.jfif')
+img_ps5 = encode_asset('./Assets/telephone&PC/phoneBrands.image/316800155055565523.jfif')
 img_ps5_slim = encode_asset('./Assets/telephone&PC/PS5 Slim.jfif')
 img_ankara = encode_asset('./Assets/fashion/100% Cotton Ankara Palazzo Pants.jfif')
 img_suit = encode_asset('./Assets/fashion/#MenStyle #MensFashion #CorporateStyle #MensShoe….jfif')

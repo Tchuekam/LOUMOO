@@ -43,7 +43,7 @@ img_s26 = encode_asset('./Assets/telephone&PC/SAMSUNG S26 ULTRA 🔥 BUY IT FOR 
 img_camon = encode_asset('./Assets/telephone&PC/TECNO CAMON 40 Series_ Redefining Imagery with  TECNO AI.jfif')
 img_galaxy_ai = encode_asset('./Assets/telephone&PC/Galaxy Ai.jfif')
 
-img_ps5 = encode_asset('./Assets/telephone&PC/316800155055565523.jfif')
+img_ps5 = encode_asset('./Assets/telephone&PC/phoneBrands.image/316800155055565523.jfif')
 img_ps5_slim = encode_asset('./Assets/telephone&PC/PS5 Slim.jfif')
 
 img_suit = encode_asset('./Assets/fashion/#MenStyle #MensFashion #CorporateStyle #MensShoe….jfif')

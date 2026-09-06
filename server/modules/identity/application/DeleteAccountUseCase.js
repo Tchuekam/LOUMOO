@@ -77,9 +77,18 @@ class DeleteAccountUseCase {
     //     Non-PII rows (orders, activity log, security events) are preserved
     //     untouched for the audit trail.
     const piiAnonymizations = [
-      { table: 'addresses', fields: { recipient_name: null, phone_number: null, street_address: null, landmark: null, quarter: null, delivery_instructions: null } },
-      { table: 'saved_items', fields: { title: 'Deleted item', image_url: null, category: null, metadata: {} } },
-      { table: 'followed_stores', fields: { store_name: 'Deleted store', store_avatar: null, city: null } }
+      {
+        table: 'addresses',
+        fields: {
+          recipient_name: 'Anonymized Recipient',
+          phone_number: '+237000000000',
+          street_address: 'Redacted Address',
+          landmark: null,
+          quarter: null,
+          delivery_instructions: null,
+          deleted_at: new Date().toISOString()
+        }
+      }
     ];
     const piiErrors = [];
     for (const { table, fields } of piiAnonymizations) {
@@ -89,6 +98,18 @@ class DeleteAccountUseCase {
       } catch (err) {
         piiErrors.push(`${table}: ${err.message}`);
       }
+    }
+
+    // Purge user's saved items and followed stores
+    try {
+      await db.from('saved_items').delete().eq('user_id', userId);
+    } catch (siErr) {
+      piiErrors.push(`saved_items: ${siErr.message}`);
+    }
+    try {
+      await db.from('followed_stores').delete().eq('user_id', userId);
+    } catch (fsErr) {
+      piiErrors.push(`followed_stores: ${fsErr.message}`);
     }
 
     // Deactivate any owned stores

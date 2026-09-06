@@ -31,15 +31,36 @@ class AdaptiveRepository {
     return data || [];
   }
 
-  static async saveAnswer(userId, {
-    questionKey, phase = 'intent', rawText = null, value = {}, source = 'declared', skipped = false
-  } = {}) {
+  static async saveAnswer(userId, questionKeyOrOptions = {}, maybeOptions = {}) {
+    let opts = {};
+    if (typeof questionKeyOrOptions === 'string') {
+      opts = Object.assign({}, maybeOptions, { questionKey: questionKeyOrOptions });
+    } else if (questionKeyOrOptions && typeof questionKeyOrOptions === 'object') {
+      opts = questionKeyOrOptions;
+    }
+    const {
+      questionKey,
+      phase = 'intent',
+      rawText = null,
+      value = {},
+      source = 'declared',
+      skipped = false,
+      selectedChip = null,
+      selectedChips = null,
+      extractedSignals = null
+    } = opts;
+
+    const finalValue = Object.assign({}, value);
+    if (selectedChip !== null && finalValue.selectedChip === undefined) finalValue.selectedChip = selectedChip;
+    if (selectedChips !== null && finalValue.selectedChips === undefined) finalValue.selectedChips = selectedChips;
+    if (extractedSignals !== null && finalValue.extractedSignals === undefined) finalValue.extractedSignals = extractedSignals;
+
     const record = {
       user_id: userId,
       question_key: questionKey,
       phase,
       raw_text: rawText,
-      value,
+      value: finalValue,
       source,
       skipped,
       answered_at: new Date().toISOString(),
@@ -90,6 +111,16 @@ class AdaptiveRepository {
     const { data, error } = await this.db.from('user_intent_signals').insert(record).select('id').single();
     if (error) throw new InfrastructureError('Supabase', `intent signal insert failed: ${error.message}`, error);
     return data;
+  }
+
+  static async saveSignal(userId, { signalType, type, value, source = 'declared', confidence = 1.0, provenance = {} } = {}) {
+    return this.insertSignal(userId, {
+      type: signalType || type,
+      value,
+      source,
+      confidence,
+      provenance
+    });
   }
 
   /**

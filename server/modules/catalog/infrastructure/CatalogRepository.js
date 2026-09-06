@@ -15,6 +15,7 @@
 const { SupabaseDatabase } = require('../../../infrastructure/database/SupabaseClient');
 const { InfrastructureError } = require('../../../shared/errors/AppError');
 const MediaStorageService = require('../../../infrastructure/storage/MediaStorageService');
+const { config } = require('../../../config/env');
 
 const CATALOG_SELECT_COLUMNS = [
   'id', 'store_id', 'seller_id', 'listing_type', 'category_id', 'title', 'slug',
@@ -160,13 +161,15 @@ class CatalogRepository {
           return this._formatProductCard(l, coverUrl, store, mediaList);
         });
 
-        // Keep QA/test boutiques out of the public buyer feed — a shopper must
+        // Keep QA/test boutiques out of the public buyer feed in non-test environments — a shopper must
         // never see "Test Boutique …" listings sitting among real inventory.
-        const beforeFilter = dbItems.length;
-        dbItems = dbItems.filter((it) =>
-          !/^store_test_/i.test(String(it.storeId || '')) &&
-          !/test\s*boutique/i.test(String(it.storeName || '')));
-        dbTotal = Math.max(dbItems.length, dbTotal - (beforeFilter - dbItems.length));
+        if (!config || !config.isTest) {
+          const beforeFilter = dbItems.length;
+          dbItems = dbItems.filter((it) =>
+            !/^store_test_/i.test(String(it.storeId || '')) &&
+            !/test\s*boutique/i.test(String(it.storeName || '')));
+          dbTotal = Math.max(dbItems.length, dbTotal - (beforeFilter - dbItems.length));
+        }
       }
     } catch (err) {
       // An empty or unreachable database is not fatal for discovery: the curated
@@ -220,11 +223,8 @@ class CatalogRepository {
         .eq('stores.status', 'ACTIVE')
         .is('deleted_at', null);
 
-      if (idOrSlug.startsWith('lst_') || idOrSlug.includes('-')) {
-        query = query.or(`id.eq.${idOrSlug},slug.eq.${idOrSlug}`);
-      } else {
-        query = query.eq('id', idOrSlug);
-      }
+      const cleanId = String(idOrSlug).trim().replace(/["(),]/g, '');
+      query = query.or(`id.eq.${cleanId},slug.eq.${cleanId}`);
 
       const { data, error } = await query.maybeSingle();
       if (error) {

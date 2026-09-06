@@ -124,7 +124,7 @@ def get_home_view():
             </div>
 
             <div class="hero-media-wrap" style="background:transparent">
-              <video src="./Assets/LOUMOO%20VIDEOS/HeroBanner/From%20Klickpin.com-%20Aesthetic%20Stretching%20Routine%20Ideas%20for%20This%20Year-pin-id-958000151963779036.mp4" poster="./Assets/_processed/herobanner_stretching.jpg" autoplay muted="true" defaultMuted="true" playsinline data-hero-video="true"></video>
+              <video src="./Assets/LOUMOO%20VIDEOS/HeroBanner/From%20Klickpin.com-%20Aesthetic%20Stretching%20Routine%20Ideas%20for%20This%20Year-pin-id-958000151963779036.mp4" poster="./Assets/_processed/herobanner_stretching.jpg" autoplay muted="true" defaultMuted="true" playsinline preload="metadata"></video>
             </div>
           </div>
           <div class="hero-dots-row">
@@ -190,7 +190,7 @@ def get_home_view():
             </div>
 
             <div class="hero-media-wrap" style="background:transparent">
-              <video src="./Assets/LOUMOO%20VIDEOS/HeroBanner/From%20Klickpin.com-%2093%20Trending%20Passive%20Income%20Ideas%20for%20Right%20Now-pin-id-1142084786777854743.mp4" poster="./Assets/_processed/herobanner_passive_income.jpg" autoplay muted="true" defaultMuted="true" playsinline data-hero-video="true"></video>
+              <video src="./Assets/LOUMOO%20VIDEOS/HeroBanner/From%20Klickpin.com-%2093%20Trending%20Passive%20Income%20Ideas%20for%20Right%20Now-pin-id-1142084786777854743.mp4" poster="./Assets/_processed/herobanner_passive_income.jpg" autoplay muted="true" defaultMuted="true" playsinline preload="metadata"></video>
             </div>
           </div>
           <div class="hero-dots-row">
@@ -256,7 +256,7 @@ def get_home_view():
             </div>
 
             <div class="hero-media-wrap" style="background:transparent">
-              <video src="./Assets/LOUMOO%20VIDEOS/HeroBanner/From%20Klickpin.com-%20Discover%20Unique%20rustic%20wedding%20decor%20for%20your%20next%20Pinterest%20save%20built%20around%20ideas%20that%20are%20easy%20to%20save%20and%20revisit%20later-pi.mp4" poster="./Assets/_processed/herobanner_rustic_wedding.jpg" autoplay muted="true" defaultMuted="true" playsinline data-hero-video="true"></video>
+              <video src="./Assets/LOUMOO%20VIDEOS/HeroBanner/From%20Klickpin.com-%20Discover%20Unique%20rustic%20wedding%20decor%20for%20your%20next%20Pinterest%20save%20built%20around%20ideas%20that%20are%20easy%20to%20save%20and%20revisit%20later-pi.mp4" poster="./Assets/_processed/herobanner_rustic_wedding.jpg" autoplay muted="true" defaultMuted="true" playsinline preload="metadata"></video>
             </div>
           </div>
           <div class="hero-dots-row">
@@ -940,115 +940,115 @@ def get_home_view():
 
     <!-- Official Insta360 5-Card Bento Showcase Grid (Media-First Hover-to-Play Standard) -->
     <div class="insta360-bento-video-grid" id="instaVideoBentoRail">
-      <!-- 1. Left Tall Card: Catching waves (By Tikanuismith · Insta360 X4) -->
-      <div onClick="{{ () => openVideoModal('Holiday Aesthetics & Living', 'Luxury Interior & Decor Showcase · Loumoo Lifestyle', 'LOUMOO LIVING', './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2010%20Aesthetic%20holiday%20table%20setting%20ideas%20that%20bring%20together%20comfort%20beauty%20and%20useful%20ideas%20you%20will%20actually%20try%20for%20people%20w.mp4') }}" data-hover-video="true" class="insta-video-card-tall" style="position:relative;overflow:hidden;border-radius:var(--radius-lg);cursor:pointer;background:#0b0d14" aria-label="Explore Catching waves by Tikanuismith">
-        <video src="./Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2010%20Aesthetic%20holiday%20table%20setting%20ideas%20that%20bring%20together%20comfort%20beauty%20and%20useful%20ideas%20you%20will%20actually%20try%20for%20people%20w.mp4" poster="./Assets/Travel&Hotel/1995%20Luxury%20Hotel%20Suite%20Wallpaper.jfif" muted loop playsinline preload="none" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
+      <!-- 1. Left Tall Card: Samsung Galaxy S25 Ultra (Vertical) -->
+      <div onClick="{{ () => openVideoModal('Galaxy S25 Ultra Titanium', 'Next-Gen Flagship Smartphone Design · 200MP Pro Visuals', 'SAMSUNG GALAXY', './Assets/LOUMOO%20VIDEOS/phoneBrands.videos/phone/From%20Klickpin.com-%201067142074219304497-pin-id-1067142074219304497.mp4') }}" class="insta-video-card-tall" data-hover-video="true" style="position:relative;overflow:hidden;border-radius:var(--radius-lg);cursor:pointer;background:#0b0d14" aria-label="Explore Galaxy S25 Ultra Titanium">
+        <video src="./Assets/LOUMOO%20VIDEOS/phoneBrands.videos/phone/From%20Klickpin.com-%201067142074219304497-pin-id-1067142074219304497.mp4" poster="./Assets/LOUMOO%20VIDEOS/phoneBrands.videos/phone/poster_1.jpg" autoplay muted loop playsinline preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
         <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0) 35%, rgba(0,0,0,0.2) 60%, rgba(0,0,0,0.85) 100%);pointer-events:none"></div>
 
-        <div class="loumoo-card-video-pill" style="top:14px;right:14px"><span class="live-dot"></span>8K 360°</div>
+        <div class="loumoo-card-video-pill" style="top:12px;left:12px"><span class="live-dot"></span>FLAGSHIP 4K</div>
 
         <!-- Bottom Metadata Bar -->
         <div class="insta-card-bottom-bar" style="position:relative;z-index:2">
           <div class="insta-card-meta-left">
-            <span class="insta-card-title">Catching waves</span>
-            <span class="insta-card-author">By Tikanuismith</span>
+            <span class="insta-card-title">Galaxy S25 Ultra</span>
+            <span class="insta-card-author">Titanium Silver · 200MP Pro</span>
           </div>
           <div class="insta-device-pill">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="12" cy="12" r="4.5"/></svg>
-            <span>Insta360 X4</span>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="5" y="2" width="14" height="20" rx="3"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+            <span>Galaxy AI</span>
           </div>
         </div>
       </div>
 
       <!-- 2. Middle Column: Split Top Wide + Bottom Duo -->
       <div class="insta-video-middle-col">
-        <!-- Top Wide Card: Parachute drift (By Nick Durham · Insta360 Ace Pro 2) -->
-        <div onClick="{{ () => openVideoModal('Timeless Interior Elegance', 'Modern Organic Retreat Design · Loumoo Living', 'WARM LUXURY', './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2016%20Timeless%20entryway%20organization%20ideas%20that%20look%20expensive%20while%20staying%20practical%20realistic%20and%20beginner%20friendly%20for%20busy%20pe.mp4') }}" data-hover-video="true" class="insta-video-card-wide" style="position:relative;overflow:hidden;border-radius:var(--radius-lg);cursor:pointer;background:#0b0d14" aria-label="Explore Parachute drift by Nick Durham">
-          <video src="./Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2016%20Timeless%20entryway%20organization%20ideas%20that%20look%20expensive%20while%20staying%20practical%20realistic%20and%20beginner%20friendly%20for%20busy%20pe.mp4" poster="./Assets/Travel&Hotel/Golden%20Haven%20Retreat%20_%20Warm%20Luxury%20Hotel%20Bedroom%20Design%20with%20Modern%20Organic%20Elegance.jfif" muted loop playsinline preload="none" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
+        <!-- Top Wide Card: Smart Spa & Wellness (Horizontal 1280x720 Widescreen) -->
+        <div onClick="{{ () => openVideoModal('Smart Spa Night & Wellness', 'Effortless Relaxation · Aromatherapy & Self-Care Sanctuary', 'WELLNESS & SPA', './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%20Bookmark%20this%20smart%20spa%20night%20roundup%20everyone%20will%20ask%20you%20about%20for%20a%20stylish%20result%20that%20still%20feels%20effortless%20and%20make%20you.mp4') }}" class="insta-video-card-wide" data-hover-video="true" style="position:relative;overflow:hidden;border-radius:var(--radius-lg);cursor:pointer;background:#0b0d14" aria-label="Explore Smart Spa Night & Wellness">
+          <video src="./Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%20Bookmark%20this%20smart%20spa%20night%20roundup%20everyone%20will%20ask%20you%20about%20for%20a%20stylish%20result%20that%20still%20feels%20effortless%20and%20make%20you.mp4" poster="./Assets/_processed/spa_night_poster.jpg" autoplay muted loop playsinline preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
           <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0) 35%, rgba(0,0,0,0.2) 60%, rgba(0,0,0,0.85) 100%);pointer-events:none"></div>
 
-          <div class="loumoo-card-video-pill" style="top:14px;right:14px"><span class="live-dot"></span>8K HDR</div>
+          <div class="loumoo-card-video-pill" style="top:12px;left:12px"><span class="live-dot"></span>WELLNESS & SPA</div>
 
           <!-- Bottom Metadata Bar -->
           <div class="insta-card-bottom-bar" style="position:relative;z-index:2">
             <div class="insta-card-meta-left">
-              <span class="insta-card-title">Parachute drift</span>
-              <span class="insta-card-author">By Nick Durham</span>
+              <span class="insta-card-title">Smart Spa Night</span>
+              <span class="insta-card-author">Aromatherapy · Self-Care Sanctuary</span>
             </div>
             <div class="insta-device-pill">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="12" cy="12" r="4.5"/></svg>
-              <span>Ace Pro 2</span>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+              <span>Smart Care</span>
             </div>
           </div>
         </div>
 
         <!-- Bottom Duo Row -->
         <div class="insta-video-middle-bottom-row">
-          <!-- 3. Middle Bottom-Left: Wing view (By Doug Payne · Insta360 X4) -->
-          <div onClick="{{ () => openVideoModal('Luxury Suite Architecture', 'Hotel Room Sourcing & Interiors · Douala & Kribi', 'SUITE ARCHITECTURE', './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2049%20Genius%20Guest%20Room%20Ideas-pin-id-1127588825467750602.mp4') }}" data-hover-video="true" class="insta-video-card-compact" style="position:relative;overflow:hidden;border-radius:var(--radius-lg);cursor:pointer;background:#0b0d14" aria-label="Explore Wing view by Doug Payne">
-            <video src="./Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2049%20Genius%20Guest%20Room%20Ideas-pin-id-1127588825467750602.mp4" poster="./Assets/Travel&Hotel/Luxury%20Hotel%20Room%20Interiors%20at%20This%20Level%20Come%20Down%20to%20Who%20You%20Source%20With.jfif" muted loop playsinline preload="none" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
+          <!-- 3. Middle Bottom-Left: Cozy Workspace (Desk Styling) -->
+          <div onClick="{{ () => openVideoModal('Cozy Workspace Desk Styling', 'Minimalist Office Desk Setup & Productivity Tech', 'WORKSPACE', './Assets/LOUMOO%20VIDEOS/phoneBrands.videos/From%20Klickpin.com-%20Discover%20Cozy%20office%20desk%20styling%20for%20a%20polished%20look%20people%20will%20notice%20with%20simple%20details%20that%20elevate%20the%20final%20look-pin-id.mp4') }}" class="insta-video-card-compact" data-hover-video="true" style="position:relative;overflow:hidden;border-radius:var(--radius-lg);cursor:pointer;background:#0b0d14" aria-label="Explore Cozy Workspace Desk Styling">
+            <video src="./Assets/LOUMOO%20VIDEOS/phoneBrands.videos/From%20Klickpin.com-%20Discover%20Cozy%20office%20desk%20styling%20for%20a%20polished%20look%20people%20will%20notice%20with%20simple%20details%20that%20elevate%20the%20final%20look-pin-id.mp4" poster="./Assets/_processed/desk_styling_tall_poster.jpg" autoplay muted loop playsinline preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
             <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0) 35%, rgba(0,0,0,0.2) 60%, rgba(0,0,0,0.85) 100%);pointer-events:none"></div>
 
-            <div class="loumoo-card-video-pill" style="top:10px;right:10px;padding:3px 6px;font-size:9.5px"><span class="live-dot"></span>AERIAL</div>
+            <div class="loumoo-card-video-pill" style="top:9px;left:9px;padding:3px 6px;font-size:9.5px"><span class="live-dot"></span>WORKSPACE</div>
 
             <!-- Bottom Metadata Bar -->
             <div class="insta-card-bottom-bar" style="position:relative;z-index:2;padding:14px 12px 10px">
               <div class="insta-card-meta-left">
-                <span class="insta-card-title" style="font-size:14px">Wing view</span>
-                <span class="insta-card-author" style="font-size:11px">By Doug Payne</span>
+                <span class="insta-card-title" style="font-size:14px">Cozy Desk Setup</span>
+                <span class="insta-card-author" style="font-size:11px">Minimalist Workspace</span>
               </div>
               <div class="insta-device-pill" style="padding:3px 8px;font-size:10px">
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="12" cy="12" r="4.5"/></svg>
-                <span>Insta360 X4</span>
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+                <span>Productivity</span>
               </div>
             </div>
           </div>
 
-          <!-- 4. Middle Bottom-Right: River glide (By Daniel Falcão Correia Lima · Insta360 GO 3S) -->
-          <div onClick="{{ () => openVideoModal('Smart Morning Routine', 'Wellness & Smart Lifestyle Devices · Loumoo Lifestyle', 'SMART ROUTINE', './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2094%20Clever%20Morning%20Routine%20Ideas-pin-id-641833384412737958.mp4') }}" data-hover-video="true" class="insta-video-card-compact" style="position:relative;overflow:hidden;border-radius:var(--radius-lg);cursor:pointer;background:#0b0d14" aria-label="Explore River glide by Daniel Falcão Correia Lima">
-            <video src="./Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2094%20Clever%20Morning%20Routine%20Ideas-pin-id-641833384412737958.mp4" poster="./Assets/Travel&Hotel/City%20View%20from%20Room.jfif" muted loop playsinline preload="none" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
+          <!-- 4. Middle Bottom-Right: City Break Travel (Travel Lifestyle) -->
+          <div onClick="{{ () => openVideoModal('City Break Travel', 'Weekend Itinerary & Urban Explorer Essentials · Loumoo Lifestyle', 'TRAVEL', './Assets/LOUMOO%20VIDEOS/phoneBrands.videos/phone/From%20Klickpin.com-%2085%20City%20Break%20Itinerary%20Ideas%20for%20Men-pin-id-512073420150638463.mp4') }}" class="insta-video-card-compact" data-hover-video="true" style="position:relative;overflow:hidden;border-radius:var(--radius-lg);cursor:pointer;background:#0b0d14" aria-label="Explore City Break Travel">
+            <video src="./Assets/LOUMOO%20VIDEOS/phoneBrands.videos/phone/From%20Klickpin.com-%2085%20City%20Break%20Itinerary%20Ideas%20for%20Men-pin-id-512073420150638463.mp4" poster="./Assets/LOUMOO%20VIDEOS/phoneBrands.videos/phone/poster_4.jpg" autoplay muted loop playsinline preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
             <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0) 35%, rgba(0,0,0,0.2) 60%, rgba(0,0,0,0.85) 100%);pointer-events:none"></div>
 
-            <div class="loumoo-card-video-pill" style="top:10px;right:10px;padding:3px 6px;font-size:9.5px"><span class="live-dot"></span>4K ACTION</div>
+            <div class="loumoo-card-video-pill" style="top:9px;left:9px;padding:3px 6px;font-size:9.5px"><span class="live-dot"></span>TRAVEL</div>
 
             <!-- Bottom Metadata Bar -->
             <div class="insta-card-bottom-bar" style="position:relative;z-index:2;padding:14px 12px 10px">
               <div class="insta-card-meta-left">
-                <span class="insta-card-title" style="font-size:14px">River glide</span>
-                <span class="insta-card-author" style="font-size:11px">By Daniel Falcão</span>
+                <span class="insta-card-title" style="font-size:14px">City Break</span>
+                <span class="insta-card-author" style="font-size:11px">Weekend Itinerary</span>
               </div>
               <div class="insta-device-pill" style="padding:3px 8px;font-size:10px">
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="12" cy="12" r="4.5"/></svg>
-                <span>GO 3S</span>
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                <span>Explorer</span>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- 5. Right Tall Card: City shift (By Asenseofhuber · Insta360 Flow) -->
-      <div onClick="{{ () => openVideoModal('Kribi Coastal Serenity', 'Beachfront Leisure & Resort Inspiration · Cameroon', 'KRIBI COAST', './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%20Beachy%20beach%20picnic%20thoughts%20and%20clever%20inspiration%20with%20timeless%20style%20to%20brighten%20your%20feed-pin-id-958000151964999370.mp4') }}" data-hover-video="true" class="insta-video-card-tall" style="position:relative;overflow:hidden;border-radius:var(--radius-lg);cursor:pointer;background:#0b0d14" aria-label="Explore City shift by Asenseofhuber">
-        <video src="./Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%20Beachy%20beach%20picnic%20thoughts%20and%20clever%20inspiration%20with%20timeless%20style%20to%20brighten%20your%20feed-pin-id-958000151964999370.mp4" poster="./Assets/Travel&Hotel/Kribi%20Hotel.jfif" muted loop playsinline preload="none" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
+      <!-- 5. Right Tall Card: Apple iPhone 16 Pro Max (Vertical) -->
+      <div onClick="{{ () => openVideoModal('iPhone 16 Pro Max Titanium', 'Natural Titanium Frame & A18 Pro Silicon · Apple Showcase', 'APPLE FLAGSHIP', './Assets/LOUMOO%20VIDEOS/phoneBrands.videos/phone/From%20Klickpin.com-%201072490098914829145-pin-id-1072490098914829145.mp4') }}" class="insta-video-card-tall" data-hover-video="true" style="position:relative;overflow:hidden;border-radius:var(--radius-lg);cursor:pointer;background:#0b0d14" aria-label="Explore iPhone 16 Pro Max Titanium">
+        <video src="./Assets/LOUMOO%20VIDEOS/phoneBrands.videos/phone/From%20Klickpin.com-%201072490098914829145-pin-id-1072490098914829145.mp4" poster="./Assets/LOUMOO%20VIDEOS/phoneBrands.videos/phone/poster_2.jpg" autoplay muted loop playsinline preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
         <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0) 35%, rgba(0,0,0,0.2) 60%, rgba(0,0,0,0.85) 100%);pointer-events:none"></div>
 
-        <div class="loumoo-card-video-pill" style="top:14px;right:14px"><span class="live-dot"></span>AI TRACKING</div>
+        <div class="loumoo-card-video-pill" style="top:12px;left:12px"><span class="live-dot"></span>TITANIUM PRO</div>
 
         <!-- Bottom Metadata Bar -->
         <div class="insta-card-bottom-bar" style="position:relative;z-index:2">
           <div class="insta-card-meta-left">
-            <span class="insta-card-title">City shift</span>
-            <span class="insta-card-author">By Asenseofhuber</span>
+            <span class="insta-card-title">iPhone 16 Pro Max</span>
+            <span class="insta-card-author">Natural Titanium · A18 Pro</span>
           </div>
           <div class="insta-device-pill">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="12" cy="12" r="4.5"/></svg>
-            <span>Insta360 Flow</span>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="5" y="2" width="14" height="20" rx="3"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+            <span>Apple A18</span>
           </div>
         </div>
       </div>
     </div>
+  </div>
 
-
-    <!-- ── 06: SHOP BY CATEGORY / APPLE-GRADE DUAL CARDS ── -->
+  <!-- ── 06: SHOP BY CATEGORY / APPLE-GRADE DUAL CARDS ── -->
     <div class="editorial-section-header">
       <h2 class="editorial-section-title">Shop by category</h2>
       <button onClick="{{ openAllCategories }}" class="editorial-see-all">See all →</button>
@@ -1429,57 +1429,57 @@ def get_home_view():
     </div>
 
     <div class="lifestyle-video-grid">
-      <!-- 1. Party Decor Ideas -->
-      <button type="button" onClick="{{ () => openVideoModal('Party Decor & Vibes', 'Polished birthday and celebration decor ideas for lifestyle creators', 'EVENT DECOR', './Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%2010%20Beautiful%20birthday%20party%20decor%20ideas%20that%20help%20you%20create%20a%20polished%20look%20with%20very%20simple%20and%20affordable%20details%20for%20creato.mp4') }}" data-hover-video="true" class="lifestyle-card" aria-label="Play Party Decor & Vibes video">
-        <video src="./Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%2010%20Beautiful%20birthday%20party%20decor%20ideas%20that%20help%20you%20create%20a%20polished%20look%20with%20very%20simple%20and%20affordable%20details%20for%20creato.mp4" poster="./Assets/_processed/capturelife_party_decor_poster.jpg" muted loop playsinline preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;transition:transform 0.4s ease;pointer-events:none"></video>
+      <!-- 1. Party Decor Ideas (Horizontal) -->
+      <div onClick="{{ () => openVideoModal('Party Decor & Vibes', 'Polished birthday and celebration decor ideas for lifestyle creators', 'EVENT DECOR', './Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%2010%20Beautiful%20birthday%20party%20decor%20ideas%20that%20help%20you%20create%20a%20polished%20look%20with%20very%20simple%20and%20affordable%20details%20for%20creato.mp4') }}" class="lifestyle-card" data-hover-video="true" aria-label="Play Party Decor & Vibes video" style="position:relative;overflow:hidden;border-radius:var(--radius-lg);cursor:pointer;background:#0b0d14">
+        <video src="./Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%2010%20Beautiful%20birthday%20party%20decor%20ideas%20that%20help%20you%20create%20a%20polished%20look%20with%20very%20simple%20and%20affordable%20details%20for%20creato.mp4" poster="./Assets/_processed/capturelife_party_decor_poster.jpg" autoplay muted loop playsinline preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;transition:transform 0.4s ease"></video>
         <div class="lifestyle-card-scrim" style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.05) 45%, rgba(0,0,0,0.85) 100%);pointer-events:none;z-index:1"></div>
-        <div class="lifestyle-card-pill" style="position:relative;z-index:2;display:flex;justify-content:flex-end">
+        <div class="lifestyle-card-pill" style="position:relative;z-index:2;display:flex;justify-content:flex-start">
           <span style="font:700 9.5px/1 var(--font-heading);background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.25);color:#fff;padding:3px 8px;border-radius:var(--radius-pill);letter-spacing:0.04em">EVENT DECOR</span>
         </div>
         <div class="lifestyle-card-meta" style="position:relative;z-index:2">
           <div style="font:800 13.5px/1.2 var(--font-heading);color:#ffffff;text-shadow:0 1px 4px rgba(0,0,0,0.8)">Party Decor Ideas</div>
-          <div style="font:500 11px/1 var(--font-body);color:rgba(255,255,255,0.85);margin-top:3px;text-shadow:0 1px 3px rgba(0,0,0,0.8)">Polished Creator Details</div>
+          <div style="font:500 11px/1 var(--font-body);color:rgba(255,255,255,0.85);margin-top:3px;text-shadow:0 1px 3px rgba(0,0,0,0.8)">Polished celebration details</div>
         </div>
-      </button>
+      </div>
 
-      <!-- 2. Dreamy Hair Care -->
-      <button type="button" onClick="{{ () => openVideoModal('Dreamy Hair Care', 'Natural curls and intentional hair care routines for everyday beauty', 'GLOW & BEAUTY', './Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%20Explore%20Dreamy%20curly%20hair%20care%20ideas%20for%20your%20next%20inspiration%20board%20designed%20for%20people%20who%20want%20results%20that%20look%20intentional.mp4') }}" data-hover-video="true" class="lifestyle-card" aria-label="Play Dreamy Hair Care video">
-        <video src="./Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%20Explore%20Dreamy%20curly%20hair%20care%20ideas%20for%20your%20next%20inspiration%20board%20designed%20for%20people%20who%20want%20results%20that%20look%20intentional.mp4" poster="./Assets/_processed/capturelife_hair_care_poster.jpg" muted loop playsinline preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;transition:transform 0.4s ease;pointer-events:none"></video>
+      <!-- 2. Dreamy Hair Care (Horizontal) -->
+      <div onClick="{{ () => openVideoModal('Dreamy Hair Care', 'Natural curls and intentional hair care routines for everyday beauty', 'GLOW & BEAUTY', './Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%20Explore%20Dreamy%20curly%20hair%20care%20ideas%20for%20your%20next%20inspiration%20board%20designed%20for%20people%20who%20want%20results%20that%20look%20intentional.mp4') }}" class="lifestyle-card" data-hover-video="true" aria-label="Play Dreamy Hair Care video" style="position:relative;overflow:hidden;border-radius:var(--radius-lg);cursor:pointer;background:#0b0d14">
+        <video src="./Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%20Explore%20Dreamy%20curly%20hair%20care%20ideas%20for%20your%20next%20inspiration%20board%20designed%20for%20people%20who%20want%20results%20that%20look%20intentional.mp4" poster="./Assets/_processed/capturelife_hair_care_poster.jpg" autoplay muted loop playsinline preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;transition:transform 0.4s ease"></video>
         <div class="lifestyle-card-scrim" style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.05) 45%, rgba(0,0,0,0.85) 100%);pointer-events:none;z-index:1"></div>
-        <div class="lifestyle-card-pill" style="position:relative;z-index:2;display:flex;justify-content:flex-end">
+        <div class="lifestyle-card-pill" style="position:relative;z-index:2;display:flex;justify-content:flex-start">
           <span style="font:700 9.5px/1 var(--font-heading);background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.25);color:#fff;padding:3px 8px;border-radius:var(--radius-pill);letter-spacing:0.04em">GLOW & BEAUTY</span>
         </div>
         <div class="lifestyle-card-meta" style="position:relative;z-index:2">
           <div style="font:800 13.5px/1.2 var(--font-heading);color:#ffffff;text-shadow:0 1px 4px rgba(0,0,0,0.8)">Dreamy Hair Care</div>
-          <div style="font:500 11px/1 var(--font-body);color:rgba(255,255,255,0.85);margin-top:3px;text-shadow:0 1px 3px rgba(0,0,0,0.8)">Natural Texture & Styling</div>
+          <div style="font:500 11px/1 var(--font-body);color:rgba(255,255,255,0.85);margin-top:3px;text-shadow:0 1px 3px rgba(0,0,0,0.8)">Intentional curls & glow</div>
         </div>
-      </button>
+      </div>
 
-      <!-- 3. Daily Inspiration Notes -->
-      <button type="button" onClick="{{ () => openVideoModal('Daily Inspiration Notes', 'Fresh mindful notes and journaling ideas to keep things grounded', 'CREATIVE NOTES', './Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%20Fresh%20democracy%20notes%20with%20charm%20and%20useful%20ideas%20for%20daily%20inspiration%20that%20keep%20things%20grounded-pin-id-857654322816019216.mp4') }}" data-hover-video="true" class="lifestyle-card" aria-label="Play Daily Inspiration Notes video">
-        <video src="./Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%20Fresh%20democracy%20notes%20with%20charm%20and%20useful%20ideas%20for%20daily%20inspiration%20that%20keep%20things%20grounded-pin-id-857654322816019216.mp4" poster="./Assets/_processed/capturelife_creative_notes_poster.jpg" muted loop playsinline preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;transition:transform 0.4s ease;pointer-events:none"></video>
+      <!-- 3. Daily Inspiration Notes (Horizontal) -->
+      <div onClick="{{ () => openVideoModal('Daily Inspiration Notes', 'Fresh mindful notes and journaling ideas to keep things grounded', 'CREATIVE NOTES', './Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%20Fresh%20democracy%20notes%20with%20charm%20and%20useful%20ideas%20for%20daily%20inspiration%20that%20keep%20things%20grounded-pin-id-857654322816019216.mp4') }}" class="lifestyle-card" data-hover-video="true" aria-label="Play Daily Inspiration Notes video" style="position:relative;overflow:hidden;border-radius:var(--radius-lg);cursor:pointer;background:#0b0d14">
+        <video src="./Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%20Fresh%20democracy%20notes%20with%20charm%20and%20useful%20ideas%20for%20daily%20inspiration%20that%20keep%20things%20grounded-pin-id-857654322816019216.mp4" poster="./Assets/_processed/capturelife_creative_notes_poster.jpg" autoplay muted loop playsinline preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;transition:transform 0.4s ease"></video>
         <div class="lifestyle-card-scrim" style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.05) 45%, rgba(0,0,0,0.85) 100%);pointer-events:none;z-index:1"></div>
-        <div class="lifestyle-card-pill" style="position:relative;z-index:2;display:flex;justify-content:flex-end">
+        <div class="lifestyle-card-pill" style="position:relative;z-index:2;display:flex;justify-content:flex-start">
           <span style="font:700 9.5px/1 var(--font-heading);background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.25);color:#fff;padding:3px 8px;border-radius:var(--radius-pill);letter-spacing:0.04em">CREATIVE NOTES</span>
         </div>
         <div class="lifestyle-card-meta" style="position:relative;z-index:2">
           <div style="font:800 13.5px/1.2 var(--font-heading);color:#ffffff;text-shadow:0 1px 4px rgba(0,0,0,0.8)">Daily Inspiration Notes</div>
-          <div style="font:500 11px/1 var(--font-body);color:rgba(255,255,255,0.85);margin-top:3px;text-shadow:0 1px 3px rgba(0,0,0,0.8)">Grounded Thoughts & Charm</div>
+          <div style="font:500 11px/1 var(--font-body);color:rgba(255,255,255,0.85);margin-top:3px;text-shadow:0 1px 3px rgba(0,0,0,0.8)">Mindful journaling & ideas</div>
         </div>
-      </button>
+      </div>
 
-      <!-- 4. Budget Desk Setup -->
-      <button type="button" onClick="{{ () => openVideoModal('Budget Desk Setup', 'Budget-friendly office desk styling ideas and workspace inspiration', 'DESK STYLING', './Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%20Try%20Budget-friendly%20office%20desk%20styling%20for%20your%20next%20Pinterest%20save%20built%20around%20ideas%20that%20are%20easy%20to%20save%20and%20revisit%20later.mp4') }}" data-hover-video="true" class="lifestyle-card" aria-label="Play Budget Desk Setup video">
-        <video src="./Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%20Try%20Budget-friendly%20office%20desk%20styling%20for%20your%20next%20Pinterest%20save%20built%20around%20ideas%20that%20are%20easy%20to%20save%20and%20revisit%20later.mp4" poster="./Assets/_processed/capturelife_desk_styling_poster.jpg" muted loop playsinline preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;transition:transform 0.4s ease;pointer-events:none"></video>
+      <!-- 4. Budget Desk Setup (Horizontal) -->
+      <div onClick="{{ () => openVideoModal('Budget Desk Setup', 'Budget-friendly office desk styling ideas and workspace inspiration', 'DESK STYLING', './Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%20Try%20Budget-friendly%20office%20desk%20styling%20for%20your%20next%20Pinterest%20save%20built%20around%20ideas%20that%20are%20easy%20to%20save%20and%20revisit%20later.mp4') }}" class="lifestyle-card" data-hover-video="true" aria-label="Play Budget Desk Setup video" style="position:relative;overflow:hidden;border-radius:var(--radius-lg);cursor:pointer;background:#0b0d14">
+        <video src="./Assets/LOUMOO%20VIDEOS/CaptureLIFE/From%20Klickpin.com-%20Try%20Budget-friendly%20office%20desk%20styling%20for%20your%20next%20Pinterest%20save%20built%20around%20ideas%20that%20are%20easy%20to%20save%20and%20revisit%20later.mp4" poster="./Assets/_processed/capturelife_desk_styling_poster.jpg" autoplay muted loop playsinline preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;transition:transform 0.4s ease"></video>
         <div class="lifestyle-card-scrim" style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.05) 45%, rgba(0,0,0,0.85) 100%);pointer-events:none;z-index:1"></div>
-        <div class="lifestyle-card-pill" style="position:relative;z-index:2;display:flex;justify-content:flex-end">
+        <div class="lifestyle-card-pill" style="position:relative;z-index:2;display:flex;justify-content:flex-start">
           <span style="font:700 9.5px/1 var(--font-heading);background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.25);color:#fff;padding:3px 8px;border-radius:var(--radius-pill);letter-spacing:0.04em">DESK STYLING</span>
         </div>
         <div class="lifestyle-card-meta" style="position:relative;z-index:2">
           <div style="font:800 13.5px/1.2 var(--font-heading);color:#ffffff;text-shadow:0 1px 4px rgba(0,0,0,0.8)">Budget Desk Setup</div>
-          <div style="font:500 11px/1 var(--font-body);color:rgba(255,255,255,0.85);margin-top:3px;text-shadow:0 1px 3px rgba(0,0,0,0.8)">Smart Workspace Aesthetics</div>
+          <div style="font:500 11px/1 var(--font-body);color:rgba(255,255,255,0.85);margin-top:3px;text-shadow:0 1px 3px rgba(0,0,0,0.8)">Smart modern workspace</div>
         </div>
-      </button>
+      </div>
     </div>
 
     <!-- ── 09: BLACK FRIDAY EXPERIENCE (Preserved & Elevated) ── -->
@@ -1737,64 +1737,75 @@ def get_home_view():
       </div>
 
       <div class="loumoo-rail-track" id="storiesMotionRail">
-        <!-- Story 1: City Lights -->
-        <div class="loumoo-rail-card-story" onClick="{{ () => openVideoModal('City Lights at Midnight', 'Douala & Yaoundé Urban Life · Loumoo Stories', 'URBAN', './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2010%20Aesthetic%20holiday%20table%20setting%20ideas%20that%20bring%20together%20comfort%20beauty%20and%20useful%20ideas%20you%20will%20actually%20try%20for%20people%20w.mp4') }}" data-hover-video="true" style="position:relative;border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;box-shadow:var(--shadow-sm);transition:transform 0.3s ease;background:#0b0d14" aria-label="Play City Lights story">
-          <video src="./Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2010%20Aesthetic%20holiday%20table%20setting%20ideas%20that%20bring%20together%20comfort%20beauty%20and%20useful%20ideas%20you%20will%20actually%20try%20for%20people%20w.mp4" poster="./Assets/Travel&Hotel/Krystal%20Palace%20Hotel%20Douala.jfif" muted loop playsinline preload="none" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
+        <!-- Story 1: Sleep & Wellness Routine -->
+        <div class="loumoo-rail-card-story" data-hover-video="true" onClick="{{ () => openVideoModal('Sleep & Wellness Routine', 'Night Routine & Wearables · Wellness Tech', 'WELLNESS', './Assets/LOUMOO%20VIDEOS/phoneBrands.videos/phone/From%20Klickpin.com-%2083%20Fresh%20Sleep%20Routine%20Tips%20for%20Weekend-pin-id-884253708081290479.mp4') }}" style="position:relative;border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;box-shadow:var(--shadow-sm);transition:transform 0.3s ease;background:#0b0d14" aria-label="Play Sleep Routine story">
+          <video src="./Assets/LOUMOO%20VIDEOS/phoneBrands.videos/phone/From%20Klickpin.com-%2083%20Fresh%20Sleep%20Routine%20Tips%20for%20Weekend-pin-id-884253708081290479.mp4" poster="./Assets/LOUMOO%20VIDEOS/phoneBrands.videos/phone/poster_3.jpg" autoplay muted loop playsinline preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
           <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.85) 100%);pointer-events:none"></div>
-          <div style="position:absolute;top:12px;left:12px;background:rgba(239,68,68,0.9);color:#fff;font:700 10px var(--font-heading);padding:4px 8px;border-radius:100px;letter-spacing:0.05em">LIVE STORY</div>
+          <div style="position:absolute;top:12px;left:12px;background:rgba(99,102,241,0.9);color:#fff;font:700 10px var(--font-heading);padding:4px 8px;border-radius:100px;letter-spacing:0.05em">WELLNESS</div>
           <div style="position:absolute;bottom:12px;left:12px;right:12px;pointer-events:none">
-            <div style="font:700 14px/1.2 var(--font-heading);color:#fff">City Lights</div>
-            <div style="font:400 11px var(--font-body);color:rgba(255,255,255,0.8);margin-top:2px">4K Night Drive</div>
+            <div style="font:700 14px/1.2 var(--font-heading);color:#fff">Sleep Routine</div>
+            <div style="font:400 11px var(--font-body);color:rgba(255,255,255,0.8);margin-top:2px">Rest & Recharge</div>
           </div>
         </div>
 
-        <!-- Story 2: Alpine Wings -->
-        <div class="loumoo-rail-card-story" onClick="{{ () => openVideoModal('Seaside Villa Walkthrough', 'Kribi Oceanfront Relaxation · Loumoo Escapes', 'GETAWAY', './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2016%20Timeless%20entryway%20organization%20ideas%20that%20look%20expensive%20while%20staying%20practical%20realistic%20and%20beginner%20friendly%20for%20busy%20pe.mp4') }}" data-hover-video="true" style="position:relative;border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;box-shadow:var(--shadow-sm);transition:transform 0.3s ease;background:#0b0d14" aria-label="Play Alpine Ridge story">
-          <video src="./Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2016%20Timeless%20entryway%20organization%20ideas%20that%20look%20expensive%20while%20staying%20practical%20realistic%20and%20beginner%20friendly%20for%20busy%20pe.mp4" poster="./Assets/Travel&Hotel/Hotel%20du%20Phare%20%28Kribi,%20Cameroun%29%20_%20tarifs%202019%20mis%E2%80%A6.jfif" muted loop playsinline preload="none" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
+        <!-- Story 2: Holiday Air Fryer Inspiration -->
+        <div class="loumoo-rail-card-story" data-hover-video="true" onClick="{{ () => openVideoModal('Holiday Air Fryer Recipes', 'Crispy Gourmet Cooking & Modern Kitchen Appliances', 'KITCHEN TECH', './Assets/LOUMOO%20VIDEOS/phoneBrands.videos/phone/From%20Klickpin.com-%20Air%20Fryer%20Recipes%20Inspiration%20for%20Holiday-pin-id-884253708081290479.mp4') }}" style="position:relative;border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;box-shadow:var(--shadow-sm);transition:transform 0.3s ease;background:#0b0d14" aria-label="Play Air Fryer story">
+          <video src="./Assets/LOUMOO%20VIDEOS/phoneBrands.videos/phone/From%20Klickpin.com-%20Air%20Fryer%20Recipes%20Inspiration%20for%20Holiday-pin-id-884253708081290479.mp4" poster="./Assets/LOUMOO%20VIDEOS/phoneBrands.videos/phone/poster_6.jpg" autoplay muted loop playsinline preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
           <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.85) 100%);pointer-events:none"></div>
-          <div style="position:absolute;top:12px;left:12px;background:rgba(14,165,233,0.9);color:#fff;font:700 10px var(--font-heading);padding:4px 8px;border-radius:100px;letter-spacing:0.05em">AERIAL</div>
+          <div style="position:absolute;top:12px;left:12px;background:rgba(239,68,68,0.9);color:#fff;font:700 10px var(--font-heading);padding:4px 8px;border-radius:100px;letter-spacing:0.05em">KITCHEN</div>
           <div style="position:absolute;bottom:12px;left:12px;right:12px;pointer-events:none">
-            <div style="font:700 14px/1.2 var(--font-heading);color:#fff">Alpine Flight</div>
-            <div style="font:400 11px var(--font-body);color:rgba(255,255,255,0.8);margin-top:2px">Glacier Horizon</div>
+            <div style="font:700 14px/1.2 var(--font-heading);color:#fff">Air Fryer Master</div>
+            <div style="font:400 11px var(--font-body);color:rgba(255,255,255,0.8);margin-top:2px">Crispy Recipes</div>
           </div>
         </div>
 
-        <!-- Story 3: Ocean Waves -->
-        <div class="loumoo-rail-card-story" onClick="{{ () => openVideoModal('Ocean Swell & Surf', 'Atlantic Waves & Atlantic Coast · Loumoo Coast', 'COASTAL', './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%20Beachy%20beach%20picnic%20thoughts%20and%20clever%20inspiration%20with%20timeless%20style%20to%20brighten%20your%20feed-pin-id-958000151964999370.mp4') }}" data-hover-video="true" style="position:relative;border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;box-shadow:var(--shadow-sm);transition:transform 0.3s ease;background:#0b0d14" aria-label="Play Ocean Swell story">
-          <video src="./Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%20Beachy%20beach%20picnic%20thoughts%20and%20clever%20inspiration%20with%20timeless%20style%20to%20brighten%20your%20feed-pin-id-958000151964999370.mp4" poster="./Assets/Travel&Hotel/Residence%20JULLY%20Kribi.jfif" muted loop playsinline preload="none" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
+        <!-- Story 3: Summer Outfit Ideas -->
+        <div class="loumoo-rail-card-story" data-hover-video="true" onClick="{{ () => openVideoModal('Summer Outfit Ideas', 'Chic Minimalist Wardrobe & Put Together Looks', 'FASHION', './Assets/LOUMOO%20VIDEOS/phoneBrands.videos/From%20Klickpin.com-%20Summer%20Outfit%20Ideas%20That%20Feel%20So%20Put%20Together%2059525-pin-id-222857881555742085.mp4') }}" style="position:relative;border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;box-shadow:var(--shadow-sm);transition:transform 0.3s ease;background:#0b0d14" aria-label="Play Summer Outfits story">
+          <video src="./Assets/LOUMOO%20VIDEOS/phoneBrands.videos/From%20Klickpin.com-%20Summer%20Outfit%20Ideas%20That%20Feel%20So%20Put%20Together%2059525-pin-id-222857881555742085.mp4" poster="./Assets/_processed/summer_outfits_poster.jpg" autoplay muted loop playsinline preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
           <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.85) 100%);pointer-events:none"></div>
-          <div style="position:absolute;top:12px;left:12px;background:rgba(16,185,129,0.9);color:#fff;font:700 10px var(--font-heading);padding:4px 8px;border-radius:100px;letter-spacing:0.05em">COASTAL</div>
+          <div style="position:absolute;top:12px;left:12px;background:rgba(245,158,11,0.9);color:#fff;font:700 10px var(--font-heading);padding:4px 8px;border-radius:100px;letter-spacing:0.05em">FASHION</div>
           <div style="position:absolute;bottom:12px;left:12px;right:12px;pointer-events:none">
-            <div style="font:700 14px/1.2 var(--font-heading);color:#fff">Ocean Swell</div>
-            <div style="font:400 11px var(--font-body);color:rgba(255,255,255,0.8);margin-top:2px">Kribi Coastline</div>
+            <div style="font:700 14px/1.2 var(--font-heading);color:#fff">Summer Outfits</div>
+            <div style="font:400 11px var(--font-body);color:rgba(255,255,255,0.8);margin-top:2px">Put Together Chic</div>
           </div>
         </div>
 
-        <!-- Story 4: Rainforest Cascade -->
-        <div class="loumoo-rail-card-story" onClick="{{ () => openVideoModal('Lobe Falls Cascade', 'Deep Equatorial Wonders · Cameroon Tourism', 'NATURE', './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2049%20Genius%20Guest%20Room%20Ideas-pin-id-1127588825467750602.mp4') }}" data-hover-video="true" style="position:relative;border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;box-shadow:var(--shadow-sm);transition:transform 0.3s ease;background:#0b0d14" aria-label="Play Lobe Falls story">
-          <video src="./Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2049%20Genius%20Guest%20Room%20Ideas-pin-id-1127588825467750602.mp4" poster="./Assets/Travel&Hotel/Yaounde,%20Cameroon.jfif" muted loop playsinline preload="none" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
+        <!-- Story 4: Clean Girl Makeup -->
+        <div class="loumoo-rail-card-story" data-hover-video="true" onClick="{{ () => openVideoModal('Clean Girl Makeup', 'Trending Natural Glow & Fresh Skincare Routine', 'BEAUTY', './Assets/LOUMOO%20VIDEOS/phoneBrands.videos/From%20Klickpin.com-%20Try%20Easy%20clean%20girl%20makeup%20looks%20that%20are%20trending%20right%20now%20across%20Pinterest%20boards%20for%20a%20polished%20look%20people%20will%20notice-pin.mp4') }}" style="position:relative;border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;box-shadow:var(--shadow-sm);transition:transform 0.3s ease;background:#0b0d14" aria-label="Play Clean Girl Makeup story">
+          <video src="./Assets/LOUMOO%20VIDEOS/phoneBrands.videos/From%20Klickpin.com-%20Try%20Easy%20clean%20girl%20makeup%20looks%20that%20are%20trending%20right%20now%20across%20Pinterest%20boards%20for%20a%20polished%20look%20people%20will%20notice-pin.mp4" poster="./Assets/_processed/clean_girl_makeup_poster.jpg" autoplay muted loop playsinline preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
           <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.85) 100%);pointer-events:none"></div>
-          <div style="position:absolute;top:12px;left:12px;background:rgba(168,85,247,0.9);color:#fff;font:700 10px var(--font-heading);padding:4px 8px;border-radius:100px;letter-spacing:0.05em">DISCOVERY</div>
+          <div style="position:absolute;top:12px;left:12px;background:rgba(236,72,153,0.9);color:#fff;font:700 10px var(--font-heading);padding:4px 8px;border-radius:100px;letter-spacing:0.05em">BEAUTY</div>
           <div style="position:absolute;bottom:12px;left:12px;right:12px;pointer-events:none">
-            <div style="font:700 14px/1.2 var(--font-heading);color:#fff">Lobe Falls</div>
-            <div style="font:400 11px var(--font-body);color:rgba(255,255,255,0.8);margin-top:2px">Rainforest Mist</div>
+            <div style="font:700 14px/1.2 var(--font-heading);color:#fff">Clean Girl Glow</div>
+            <div style="font:400 11px var(--font-body);color:rgba(255,255,255,0.8);margin-top:2px">Fresh Minimalist</div>
           </div>
         </div>
 
-        <!-- Story 5: Mount Cameroon Ascent -->
-        <div class="loumoo-rail-card-story" onClick="{{ () => openVideoModal('Mount Cameroon Summit', 'Trekking the Chariot of the Gods · Buea', 'SUMMIT', './Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2094%20Clever%20Morning%20Routine%20Ideas-pin-id-641833384412737958.mp4') }}" data-hover-video="true" style="position:relative;border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;box-shadow:var(--shadow-sm);transition:transform 0.3s ease;background:#0b0d14" aria-label="Play Mount Cameroon story">
-          <video src="./Assets/LOUMOO%20VIDEOS/From%20Klickpin.com-%2016%20Timeless%20entryway%20organization%20ideas%20that%20look%20expensive%20while%20staying%20practical%20realistic%20and%20beginner%20friendly%20for%20busy%20pe.mp4" poster="./Assets/Travel&Hotel/Hotel%20du%20Phare%20%28Kribi,%20Cameroun%29%20_%20tarifs%202019%20mis%E2%80%A6.jfif" muted loop playsinline preload="none" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
+        <!-- Story 5: Road Trip Essentials -->
+        <div class="loumoo-rail-card-story" data-hover-video="true" onClick="{{ () => openVideoModal('Road Trip Essentials', 'Explore Must-Have Travel Gear & Scenic Road Trips', 'TRAVEL GEAR', './Assets/LOUMOO%20VIDEOS/phoneBrands.videos/From%20Klickpin.com-%20Explore%20Fresh%20road%20trip%20essentials%20that%20are%20trending%20right%20now%20across%20Pinterest%20boards%20for%20ideas%20worth%20saving%20right%20now-pin-id-.mp4') }}" style="position:relative;border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;box-shadow:var(--shadow-sm);transition:transform 0.3s ease;background:#0b0d14" aria-label="Play Road Trip Essentials story">
+          <video src="./Assets/LOUMOO%20VIDEOS/phoneBrands.videos/From%20Klickpin.com-%20Explore%20Fresh%20road%20trip%20essentials%20that%20are%20trending%20right%20now%20across%20Pinterest%20boards%20for%20ideas%20worth%20saving%20right%20now-pin-id-.mp4" poster="./Assets/_processed/road_trip_poster.jpg" autoplay muted loop playsinline preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
           <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.85) 100%);pointer-events:none"></div>
-          <div style="position:absolute;top:12px;left:12px;background:rgba(234,88,12,0.9);color:#fff;font:700 10px var(--font-heading);padding:4px 8px;border-radius:100px;letter-spacing:0.05em">EXPEDITION</div>
+          <div style="position:absolute;top:12px;left:12px;background:rgba(16,185,129,0.9);color:#fff;font:700 10px var(--font-heading);padding:4px 8px;border-radius:100px;letter-spacing:0.05em">ROAD TRIP</div>
           <div style="position:absolute;bottom:12px;left:12px;right:12px;pointer-events:none">
-            <div style="font:700 14px/1.2 var(--font-heading);color:#fff">Mount Fako</div>
-            <div style="font:400 11px var(--font-body);color:rgba(255,255,255,0.8);margin-top:2px">Volcanic Trail</div>
+            <div style="font:700 14px/1.2 var(--font-heading);color:#fff">Road Trip Gear</div>
+            <div style="font:400 11px var(--font-body);color:rgba(255,255,255,0.8);margin-top:2px">Adventure Ready</div>
+          </div>
+        </div>
+
+        <!-- Story 6: Mindful Lifestyle & Tech -->
+        <div class="loumoo-rail-card-story" data-hover-video="true" onClick="{{ () => openVideoModal('Mindful Lifestyle & Tech', 'Everyday Inspiration & Calm Aesthetics', 'INSPIRATION', './Assets/LOUMOO%20VIDEOS/phoneBrands.videos/phone/From%20Klickpin.com-%20Thoughtful%20peaceful%20sayings%20that%20fit%20modern%20everyday%20life%20for%20beginners%20for%20modern%20quote%20boards-pin-id-1061090362211983112.mp4') }}" style="position:relative;border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;box-shadow:var(--shadow-sm);transition:transform 0.3s ease;background:#0b0d14" aria-label="Play Mindful Inspiration story">
+          <video src="./Assets/LOUMOO%20VIDEOS/phoneBrands.videos/phone/From%20Klickpin.com-%20Thoughtful%20peaceful%20sayings%20that%20fit%20modern%20everyday%20life%20for%20beginners%20for%20modern%20quote%20boards-pin-id-1061090362211983112.mp4" poster="./Assets/LOUMOO%20VIDEOS/phoneBrands.videos/phone/poster_10.jpg" autoplay muted loop playsinline preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.85) 100%);pointer-events:none"></div>
+          <div style="position:absolute;top:12px;left:12px;background:rgba(139,92,246,0.9);color:#fff;font:700 10px var(--font-heading);padding:4px 8px;border-radius:100px;letter-spacing:0.05em">LIFESTYLE</div>
+          <div style="position:absolute;bottom:12px;left:12px;right:12px;pointer-events:none">
+            <div style="font:700 14px/1.2 var(--font-heading);color:#fff">Mindful Notes</div>
+            <div style="font:400 11px var(--font-body);color:rgba(255,255,255,0.8);margin-top:2px">Everyday Calm</div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ── SECTION C: COLLECTIONS FOR YOU (Horizontal Native Content Rail) ── -->
+  <!-- ── SECTION C: COLLECTIONS FOR YOU (Horizontal Native Content Rail) ── -->
     <div class="loumoo-rail-section">
       <div class="loumoo-rail-header">
         <div class="loumoo-rail-title-wrap">
@@ -2198,37 +2209,114 @@ def get_home_view():
 
     <div class="more-explore-grid">
       <!-- 1. Home (Make it yours) -->
-      <div onClick="{{ () => openCategory('home') }}" class="more-explore-card tile-home" aria-label="Explore Home Category">
-        <div class="more-explore-play">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="#ffffff"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+      <div onClick="{{ () => openCategory('home') }}" class="more-explore-card" aria-label="Explore Home Category">
+        <img class="more-explore-bg" src="./Assets/ElectroMenage/Make%20Great%20Coffee%20at%20Home.jfif" alt="Home and Living Collection" loading="lazy">
+        <div class="more-explore-overlay"></div>
+        <div class="more-explore-top-bar">
+          <span class="more-explore-badge">✦ 47+ Curated</span>
+          <div class="more-explore-play" title="Explore Home & Living">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
         </div>
-        <div class="more-explore-text">
-          <div class="more-explore-title">Home</div>
-          <div class="more-explore-sub">Make it yours</div>
+        <div class="more-explore-bottom-content">
+          <div class="more-explore-text">
+            <div class="more-explore-title">Home</div>
+            <div class="more-explore-sub">Make it yours</div>
+          </div>
+          <div class="more-explore-product-pill" onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); openProduct('home_station_expresso_infusion_barista_maison'); } }}" title="View best product: Station Expresso Barista">
+            <img class="more-explore-product-thumb" src="./Assets/ElectroMenage/Make%20Great%20Coffee%20at%20Home.jfif" alt="Station Expresso Barista" loading="lazy">
+            <div class="more-explore-product-info">
+              <span class="more-explore-product-name">Station Expresso Barista</span>
+              <div class="more-explore-product-price-box">
+                <span class="more-explore-product-price">XAF 68.000</span>
+                <span class="more-explore-product-orig">XAF 85.000</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
       <!-- 2. Beauty (Glow Everyday) -->
-      <div onClick="{{ () => openCategory('beauty') }}" class="more-explore-card tile-beauty" aria-label="Explore Beauty Category">
-        <div class="more-explore-text">
-          <div class="more-explore-title">Beauty</div>
-          <div class="more-explore-sub">Glow Everyday</div>
+      <div onClick="{{ () => openCategory('beauty') }}" class="more-explore-card" aria-label="Explore Beauty Category">
+        <img class="more-explore-bg" src="./Assets/perfume&lotion/Boss%20Bottled%20Night%20by%20Hugo%20Boss%20_%20100ml%20EDT%20_%20Woody%20Aromatic%20Fragrance%20_%20Gift%20for%20him,%20Fathers%20day.jfif" alt="Beauty and Wellness Collection" loading="lazy">
+        <div class="more-explore-overlay"></div>
+        <div class="more-explore-top-bar">
+          <span class="more-explore-badge">✦ Luxury Scents</span>
+          <div class="more-explore-play" title="Explore Beauty & Wellness">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </div>
+        <div class="more-explore-bottom-content">
+          <div class="more-explore-text">
+            <div class="more-explore-title">Beauty</div>
+            <div class="more-explore-sub">Glow Everyday</div>
+          </div>
+          <div class="more-explore-product-pill" onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); openProduct('beauty_boss_bottled_night_100ml_edt'); } }}" title="View best product: Hugo Boss Bottled Night 100ml">
+            <img class="more-explore-product-thumb" src="./Assets/perfume&lotion/Boss%20Bottled%20Night%20by%20Hugo%20Boss%20_%20100ml%20EDT%20_%20Woody%20Aromatic%20Fragrance%20_%20Gift%20for%20him,%20Fathers%20day.jfif" alt="Hugo Boss Bottled Night 100ml" loading="lazy">
+            <div class="more-explore-product-info">
+              <span class="more-explore-product-name">Boss Bottled Night 100ml</span>
+              <div class="more-explore-product-price-box">
+                <span class="more-explore-product-price">XAF 42.000</span>
+                <span class="more-explore-product-orig">XAF 55.000</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
       <!-- 3. Sports (Push Limits) -->
-      <div onClick="{{ () => openCategory('sports') }}" class="more-explore-card tile-sports" aria-label="Explore Sports Category">
-        <div class="more-explore-text">
-          <div class="more-explore-title">Sports</div>
-          <div class="more-explore-sub">Push Limits</div>
+      <div onClick="{{ () => openCategory('sports') }}" class="more-explore-card" aria-label="Explore Sports Category">
+        <img class="more-explore-bg" src="./Assets/_processed/sports_editorial_banner.jpg" alt="Sports and Active Gear Collection" loading="lazy">
+        <div class="more-explore-overlay"></div>
+        <div class="more-explore-top-bar">
+          <span class="more-explore-badge">✦ Top Gear</span>
+          <div class="more-explore-play" title="Explore Sports & Gear">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </div>
+        <div class="more-explore-bottom-content">
+          <div class="more-explore-text">
+            <div class="more-explore-title">Sports</div>
+            <div class="more-explore-sub">Push Limits</div>
+          </div>
+          <div class="more-explore-product-pill" onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); openProduct('sport_nike_joyride_running_cushion_sneakers'); } }}" title="View best product: Nike Joyride Dual Run">
+            <img class="more-explore-product-thumb" src="./Assets/fashion/shoes/Nike%27s%20Joyride%20Collection%20Is%20Designed%20to%20Make%20Your%20Running%20Routine%20Easier%20Than%20Ever.jfif" alt="Nike Joyride Dual Run" loading="lazy">
+            <div class="more-explore-product-info">
+              <span class="more-explore-product-name">Nike Joyride Dual Run</span>
+              <div class="more-explore-product-price-box">
+                <span class="more-explore-product-price">XAF 44.500</span>
+                <span class="more-explore-product-orig">XAF 58.000</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
       <!-- 4. Groceries (Daily Needs) -->
-      <div onClick="{{ () => openCategory('groceries') }}" class="more-explore-card tile-groceries" aria-label="Explore Groceries Category">
-        <div class="more-explore-text">
-          <div class="more-explore-title">Groceries</div>
-          <div class="more-explore-sub">Daily Needs</div>
+      <div onClick="{{ () => openCategory('groceries') }}" class="more-explore-card" aria-label="Explore Groceries Category">
+        <img class="more-explore-bg" src="./Assets/_processed/groceries_editorial_banner.jpg" alt="Groceries and Daily Essentials Collection" loading="lazy">
+        <div class="more-explore-overlay"></div>
+        <div class="more-explore-top-bar">
+          <span class="more-explore-badge">✦ Fresh Daily</span>
+          <div class="more-explore-play" title="Explore Groceries & Food">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </div>
+        <div class="more-explore-bottom-content">
+          <div class="more-explore-text">
+            <div class="more-explore-title">Groceries</div>
+            <div class="more-explore-sub">Daily Needs</div>
+          </div>
+          <div class="more-explore-product-pill" onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); openProduct('groc_panier_recolte_bio_maraicher'); } }}" title="View best product: Panier Bio Récolte 10kg">
+            <img class="more-explore-product-thumb" src="./Assets/_processed/groceries_editorial_banner.jpg" alt="Panier Récolte Bio 10kg" loading="lazy">
+            <div class="more-explore-product-info">
+              <span class="more-explore-product-name">Panier Bio Récolte 10kg</span>
+              <div class="more-explore-product-price-box">
+                <span class="more-explore-product-price">XAF 14.500</span>
+                <span class="more-explore-product-orig">XAF 18.500</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -2649,6 +2737,5 @@ def get_home_view():
     </div>
 
   </div>
-</div>
 </sc-if>
 """

@@ -12,6 +12,17 @@ const SessionToken = require('../../infrastructure/SessionToken');
 const OtpSecurity = require('../../infrastructure/OtpSecurity');
 const AuthThrottle = require('../../infrastructure/AuthThrottle');
 const { resolveAuthUserId } = require('../../infrastructure/IdentityResolver');
+const { requireAuth } = require('../guards/authGuard');
+const AccountStateService = require('../../application/AccountStateService');
+const ProfileRepository = require('../../infrastructure/ProfileRepository');
+const SupabaseIdentityProvider = require('../../infrastructure/SupabaseIdentityProvider');
+const { SupabaseDatabase } = require('../../../../infrastructure/database/SupabaseClient');
+const CacheService = require('../../../../infrastructure/cache/CacheService');
+const AnalyticsService = require('../../../../infrastructure/analytics/AnalyticsService');
+const { sendEmail } = require('../../../../clients/resend');
+const config = require('../../../../config/env');
+const logger = require('../../../../shared/logging/logger');
+const { AuthenticationError, ValidationError, InfrastructureError, RateLimitError } = require('../../../../shared/errors/AppError');
 
 /**
  * THE session secret. There is deliberately no fallback default: a hardcoded
@@ -87,19 +98,6 @@ function otpEmailHtml(code, intro) {
     </div>
   `;
 }
-
-
-const { requireAuth } = require('../guards/authGuard');
-const AccountStateService = require('../../application/AccountStateService');
-const ProfileRepository = require('../../infrastructure/ProfileRepository');
-const SupabaseIdentityProvider = require('../../infrastructure/SupabaseIdentityProvider');
-const { SupabaseDatabase } = require('../../../../infrastructure/database/SupabaseClient');
-const CacheService = require('../../../../infrastructure/cache/CacheService');
-const AnalyticsService = require('../../../../infrastructure/analytics/AnalyticsService');
-const { sendEmail } = require('../../../../clients/resend');
-const config = require('../../../../config/env');
-const logger = require('../../../../shared/logging/logger');
-const { AuthenticationError, ValidationError, InfrastructureError, RateLimitError } = require('../../../../shared/errors/AppError');
 
 const OTP_NAMESPACE = 'auth_otp';
 const OTP_TTL_SECONDS = 900; // 15 minutes

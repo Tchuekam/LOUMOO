@@ -193,6 +193,36 @@ class SeatInventoryService {
         }
       }
 
+      // 3. Mark active database bookings holding these seats as CANCELLED
+      if (this.repo.db) {
+        try {
+          const { data: activeBookings } = await this.repo.db
+            .from('travel_bookings')
+            .select('id, status, booking_passengers(seat)')
+            .eq('item_id', serviceId)
+            .in('status', ['CONFIRMED', 'PENDING']);
+
+          if (Array.isArray(activeBookings)) {
+            const seatSet = new Set(seatNumbers.map(s => String(s)));
+            const toCancel = [];
+            for (const b of activeBookings) {
+              if (Array.isArray(b.booking_passengers) && b.booking_passengers.some(p => seatSet.has(String(p.seat)))) {
+                toCancel.push(b.id);
+              }
+            }
+            if (toCancel.length > 0) {
+              await this.repo.db
+                .from('travel_bookings')
+                .update({ status: 'CANCELLED', updated_at: new Date().toISOString() })
+                .in('id', toCancel);
+              logger.info(`[SeatInventory] Cancelled ${toCancel.length} database bookings releasing seats [${seatNumbers.join(', ')}] on service ${serviceId}`);
+            }
+          }
+        } catch (err) {
+          logger.warn(`[SeatInventory] DB seat cancellation notice for ${serviceId}: ${err.message}`);
+        }
+      }
+
       logger.info(`[SeatInventory] Released seats [${seatNumbers.join(', ')}] on service ${serviceId}`);
       return true;
     });

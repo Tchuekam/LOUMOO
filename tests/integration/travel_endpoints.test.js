@@ -14,6 +14,7 @@ const assert = require('assert');
 const http = require('http');
 const app = require('../../server/index');
 const { createUser } = require('../helpers/harness');
+const { seatInventoryService } = require('../../server/modules/travel/application/SeatInventoryService');
 
 function makeRequest(method, path, body = null, headers = {}) {
   return new Promise((resolve, reject) => {
@@ -63,6 +64,9 @@ function makeRequest(method, path, body = null, headers = {}) {
 
 async function run() {
   console.log('  Testing Travel REST API endpoints, public discovery & authorization boundaries...');
+
+  // Reset test seat inventory to prevent collisions with prior test runs
+  await seatInventoryService.releaseSeats('bus-sch-1', ['4A']);
 
   // ==========================================================================
   // 1. PUBLIC DISCOVERY ENDPOINTS (UNAUTHENTICATED ACCESS ALLOWED)

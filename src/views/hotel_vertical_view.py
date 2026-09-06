@@ -142,7 +142,7 @@ def get_hotel_vertical_view():
   <div style="padding:14px 16px;max-width:960px;margin:0 auto;display:flex;flex-direction:column;gap:14px">
 
     <!-- Hero -->
-    <div style="height:230px;border-radius:var(--radius-lg);overflow:hidden;position:relative;box-shadow:var(--shadow-sm)">
+    <div style="height:210px;border-radius:var(--radius-lg);overflow:hidden;position:relative;box-shadow:var(--shadow-sm)">
       <img src="{{ hotelDetailCard.image }}" alt="{{ hotelDetailCard.name }}" style="width:100%;height:100%;object-fit:cover">
       <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.05) 40%, rgba(0,0,0,0.78) 100%)"></div>
       <div style="position:absolute;bottom:14px;left:16px;right:16px;color:#fff;z-index:2;display:flex;justify-content:space-between;align-items:flex-end;gap:10px">

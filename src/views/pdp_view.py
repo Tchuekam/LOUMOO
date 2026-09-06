@@ -46,7 +46,7 @@ def get_product_view():
       <button onClick="{{ on.vsCompare }}" aria-label="Compare with other products" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect width="8" height="18" x="3" y="3" rx="1"/><rect width="8" height="18" x="13" y="3" rx="1"/></svg>
       </button>
-      <button onClick="{{ on.merchant }}" class="btn btn-secondary" style="height:34px;padding:0 14px;font-size:11.5px;font-weight:700;display:flex;align-items:center;gap:4px">
+      <button onClick="{{ on.store }}" class="btn btn-secondary" style="height:34px;padding:0 14px;font-size:11.5px;font-weight:700;display:flex;align-items:center;gap:4px">
         <span>{{ productStoreName || 'BOUTIQUE' }}</span>
         <span>→</span>
       </button>
@@ -315,7 +315,7 @@ def get_product_view():
             
             <div style="display:flex;align-items:center;gap:10px">
               <button onClick="{{ contactSellerWhatsApp }}" class="btn btn-secondary" style="height:38px;padding:0 14px;font-size:12px;font-weight:700;color:var(--color-wa-teal)">MESSAGE BOUTIQUE</button>
-              <button onClick="{{ on.merchant }}" class="btn btn-primary" style="height:38px;padding:0 16px;font-size:12px;font-weight:700">VISIT STOREFRONT →</button>
+              <button onClick="{{ on.store }}" class="btn btn-primary" style="height:38px;padding:0 16px;font-size:12px;font-weight:700">VISIT STOREFRONT →</button>
             </div>
           </div>
 

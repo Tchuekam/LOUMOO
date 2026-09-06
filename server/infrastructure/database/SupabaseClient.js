@@ -25,6 +25,10 @@
  */
 
 const { createClient } = require('@supabase/supabase-js');
+const dns = require('dns');
+if (typeof dns.setDefaultResultOrder === 'function') {
+  dns.setDefaultResultOrder('ipv4first');
+}
 const { config } = require('../../config/env');
 const logger = require('../../shared/logging/logger');
 const { InfrastructureError } = require('../../shared/errors/AppError');
@@ -36,17 +40,15 @@ const https = require('https');
 const http = require('http');
 
 const httpsAgent = new https.Agent({
-  autoSelectFamily: false,
   keepAlive: true,
-  keepAliveMsecs: 15000,
-  timeout: 45000
+  keepAliveMsecs: 5000,
+  timeout: 15000
 });
 
 const httpAgent = new http.Agent({
-  autoSelectFamily: false,
   keepAlive: true,
-  keepAliveMsecs: 15000,
-  timeout: 45000
+  keepAliveMsecs: 5000,
+  timeout: 15000
 });
 
 function nativeFetch(url, options = {}) {
@@ -61,6 +63,20 @@ function nativeFetch(url, options = {}) {
         options.headers.forEach((v, k) => { headers[k] = v; });
       } else {
         Object.assign(headers, options.headers);
+      }
+    }
+
+    let bodyBuffer = null;
+    if (options.body) {
+      if (Buffer.isBuffer(options.body)) {
+        bodyBuffer = options.body;
+      } else if (typeof options.body === 'string') {
+        bodyBuffer = Buffer.from(options.body);
+      } else if (typeof options.body === 'object') {
+        bodyBuffer = Buffer.from(JSON.stringify(options.body));
+      }
+      if (bodyBuffer) {
+        headers['Content-Length'] = bodyBuffer.length;
       }
     }
 
@@ -92,35 +108,47 @@ function nativeFetch(url, options = {}) {
     });
 
     req.on('timeout', () => {
-      req.destroy(new Error(`Request to ${parsed.host} timed out after 45000ms`));
+      req.destroy(new Error(`Request to ${parsed.host} timed out after 15000ms`));
     });
 
     req.on('error', reject);
 
-    if (options.body) {
-      req.write(options.body);
+    if (bodyBuffer) {
+      req.write(bodyBuffer);
     }
     req.end();
   });
 }
 
 async function resilientNativeFetch(url, options = {}) {
-  const maxAttempts = 3;
+  const maxAttempts = 4;
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
       return await nativeFetch(url, options);
     } catch (err) {
-      const isTransient = err.message && (
-        err.message.includes('timed out') ||
-        err.message.includes('ECONNRESET') ||
-        err.message.includes('ETIMEDOUT') ||
-        err.message.includes('socket hang up')
+      const msg = (err && (err.message || '')) + '';
+      const code = (err && (err.code || '')) + '';
+      const isTransient = (
+        msg.includes('timed out') ||
+        msg.includes('ECONNRESET') ||
+        msg.includes('ETIMEDOUT') ||
+        msg.includes('socket hang up') ||
+        msg.includes('ENOTFOUND') ||
+        msg.includes('EAI_AGAIN') ||
+        msg.includes('ECONNREFUSED') ||
+        msg.includes('ECONNABORTED') ||
+        msg.includes('UND_ERR_CONNECT_TIMEOUT') ||
+        code === 'ECONNRESET' ||
+        code === 'ETIMEDOUT' ||
+        code === 'ECONNABORTED' ||
+        code === 'EAI_AGAIN' ||
+        code === 'ECONNREFUSED'
       );
       if (attempt === maxAttempts || !isTransient) {
         throw err;
       }
-      logger.warn(`[SupabaseClient] Retrying HTTP request (${attempt}/${maxAttempts}) due to: ${err.message}`);
-      await new Promise(r => setTimeout(r, attempt * 500));
+      logger.warn(`[SupabaseClient] Retrying HTTP request (${attempt}/${maxAttempts}) due to: ${err.message || code}`);
+      await new Promise(r => setTimeout(r, attempt * 1000));
     }
   }
 }

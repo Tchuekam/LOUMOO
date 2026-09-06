@@ -134,7 +134,7 @@ const QUESTION_BANK = Object.freeze({
       const chip = answer.chip || null;
       const intentId = chip
         ? { buy: 'purchase', sell: 'sell', grow: 'growth', travel: 'travel', service: 'service', explore: 'browse' }[chip]
-        : signals.summary.intent || 'browse';
+        : (signals && signals.summary && signals.summary.intent) || 'browse';
       return [
         { type: 'intent', value: { id: intentId }, source: chip ? 'declared' : 'inferred', confidence: chip ? 1 : 0.8 },
         { type: 'goal', value: { id: `goal_${intentId}`, type: intentId === 'purchase' ? 'purchase' : intentId }, confidence: 0.9 }

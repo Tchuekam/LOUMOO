@@ -2,6 +2,2194 @@
 // Edit PRODUCTS_DATA in build_redesign.py instead; this file is regenerated each build.
 export const catalogProducts = {
 
+  "beauty_boss_bottled_night_100ml_edt": {
+    id: "beauty_boss_bottled_night_100ml_edt",
+    title: "Hugo Boss Bottled Night Eau de Toilette 100ml Vaporisateur",
+    brand: "Hugo Boss Parfums",
+    category: "beauty",
+    categoryLabel: "Parfums & Fragrances Masculines",
+    subcategory: "perfume",
+    conditionLabel: "Neuf sous blister scellé · 100% Authentique Certifié",
+    fulfillmentLabel: "Livraison Express Douala & Yaoundé 24h",
+    badge: "-24% PROMO",
+    rating: "4.9",
+    reviewCount: 42,
+    soldCount: 118,
+    price: "XAF 55.000",
+    salePrice: "XAF 42.000",
+    storeName: "L'Élixir Parfumerie Prestige",
+    storeCity: "Bonapriso, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/perfume&lotion/Boss%20Bottled%20Night%20by%20Hugo%20Boss%20_%20100ml%20EDT%20_%20Woody%20Aromatic%20Fragrance%20_%20Gift%20for%20him,%20Fathers%20day.jfif",
+    images: [
+      "./Assets/perfume&lotion/Boss%20Bottled%20Night%20by%20Hugo%20Boss%20_%20100ml%20EDT%20_%20Woody%20Aromatic%20Fragrance%20_%20Gift%20for%20him,%20Fathers%20day.jfif"
+    ],
+    attributes: [
+      { key: "Contenance", val: "100ml / 3.3 FL. OZ." },
+      { key: "Famille Olfactive", val: "Boisé Aromatique & Lavande Intense" },
+      { key: "Tenue", val: "Longue durée 12h+" }
+    ],
+    description: "Fragrance nocturne magnétique par excellence, associant feuilles de bouleau, cardamome épicée et notes intenses de bois de louro amarillo. 100% original garanti par L'Élixir Parfumerie Bonapriso avec protection LOUMOO Escrow."
+  },
+
+  "beauty_jean_paul_gaultier_le_beau_le_parfum": {
+    id: "beauty_jean_paul_gaultier_le_beau_le_parfum",
+    title: "Jean Paul Gaultier Le Beau Le Parfum Intense 125ml",
+    brand: "Jean Paul Gaultier",
+    category: "beauty",
+    categoryLabel: "Haute Parfumerie & Extrait",
+    subcategory: "perfume",
+    conditionLabel: "Neuf sous boîte métal iconique scellée",
+    fulfillmentLabel: "Expédition Sécurisée Cameroun 24h",
+    badge: "-21% PROMO",
+    rating: "4.9",
+    reviewCount: 38,
+    soldCount: 89,
+    price: "XAF 78.000",
+    salePrice: "XAF 62.000",
+    storeName: "Sillage d'Or Yaoundé",
+    storeCity: "Bastos, Yaoundé",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/perfume&lotion/The%20Scent%20of%20Success_%20Jean%20Paul%20Gaultier%20Le%20Beau%20Le%20Parfum%20_%20Men%E2%80%99s%20Luxury%20Lifestyle.jfif",
+    images: [
+      "./Assets/perfume&lotion/The%20Scent%20of%20Success_%20Jean%20Paul%20Gaultier%20Le%20Beau%20Le%20Parfum%20_%20Men%E2%80%99s%20Luxury%20Lifestyle.jfif"
+    ],
+    attributes: [
+      { key: "Volume", val: "125ml Eau de Parfum Intense" },
+      { key: "Notes", val: "Noix de Coco, Bois de Santal, Fève Tonka" },
+      { key: "Flacon", val: "Buste sculpté avec feuille de vigne dorée" }
+    ],
+    description: "Une tentation ultra-sensuelle et addictive alliant la douceur de la noix de coco au sillage viril du bois de santal et de l'ambre gris. Vendu avec garantie d'authenticité par Sillage d'Or Bastos."
+  },
+
+  "beauty_homme_liberte_50ml_extrait_parfum": {
+    id: "beauty_homme_liberte_50ml_extrait_parfum",
+    title: "Homme Liberté Extrait de Parfum 50ml Niche Collection",
+    brand: "Maison Liberté Paris",
+    category: "beauty",
+    categoryLabel: "Parfums de Niche & Rares",
+    subcategory: "perfume",
+    conditionLabel: "Neuf en coffret numéroté luxe",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h",
+    badge: "-25% PROMO",
+    rating: "4.8",
+    reviewCount: 19,
+    soldCount: 44,
+    price: "XAF 48.000",
+    salePrice: "XAF 36.000",
+    storeName: "L'Élixir Parfumerie Prestige",
+    storeCity: "Bonapriso, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/perfume&lotion/Homme%20Liberte%20-%2050ML%20%28Extrait%20De%20Parfum%29.jfif",
+    images: [
+      "./Assets/perfume&lotion/Homme%20Liberte%20-%2050ML%20%28Extrait%20De%20Parfum%29.jfif"
+    ],
+    attributes: [
+      { key: "Concentration", val: "Extrait de Parfum 30% d'huiles pures" },
+      { key: "Notes de Tête", val: "Bergamote de Calabre, Poivre Rose" },
+      { key: "Notes de Fond", val: "Cèdre de l'Atlas, Ambre Sombre" }
+    ],
+    description: "Composition de haute parfumerie artisanale pour connaisseurs exigeants. Concentration maximale pour un sillage raffiné et persistant toute la journée."
+  },
+
+  "beauty_bentley_for_men_fragrance_eau_intense": {
+    id: "beauty_bentley_for_men_fragrance_eau_intense",
+    title: "Bentley For Men Intense Eau de Parfum 100ml",
+    brand: "Bentley Fragrances",
+    category: "beauty",
+    categoryLabel: "Parfums & Fragrances Masculines",
+    subcategory: "perfume",
+    conditionLabel: "Neuf sous blister scellé d'origine",
+    fulfillmentLabel: "Livraison Express Nationale 24h-48h",
+    badge: "-24% PROMO",
+    rating: "4.8",
+    reviewCount: 27,
+    soldCount: 63,
+    price: "XAF 45.000",
+    salePrice: "XAF 34.000",
+    storeName: "Sillage d'Or Yaoundé",
+    storeCity: "Bastos, Yaoundé",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/perfume&lotion/Bentley%27s%20Latest%20Fragrances%20Is%20Its%20Best%20Yet.jfif",
+    images: [
+      "./Assets/perfume&lotion/Bentley%27s%20Latest%20Fragrances%20Is%20Its%20Best%20Yet.jfif"
+    ],
+    attributes: [
+      { key: "Volume", val: "100ml Eau de Parfum" },
+      { key: "Accord Principal", val: "Rhum des Caraïbes, Cuir, Cannelle & Bois Précieux" }
+    ],
+    description: "Un chef-d'œuvre de la parfumerie boisée orientale signé par la légendaire créatrice Nathalie Lorson. Accord opulent de rhum vieilli et de cuir chaud."
+  },
+
+  "beauty_loude_gel_nettoyant_visage_panthenol": {
+    id: "beauty_loude_gel_nettoyant_visage_panthenol",
+    title: "LOUDÉ Gel Nettoyant Facial Doux au Panthénol & B5 200ml",
+    brand: "LOUDÉ Dermo-Cosmetics",
+    category: "beauty",
+    categoryLabel: "Soins du Visage & Skincare",
+    subcategory: "skincare",
+    conditionLabel: "Neuf scellé · Formule hypoallergénique",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h",
+    badge: "-24% PROMO",
+    rating: "4.9",
+    reviewCount: 35,
+    soldCount: 142,
+    price: "XAF 16.500",
+    salePrice: "XAF 12.500",
+    storeName: "Pure Derme Bonanjo",
+    storeCity: "Bonanjo, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/perfume&lotion/G%C3%BCn%C3%BCn%20yorgunlu%C4%9Funu%20ve%20%C5%9Fehrin%20stresini%20cildinizden%20nazik%C3%A7e%20uzakla%C5%9Ft%C4%B1r%C4%B1n_%20LOUD%C3%89%20Panthenol%20Facial%20Cl___.jfif",
+    images: [
+      "./Assets/perfume&lotion/G%C3%BCn%C3%BCn%20yorgunlu%C4%9Funu%20ve%20%C5%9Fehrin%20stresini%20cildinizden%20nazik%C3%A7e%20uzakla%C5%9Ft%C4%B1r%C4%B1n_%20LOUD%C3%89%20Panthenol%20Facial%20Cl___.jfif"
+    ],
+    attributes: [
+      { key: "Actifs Clés", val: "Pro-Vitamine B5 (Panthénol) & Allantoïne" },
+      { key: "Type de Peau", val: "Toutes peaux y compris peaux sensibles" },
+      { key: "Contenance", val: "200ml Flacon Pompe Précision" }
+    ],
+    description: "Élimine en douceur les impuretés, l'excès de sébum et la pollution sans agresser la barrière cutanée. Apaise et hydrate dès la première utilisation."
+  },
+
+  "beauty_soin_regard_anti_cernes_poches_peptides": {
+    id: "beauty_soin_regard_anti_cernes_poches_peptides",
+    title: "Sérum Éclat Regard Anti-Cernes & Anti-Poches Peptides 15ml",
+    brand: "DermaLuxe Botanicals",
+    category: "beauty",
+    categoryLabel: "Soins du Visage & Skincare",
+    subcategory: "skincare",
+    conditionLabel: "Neuf avec embout applicateur métallique rafraîchissant",
+    fulfillmentLabel: "Livraison Express Nationale",
+    badge: "-23% PROMO",
+    rating: "4.8",
+    reviewCount: 22,
+    soldCount: 76,
+    price: "XAF 18.000",
+    salePrice: "XAF 13.900",
+    storeName: "Pure Derme Bonanjo",
+    storeCity: "Bonanjo, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/perfume&lotion/%C2%BFMirada%20cansada_%20Di%20adi%C3%B3s%20a%20las%20bolsas%20y%20ojeras%E2%80%A6.jfif",
+    images: [
+      "./Assets/perfume&lotion/%C2%BFMirada%20cansada_%20Di%20adi%C3%B3s%20a%20las%20bolsas%20y%20ojeras%E2%80%A6.jfif"
+    ],
+    attributes: [
+      { key: "Action", val: "Décongestionnante, Drainante & Lissante" },
+      { key: "Applicateur", val: "Embout Cryo Métal Zamac Effet Glaçon" }
+    ],
+    description: "Réduit visiblement les poches sous les yeux et éclaircit les cernes en stimulant la microcirculation grâce à un complexe actif de caféine pure et de peptides."
+  },
+
+  "beauty_shampooing_naturel_nourrissant_cheveux_secs": {
+    id: "beauty_shampooing_naturel_nourrissant_cheveux_secs",
+    title: "Shampooing Naturel Nourrissant Huiles Végétales & Karité 300ml",
+    brand: "Botanical Pure Cameroon",
+    category: "beauty",
+    categoryLabel: "Soins Capillaires & Shampoings",
+    subcategory: "haircare",
+    conditionLabel: "Neuf 100% Bio & Sans Sulfates / Sans Parabènes",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h",
+    badge: "-24% PROMO",
+    rating: "4.8",
+    reviewCount: 31,
+    soldCount: 115,
+    price: "XAF 12.500",
+    salePrice: "XAF 9.500",
+    storeName: "BioCosmétique Bastos",
+    storeCity: "Bastos, Yaoundé",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/perfume&lotion/Natural%20Shampoo%20for%20Dry%20Hair.jfif",
+    images: [
+      "./Assets/perfume&lotion/Natural%20Shampoo%20for%20Dry%20Hair.jfif"
+    ],
+    attributes: [
+      { key: "Ingrédients", val: "Beurre de Karité Brut, Huile d'Avocat & Ricin" },
+      { key: "Texture", val: "Crème onctueuse moussante naturelle" }
+    ],
+    description: "Formulé spécialement pour nourrir en profondeur les cheveux secs, crépus ou frisés. Restaure la souplesse naturelle et apporte une brillance éclatante."
+  },
+
+  "beauty_creme_hydratation_profonde_instant_glow": {
+    id: "beauty_creme_hydratation_profonde_instant_glow",
+    title: "Crème Hydratation Profonde & Éclat Instant Glow 50ml",
+    brand: "Glow Botanics",
+    category: "beauty",
+    categoryLabel: "Soins du Visage & Skincare",
+    subcategory: "skincare",
+    conditionLabel: "Neuf en pot en verre scellé avec spatule",
+    fulfillmentLabel: "Livraison Express Nationale",
+    badge: "-25% PROMO",
+    rating: "4.9",
+    reviewCount: 29,
+    soldCount: 98,
+    price: "XAF 22.000",
+    salePrice: "XAF 16.500",
+    storeName: "Pure Derme Bonanjo",
+    storeCity: "Bonanjo, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/perfume&lotion/INSTANT%20GLOW.jfif",
+    images: [
+      "./Assets/perfume&lotion/INSTANT%20GLOW.jfif"
+    ],
+    attributes: [
+      { key: "Actifs", val: "Acide Hyaluronique 3D & Niacinamide 5%" },
+      { key: "Finition", val: "Non grasse, toucher soyeux et lumineux" }
+    ],
+    description: "Infuse la peau d'une hydratation intense pendant 48 heures. Révèle instantanément l'éclat du teint et unifie le grain de peau avec un fini glow naturel."
+  },
+
+  "sport_nike_joyride_running_cushion_sneakers": {
+    id: "sport_nike_joyride_running_cushion_sneakers",
+    title: "Nike Joyride Dual Run Sneakers de Running Amorti Dynamique",
+    brand: "Nike Running",
+    category: "sports",
+    categoryLabel: "Chaussures de Sport & Running",
+    subcategory: "footwear",
+    conditionLabel: "Neuf en boîte d'origine certifiée Nike",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h",
+    badge: "-23% PROMO",
+    rating: "4.9",
+    reviewCount: 54,
+    soldCount: 160,
+    price: "XAF 58.000",
+    salePrice: "XAF 44.500",
+    storeName: "Sport & Performance Akwa",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/Nike%27s%20Joyride%20Collection%20Is%20Designed%20to%20Make%20Your%20Running%20Routine%20Easier%20Than%20Ever.jfif",
+    images: [
+      "./Assets/fashion/shoes/Nike%27s%20Joyride%20Collection%20Is%20Designed%20to%20Make%20Your%20Running%20Routine%20Easier%20Than%20Ever.jfif"
+    ],
+    attributes: [
+      { key: "Technologie", val: "Micro-billes TPE Joyride amorti personnalisé" },
+      { key: "Empeigne", val: "Mesh respirant Flyknit extensible" },
+      { key: "Usage", val: "Running, entraînement cardio & marathon" }
+    ],
+    description: "Conçue pour transformer chaque foulée en une sensation de légèreté absolue. Les micro-billes s'adaptent à la forme exacte de votre pied pour absorber les chocs. Garanti 100% officiel."
+  },
+
+  "sport_nike_air_jordan_retro_high_og": {
+    id: "sport_nike_air_jordan_retro_high_og",
+    title: "Nike Air Jordan 1 Retro High Baskets Performance & Streetwear",
+    brand: "Jordan Brand",
+    category: "sports",
+    categoryLabel: "Chaussures de Basketball & Streetwear",
+    subcategory: "footwear",
+    conditionLabel: "Neuf avec étiquettes & boîte collector Jumpman",
+    fulfillmentLabel: "Expédition Express Nationale 24h",
+    badge: "-23% PROMO",
+    rating: "4.9",
+    reviewCount: 62,
+    soldCount: 195,
+    price: "XAF 75.000",
+    salePrice: "XAF 58.000",
+    storeName: "Kamer Sneaker Vault",
+    storeCity: "Bonapriso, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/Nike%20Air%20Jordan.jfif",
+    images: [
+      "./Assets/fashion/shoes/Nike%20Air%20Jordan.jfif"
+    ],
+    attributes: [
+      { key: "Matière", val: "Cuir véritable pleine fleur de première qualité" },
+      { key: "Amorti", val: "Unité Nike Air encapsulée au talon" },
+      { key: "Semelle", val: "Caoutchouc résistant avec point de pivot basket" }
+    ],
+    description: "L'icône intemporelle des parquets et de la mode urbaine. Maintien parfait de la cheville, confort supérieur et style légendaire."
+  },
+
+  "sport_nike_air_force_1_low_triple_white": {
+    id: "sport_nike_air_force_1_low_triple_white",
+    title: "Nike Air Force 1 '07 Low Edition Cuir Premium Blanc",
+    brand: "Nike Sportswear",
+    category: "sports",
+    categoryLabel: "Baskets Sport & Lifestyle",
+    subcategory: "footwear",
+    conditionLabel: "Neuf en boîte d'origine avec deubré métallique AF1",
+    fulfillmentLabel: "Livraison Express Douala & Yaoundé 24h",
+    badge: "-23% PROMO",
+    rating: "4.9",
+    reviewCount: 85,
+    soldCount: 310,
+    price: "XAF 48.000",
+    salePrice: "XAF 37.000",
+    storeName: "Sport & Performance Akwa",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/Look%20at%20this%20new%20Nike%20Air%20Force.jfif",
+    images: [
+      "./Assets/fashion/shoes/Look%20at%20this%20new%20Nike%20Air%20Force.jfif"
+    ],
+    attributes: [
+      { key: "Tige", val: "Cuir blanc lisse premium facile à nettoyer" },
+      { key: "Semelle intermédiaire", val: "Mousse avec coussin d'air Nike Air" }
+    ],
+    description: "Le classique indémodable alliant confort d'athlétisme et esthétique streetwear irréprochable."
+  },
+
+  "sport_chaussures_entrainement_fitness_running_pro": {
+    id: "sport_chaussures_entrainement_fitness_running_pro",
+    title: "Chaussures d'Entraînement Respirantes & Fitness Running Pro",
+    brand: "Pro Athletic Tech",
+    category: "sports",
+    categoryLabel: "Équipement Athlétique & Fitness",
+    subcategory: "footwear",
+    conditionLabel: "Neuf en boîte avec lacets renforcés",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h",
+    badge: "-24% PROMO",
+    rating: "4.8",
+    reviewCount: 24,
+    soldCount: 78,
+    price: "XAF 35.000",
+    salePrice: "XAF 26.500",
+    storeName: "Sport & Performance Akwa",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/fashion/shoes/Men%27s%20Sports%20Shoes,%20Men%27s%20Casual%20Shoes,%20Fashionable%20And%20Personalized%20Street%20Student%20Handsome%20Shoes,%20Lace%20Up%20Men%27s%20Shoes,%20Men%27s%20Board%20Shoes.jfif",
+    images: [
+      "./Assets/fashion/shoes/Men%27s%20Sports%20Shoes,%20Men%27s%20Casual%20Shoes,%20Fashionable%20And%20Personalized%20Street%20Student%20Handsome%20Shoes,%20Lace%20Up%20Men%27s%20Shoes,%20Men%27s%20Board%20Shoes.jfif"
+    ],
+    attributes: [
+      { key: "Poids", val: "Ultra-légère (220g)" },
+      { key: "Adhérence", val: "Semelle profilée antidérapante multi-surfaces" }
+    ],
+    description: "Chaussure polyvalente conçue pour le fitness en salle, le cross-training et la course à pied en extérieur."
+  },
+
+  "sport_bouteille_isotherme_inox_sport_1l": {
+    id: "sport_bouteille_isotherme_inox_sport_1l",
+    title: "Bouteille Gourde Isotherme Sport Inox 1000ml Anti-Fuite",
+    brand: "HydroSport Elite",
+    category: "sports",
+    categoryLabel: "Accessoires de Sport & Hydratation",
+    subcategory: "gear",
+    conditionLabel: "Neuf sous emballage protecteur avec bouchon sport",
+    fulfillmentLabel: "Livraison Express Nationale",
+    badge: "-26% PROMO",
+    rating: "4.9",
+    reviewCount: 39,
+    soldCount: 140,
+    price: "XAF 12.000",
+    salePrice: "XAF 8.900",
+    storeName: "FitZone Cameroun",
+    storeCity: "Omnisports, Yaoundé",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/ElectroMenage/725642558709743083.jfif",
+    images: [
+      "./Assets/ElectroMenage/725642558709743083.jfif"
+    ],
+    attributes: [
+      { key: "Capacité", val: "1.0 Litre (1000ml)" },
+      { key: "Isolation", val: "Garde au frais 24h / au chaud 12h" },
+      { key: "Matériau", val: "Acier inoxydable 18/8 sans BPA" }
+    ],
+    description: "Gourde isotherme indispensable pour les entraînements intensifs, le gym ou les randonnées en climat tropical."
+  },
+
+  "sport_kit_bandes_resistance_fitness_musculation": {
+    id: "sport_kit_bandes_resistance_fitness_musculation",
+    title: "Kit 5 Bandes Élastiques de Résistance & Musculation Complète",
+    brand: "FitPro Active",
+    category: "sports",
+    categoryLabel: "Matériel Fitness & Musculation",
+    subcategory: "gear",
+    conditionLabel: "Neuf en sacoche de transport imperméable",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h",
+    badge: "-30% PROMO",
+    rating: "4.8",
+    reviewCount: 45,
+    soldCount: 180,
+    price: "XAF 15.000",
+    salePrice: "XAF 10.500",
+    storeName: "FitZone Cameroun",
+    storeCity: "Omnisports, Yaoundé",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/_processed/sports_editorial_banner.jpg",
+    images: [
+      "./Assets/_processed/sports_editorial_banner.jpg"
+    ],
+    attributes: [
+      { key: "Niveaux", val: "5 niveaux de 5 kg à 45 kg de résistance" },
+      { key: "Accessoires", val: "Poignées rembourrées, sangles chevilles & ancrage porte" }
+    ],
+    description: "Votre salle de sport complète transportable partout. Idéal pour sculpter l'ensemble du corps, rééducation ou renforcement musculaire à domicile."
+  },
+
+  "groc_panier_recolte_bio_maraicher": {
+    id: "groc_panier_recolte_bio_maraicher",
+    title: "Panier Récolte Bio & Légumes Frais du Marché (10kg Assortis)",
+    brand: "Les Jardins Maraîchers de l'Ouest",
+    category: "groceries",
+    categoryLabel: "Fruits, Légumes & Produits Frais",
+    subcategory: "fresh",
+    conditionLabel: "Récolté du matin · 100% Fraîcheur Garantie",
+    fulfillmentLabel: "Livraison du Jour Douala & Yaoundé (Morning Express)",
+    badge: "-22% FRAIS",
+    rating: "4.9",
+    reviewCount: 78,
+    soldCount: 320,
+    price: "XAF 18.500",
+    salePrice: "XAF 14.500",
+    storeName: "Le Marché Vert Bio",
+    storeCity: "Bonapriso, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/_processed/groceries_editorial_banner.jpg",
+    images: [
+      "./Assets/_processed/groceries_editorial_banner.jpg"
+    ],
+    attributes: [
+      { key: "Poids Total", val: "10 kg net de légumes et fruits maraîchers" },
+      { key: "Composition", val: "Tomates bio, carottes, poivrons, choux, concombres, avocats, bananes douces" },
+      { key: "Origine", val: "Terroirs agricoles certifiés sans pesticides chimiques" }
+    ],
+    description: "Le meilleur des terroirs maraîchers locaux livré directement chez vous. Produits triés à la main, lavés et soigneusement emballés dans des cagettes recyclables."
+  },
+
+  "groc_cafe_arabica_mont_cameroun_500g": {
+    id: "groc_cafe_arabica_mont_cameroun_500g",
+    title: "Café Pure Arabica des Hauts Plateaux de l'Ouest 500g Torréfié",
+    brand: "Mont Cameroun Coffee Roasters",
+    category: "groceries",
+    categoryLabel: "Café, Thé & Boissons Chaudes",
+    subcategory: "beverages",
+    conditionLabel: "Torréfaction artisanale fraîche · Paquet valve fraîcheur",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h",
+    badge: "-19% PROMO",
+    rating: "4.9",
+    reviewCount: 46,
+    soldCount: 165,
+    price: "XAF 8.500",
+    salePrice: "XAF 6.900",
+    storeName: "Comptoir Colonial des Épices",
+    storeCity: "Bastos, Yaoundé",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/ElectroMenage/Make%20Great%20Coffee%20at%20Home.jfif",
+    images: [
+      "./Assets/ElectroMenage/Make%20Great%20Coffee%20at%20Home.jfif"
+    ],
+    attributes: [
+      { key: "Variété", val: "100% Arabica Grand Cru Altitude (1800m)" },
+      { key: "Profil Aromatique", val: "Notes de chocolat noir, noisette et agrumes doux" },
+      { key: "Mouture", val: "Grain ou moulu polyvalent (filtre, piston, expresso)" }
+    ],
+    description: "Café d'exception cultivé sur les terres volcaniques fertiles des hautes terres de l'Ouest Cameroun. Torréfaction lente révélant une crema dense et un arôme envoûtant."
+  },
+
+  "groc_miel_sauvage_pur_adamaoua_1l": {
+    id: "groc_miel_sauvage_pur_adamaoua_1l",
+    title: "Miel Sauvage Pur & Naturel de l'Adamaoua 1000ml Bocal Verre",
+    brand: "Rucher Sauvage de Ngaoundéré",
+    category: "groceries",
+    categoryLabel: "Épicerie Fine & Miels Purs",
+    subcategory: "pantry",
+    conditionLabel: "100% Pur non pasteurisé · Récolte forestière naturelle",
+    fulfillmentLabel: "Livraison Express Nationale 24h",
+    badge: "-21% PROMO",
+    rating: "4.9",
+    reviewCount: 52,
+    soldCount: 210,
+    price: "XAF 12.000",
+    salePrice: "XAF 9.500",
+    storeName: "Comptoir Colonial des Épices",
+    storeCity: "Bastos, Yaoundé",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/_processed/groceries_editorial_banner.jpg",
+    images: [
+      "./Assets/_processed/groceries_editorial_banner.jpg"
+    ],
+    attributes: [
+      { key: "Volume", val: "1.0 Litre (1400g net)" },
+      { key: "Propriétés", val: "Riche en antioxydants, enzymes naturelles et oligo-éléments" }
+    ],
+    description: "Miel de brousse aux teintes ambrées dorées et aux arômes floraux intenses. Issu des ruches traditionnelles de la savane arborée de l'Adamaoua."
+  },
+
+  "groc_huile_olive_vierge_extra_bio_1l": {
+    id: "groc_huile_olive_vierge_extra_bio_1l",
+    title: "Huile d'Olive Vierge Extra Première Pression à Froid 1L Bouteille Sombre",
+    brand: "Oliva Dorata Mediterranean",
+    category: "groceries",
+    categoryLabel: "Huiles & Condiments Gastronomiques",
+    subcategory: "pantry",
+    conditionLabel: "Neuf bouteille en verre teinté anti-UV avec bec verseur",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h",
+    badge: "-20% PROMO",
+    rating: "4.8",
+    reviewCount: 33,
+    soldCount: 125,
+    price: "XAF 14.000",
+    salePrice: "XAF 11.200",
+    storeName: "Le Marché Vert Bio",
+    storeCity: "Bonapriso, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/_processed/groceries_editorial_banner.jpg",
+    images: [
+      "./Assets/_processed/groceries_editorial_banner.jpg"
+    ],
+    attributes: [
+      { key: "Acidité", val: "Ultra-basse < 0.3%" },
+      { key: "Extraction", val: "Mécanique à froid 100% naturelle" }
+    ],
+    description: "Huile d'olive d'exception aux reflets émeraude et aux notes subtilement herbacées. Idéale pour assaisonner salades gourmandes et sublimer vos plats mijotés."
+  },
+
+  "groc_riz_parfume_super_luxe_25kg": {
+    id: "groc_riz_parfume_super_luxe_25kg",
+    title: "Riz Parfumé Jasmin Long Grain Sélection Or 25kg Sac Tissé",
+    brand: "Royal Jasmine Selected",
+    category: "groceries",
+    categoryLabel: "Céréales, Riz & Féculents",
+    subcategory: "pantry",
+    conditionLabel: "Sac hermétique scellé d'usine · Grains entiers 100%",
+    fulfillmentLabel: "Livraison Camionnette Directe à Domicile",
+    badge: "-13% PROMO",
+    rating: "4.9",
+    reviewCount: 94,
+    soldCount: 420,
+    price: "XAF 28.000",
+    salePrice: "XAF 24.500",
+    storeName: "Super Alimentation Akwa",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/_processed/groceries_editorial_banner.jpg",
+    images: [
+      "./Assets/_processed/groceries_editorial_banner.jpg"
+    ],
+    attributes: [
+      { key: "Conditionnement", val: "Sac de 25 kg renforcé" },
+      { key: "Qualité", val: "Brisures inférieures à 2%, arôme naturel jasmin" }
+    ],
+    description: "Le riz favori des familles pour les réceptions et repas quotidiens. Cuisson parfaite sans coller, grains longs et parfum délicat."
+  },
+
+  "groc_chocolat_noir_artisanat_cameroun": {
+    id: "groc_chocolat_noir_artisanat_cameroun",
+    title: "Coffret Découverte Chocolats Purs Grands Crus Cameroun 70% (Lot de 4)",
+    brand: "Cacao d'Or Mbalmayo",
+    category: "groceries",
+    categoryLabel: "Confiserie, Chocolats & Biscuits",
+    subcategory: "sweets",
+    conditionLabel: "Neuf en étui éco-conçu papier kraft doré",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h",
+    badge: "-21% PROMO",
+    rating: "4.9",
+    reviewCount: 37,
+    soldCount: 110,
+    price: "XAF 9.500",
+    salePrice: "XAF 7.500",
+    storeName: "Comptoir Colonial des Épices",
+    storeCity: "Bastos, Yaoundé",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/_processed/groceries_editorial_banner.jpg",
+    images: [
+      "./Assets/_processed/groceries_editorial_banner.jpg"
+    ],
+    attributes: [
+      { key: "Teneur Cacao", val: "70% pur beurre de cacao camerounais" },
+      { key: "Variétés", val: "Noir Intense, Piment Doux, Fleur de Sel, Café Arabica" }
+    ],
+    description: "La fierté de la fève camerounaise travaillée par des maîtres chocolatiers locaux. Une explosion de saveurs fruitées et boisées sans lécithine ajoutée."
+  },
+
+  "groc_the_vert_infusion_gingembre_citron": {
+    id: "groc_the_vert_infusion_gingembre_citron",
+    title: "Thé Vert Bio & Infusion Détox Gingembre Citronnelle 100 Sachets",
+    brand: "Herboristerie des Plateaux",
+    category: "groceries",
+    categoryLabel: "Café, Thé & Boissons Chaudes",
+    subcategory: "beverages",
+    conditionLabel: "Boîte distributrice hermétique 100 sachets mousseline",
+    fulfillmentLabel: "Livraison Express Nationale",
+    badge: "-25% PROMO",
+    rating: "4.8",
+    reviewCount: 28,
+    soldCount: 95,
+    price: "XAF 6.500",
+    salePrice: "XAF 4.900",
+    storeName: "Le Marché Vert Bio",
+    storeCity: "Bonapriso, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/_processed/groceries_editorial_banner.jpg",
+    images: [
+      "./Assets/_processed/groceries_editorial_banner.jpg"
+    ],
+    attributes: [
+      { key: "Ingrédients", val: "Thé vert Sencha bio, rhizome de gingembre frais, citronnelle sauvage" },
+      { key: "Bienfaits", val: "Stimule l'énergie, aide à la digestion et renforce les défenses immunitaires" }
+    ],
+    description: "Une alliance vivifiante et revigorante de thé vert antioxydant et d'épices fraîches locales. Délicieux chaud ou glacé."
+  },
+
+  "groc_pack_eau_minerale_tangui_15l": {
+    id: "groc_pack_eau_minerale_tangui_15l",
+    title: "Pack 6 Bouteilles Eau Minérale Naturelle Tangui 1.5L",
+    brand: "Tangui Eau Minérale",
+    category: "groceries",
+    categoryLabel: "Eaux Minérales & Boissons Fraîches",
+    subcategory: "beverages",
+    conditionLabel: "Pack fardelé d'origine certifié",
+    fulfillmentLabel: "Livraison Directe Domicile / Bureau",
+    badge: "-20% PROMO",
+    rating: "4.9",
+    reviewCount: 112,
+    soldCount: 650,
+    price: "XAF 3.500",
+    salePrice: "XAF 2.800",
+    storeName: "Super Alimentation Akwa",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/_processed/groceries_editorial_banner.jpg",
+    images: [
+      "./Assets/_processed/groceries_editorial_banner.jpg"
+    ],
+    attributes: [
+      { key: "Contenance", val: "6 x 1.5L = 9 Litres" },
+      { key: "Origine", val: "Source minérale naturelle protégée du Mont Cameroun" }
+    ],
+    description: "Pureté et équilibre minéral au quotidien pour toute la famille. Faiblement minéralisée, convient parfaitement aux nourrissons."
+  },
+
+  "jewel_bracelet_homme_agate_noire_naturelle_acier_in": {
+    id: "jewel_bracelet_homme_agate_noire_naturelle_acier_in",
+    title: "Bracelet Homme Agate Noire Naturelle & Acier Inoxydable 316L",
+    brand: "Éclat & Diamant Bonapriso",
+    category: "fashion",
+    categoryLabel: "Joaillerie & Bijoux Précieux",
+    subcategory: "watches_jewelry",
+    conditionLabel: "Neuf certifié · Écrin de luxe & Certificat d'authenticité",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h · Remise sécurisée",
+    badge: "-26% PROMO",
+    rating: "4.8",
+    reviewCount: 19,
+    soldCount: 28,
+    price: "XAF 25.000",
+    salePrice: "XAF 18.500",
+    storeName: "L'Écrin d'Or Akwa",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/jelweries/bracelet/Black%20Agate%20Bracelet,%20Energy%20Balancing%20Men%27s%20Bracelet,%20Stainless%20Steel%20Men%27s%20Jewelry,%20Gift%20for%20Father_Husband.jfif",
+    images: [
+      "./Assets/jelweries/bracelet/Black%20Agate%20Bracelet,%20Energy%20Balancing%20Men%27s%20Bracelet,%20Stainless%20Steel%20Men%27s%20Jewelry,%20Gift%20for%20Father_Husband.jfif"
+    ],
+    attributes: [
+      { key: "Matériau", val: "Perles d'Agate Noire Véritable 8mm" },
+      { key: "Finition", val: "Acier Inoxydable 316L Poli Miroir" },
+      { key: "Fermoir", val: "Cordon Élastique Résistant Haute Densité" }
+    ],
+    description: "Bracelet d'équilibrage et d'élégance pour homme associant perles d'agate noire matte et séparateurs en acier inoxydable chirurgical anti-allergène. Vendu et garanti 100% authentique par L'Écrin d'Or Akwa avec protection du paiement par séquestre LOUMOO Escrow."
+  },
+
+  "jewel_bracelet_cuir_veritable_tresse_maille_cubaine": {
+    id: "jewel_bracelet_cuir_veritable_tresse_maille_cubaine",
+    title: "Bracelet Cuir Véritable Tressé & Maille Cubaine Acier Titane",
+    brand: "Comptoir de l'Or Douala",
+    category: "fashion",
+    categoryLabel: "Joaillerie & Bijoux Précieux",
+    subcategory: "watches_jewelry",
+    conditionLabel: "Neuf certifié · Écrin de luxe & Certificat d'authenticité",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h · Remise sécurisée",
+    badge: "-25% PROMO",
+    rating: "4.9",
+    reviewCount: 23,
+    soldCount: 35,
+    price: "XAF 28.000",
+    salePrice: "XAF 21.000",
+    storeName: "Prestige Joaillerie Bastos",
+    storeCity: "Bastos, Yaoundé",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/jelweries/bracelet/Cuban%20Links%20Leather%20Bracelet.jfif",
+    images: [
+      "./Assets/jelweries/bracelet/Cuban%20Links%20Leather%20Bracelet.jfif"
+    ],
+    attributes: [
+      { key: "Matière", val: "Cuir de Vachette Véritable Tressé Main" },
+      { key: "Métal", val: "Acier Titane Finition Noire Brossée & Argent" },
+      { key: "Fermoir", val: "Magnétique Sécurisé avec Verrou Coulissant" }
+    ],
+    description: "Bracelet double rang combinant le tressage artisanal en cuir noir noble et l'insert central en maille cubaine ultra-moderne. Vendu et garanti 100% authentique par Prestige Joaillerie Bastos avec protection du paiement par séquestre LOUMOO Escrow."
+  },
+
+  "jewel_bracelet_multi_rangs_arbre_de_vie_cuir_patine": {
+    id: "jewel_bracelet_multi_rangs_arbre_de_vie_cuir_patine",
+    title: "Bracelet Multi-Rangs Arbre de Vie Cuir Patiné & Breloques Vintage",
+    brand: "L'Écrin d'Or Akwa",
+    category: "fashion",
+    categoryLabel: "Joaillerie & Bijoux Précieux",
+    subcategory: "watches_jewelry",
+    conditionLabel: "Neuf certifié · Écrin de luxe & Certificat d'authenticité",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h · Remise sécurisée",
+    badge: "-28% PROMO",
+    rating: "5.0",
+    reviewCount: 27,
+    soldCount: 42,
+    price: "XAF 22.000",
+    salePrice: "XAF 15.900",
+    storeName: "Éclat & Diamant Bonapriso",
+    storeCity: "Bonapriso, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/jelweries/bracelet/Fashionable%20and%20Popular%20Men%20Tree%20Print%20Braid%20Detail%20Bracelet%20PU%20for%20Vacation%20and%20for%20a%20Stylish%20Look.jfif",
+    images: [
+      "./Assets/jelweries/bracelet/Fashionable%20and%20Popular%20Men%20Tree%20Print%20Braid%20Detail%20Bracelet%20PU%20for%20Vacation%20and%20for%20a%20Stylish%20Look.jfif"
+    ],
+    attributes: [
+      { key: "Symbole", val: "Médaillon Gravé Arbre de Vie en Bronze Antique" },
+      { key: "Style", val: "Multi-Brins Cuir Tressé & Perles en Bois" },
+      { key: "Ajustement", val: "Nœud Coulissant Ajustable de 18 à 23 cm" }
+    ],
+    description: "Bracelet bohème chic masculin orné du médaillon arbre de vie, symbole d'énergie et de force, parfait pour les tenues casual et estivales. Vendu et garanti 100% authentique par Éclat & Diamant Bonapriso avec protection du paiement par séquestre LOUMOO Escrow."
+  },
+
+  "jewel_bracelet_energetique_pierres_fines_7_chakras": {
+    id: "jewel_bracelet_energetique_pierres_fines_7_chakras",
+    title: "Bracelet Énergétique Pierres Fines 7 Chakras & Cristal de Roche",
+    brand: "Prestige Joaillerie Bastos",
+    category: "fashion",
+    categoryLabel: "Joaillerie & Bijoux Précieux",
+    subcategory: "watches_jewelry",
+    conditionLabel: "Neuf certifié · Écrin de luxe & Certificat d'authenticité",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h · Remise sécurisée",
+    badge: "-25% PROMO",
+    rating: "4.8",
+    reviewCount: 31,
+    soldCount: 49,
+    price: "XAF 30.000",
+    salePrice: "XAF 22.500",
+    storeName: "Comptoir de l'Or Douala",
+    storeCity: "Marché Central, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/jelweries/bracelet/Gems&crystals%20meaning%EF%BD%9Cbeaded%20ideas.jfif",
+    images: [
+      "./Assets/jelweries/bracelet/Gems&crystals%20meaning%EF%BD%9Cbeaded%20ideas.jfif"
+    ],
+    attributes: [
+      { key: "Pierres", val: "Lapis Lazuli, Œil de Tigre, Améthyste, Jaspe" },
+      { key: "Pureté", val: "Minéraux Naturels Certifiés sans Traitement" },
+      { key: "Diamètre", val: "Perles Rondes Calibrées 8 mm" }
+    ],
+    description: "Élégant chapelet de poignet harmonisant 7 gemmes semi-précieuses authentiques. Apporte équilibre et raffinement spirituel au quotidien. Vendu et garanti 100% authentique par Comptoir de l'Or Douala avec protection du paiement par séquestre LOUMOO Escrow."
+  },
+
+  "jewel_bracelet_jonc_motif_cle_grecque_meandre_argen": {
+    id: "jewel_bracelet_jonc_motif_cle_grecque_meandre_argen",
+    title: "Bracelet Jonc Motif Clé Grecque Méandre Argent Massif 925",
+    brand: "Prestige Joaillerie Bastos",
+    category: "fashion",
+    categoryLabel: "Joaillerie & Bijoux Précieux",
+    subcategory: "watches_jewelry",
+    conditionLabel: "Neuf certifié · Écrin de luxe & Certificat d'authenticité",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h · Remise sécurisée",
+    badge: "-27% LUXE",
+    rating: "4.9",
+    reviewCount: 35,
+    soldCount: 56,
+    price: "XAF 48.000",
+    salePrice: "XAF 34.900",
+    storeName: "L'Écrin d'Or Akwa",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/jelweries/bracelet/Meander%20Bracelet%20for%20Men%20-%20Ancient%20Greek%20Bracelet%20-%20925%20Sterling%20Silver%20Greek%20Key%20Bracelet.jfif",
+    images: [
+      "./Assets/jelweries/bracelet/Meander%20Bracelet%20for%20Men%20-%20Ancient%20Greek%20Bracelet%20-%20925%20Sterling%20Silver%20Greek%20Key%20Bracelet.jfif"
+    ],
+    attributes: [
+      { key: "Métal", val: "Argent Massif 925/1000 Poinçon Officiel" },
+      { key: "Design", val: "Gravure Antique Clé Grecque Méandre Continu" },
+      { key: "Poids", val: "26,5 grammes · Finition Oxydée & Polie" }
+    ],
+    description: "Jonc d'inspiration hellénique en argent véritable 925. Gravure en relief des méandres antiques avec patine noircie contrastée. Vendu et garanti 100% authentique par L'Écrin d'Or Akwa avec protection du paiement par séquestre LOUMOO Escrow."
+  },
+
+  "jewel_bracelet_macrame_casque_spartiate_hematite_pi": {
+    id: "jewel_bracelet_macrame_casque_spartiate_hematite_pi",
+    title: "Bracelet Macramé Casque Spartiate Hématite & Pierre de Lave Noire",
+    brand: "Éclat & Diamant Bonapriso",
+    category: "fashion",
+    categoryLabel: "Joaillerie & Bijoux Précieux",
+    subcategory: "watches_jewelry",
+    conditionLabel: "Neuf certifié · Écrin de luxe & Certificat d'authenticité",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h · Remise sécurisée",
+    badge: "-27% PROMO",
+    rating: "5.0",
+    reviewCount: 39,
+    soldCount: 63,
+    price: "XAF 26.000",
+    salePrice: "XAF 18.900",
+    storeName: "Prestige Joaillerie Bastos",
+    storeCity: "Bastos, Yaoundé",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/jelweries/bracelet/Men%20Charm%20Black%20Spartan%20Helmet%20Beaded%20Natural%20Stone%20Adjustable%20Macrame%20Bracelets%20_%20eBay.jfif",
+    images: [
+      "./Assets/jelweries/bracelet/Men%20Charm%20Black%20Spartan%20Helmet%20Beaded%20Natural%20Stone%20Adjustable%20Macrame%20Bracelets%20_%20eBay.jfif"
+    ],
+    attributes: [
+      { key: "Charm", val: "Casque de Guerrier Spartiate Plaqué Gunmetal" },
+      { key: "Pierres", val: "Perles de Lave Volcanique Poreuse & Hématite" },
+      { key: "Fermeture", val: "Tressage Macramé Haute Résistance Ajustable" }
+    ],
+    description: "Bracelet guerrier masculin arborant un casque spartiate pavé de micro-oxydes de zirconium noirs, monté sur pierres volcaniques texturées. Vendu et garanti 100% authentique par Prestige Joaillerie Bastos avec protection du paiement par séquestre LOUMOO Escrow."
+  },
+
+  "jewel_bracelet_luxe_serasar_cuir_tresse_noir_fermoi": {
+    id: "jewel_bracelet_luxe_serasar_cuir_tresse_noir_fermoi",
+    title: "Bracelet Luxe SERASAR Cuir Tressé Noir & Fermoir Magnétique Or",
+    brand: "L'Écrin d'Or Akwa",
+    category: "fashion",
+    categoryLabel: "Joaillerie & Bijoux Précieux",
+    subcategory: "watches_jewelry",
+    conditionLabel: "Neuf certifié · Écrin de luxe & Certificat d'authenticité",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h · Remise sécurisée",
+    badge: "-26% PROMO",
+    rating: "4.8",
+    reviewCount: 43,
+    soldCount: 70,
+    price: "XAF 35.000",
+    salePrice: "XAF 25.900",
+    storeName: "Éclat & Diamant Bonapriso",
+    storeCity: "Bonapriso, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/jelweries/bracelet/SERASAR%20Premium%20Leather%20Bracelet%20Men%20_%20Stainless%20Steel%20Magnetic%20Clasp%20_%20Three%20Colors%20_%20Jewelry%20Box%20Included.jfif",
+    images: [
+      "./Assets/jelweries/bracelet/SERASAR%20Premium%20Leather%20Bracelet%20Men%20_%20Stainless%20Steel%20Magnetic%20Clasp%20_%20Three%20Colors%20_%20Jewelry%20Box%20Included.jfif"
+    ],
+    attributes: [
+      { key: "Origine", val: "Cuir Pleine Fleur Allemand Véritable" },
+      { key: "Fermoir", val: "Acier Inoxydable Doré à l'Or Fin 18K Magnétique" },
+      { key: "Écrin", val: "Livré avec Coffret Cadeau & Carte d'Authenticité" }
+    ],
+    description: "Bracelet signature haut de gamme pour homme en cuir premium double tresse avec fermoir magnétique plaqué or fin inaltérable. Vendu et garanti 100% authentique par Éclat & Diamant Bonapriso avec protection du paiement par séquestre LOUMOO Escrow."
+  },
+
+  "jewel_bracelet_bangle_glaive_sculpte_en_acier_damas": {
+    id: "jewel_bracelet_bangle_glaive_sculpte_en_acier_damas",
+    title: "Bracelet Bangle Glaive Sculpté en Acier Damascout & Finition Antique",
+    brand: "Comptoir de l'Or Douala",
+    category: "fashion",
+    categoryLabel: "Joaillerie & Bijoux Précieux",
+    subcategory: "watches_jewelry",
+    conditionLabel: "Neuf certifié · Écrin de luxe & Certificat d'authenticité",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h · Remise sécurisée",
+    badge: "-27% PROMO",
+    rating: "4.9",
+    reviewCount: 47,
+    soldCount: 77,
+    price: "XAF 32.000",
+    salePrice: "XAF 23.500",
+    storeName: "Comptoir de l'Or Douala",
+    storeCity: "Marché Central, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/jelweries/bracelet/%F0%9F%97%A1%20%D0%91%D1%80%D0%B0%D1%81%D0%BB%D0%B5%D1%82%20bangle%20_%D0%9C%D0%B5%D1%87_%20%F0%9F%93%90%20%D0%A0%D0%BE%D0%B7%D0%BC%D1%96%D1%80_%2020%20%D1%81%D0%BC%20%F0%9F%94%A9%20%D0%9C%D0%B5%D1%82%D0%B0%D0%BB%E2%80%A6.jfif",
+    images: [
+      "./Assets/jelweries/bracelet/%F0%9F%97%A1%20%D0%91%D1%80%D0%B0%D1%81%D0%BB%D0%B5%D1%82%20bangle%20_%D0%9C%D0%B5%D1%87_%20%F0%9F%93%90%20%D0%A0%D0%BE%D0%B7%D0%BC%D1%96%D1%80_%2020%20%D1%81%D0%BC%20%F0%9F%94%A9%20%D0%9C%D0%B5%D1%82%D0%B0%D0%BB%E2%80%A6.jfif"
+    ],
+    attributes: [
+      { key: "Forme", val: "Lame Courbée Glaive Médiéval Ergonomique" },
+      { key: "Matière", val: "Acier Inoxydable Chirurgical Finition Vieil Argent" },
+      { key: "Circonférence", val: "20 cm ajustable manuellement" }
+    ],
+    description: "Bracelet manchette rigide original sculpté sous forme d'épée antique. Ouvrage d'artisan joaillier aux détails minutieux et au confort remarquable. Vendu et garanti 100% authentique par Comptoir de l'Or Douala avec protection du paiement par séquestre LOUMOO Escrow."
+  },
+
+  "jewel_paire_de_clous_doreilles_geometriques_minimal": {
+    id: "jewel_paire_de_clous_doreilles_geometriques_minimal",
+    title: "Paire de Clous d'Oreilles Géométriques Minimalistes Plaqué Or 18K",
+    brand: "Éclat & Diamant Bonapriso",
+    category: "fashion",
+    categoryLabel: "Joaillerie & Bijoux Précieux",
+    subcategory: "watches_jewelry",
+    conditionLabel: "Neuf certifié · Écrin de luxe & Certificat d'authenticité",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h · Remise sécurisée",
+    badge: "-28% PROMO",
+    rating: "5.0",
+    reviewCount: 51,
+    soldCount: 84,
+    price: "XAF 18.000",
+    salePrice: "XAF 12.900",
+    storeName: "L'Écrin d'Or Akwa",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/jelweries/hearing/1%20Pair%20Vintage%20Gold%20Minimalist%20Geometric%20Stud%20Earrings,%20Suitable%20For%20Young%20Girl%20Everyday%20And%20Festivals.jfif",
+    images: [
+      "./Assets/jelweries/hearing/1%20Pair%20Vintage%20Gold%20Minimalist%20Geometric%20Stud%20Earrings,%20Suitable%20For%20Young%20Girl%20Everyday%20And%20Festivals.jfif"
+    ],
+    attributes: [
+      { key: "Placage", val: "Or Jaune 18 Carats 3 Microns Garanti" },
+      { key: "Type", val: "Clous d'Oreilles Puces avec Poussettes Papillon" },
+      { key: "Sensibilité", val: "Tiges Hypoallergéniques en Titane sans Nickel" }
+    ],
+    description: "Clous d'oreilles au design géométrique épuré et contemporain. Éclat doré étincelant pour sublimer le port de tête au quotidien ou en soirée. Vendu et garanti 100% authentique par L'Écrin d'Or Akwa avec protection du paiement par séquestre LOUMOO Escrow."
+  },
+
+  "jewel_boucles_doreilles_pendantes_cascade_de_crista": {
+    id: "jewel_boucles_doreilles_pendantes_cascade_de_crista",
+    title: "Boucles d'Oreilles Pendantes Cascade de Cristaux & Gouttes Dorées",
+    brand: "Prestige Joaillerie Bastos",
+    category: "fashion",
+    categoryLabel: "Joaillerie & Bijoux Précieux",
+    subcategory: "watches_jewelry",
+    conditionLabel: "Neuf certifié · Écrin de luxe & Certificat d'authenticité",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h · Remise sécurisée",
+    badge: "-29% PROMO",
+    rating: "4.8",
+    reviewCount: 55,
+    soldCount: 91,
+    price: "XAF 28.000",
+    salePrice: "XAF 19.900",
+    storeName: "Prestige Joaillerie Bastos",
+    storeCity: "Bastos, Yaoundé",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/jelweries/hearing/10062799164306494.jfif",
+    images: [
+      "./Assets/jelweries/hearing/10062799164306494.jfif"
+    ],
+    attributes: [
+      { key: "Pierres", val: "Zircons Cubiques AAA+ Taillés en Poire" },
+      { key: "Monture", val: "Alliage de Précision Plaqué Or 14K" },
+      { key: "Longueur", val: "45 mm · Fermoirs Dormeuses Sécurisés" }
+    ],
+    description: "Pendantes raffinées capturant la lumière à chaque mouvement. Idéales pour mariages, galas et cérémonies prestigieuses. Vendu et garanti 100% authentique par Prestige Joaillerie Bastos avec protection du paiement par séquestre LOUMOO Escrow."
+  },
+
+  "jewel_creoles_torsadees_epaisses_plaque_or_18k_styl": {
+    id: "jewel_creoles_torsadees_epaisses_plaque_or_18k_styl",
+    title: "Créoles Torsadées Épaisses Plaqué Or 18K Style Bohème Chic",
+    brand: "L'Écrin d'Or Akwa",
+    category: "fashion",
+    categoryLabel: "Joaillerie & Bijoux Précieux",
+    subcategory: "watches_jewelry",
+    conditionLabel: "Neuf certifié · Écrin de luxe & Certificat d'authenticité",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h · Remise sécurisée",
+    badge: "-27% PROMO",
+    rating: "4.9",
+    reviewCount: 59,
+    soldCount: 98,
+    price: "XAF 24.000",
+    salePrice: "XAF 17.500",
+    storeName: "Éclat & Diamant Bonapriso",
+    storeCity: "Bonapriso, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/jelweries/hearing/1008736016548843830.jfif",
+    images: [
+      "./Assets/jelweries/hearing/1008736016548843830.jfif"
+    ],
+    attributes: [
+      { key: "Design", val: "Effet Corde Torsadée Épaisse 5mm" },
+      { key: "Diamètre", val: "25 mm · Poids Plume Confortable" },
+      { key: "Fermeture", val: "Charnière Clic Invisible et Fiable" }
+    ],
+    description: "Créoles modernes à texture torsadée apportant un volume luxueux sans alourdir le lobe. Traitement anti-oxydation longue tenue. Vendu et garanti 100% authentique par Éclat & Diamant Bonapriso avec protection du paiement par séquestre LOUMOO Escrow."
+  },
+
+  "jewel_boucles_doreilles_art_deco_emeraudes_poire_ha": {
+    id: "jewel_boucles_doreilles_art_deco_emeraudes_poire_ha",
+    title: "Boucles d'Oreilles Art Déco Émeraudes Poire & Halo Brillants",
+    brand: "Prestige Joaillerie Bastos",
+    category: "fashion",
+    categoryLabel: "Joaillerie & Bijoux Précieux",
+    subcategory: "watches_jewelry",
+    conditionLabel: "Neuf certifié · Écrin de luxe & Certificat d'authenticité",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h · Remise sécurisée",
+    badge: "-29% LUXE",
+    rating: "5.0",
+    reviewCount: 63,
+    soldCount: 105,
+    price: "XAF 42.000",
+    salePrice: "XAF 29.900",
+    storeName: "Comptoir de l'Or Douala",
+    storeCity: "Marché Central, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/jelweries/hearing/1688918606841170.jfif",
+    images: [
+      "./Assets/jelweries/hearing/1688918606841170.jfif"
+    ],
+    attributes: [
+      { key: "Pierre Centrale", val: "Émeraude Synthétique Hydrothermale Verte Intense" },
+      { key: "Halo", val: "Micro-Pavé de Zircons Façon Diamant" },
+      { key: "Monture", val: "Argent Massif 925 Finition Rhodium Platine" }
+    ],
+    description: "Pièce de haute joaillerie d'inspiration vintage mettant en valeur une splendide pierre verte poire entourée d'une couronne scintillante. Vendu et garanti 100% authentique par Comptoir de l'Or Douala avec protection du paiement par séquestre LOUMOO Escrow."
+  },
+
+  "jewel_puces_doreilles_perles_de_culture_deau_douce": {
+    id: "jewel_puces_doreilles_perles_de_culture_deau_douce",
+    title: "Puces d'Oreilles Perles de Culture d'Eau Douce & Couronne Diamantée",
+    brand: "L'Écrin d'Or Akwa",
+    category: "fashion",
+    categoryLabel: "Joaillerie & Bijoux Précieux",
+    subcategory: "watches_jewelry",
+    conditionLabel: "Neuf certifié · Écrin de luxe & Certificat d'authenticité",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h · Remise sécurisée",
+    badge: "-25% PROMO",
+    rating: "4.8",
+    reviewCount: 67,
+    soldCount: 112,
+    price: "XAF 32.000",
+    salePrice: "XAF 23.900",
+    storeName: "L'Écrin d'Or Akwa",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/jelweries/hearing/18155204744316411.jfif",
+    images: [
+      "./Assets/jelweries/hearing/18155204744316411.jfif"
+    ],
+    attributes: [
+      { key: "Perles", val: "Perles de Culture Blanches Lustre Élevé 8mm" },
+      { key: "Monture", val: "Argent 925 Rhodié Inoxydable" },
+      { key: "Style", val: "Classique Intemporel Mariée & Affaires" }
+    ],
+    description: "Le grand classique de la joaillerie féminine : véritables perles baroques sélectionnées pour leur lustre satiné et leur nacre sans défaut. Vendu et garanti 100% authentique par L'Écrin d'Or Akwa avec protection du paiement par séquestre LOUMOO Escrow."
+  },
+
+  "jewel_boucles_doreilles_demi_lune_ciselees_or_jaune": {
+    id: "jewel_boucles_doreilles_demi_lune_ciselees_or_jaune",
+    title: "Boucles d'Oreilles Demi-Lune Ciselées Or Jaune et Émail Nude",
+    brand: "Éclat & Diamant Bonapriso",
+    category: "fashion",
+    categoryLabel: "Joaillerie & Bijoux Précieux",
+    subcategory: "watches_jewelry",
+    conditionLabel: "Neuf certifié · Écrin de luxe & Certificat d'authenticité",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h · Remise sécurisée",
+    badge: "-27% PROMO",
+    rating: "4.9",
+    reviewCount: 71,
+    soldCount: 119,
+    price: "XAF 26.000",
+    salePrice: "XAF 18.900",
+    storeName: "Prestige Joaillerie Bastos",
+    storeCity: "Bastos, Yaoundé",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/jelweries/hearing/2814818513335420.jfif",
+    images: [
+      "./Assets/jelweries/hearing/2814818513335420.jfif"
+    ],
+    attributes: [
+      { key: "Finition", val: "Plaqué Or 18 Carats & Émail Poudré Nude" },
+      { key: "Forme", val: "Croissant Géométrique Demi-Lune Évasé" },
+      { key: "Système", val: "Attaches Françaises Sécurisées" }
+    ],
+    description: "Création audacieuse et sophistiquée mariant la chaleur du métal doré à la douceur d'un émail satiné rose nude. Vendu et garanti 100% authentique par Prestige Joaillerie Bastos avec protection du paiement par séquestre LOUMOO Escrow."
+  },
+
+  "jewel_pendantes_sculpturales_anneaux_entrelaces_met": {
+    id: "jewel_pendantes_sculpturales_anneaux_entrelaces_met",
+    title: "Pendantes Sculpturales Anneaux Entrelacés Métal Satiné",
+    brand: "Comptoir de l'Or Douala",
+    category: "fashion",
+    categoryLabel: "Joaillerie & Bijoux Précieux",
+    subcategory: "watches_jewelry",
+    conditionLabel: "Neuf certifié · Écrin de luxe & Certificat d'authenticité",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h · Remise sécurisée",
+    badge: "-26% PROMO",
+    rating: "5.0",
+    reviewCount: 75,
+    soldCount: 31,
+    price: "XAF 25.000",
+    salePrice: "XAF 18.500",
+    storeName: "Éclat & Diamant Bonapriso",
+    storeCity: "Bonapriso, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/jelweries/hearing/78813062224051248.jfif",
+    images: [
+      "./Assets/jelweries/hearing/78813062224051248.jfif"
+    ],
+    attributes: [
+      { key: "Design", val: "Anneaux Mobiles Asymétriques Organiques" },
+      { key: "Matière", val: "Laiton Joaillier Haute Tenue Doré 18K" },
+      { key: "Finition", val: "Brossée Mat & Bords Miroir" }
+    ],
+    description: "Boucles pendantes légères au mouvement gracieux composées de cercles martelés s'entremêlant au gré de vos pas. Vendu et garanti 100% authentique par Éclat & Diamant Bonapriso avec protection du paiement par séquestre LOUMOO Escrow."
+  },
+
+  "jewel_creoles_bombees_classiques_tube_or_jaune_poli": {
+    id: "jewel_creoles_bombees_classiques_tube_or_jaune_poli",
+    title: "Créoles Bombées Classiques Tube Or Jaune Poli Miroir 30mm",
+    brand: "L'Écrin d'Or Akwa",
+    category: "fashion",
+    categoryLabel: "Joaillerie & Bijoux Précieux",
+    subcategory: "watches_jewelry",
+    conditionLabel: "Neuf certifié · Écrin de luxe & Certificat d'authenticité",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h · Remise sécurisée",
+    badge: "-28% PROMO",
+    rating: "4.8",
+    reviewCount: 79,
+    soldCount: 38,
+    price: "XAF 32.000",
+    salePrice: "XAF 22.900",
+    storeName: "Comptoir de l'Or Douala",
+    storeCity: "Marché Central, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/jelweries/hearing/Classic%20Yellow%20Gold%20Hoop%20Earrings%20_%20Everyday%20Luxury.jfif",
+    images: [
+      "./Assets/jelweries/hearing/Classic%20Yellow%20Gold%20Hoop%20Earrings%20_%20Everyday%20Luxury.jfif"
+    ],
+    attributes: [
+      { key: "Profil", val: "Tubulaire Épais 4 mm Creux Ultra-Léger" },
+      { key: "Placage", val: "Dorure Or Jaune 18K Électrolytique Durable" },
+      { key: "Fermoir", val: "Tige Basculante Cliquable Invisible" }
+    ],
+    description: "L'indispensable créole chunky dorée adorée des influenceuses et fashionistas. Confort absolu pour un port tout au long de la journée. Vendu et garanti 100% authentique par Comptoir de l'Or Douala avec protection du paiement par séquestre LOUMOO Escrow."
+  },
+
+  "jewel_creoles_chunky_drop_bombees_laiton_dore_goutt": {
+    id: "jewel_creoles_chunky_drop_bombees_laiton_dore_goutt",
+    title: "Créoles Chunky Drop Bombées Laiton Doré Goutte d'Or",
+    brand: "Éclat & Diamant Bonapriso",
+    category: "fashion",
+    categoryLabel: "Joaillerie & Bijoux Précieux",
+    subcategory: "watches_jewelry",
+    conditionLabel: "Neuf certifié · Écrin de luxe & Certificat d'authenticité",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h · Remise sécurisée",
+    badge: "-31% PROMO",
+    rating: "4.9",
+    reviewCount: 83,
+    soldCount: 45,
+    price: "XAF 29.000",
+    salePrice: "XAF 19.900",
+    storeName: "L'Écrin d'Or Akwa",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/jelweries/hearing/earrings.jfif",
+    images: [
+      "./Assets/jelweries/hearing/earrings.jfif"
+    ],
+    attributes: [
+      { key: "Design", val: "Goutte Volumineuse Inspirée Haute Couture" },
+      { key: "Matériau", val: "Acier Inoxydable Plaqué Or 18K Inaltérable" },
+      { key: "Poids", val: "6,8 g la paire · Aucune traction sur le lobe" }
+    ],
+    description: "Les célébrissimes boucles 'teardrop' au galbe parfait. Finition miroir étincelante résistante à l'eau, aux parfums et à l'humidité. Vendu et garanti 100% authentique par L'Écrin d'Or Akwa avec protection du paiement par séquestre LOUMOO Escrow."
+  },
+
+  "jewel_boucles_doreilles_gouttes_quartz_rose_naturel": {
+    id: "jewel_boucles_doreilles_gouttes_quartz_rose_naturel",
+    title: "Boucles d'Oreilles Gouttes Quartz Rose Naturel & Pavage Zircon",
+    brand: "Prestige Joaillerie Bastos",
+    category: "fashion",
+    categoryLabel: "Joaillerie & Bijoux Précieux",
+    subcategory: "watches_jewelry",
+    conditionLabel: "Neuf certifié · Écrin de luxe & Certificat d'authenticité",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h · Remise sécurisée",
+    badge: "-26% PROMO",
+    rating: "5.0",
+    reviewCount: 22,
+    soldCount: 52,
+    price: "XAF 36.000",
+    salePrice: "XAF 26.500",
+    storeName: "Prestige Joaillerie Bastos",
+    storeCity: "Bastos, Yaoundé",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/jelweries/hearing/Stone%20earrings.jfif",
+    images: [
+      "./Assets/jelweries/hearing/Stone%20earrings.jfif"
+    ],
+    attributes: [
+      { key: "Gemme", val: "Quartz Rose Véritable Taillé Briolette" },
+      { key: "Monture", val: "Argent 925 Doré à l'Or Rose 18K" },
+      { key: "Vertus", val: "Pierre de l'Amour Inconditionnel et de la Sérénité" }
+    ],
+    description: "Pendantes douces et romantiques mettant à l'honneur deux gouttes de quartz rose aux nuances diaphanes entourées d'oxydes scintillants. Vendu et garanti 100% authentique par Prestige Joaillerie Bastos avec protection du paiement par séquestre LOUMOO Escrow."
+  },
+
+  "jewel_collier_plastron_haute_joaillerie_floral_cris": {
+    id: "jewel_collier_plastron_haute_joaillerie_floral_cris",
+    title: "Collier Plastron Haute Joaillerie Floral Cristaux Émeraude & Saphir",
+    brand: "Prestige Joaillerie Bastos",
+    category: "fashion",
+    categoryLabel: "Joaillerie & Bijoux Précieux",
+    subcategory: "watches_jewelry",
+    conditionLabel: "Neuf certifié · Écrin de luxe & Certificat d'authenticité",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h · Remise sécurisée",
+    badge: "-30% PRIVILÈGE",
+    rating: "4.8",
+    reviewCount: 26,
+    soldCount: 59,
+    price: "XAF 85.000",
+    salePrice: "XAF 59.900",
+    storeName: "Éclat & Diamant Bonapriso",
+    storeCity: "Bonapriso, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/jelweries/necklace/10%20p%C3%A9pites%20de%20Haute%20Joaillerie%20d%C3%A9voil%C3%A9es%20%C3%A0%20la%20Fashion%20Week%20de%20Paris%20printemps-%C3%A9t%C3%A9%202021.jfif",
+    images: [
+      "./Assets/jelweries/necklace/10%20p%C3%A9pites%20de%20Haute%20Joaillerie%20d%C3%A9voil%C3%A9es%20%C3%A0%20la%20Fashion%20Week%20de%20Paris%20printemps-%C3%A9t%C3%A9%202021.jfif"
+    ],
+    attributes: [
+      { key: "Collection", val: "Édition Paris Fashion Week Haute Joaillerie" },
+      { key: "Sertissage", val: "Plus de 280 Cristaux Swarovski Éléments Taillés" },
+      { key: "Collier", val: "Collerette Souple Articulée Ajustable" }
+    ],
+    description: "Véritable chef-d'œuvre de joaillerie de cérémonie digne des tapis rouges. Motif végétal majestueux composé de gemmes aux teintes intenses. Vendu et garanti 100% authentique par Éclat & Diamant Bonapriso avec protection du paiement par séquestre LOUMOO Escrow."
+  },
+
+  "jewel_collier_pendentif_cercle_deternite_solitaire": {
+    id: "jewel_collier_pendentif_cercle_deternite_solitaire",
+    title: "Collier Pendentif Cercle d'Éternité Solitaire Diamant Synthétique",
+    brand: "L'Écrin d'Or Akwa",
+    category: "fashion",
+    categoryLabel: "Joaillerie & Bijoux Précieux",
+    subcategory: "watches_jewelry",
+    conditionLabel: "Neuf certifié · Écrin de luxe & Certificat d'authenticité",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h · Remise sécurisée",
+    badge: "-27% PROMO",
+    rating: "4.9",
+    reviewCount: 30,
+    soldCount: 66,
+    price: "XAF 38.000",
+    salePrice: "XAF 27.900",
+    storeName: "Comptoir de l'Or Douala",
+    storeCity: "Marché Central, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/jelweries/necklace/1105070827331171576.jfif",
+    images: [
+      "./Assets/jelweries/necklace/1105070827331171576.jfif"
+    ],
+    attributes: [
+      { key: "Pendentif", val: "Anneau Entrelacé Pavé Micro-Zircons 15mm" },
+      { key: "Chaîne", val: "Maille Forçat Fine 42 cm + 5 cm d'Extension" },
+      { key: "Métal", val: "Argent Sterling 925 Rhodié Anti-Ternissement" }
+    ],
+    description: "Pendentif cercle infini symbolisant l'amour éternel et l'harmonie. Délicat, féminin et étincelant de mille feux sur le décolleté. Vendu et garanti 100% authentique par Comptoir de l'Or Douala avec protection du paiement par séquestre LOUMOO Escrow."
+  },
+
+  "jewel_collier_ras_du_cou_maille_serpent_double_rang": {
+    id: "jewel_collier_ras_du_cou_maille_serpent_double_rang",
+    title: "Collier Ras-du-Cou Maille Serpent Double Rang Or Jaune 18K",
+    brand: "Comptoir de l'Or Douala",
+    category: "fashion",
+    categoryLabel: "Joaillerie & Bijoux Précieux",
+    subcategory: "watches_jewelry",
+    conditionLabel: "Neuf certifié · Écrin de luxe & Certificat d'authenticité",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h · Remise sécurisée",
+    badge: "-27% PROMO",
+    rating: "5.0",
+    reviewCount: 34,
+    soldCount: 73,
+    price: "XAF 34.000",
+    salePrice: "XAF 24.900",
+    storeName: "L'Écrin d'Or Akwa",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/jelweries/necklace/122934264825098053.jfif",
+    images: [
+      "./Assets/jelweries/necklace/122934264825098053.jfif"
+    ],
+    attributes: [
+      { key: "Type de Maille", val: "Maille Serpent Herringbone Plate 3mm" },
+      { key: "Superposition", val: "Deux Rangs Dégradés 38 cm et 43 cm" },
+      { key: "Finition", val: "Or Jaune 18K Déposé sous Vide (PVD Inusable)" }
+    ],
+    description: "Duo de chaînes serpent plates épousant parfaitement les courbes de la clavicule. Effet miroir liquide doré ultra-tendance. Vendu et garanti 100% authentique par L'Écrin d'Or Akwa avec protection du paiement par séquestre LOUMOO Escrow."
+  },
+
+  "jewel_collier_pendentif_croissant_de_lune_cur_pave": {
+    id: "jewel_collier_pendentif_croissant_de_lune_cur_pave",
+    title: "Collier Pendentif Croissant de Lune & Cœur Pavé Zircons",
+    brand: "Éclat & Diamant Bonapriso",
+    category: "fashion",
+    categoryLabel: "Joaillerie & Bijoux Précieux",
+    subcategory: "watches_jewelry",
+    conditionLabel: "Neuf certifié · Écrin de luxe & Certificat d'authenticité",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h · Remise sécurisée",
+    badge: "-29% PROMO",
+    rating: "4.8",
+    reviewCount: 38,
+    soldCount: 80,
+    price: "XAF 26.000",
+    salePrice: "XAF 18.500",
+    storeName: "Prestige Joaillerie Bastos",
+    storeCity: "Bastos, Yaoundé",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/jelweries/necklace/1pc%20Rhinestone%20Heart%20Decor%20Moon%20Charm%20Necklace%20Copper%20Jewelry.jfif",
+    images: [
+      "./Assets/jelweries/necklace/1pc%20Rhinestone%20Heart%20Decor%20Moon%20Charm%20Necklace%20Copper%20Jewelry.jfif"
+    ],
+    attributes: [
+      { key: "Motif", val: "Croissant de Lune Stellaire avec Cœur Cristallin" },
+      { key: "Matière", val: "Cuivre Joaillier Pur Plaqué Or Blanc & Zirconium" },
+      { key: "Longueur", val: "45 cm réglable avec mousqueton sécurisé" }
+    ],
+    description: "Bijou poétique et féerique capturant la magie des astres. Un cœur étincelant blotti au creux d'un fin croissant de lune étoilé. Vendu et garanti 100% authentique par Prestige Joaillerie Bastos avec protection du paiement par séquestre LOUMOO Escrow."
+  },
+
+  "jewel_pendentif_amulette_vintage_medaillon_ovale_ag": {
+    id: "jewel_pendentif_amulette_vintage_medaillon_ovale_ag",
+    title: "Pendentif Amulette Vintage Médaillon Ovale Agate Rouge & Filigrane",
+    brand: "Prestige Joaillerie Bastos",
+    category: "fashion",
+    categoryLabel: "Joaillerie & Bijoux Précieux",
+    subcategory: "watches_jewelry",
+    conditionLabel: "Neuf certifié · Écrin de luxe & Certificat d'authenticité",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h · Remise sécurisée",
+    badge: "-27% LUXE",
+    rating: "4.9",
+    reviewCount: 42,
+    soldCount: 87,
+    price: "XAF 45.000",
+    salePrice: "XAF 32.900",
+    storeName: "Éclat & Diamant Bonapriso",
+    storeCity: "Bonapriso, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/jelweries/necklace/41165784090984212.jfif",
+    images: [
+      "./Assets/jelweries/necklace/41165784090984212.jfif"
+    ],
+    attributes: [
+      { key: "Gemme", val: "Agate Cornaline Rouge Profond Cabochon Ovale" },
+      { key: "Cadre", val: "Dentelle de Métal Doré Travaillée à la Main" },
+      { key: "Chaîne", val: "Maille Vénitienne 50 cm en Argent Doré" }
+    ],
+    description: "Amulette d'inspiration impériale avec cabochon en pierre naturelle rouge carmin entouré de motifs filigranés baroques. Vendu et garanti 100% authentique par Éclat & Diamant Bonapriso avec protection du paiement par séquestre LOUMOO Escrow."
+  },
+
+  "jewel_sautoir_boheme_perles_nacrees_chaines_degrade": {
+    id: "jewel_sautoir_boheme_perles_nacrees_chaines_degrade",
+    title: "Sautoir Bohème Perles Nacrées & Chaînes Dégradées Multirangs",
+    brand: "L'Écrin d'Or Akwa",
+    category: "fashion",
+    categoryLabel: "Joaillerie & Bijoux Précieux",
+    subcategory: "watches_jewelry",
+    conditionLabel: "Neuf certifié · Écrin de luxe & Certificat d'authenticité",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h · Remise sécurisée",
+    badge: "-28% PROMO",
+    rating: "5.0",
+    reviewCount: 46,
+    soldCount: 94,
+    price: "XAF 36.000",
+    salePrice: "XAF 26.000",
+    storeName: "Comptoir de l'Or Douala",
+    storeCity: "Marché Central, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/jelweries/necklace/591449363612313864.jfif",
+    images: [
+      "./Assets/jelweries/necklace/591449363612313864.jfif"
+    ],
+    attributes: [
+      { key: "Longueur", val: "Sautoir 75 cm + Chaînette de Rallonge" },
+      { key: "Perles", val: "Perles de Verre Nacre de Majorque & Éléments Dorés" },
+      { key: "Porté", val: "Simple ou Double Tour selon la Tenue" }
+    ],
+    description: "Sautoir élégant alternant perles immaculées et pampilles dorées. Apporte une silhouette élancée et chic sur une robe fluide ou une chemise. Vendu et garanti 100% authentique par Comptoir de l'Or Douala avec protection du paiement par séquestre LOUMOO Escrow."
+  },
+
+  "jewel_collier_minimaliste_barre_courbe_pavee_diaman": {
+    id: "jewel_collier_minimaliste_barre_courbe_pavee_diaman",
+    title: "Collier Minimaliste Barre Courbe Pavée Diamants Similaires",
+    brand: "Éclat & Diamant Bonapriso",
+    category: "fashion",
+    categoryLabel: "Joaillerie & Bijoux Précieux",
+    subcategory: "watches_jewelry",
+    conditionLabel: "Neuf certifié · Écrin de luxe & Certificat d'authenticité",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h · Remise sécurisée",
+    badge: "-27% PROMO",
+    rating: "4.8",
+    reviewCount: 50,
+    soldCount: 101,
+    price: "XAF 28.000",
+    salePrice: "XAF 20.500",
+    storeName: "L'Écrin d'Or Akwa",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/jelweries/necklace/703756184095675.jfif",
+    images: [
+      "./Assets/jelweries/necklace/703756184095675.jfif"
+    ],
+    attributes: [
+      { key: "Barre", val: "Arc de Cercle Horizontal Sertissage Rail 30mm" },
+      { key: "Métal", val: "Or Blanc 18K sur Base Argent Sterling 925" },
+      { key: "Style", val: "Luxe Discret Quotidien · Teint Sublimé" }
+    ],
+    description: "L'élégance de la ligne pure : une barrette incurvée épousant le creux du cou, sertie d'une rangée ininterrompue de brillants. Vendu et garanti 100% authentique par L'Écrin d'Or Akwa avec protection du paiement par séquestre LOUMOO Escrow."
+  },
+
+  "jewel_parure_mariee_collier_boucles_aigue_marine_ov": {
+    id: "jewel_parure_mariee_collier_boucles_aigue_marine_ov",
+    title: "Parure Mariée Collier & Boucles Aigue-Marine Ovale Argent 925",
+    brand: "Prestige Joaillerie Bastos",
+    category: "fashion",
+    categoryLabel: "Joaillerie & Bijoux Précieux",
+    subcategory: "watches_jewelry",
+    conditionLabel: "Neuf certifié · Écrin de luxe & Certificat d'authenticité",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h · Remise sécurisée",
+    badge: "-29% MARIAGE",
+    rating: "4.9",
+    reviewCount: 54,
+    soldCount: 108,
+    price: "XAF 75.000",
+    salePrice: "XAF 52.900",
+    storeName: "Prestige Joaillerie Bastos",
+    storeCity: "Bastos, Yaoundé",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/jelweries/necklace/Aquamarine%20and%20Simulated%20Diamond%20Necklace%20&%20Earrings%20Set%20-%20925%20Sterling%20Silver,%20Elegant%20Bridal%20arm%20Jewelry_.jfif",
+    images: [
+      "./Assets/jelweries/necklace/Aquamarine%20and%20Simulated%20Diamond%20Necklace%20&%20Earrings%20Set%20-%20925%20Sterling%20Silver,%20Elegant%20Bridal%20arm%20Jewelry_.jfif"
+    ],
+    attributes: [
+      { key: "Ensemble", val: "Collier Pendentif + Paire de Boucles Assorties" },
+      { key: "Pierres", val: "Aigue-Marine Bleue Céleste & Diamants Similaires" },
+      { key: "Composition", val: "Argent Massif 925 Poinçonné et Certifié" }
+    ],
+    description: "Somptueuse parure de noces et de grande réception. L'aigue-marine aux reflets d'eau cristalline est sublimée par un halo royal de brillants. Vendu et garanti 100% authentique par Prestige Joaillerie Bastos avec protection du paiement par séquestre LOUMOO Escrow."
+  },
+
+  "jewel_parure_infinie_goutte_de_cristal_nud_infini_p": {
+    id: "jewel_parure_infinie_goutte_de_cristal_nud_infini_p",
+    title: "Parure Infinie Goutte de Cristal & Nœud Infini Plaqué Platine",
+    brand: "L'Écrin d'Or Akwa",
+    category: "fashion",
+    categoryLabel: "Joaillerie & Bijoux Précieux",
+    subcategory: "watches_jewelry",
+    conditionLabel: "Neuf certifié · Écrin de luxe & Certificat d'authenticité",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h · Remise sécurisée",
+    badge: "-29% LUXE",
+    rating: "5.0",
+    reviewCount: 58,
+    soldCount: 115,
+    price: "XAF 68.000",
+    salePrice: "XAF 48.500",
+    storeName: "Éclat & Diamant Bonapriso",
+    storeCity: "Bonapriso, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/jelweries/necklace/Elegant%20Infinity%20Teardrop%20Necklace%20&%20Earrings%20Set.jfif",
+    images: [
+      "./Assets/jelweries/necklace/Elegant%20Infinity%20Teardrop%20Necklace%20&%20Earrings%20Set.jfif"
+    ],
+    attributes: [
+      { key: "Parure", val: "Collier Infini Goutte + Boucles Pendantes" },
+      { key: "Placage", val: "Triple Couche Platine Rhodié Inaltérable" },
+      { key: "Cristal", val: "Zircone Cubique Autrichienne Coupe Poire 12x8mm" }
+    ],
+    description: "Ensemble bijou d'exception mêlant le symbole de l'infini et une majestueuse goutte de cristal taillée avec une précision optique absolue. Vendu et garanti 100% authentique par Éclat & Diamant Bonapriso avec protection du paiement par séquestre LOUMOO Escrow."
+  },
+
+  "jewel_collier_papillon_feerique_etoiles_scintillant": {
+    id: "jewel_collier_papillon_feerique_etoiles_scintillant",
+    title: "Collier Papillon Féerique & Étoiles Scintillantes Or Jaune 18K",
+    brand: "Comptoir de l'Or Douala",
+    category: "fashion",
+    categoryLabel: "Joaillerie & Bijoux Précieux",
+    subcategory: "watches_jewelry",
+    conditionLabel: "Neuf certifié · Écrin de luxe & Certificat d'authenticité",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h · Remise sécurisée",
+    badge: "-28% PROMO",
+    rating: "4.8",
+    reviewCount: 62,
+    soldCount: 122,
+    price: "XAF 27.000",
+    salePrice: "XAF 19.500",
+    storeName: "Comptoir de l'Or Douala",
+    storeCity: "Marché Central, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/jelweries/necklace/Gold%20Butterfly%20&%20Star%20Charm%20Necklace%20%E2%9C%A8%F0%9F%A6%8B.jfif",
+    images: [
+      "./Assets/jelweries/necklace/Gold%20Butterfly%20&%20Star%20Charm%20Necklace%20%E2%9C%A8%F0%9F%A6%8B.jfif"
+    ],
+    attributes: [
+      { key: "Charms", val: "Papillon Ciselé Ajouré & Étoiles Polaires" },
+      { key: "Dorure", val: "Or Jaune 18K 3 Microns Garanti 2 Ans" },
+      { key: "Longueur", val: "Chaîne Réglable 40-45 cm" }
+    ],
+    description: "Collier délicat inspiré de la nature printanière. Le papillon central semble virevolter entre de fines étoiles suspendues. Vendu et garanti 100% authentique par Comptoir de l'Or Douala avec protection du paiement par séquestre LOUMOO Escrow."
+  },
+
+  "jewel_collier_choker_rigide_torque_en_argent_925_ma": {
+    id: "jewel_collier_choker_rigide_torque_en_argent_925_ma",
+    title: "Collier Choker Rigide Torque en Argent 925 Martelure Soleil",
+    brand: "Prestige Joaillerie Bastos",
+    category: "fashion",
+    categoryLabel: "Joaillerie & Bijoux Précieux",
+    subcategory: "watches_jewelry",
+    conditionLabel: "Neuf certifié · Écrin de luxe & Certificat d'authenticité",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h · Remise sécurisée",
+    badge: "-27% LUXE",
+    rating: "4.9",
+    reviewCount: 66,
+    soldCount: 34,
+    price: "XAF 55.000",
+    salePrice: "XAF 39.900",
+    storeName: "L'Écrin d'Or Akwa",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/jelweries/necklace/Instagram.jfif",
+    images: [
+      "./Assets/jelweries/necklace/Instagram.jfif"
+    ],
+    attributes: [
+      { key: "Format", val: "Torque Ouvert Semi-Rigide Ajustable au Cou" },
+      { key: "Finition", val: "Argent 925 Massif Martelé Artisanalement" },
+      { key: "Largeur", val: "Bandeau 6 mm · Éclat Miroir et Trame Ciselée" }
+    ],
+    description: "Torque moderne d'orfèvre sculpteur. Sa forme ouverte s'enfile avec fluidité et rehausse instantanément robes de cocktail et décolletés plongeants. Vendu et garanti 100% authentique par L'Écrin d'Or Akwa avec protection du paiement par séquestre LOUMOO Escrow."
+  },
+
+  "jewel_collier_pendentif_dragon_mythique_enroule_pie": {
+    id: "jewel_collier_pendentif_dragon_mythique_enroule_pie",
+    title: "Collier Pendentif Dragon Mythique Enroulé & Pierre d'Obsidienne",
+    brand: "Comptoir de l'Or Douala",
+    category: "fashion",
+    categoryLabel: "Joaillerie & Bijoux Précieux",
+    subcategory: "watches_jewelry",
+    conditionLabel: "Neuf certifié · Écrin de luxe & Certificat d'authenticité",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h · Remise sécurisée",
+    badge: "-27% PROMO",
+    rating: "5.0",
+    reviewCount: 70,
+    soldCount: 41,
+    price: "XAF 35.000",
+    salePrice: "XAF 25.500",
+    storeName: "Prestige Joaillerie Bastos",
+    storeCity: "Bastos, Yaoundé",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/jelweries/necklace/Mundo%20Gump_%20Descubra%20O%20Site%20Mais%20Legal%20Do%20Brasil.jfif",
+    images: [
+      "./Assets/jelweries/necklace/Mundo%20Gump_%20Descubra%20O%20Site%20Mais%20Legal%20Do%20Brasil.jfif"
+    ],
+    attributes: [
+      { key: "Créature", val: "Dragon Gothique Ciselé Écailles en Relief" },
+      { key: "Pierre", val: "Cœur d'Obsidienne Noire Protectrice Polie" },
+      { key: "Chaîne", val: "Cordon Cordelette Tressée Renforcée 55 cm" }
+    ],
+    description: "Pendentif de caractère pour passionnés d'héroïc-fantasy et de mythologie. Le dragon protecteur enlace une pierre d'obsidienne noire pure. Vendu et garanti 100% authentique par Prestige Joaillerie Bastos avec protection du paiement par séquestre LOUMOO Escrow."
+  },
+
+  "jewel_collier_artisanal_perles_de_rocaille_africain": {
+    id: "jewel_collier_artisanal_perles_de_rocaille_africain",
+    title: "Collier Artisanal Perles de Rocaille Africaines & Pendentif Laiton",
+    brand: "Éclat & Diamant Bonapriso",
+    category: "fashion",
+    categoryLabel: "Joaillerie & Bijoux Précieux",
+    subcategory: "watches_jewelry",
+    conditionLabel: "Neuf certifié · Écrin de luxe & Certificat d'authenticité",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h · Remise sécurisée",
+    badge: "-29% ARTISAN",
+    rating: "4.8",
+    reviewCount: 74,
+    soldCount: 48,
+    price: "XAF 28.000",
+    salePrice: "XAF 19.900",
+    storeName: "Éclat & Diamant Bonapriso",
+    storeCity: "Bonapriso, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/jelweries/necklace/my%20creations.jfif",
+    images: [
+      "./Assets/jelweries/necklace/my%20creations.jfif"
+    ],
+    attributes: [
+      { key: "Perlage", val: "Micro-Perles de Verre Tissées à l'Aiguille" },
+      { key: "Pendentif", val: "Laiton Fondu à la Cire Perdue Motif Traditionnel" },
+      { key: "Origine", val: "Fait Main par Maîtres Artisans Camerounais" }
+    ],
+    description: "Création joaillière d'inspiration afro-contemporaine sublimant les techniques traditionnelles de perlage et de fonte de bronze d'art. Vendu et garanti 100% authentique par Éclat & Diamant Bonapriso avec protection du paiement par séquestre LOUMOO Escrow."
+  },
+
+  "jewel_collier_riviere_rubis_de_synthese_cristaux_go": {
+    id: "jewel_collier_riviere_rubis_de_synthese_cristaux_go",
+    title: "Collier Rivière Rubis de Synthèse & Cristaux Goutte de Sang",
+    brand: "Prestige Joaillerie Bastos",
+    category: "fashion",
+    categoryLabel: "Joaillerie & Bijoux Précieux",
+    subcategory: "watches_jewelry",
+    conditionLabel: "Neuf certifié · Écrin de luxe & Certificat d'authenticité",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h · Remise sécurisée",
+    badge: "-28% LUXE",
+    rating: "4.9",
+    reviewCount: 78,
+    soldCount: 55,
+    price: "XAF 58.000",
+    salePrice: "XAF 42.000",
+    storeName: "Comptoir de l'Or Douala",
+    storeCity: "Marché Central, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/jelweries/necklace/red%20necklace.jfif",
+    images: [
+      "./Assets/jelweries/necklace/red%20necklace.jfif"
+    ],
+    attributes: [
+      { key: "Pierres", val: "Rubis de Synthèse Taillés Poire Rouge Royal" },
+      { key: "Monture", val: "Argent 925 Rhodié Double Rangée Diamantée" },
+      { key: "Occasion", val: "Galas, Soirées de Prestige et Cérémonies" }
+    ],
+    description: "Un éclat flamboyant inoubliable : rivière scintillante parsemée de rubis rouge passion captivant tous les regards dès l'entrée en scène. Vendu et garanti 100% authentique par Comptoir de l'Or Douala avec protection du paiement par séquestre LOUMOO Escrow."
+  },
+
+  "jewel_collier_chaine_trombones_chunky_medaillon_mon": {
+    id: "jewel_collier_chaine_trombones_chunky_medaillon_mon",
+    title: "Collier Chaîne Trombones Chunky & Médaillon Monogramme Or 18K",
+    brand: "L'Écrin d'Or Akwa",
+    category: "fashion",
+    categoryLabel: "Joaillerie & Bijoux Précieux",
+    subcategory: "watches_jewelry",
+    conditionLabel: "Neuf certifié · Écrin de luxe & Certificat d'authenticité",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h · Remise sécurisée",
+    badge: "-25% TENDANCE",
+    rating: "5.0",
+    reviewCount: 82,
+    soldCount: 62,
+    price: "XAF 36.000",
+    salePrice: "XAF 26.900",
+    storeName: "L'Écrin d'Or Akwa",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/jelweries/necklace/Shop%20All%20_%20ShirleysCo.jfif",
+    images: [
+      "./Assets/jelweries/necklace/Shop%20All%20_%20ShirleysCo.jfif"
+    ],
+    attributes: [
+      { key: "Maille", val: "Trombones Rectangulaires Paperclip Tendance" },
+      { key: "Fermoir", val: "Anneau Marin T-Bar Basculant à l'Avant" },
+      { key: "Matériau", val: "Acier Inoxydable Recouvert d'Or 18K" }
+    ],
+    description: "La maille paperclip incontournable combinée à un fermoir marin en T porté sur l'avant. Le must-have des superpositions de bijoux branchés. Vendu et garanti 100% authentique par L'Écrin d'Or Akwa avec protection du paiement par séquestre LOUMOO Escrow."
+  },
+
+  "jewel_parure_nuptiale_reine_dafrique_collier_cascad": {
+    id: "jewel_parure_nuptiale_reine_dafrique_collier_cascad",
+    title: "Parure Nuptiale Reine d'Afrique Collier Cascade & Clous Diamant",
+    brand: "Prestige Joaillerie Bastos",
+    category: "fashion",
+    categoryLabel: "Joaillerie & Bijoux Précieux",
+    subcategory: "watches_jewelry",
+    conditionLabel: "Neuf certifié · Écrin de luxe & Certificat d'authenticité",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h · Remise sécurisée",
+    badge: "-27% MARIAGE",
+    rating: "4.8",
+    reviewCount: 21,
+    soldCount: 69,
+    price: "XAF 89.000",
+    salePrice: "XAF 64.900",
+    storeName: "Prestige Joaillerie Bastos",
+    storeCity: "Bastos, Yaoundé",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/jelweries/necklace/The%20Matching%20Set%20That%20Belongs%20on%20a%20Bride%20%F0%9F%92%8E.jfif",
+    images: [
+      "./Assets/jelweries/necklace/The%20Matching%20Set%20That%20Belongs%20on%20a%20Bride%20%F0%9F%92%8E.jfif"
+    ],
+    attributes: [
+      { key: "Ensemble", val: "Collier V Cascade + Clous d'Oreilles Assortis" },
+      { key: "Gemmes", val: "Zircons Flawless D-Color Taillés en Brillant" },
+      { key: "Plaquage", val: "Triple Placage Rhodium Blanc Haute Brillance" }
+    ],
+    description: "Le parangon de la joaillerie nuptiale : rivière de diamants de synthèse descendant en cascade gracieuse sur le décolleté de la mariée. Vendu et garanti 100% authentique par Prestige Joaillerie Bastos avec protection du paiement par séquestre LOUMOO Escrow."
+  },
+
+  "jewel_collier_pendentif_larme_dange_cristal_aurore": {
+    id: "jewel_collier_pendentif_larme_dange_cristal_aurore",
+    title: "Collier Pendentif Larme d'Ange Cristal Aurore Boréale",
+    brand: "L'Écrin d'Or Akwa",
+    category: "fashion",
+    categoryLabel: "Joaillerie & Bijoux Précieux",
+    subcategory: "watches_jewelry",
+    conditionLabel: "Neuf certifié · Écrin de luxe & Certificat d'authenticité",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h · Remise sécurisée",
+    badge: "-27% PROMO",
+    rating: "4.9",
+    reviewCount: 25,
+    soldCount: 76,
+    price: "XAF 32.000",
+    salePrice: "XAF 23.500",
+    storeName: "Éclat & Diamant Bonapriso",
+    storeCity: "Bonapriso, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/jelweries/necklace/%E2%80%A6.jfif",
+    images: [
+      "./Assets/jelweries/necklace/%E2%80%A6.jfif"
+    ],
+    attributes: [
+      { key: "Cristal", val: "Prisme Multi-Facettes Effet Aurore Boréale" },
+      { key: "Chaîne", val: "Maille Vénitienne 45 cm Argent 925" },
+      { key: "Reflets", val: "Chatoiement Bleu, Violet et Doré selon la Lumière" }
+    ],
+    description: "Pendentif féerique réfractant le spectre lumineux en reflets prismatiques fascinants. Présenté dans son écrin velours LOUMOO. Vendu et garanti 100% authentique par Éclat & Diamant Bonapriso avec protection du paiement par séquestre LOUMOO Escrow."
+  },
+
+  "jewel_collier_pendentif_solitaire_etoile_diamantee": {
+    id: "jewel_collier_pendentif_solitaire_etoile_diamantee",
+    title: "Collier Pendentif Solitaire Étoile Diamantée & Anneau Pavé",
+    brand: "Éclat & Diamant Bonapriso",
+    category: "fashion",
+    categoryLabel: "Joaillerie & Bijoux Précieux",
+    subcategory: "watches_jewelry",
+    conditionLabel: "Neuf certifié · Écrin de luxe & Certificat d'authenticité",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h · Remise sécurisée",
+    badge: "-29% PROMO",
+    rating: "5.0",
+    reviewCount: 29,
+    soldCount: 83,
+    price: "XAF 35.000",
+    salePrice: "XAF 25.000",
+    storeName: "Comptoir de l'Or Douala",
+    storeCity: "Marché Central, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/jelweries/necklace/%E2%9C%A8%20Necklace%20That%20Elevates%20Every%20Look%20This%20elegant%E2%80%A6.jfif",
+    images: [
+      "./Assets/jelweries/necklace/%E2%9C%A8%20Necklace%20That%20Elevates%20Every%20Look%20This%20elegant%E2%80%A6.jfif"
+    ],
+    attributes: [
+      { key: "Solitaire", val: "Zircon Cubique Brillant Coeur & Flèches 7mm" },
+      { key: "Chaîne", val: "Maille Forçat Diamantée Ultra-Scintillante" },
+      { key: "Métal", val: "Plaqué Or Blanc 18K Inoxydable" }
+    ],
+    description: "Le collier délicat indispensable qui rehausse chaque tenue d'une note d'élégance discrète et raffinée. Parfait de jour comme de nuit. Vendu et garanti 100% authentique par Comptoir de l'Or Douala avec protection du paiement par séquestre LOUMOO Escrow."
+  },
+
+  "jewel_bague_solitaire_grenat_rouge_profond_couronne": {
+    id: "jewel_bague_solitaire_grenat_rouge_profond_couronne",
+    title: "Bague Solitaire Grenat Rouge Profond & Couronne Feuillage Or",
+    brand: "Prestige Joaillerie Bastos",
+    category: "fashion",
+    categoryLabel: "Joaillerie & Bijoux Précieux",
+    subcategory: "watches_jewelry",
+    conditionLabel: "Neuf certifié · Écrin de luxe & Certificat d'authenticité",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h · Remise sécurisée",
+    badge: "-27% LUXE",
+    rating: "4.8",
+    reviewCount: 33,
+    soldCount: 90,
+    price: "XAF 52.000",
+    salePrice: "XAF 37.900",
+    storeName: "L'Écrin d'Or Akwa",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/jelweries/ring/%23garnet%20%23ring%20%23aiart%20%20%23%E3%82%AC%E3%83%BC%E3%83%8D%E3%83%83%E3%83%88.jfif",
+    images: [
+      "./Assets/jelweries/ring/%23garnet%20%23ring%20%23aiart%20%20%23%E3%82%AC%E3%83%BC%E3%83%8D%E3%83%83%E3%83%88.jfif"
+    ],
+    attributes: [
+      { key: "Gemme", val: "Grenat Naturel Ovale 2,4 Carats Rouge Bordeaux" },
+      { key: "Monture", val: "Argent 925 Doré à l'Or Jaune 18K Ciselé Main" },
+      { key: "Motif", val: "Volutes Végétales et Feuilles de Laurier" }
+    ],
+    description: "Bague souveraine sertie d'un grenat d'un rouge envoûtant entouré de fins motifs végétaux ouvragés avec virtuosité par nos maîtres joailliers. Vendu et garanti 100% authentique par L'Écrin d'Or Akwa avec protection du paiement par séquestre LOUMOO Escrow."
+  },
+
+  "jewel_bague_alliance_jonc_entrelace_deux_ors_pavage": {
+    id: "jewel_bague_alliance_jonc_entrelace_deux_ors_pavage",
+    title: "Bague Alliance Jonc Entrelacé Deux Ors Pavage Diamant Zircon",
+    brand: "L'Écrin d'Or Akwa",
+    category: "fashion",
+    categoryLabel: "Joaillerie & Bijoux Précieux",
+    subcategory: "watches_jewelry",
+    conditionLabel: "Neuf certifié · Écrin de luxe & Certificat d'authenticité",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h · Remise sécurisée",
+    badge: "-28% PROMO",
+    rating: "4.9",
+    reviewCount: 37,
+    soldCount: 97,
+    price: "XAF 38.000",
+    salePrice: "XAF 27.500",
+    storeName: "Prestige Joaillerie Bastos",
+    storeCity: "Bastos, Yaoundé",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/jelweries/ring/11047961582546448.jfif",
+    images: [
+      "./Assets/jelweries/ring/11047961582546448.jfif"
+    ],
+    attributes: [
+      { key: "Design", val: "Deux Anneaux Croisés Fusionnés Symbolisant l'Union" },
+      { key: "Finition", val: "Bicolore Or Jaune & Or Blanc 18K" },
+      { key: "Pavage", val: "Micro-Zircons Scintillants Semi-Éternité" }
+    ],
+    description: "Alliance moderne et intemporelle évoquant deux destins entrelacés. Confort bombé intérieur 'confort fit' pour un porté agréable. Vendu et garanti 100% authentique par Prestige Joaillerie Bastos avec protection du paiement par séquestre LOUMOO Escrow."
+  },
+
+  "jewel_bague_trilogie_saphir_royal_deux_diamants_tri": {
+    id: "jewel_bague_trilogie_saphir_royal_deux_diamants_tri",
+    title: "Bague Trilogie Saphir Royal & Deux Diamants Trillants",
+    brand: "Prestige Joaillerie Bastos",
+    category: "fashion",
+    categoryLabel: "Joaillerie & Bijoux Précieux",
+    subcategory: "watches_jewelry",
+    conditionLabel: "Neuf certifié · Écrin de luxe & Certificat d'authenticité",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h · Remise sécurisée",
+    badge: "-28% LUXE",
+    rating: "5.0",
+    reviewCount: 41,
+    soldCount: 104,
+    price: "XAF 62.000",
+    salePrice: "XAF 44.900",
+    storeName: "Éclat & Diamant Bonapriso",
+    storeCity: "Bonapriso, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/jelweries/ring/24066179249577772.jfif",
+    images: [
+      "./Assets/jelweries/ring/24066179249577772.jfif"
+    ],
+    attributes: [
+      { key: "Centre", val: "Saphir Synthétique Bleu Nuit Ovale Facetté" },
+      { key: "Épaulement", val: "2 Diamants de Synthèse Taille Trilliant" },
+      { key: "Corps", val: "Argent 925 Rhodié Haute Joaillerie" }
+    ],
+    description: "La légendaire bague trilogie représentant le passé, le présent et le futur. Bleu royal hypnotisant entouré de deux gemmes lumineuses. Vendu et garanti 100% authentique par Éclat & Diamant Bonapriso avec protection du paiement par séquestre LOUMOO Escrow."
+  },
+
+  "jewel_chevaliere_homme_onyx_noir_ovale_aigles_grave": {
+    id: "jewel_chevaliere_homme_onyx_noir_ovale_aigles_grave",
+    title: "Chevalière Homme Onyx Noir Ovale & Aigles Gravés Argent 925",
+    brand: "Comptoir de l'Or Douala",
+    category: "fashion",
+    categoryLabel: "Joaillerie & Bijoux Précieux",
+    subcategory: "watches_jewelry",
+    conditionLabel: "Neuf certifié · Écrin de luxe & Certificat d'authenticité",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h · Remise sécurisée",
+    badge: "-27% PROMO",
+    rating: "4.8",
+    reviewCount: 45,
+    soldCount: 111,
+    price: "XAF 44.000",
+    salePrice: "XAF 31.900",
+    storeName: "Comptoir de l'Or Douala",
+    storeCity: "Marché Central, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/jelweries/ring/26317979069231196.jfif",
+    images: [
+      "./Assets/jelweries/ring/26317979069231196.jfif"
+    ],
+    attributes: [
+      { key: "Plateau", val: "Pierre d'Onyx Noire Véritable Polie Miroir" },
+      { key: "Gravures", val: "Blasons Aigles Impériaux Latéraux en Bas-Relief" },
+      { key: "Matière", val: "Argent Massif 925 Patiné Vintage" }
+    ],
+    description: "Chevalière masculine au charisme affirmé, associant l'élégance sobre de l'onyx noir et la puissance des détails héraldiques sculptés. Vendu et garanti 100% authentique par Comptoir de l'Or Douala avec protection du paiement par séquestre LOUMOO Escrow."
+  },
+
+  "jewel_bague_de_fiancailles_solitaire_ovale_halo_sci": {
+    id: "jewel_bague_de_fiancailles_solitaire_ovale_halo_sci",
+    title: "Bague de Fiançailles Solitaire Ovale Halo Scintillant & Pavé",
+    brand: "Prestige Joaillerie Bastos",
+    category: "fashion",
+    categoryLabel: "Joaillerie & Bijoux Précieux",
+    subcategory: "watches_jewelry",
+    conditionLabel: "Neuf certifié · Écrin de luxe & Certificat d'authenticité",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h · Remise sécurisée",
+    badge: "-28% FIANÇAILLES",
+    rating: "4.9",
+    reviewCount: 49,
+    soldCount: 118,
+    price: "XAF 65.000",
+    salePrice: "XAF 46.900",
+    storeName: "L'Écrin d'Or Akwa",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/jelweries/ring/27%20Unique%20Engagement%20Rings%20That%20Will%20Make%20Her%20Happy.jfif",
+    images: [
+      "./Assets/jelweries/ring/27%20Unique%20Engagement%20Rings%20That%20Will%20Make%20Her%20Happy.jfif"
+    ],
+    attributes: [
+      { key: "Solitaire", val: "Pierre Centrale Ovale 8x6mm Équivalent 1,5 Ct" },
+      { key: "Halo", val: "Pavage Rapproché 'Micropavé' sans Griffe Apparente" },
+      { key: "Anneau", val: "Corps Fin Pavé de Diamants CZ Triple Éclat" }
+    ],
+    description: "La bague de fiançailles par excellence conçue pour émerveiller. Coupe ovale allongeant la main avec un halo majestueux renforçant la brillance. Vendu et garanti 100% authentique par L'Écrin d'Or Akwa avec protection du paiement par séquestre LOUMOO Escrow."
+  },
+
+  "jewel_bague_bandeau_large_ajouree_dentelle_geometri": {
+    id: "jewel_bague_bandeau_large_ajouree_dentelle_geometri",
+    title: "Bague Bandeau Large Ajourée Dentelle Géométrique Or 18K",
+    brand: "L'Écrin d'Or Akwa",
+    category: "fashion",
+    categoryLabel: "Joaillerie & Bijoux Précieux",
+    subcategory: "watches_jewelry",
+    conditionLabel: "Neuf certifié · Écrin de luxe & Certificat d'authenticité",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h · Remise sécurisée",
+    badge: "-28% PROMO",
+    rating: "5.0",
+    reviewCount: 53,
+    soldCount: 30,
+    price: "XAF 36.000",
+    salePrice: "XAF 26.000",
+    storeName: "Prestige Joaillerie Bastos",
+    storeCity: "Bastos, Yaoundé",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/jelweries/ring/289426713572023232.jfif",
+    images: [
+      "./Assets/jelweries/ring/289426713572023232.jfif"
+    ],
+    attributes: [
+      { key: "Largeur", val: "Bandeau 10 mm Ajouré Aérien" },
+      { key: "Finitions", val: "Plaqué Or Jaune 18K Miroir & Micro-Pavage" },
+      { key: "Confort", val: "Bords Adoucis Non Blessants" }
+    ],
+    description: "Bague cocktail impressionnante créant un effet dentelle précieuse sur le doigt sans aucune lourdeur. Parfaite au majeur ou à l'index. Vendu et garanti 100% authentique par Prestige Joaillerie Bastos avec protection du paiement par séquestre LOUMOO Escrow."
+  },
+
+  "jewel_bague_solitaire_emeraude_de_colombie_epauleme": {
+    id: "jewel_bague_solitaire_emeraude_de_colombie_epauleme",
+    title: "Bague Solitaire Émeraude de Colombie Épaulement Baguette",
+    brand: "Prestige Joaillerie Bastos",
+    category: "fashion",
+    categoryLabel: "Joaillerie & Bijoux Précieux",
+    subcategory: "watches_jewelry",
+    conditionLabel: "Neuf certifié · Écrin de luxe & Certificat d'authenticité",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h · Remise sécurisée",
+    badge: "-28% LUXE",
+    rating: "4.8",
+    reviewCount: 57,
+    soldCount: 37,
+    price: "XAF 58.000",
+    salePrice: "XAF 41.900",
+    storeName: "Éclat & Diamant Bonapriso",
+    storeCity: "Bonapriso, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/jelweries/ring/33706697207342761.jfif",
+    images: [
+      "./Assets/jelweries/ring/33706697207342761.jfif"
+    ],
+    attributes: [
+      { key: "Pierre", val: "Émeraude Synthétique Rectangulaire Taille Émeraude" },
+      { key: "Côtés", val: "Deux Pierres Taillées Baguette Écrin de Platine" },
+      { key: "Monture", val: "Argent 925 Rhodié Massif" }
+    ],
+    description: "Ligne architecturale et noble typique de la place Vendôme. La taille rectangulaire émeraude révèle la pureté et la profondeur de la couleur verte. Vendu et garanti 100% authentique par Éclat & Diamant Bonapriso avec protection du paiement par séquestre LOUMOO Escrow."
+  },
+
+  "jewel_bague_solitaire_cur_damour_halo_anneau_pave_o": {
+    id: "jewel_bague_solitaire_cur_damour_halo_anneau_pave_o",
+    title: "Bague Solitaire Cœur d'Amour Halo & Anneau Pavé Or Rose 18K",
+    brand: "Éclat & Diamant Bonapriso",
+    category: "fashion",
+    categoryLabel: "Joaillerie & Bijoux Précieux",
+    subcategory: "watches_jewelry",
+    conditionLabel: "Neuf certifié · Écrin de luxe & Certificat d'authenticité",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h · Remise sécurisée",
+    badge: "-28% ROMANTIQUE",
+    rating: "4.9",
+    reviewCount: 61,
+    soldCount: 44,
+    price: "XAF 49.000",
+    salePrice: "XAF 35.500",
+    storeName: "Comptoir de l'Or Douala",
+    storeCity: "Marché Central, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/jelweries/ring/Anillo%20de%20compromiso%20con%20coraz%C3%B3n%20y%20halo%20de%20oro.jfif",
+    images: [
+      "./Assets/jelweries/ring/Anillo%20de%20compromiso%20con%20coraz%C3%B3n%20y%20halo%20de%20oro.jfif"
+    ],
+    attributes: [
+      { key: "Forme", val: "Taille Cœur Romantique 7 mm Zircon AAA+" },
+      { key: "Placage", val: "Or Rose 18 Carats Haute Brillance" },
+      { key: "Symbolique", val: "Déclaration d'Amour & Anniversaire de Rencontre" }
+    ],
+    description: "Ode à la passion et à la romance : un cœur étincelant taillé au millième de millimètre enveloppé d'un doux halo d'or rosé réconfortant. Vendu et garanti 100% authentique par Comptoir de l'Or Douala avec protection du paiement par séquestre LOUMOO Escrow."
+  },
+
+  "jewel_chevaliere_homme_emeraude_rectangle_acier_tit": {
+    id: "jewel_chevaliere_homme_emeraude_rectangle_acier_tit",
+    title: "Chevalière Homme Émeraude Rectangle & Acier Titane Brossé",
+    brand: "Comptoir de l'Or Douala",
+    category: "fashion",
+    categoryLabel: "Joaillerie & Bijoux Précieux",
+    subcategory: "watches_jewelry",
+    conditionLabel: "Neuf certifié · Écrin de luxe & Certificat d'authenticité",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h · Remise sécurisée",
+    badge: "-27% PROMO",
+    rating: "5.0",
+    reviewCount: 65,
+    soldCount: 51,
+    price: "XAF 38.000",
+    salePrice: "XAF 27.900",
+    storeName: "L'Écrin d'Or Akwa",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/jelweries/ring/Emerald%20for%20Mens.jfif",
+    images: [
+      "./Assets/jelweries/ring/Emerald%20for%20Mens.jfif"
+    ],
+    attributes: [
+      { key: "Pierre Centrale", val: "Émeraude Synthétique Verte Sombre Rectangle" },
+      { key: "Matériau", val: "Acier Titane Inusable & Hypoallergénique" },
+      { key: "Texture", val: "Finitions Brossées Mixtes & Rainures Dorées" }
+    ],
+    description: "Bague statutaire pour homme d'affaires affirmé. La prestance du vert émeraude contraste magnifiquement avec la robustesse du titane brossé. Vendu et garanti 100% authentique par L'Écrin d'Or Akwa avec protection du paiement par séquestre LOUMOO Escrow."
+  },
+
+  "jewel_bague_rock_punk_anneau_crane_gothique_argent": {
+    id: "jewel_bague_rock_punk_anneau_crane_gothique_argent",
+    title: "Bague Rock Punk Anneau Crâne Gothique Argent Vieilli 925",
+    brand: "Comptoir de l'Or Douala",
+    category: "fashion",
+    categoryLabel: "Joaillerie & Bijoux Précieux",
+    subcategory: "watches_jewelry",
+    conditionLabel: "Neuf certifié · Écrin de luxe & Certificat d'authenticité",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h · Remise sécurisée",
+    badge: "-29% PROMO",
+    rating: "4.8",
+    reviewCount: 69,
+    soldCount: 58,
+    price: "XAF 28.000",
+    salePrice: "XAF 19.900",
+    storeName: "Prestige Joaillerie Bastos",
+    storeCity: "Bastos, Yaoundé",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/jelweries/ring/Gold_Silver%20Rock%20Punk%20Ring%20-%208%20_%20Silver.jfif",
+    images: [
+      "./Assets/jelweries/ring/Gold_Silver%20Rock%20Punk%20Ring%20-%208%20_%20Silver.jfif"
+    ],
+    attributes: [
+      { key: "Thème", val: "Crâne Sculpté Rock Biker & Ornements Gothiques" },
+      { key: "Finition", val: "Argent Massif 925 Effet Vintage Noircie" },
+      { key: "Robustesse", val: "Métal Épais Ultra-Résistant aux Chocs" }
+    ],
+    description: "Bague rebelle et sculpturale conçue pour les adeptes du style biker et rock. Patine noircie mettant en exergue chaque détail du masque. Vendu et garanti 100% authentique par Prestige Joaillerie Bastos avec protection du paiement par séquestre LOUMOO Escrow."
+  },
+
+  "jewel_bague_empilable_multi_rangs_diamants_perles_o": {
+    id: "jewel_bague_empilable_multi_rangs_diamants_perles_o",
+    title: "Bague Empilable Multi-Rangs Diamants & Perles Or Jaune 18K",
+    brand: "L'Écrin d'Or Akwa",
+    category: "fashion",
+    categoryLabel: "Joaillerie & Bijoux Précieux",
+    subcategory: "watches_jewelry",
+    conditionLabel: "Neuf certifié · Écrin de luxe & Certificat d'authenticité",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h · Remise sécurisée",
+    badge: "-29% TENDANCE",
+    rating: "4.9",
+    reviewCount: 73,
+    soldCount: 65,
+    price: "XAF 42.000",
+    salePrice: "XAF 29.900",
+    storeName: "Éclat & Diamant Bonapriso",
+    storeCity: "Bonapriso, Douala",
+    storeRating: "4.8",
+    storeVerified: true,
+    coverImage: "./Assets/jelweries/ring/Instagram%20%281%29.jfif",
+    images: [
+      "./Assets/jelweries/ring/Instagram%20%281%29.jfif"
+    ],
+    attributes: [
+      { key: "Concept", val: "Bague Cage Évasée Donnant l'Illusion de 3 Anneaux" },
+      { key: "Pierres", val: "Zircons Brillants Micro-Sertis en Ligne" },
+      { key: "Alliage", val: "Laiton Joaillier Plaqué Or Jaune 18K 3 Microns" }
+    ],
+    description: "Le chic du 'stacking' immédiat en une seule bague : trois rangs harmonieux qui se croisent sur la phalange avec éclat et légèreté. Vendu et garanti 100% authentique par Éclat & Diamant Bonapriso avec protection du paiement par séquestre LOUMOO Escrow."
+  },
+
+  "jewel_alliance_homme_fibre_de_carbone_noire_bords_b": {
+    id: "jewel_alliance_homme_fibre_de_carbone_noire_bords_b",
+    title: "Alliance Homme Fibre de Carbone Noire & Bords Biseautés Or Rose",
+    brand: "Comptoir de l'Or Douala",
+    category: "fashion",
+    categoryLabel: "Joaillerie & Bijoux Précieux",
+    subcategory: "watches_jewelry",
+    conditionLabel: "Neuf certifié · Écrin de luxe & Certificat d'authenticité",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h · Remise sécurisée",
+    badge: "-28% PROMO",
+    rating: "5.0",
+    reviewCount: 77,
+    soldCount: 72,
+    price: "XAF 46.000",
+    salePrice: "XAF 32.900",
+    storeName: "Comptoir de l'Or Douala",
+    storeCity: "Marché Central, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/jelweries/ring/mens%20wedding%20bands%20black%20carbon%20rose%20gold%20polushed%E2%80%A6.jfif",
+    images: [
+      "./Assets/jelweries/ring/mens%20wedding%20bands%20black%20carbon%20rose%20gold%20polushed%E2%80%A6.jfif"
+    ],
+    attributes: [
+      { key: "Centre", val: "Incrustation Fibre de Carbone Tissée Noire Aéronautique" },
+      { key: "Bordures", val: "Tungstène Carbure Poli Miroir Doré Or Rose" },
+      { key: "Largeur", val: "8 mm · Inrayable et Garanti à Vie" }
+    ],
+    description: "L'alliance masculine technologique par excellence : cœur en carbone noir tissé indestructible bordé de deux liserés biseautés or rose. Vendu et garanti 100% authentique par Comptoir de l'Or Douala avec protection du paiement par séquestre LOUMOO Escrow."
+  },
+
+  "jewel_duo_dalliances_de_mariage_contemporaines_or_b": {
+    id: "jewel_duo_dalliances_de_mariage_contemporaines_or_b",
+    title: "Duo d'Alliances de Mariage Contemporaines Or Blanc & Zircons",
+    brand: "Prestige Joaillerie Bastos",
+    category: "fashion",
+    categoryLabel: "Joaillerie & Bijoux Précieux",
+    subcategory: "watches_jewelry",
+    conditionLabel: "Neuf certifié · Écrin de luxe & Certificat d'authenticité",
+    fulfillmentLabel: "Douala & Yaoundé Express 24h · Remise sécurisée",
+    badge: "-28% MARIAGE",
+    rating: "4.8",
+    reviewCount: 81,
+    soldCount: 79,
+    price: "XAF 72.000",
+    salePrice: "XAF 51.900",
+    storeName: "L'Écrin d'Or Akwa",
+    storeCity: "Akwa, Douala",
+    storeRating: "4.9",
+    storeVerified: true,
+    coverImage: "./Assets/jelweries/ring/Un%20dise%C3%B1o%20moderno%20de%20anillo%20de%20boda%20y%20uno%20de%E2%80%A6.jfif",
+    images: [
+      "./Assets/jelweries/ring/Un%20dise%C3%B1o%20moderno%20de%20anillo%20de%20boda%20y%20uno%20de%E2%80%A6.jfif"
+    ],
+    attributes: [
+      { key: "Contenu", val: "Paire d'Alliances Coordonnées Homme & Femme" },
+      { key: "Modèle Femme", val: "Anneau Festonné Vague Pavé de Diamants CZ" },
+      { key: "Modèle Homme", val: "Jonc Ruban Demi-Bombé Satiné Sobre" }
+    ],
+    description: "Ensemble d'alliances complémentaires célébrant l'harmonie des époux. Finition satinée moderne et courbure protectrice ergonomique. Vendu et garanti 100% authentique par L'Écrin d'Or Akwa avec protection du paiement par séquestre LOUMOO Escrow."
+  },
+
   "home_lot_de_4_allume_gaz_de_cuisine_rechargea": {
     id: "home_lot_de_4_allume_gaz_de_cuisine_rechargea",
     title: "Lot de 4 Allume-Gaz de Cuisine Rechargeables Sécurité",

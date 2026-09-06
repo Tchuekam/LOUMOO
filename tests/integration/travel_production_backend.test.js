@@ -19,6 +19,7 @@ const assert = require('assert');
 const http = require('http');
 const app = require('../../server/index');
 const { createUser } = require('../helpers/harness');
+const { seatInventoryService } = require('../../server/modules/travel/application/SeatInventoryService');
 
 function makeRequest(method, path, body = null, headers = {}) {
   return new Promise((resolve, reject) => {
@@ -70,6 +71,9 @@ async function run() {
   console.log('═══════════════════════════════════════════════════════════');
   console.log('  LOUMOO TRAVEL PRODUCTION BACKEND INTEGRATION TEST SUITE');
   console.log('═══════════════════════════════════════════════════════════\n');
+
+  // Reset test seat inventory to prevent collisions with prior test runs
+  await seatInventoryService.releaseSeats('bus-sch-1', ['6A', '6C']);
 
   // Provision verified test users
   const primaryUser = await createUser({ stage: 'ready', suffix: 'prodTrv1' });

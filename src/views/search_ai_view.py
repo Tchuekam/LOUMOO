@@ -179,7 +179,7 @@ def get_search_and_ai_view():
      wired to a real vision model. Replaces the previous simulated "scan → 98%
      match" flow (is.visualScan / is.visualResults are retired).
      ══════════════════════════════════════════════════════════════════════ -->
-<sc-if value="{{ is.visual }}">
+<sc-if value="{{ is.visual || is.visualScan || is.visualResults }}">
 <div style="position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:520px;padding:56px 24px 40px;text-align:center">
   <button onClick="{{ back }}" aria-label="Go back" style="position:absolute;top:16px;left:16px;border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>

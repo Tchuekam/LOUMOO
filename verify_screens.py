@@ -1,42 +1,41 @@
+import glob
 import re
 
+# Read all DC files: root app and all route-level chunk files
+files = ['Commerce App.dc.html'] + glob.glob('*Screens.dc.html')
+all_content = ''
+for fpath in files:
+    with open(fpath, 'r', encoding='utf-8') as f:
+        all_content += '\n' + f.read()
+
+# Find all screen identifiers in sc-if conditionals
+screens = set(re.findall(r'\bis\.(\w+)\b', all_content))
+print(f"Total unique screen conditionals found: {len(screens)}")
+
 with open('Commerce App.dc.html', 'r', encoding='utf-8') as f:
-    content = f.read()
+    root_content = f.read()
 
-screens = re.findall(r'<sc-if value="{{\s*is\.(\w+)\s*}}"', content)
-print(f"Total screen conditionals found: {len(screens)}")
-print("Screens found:", screens)
+screens_match = re.search(r'const SCREENS = \[([\s\S]*?)\];', root_content)
+if screens_match:
+    raw_screens = re.sub(r'//.*', '', screens_match.group(1))
+    defined_screens = [s.strip(" '\"\n\r") for s in raw_screens.split(',') if s.strip(" '\"\n\r")]
+else:
+    defined_screens = []
 
-defined_screens = [
-    'home','search','filters','voice','category','bestpicks','freeday',
-    'notifications','chat','threadAi','threadSeller','product',
-    'cart','checkout','paying','success','orders','store','business','brand',
-    'vs','vsCompare','visual','visualScan','visualResults','upload',
-    'uploadDetails','uploadPrice','uploadSuccess','myListings','travel',
-    'travelBus','travelPackages','travelVisa','travelResults','travelDetail',
-    'travelPassenger','travelTicket','announce','announceStudio','announceCampaigns','announceDetail','profile',
-    'seller','settings','payFailed','networkError','saved','transactions','loading',
-    'onboardWelcome','onboardType','onboardIdentity','onboardOtp','onboardAdaptive','onboardBuyer',
-    'onboardSeller','onboardBusiness','onboardVerify','onboardReview','onboardSuccess',
-    'signIn','forgotPassword','resetPassword','verifyEmail',
-    'accountDashboard','editProfile','addresses','notificationPreferences',
-    'privacySettings','securitySettings','followedStores','userActivity','deleteAccount',
-    'orderDetail','refundRequest','writeReview','sellerOrderDetail','sellerPayouts',
-    'hotelSearch','hotelDetail','hotelBooking','createStore','storeOnboarding',
-    'storeSettings','storeVerification','storeAnalytics','listingAttributes','listingPreview',
-    'publicUserProfile','sellerPublicPage'
-]
+print(f"Total screens declared in SCREENS: {len(defined_screens)}")
 
 missing = [s for s in defined_screens if s not in screens]
 print("Missing screens count:", len(missing))
 if missing:
     print("Missing screens:", missing)
+else:
+    print("All defined screens have corresponding template conditionals across app shell and chunks!")
 
-open_sc = content.count('<sc-if')
-close_sc = content.count('</sc-if>')
+open_sc = all_content.count('<sc-if')
+close_sc = all_content.count('</sc-if>')
 print(f"Open sc-if: {open_sc}, Close sc-if: {close_sc}")
 
-print("Has </x-dc>:", '</x-dc>' in content)
-print("Has <script type=\"text/x-dc\":", '<script type="text/x-dc"' in content)
-print("Has </script>:", '</script>' in content)
-print("Has </html>:", '</html>' in content)
+print("Has </x-dc>:", '</x-dc>' in root_content)
+print("Has <script type=\"text/x-dc\":", '<script type="text/x-dc"' in root_content)
+print("Has </script>:", '</script>' in root_content)
+print("Has </html>:", '</html>' in root_content)
