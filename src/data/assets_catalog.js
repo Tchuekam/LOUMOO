@@ -7980,9 +7980,9 @@ export const assetsCatalog = [
     "reviewCount": 230,
     "soldCount": 392,
     "cardMode": "cover",
-    "originalImage": "./Assets/fashion/shoes/Korean-Style%20Casual%20Flat%20Sandals%2C%20Summer%20Open-Toe%20Sandals%2C%20New%20Autumn%20Woven%20Roman%20Sandals%2C%20Fashionable%20French%20Style%20Women%27s%20Sandals%20To%20Pair%20With%20Skirts%2C%20Suitable%20For%20Outdoor%20Beach%20Wear%2C%20Bohemian%20Style%E2%80%A6.jfif",
+    "originalImage": "./Assets/fashion/shoes/korean_casual_flat_sandals.jfif",
     "processedImage": null,
-    "displayImage": "./Assets/fashion/shoes/Korean-Style%20Casual%20Flat%20Sandals%2C%20Summer%20Open-Toe%20Sandals%2C%20New%20Autumn%20Woven%20Roman%20Sandals%2C%20Fashionable%20French%20Style%20Women%27s%20Sandals%20To%20Pair%20With%20Skirts%2C%20Suitable%20For%20Outdoor%20Beach%20Wear%2C%20Bohemian%20Style%E2%80%A6.jfif",
+    "displayImage": "./Assets/fashion/shoes/korean_casual_flat_sandals.jfif",
     "hasWhiteBg": false
   },
   {

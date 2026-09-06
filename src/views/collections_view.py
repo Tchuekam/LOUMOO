@@ -463,28 +463,27 @@ def get_collections_view():
         
         <div class="hs" style="gap:8px;padding-bottom:4px">
           <button onClick="{{ () => selectSubcategory('all') }}" class="tag {{ isSubcatAll ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">
-            All Listings ({{ isCategoryElectronics ? (electronicsTotalCount || 224) : (categoryTotalCount || 24) }})
+            All Listings ({{ isCategoryElectronics ? (electronicsTotalCount || 410) : (isCategoryFashion ? (fashionTotalCount || 320) : (isCategoryHome ? (homeTotalCount || 175) : (categoryTotalCount || 0))) }})
           </button>
 
           <sc-if value="{{ isCategoryElectronics }}">
-            <button onClick="{{ () => selectSubcategory('smartphones') }}" class="tag {{ activeSubcategorySlug === 'smartphones' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">📱 Smartphones ({{ subcatSmartphonesCount || 174 }})</button>
-            <button onClick="{{ () => selectSubcategory('power_accessories') }}" class="tag {{ activeSubcategorySlug === 'power_accessories' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">⚡ Power &amp; Accessories ({{ subcatPowerCount || 37 }})</button>
-            <button onClick="{{ () => selectSubcategory('audio') }}" class="tag {{ activeSubcategorySlug === 'audio' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">🎧 Pro Audio &amp; ANC ({{ subcatAudioCount || 19 }})</button>
-            <button onClick="{{ () => selectSubcategory('laptops') }}" class="tag {{ activeSubcategorySlug === 'laptops' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">💻 Laptops &amp; PC ({{ subcatLaptopsCount || 12 }})</button>
+            <button onClick="{{ () => selectSubcategory('smartphones') }}" class="tag {{ activeSubcategorySlug === 'smartphones' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">📱 Smartphones ({{ subcatSmartphonesCount || 142 }})</button>
+            <button onClick="{{ () => selectSubcategory('power_accessories') }}" class="tag {{ activeSubcategorySlug === 'power_accessories' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">⚡ Power &amp; Accessories ({{ subcatPowerCount || 88 }})</button>
+            <button onClick="{{ () => selectSubcategory('audio') }}" class="tag {{ activeSubcategorySlug === 'audio' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">🎧 Pro Audio &amp; ANC ({{ subcatAudioCount || 96 }})</button>
+            <button onClick="{{ () => selectSubcategory('laptops') }}" class="tag {{ activeSubcategorySlug === 'laptops' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">💻 Laptops &amp; PC ({{ subcatLaptopsCount || 84 }})</button>
           </sc-if>
 
           <sc-if value="{{ isCategoryFashion }}">
-            <button onClick="{{ () => selectSubcategory('footwear') }}" class="tag {{ activeSubcategorySlug === 'footwear' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">👟 Footwear &amp; Sneakers ({{ subcatFootwearCount || 81 }})</button>
-            <button onClick="{{ () => selectSubcategory('clothing') }}" class="tag {{ activeSubcategorySlug === 'clothing' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">👗 Apparel &amp; Streetwear ({{ subcatClothingCount || 68 }})</button>
-            <button onClick="{{ () => selectSubcategory('bags') }}" class="tag {{ activeSubcategorySlug === 'bags' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">👜 Luxury Bags &amp; Leather ({{ subcatBagsCount || 38 }})</button>
-            <button onClick="{{ () => selectSubcategory('watches_jewelry') }}" class="tag {{ activeSubcategorySlug === 'watches_jewelry' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">💍 Joaillerie &amp; Montres ({{ subcatWatchesCount || 49 }})</button>
+            <button onClick="{{ () => selectSubcategory('footwear') }}" class="tag {{ activeSubcategorySlug === 'footwear' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">👟 Footwear &amp; Sneakers ({{ subcatFootwearCount || 185 }})</button>
+            <button onClick="{{ () => selectSubcategory('clothing') }}" class="tag {{ activeSubcategorySlug === 'clothing' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">👗 Apparel &amp; Streetwear ({{ subcatClothingCount || 95 }})</button>
+            <button onClick="{{ () => selectSubcategory('watches_jewelry') }}" class="tag {{ activeSubcategorySlug === 'watches_jewelry' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">💍 Joaillerie &amp; Montres ({{ subcatWatchesCount || 40 }})</button>
           </sc-if>
 
           <sc-if value="{{ isCategoryHome }}">
-            <button onClick="{{ () => selectSubcategory('appliances') }}" class="tag {{ activeSubcategorySlug === 'appliances' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">⚡ Petit Électroménager ({{ subcatAppliancesCount || 14 }})</button>
-            <button onClick="{{ () => selectSubcategory('cookware') }}" class="tag {{ activeSubcategorySlug === 'cookware' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">🍳 Casseroles &amp; Poêles ({{ subcatCookwareCount || 10 }})</button>
-            <button onClick="{{ () => selectSubcategory('tableware') }}" class="tag {{ activeSubcategorySlug === 'tableware' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">🍽️ Vaisselle &amp; Services ({{ subcatTablewareCount || 17 }})</button>
-            <button onClick="{{ () => selectSubcategory('home_care') }}" class="tag {{ activeSubcategorySlug === 'home_care' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">🧺 Entretien &amp; Rangement ({{ subcatHomeCareCount || 6 }})</button>
+            <button onClick="{{ () => selectSubcategory('appliances') }}" class="tag {{ activeSubcategorySlug === 'appliances' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">⚡ Petit Électroménager ({{ subcatAppliancesCount || 50 }})</button>
+            <button onClick="{{ () => selectSubcategory('cookware') }}" class="tag {{ activeSubcategorySlug === 'cookware' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">🍳 Casseroles &amp; Poêles ({{ subcatCookwareCount || 40 }})</button>
+            <button onClick="{{ () => selectSubcategory('tableware') }}" class="tag {{ activeSubcategorySlug === 'tableware' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">🍽️ Vaisselle &amp; Services ({{ subcatTablewareCount || 50 }})</button>
+            <button onClick="{{ () => selectSubcategory('home_care') }}" class="tag {{ activeSubcategorySlug === 'home_care' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer">🧺 Entretien &amp; Rangement ({{ subcatHomeCareCount || 35 }})</button>
           </sc-if>
 
           <sc-if value="{{ isCategoryHotels }}">
