@@ -13,9 +13,10 @@ class AnnouncementDistributionService {
     const adminDb = SupabaseClient.getAdmin();
 
     const limit = Math.min(parseInt(options.limit, 10) || 20, 50);
-    const offset = parseInt(options.offset, 10) || 0;
+    const offset = Math.max(0, parseInt(options.offset, 10) || 0);
     const type = options.type ? options.type.toUpperCase() : null;
     const city = options.city ? options.city.trim() : null;
+    const cityFilter = city && city.toLowerCase() !== 'all' ? city : null;
     const search = options.search ? options.search.trim().toLowerCase() : null;
 
     let query = adminDb
@@ -30,8 +31,11 @@ class AnnouncementDistributionService {
       .eq('status', ANNOUNCEMENT_STATUSES.PUBLISHED)
       .is('deleted_at', null)
       .order('is_pinned', { ascending: false })
-      .order('published_at', { ascending: false })
-      .range(offset, offset + limit - 1);
+      .order('published_at', { ascending: false });
+
+    if (!cityFilter) {
+      query = query.range(offset, offset + limit - 1);
+    }
 
     if (type && type !== 'ALL') {
       query = query.eq('type', type);
@@ -48,20 +52,22 @@ class AnnouncementDistributionService {
     }
 
     let filtered = rows || [];
-    if (city && city !== 'All') {
+    if (cityFilter) {
       filtered = filtered.filter(item => {
         const targetCities = item.target?.target_cities || [];
         if (targetCities.length > 0) {
-          return targetCities.includes(city);
+          return targetCities.some(targetCity => String(targetCity).toLowerCase() === cityFilter.toLowerCase());
         }
-        return item.author?.city === city;
+        return String(item.author?.city || '').toLowerCase() === cityFilter.toLowerCase();
       });
     }
 
-    const announcements = filtered.map(row => new Announcement(row).toPublicJSON());
+    const announcements = filtered
+      .slice(cityFilter ? offset : 0, cityFilter ? offset + limit : undefined)
+      .map(row => new Announcement(row).toPublicJSON());
 
     return {
-      total: count || announcements.length,
+      total: cityFilter ? filtered.length : (count || announcements.length),
       limit,
       offset,
       announcements

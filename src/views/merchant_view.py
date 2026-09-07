@@ -48,6 +48,42 @@ _TEMPLATE = """
   </div>
 
   <div class="page-body">
+
+    <sc-if value="{{ storeDiscoveryLoading }}">
+      <div class="pub-banner is-busy" role="status"><span class="pub-spinner" aria-hidden="true"></span><span>Loading live stores…</span></div>
+    </sc-if>
+    <sc-if value="{{ storeDiscoveryError }}">
+      <div class="pub-banner is-error" role="alert"><span>{{ storeDiscoveryError }}</span><button class="pub-linkbtn" onClick="{{ reloadStoreDiscovery }}">Try again</button></div>
+    </sc-if>
+    <sc-if value="{{ storeDiscoveryCards.length }}">
+      <div class="card-premium" style="padding:16px">
+        <div class="section-head" style="margin-bottom:12px">
+          <div class="section-head-text">
+            <h3 class="section-head-title">Stores on LOUMOO</h3>
+            <div class="section-head-sub">Live storefronts created by Cameroon merchants</div>
+          </div>
+          <span class="tag tag-accent">{{ storeDiscoveryTotal }} STORES</span>
+        </div>
+        <div class="entity-grid">
+          <sc-for list="{{ storeDiscoveryCards }}" as="store">
+            <article class="store-card">
+              <div class="store-card-head">
+                <div class="store-logo" style="background:var(--color-accent);color:#fff">{{ store.initial }}</div>
+                <div class="store-id">
+                  <div class="store-name-row">
+                    <span class="store-name">{{ store.name }}</span>
+                    <sc-if value="{{ store.isVerified }}"><span class="store-verified" aria-label="Verified">✓</span></sc-if>
+                  </div>
+                  <div class="store-desc">{{ store.description }}</div>
+                  <div class="store-meta"><span class="store-meta-strong">★ {{ store.rating }}</span><span class="store-meta-dot">·</span><span>{{ store.city || 'Cameroon' }}</span></div>
+                </div>
+              </div>
+              <button onClick="{{ () => openDiscoveredStore(store) }}" class="store-cta">Visit storefront <span aria-hidden="true">→</span></button>
+            </article>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
     
     <!-- ── SEARCH & FILTER HERO BAR ── -->
     <div class="card-premium" style="padding:16px;display:flex;flex-direction:column;gap:14px;background:var(--color-surface);border-radius:var(--radius-lg)">
@@ -326,6 +362,12 @@ _TEMPLATE = """
      ══════════════════════════════════════════════════════════════════════ -->
 <sc-if value="{{ is.business }}">
 <div style="padding-bottom:64px">
+  <sc-if value="{{ businessStoreProfileLoading }}">
+    <div class="pub-banner is-busy" role="status"><span class="pub-spinner" aria-hidden="true"></span><span>Loading storefront profile…</span></div>
+  </sc-if>
+  <sc-if value="{{ businessStoreProfileError }}">
+    <div class="pub-banner is-error" role="alert"><span>{{ businessStoreProfileError }}</span><button class="pub-linkbtn" onClick="{{ reloadStoreProfile }}">Try again</button></div>
+  </sc-if>
   
   <!-- ── STOREFRONT IDENTITY HEADER (minimal) ── -->
   <div style="background:var(--color-surface);border-bottom:1px solid var(--color-divider)">
@@ -338,18 +380,18 @@ _TEMPLATE = """
 
         <div style="display:flex;align-items:center;gap:20px;min-width:0">
           <!-- Logo Avatar -->
-          <div style="width:76px;height:76px;border-radius:20px;background:#0b0d14;color:#fff;display:flex;align-items:center;justify-content:center;font:600 30px/1 var(--font-heading);flex-shrink:0">O</div>
+          <div style="width:76px;height:76px;border-radius:20px;background:#0b0d14;color:#fff;display:flex;align-items:center;justify-content:center;font:600 30px/1 var(--font-heading);flex-shrink:0">{{ businessStoreInitial }}</div>
 
           <div style="min-width:0">
             <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">
-              <h1 style="color:var(--color-text);margin:0;font-size:clamp(22px, 3.2vw, 30px);font-weight:700;letter-spacing:-.03em">Orca Electronics</h1>
-              <svg width="19" height="19" viewBox="0 0 24 24" fill="var(--color-accent)" role="img" aria-label="Official partner"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-1.1 14.2-4-4L8.3 10.8l2.6 2.6 4.8-4.8 1.4 1.4z"/></svg>
+              <h1 style="color:var(--color-text);margin:0;font-size:clamp(22px, 3.2vw, 30px);font-weight:700;letter-spacing:-.03em">{{ businessStoreName }}</h1>
+              <sc-if value="{{ businessStoreVerified }}"><svg width="19" height="19" viewBox="0 0 24 24" fill="var(--color-accent)" role="img" aria-label="Verified store"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-1.1 14.2-4-4L8.3 10.8l2.6 2.6 4.8-4.8 1.4 1.4z"/></svg></sc-if>
             </div>
             <p style="color:var(--color-text-secondary);margin:6px 0 12px;font-size:14px;max-width:560px;line-height:1.5">
-              Authorized Apple &amp; Dell reseller · Akwa, Douala
+              {{ businessStoreDescription }}
             </p>
             <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;font:500 13px/1 var(--font-body);color:var(--color-text-muted)">
-              <span style="color:var(--color-text);font-weight:600">★ 4.9</span>
+              <span style="color:var(--color-text);font-weight:600">★ {{ businessStoreRating }}</span>
               <span style="opacity:.35">·</span>
               <span>1,240 followers</span>
               <span style="opacity:.35">·</span>
@@ -365,7 +407,7 @@ _TEMPLATE = """
           <button onClick="{{ toggleFollow }}" class="btn {{ following ? 'btn-secondary' : 'btn-primary' }}" style="height:42px;padding:0 24px;font-weight:600;border-radius:var(--radius-pill)">
             {{ followLabel }}
           </button>
-          <button onClick="{{ (e) => contactSellerWhatsApp({ sellerName: 'Orca Electronics' }) }}" class="btn btn-secondary" style="height:42px;padding:0 20px;font-weight:600;border-radius:var(--radius-pill);color:var(--color-wa-teal)">
+          <button onClick="{{ (e) => contactSellerWhatsApp({ sellerName: businessStoreName }) }}" class="btn btn-secondary" style="height:42px;padding:0 20px;font-weight:600;border-radius:var(--radius-pill);color:var(--color-wa-teal)">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="margin-right:6px"><path d="M17.5 14.4c-.3-.15-1.7-.85-2-.95-.26-.1-.46-.15-.65.15-.2.3-.75.95-.9 1.15-.17.2-.34.22-.63.07-.3-.15-1.25-.46-2.4-1.47-.9-.8-1.5-1.77-1.67-2.07-.17-.3-.02-.46.13-.6.13-.14.3-.34.44-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.65-1.57-.9-2.15-.24-.57-.48-.5-.65-.5h-.56c-.2 0-.5.07-.77.37-.26.3-1 .98-1 2.4s1.03 2.78 1.17 2.98c.15.2 2.02 3.08 4.9 4.32.68.3 1.22.47 1.63.6.68.22 1.3.18 1.8.11.55-.08 1.7-.7 1.93-1.36.24-.67.24-1.24.17-1.36-.07-.12-.26-.2-.55-.34zM12 2C6.48 2 2 6.48 2 12c0 1.77.46 3.43 1.27 4.87L2 22l5.25-1.38A9.94 9.94 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2z"/></svg>
             <span>Message</span>
           </button>
@@ -389,7 +431,7 @@ _TEMPLATE = """
         </span>
         <span style="display:flex;align-items:center;gap:7px">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-          <span>Akwa showroom, Douala</span>
+          <span>{{ businessStoreCity }}</span>
         </span>
       </div>
 

@@ -111,7 +111,10 @@ class CreateStoreUseCase {
       category_id: input.categoryId.toLowerCase(),
       phone_number: input.phoneNumber || principal.phoneNumber || '',
       email: input.email || principal.email || '',
-      status: 'DRAFT',
+      // A created storefront is immediately discoverable. Onboarding still
+      // controls seller readiness and listing capabilities, not whether the
+      // storefront exists for shoppers.
+      status: 'ACTIVE',
       visibility: 'PUBLIC',
       is_verified: false,
       verification_tier: 'unverified',

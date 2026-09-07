@@ -20,6 +20,7 @@ class StoreDiscoveryUseCase {
     const query = (filters.query || '').toString().trim();
     const category = (filters.category || 'all').toString();
     const city = (filters.city || 'all').toString();
+    const cityFilter = city.toLowerCase() === 'all' ? 'all' : city;
     const verifiedOnly = filters.verifiedOnly === true || filters.verifiedOnly === 'true';
     const page = Math.max(1, parseInt(filters.page, 10) || 1);
     const limit = Math.min(50, Math.max(1, parseInt(filters.limit, 10) || 20));
@@ -29,6 +30,30 @@ class StoreDiscoveryUseCase {
     return CacheService.remember(cacheKey, 120, async () => {
       const db = SupabaseDatabase.getAdmin();
       const offset = (page - 1) * limit;
+      let cityStoreIds = null;
+
+      if (cityFilter !== 'all') {
+        const { data: locations, error: locationError } = await db
+          .from('store_locations')
+          .select('store_id')
+          .ilike('city', cityFilter);
+
+        if (locationError) {
+          throw new InfrastructureError('Supabase', `store city lookup failed: ${locationError.message}`, locationError);
+        }
+
+        cityStoreIds = (locations || []).map(location => location.store_id);
+        if (cityStoreIds.length === 0) {
+          return {
+            stores: [],
+            total: 0,
+            page,
+            limit,
+            hasMore: false,
+            cityFilterApplied: true
+          };
+        }
+      }
 
       let q = db
         .from('stores')
@@ -39,6 +64,7 @@ class StoreDiscoveryUseCase {
 
       if (category !== 'all') q = q.eq('category_id', category.toLowerCase());
       if (verifiedOnly) q = q.eq('is_verified', true);
+      if (cityStoreIds) q = q.in('id', cityStoreIds);
 
       // Searching across name and description at the database level keeps
       // pagination honest — filtering a single page in memory would report
@@ -66,8 +92,8 @@ class StoreDiscoveryUseCase {
         return publicView;
       });
 
-      // City lives on store_locations, one join away, so it is attached after
-      // the page is fetched rather than duplicated onto every store row.
+      // City lives on store_locations, one join away, so attach it after the
+      // primary query while keeping filtering and pagination database-backed.
       if (stores.length > 0) {
         const { data: locations } = await db
           .from('store_locations')
@@ -78,19 +104,13 @@ class StoreDiscoveryUseCase {
         stores.forEach(st => { st.city = cityById.get(st.id) || null; });
       }
 
-      let cityFiltered = false;
-      if (city !== 'all') {
-        stores = stores.filter(st => (st.city || '').toLowerCase() === city.toLowerCase());
-        cityFiltered = true;
-      }
-
       return {
         stores,
         total: count || 0,
         page,
         limit,
         hasMore: offset + (data || []).length < (count || 0),
-        cityFilterApplied: cityFiltered
+        cityFilterApplied: cityFilter !== 'all'
       };
     }, 'catalog');
   }

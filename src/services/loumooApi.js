@@ -634,6 +634,10 @@
     return this.request('/api/v1/stores/me');
   };
 
+  LoumooApiClient.prototype.getStoreDiscovery = function (params) {
+    return this.request('/api/v1/stores/discovery' + qs(params));
+  };
+
   /* --- 05.03 Store management --- */
   LoumooApiClient.prototype.getStore = function (storeId) {
     return this.request('/api/v1/stores/' + encodeURIComponent(storeId));

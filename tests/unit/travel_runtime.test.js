@@ -86,6 +86,12 @@ async function run() {
   vals = comp.renderVals();
   assert.strictEqual(comp.state.travelServiceTab, 'bus');
 
+  // Route swap must update the form values, not only show feedback.
+  vals.swapTravelRoute();
+  vals = comp.renderVals();
+  assert.strictEqual(comp.state.travelFrom, 'Yaoundé');
+  assert.strictEqual(comp.state.travelTo, 'Douala');
+
   // 3. Operator Filters
   vals.setBusFilterGeneral();
   vals = comp.renderVals();

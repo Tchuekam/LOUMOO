@@ -42,14 +42,27 @@ async function run() {
   const unservicedTrain = travelService.search({ type: 'train', origin: 'Douala', destination: 'Kribi' });
   assert.ok(unservicedTrain.trainRouteNotice, 'Unserviced rail destination provides notice');
 
-  // 5. Taxi Quote Calculation
+  // 5. Unified search price and rating filters
+  const filteredSearch = await travelService.search({
+    type: 'bus',
+    origin: 'Douala',
+    destination: 'Yaoundé',
+    minPrice: 5000,
+    maxPrice: 8000,
+    rating: 4.8
+  });
+  assert.ok(filteredSearch.items.length > 0, 'Filtered search returns matching transport');
+  assert.ok(filteredSearch.items.every(item => item.price >= 5000 && item.price <= 8000 && item.rating >= 4.8),
+    'Price and rating filters apply to normalized results');
+
+  // 6. Taxi Quote Calculation
   const taxiQuote = travelService.calculateTaxiQuote({ type: 'airport', origin: 'Akwa', destination: 'Douala Airport', vehicleClass: 'vip' });
   assert.strictEqual(taxiQuote.type, 'airport');
   assert.strictEqual(taxiQuote.currency, 'XAF');
   assert.ok(taxiQuote.estimatedPrice >= 12000, 'Airport transfer quote calculated');
   assert.ok(taxiQuote.driverAssigned.name, 'Driver partner assigned');
 
-  // 6. Tourism Packages
+  // 7. Tourism Packages
   const packages = travelService.getPackages();
   assert.ok(packages.length >= 3, 'Found 3 curated tourism packages');
   const kribi = travelService.getPackageById('pkg-1');
@@ -57,7 +70,7 @@ async function run() {
   assert.ok(kribi.itinerary.length === 3, '3-day itinerary present');
   assert.ok(kribi.included.length >= 2, 'Inclusions listed');
 
-  // 7. Visa Concierge
+  // 8. Visa Concierge
   const visas = travelService.getVisaDestinations();
   assert.ok(visas.length >= 4, 'Found 4 visa destinations');
   const france = travelService.getVisaDestinationById('visa-fr');
@@ -65,7 +78,7 @@ async function run() {
   assert.ok(france.conciergeFee > 0, 'Concierge fee present');
   assert.ok(france.requirements.length >= 4, 'Requirements checklist present');
 
-  // 8. Booking Domain Entity & Lifecycle
+  // 9. Booking Domain Entity & Lifecycle
   const newBooking = new Booking({
     type: SERVICE_TYPES.BUS,
     userId: 'usr_unit_test',

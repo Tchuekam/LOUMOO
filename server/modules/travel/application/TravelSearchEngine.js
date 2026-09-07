@@ -140,7 +140,12 @@ class LocalMarketplaceAdapter extends TravelProviderAdapter {
       }
     }
 
-    return normalizedItems;
+    return normalizedItems.filter(item => {
+      if (params.minPrice !== undefined && item.price < Number(params.minPrice)) return false;
+      if (params.maxPrice !== undefined && item.price > Number(params.maxPrice)) return false;
+      if (params.rating !== undefined && item.rating < Number(params.rating)) return false;
+      return true;
+    });
   }
 }
 

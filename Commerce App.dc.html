@@ -38187,6 +38187,10 @@ class Component extends DCLogic {
     sellerListingTab: 'all',
     sellerListingsLoading: false,
     sellerListingsError: '',
+    storeDiscovery: [],
+    storeDiscoveryTotal: 0,
+    storeDiscoveryLoading: false,
+    storeDiscoveryError: '',
 
     // ── Canonical Dynamic Product & Catalog State ──
     currentProductId: null,
@@ -39205,7 +39209,11 @@ class Component extends DCLogic {
    * anything published through the studio turns up here without a reload.
    */
   _onScreenEnter(screen) {
-    if (screen === 'announce') {
+    if (screen === 'store') {
+      this.loadStoreDiscovery();
+    } else if (screen === 'business') {
+      this.loadStoreProfile();
+    } else if (screen === 'announce') {
       this.ensureAnnouncements();
     } else if (screen === 'myListings') {
       this.loadSellerListings();
@@ -39220,6 +39228,58 @@ class Component extends DCLogic {
     } else if (screen === 'vsCompare') {
       this.runCompare();
     }
+  }
+
+  loadStoreDiscovery() {
+    const api = getApi();
+    if (!api || !api.getStoreDiscovery) return Promise.resolve();
+    const params = {
+      query: String(this.state.storeSearchQuery || '').trim(),
+      city: this.state.storeCityFilter || 'all',
+      category: this.state.storeCategoryFilter || 'all',
+      verifiedOnly: Boolean(this.state.storeVerifiedOnly),
+      page: 1,
+      limit: 24
+    };
+    this.setState({ storeDiscoveryLoading: true, storeDiscoveryError: '' });
+    return api.getStoreDiscovery(params).then(res => {
+      if (this._unmounted) return;
+      const data = (res && res.data) || res || {};
+      const stores = Array.isArray(data.stores) ? data.stores : [];
+      this.setState({
+        storeDiscovery: stores,
+        storeDiscoveryTotal: Number(data.total) || stores.length,
+        storeDiscoveryLoading: false
+      });
+    }).catch(err => {
+      if (this._unmounted) return;
+      this.setState({
+        storeDiscoveryLoading: false,
+        storeDiscoveryError: (err && err.message) || 'Could not load stores.'
+      });
+    });
+  }
+
+  loadStoreProfile() {
+    const storeId = this.state.currentStoreId;
+    const api = getApi();
+    if (!storeId || !api || !api.getStore) return Promise.resolve();
+    this.setState({ storeProfileLoading: true, storeProfileError: '' });
+    return api.getStore(storeId).then(res => {
+      if (this._unmounted) return;
+      const store = (res && res.data) || res;
+      if (!store || typeof store !== 'object') throw new Error('Store profile was not found.');
+      this.setState({
+        currentStore: store,
+        storeProfileLoading: false
+      });
+    }).catch(err => {
+      if (this._unmounted) return;
+      this.setState({
+        storeProfileLoading: false,
+        storeProfileError: (err && err.message) || 'Could not load this storefront.'
+      });
+    });
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -40285,6 +40345,15 @@ class Component extends DCLogic {
         this.setState({ announceLoading: false, announceError: friendlyError(err) });
       });
     this._announceFeedRequest = { key: key, promise: request };
+    request.then(() => {
+      if (this._announceFeedRequest && this._announceFeedRequest.promise === request) {
+        this._announceFeedRequest = null;
+      }
+    }, () => {
+      if (this._announceFeedRequest && this._announceFeedRequest.promise === request) {
+        this._announceFeedRequest = null;
+      }
+    });
     return request;
   }
 
@@ -43101,10 +43170,18 @@ class Component extends DCLogic {
 
       // ── Stores & Brands Discovery / Storefront Getters & Actions ──
       storeSearchQuery: this.state.storeSearchQuery || '',
-      updateStoreSearch: (e) => this.setState({ storeSearchQuery: e && e.target ? e.target.value : e }),
-      clearStoreSearch: () => this.setState({ storeSearchQuery: '' }),
+      updateStoreSearch: (e) => {
+        const value = e && e.target ? e.target.value : e;
+        this.setState({ storeSearchQuery: value });
+        this.loadStoreDiscovery();
+      },
+      clearStoreSearch: () => { this.setState({ storeSearchQuery: '' }); this.loadStoreDiscovery(); },
       storeCityFilter: this.state.storeCityFilter || 'all',
-      updateStoreCityFilter: (e) => this.setState({ storeCityFilter: e && e.target ? e.target.value : e }),
+      updateStoreCityFilter: (e) => {
+        const value = e && e.target ? e.target.value : e;
+        this.setState({ storeCityFilter: value });
+        this.loadStoreDiscovery();
+      },
       storeCategoryFilter: this.state.storeCategoryFilter || 'all',
       /* Category chip classes, resolved here rather than as a ternary in the
          template. The engine returns the comparison's BOOLEAN and discards the
@@ -43116,9 +43193,43 @@ class Component extends DCLogic {
       storeCatHospitalityClass: (this.state.storeCategoryFilter || 'all') === 'hospitality' ? 'tag-accent' : 'tag-neutral',
       storeCatHomeClass: (this.state.storeCategoryFilter || 'all') === 'home' ? 'tag-accent' : 'tag-neutral',
       storeCatServicesClass: (this.state.storeCategoryFilter || 'all') === 'services' ? 'tag-accent' : 'tag-neutral',
-      setStoreCategory: (cat) => this.setState({ storeCategoryFilter: cat }),
+      setStoreCategory: (cat) => { this.setState({ storeCategoryFilter: cat }); this.loadStoreDiscovery(); },
       storeVerifiedOnly: Boolean(this.state.storeVerifiedOnly),
-      toggleStoreVerifiedOnly: () => this.setState(st => ({ storeVerifiedOnly: !st.storeVerifiedOnly })),
+      toggleStoreVerifiedOnly: () => {
+        this.setState(st => ({ storeVerifiedOnly: !st.storeVerifiedOnly }));
+        this.loadStoreDiscovery();
+      },
+      storeDiscoveryTotal: this.state.storeDiscoveryTotal || 0,
+      storeDiscoveryLoading: Boolean(this.state.storeDiscoveryLoading),
+      storeDiscoveryError: this.state.storeDiscoveryError || '',
+      storeDiscoveryCards: (this.state.storeDiscovery || []).map(store => ({
+        id: store.id,
+        name: store.name || 'Unnamed store',
+        description: store.description || 'LOUMOO storefront',
+        rating: Number(store.rating || 0).toFixed(1),
+        city: store.city || '',
+        isVerified: Boolean(store.isVerified || store.is_verified),
+        initial: String(store.name || 'S').trim().charAt(0).toUpperCase()
+      })),
+      reloadStoreDiscovery: () => this.loadStoreDiscovery(),
+      openDiscoveredStore: (store) => {
+        if (!store || !store.id) return;
+        this.setState({
+          currentStoreId: store.id,
+          currentStore: store,
+          storeProfileError: ''
+        });
+        this.go('business');
+      },
+      businessStoreName: (this.state.currentStore && this.state.currentStore.name) || 'Orca Electronics',
+      businessStoreDescription: (this.state.currentStore && (this.state.currentStore.description || this.state.currentStore.tagline)) || 'Authorized electronics reseller · Akwa, Douala',
+      businessStoreCity: (this.state.currentStore && this.state.currentStore.city) || 'Douala',
+      businessStoreRating: Number((this.state.currentStore && this.state.currentStore.rating) || 4.9).toFixed(1),
+      businessStoreInitial: String((this.state.currentStore && this.state.currentStore.name) || 'Orca Electronics').trim().charAt(0).toUpperCase(),
+      businessStoreVerified: Boolean(this.state.currentStore && (this.state.currentStore.isVerified || this.state.currentStore.is_verified)),
+      businessStoreProfileLoading: Boolean(this.state.storeProfileLoading),
+      businessStoreProfileError: this.state.storeProfileError || '',
+      reloadStoreProfile: () => this.loadStoreProfile(),
       /* Storefront tabs, fully resolved in JS.
 
          The template engine does not evaluate a ternary whose test is a
@@ -44603,7 +44714,12 @@ class Component extends DCLogic {
       setBusSeat4B: () => { this.setState({ selectedBusSeat: '4B' }); this.toast('Selected Seat 4B (Aisle VIP)'); },
       setBusSeat4C: () => { this.setState({ selectedBusSeat: '4C' }); this.toast('Selected Seat 4C (Solo VIP)'); },
 
-      swapTravelRoute: () => { this.toast('Swapped Origin & Destination (Douala ⇄ Yaoundé)'); },
+      swapTravelRoute: () => {
+        const from = this.state.travelFrom || 'Douala';
+        const to = this.state.travelTo || 'Yaoundé';
+        this.setState({ travelFrom: to, travelTo: from });
+        this.toast('Swapped Origin & Destination');
+      },
       // Passenger form bindings
       travelPaxName: this.state.travelPaxName,
       travelPaxPhone: this.state.travelPaxPhone,
