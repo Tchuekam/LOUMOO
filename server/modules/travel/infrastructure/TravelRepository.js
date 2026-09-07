@@ -246,6 +246,10 @@ class TravelRepository {
     if (filters.type && filters.type !== 'all') {
       list = list.filter(s => s.type === filters.type);
     }
+    if (filters.operatorId || filters.providerId) {
+      const pid = (filters.operatorId || filters.providerId).toLowerCase();
+      list = list.filter(s => s.providerId.toLowerCase() === pid || (s.providerName && s.providerName.toLowerCase().includes(pid)));
+    }
     if (filters.origin) {
       const o = filters.origin.toLowerCase();
       list = list.filter(s => s.origin.toLowerCase().includes(o));

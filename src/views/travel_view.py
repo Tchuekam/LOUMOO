@@ -131,8 +131,8 @@ def get_travel_view():
 
         <div style="background:var(--color-surface-subtle);border:1px solid var(--color-border-subtle);border-radius:var(--radius-md);padding:9px 12px">
           <label style="font:700 9.5px/1 var(--font-heading);color:var(--color-text-muted);letter-spacing:.08em;margin-bottom:4px;display:block">PASSENGERS &amp; CLASS</label>
-          <button onClick="{{ say.pax }}" aria-label="Select passengers" class="lc-1" style="width:100%;border:none;background:transparent;padding:0;font:600 12.5px/1.2 var(--font-body);text-align:left;color:var(--color-text);display:flex;justify-content:space-between;align-items:center;cursor:pointer">
-            <span>1 Adult · VIP</span>
+          <button onClick="{{ toggleTravelPaxClass }}" aria-label="Select passengers" class="lc-1" style="width:100%;border:none;background:transparent;padding:0;font:600 12.5px/1.2 var(--font-body);text-align:left;color:var(--color-text);display:flex;justify-content:space-between;align-items:center;cursor:pointer">
+            <span>{{ travelPaxClassLabel }}</span>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-muted)" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
           </button>
         </div>
@@ -140,10 +140,10 @@ def get_travel_view():
 
       <!-- Action Button Based on Mode -->
       <sc-if value="{{ isTravelTabBus }}">
-        <button onClick="{{ searchTravel }}" class="btn btn-primary btn-block" style="height:44px;font-size:13.5px;font-weight:800;border-radius:var(--radius-pill);box-shadow:var(--shadow-glow-blue)">
+        <button onClick="{{ findBusSchedules }}" class="btn btn-primary btn-block" style="height:44px;font-size:13.5px;font-weight:800;border-radius:var(--radius-pill);box-shadow:var(--shadow-glow-blue)">
           Find Bus Schedules <span>→</span>
         </button>
-      </div>
+      </sc-if>
       <sc-if value="{{ isTravelTabFlight }}">
         <button onClick="{{ searchTravel }}" class="btn btn-primary btn-block" style="height:44px;font-size:13.5px;font-weight:800;border-radius:var(--radius-pill);box-shadow:var(--shadow-glow-blue)">
           Search Available Flights <span>→</span>
@@ -183,24 +183,25 @@ def get_travel_view():
         </div>
       </div>
     </sc-if>
-    <sc-if value="{{ !travelLandingLoaded }}">
-    <!-- Your Next Trip (Apple Wallet Style Slim Ticket Card) -->
-    <div onClick="{{ on.travelTicket }}" style="padding:12px 14px;background:linear-gradient(135deg, rgba(0, 122, 255, 0.05) 0%, rgba(16, 185, 129, 0.05) 100%);border:1px solid rgba(0, 122, 255, 0.18);border-radius:var(--radius-lg);display:flex;justify-content:space-between;align-items:center;gap:12px;cursor:pointer;box-shadow:var(--shadow-xs);transition:all .2s var(--ease-spring)">
-      <div style="display:flex;align-items:center;gap:10px;min-width:0">
-        <div style="width:36px;height:36px;border-radius:var(--radius-sm);background:var(--color-surface);border:1px solid var(--color-divider);display:flex;align-items:center;justify-content:center;color:var(--color-accent);box-shadow:var(--shadow-xs);flex-shrink:0">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6v6"/><path d="M16 6v6"/><path d="M2 12h20"/><path d="M6 18H4a2 2 0 0 1-2-2V7a3 3 0 0 1 3-3h14a3 3 0 0 1 3 3v9a2 2 0 0 1-2 2h-2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>
-        </div>
-        </div>
-        <div style="min-width:0">
-          <div style="display:flex;align-items:center;gap:6px">
-            <span style="background:rgba(0, 122, 255, 0.12);color:var(--color-accent);padding:2px 6px;border-radius:var(--radius-pill);font:800 9px/1 var(--font-heading)">ACTIVE TICKET</span>
-            <span style="font:600 11px/1 var(--font-mono);color:var(--color-text-muted)">4A · VIP</span>
+
+    <!-- Your Next Trip (Apple Wallet Style Slim Ticket Card — Dynamic Active Ticket) -->
+    <sc-if value="{{ hasActiveTicket }}">
+      <div onClick="{{ on.travelTicket }}" style="padding:12px 14px;background:linear-gradient(135deg, rgba(0, 122, 255, 0.05) 0%, rgba(16, 185, 129, 0.05) 100%);border:1px solid rgba(0, 122, 255, 0.18);border-radius:var(--radius-lg);display:flex;justify-content:space-between;align-items:center;gap:12px;cursor:pointer;box-shadow:var(--shadow-xs);transition:all .2s var(--ease-spring)">
+        <div style="display:flex;align-items:center;gap:10px;min-width:0">
+          <div style="width:36px;height:36px;border-radius:var(--radius-sm);background:var(--color-surface);border:1px solid var(--color-divider);display:flex;align-items:center;justify-content:center;color:var(--color-accent);box-shadow:var(--shadow-xs);flex-shrink:0">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6v6"/><path d="M16 6v6"/><path d="M2 12h20"/><path d="M6 18H4a2 2 0 0 1-2-2V7a3 3 0 0 1 3-3h14a3 3 0 0 1 3 3v9a2 2 0 0 1-2 2h-2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>
           </div>
-          <div class="lc-1" style="font:700 13px/1.2 var(--font-heading);color:var(--color-text);margin-top:3px">Douala ➔ Yaoundé (Tomorrow 08:00)</div>
+          <div style="min-width:0">
+            <div style="display:flex;align-items:center;gap:6px">
+              <span style="background:rgba(0, 122, 255, 0.12);color:var(--color-accent);padding:2px 6px;border-radius:var(--radius-pill);font:800 9px/1 var(--font-heading)">ACTIVE TICKET</span>
+              <span style="font:600 11px/1 var(--font-mono);color:var(--color-text-muted)">{{ activeTicketSeat }} · {{ activeTicketClass }}</span>
+            </div>
+            <div class="lc-1" style="font:700 13px/1.2 var(--font-heading);color:var(--color-text);margin-top:3px">{{ activeTicketRoute }} ({{ activeTicketTime }})</div>
+          </div>
         </div>
+        <span style="font:700 12px/1 var(--font-heading);color:var(--color-accent);white-space:nowrap;flex-shrink:0">View →</span>
       </div>
-      <span style="font:700 12px/1 var(--font-heading);color:var(--color-accent);white-space:nowrap;flex-shrink:0">View →</span>
-    </div>
+    </sc-if>
 
     <!-- ── 1. POPULAR CORRIDORS (HORIZONTAL RAIL) ── -->
     <div>
@@ -209,28 +210,28 @@ def get_travel_view():
         <span style="font:600 11.5px/1 var(--font-body);color:var(--color-text-muted)">Live Seats</span>
       </div>
       <div class="travel-rail" style="display:flex;flex-direction:row;flex-wrap:nowrap;gap:12px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:4px 2px 10px;margin:0 -16px;padding-left:16px;padding-right:16px">
-        <div onClick="{{ on.travelBus }}" class="travel-corridor-card" style="flex:0 0 155px;width:155px;max-width:180px;scroll-snap-align:start;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:12px;cursor:pointer;display:flex;flex-direction:column;gap:4px;box-shadow:var(--shadow-xs);box-sizing:border-box">
+        <div onClick="{{ selectCorridorDoualaYaounde }}" class="travel-corridor-card" style="flex:0 0 155px;width:155px;max-width:180px;scroll-snap-align:start;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:12px;cursor:pointer;display:flex;flex-direction:column;gap:4px;box-shadow:var(--shadow-xs);box-sizing:border-box">
           <div style="display:flex;justify-content:space-between;align-items:center">
             <span style="font:800 12px/1.2 var(--font-heading);color:var(--color-text)">Douala ⇄ Yaoundé</span>
           </div>
           <div class="lc-1" style="font:500 10.5px/1.2 var(--font-body);color:var(--color-text-secondary)">3h 45m · Bus &amp; Camrail</div>
           <div style="font:800 12.5px/1 var(--font-heading);color:var(--color-accent);margin-top:2px">From XAF 6 000</div>
         </div>
-        <div onClick="{{ on.travelBus }}" class="travel-corridor-card" style="flex:0 0 155px;width:155px;max-width:180px;scroll-snap-align:start;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:12px;cursor:pointer;display:flex;flex-direction:column;gap:4px;box-shadow:var(--shadow-xs);box-sizing:border-box">
+        <div onClick="{{ selectCorridorDoualaKribi }}" class="travel-corridor-card" style="flex:0 0 155px;width:155px;max-width:180px;scroll-snap-align:start;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:12px;cursor:pointer;display:flex;flex-direction:column;gap:4px;box-shadow:var(--shadow-xs);box-sizing:border-box">
           <div style="display:flex;justify-content:space-between;align-items:center">
             <span style="font:800 12px/1.2 var(--font-heading);color:var(--color-text)">Douala ⇄ Kribi</span>
           </div>
           <div class="lc-1" style="font:500 10.5px/1.2 var(--font-body);color:var(--color-text-secondary)">2h 30m · Coastal Shuttle</div>
           <div style="font:800 12.5px/1 var(--font-heading);color:var(--color-accent);margin-top:2px">From XAF 4 500</div>
         </div>
-        <div onClick="{{ on.travelBus }}" class="travel-corridor-card" style="flex:0 0 155px;width:155px;max-width:180px;scroll-snap-align:start;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:12px;cursor:pointer;display:flex;flex-direction:column;gap:4px;box-shadow:var(--shadow-xs);box-sizing:border-box">
+        <div onClick="{{ selectCorridorYaoundeBafoussam }}" class="travel-corridor-card" style="flex:0 0 155px;width:155px;max-width:180px;scroll-snap-align:start;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:12px;cursor:pointer;display:flex;flex-direction:column;gap:4px;box-shadow:var(--shadow-xs);box-sizing:border-box">
           <div style="display:flex;justify-content:space-between;align-items:center">
             <span style="font:800 12px/1.2 var(--font-heading);color:var(--color-text)">Yaoundé ⇄ Bafoussam</span>
           </div>
           <div class="lc-1" style="font:500 10.5px/1.2 var(--font-body);color:var(--color-text-secondary)">4h 00m · Highlands VIP</div>
           <div style="font:800 12.5px/1 var(--font-heading);color:var(--color-accent);margin-top:2px">From XAF 5 500</div>
         </div>
-        <div onClick="{{ on.travelBus }}" class="travel-corridor-card" style="flex:0 0 155px;width:155px;max-width:180px;scroll-snap-align:start;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:12px;cursor:pointer;display:flex;flex-direction:column;gap:4px;box-shadow:var(--shadow-xs);box-sizing:border-box">
+        <div onClick="{{ selectCorridorDoualaNgaoundere }}" class="travel-corridor-card" style="flex:0 0 155px;width:155px;max-width:180px;scroll-snap-align:start;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:12px;cursor:pointer;display:flex;flex-direction:column;gap:4px;box-shadow:var(--shadow-xs);box-sizing:border-box">
           <div style="display:flex;justify-content:space-between;align-items:center">
             <span style="font:800 12px/1.2 var(--font-heading);color:var(--color-text)">Douala ⇄ Ngaoundéré</span>
           </div>
@@ -407,7 +408,6 @@ def get_travel_view():
       </button>
     </div>
 
-    </sc-if>
   </div>
 </div>
 </sc-if>
@@ -436,164 +436,118 @@ def get_travel_view():
     <!-- Operator Filter Segmented Pills -->
     <div class="hs" style="gap:8px;margin-bottom:20px;padding-bottom:4px">
       <button onClick="{{ setBusFilterAll }}" class="tag {{ isBusFilterAll ? 'tag-accent' : 'tag-neutral' }}" style="height:38px;padding:0 18px;font-size:12px;font-weight:700;border-radius:var(--radius-pill);cursor:pointer">
-        All Operators (4)
+        All Operators ({{ busCountTotal }})
       </button>
       <button onClick="{{ setBusFilterGeneral }}" class="tag {{ isBusFilterGeneral ? 'tag-accent' : 'tag-neutral' }}" style="height:38px;padding:0 18px;font-size:12px;font-weight:700;border-radius:var(--radius-pill);cursor:pointer">
-        General Express (2)
+        General Express
       </button>
       <button onClick="{{ setBusFilterFinexs }}" class="tag {{ isBusFilterFinexs ? 'tag-accent' : 'tag-neutral' }}" style="height:38px;padding:0 18px;font-size:12px;font-weight:700;border-radius:var(--radius-pill);cursor:pointer">
-        Finexs Voyages (1)
+        Finexs Voyages
       </button>
       <button onClick="{{ setBusFilterTouristique }}" class="tag {{ isBusFilterTouristique ? 'tag-accent' : 'tag-neutral' }}" style="height:38px;padding:0 18px;font-size:12px;font-weight:700;border-radius:var(--radius-pill);cursor:pointer">
-        Touristique VIP (1)
+        Touristique VIP
       </button>
     </div>
 
     <!-- Bus Schedules Feed -->
     <div style="display:flex;flex-direction:column;gap:18px">
-      
-      <!-- Bus Card 1: General Express VIP -->
-      <sc-if value="{{ !isBusFilterFinexs && !isBusFilterTouristique }}">
-      <div class="card-premium" style="padding:22px;border-radius:var(--radius-lg);box-shadow:var(--shadow-sm)">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px">
-          <div>
-            <div style="display:flex;align-items:center;gap:8px">
-              <span style="background:rgba(0,122,255,0.1);color:var(--color-accent);padding:3px 8px;border-radius:var(--radius-pill);font:800 10.5px/1 var(--font-heading)">VIP PRESTIGE</span>
-              <span style="font:700 11.5px/1 var(--font-body);color:var(--color-success)">✓ Verified Operator</span>
-            </div>
-            <div style="font:800 18px/1.2 var(--font-heading);color:var(--color-text);margin-top:6px">General Express Voyages</div>
-            <div style="font:500 12.5px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Douala (Terminal Bépanda) → Yaoundé (Terminal Mvan)</div>
-          </div>
-          <div style="text-align:right">
-            <div style="font:800 22px/1 var(--font-heading);color:var(--color-accent)">XAF 6 000</div>
-            <span style="font:700 11.5px/1 var(--font-body);color:var(--color-success)">8 seats remaining</span>
-          </div>
-        </div>
-
-        <div style="display:flex;gap:16px;align-items:center;margin:16px 0;padding:14px 18px;background:var(--color-surface-subtle);border-radius:var(--radius-md);font-size:13px;border:1px solid var(--color-border-subtle)">
-          <div>
-            <div style="font:800 18px/1 var(--font-heading);color:var(--color-text)">06:00</div>
-            <div style="font:500 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Departure</div>
-          </div>
-          <div style="flex:1;text-align:center;position:relative">
-            <span style="font:700 11px/1 var(--font-heading);color:var(--color-text-muted);display:block;margin-bottom:6px">3h 45m NON-STOP</span>
-            <div style="width:100%;height:2px;background:var(--color-divider);border-radius:2px"></div>
-          </div>
-          <div style="text-align:right">
-            <div style="font:800 18px/1 var(--font-heading);color:var(--color-text)">09:45</div>
-            <div style="font:500 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Arrival</div>
-          </div>
-        </div>
-
-        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px">
-          <span style="background:var(--color-neutral-100);color:var(--color-text-secondary);padding:4px 10px;border-radius:var(--radius-pill);font-size:11.5px;font-weight:600">📶 Onboard Wi-Fi 6</span>
-          <span style="background:var(--color-neutral-100);color:var(--color-text-secondary);padding:4px 10px;border-radius:var(--radius-pill);font-size:11.5px;font-weight:600">❄️ Climate Controlled</span>
-          <span style="background:var(--color-neutral-100);color:var(--color-text-secondary);padding:4px 10px;border-radius:var(--radius-pill);font-size:11.5px;font-weight:600">🔌 USB Charging</span>
-          <span style="background:var(--color-neutral-100);color:var(--color-text-secondary);padding:4px 10px;border-radius:var(--radius-pill);font-size:11.5px;font-weight:600">💺 VIP Reclining</span>
-        </div>
-
-        <!-- Interactive Visual Seat Selection Drawer -->
-        <div style="border-top:1px solid var(--color-divider);padding-top:16px">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-            <div style="font:800 11.5px/1 var(--font-heading);letter-spacing:.06em;color:var(--color-text-muted);text-transform:uppercase">Choose Your Seat (2+1 VIP Layout)</div>
-            <div style="display:flex;gap:10px;font-size:11px;font-weight:700">
-              <span style="color:var(--color-success)">● Available</span>
-              <span style="color:var(--color-accent)">● Selected</span>
-              <span style="color:var(--color-text-muted)">● Taken</span>
-            </div>
-          </div>
-          
-          <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:10px;max-width:380px;margin-bottom:16px;background:var(--color-surface-subtle);padding:16px;border-radius:var(--radius-md);border:1px solid var(--color-border-subtle)">
-            <button onClick="{{ setBusSeat1A }}" class="tag {{ isSeat1A ? 'tag-accent' : 'tag-neutral' }}" style="height:40px;font-weight:800;border-radius:var(--radius-sm);cursor:pointer">1A (Window)</button>
-            <button onClick="{{ setBusSeat1B }}" class="tag {{ isSeat1B ? 'tag-accent' : 'tag-neutral' }}" style="height:40px;font-weight:800;border-radius:var(--radius-sm);cursor:pointer">1B (Aisle)</button>
-            <button class="tag tag-neutral" disabled style="height:40px;opacity:0.35;background:rgba(0,0,0,0.08);cursor:not-allowed;border-radius:var(--radius-sm)">1C (Taken)</button>
-
-            <button onClick="{{ setBusSeat2A }}" class="tag {{ isSeat2A ? 'tag-accent' : 'tag-neutral' }}" style="height:40px;font-weight:800;border-radius:var(--radius-sm);cursor:pointer">2A (Window)</button>
-            <button class="tag tag-neutral" disabled style="height:40px;opacity:0.35;background:rgba(0,0,0,0.08);cursor:not-allowed;border-radius:var(--radius-sm)">2B (Taken)</button>
-            <button onClick="{{ setBusSeat2C }}" class="tag {{ isSeat2C ? 'tag-accent' : 'tag-neutral' }}" style="height:40px;font-weight:800;border-radius:var(--radius-sm);cursor:pointer">2C (VIP Solo)</button>
-
-            <button onClick="{{ setBusSeat4A }}" class="tag {{ isSeat4A ? 'tag-accent' : 'tag-neutral' }}" style="height:40px;font-weight:800;border-radius:var(--radius-sm);cursor:pointer">4A (Window) ✓</button>
-            <button onClick="{{ setBusSeat4B }}" class="tag {{ isSeat4B ? 'tag-accent' : 'tag-neutral' }}" style="height:40px;font-weight:800;border-radius:var(--radius-sm);cursor:pointer">4B (Aisle)</button>
-            <button onClick="{{ setBusSeat4C }}" class="tag {{ isSeat4C ? 'tag-accent' : 'tag-neutral' }}" style="height:40px;font-weight:800;border-radius:var(--radius-sm);cursor:pointer">4C (VIP Solo)</button>
-          </div>
-
-          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
-            <span style="font:600 13px/1 var(--font-body);color:var(--color-text)">
-              Selected: <strong style="color:var(--color-accent)">Seat {{ isSeat1A ? '1A' : (isSeat1B ? '1B' : (isSeat2A ? '2A' : (isSeat2C ? '2C' : (isSeat4B ? '4B' : (isSeat4C ? '4C' : '4A'))))) }}</strong> · Total: <strong>XAF 6 000</strong>
-            </span>
-            <button onClick="{{ on.travelPassenger }}" class="btn btn-primary" style="height:44px;padding:0 24px;font-size:13.5px;font-weight:800;border-radius:var(--radius-pill);box-shadow:var(--shadow-glow-blue)">
-              Continue with Seat <span>→</span>
-            </button>
-          </div>
-        </div>
-      </div>
+      <sc-if value="{{ busSchedulesLoading }}">
+        <div class="card-premium" style="padding:28px;text-align:center;color:var(--color-text-secondary)">Loading verified bus schedules…</div>
       </sc-if>
-
-      <!-- Bus Card 2: Finexs Voyages VIP -->
-      <sc-if value="{{ !isBusFilterGeneral && !isBusFilterTouristique }}">
-      <div class="card-premium" style="padding:22px;border-radius:var(--radius-lg);box-shadow:var(--shadow-sm)">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px">
-          <div>
-            <div style="display:flex;align-items:center;gap:8px">
-              <span style="background:rgba(0,122,255,0.1);color:var(--color-accent);padding:3px 8px;border-radius:var(--radius-pill);font:800 10.5px/1 var(--font-heading)">VIP PRESTIGE</span>
-              <span style="font:700 11.5px/1 var(--font-body);color:var(--color-success)">✓ Verified Operator</span>
-            </div>
-            <div style="font:800 18px/1.2 var(--font-heading);color:var(--color-text);margin-top:6px">Finexs Voyages VIP</div>
-            <div style="font:500 12.5px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Douala (Akwa Liberté) → Yaoundé (Tongolo Express)</div>
-          </div>
-          <div style="text-align:right">
-            <div style="font:800 22px/1 var(--font-heading);color:var(--color-text)">XAF 7 500</div>
-            <span style="font:700 11.5px/1 var(--font-body);color:var(--color-success)">12 seats available</span>
-          </div>
-        </div>
-
-        <div style="display:flex;gap:16px;align-items:center;margin:16px 0;padding:14px 18px;background:var(--color-surface-subtle);border-radius:var(--radius-md);font-size:13px;border:1px solid var(--color-border-subtle)">
-          <div>
-            <div style="font:800 18px/1 var(--font-heading);color:var(--color-text)">07:30</div>
-            <div style="font:500 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Departure</div>
-          </div>
-          <div style="flex:1;text-align:center;position:relative">
-            <span style="font:700 11px/1 var(--font-heading);color:var(--color-text-muted);display:block;margin-bottom:6px">3h 45m NON-STOP</span>
-            <div style="width:100%;height:2px;background:var(--color-divider);border-radius:2px"></div>
-          </div>
-          <div style="text-align:right">
-            <div style="font:800 18px/1 var(--font-heading);color:var(--color-text)">11:15</div>
-            <div style="font:500 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Arrival</div>
-          </div>
-        </div>
-
-        <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--color-divider);padding-top:14px">
-          <span style="font-size:12.5px;color:var(--color-text-secondary)">Leather Seating · Cold Refreshments · High-Speed Wi-Fi</span>
-          <button onClick="{{ on.travelPassenger }}" class="btn btn-secondary" style="height:40px;padding:0 20px;font-size:13px;font-weight:700;border-radius:var(--radius-pill)">Select Schedule</button>
-        </div>
-      </div>
+      <sc-if value="{{ busSchedulesError }}">
+        <div class="card-premium" style="padding:20px;color:var(--color-danger)">{{ busSchedulesError }}</div>
       </sc-if>
-
-      <!-- Bus Card 3: Touristique Express Sleeper -->
-      <sc-if value="{{ !isBusFilterGeneral && !isBusFilterFinexs }}">
-      <div class="card-premium" style="padding:22px;border-radius:var(--radius-lg);box-shadow:var(--shadow-sm)">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px">
-          <div>
-            <div style="display:flex;align-items:center;gap:8px">
-              <span style="background:rgba(217, 119, 6, 0.1);color:#d97706;padding:3px 8px;border-radius:var(--radius-pill);font:800 10.5px/1 var(--font-heading)">OVERNIGHT SLEEPER</span>
-              <span style="font:700 11.5px/1 var(--font-body);color:var(--color-success)">✓ Verified Operator</span>
+      <sc-if value="{{ !busSchedulesLoading && !busSchedulesError && filteredBusSchedules.length }}">
+        <sc-for list="{{ filteredBusSchedules }}" as="bus">
+          <div class="card-premium" style="padding:22px;border-radius:var(--radius-lg);box-shadow:var(--shadow-sm)">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px">
+              <div>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <span style="background:rgba(0,122,255,0.1);color:var(--color-accent);padding:3px 8px;border-radius:var(--radius-pill);font:800 10.5px/1 var(--font-heading)">{{ bus.className || bus.type || bus.busClass || 'VIP PRESTIGE' }}</span>
+                  <span style="font:700 11.5px/1 var(--font-body);color:var(--color-success)">✓ Verified Operator</span>
+                </div>
+                <div style="font:800 18px/1.2 var(--font-heading);color:var(--color-text);margin-top:6px">{{ bus.operatorName || bus.providerName || bus.provider }}</div>
+                <div style="font:500 12.5px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">{{ bus.origin }} ({{ bus.originTerminal || 'Terminal' }}) → {{ bus.destination }} ({{ bus.destinationTerminal || 'Terminal' }})</div>
+              </div>
+              <div style="text-align:right">
+                <div style="font:800 22px/1 var(--font-heading);color:var(--color-accent)">{{ bus.currency }} {{ bus.price }}</div>
+                <span style="font:700 11.5px/1 var(--font-body);color:var(--color-success)">{{ bus.availableSeats || bus.availableUnits || 8 }} seats remaining</span>
+              </div>
             </div>
-            <div style="font:800 18px/1.2 var(--font-heading);color:var(--color-text);margin-top:6px">Touristique Express VIP</div>
-            <div style="font:500 12.5px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Douala (Bessengue) → Ngaoundéré / Garoua</div>
-          </div>
-          <div style="text-align:right">
-            <div style="font:800 22px/1 var(--font-heading);color:var(--color-text)">XAF 18 000</div>
-            <span style="font:700 11.5px/1 var(--font-body);color:var(--color-text-muted)">6 berths left</span>
-          </div>
-        </div>
 
-        <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--color-divider);padding-top:14px;margin-top:16px">
-          <span style="font-size:12.5px;color:var(--color-text-secondary)">Departure: 12:00 · Full Reclining Berths &amp; Warm Dinner Included</span>
-          <button onClick="{{ on.travelPassenger }}" class="btn btn-secondary" style="height:40px;padding:0 20px;font-size:13px;font-weight:700;border-radius:var(--radius-pill)">Select Sleeper</button>
-        </div>
-      </div>
+            <div style="display:flex;gap:16px;align-items:center;margin:16px 0;padding:14px 18px;background:var(--color-surface-subtle);border-radius:var(--radius-md);font-size:13px;border:1px solid var(--color-border-subtle)">
+              <div>
+                <div style="font:800 18px/1 var(--font-heading);color:var(--color-text)">{{ bus.departureTime || bus.departure || '06:00' }}</div>
+                <div style="font:500 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Departure</div>
+              </div>
+              <div style="flex:1;text-align:center;position:relative">
+                <span style="font:700 11px/1 var(--font-heading);color:var(--color-text-muted);display:block;margin-bottom:6px">{{ bus.duration || '3h 45m NON-STOP' }}</span>
+                <div style="width:100%;height:2px;background:var(--color-divider);border-radius:2px"></div>
+              </div>
+              <div style="text-align:right">
+                <div style="font:800 18px/1 var(--font-heading);color:var(--color-text)">{{ bus.arrivalTime || bus.arrival || '09:45' }}</div>
+                <div style="font:500 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Arrival</div>
+              </div>
+            </div>
+
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px">
+              <span style="background:var(--color-neutral-100);color:var(--color-text-secondary);padding:4px 10px;border-radius:var(--radius-pill);font-size:11.5px;font-weight:600">📶 Onboard Wi-Fi 6</span>
+              <span style="background:var(--color-neutral-100);color:var(--color-text-secondary);padding:4px 10px;border-radius:var(--radius-pill);font-size:11.5px;font-weight:600">❄️ Climate Controlled</span>
+              <span style="background:var(--color-neutral-100);color:var(--color-text-secondary);padding:4px 10px;border-radius:var(--radius-pill);font-size:11.5px;font-weight:600">🔌 USB Charging</span>
+              <span style="background:var(--color-neutral-100);color:var(--color-text-secondary);padding:4px 10px;border-radius:var(--radius-pill);font-size:11.5px;font-weight:600">💺 VIP Reclining</span>
+            </div>
+
+            <!-- Interactive Visual Seat Selection Drawer -->
+            <div style="border-top:1px solid var(--color-divider);padding-top:16px">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+                <div style="font:800 11.5px/1 var(--font-heading);letter-spacing:.06em;color:var(--color-text-muted);text-transform:uppercase">Choose Your Seat (2+1 VIP Layout)</div>
+                <div style="display:flex;gap:10px;font-size:11px;font-weight:700">
+                  <span style="color:var(--color-success)">● Available</span>
+                  <span style="color:var(--color-accent)">● Selected</span>
+                  <span style="color:var(--color-text-muted)">● Taken</span>
+                </div>
+              </div>
+              
+              <!-- Dynamic seat grid if activeSeatsList has items -->
+              <sc-if value="{{ activeSeatsList.length }}">
+                <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:10px;max-width:380px;margin-bottom:16px;background:var(--color-surface-subtle);padding:16px;border-radius:var(--radius-md);border:1px solid var(--color-border-subtle)">
+                  <sc-for list="{{ activeSeatsList }}" as="seat">
+                    <button onClick="{{ selectBusSeat(seat) }}" class="tag {{ seat.isSelected ? 'tag-accent' : (seat.isAvailable ? 'tag-neutral' : '') }}" style="height:40px;font-weight:800;border-radius:var(--radius-sm);cursor:{{ seat.isAvailable ? 'pointer' : 'not-allowed' }};opacity:{{ seat.isAvailable ? '1' : '0.35' }};background:{{ !seat.isAvailable ? 'rgba(0,0,0,0.08)' : '' }}" {{ !seat.isAvailable ? 'disabled' : '' }}>
+                      {{ seat.seatNumber }} ({{ seat.isWindow ? 'Window' : (seat.isAisle ? 'Aisle' : 'Solo') }}) {{ seat.isSelected ? '✓' : (!seat.isAvailable ? '(Taken)' : '') }}
+                    </button>
+                  </sc-for>
+                </div>
+              </sc-if>
+
+              <!-- Fallback 3x3 seat grid for tests & offline -->
+              <sc-if value="{{ !activeSeatsList.length }}">
+                <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:10px;max-width:380px;margin-bottom:16px;background:var(--color-surface-subtle);padding:16px;border-radius:var(--radius-md);border:1px solid var(--color-border-subtle)">
+                  <button onClick="{{ setBusSeat1A }}" class="tag {{ isSeat1A ? 'tag-accent' : 'tag-neutral' }}" style="height:40px;font-weight:800;border-radius:var(--radius-sm);cursor:pointer">1A (Window)</button>
+                  <button onClick="{{ setBusSeat1B }}" class="tag {{ isSeat1B ? 'tag-accent' : 'tag-neutral' }}" style="height:40px;font-weight:800;border-radius:var(--radius-sm);cursor:pointer">1B (Aisle)</button>
+                  <button class="tag tag-neutral" disabled style="height:40px;opacity:0.35;background:rgba(0,0,0,0.08);cursor:not-allowed;border-radius:var(--radius-sm)">1C (Taken)</button>
+
+                  <button onClick="{{ setBusSeat2A }}" class="tag {{ isSeat2A ? 'tag-accent' : 'tag-neutral' }}" style="height:40px;font-weight:800;border-radius:var(--radius-sm);cursor:pointer">2A (Window)</button>
+                  <button class="tag tag-neutral" disabled style="height:40px;opacity:0.35;background:rgba(0,0,0,0.08);cursor:not-allowed;border-radius:var(--radius-sm)">2B (Taken)</button>
+                  <button onClick="{{ setBusSeat2C }}" class="tag {{ isSeat2C ? 'tag-accent' : 'tag-neutral' }}" style="height:40px;font-weight:800;border-radius:var(--radius-sm);cursor:pointer">2C (VIP Solo)</button>
+
+                  <button onClick="{{ setBusSeat4A }}" class="tag {{ isSeat4A ? 'tag-accent' : 'tag-neutral' }}" style="height:40px;font-weight:800;border-radius:var(--radius-sm);cursor:pointer">4A (Window) ✓</button>
+                  <button onClick="{{ setBusSeat4B }}" class="tag {{ isSeat4B ? 'tag-accent' : 'tag-neutral' }}" style="height:40px;font-weight:800;border-radius:var(--radius-sm);cursor:pointer">4B (Aisle)</button>
+                  <button onClick="{{ setBusSeat4C }}" class="tag {{ isSeat4C ? 'tag-accent' : 'tag-neutral' }}" style="height:40px;font-weight:800;border-radius:var(--radius-sm);cursor:pointer">4C (VIP Solo)</button>
+                </div>
+              </sc-if>
+
+              <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+                <span style="font:600 13px/1 var(--font-body);color:var(--color-text)">
+                  Selected: <strong style="color:var(--color-accent)">Seat {{ selectedBusSeat }}</strong> · Total: <strong>{{ bus.currency }} {{ bus.price }}</strong>
+                </span>
+                <button onClick="{{ continueWithBusSeat(bus) }}" class="btn btn-primary" style="height:44px;padding:0 24px;font-size:13.5px;font-weight:800;border-radius:var(--radius-pill);box-shadow:var(--shadow-glow-blue)">
+                  Continue with Seat <span>→</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </sc-for>
       </sc-if>
-
     </div>
   </div>
 </div>
@@ -962,11 +916,11 @@ def get_travel_view():
       <div style="font:800 11.5px/1 var(--font-heading);letter-spacing:.06em;color:var(--color-text-muted);text-transform:uppercase;margin-bottom:14px">Select Mobile Money Payment</div>
       
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-        <div style="padding:14px;border:2px solid var(--color-accent);border-radius:var(--radius-md);background:var(--color-accent-100);cursor:pointer">
+        <div onClick="{{ setPaymentMtn }}" style="padding:14px;border:{{ isPaymentMtn ? '2px solid var(--color-accent)' : '1px solid var(--color-divider)' }};border-radius:var(--radius-md);background:{{ isPaymentMtn ? 'var(--color-accent-100)' : 'var(--color-surface)' }};cursor:pointer">
           <div style="font:800 14px/1 var(--font-heading);color:var(--color-text)">📱 MTN Mobile Money</div>
           <div style="font:500 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:4px">Instant USSD PIN Prompt</div>
         </div>
-        <div style="padding:14px;border:1px solid var(--color-divider);border-radius:var(--radius-md);background:var(--color-surface);cursor:pointer">
+        <div onClick="{{ setPaymentOrange }}" style="padding:14px;border:{{ isPaymentOrange ? '2px solid var(--color-accent)' : '1px solid var(--color-divider)' }};border-radius:var(--radius-md);background:{{ isPaymentOrange ? 'var(--color-accent-100)' : 'var(--color-surface)' }};cursor:pointer">
           <div style="font:800 14px/1 var(--font-heading);color:var(--color-text)">🟠 Orange Money</div>
           <div style="font:500 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:4px">#150*50# OTP Authorization</div>
         </div>
@@ -1229,10 +1183,10 @@ def get_travel_view():
         Our certified immigration specialists in Douala and Yaoundé review your bank statements, provide compliant travel insurance, and secure TLScontact / VFS appointment slots.
       </div>
       <div style="display:flex;flex-direction:column;gap:12px">
-        <input type="text" class="input" placeholder="Destination Country (e.g. France / Schengen, USA, Canada)" style="height:44px;border-radius:var(--radius-sm)">
-        <input type="text" class="input" placeholder="Planned Travel Date" style="height:44px;border-radius:var(--radius-sm)">
-        <input type="text" class="input" placeholder="Applicant Phone / WhatsApp" style="height:44px;border-radius:var(--radius-sm)">
-        <button onClick="{{ say.origin }}" class="btn btn-primary btn-block" style="height:48px;font-size:14.5px;font-weight:800;border-radius:var(--radius-pill);box-shadow:var(--shadow-glow-blue)">
+        <input type="text" class="input" value="{{ visaCountry }}" onInput="{{ updateVisaCountry }}" placeholder="Destination Country (e.g. France / Schengen, USA, Canada)" style="height:44px;border-radius:var(--radius-sm)">
+        <input type="text" class="input" value="{{ visaDate }}" onInput="{{ updateVisaDate }}" placeholder="Planned Travel Date" style="height:44px;border-radius:var(--radius-sm)">
+        <input type="text" class="input" value="{{ visaPhone }}" onInput="{{ updateVisaPhone }}" placeholder="Applicant Phone / WhatsApp" style="height:44px;border-radius:var(--radius-sm)">
+        <button onClick="{{ requestVisaConcierge }}" class="btn btn-primary btn-block" style="height:48px;font-size:14.5px;font-weight:800;border-radius:var(--radius-pill);box-shadow:var(--shadow-glow-blue)">
           Request Visa Concierge (XAF 25 000 Vetting) <span>→</span>
         </button>
       </div>

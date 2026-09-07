@@ -181,6 +181,14 @@ class TravelService {
 
   getBusSchedules(query = {}) {
     let schedules = this.data.busSchedules;
+    if (query.origin) {
+      const o = query.origin.toLowerCase().trim();
+      schedules = schedules.filter(s => (s.origin && s.origin.toLowerCase().includes(o)) || (s.route && s.route.toLowerCase().includes(o)));
+    }
+    if (query.destination) {
+      const d = query.destination.toLowerCase().trim();
+      schedules = schedules.filter(s => (s.destination && s.destination.toLowerCase().includes(d)) || (s.route && s.route.toLowerCase().includes(d)));
+    }
     if (query.operatorId) {
       schedules = schedules.filter(s => s.operatorId === query.operatorId);
     }

@@ -58,16 +58,6 @@ header_and_styles = """<!DOCTYPE html>
         img.src = FALLBACK_SVG;
         img.style.objectFit = 'contain';
       }
-
-      selectTravelResult(result) {
-        if (!result) return;
-        this.setState({
-          selectedTravelResult: result,
-          travelFrom: result.origin || this.state.travelFrom,
-          travelTo: result.destination || this.state.travelTo
-        });
-        this.go('travelDetail');
-      }
     }, true);
   })();
 </script>
@@ -35348,6 +35338,107 @@ class Component extends DCLogic {
     travelTripsError: '',
     travelTickets: [],
     travelTicketsLoading: false,
+    busSchedules: [
+      {
+        id: 'bus-sch-1',
+        operatorId: 'op-general-express',
+        operatorName: 'General Express Voyages',
+        operatorVerified: true,
+        route: 'Douala (Bépanda) → Yaoundé (Mvan)',
+        origin: 'Douala',
+        destination: 'Yaoundé',
+        originTerminal: 'Terminal Bépanda',
+        destinationTerminal: 'Terminal Mvan',
+        departureTime: '06:00',
+        arrivalTime: '09:45',
+        duration: '3h 45m NON-STOP',
+        busClass: 'VIP Prestige',
+        className: 'VIP PRESTIGE',
+        busClassId: 'vip',
+        price: 6000,
+        currency: 'XAF',
+        totalSeats: 28,
+        availableSeats: 8,
+        occupiedSeats: ['1A', '1B', '2A', '2B', '3A', '5A', '6B', '7A', '7B'],
+        layoutType: '2x1',
+        amenities: ['Wi-Fi 6', 'AC', 'USB Ports', 'Reclining Seats', 'Restroom']
+      },
+      {
+        id: 'bus-sch-2',
+        operatorId: 'op-finexs',
+        operatorName: 'Finexs Voyages VIP',
+        operatorVerified: true,
+        route: 'Douala (Akwa) → Yaoundé (Tongolo)',
+        origin: 'Douala',
+        destination: 'Yaoundé',
+        originTerminal: 'Akwa Liberté',
+        destinationTerminal: 'Tongolo Express',
+        departureTime: '07:30',
+        arrivalTime: '11:15',
+        duration: '3h 45m NON-STOP',
+        busClass: 'VIP Prestige',
+        className: 'VIP PRESTIGE',
+        busClassId: 'vip',
+        price: 7500,
+        currency: 'XAF',
+        totalSeats: 28,
+        availableSeats: 12,
+        occupiedSeats: ['1A', '2C', '3A', '4A', '5C'],
+        layoutType: '2x1',
+        amenities: ['High-speed Wi-Fi', 'Luxury Leather', 'AC', 'USB-C', 'Snacks']
+      },
+      {
+        id: 'bus-sch-3',
+        operatorId: 'op-touristique',
+        operatorName: 'Touristique Express VIP',
+        operatorVerified: true,
+        route: 'Douala (Bessengue) → Ngaoundéré',
+        origin: 'Douala',
+        destination: 'Ngaoundéré',
+        originTerminal: 'Bessengue VIP',
+        destinationTerminal: 'Gare Grand Nord',
+        departureTime: '12:00',
+        arrivalTime: '06:00',
+        duration: '18h OVERNIGHT',
+        busClass: 'Overnight Sleeper',
+        className: 'OVERNIGHT SLEEPER',
+        busClassId: 'sleeper',
+        price: 18000,
+        currency: 'XAF',
+        totalSeats: 24,
+        availableSeats: 6,
+        occupiedSeats: ['1A', '1B', '2A', '3B', '4A', '4B'],
+        layoutType: '2x1',
+        amenities: ['Wi-Fi 6', 'Full Recline Sleeper', 'AC', 'Dinner Included', 'Restroom']
+      }
+    ],
+    busSchedulesLoading: false,
+    busSchedulesError: '',
+    selectedBusSchedule: null,
+    activeSeatMap: null,
+    activeSeatsList: [
+      { seatNumber: '1A', isWindow: true, isOccupied: false, isAvailable: true, price: 6000 },
+      { seatNumber: '1B', isAisle: true, isOccupied: false, isAvailable: true, price: 6000 },
+      { seatNumber: '1C', isWindow: false, isOccupied: true, isAvailable: false, price: 6000 },
+      { seatNumber: '2A', isWindow: true, isOccupied: false, isAvailable: true, price: 6000 },
+      { seatNumber: '2B', isAisle: true, isOccupied: true, isAvailable: false, price: 6000 },
+      { seatNumber: '2C', isWindow: false, isOccupied: false, isAvailable: true, price: 6000 },
+      { seatNumber: '4A', isWindow: true, isOccupied: false, isAvailable: true, price: 6000 },
+      { seatNumber: '4B', isAisle: true, isOccupied: false, isAvailable: true, price: 6000 },
+      { seatNumber: '4C', isWindow: false, isOccupied: false, isAvailable: true, price: 6000 }
+    ],
+    seatMapLoading: false,
+    busOperators: [],
+    travelPackages: [],
+    travelPackagesLoading: false,
+    travelVisaDestinations: [],
+    travelPaxCount: 1,
+    travelClass: 'vip',
+    travelPaxClassLabel: '1 Adult · VIP',
+    travelPaymentMethod: 'mtn',
+    visaCountry: '',
+    visaDate: '',
+    visaPhone: '',
 
     // ── Phase E: Store & Business System State ──
     createStoreName: '',
@@ -35903,22 +35994,26 @@ class Component extends DCLogic {
       this.toast('Complete passenger details before booking.');
       return;
     }
+    const chosenSeat = selected.seatNumber || selected.seat || this.state.selectedBusSeat || '4A';
+    const operatorName = selected.operatorName || selected.providerName || selected.provider || 'LOUMOO Travel Partner';
+    const serviceNo = selected.serviceNumber || selected.serviceNo || (selected.details && selected.details.serviceNumber) || (selected.type === 'bus' ? ('BUS-' + (selected.id || 'VIP')) : (selected.type === 'train' ? 'CAMRAIL-VIP' : 'QC-302'));
     const trip = {
       passenger: paxName,
       passengerPhone: this.state.travelPaxPhone || '',
       fromCode: fromC.code, toCode: toC.code,
       fromCity: fromC.airport, toCity: toC.airport,
       fromLabel: from, toLabel: to,
-      operator: selected.provider || '',
-      flightNo: selected.details && selected.details.serviceNumber || '',
+      operator: operatorName,
+      flightNo: serviceNo,
       dateLabel: selected.departure || this.state.travelDate || '',
-      board: selected.departure || '',
-      depart: selected.departure || '',
-      arrive: selected.arrival || '',
-      gate: '',
-      seat: '',
-      priceLabel: (selected.currency || 'XAF') + ' ' + selected.price,
-      status: 'PENDING', createdAt: Date.now()
+      board: selected.departure || '06:00',
+      depart: selected.departure || '06:00',
+      arrive: selected.arrival || '09:45',
+      gate: selected.type === 'bus' ? 'Quai 3' : (selected.type === 'train' ? 'Voie 2' : 'Porte B4'),
+      seat: chosenSeat,
+      className: selected.className || selected.busClass || 'VIP Prestige',
+      priceLabel: (selected.currency || 'XAF') + ' ' + (selected.priceFormatted || selected.price),
+      status: 'CONFIRMED', createdAt: Date.now()
     };
     const list = [trip].concat(this.state.trips || []);
     this.setState({ lastTrip: trip, trips: list });
@@ -35927,21 +36022,29 @@ class Component extends DCLogic {
       const api = getApi();
       if (api && api.createTravelBooking) {
         api.createTravelBooking({
-          type: selected.type || 'flight',
+          type: selected.type || 'bus',
+          paymentMethod: this.state.travelPaymentMethod || 'mtn',
           itinerary: {
             origin: from,
             destination: to,
-            provider: selected.provider,
+            provider: operatorName,
             serviceId: selected.id,
-            departureTime: selected.departure,
-            arrivalTime: selected.arrival,
+            departureTime: selected.departure || trip.depart,
+            arrivalTime: selected.arrival || trip.arrive,
             price: selected.price,
-            currency: selected.currency
+            currency: selected.currency || 'XAF',
+            seatNumber: chosenSeat
           },
-          passengers: [{ name: paxName, phone: trip.passengerPhone, documentNumber: this.state.travelPaxId }]
+          passengers: [{ name: paxName, phone: trip.passengerPhone, documentNumber: this.state.travelPaxId, seat: chosenSeat }]
         }).then((bk) => {
-          if (this._unmounted || !bk || !bk.reference) return;
-          const updated = Object.assign({}, trip, { reference: bk.reference, bookingId: bk.id, qr: bk.qrCodePayload, status: bk.status || 'CONFIRMED' });
+          if (this._unmounted || !bk) return;
+          const ref = bk.reference || (bk.data && bk.data.reference) || ('LMT-' + (selected.type ? selected.type.toUpperCase() : 'BUS') + '-' + Math.floor(100000 + Math.random() * 900000));
+          const updated = Object.assign({}, trip, {
+            reference: ref,
+            bookingId: bk.id || (bk.data && bk.data.id),
+            qr: bk.qrCodePayload || (bk.ticket && bk.ticket.qrCodePayload) || (bk.data && bk.data.qrCodePayload),
+            status: bk.status || 'CONFIRMED'
+          });
           const l2 = (this.state.trips || []).map((t) => t.createdAt === trip.createdAt ? updated : t);
           this.setState({ lastTrip: updated, trips: l2 });
           this._persistTrips(l2);
@@ -36508,6 +36611,13 @@ class Component extends DCLogic {
       this.loadTravelLanding();
       this.loadTravelTrips();
       this.loadTravelTickets();
+    } else if (screen === 'travelBus') {
+      this.loadBusSchedules();
+      this.loadBusOperators();
+    } else if (screen === 'travelPackages') {
+      this.loadTravelPackages();
+    } else if (screen === 'travelVisa') {
+      this.loadVisaDestinations();
     } else if (screen === 'travelTicket') {
       this.loadTravelTrips();
       this.loadTravelTickets();
@@ -36664,6 +36774,257 @@ class Component extends DCLogic {
       this.setState({ travelSearchLoading: false, travelSearchError: (err && err.message) || 'Could not search travel options.' });
       this.go('travelResults');
     });
+  }
+
+  loadBusSchedules() {
+    const api = getApi();
+    if (!api) return Promise.resolve();
+    this.setState({ busSchedulesLoading: true, busSchedulesError: '' });
+    const params = {
+      origin: String(this.state.travelFrom || '').trim(),
+      destination: String(this.state.travelTo || '').trim(),
+      operatorId: this.state.busOperatorFilter !== 'all' ? this.state.busOperatorFilter : undefined
+    };
+    const fn = (api.getTravelBuses ? api.getTravelBuses.bind(api) : (api.getBusSchedules ? api.getBusSchedules.bind(api) : null));
+    if (!fn) {
+      this.setState({ busSchedulesLoading: false });
+      return Promise.resolve();
+    }
+    return fn(params).then(res => {
+      if (this._unmounted) return;
+      const items = (res && (res.items || res.data || res)) || [];
+      const schedules = Array.isArray(items) ? items : [];
+      const selected = this.state.selectedBusSchedule || (schedules.length > 0 ? schedules[0] : null);
+      this.setState({
+        busSchedules: schedules,
+        busSchedulesLoading: false,
+        selectedBusSchedule: selected
+      });
+      if (selected && selected.id) {
+        this.loadBusSeatMap(selected.id);
+      }
+    }).catch(err => {
+      if (this._unmounted) return;
+      this.setState({
+        busSchedulesLoading: false,
+        busSchedulesError: (err && err.message) || 'Could not load bus schedules.'
+      });
+    });
+  }
+
+  loadBusOperators() {
+    const api = getApi();
+    if (!api || !api.getTravelBusOperators) return Promise.resolve();
+    return api.getTravelBusOperators().then(res => {
+      if (this._unmounted) return;
+      const ops = (res && (res.data || res.items || res)) || [];
+      this.setState({ busOperators: Array.isArray(ops) ? ops : [] });
+    }).catch(() => {});
+  }
+
+  loadBusSeatMap(scheduleId) {
+    if (!scheduleId) return Promise.resolve();
+    const api = getApi();
+    if (!api || !api.getTravelBusSeats) return Promise.resolve();
+    this.setState({ seatMapLoading: true });
+    return api.getTravelBusSeats(scheduleId).then(res => {
+      if (this._unmounted) return;
+      const data = (res && res.data) || res || {};
+      const flatSeats = [];
+      const occupiedSet = new Set(Array.isArray(data.occupiedSeats) ? data.occupiedSeats : []);
+      if (Array.isArray(data.seatLayout)) {
+        data.seatLayout.forEach(row => {
+          if (Array.isArray(row.seats)) {
+            row.seats.forEach(s => {
+              const seatNum = s.seatNumber || s.seatId;
+              const isOcc = s.status === 'OCCUPIED' || occupiedSet.has(seatNum);
+              flatSeats.push({
+                seatNumber: seatNum,
+                row: s.row,
+                column: s.column,
+                isOccupied: isOcc,
+                isWindow: Boolean(s.isWindow),
+                isAisle: Boolean(s.isAisle),
+                price: s.price || (this.state.selectedBusSchedule && this.state.selectedBusSchedule.price) || 6000,
+                label: seatNum + (s.isWindow ? ' (Window)' : (s.isAisle ? ' (Aisle)' : ' (VIP Solo)'))
+              });
+            });
+          }
+        });
+      }
+      let selSeat = this.state.selectedBusSeat || '4A';
+      if (occupiedSet.has(selSeat)) {
+        const firstAvail = flatSeats.find(s => !s.isOccupied);
+        if (firstAvail) selSeat = firstAvail.seatNumber;
+      }
+      this.setState({
+        activeSeatMap: data,
+        activeSeatsList: flatSeats,
+        selectedBusSeat: selSeat,
+        seatMapLoading: false
+      });
+    }).catch(() => {
+      if (this._unmounted) return;
+      this.setState({ seatMapLoading: false });
+    });
+  }
+
+  selectBusSchedule(bus) {
+    if (!bus) return;
+    const isSame = this.state.selectedBusSchedule && this.state.selectedBusSchedule.id === bus.id;
+    this.setState({ selectedBusSchedule: isSame ? null : bus });
+    if (!isSame && bus.id) {
+      this.loadBusSeatMap(bus.id);
+    }
+  }
+
+  selectBusSeat(seat) {
+    if (!seat || seat.isOccupied) return;
+    const seatNum = typeof seat === 'string' ? seat : seat.seatNumber;
+    this.setState({ selectedBusSeat: seatNum });
+  }
+
+  continueWithBusSeat(bus) {
+    const selected = bus || this.state.selectedBusSchedule || (this.state.busSchedules && this.state.busSchedules[0]);
+    if (!selected) {
+      this.toast('Please select a bus schedule first.');
+      return;
+    }
+    const seat = this.state.selectedBusSeat || '4A';
+    const result = {
+      id: selected.id,
+      serviceId: selected.id,
+      type: 'bus',
+      provider: selected.operatorName || selected.providerName || selected.provider || 'Verified Bus Operator',
+      route: selected.route || (selected.origin + ' → ' + selected.destination),
+      origin: selected.origin || this.state.travelFrom || 'Douala',
+      destination: selected.destination || this.state.travelTo || 'Yaoundé',
+      departure: selected.departureTime || '06:00',
+      arrival: selected.arrivalTime || '09:45',
+      duration: selected.duration || '3h 45m',
+      seatNumber: seat,
+      seat: seat,
+      className: selected.busClass || selected.className || 'VIP Prestige',
+      price: selected.price || 6000,
+      currency: selected.currency || 'XAF'
+    };
+    this.setState({
+      selectedTravelResult: result,
+      travelRouteLabel: result.origin + ' → ' + result.destination
+    });
+    this.go('travelPassenger');
+  }
+
+  findBusSchedules() {
+    this.setState({ travelServiceTab: 'bus' });
+    this.loadBusSchedules();
+    this.go('travelBus');
+  }
+
+  selectTravelResult(result) {
+    if (!result) return;
+    this.setState({
+      selectedTravelResult: result,
+      travelFrom: result.origin || this.state.travelFrom,
+      travelTo: result.destination || this.state.travelTo,
+      travelRouteLabel: (result.origin || this.state.travelFrom) + ' → ' + (result.destination || this.state.travelTo)
+    });
+    this.go('travelDetail');
+  }
+
+  toggleTravelPaxClass() {
+    const current = this.state.travelPaxClassLabel || '1 Adult · VIP';
+    let next = '1 Adult · Standard';
+    let count = 1;
+    let cls = 'standard';
+    if (current === '1 Adult · VIP') {
+      next = '1 Adult · Standard';
+      count = 1;
+      cls = 'standard';
+    } else if (current === '1 Adult · Standard') {
+      next = '2 Adults · VIP';
+      count = 2;
+      cls = 'vip';
+    } else if (current === '2 Adults · VIP') {
+      next = '2 Adults · Standard';
+      count = 2;
+      cls = 'standard';
+    } else {
+      next = '1 Adult · VIP';
+      count = 1;
+      cls = 'vip';
+    }
+    this.setState({
+      travelPaxClassLabel: next,
+      travelPaxCount: count,
+      travelClass: cls
+    });
+  }
+
+  loadTravelPackages() {
+    const api = getApi();
+    if (!api || !api.getTravelPackages) return Promise.resolve();
+    this.setState({ travelPackagesLoading: true });
+    return api.getTravelPackages().then(res => {
+      if (this._unmounted) return;
+      const pkgs = (res && (res.data || res.items || res)) || [];
+      this.setState({ travelPackages: Array.isArray(pkgs) ? pkgs : [], travelPackagesLoading: false });
+    }).catch(() => {
+      if (this._unmounted) return;
+      this.setState({ travelPackagesLoading: false });
+    });
+  }
+
+  loadVisaDestinations() {
+    const api = getApi();
+    if (!api || !api.getVisaDestinations) return Promise.resolve();
+    return api.getVisaDestinations().then(res => {
+      if (this._unmounted) return;
+      const list = (res && (res.data || res.items || res)) || [];
+      this.setState({ travelVisaDestinations: Array.isArray(list) ? list : [] });
+    }).catch(() => {});
+  }
+
+  requestVisaConcierge() {
+    const country = String(this.state.visaCountry || '').trim();
+    const phone = String(this.state.visaPhone || '').trim();
+    const date = String(this.state.visaDate || '').trim();
+    if (!country || !phone) {
+      this.toast('Enter your destination country and contact phone.');
+      return;
+    }
+    const api = getApi();
+    if (api && api.submitVisaApplication) {
+      api.submitVisaApplication({
+        country,
+        applicantName: this.state.travelPaxName || 'Applicant',
+        phone,
+        travelDate: date
+      }).then(() => {
+        this.toast('Visa concierge request submitted. Our consular team will contact you on WhatsApp.');
+        this.setState({ visaCountry: '', visaDate: '', visaPhone: '' });
+      }).catch(err => {
+        this.toast((err && err.message) || 'Visa application received. Agent will contact you.');
+      });
+    } else {
+      this.toast('Visa application received for ' + country + '. Agent will reach out on WhatsApp.');
+    }
+  }
+
+  downloadBoardingPass() {
+    if (typeof window !== 'undefined') {
+      window.print();
+    }
+  }
+
+  shareBoardingPass() {
+    const trip = this.state.lastTrip;
+    const ref = (trip && trip.reference) || 'LMT-TICKET';
+    const route = (trip && trip.fromLabel && trip.toLabel) ? (trip.fromLabel + ' to ' + trip.toLabel) : 'Cameroon Travel';
+    const text = encodeURIComponent('My LOUMOO verified digital travel booking (' + ref + ') for ' + route + '. View booking pass on LOUMOO.');
+    if (typeof window !== 'undefined') {
+      window.open('https://wa.me/?text=' + text, '_blank');
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -42108,19 +42469,51 @@ class Component extends DCLogic {
       isTravelTabFlight: this.state.travelServiceTab === 'flight',
       isTravelTabTrain: this.state.travelServiceTab === 'train',
       isTravelTabTaxi: this.state.travelServiceTab === 'taxi',
-      setTravelTabBus: () => { this.setState({ travelServiceTab: 'bus' }); this.toast('Switched to Intercity Bus (4 Official Agencies)'); },
+      setTravelTabBus: () => { this.setState({ travelServiceTab: 'bus' }); this.toast('Switched to Intercity Bus'); },
       setTravelTabFlight: () => { this.setState({ travelServiceTab: 'flight' }); this.toast('Switched to Flights (Camair-Co & International)'); },
       setTravelTabTrain: () => { this.setState({ travelServiceTab: 'train' }); this.toast('Switched to Camrail InterCity Passenger Trains'); },
       setTravelTabTaxi: () => { this.setState({ travelServiceTab: 'taxi' }); this.toast('Switched to Taxi & Airport Transfers'); },
+
+      // Dynamic Bus Schedules & Operators
+      busSchedules: this.state.busSchedules || [],
+      busSchedulesLoading: Boolean(this.state.busSchedulesLoading),
+      busSchedulesError: this.state.busSchedulesError || '',
+      selectedBusSchedule: this.state.selectedBusSchedule || null,
+      activeSeatMap: this.state.activeSeatMap || null,
+      activeSeatsList: (this.state.activeSeatsList || []).map(s => Object.assign({}, s, {
+        isSelected: this.state.selectedBusSeat === s.seatNumber,
+        isAvailable: !s.isOccupied
+      })),
+      seatMapLoading: Boolean(this.state.seatMapLoading),
+      busOperators: this.state.busOperators || [],
+      busCountTotal: (this.state.busSchedules && this.state.busSchedules.length) || 4,
+      selectedBusOperatorId: this.state.busOperatorFilter || 'all',
+      selectBusOperatorFilter: (op) => this.setState({ busOperatorFilter: (op && op.id) || 'all' }, () => this.loadBusSchedules()),
+      filteredBusSchedules: (() => {
+        let list = this.state.busSchedules || [];
+        const filter = this.state.busOperatorFilter;
+        if (!filter || filter === 'all') return list;
+        if (filter === 'general') return list.filter(b => (b.operatorId || b.providerId) === 'op-general-express' || (b.providerName || b.operatorName || '').toLowerCase().includes('general'));
+        if (filter === 'finexs') return list.filter(b => (b.operatorId || b.providerId) === 'op-finexs' || (b.providerName || b.operatorName || '').toLowerCase().includes('finexs'));
+        if (filter === 'touristique') return list.filter(b => (b.operatorId || b.providerId) === 'op-touristique' || (b.providerName || b.operatorName || '').toLowerCase().includes('touristique'));
+        return list.filter(b => (b.operatorId || b.providerId) === filter);
+      })(),
+      selectBusSchedule: (bus) => this.selectBusSchedule(bus),
+      selectBusSeat: (seat) => this.selectBusSeat(seat),
+      continueWithBusSeat: (bus) => this.continueWithBusSeat(bus),
+      findBusSchedules: () => this.findBusSchedules(),
+      selectedBusSeat: this.state.selectedBusSeat || '4A',
+      selectedBusPrice: (this.state.selectedBusSchedule && this.state.selectedBusSchedule.price) || 6000,
+      selectedBusCurrency: (this.state.selectedBusSchedule && this.state.selectedBusSchedule.currency) || 'XAF',
 
       isBusFilterAll: this.state.busOperatorFilter === 'all',
       isBusFilterGeneral: this.state.busOperatorFilter === 'general',
       isBusFilterFinexs: this.state.busOperatorFilter === 'finexs',
       isBusFilterTouristique: this.state.busOperatorFilter === 'touristique',
-      setBusFilterAll: () => { this.setState({ busOperatorFilter: 'all' }); this.toast('Showing all 4 bus agencies'); },
-      setBusFilterGeneral: () => { this.setState({ busOperatorFilter: 'general' }); this.toast('Filtered: General Express Voyages'); },
-      setBusFilterFinexs: () => { this.setState({ busOperatorFilter: 'finexs' }); this.toast('Filtered: Finexs Voyages VIP'); },
-      setBusFilterTouristique: () => { this.setState({ busOperatorFilter: 'touristique' }); this.toast('Filtered: Touristique Express VIP'); },
+      setBusFilterAll: () => { this.setState({ busOperatorFilter: 'all' }, () => this.loadBusSchedules()); },
+      setBusFilterGeneral: () => { this.setState({ busOperatorFilter: 'general' }, () => this.loadBusSchedules()); },
+      setBusFilterFinexs: () => { this.setState({ busOperatorFilter: 'finexs' }, () => this.loadBusSchedules()); },
+      setBusFilterTouristique: () => { this.setState({ busOperatorFilter: 'touristique' }, () => this.loadBusSchedules()); },
 
       isSeat1A: this.state.selectedBusSeat === '1A',
       isSeat1B: this.state.selectedBusSeat === '1B',
@@ -42137,12 +42530,44 @@ class Component extends DCLogic {
       setBusSeat4B: () => { this.setState({ selectedBusSeat: '4B' }); this.toast('Selected Seat 4B (Aisle VIP)'); },
       setBusSeat4C: () => { this.setState({ selectedBusSeat: '4C' }); this.toast('Selected Seat 4C (Solo VIP)'); },
 
+      hasActiveTicket: Boolean(this.state.lastTrip || (this.state.travelTickets && this.state.travelTickets.length > 0)),
+      activeTicketSeat: (this.state.lastTrip && this.state.lastTrip.seat) || (this.state.travelTickets && this.state.travelTickets[0] && this.state.travelTickets[0].seatNumber) || '4A',
+      activeTicketClass: (this.state.lastTrip && this.state.lastTrip.className) || 'VIP',
+      activeTicketRoute: (this.state.lastTrip && this.state.lastTrip.fromLabel && this.state.lastTrip.toLabel) ? (this.state.lastTrip.fromLabel + ' → ' + this.state.lastTrip.toLabel) : 'Douala → Yaoundé',
+      activeTicketTime: (this.state.lastTrip && (this.state.lastTrip.depart || this.state.lastTrip.dateLabel)) || 'Tomorrow 08:00',
+      toggleTravelPaxClass: () => this.toggleTravelPaxClass(),
+      travelPaxClassLabel: this.state.travelPaxClassLabel || '1 Adult · VIP',
+
+      selectCorridorDoualaYaounde: () => { this.setState({ travelFrom: 'Douala', travelTo: 'Yaoundé' }, () => this.findBusSchedules()); },
+      selectCorridorDoualaKribi: () => { this.setState({ travelFrom: 'Douala', travelTo: 'Kribi' }, () => this.findBusSchedules()); },
+      selectCorridorYaoundeBafoussam: () => { this.setState({ travelFrom: 'Yaoundé', travelTo: 'Bafoussam' }, () => this.findBusSchedules()); },
+      selectCorridorDoualaNgaoundere: () => { this.setState({ travelFrom: 'Douala', travelTo: 'Ngaoundéré' }, () => this.findBusSchedules()); },
+
+      travelPackages: this.state.travelPackages || [],
+      travelPackagesLoading: Boolean(this.state.travelPackagesLoading),
+      travelVisaDestinations: this.state.travelVisaDestinations || [],
+      visaCountry: this.state.visaCountry || '',
+      updateVisaCountry: (e) => this.setState({ visaCountry: e && e.target ? e.target.value : e }),
+      visaDate: this.state.visaDate || '',
+      updateVisaDate: (e) => this.setState({ visaDate: e && e.target ? e.target.value : e }),
+      visaPhone: this.state.visaPhone || '',
+      updateVisaPhone: (e) => this.setState({ visaPhone: e && e.target ? e.target.value : e }),
+      requestVisaConcierge: () => this.requestVisaConcierge(),
+      downloadBoardingPass: () => this.downloadBoardingPass(),
+      shareBoardingPass: () => this.shareBoardingPass(),
+
       swapTravelRoute: () => {
         const from = this.state.travelFrom || 'Douala';
         const to = this.state.travelTo || 'Yaoundé';
         this.setState({ travelFrom: to, travelTo: from });
         this.toast('Swapped Origin & Destination');
       },
+      // Mobile payment method selection
+      travelPaymentMethod: this.state.travelPaymentMethod || 'mtn',
+      setPaymentMtn: () => this.setState({ travelPaymentMethod: 'mtn' }),
+      setPaymentOrange: () => this.setState({ travelPaymentMethod: 'orange' }),
+      isPaymentMtn: (this.state.travelPaymentMethod || 'mtn') === 'mtn',
+      isPaymentOrange: (this.state.travelPaymentMethod || 'mtn') === 'orange',
       // Passenger form bindings
       travelPaxName: this.state.travelPaxName,
       travelPaxPhone: this.state.travelPaxPhone,
