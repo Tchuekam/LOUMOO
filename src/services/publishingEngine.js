@@ -1988,6 +1988,8 @@
     card.priceNote = projected.priceNote;
     card.subtitle = projected.subtitle;
     card.ctaLabel = ann.ctaLabel || projected.ctaLabel;
+    card.ctaType = ann.ctaType || projected.ctaType || '';
+    card.ctaUrl = ann.ctaUrl || '';
 
     var meta = [];
     if (ann.metrics && ann.metrics.views) meta.push(ann.metrics.views + ' views');

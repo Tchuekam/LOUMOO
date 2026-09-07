@@ -130,9 +130,13 @@ class AnnouncementService {
       custom_rules: input.customRules || {}
     };
 
-    await adminDb.from('announcement_targets').insert(targetRow);
+    const { error: targetError } = await adminDb.from('announcement_targets').insert(targetRow);
+    if (targetError) {
+      logger.error('[AnnouncementService] Failed to persist announcement audience', targetError);
+      throw targetError;
+    }
 
-    await adminDb.from('announcement_metrics').insert({
+    const { error: metricsError } = await adminDb.from('announcement_metrics').insert({
       announcement_id: created.id,
       impressions: 0,
       views: 0,
@@ -142,6 +146,10 @@ class AnnouncementService {
       shares: 0,
       conversions: 0
     });
+    if (metricsError) {
+      logger.error('[AnnouncementService] Failed to persist announcement metrics', metricsError);
+      throw metricsError;
+    }
 
     logger.info("[AnnouncementService] Created announcement " + created.id + " (" + created.slug + ") by user " + principal.id + " status=" + created.status);
 
@@ -407,7 +415,7 @@ class AnnouncementService {
       .from('announcements')
       .select(`
         *,
-        store:stores(id, name, slug, logo_url, is_verified, rating, rating_count, verification_tier),
+        store:stores(id, owner_id, name, slug, city, logo_url, is_verified, rating, rating_count, verification_tier),
         author:profiles(id, first_name, last_name, avatar_url, city),
         target:announcement_targets(*),
         metrics:announcement_metrics(*)

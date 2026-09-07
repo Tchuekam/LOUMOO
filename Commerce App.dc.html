@@ -24,6 +24,16 @@
         img.src = FALLBACK_SVG;
         img.style.objectFit = 'contain';
       }
+
+      selectTravelResult(result) {
+        if (!result) return;
+        this.setState({
+          selectedTravelResult: result,
+          travelFrom: result.origin || this.state.travelFrom,
+          travelTo: result.destination || this.state.travelTo
+        });
+        this.go('travelDetail');
+      }
     }, true);
   })();
 </script>
@@ -38061,11 +38071,21 @@ class Component extends DCLogic {
     trips: [],
     lastTrip: null,
     notifications: [],
-    travelPaxName: 'Rostand Tchuekam',
-    travelPaxPhone: '+237 690 12 34 56',
-    travelPaxId: '09CM48921',
+    travelPaxName: '',
+    travelPaxPhone: '',
+    travelPaxId: '',
     travelFrom: 'Douala',
     travelTo: 'Yaoundé',
+    travelDate: new Date().toISOString().slice(0, 10),
+    travelSearchResults: [],
+    travelSearchLoading: false,
+    travelSearchError: '',
+    travelSearchDone: false,
+    selectedTravelResult: null,
+    travelLandingLoaded: false,
+    travelLandingLoading: false,
+    travelLandingError: '',
+    travelLandingItems: [],
     payoutMethod: 'mtn',
     payoutPhone: '690 12 34 56',
     payoutAmount: '500 000',
@@ -38084,6 +38104,10 @@ class Component extends DCLogic {
     travelMyTripsTab: 'upcoming',
     busOperatorFilter: 'all',
     selectedBusSeat: '4A',
+    travelTripsLoading: false,
+    travelTripsError: '',
+    travelTickets: [],
+    travelTicketsLoading: false,
 
     // ── Phase E: Store & Business System State ──
     createStoreName: '',
@@ -38624,27 +38648,37 @@ class Component extends DCLogic {
   // Confirm a travel booking: build a trip, persist it, issue a boarding pass,
   // and best-effort register it with the real travel API (which returns a PNR).
   _confirmTravelBooking() {
+    const selected = this.state.selectedTravelResult;
+    if (!selected) {
+      this.toast('Select a live travel option before issuing a ticket.');
+      this.go('travelTicket');
+      return;
+    }
     const from = this.state.travelFrom || 'Douala';
     const to = this.state.travelTo || 'Yaoundé';
     const fromC = this._cityCode(from);
     const toC = this._cityCode(to);
-    const paxName = String(this.state.travelPaxName || 'Guest Traveller').trim() || 'Guest Traveller';
-    const seats = ['9C', '12A', '14B', '7D', '3A', '18F', '21C'];
-    const seat = seats[Math.floor(Math.random() * seats.length)];
-    const gate = 'B' + (1 + Math.floor(Math.random() * 8));
-    const flightNo = 'QC ' + (300 + Math.floor(Math.random() * 90));
-    const now = new Date();
+    const paxName = String(this.state.travelPaxName || '').trim();
+    if (!paxName || !this.state.travelPaxPhone || !this.state.travelPaxId) {
+      this.toast('Complete passenger details before booking.');
+      return;
+    }
     const trip = {
-      reference: 'LMT-' + Date.now().toString(36).toUpperCase().slice(-6),
       passenger: paxName,
       passengerPhone: this.state.travelPaxPhone || '',
       fromCode: fromC.code, toCode: toC.code,
       fromCity: fromC.airport, toCity: toC.airport,
       fromLabel: from, toLabel: to,
-      operator: 'Camair-Co', flightNo: flightNo,
-      dateLabel: now.toLocaleDateString('en-GB', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' }),
-      board: '08:10', depart: '08:40', arrive: '09:45', gate: gate, seat: seat,
-      priceLabel: 'XAF 78 000', status: 'CONFIRMED', createdAt: Date.now()
+      operator: selected.provider || '',
+      flightNo: selected.details && selected.details.serviceNumber || '',
+      dateLabel: selected.departure || this.state.travelDate || '',
+      board: selected.departure || '',
+      depart: selected.departure || '',
+      arrive: selected.arrival || '',
+      gate: '',
+      seat: '',
+      priceLabel: (selected.currency || 'XAF') + ' ' + selected.price,
+      status: 'PENDING', createdAt: Date.now()
     };
     const list = [trip].concat(this.state.trips || []);
     this.setState({ lastTrip: trip, trips: list });
@@ -38653,12 +38687,21 @@ class Component extends DCLogic {
       const api = getApi();
       if (api && api.createTravelBooking) {
         api.createTravelBooking({
-          type: 'flight',
-          itinerary: { origin: from, destination: to, operator: 'Camair-Co', flightNo: flightNo, departureTime: trip.depart, arrivalTime: trip.arrive },
-          passengers: [{ name: paxName, phone: trip.passengerPhone, seat: seat }]
+          type: selected.type || 'flight',
+          itinerary: {
+            origin: from,
+            destination: to,
+            provider: selected.provider,
+            serviceId: selected.id,
+            departureTime: selected.departure,
+            arrivalTime: selected.arrival,
+            price: selected.price,
+            currency: selected.currency
+          },
+          passengers: [{ name: paxName, phone: trip.passengerPhone, documentNumber: this.state.travelPaxId }]
         }).then((bk) => {
           if (this._unmounted || !bk || !bk.reference) return;
-          const updated = Object.assign({}, trip, { reference: bk.reference, bookingId: bk.id, qr: bk.qrCodePayload });
+          const updated = Object.assign({}, trip, { reference: bk.reference, bookingId: bk.id, qr: bk.qrCodePayload, status: bk.status || 'CONFIRMED' });
           const l2 = (this.state.trips || []).map((t) => t.createdAt === trip.createdAt ? updated : t);
           this.setState({ lastTrip: updated, trips: l2 });
           this._persistTrips(l2);
@@ -39145,6 +39188,14 @@ class Component extends DCLogic {
       regBusinessName: user.businessName || this.state.regBusinessName,
       emailVerifyState: state.contact && state.contact.emailVerified ? 'verified' : this.state.emailVerifyState
     });
+    if (this.state.screen === 'travel' || this.state.screen === 'travelTicket') {
+      setTimeout(() => {
+        if (!this._unmounted) {
+          this.loadTravelTrips();
+          this.loadTravelTickets();
+        }
+      }, 0);
+    }
   }
 
   /**
@@ -39213,6 +39264,13 @@ class Component extends DCLogic {
       this.loadStoreDiscovery();
     } else if (screen === 'business') {
       this.loadStoreProfile();
+    } else if (screen === 'travel') {
+      this.loadTravelLanding();
+      this.loadTravelTrips();
+      this.loadTravelTickets();
+    } else if (screen === 'travelTicket') {
+      this.loadTravelTrips();
+      this.loadTravelTickets();
     } else if (screen === 'announce') {
       this.ensureAnnouncements();
     } else if (screen === 'myListings') {
@@ -39279,6 +39337,92 @@ class Component extends DCLogic {
         storeProfileLoading: false,
         storeProfileError: (err && err.message) || 'Could not load this storefront.'
       });
+    });
+  }
+
+  loadTravelTrips() {
+    const api = getApi();
+    if (!api || !api.getMyTrips || this.state.authStatus !== 'authenticated') return Promise.resolve();
+    this.setState({ travelTripsLoading: true, travelTripsError: '' });
+    return api.getMyTrips({ status: 'all' }).then(res => {
+      if (this._unmounted) return;
+      const trips = (res && (res.items || res.data)) || [];
+      this.setState({
+        trips: Array.isArray(trips) ? trips : [],
+        lastTrip: Array.isArray(trips) && trips.length ? trips[0] : this.state.lastTrip,
+        travelTripsLoading: false
+      });
+    }).catch(err => {
+      if (this._unmounted) return;
+      this.setState({
+        travelTripsLoading: false,
+        travelTripsError: (err && err.message) || 'Could not load your trips.'
+      });
+    });
+  }
+
+  loadTravelLanding() {
+    const api = getApi();
+    if (!api || !api.searchTravel) return Promise.resolve();
+    this.setState({ travelLandingLoading: true, travelLandingError: '' });
+    return api.searchTravel({ type: 'all', page: 1, limit: 12, sort: 'price_asc' }).then(res => {
+      if (this._unmounted) return;
+      const items = (res && (res.items || (res.data && res.data.items))) || [];
+      this.setState({ travelLandingLoaded: true, travelLandingLoading: false, travelLandingItems: Array.isArray(items) ? items : [] });
+    }).catch(err => {
+      if (this._unmounted) return;
+      this.setState({ travelLandingLoaded: true, travelLandingLoading: false, travelLandingError: (err && err.message) || 'Could not load travel inventory.' });
+    });
+  }
+
+  loadTravelTickets() {
+    const api = getApi();
+    if (!api || !api.getTravelTickets || this.state.authStatus !== 'authenticated') return Promise.resolve();
+    this.setState({ travelTicketsLoading: true });
+    return api.getTravelTickets().then(res => {
+      if (this._unmounted) return;
+      const tickets = (res && (res.items || res.data)) || [];
+      this.setState({
+        travelTickets: Array.isArray(tickets) ? tickets : [],
+        travelTicketsLoading: false
+      });
+    }).catch(() => {
+      if (this._unmounted) return;
+      this.setState({ travelTicketsLoading: false });
+    });
+  }
+
+  searchTravel() {
+    const api = getApi();
+    const type = this.state.travelServiceTab === 'bus' ? 'bus' : this.state.travelServiceTab === 'flight' ? 'flight' : this.state.travelServiceTab === 'train' ? 'train' : 'ride';
+    const params = {
+      type: type,
+      origin: String(this.state.travelFrom || '').trim(),
+      destination: String(this.state.travelTo || '').trim(),
+      date: this.state.travelDate || '',
+      passengers: 1,
+      page: 1,
+      limit: 50,
+      sort: 'price_asc'
+    };
+    if (!params.origin || !params.destination) {
+      this.setState({ travelSearchError: 'Enter both a departure and arrival location.' });
+      return Promise.resolve();
+    }
+    if (!api || !api.searchTravel) {
+      this.setState({ travelSearchError: 'Travel search is temporarily unavailable.' });
+      return Promise.resolve();
+    }
+    this.setState({ travelSearchLoading: true, travelSearchError: '', travelSearchDone: true, travelSearchResults: [] });
+    return api.searchTravel(params).then(res => {
+      if (this._unmounted) return;
+      const results = (res && (res.items || (res.data && res.data.items))) || [];
+      this.setState({ travelSearchLoading: false, travelSearchResults: Array.isArray(results) ? results : [] });
+      this.go('travelResults');
+    }).catch(err => {
+      if (this._unmounted) return;
+      this.setState({ travelSearchLoading: false, travelSearchError: (err && err.message) || 'Could not search travel options.' });
+      this.go('travelResults');
     });
   }
 
@@ -40379,6 +40523,43 @@ class Component extends DCLogic {
         if (this._unmounted) return;
         this.setState({ announceDetailLoading: false, announceError: friendlyError(err) });
       });
+  }
+
+  shareAnnouncement(announcement) {
+    if (!announcement || !announcement.id) return;
+    const title = announcement.title || 'LOUMOO broadcast';
+    this.recordAnnouncementInteraction(announcement.id, 'SHARE');
+    this.sharePublication(announcement.id, 'BROADCAST', title);
+  }
+
+  activateAnnouncementCta(announcement) {
+    if (!announcement || !announcement.id) return;
+    this.recordAnnouncementInteraction(announcement.id, 'CTA_CLICK');
+    const type = announcement.ctaType;
+    if (announcement.ctaUrl) {
+      const url = announcement.ctaUrl;
+      if (typeof window !== 'undefined' && window.open) window.open(url, '_blank', 'noopener,noreferrer');
+      return;
+    }
+    if ((type === 'VIEW_PRODUCT' || type === 'BUY_NOW') && announcement.attachmentId) {
+      this.openProduct(announcement.attachmentId);
+      return;
+    }
+    if (type === 'VIEW_STORE' && announcement.storeId) {
+      this.setState({ currentStoreId: announcement.storeId, currentStore: announcement.store || null });
+      this.go('business');
+      return;
+    }
+    this.contactSellerWhatsApp({
+      sellerName: (announcement.store && announcement.store.name) || 'LOUMOO seller',
+      productTitle: announcement.title
+    });
+  }
+
+  recordAnnouncementInteraction(id, eventType) {
+    const api = getApi();
+    if (!api || !id || !api.recordAnnouncementEvent) return Promise.resolve();
+    return api.recordAnnouncementEvent(id, eventType, {}).catch(() => {});
   }
 
   /** The seller's own catalogue, straight from their store. */
@@ -44074,6 +44255,8 @@ class Component extends DCLogic {
           reloadAnnouncements: () => this.loadAnnouncements({ force: true }),
           loadMoreAnnouncements: () => this.loadAnnouncements({ append: true }),
           openAnnouncement: (id) => this.openAnnouncement(id),
+          shareAnnouncement: () => this.shareAnnouncement(this.state.activeAnnouncement),
+          activateAnnouncementCta: () => this.activateAnnouncementCta(this.state.activeAnnouncement),
 
           /* ---------- My Listings ---------- */
           sellerListingCards: pub
@@ -44731,26 +44914,45 @@ class Component extends DCLogic {
       updateTravelPaxId: (e) => this.setState({ travelPaxId: e && e.target ? e.target.value : e }),
       updateTravelFrom: (e) => this.setState({ travelFrom: e && e.target ? e.target.value : e }),
       updateTravelTo: (e) => this.setState({ travelTo: e && e.target ? e.target.value : e }),
+      travelDate: this.state.travelDate,
+      updateTravelDate: (e) => this.setState({ travelDate: e && e.target ? e.target.value : e }),
+      travelSearchResults: this.state.travelSearchResults || [],
+      selectedTravelResult: this.state.selectedTravelResult || null,
+      selectTravelResult: (result) => this.selectTravelResult(result),
+      travelSearchLoading: Boolean(this.state.travelSearchLoading),
+      travelSearchError: this.state.travelSearchError || '',
+      travelSearchDone: Boolean(this.state.travelSearchDone),
+      travelLandingLoaded: Boolean(this.state.travelLandingLoaded),
+      travelLandingLoading: Boolean(this.state.travelLandingLoading),
+      travelLandingError: this.state.travelLandingError || '',
+      travelLandingItems: this.state.travelLandingItems || [],
+      searchTravel: () => this.searchTravel(),
       travelRouteLabel: (this.state.travelFrom || 'Douala') + ' → ' + (this.state.travelTo || 'Yaoundé'),
+      travelTripsLoading: Boolean(this.state.travelTripsLoading),
+      travelTripsError: this.state.travelTripsError || '',
+      travelTickets: this.state.travelTickets || [],
+      travelTicketsLoading: Boolean(this.state.travelTicketsLoading),
+      reloadTravelTrips: () => this.loadTravelTrips(),
+      reloadTravelTickets: () => this.loadTravelTickets(),
       // Confirm a real booking → persists a trip and issues the e-ticket.
       bookTravelItem: () => this._confirmTravelBooking(),
       bookFlight: () => this._confirmTravelBooking(),
       // E-ticket (boarding pass) fields, from the last confirmed trip.
-      ticketPnr: (this.state.lastTrip && this.state.lastTrip.reference) || 'LMT-000000',
-      ticketPassenger: (this.state.lastTrip && this.state.lastTrip.passenger) ? String(this.state.lastTrip.passenger).toUpperCase() : 'GUEST TRAVELLER',
-      ticketFromCode: (this.state.lastTrip && this.state.lastTrip.fromCode) || 'DLA',
-      ticketToCode: (this.state.lastTrip && this.state.lastTrip.toCode) || 'NSI',
-      ticketFromCity: (this.state.lastTrip && this.state.lastTrip.fromCity) || "Douala Int'l",
-      ticketToCity: (this.state.lastTrip && this.state.lastTrip.toCity) || 'Yaound\u00e9 Nsimalen',
+      ticketPnr: (this.state.lastTrip && this.state.lastTrip.reference) || '',
+      ticketPassenger: (this.state.lastTrip && this.state.lastTrip.passenger) ? String(this.state.lastTrip.passenger).toUpperCase() : '',
+      ticketFromCode: (this.state.lastTrip && this.state.lastTrip.fromCode) || '',
+      ticketToCode: (this.state.lastTrip && this.state.lastTrip.toCode) || '',
+      ticketFromCity: (this.state.lastTrip && this.state.lastTrip.fromCity) || '',
+      ticketToCity: (this.state.lastTrip && this.state.lastTrip.toCity) || '',
       ticketDate: (this.state.lastTrip && this.state.lastTrip.dateLabel) || '',
-      ticketBoard: (this.state.lastTrip && this.state.lastTrip.board) || '08:10',
-      ticketDepart: (this.state.lastTrip && this.state.lastTrip.depart) || '08:40',
-      ticketArrive: (this.state.lastTrip && this.state.lastTrip.arrive) || '09:45',
-      ticketGate: (this.state.lastTrip && this.state.lastTrip.gate) || 'B4',
-      ticketSeat: (this.state.lastTrip && this.state.lastTrip.seat) || '12A',
-      ticketFlightNo: (this.state.lastTrip && this.state.lastTrip.flightNo) || 'QC 302',
-      ticketOperator: (this.state.lastTrip && this.state.lastTrip.operator) || 'Camair-Co',
-      ticketPriceLabel: (this.state.lastTrip && this.state.lastTrip.priceLabel) || 'XAF 78 000',
+      ticketBoard: (this.state.lastTrip && this.state.lastTrip.board) || '',
+      ticketDepart: (this.state.lastTrip && this.state.lastTrip.depart) || '',
+      ticketArrive: (this.state.lastTrip && this.state.lastTrip.arrive) || '',
+      ticketGate: (this.state.lastTrip && this.state.lastTrip.gate) || '',
+      ticketSeat: (this.state.lastTrip && this.state.lastTrip.seat) || '',
+      ticketFlightNo: (this.state.lastTrip && this.state.lastTrip.flightNo) || '',
+      ticketOperator: (this.state.lastTrip && this.state.lastTrip.operator) || '',
+      ticketPriceLabel: (this.state.lastTrip && this.state.lastTrip.priceLabel) || '',
 
       // ── Homepage Master Hub (HeroBanner Cinema & Editorial Suite - 10 Flagship Slides) ──
       isHeroSlide0: (this.state.heroSlide || 0) === 0,

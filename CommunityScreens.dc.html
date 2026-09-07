@@ -369,7 +369,7 @@
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:8px">
-        <button class="btn btn-outline" style="height:36px;padding:0 12px;font-size:12px;font-weight:700">Share</button>
+        <button onClick="{{ shareAnnouncement }}" class="btn btn-outline" style="height:36px;padding:0 12px;font-size:12px;font-weight:700">Share</button>
       </div>
     </div>
   </div>
@@ -390,7 +390,7 @@
           <h1 style="margin:0;font-size:clamp(24px,4vw,34px);line-height:1.12;letter-spacing:-.035em">{{ activeAnnouncementCard.title }}</h1>
           <sc-if value="{{ activeAnnouncementCard.body }}"><p style="margin:0;font:400 15px/1.65 var(--font-body);color:var(--color-text-secondary)">{{ activeAnnouncementCard.body }}</p></sc-if>
           <sc-if value="{{ activeAnnouncementCard.highlights && activeAnnouncementCard.highlights.length }}"><div style="display:flex;flex-wrap:wrap;gap:8px"><sc-for list="{{ activeAnnouncementCard.highlights }}" as="item"><span class="tag tag-neutral">✓ {{ item.label }}</span></sc-for></div></sc-if>
-          <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;padding-top:14px;border-top:1px solid var(--color-divider)"><span style="font:800 18px/1 var(--font-heading);color:var(--color-accent)">{{ activeAnnouncementCard.priceLine }}</span><button onClick="{{ () => contactSellerWhatsApp({ sellerName: activeAnnouncementCard.storeName, productTitle: activeAnnouncementCard.title, price: activeAnnouncementCard.priceLine }) }}" class="btn btn-primary" style="height:42px;padding:0 16px">{{ activeAnnouncementCard.ctaLabel || 'Contact seller' }} →</button></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;padding-top:14px;border-top:1px solid var(--color-divider)"><span style="font:800 18px/1 var(--font-heading);color:var(--color-accent)">{{ activeAnnouncementCard.priceLine }}</span><button onClick="{{ activateAnnouncementCta }}" class="btn btn-primary" style="height:42px;padding:0 16px">{{ activeAnnouncementCard.ctaLabel || 'Contact seller' }} →</button></div>
         </div>
       </article>
     </sc-if>

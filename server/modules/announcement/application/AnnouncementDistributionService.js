@@ -23,7 +23,7 @@ class AnnouncementDistributionService {
       .from('announcements')
       .select(`
         *,
-        store:stores(id, name, slug, logo_url, is_verified, rating, rating_count, verification_tier),
+        store:stores(id, name, slug, city, logo_url, is_verified, rating, rating_count, verification_tier),
         author:profiles(id, first_name, last_name, avatar_url, city),
         target:announcement_targets(*),
         metrics:announcement_metrics(*)
