@@ -36852,10 +36852,9 @@ class Component extends DCLogic {
           }
         });
       }
-      let selSeat = this.state.selectedBusSeat || '4A';
-      if (occupiedSet.has(selSeat)) {
-        const firstAvail = flatSeats.find(s => !s.isOccupied);
-        if (firstAvail) selSeat = firstAvail.seatNumber;
+      let selSeat = this.state.selectedBusSeat || '';
+      if (selSeat && occupiedSet.has(selSeat)) {
+        selSeat = '';
       }
       this.setState({
         activeSeatMap: data,
@@ -36890,7 +36889,11 @@ class Component extends DCLogic {
       this.toast('Please select a bus schedule first.');
       return;
     }
-    const seat = this.state.selectedBusSeat || '4A';
+    const seat = this.state.selectedBusSeat || (this.state.activeSeatsList && this.state.activeSeatsList.find(s => s.isAvailable)?.seatNumber) || '';
+    if (!seat) {
+      this.toast('Please select an available seat first.');
+      return;
+    }
     const result = {
       id: selected.id,
       serviceId: selected.id,
@@ -42884,5 +42887,10 @@ full_html = (
 
 with open('Commerce App.dc.html', 'w', encoding='utf-8') as f:
     f.write(full_html)
+
+if os.path.exists('public'):
+    with open('public/index.html', 'w', encoding='utf-8') as f:
+        f.write(full_html)
+    print("public/index.html successfully updated!")
 
 print("Commerce App.dc.html successfully rebuilt with all screens and backend integration!")

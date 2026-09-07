@@ -463,29 +463,29 @@ def get_travel_view():
             <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px">
               <div>
                 <div style="display:flex;align-items:center;gap:8px">
-                  <span style="background:rgba(0,122,255,0.1);color:var(--color-accent);padding:3px 8px;border-radius:var(--radius-pill);font:800 10.5px/1 var(--font-heading)">{{ bus.className || bus.type || bus.busClass || 'VIP PRESTIGE' }}</span>
+                  <span style="background:rgba(0,122,255,0.1);color:var(--color-accent);padding:3px 8px;border-radius:var(--radius-pill);font:800 10.5px/1 var(--font-heading)">{{ bus.className || bus.busClass || bus.type }}</span>
                   <span style="font:700 11.5px/1 var(--font-body);color:var(--color-success)">✓ Verified Operator</span>
                 </div>
-                <div style="font:800 18px/1.2 var(--font-heading);color:var(--color-text);margin-top:6px">{{ bus.operatorName || bus.providerName || bus.provider }}</div>
-                <div style="font:500 12.5px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">{{ bus.origin }} ({{ bus.originTerminal || 'Terminal' }}) → {{ bus.destination }} ({{ bus.destinationTerminal || 'Terminal' }})</div>
+                <div style="font:800 18px/1.2 var(--font-heading);color:var(--color-text);margin-top:6px">{{ bus.operatorName || bus.providerName }}</div>
+                <div style="font:500 12.5px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">{{ bus.origin }} ({{ bus.originTerminal }}) → {{ bus.destination }} ({{ bus.destinationTerminal }})</div>
               </div>
               <div style="text-align:right">
                 <div style="font:800 22px/1 var(--font-heading);color:var(--color-accent)">{{ bus.currency }} {{ bus.price }}</div>
-                <span style="font:700 11.5px/1 var(--font-body);color:var(--color-success)">{{ bus.availableSeats || bus.availableUnits || 8 }} seats remaining</span>
+                <span style="font:700 11.5px/1 var(--font-body);color:var(--color-success)">{{ bus.availableSeats }} seats remaining</span>
               </div>
             </div>
 
             <div style="display:flex;gap:16px;align-items:center;margin:16px 0;padding:14px 18px;background:var(--color-surface-subtle);border-radius:var(--radius-md);font-size:13px;border:1px solid var(--color-border-subtle)">
               <div>
-                <div style="font:800 18px/1 var(--font-heading);color:var(--color-text)">{{ bus.departureTime || bus.departure || '06:00' }}</div>
+                <div style="font:800 18px/1 var(--font-heading);color:var(--color-text)">{{ bus.departureTime || bus.departure }}</div>
                 <div style="font:500 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Departure</div>
               </div>
               <div style="flex:1;text-align:center;position:relative">
-                <span style="font:700 11px/1 var(--font-heading);color:var(--color-text-muted);display:block;margin-bottom:6px">{{ bus.duration || '3h 45m NON-STOP' }}</span>
+                <span style="font:700 11px/1 var(--font-heading);color:var(--color-text-muted);display:block;margin-bottom:6px">{{ bus.duration }}</span>
                 <div style="width:100%;height:2px;background:var(--color-divider);border-radius:2px"></div>
               </div>
               <div style="text-align:right">
-                <div style="font:800 18px/1 var(--font-heading);color:var(--color-text)">{{ bus.arrivalTime || bus.arrival || '09:45' }}</div>
+                <div style="font:800 18px/1 var(--font-heading);color:var(--color-text)">{{ bus.arrivalTime || bus.arrival }}</div>
                 <div style="font:500 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Arrival</div>
               </div>
             </div>
@@ -508,37 +508,23 @@ def get_travel_view():
                 </div>
               </div>
               
-              <!-- Dynamic seat grid if activeSeatsList has items -->
-              <sc-if value="{{ activeSeatsList.length }}">
-                <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:10px;max-width:380px;margin-bottom:16px;background:var(--color-surface-subtle);padding:16px;border-radius:var(--radius-md);border:1px solid var(--color-border-subtle)">
-                  <sc-for list="{{ activeSeatsList }}" as="seat">
-                    <button onClick="{{ selectBusSeat(seat) }}" class="tag {{ seat.isSelected ? 'tag-accent' : (seat.isAvailable ? 'tag-neutral' : '') }}" style="height:40px;font-weight:800;border-radius:var(--radius-sm);cursor:{{ seat.isAvailable ? 'pointer' : 'not-allowed' }};opacity:{{ seat.isAvailable ? '1' : '0.35' }};background:{{ !seat.isAvailable ? 'rgba(0,0,0,0.08)' : '' }}" {{ !seat.isAvailable ? 'disabled' : '' }}>
-                      {{ seat.seatNumber }} ({{ seat.isWindow ? 'Window' : (seat.isAisle ? 'Aisle' : 'Solo') }}) {{ seat.isSelected ? '✓' : (!seat.isAvailable ? '(Taken)' : '') }}
-                    </button>
-                  </sc-for>
-                </div>
-              </sc-if>
-
-              <!-- Fallback 3x3 seat grid for tests & offline -->
-              <sc-if value="{{ !activeSeatsList.length }}">
-                <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:10px;max-width:380px;margin-bottom:16px;background:var(--color-surface-subtle);padding:16px;border-radius:var(--radius-md);border:1px solid var(--color-border-subtle)">
-                  <button onClick="{{ setBusSeat1A }}" class="tag {{ isSeat1A ? 'tag-accent' : 'tag-neutral' }}" style="height:40px;font-weight:800;border-radius:var(--radius-sm);cursor:pointer">1A (Window)</button>
-                  <button onClick="{{ setBusSeat1B }}" class="tag {{ isSeat1B ? 'tag-accent' : 'tag-neutral' }}" style="height:40px;font-weight:800;border-radius:var(--radius-sm);cursor:pointer">1B (Aisle)</button>
-                  <button class="tag tag-neutral" disabled style="height:40px;opacity:0.35;background:rgba(0,0,0,0.08);cursor:not-allowed;border-radius:var(--radius-sm)">1C (Taken)</button>
-
-                  <button onClick="{{ setBusSeat2A }}" class="tag {{ isSeat2A ? 'tag-accent' : 'tag-neutral' }}" style="height:40px;font-weight:800;border-radius:var(--radius-sm);cursor:pointer">2A (Window)</button>
-                  <button class="tag tag-neutral" disabled style="height:40px;opacity:0.35;background:rgba(0,0,0,0.08);cursor:not-allowed;border-radius:var(--radius-sm)">2B (Taken)</button>
-                  <button onClick="{{ setBusSeat2C }}" class="tag {{ isSeat2C ? 'tag-accent' : 'tag-neutral' }}" style="height:40px;font-weight:800;border-radius:var(--radius-sm);cursor:pointer">2C (VIP Solo)</button>
-
-                  <button onClick="{{ setBusSeat4A }}" class="tag {{ isSeat4A ? 'tag-accent' : 'tag-neutral' }}" style="height:40px;font-weight:800;border-radius:var(--radius-sm);cursor:pointer">4A (Window) ✓</button>
-                  <button onClick="{{ setBusSeat4B }}" class="tag {{ isSeat4B ? 'tag-accent' : 'tag-neutral' }}" style="height:40px;font-weight:800;border-radius:var(--radius-sm);cursor:pointer">4B (Aisle)</button>
-                  <button onClick="{{ setBusSeat4C }}" class="tag {{ isSeat4C ? 'tag-accent' : 'tag-neutral' }}" style="height:40px;font-weight:800;border-radius:var(--radius-sm);cursor:pointer">4C (VIP Solo)</button>
-                </div>
-              </sc-if>
+              <!-- Dynamic Seat Selection Grid -->
+              <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:10px;max-width:380px;margin-bottom:16px;background:var(--color-surface-subtle);padding:16px;border-radius:var(--radius-md);border:1px solid var(--color-border-subtle)">
+                <sc-for list="{{ activeSeatsList }}" as="seat">
+                  <button onClick="{{ selectBusSeat(seat) }}" class="tag {{ seat.isSelected ? 'tag-accent' : (seat.isAvailable ? 'tag-neutral' : '') }}" style="height:40px;font-weight:800;border-radius:var(--radius-sm);cursor:{{ seat.isAvailable ? 'pointer' : 'not-allowed' }};opacity:{{ seat.isAvailable ? '1' : '0.35' }};background:{{ !seat.isAvailable ? 'rgba(0,0,0,0.08)' : '' }}" {{ !seat.isAvailable ? 'disabled' : '' }}>
+                    {{ seat.seatNumber }} ({{ seat.isWindow ? 'Window' : (seat.isAisle ? 'Aisle' : 'Solo') }}) {{ seat.isSelected ? '✓' : (!seat.isAvailable ? '(Taken)' : '') }}
+                  </button>
+                </sc-for>
+              </div>
 
               <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
                 <span style="font:600 13px/1 var(--font-body);color:var(--color-text)">
-                  Selected: <strong style="color:var(--color-accent)">Seat {{ selectedBusSeat }}</strong> · Total: <strong>{{ bus.currency }} {{ bus.price }}</strong>
+                  <sc-if value="{{ selectedBusSeat }}">
+                    Selected: <strong style="color:var(--color-accent)">Seat {{ selectedBusSeat }}</strong> · Total: <strong>{{ bus.currency }} {{ bus.price }}</strong>
+                  </sc-if>
+                  <sc-if value="{{ !selectedBusSeat }}">
+                    <span style="color:var(--color-text-muted)">Please select an available seat above</span>
+                  </sc-if>
                 </span>
                 <button onClick="{{ continueWithBusSeat(bus) }}" class="btn btn-primary" style="height:44px;padding:0 24px;font-size:13.5px;font-weight:800;border-radius:var(--radius-pill);box-shadow:var(--shadow-glow-blue)">
                   Continue with Seat <span>→</span>
