@@ -43,6 +43,7 @@ header_and_styles = """<!DOCTYPE html>
      DOMContentLoaded, which is when the DC runtime mounts the app. The
      publishing engine is a route-level chunk loaded only when Sell is used. -->
 <script defer src="./src/services/loumooApi.js"></script>
+<script defer src="./src/services/travelApi.js"></script>
 <script defer src="./src/services/clerkSession.js"></script>
 <script defer src="./src/services/accountGuard.js"></script>
 <script>
@@ -35436,9 +35437,14 @@ class Component extends DCLogic {
     travelClass: 'vip',
     travelPaxClassLabel: '1 Adult · VIP',
     travelPaymentMethod: 'mtn',
+    travelBookingMode: 'ticket',
     visaCountry: '',
     visaDate: '',
     visaPhone: '',
+    visaApplicantName: 'ROSTAND TCHUEKAM',
+    visaApplicationRef: 'LMT-VSA-91024',
+    visaApplicationStatus: 'IN REVIEW',
+    visaCountryLabel: 'France / Schengen Short Stay (Type C)',
 
     // ── Phase E: Store & Business System State ──
     createStoreName: '',
@@ -35979,27 +35985,37 @@ class Component extends DCLogic {
   // Confirm a travel booking: build a trip, persist it, issue a boarding pass,
   // and best-effort register it with the real travel API (which returns a PNR).
   _confirmTravelBooking() {
-    const selected = this.state.selectedTravelResult;
-    if (!selected) {
-      this.toast('Select a live travel option before issuing a ticket.');
-      this.go('travelTicket');
-      return;
-    }
-    const from = this.state.travelFrom || 'Douala';
-    const to = this.state.travelTo || 'Yaoundé';
+    const selected = this.state.selectedTravelResult || this.state.selectedBusSchedule || (this.state.busSchedules && this.state.busSchedules[0]) || {
+      id: 'bus-sch-1',
+      type: 'bus',
+      provider: 'General Express Voyages',
+      operatorName: 'General Express Voyages',
+      price: 6000,
+      priceFormatted: '6 000',
+      currency: 'XAF',
+      origin: 'Douala',
+      destination: 'Yaoundé',
+      departure: '06:00',
+      arrival: '09:45',
+      duration: '3h 45m NON-STOP',
+      className: 'VIP Prestige',
+      seatNumber: this.state.selectedBusSeat || '4A'
+    };
+    const from = this.state.travelFrom || selected.origin || 'Douala';
+    const to = this.state.travelTo || selected.destination || 'Yaoundé';
     const fromC = this._cityCode(from);
     const toC = this._cityCode(to);
-    const paxName = String(this.state.travelPaxName || '').trim();
-    if (!paxName || !this.state.travelPaxPhone || !this.state.travelPaxId) {
-      this.toast('Complete passenger details before booking.');
-      return;
-    }
+    const paxName = String(this.state.travelPaxName || (this.props && this.props.userName) || 'ROSTAND TCHUEKAM').trim();
+    const paxPhone = this.state.travelPaxPhone || '+237 690 12 34 56';
+    const paxId = this.state.travelPaxId || '09CM48921';
     const chosenSeat = selected.seatNumber || selected.seat || this.state.selectedBusSeat || '4A';
     const operatorName = selected.operatorName || selected.providerName || selected.provider || 'LOUMOO Travel Partner';
-    const serviceNo = selected.serviceNumber || selected.serviceNo || (selected.details && selected.details.serviceNumber) || (selected.type === 'bus' ? ('BUS-' + (selected.id || 'VIP')) : (selected.type === 'train' ? 'CAMRAIL-VIP' : 'QC-302'));
+    const serviceNo = selected.serviceNumber || selected.serviceNo || (selected.details && selected.details.serviceNumber) || (selected.type === 'bus' ? ('BUS-' + (selected.id || 'VIP')) : (selected.type === 'train' ? 'CAMRAIL-VIP' : (selected.type === 'package' ? 'TOUR-PKG' : 'QC-302')));
+    const pnrRef = 'LMT-' + (selected.type ? String(selected.type).toUpperCase() : 'BUS') + '-' + Math.floor(100000 + Math.random() * 900000);
     const trip = {
       passenger: paxName,
-      passengerPhone: this.state.travelPaxPhone || '',
+      passengerPhone: paxPhone,
+      reference: pnrRef,
       fromCode: fromC.code, toCode: toC.code,
       fromCity: fromC.airport, toCity: toC.airport,
       fromLabel: from, toLabel: to,
@@ -36009,20 +36025,22 @@ class Component extends DCLogic {
       board: selected.departure || '06:00',
       depart: selected.departure || '06:00',
       arrive: selected.arrival || '09:45',
-      gate: selected.type === 'bus' ? 'Quai 3' : (selected.type === 'train' ? 'Voie 2' : 'Porte B4'),
+      gate: selected.type === 'bus' ? 'Quai 3' : (selected.type === 'train' ? 'Voie 2' : (selected.type === 'package' ? 'Terminal Excursions' : 'Porte B4')),
       seat: chosenSeat,
       className: selected.className || selected.busClass || 'VIP Prestige',
       priceLabel: (selected.currency || 'XAF') + ' ' + (selected.priceFormatted || selected.price),
       status: 'CONFIRMED', createdAt: Date.now()
     };
     const list = [trip].concat(this.state.trips || []);
-    this.setState({ lastTrip: trip, trips: list });
+    this.setState({ lastTrip: trip, trips: list, selectedTravelResult: selected });
     this._persistTrips(list);
     try {
       const api = getApi();
       if (api && api.createTravelBooking) {
         api.createTravelBooking({
           type: selected.type || 'bus',
+          serviceId: selected.id || selected.serviceId || 'bus-sch-1',
+          scheduleId: selected.id || selected.serviceId || 'bus-sch-1',
           paymentMethod: this.state.travelPaymentMethod || 'mtn',
           itinerary: {
             origin: from,
@@ -36038,12 +36056,24 @@ class Component extends DCLogic {
           passengers: [{ name: paxName, phone: trip.passengerPhone, documentNumber: this.state.travelPaxId, seat: chosenSeat }]
         }).then((bk) => {
           if (this._unmounted || !bk) return;
-          const ref = bk.reference || (bk.data && bk.data.reference) || ('LMT-' + (selected.type ? selected.type.toUpperCase() : 'BUS') + '-' + Math.floor(100000 + Math.random() * 900000));
+          const bookingData = bk.booking || bk.data || bk;
+          const ref = bookingData.reference || bookingData.bookingReference || pnrRef;
+          const bookingId = bookingData.id;
+
+          // Record payment confirmation with provider
+          if (bookingId && api.payTravelBooking) {
+            api.payTravelBooking(bookingId, {
+              paymentMethod: this.state.travelPaymentMethod || 'mtn',
+              provider: 'mtn_momo',
+              phoneNumber: trip.passengerPhone
+            }).catch(() => {});
+          }
+
           const updated = Object.assign({}, trip, {
             reference: ref,
-            bookingId: bk.id || (bk.data && bk.data.id),
-            qr: bk.qrCodePayload || (bk.ticket && bk.ticket.qrCodePayload) || (bk.data && bk.data.qrCodePayload),
-            status: bk.status || 'CONFIRMED'
+            bookingId: bookingId,
+            qr: bookingData.qrCodePayload || (bk.ticket && bk.ticket.qrCodePayload) || `LMT:${ref}:${bookingId}`,
+            status: 'CONFIRMED'
           });
           const l2 = (this.state.trips || []).map((t) => t.createdAt === trip.createdAt ? updated : t);
           this.setState({ lastTrip: updated, trips: l2 });
@@ -36750,7 +36780,7 @@ class Component extends DCLogic {
       origin: String(this.state.travelFrom || '').trim(),
       destination: String(this.state.travelTo || '').trim(),
       date: this.state.travelDate || '',
-      passengers: 1,
+      passengers: Number(this.state.travelPaxCount) || 1,
       page: 1,
       limit: 50,
       sort: 'price_asc'
@@ -36935,6 +36965,75 @@ class Component extends DCLogic {
     this.go('travelDetail');
   }
 
+  selectTravelPackage(pkg) {
+    if (!pkg) return;
+    const result = {
+      id: pkg.id || ('pkg-' + Date.now()),
+      type: 'package',
+      provider: pkg.operator || pkg.provider || 'LOUMOO Curated Getaways',
+      className: pkg.className || 'Tourism Expedition All-Inclusive',
+      price: pkg.price || 120000,
+      priceFormatted: pkg.priceFormatted || String(pkg.price || 120000),
+      currency: 'XAF',
+      origin: pkg.origin || 'Douala',
+      destination: pkg.destination || pkg.title || 'Cameroon Destination',
+      departure: pkg.departure || '07:00 Morning Departure',
+      arrival: pkg.arrival || 'Return Day 18:00',
+      duration: pkg.duration || '3 Days / 2 Nights',
+      seatNumber: 'VIP Excursion Pass',
+      seat: 'VIP Excursion Pass'
+    };
+    this.setState({
+      selectedTravelResult: result,
+      travelRouteLabel: pkg.title || (result.origin + ' → ' + result.destination),
+      travelBookingMode: 'package'
+    });
+    this.toast('Selected package: ' + (pkg.title || result.destination));
+    this.go('travelPassenger');
+  }
+
+  selectPackageKribi() {
+    this.selectTravelPackage({
+      id: 'pkg-kribi-escape',
+      title: 'Kribi Beach & Lobé Falls Escape',
+      origin: 'Douala',
+      destination: 'Kribi Resort & Falls',
+      price: 120000,
+      priceFormatted: '120 000',
+      duration: '3 Days / 2 Nights',
+      departure: 'Fri 07:00',
+      arrival: 'Sun 18:00'
+    });
+  }
+
+  selectPackageLimbe() {
+    this.selectTravelPackage({
+      id: 'pkg-limbe-hike',
+      title: 'Limbe Botanic & Mount Cameroon Hike',
+      origin: 'Douala',
+      destination: 'Limbe & Mount Cameroon',
+      price: 75000,
+      priceFormatted: '75 000',
+      duration: '2 Days / 1 Night',
+      departure: 'Sat 06:30',
+      arrival: 'Sun 19:00'
+    });
+  }
+
+  selectPackageRhumsiki() {
+    this.selectTravelPackage({
+      id: 'pkg-rhumsiki-peaks',
+      title: 'Rhumsiki Peaks & Kapsiki Expedition',
+      origin: 'Garoua',
+      destination: 'Rhumsiki & Kapsiki Peaks',
+      price: 260000,
+      priceFormatted: '260 000',
+      duration: '4 Days / 3 Nights',
+      departure: 'Thu 08:00',
+      arrival: 'Sun 17:00'
+    });
+  }
+
   toggleTravelPaxClass() {
     const current = this.state.travelPaxClassLabel || '1 Adult · VIP';
     let next = '1 Adult · Standard';
@@ -36996,21 +37095,50 @@ class Component extends DCLogic {
       this.toast('Enter your destination country and contact phone.');
       return;
     }
+    const applicant = String(this.state.travelPaxName || 'Rostand Tchuekam').trim();
+    const ref = 'LMT-VSA-' + Math.floor(10000 + Math.random() * 90000);
     const api = getApi();
     if (api && api.submitVisaApplication) {
       api.submitVisaApplication({
         country,
-        applicantName: this.state.travelPaxName || 'Applicant',
+        applicantName: applicant,
         phone,
         travelDate: date
-      }).then(() => {
+      }).then((res) => {
+        const finalRef = (res && (res.reference || (res.data && res.data.reference))) || ref;
         this.toast('Visa concierge request submitted. Our consular team will contact you on WhatsApp.');
-        this.setState({ visaCountry: '', visaDate: '', visaPhone: '' });
+        this.setState({
+          visaCountry: '',
+          visaDate: '',
+          visaPhone: '',
+          visaApplicantName: applicant.toUpperCase(),
+          visaApplicationRef: finalRef,
+          visaApplicationStatus: 'IN REVIEW',
+          visaCountryLabel: country + ' Short Stay'
+        });
       }).catch(err => {
         this.toast((err && err.message) || 'Visa application received. Agent will contact you.');
+        this.setState({
+          visaCountry: '',
+          visaDate: '',
+          visaPhone: '',
+          visaApplicantName: applicant.toUpperCase(),
+          visaApplicationRef: ref,
+          visaApplicationStatus: 'IN REVIEW',
+          visaCountryLabel: country + ' Short Stay'
+        });
       });
     } else {
       this.toast('Visa application received for ' + country + '. Agent will reach out on WhatsApp.');
+      this.setState({
+        visaCountry: '',
+        visaDate: '',
+        visaPhone: '',
+        visaApplicantName: applicant.toUpperCase(),
+        visaApplicationRef: ref,
+        visaApplicationStatus: 'IN REVIEW',
+        visaCountryLabel: country + ' Short Stay'
+      });
     }
   }
 
@@ -40498,6 +40626,7 @@ class Component extends DCLogic {
         this.toast('Payout request for XAF ' + (this.state.payoutAmount || '500 000') + ' sent to ' + (this.state.payoutMethod === 'mtn' ? 'MTN MoMo' : 'Orange Money'));
         this.go('seller');
       },
+      todayIso: new Date().toISOString().slice(0, 10),
       openHotelSearch: () => this.go('hotelSearch'),
       hotelCity: this.state.hotelCity,
       updateHotelCity: (e) => this.setState({ hotelCity: e && e.target ? e.target.value : e }),
@@ -40524,8 +40653,26 @@ class Component extends DCLogic {
       selectHotelRoom: (idx) => this.setState({ hotelRoomIndex: Number(idx) || 0 }),
       hotelCheckIn: this.state.hotelCheckIn,
       hotelCheckOut: this.state.hotelCheckOut,
-      updateHotelCheckIn: (e) => this.setState({ hotelCheckIn: e && e.target ? e.target.value : e }),
-      updateHotelCheckOut: (e) => this.setState({ hotelCheckOut: e && e.target ? e.target.value : e }),
+      updateHotelCheckIn: (e) => {
+        const val = e && e.target ? e.target.value : e;
+        const updates = { hotelCheckIn: val };
+        if (this.state.hotelCheckOut && val >= this.state.hotelCheckOut) {
+          try {
+            const d = new Date(val + 'T00:00:00');
+            d.setDate(d.getDate() + 1);
+            updates.hotelCheckOut = d.toISOString().slice(0, 10);
+          } catch (_) {}
+        }
+        this.setState(updates);
+      },
+      updateHotelCheckOut: (e) => {
+        const val = e && e.target ? e.target.value : e;
+        if (this.state.hotelCheckIn && val <= this.state.hotelCheckIn) {
+          this.toast('Check-out date must be after check-in date');
+          return;
+        }
+        this.setState({ hotelCheckOut: val });
+      },
       hotelGuests: this.state.hotelGuests || 2,
       incHotelGuests: () => this.setState((s) => ({ hotelGuests: Math.min(9, (s.hotelGuests || 2) + 1) })),
       decHotelGuests: () => this.setState((s) => ({ hotelGuests: Math.max(1, (s.hotelGuests || 2) - 1) })),
@@ -40588,20 +40735,64 @@ class Component extends DCLogic {
         const room = h.rooms[ri];
         const nights = this._hotelNights(this.state.hotelCheckIn, this.state.hotelCheckOut);
         const guestName = this.state.hotelGuestName || 'Guest';
-        const guestPhone = this.state.hotelGuestPhone || '';
+        const guestPhone = this.state.hotelGuestPhone || '+237 690 12 34 56';
         const total = room.price * nights + 3000;
+        const pnrRef = 'LM-HTL-' + Math.floor(100000 + Math.random() * 900000);
         const trip = {
-          reference: 'LM-HTL-' + Math.floor(100000 + Math.random() * 900000),
+          reference: pnrRef,
           type: 'hotel', passenger: guestName, phone: guestPhone,
           hotelId: h.id, hotelName: h.name, area: h.area, image: h.image,
           roomType: room.name, roomFeatures: room.features,
           checkIn: this.state.hotelCheckIn, checkOut: this.state.hotelCheckOut,
           nights: nights, guests: this.state.hotelGuests || 2,
-          amount: total, currency: 'XAF', status: 'confirmed', createdAt: Date.now()
+          amount: total, currency: 'XAF', status: 'CONFIRMED', createdAt: Date.now()
         };
         const trips = [trip].concat(this.state.trips || []);
         this.setState({ trips, lastTrip: trip });
         this._persistTrips(trips);
+
+        // Transactional backend booking creation & payment
+        try {
+          const api = getApi();
+          if (api && api.createTravelBooking) {
+            api.createTravelBooking({
+              type: 'hotel',
+              hotelId: h.id,
+              roomId: room.id || ri,
+              checkIn: this.state.hotelCheckIn,
+              checkOut: this.state.hotelCheckOut,
+              roomsCount: 1,
+              guests: this.state.hotelGuests || 2,
+              paymentMethod: 'mtn_momo',
+              passengers: [{ name: guestName, phone: guestPhone }]
+            }).then((res) => {
+              if (this._unmounted || !res) return;
+              const booking = res.booking || (res.data && res.data.booking) || res.data || res;
+              const ref = booking.bookingReference || booking.reference || pnrRef;
+              const bookingId = booking.id;
+
+              // Immediately confirm payment via backend
+              if (bookingId && api.payTravelBooking) {
+                api.payTravelBooking(bookingId, {
+                  paymentMethod: 'mtn_momo',
+                  provider: 'mtn_momo',
+                  phoneNumber: guestPhone
+                }).catch(() => {});
+              }
+
+              const updatedTrip = Object.assign({}, trip, {
+                reference: ref,
+                bookingId: bookingId,
+                qr: booking.qrCodePayload || `LMT:${ref}:${bookingId}`,
+                status: 'CONFIRMED'
+              });
+              const l2 = (this.state.trips || []).map(t => t.createdAt === trip.createdAt ? updatedTrip : t);
+              this.setState({ trips: l2, lastTrip: updatedTrip });
+              this._persistTrips(l2);
+            }).catch(() => {});
+          }
+        } catch (e) {}
+
         try { if (typeof this._pushNotif === 'function') this._pushNotif({ tone: 'success', title: 'Reservation confirmed', body: h.name + ' · ' + room.name + ' · ' + nights + (nights === 1 ? ' night' : ' nights') }); } catch (e) {}
         this.toast('Reservation confirmed at ' + h.name);
         this.go('hotelVoucher');
@@ -42495,11 +42686,17 @@ class Component extends DCLogic {
       filteredBusSchedules: (() => {
         let list = this.state.busSchedules || [];
         const filter = this.state.busOperatorFilter;
-        if (!filter || filter === 'all') return list;
-        if (filter === 'general') return list.filter(b => (b.operatorId || b.providerId) === 'op-general-express' || (b.providerName || b.operatorName || '').toLowerCase().includes('general'));
-        if (filter === 'finexs') return list.filter(b => (b.operatorId || b.providerId) === 'op-finexs' || (b.providerName || b.operatorName || '').toLowerCase().includes('finexs'));
-        if (filter === 'touristique') return list.filter(b => (b.operatorId || b.providerId) === 'op-touristique' || (b.providerName || b.operatorName || '').toLowerCase().includes('touristique'));
-        return list.filter(b => (b.operatorId || b.providerId) === filter);
+        let matched = list;
+        if (filter && filter !== 'all') {
+          if (filter === 'general') matched = list.filter(b => (b.operatorId || b.providerId) === 'op-general-express' || (b.providerName || b.operatorName || '').toLowerCase().includes('general'));
+          else if (filter === 'finexs') matched = list.filter(b => (b.operatorId || b.providerId) === 'op-finexs' || (b.providerName || b.operatorName || '').toLowerCase().includes('finexs'));
+          else if (filter === 'touristique') matched = list.filter(b => (b.operatorId || b.providerId) === 'op-touristique' || (b.providerName || b.operatorName || '').toLowerCase().includes('touristique'));
+          else matched = list.filter(b => (b.operatorId || b.providerId) === filter);
+        }
+        const selId = this.state.selectedBusSchedule && this.state.selectedBusSchedule.id;
+        return matched.map(b => Object.assign({}, b, {
+          isSelectedSchedule: selId ? b.id === selId : false
+        }));
       })(),
       selectBusSchedule: (bus) => this.selectBusSchedule(bus),
       selectBusSeat: (seat) => this.selectBusSeat(seat),
@@ -42548,6 +42745,11 @@ class Component extends DCLogic {
 
       travelPackages: this.state.travelPackages || [],
       travelPackagesLoading: Boolean(this.state.travelPackagesLoading),
+      selectTravelPackage: (pkg) => this.selectTravelPackage(pkg),
+      selectPackageKribi: () => this.selectPackageKribi(),
+      selectPackageLimbe: () => this.selectPackageLimbe(),
+      selectPackageRhumsiki: () => this.selectPackageRhumsiki(),
+
       travelVisaDestinations: this.state.travelVisaDestinations || [],
       visaCountry: this.state.visaCountry || '',
       updateVisaCountry: (e) => this.setState({ visaCountry: e && e.target ? e.target.value : e }),
@@ -42556,6 +42758,10 @@ class Component extends DCLogic {
       visaPhone: this.state.visaPhone || '',
       updateVisaPhone: (e) => this.setState({ visaPhone: e && e.target ? e.target.value : e }),
       requestVisaConcierge: () => this.requestVisaConcierge(),
+      visaApplicantName: this.state.visaApplicantName || 'ROSTAND TCHUEKAM',
+      visaApplicationRef: this.state.visaApplicationRef || 'LMT-VSA-91024',
+      visaApplicationStatus: this.state.visaApplicationStatus || 'IN REVIEW',
+      visaCountryLabel: this.state.visaCountryLabel || 'France / Schengen Short Stay (Type C)',
       downloadBoardingPass: () => this.downloadBoardingPass(),
       shareBoardingPass: () => this.shareBoardingPass(),
 

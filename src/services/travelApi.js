@@ -149,8 +149,19 @@ class TravelApiClient {
     });
   }
 
+  async payBooking(id, payload = {}) {
+    return this._request(`/bookings/${encodeURIComponent(id)}/pay`, {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+  }
+
   async getBooking(id) {
     return this._request(`/bookings/${encodeURIComponent(id)}`);
+  }
+
+  async getBookingByReference(reference) {
+    return this._request(`/bookings/reference/${encodeURIComponent(reference)}`);
   }
 
   async cancelBooking(id, reason = 'Customer request') {
@@ -182,6 +193,11 @@ class TravelApiClient {
 }
 
 const travelApi = new TravelApiClient();
+
+if (typeof window !== 'undefined') {
+  window.travelApi = travelApi;
+  window.LoumooTravelAPI = travelApi;
+}
 
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = { TravelApiClient, travelApi };

@@ -127,7 +127,7 @@
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
         <div style="background:var(--color-surface-subtle);border:1px solid var(--color-border-subtle);border-radius:var(--radius-md);padding:9px 12px">
           <label style="font:700 9.5px/1 var(--font-heading);color:var(--color-text-muted);letter-spacing:.08em;margin-bottom:4px;display:block">DEPARTURE DATE</label>
-          <input type="date" value="{{ travelDate }}" onInput="{{ updateTravelDate }}" aria-label="Departure date" style="width:100%;border:none;background:transparent;padding:0;font:600 12.5px/1.2 var(--font-body);color:var(--color-text);outline:none" />
+          <input type="date" value="{{ travelDate }}" onInput="{{ updateTravelDate }}" min="{{ todayIso }}" aria-label="Departure date" style="width:100%;border:none;background:transparent;padding:0;font:600 12.5px/1.2 var(--font-body);color:var(--color-text);outline:none" />
         </div>
 
         <div style="background:var(--color-surface-subtle);border:1px solid var(--color-border-subtle);border-radius:var(--radius-md);padding:9px 12px">
@@ -499,39 +499,49 @@
             </div>
 
             <!-- Interactive Visual Seat Selection Drawer -->
-            <div style="border-top:1px solid var(--color-divider);padding-top:16px">
-              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-                <div style="font:800 11.5px/1 var(--font-heading);letter-spacing:.06em;color:var(--color-text-muted);text-transform:uppercase">Choose Your Seat (2+1 VIP Layout)</div>
-                <div style="display:flex;gap:10px;font-size:11px;font-weight:700">
-                  <span style="color:var(--color-success)">● Available</span>
-                  <span style="color:var(--color-accent)">● Selected</span>
-                  <span style="color:var(--color-text-muted)">● Taken</span>
+            <sc-if value="{{ bus.isSelectedSchedule }}">
+              <div style="border-top:1px solid var(--color-divider);padding-top:16px">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+                  <div style="font:800 11.5px/1 var(--font-heading);letter-spacing:.06em;color:var(--color-text-muted);text-transform:uppercase">Choose Your Seat (2+1 VIP Layout)</div>
+                  <div style="display:flex;gap:10px;font-size:11px;font-weight:700">
+                    <span style="color:var(--color-success)">● Available</span>
+                    <span style="color:var(--color-accent)">● Selected</span>
+                    <span style="color:var(--color-text-muted)">● Taken</span>
+                  </div>
+                </div>
+                
+                <!-- Dynamic Seat Selection Grid -->
+                <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:10px;max-width:380px;margin-bottom:16px;background:var(--color-surface-subtle);padding:16px;border-radius:var(--radius-md);border:1px solid var(--color-border-subtle)">
+                  <sc-for list="{{ activeSeatsList }}" as="seat">
+                    <button onClick="{{ selectBusSeat(seat) }}" class="tag {{ seat.isSelected ? 'tag-accent' : (seat.isAvailable ? 'tag-neutral' : '') }}" style="height:40px;font-weight:800;border-radius:var(--radius-sm);cursor:{{ seat.isAvailable ? 'pointer' : 'not-allowed' }};opacity:{{ seat.isAvailable ? '1' : '0.35' }};background:{{ !seat.isAvailable ? 'rgba(0,0,0,0.08)' : '' }}" {{ !seat.isAvailable ? 'disabled' : '' }}>
+                      {{ seat.seatNumber }} ({{ seat.isWindow ? 'Window' : (seat.isAisle ? 'Aisle' : 'Solo') }}) {{ seat.isSelected ? '✓' : (!seat.isAvailable ? '(Taken)' : '') }}
+                    </button>
+                  </sc-for>
+                </div>
+
+                <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+                  <span style="font:600 13px/1 var(--font-body);color:var(--color-text)">
+                    <sc-if value="{{ selectedBusSeat }}">
+                      Selected: <strong style="color:var(--color-accent)">Seat {{ selectedBusSeat }}</strong> · Total: <strong>{{ bus.currency }} {{ bus.price }}</strong>
+                    </sc-if>
+                    <sc-if value="{{ !selectedBusSeat }}">
+                      <span style="color:var(--color-text-muted)">Please select an available seat above</span>
+                    </sc-if>
+                  </span>
+                  <button onClick="{{ continueWithBusSeat(bus) }}" class="btn btn-primary" style="height:44px;padding:0 24px;font-size:13.5px;font-weight:800;border-radius:var(--radius-pill);box-shadow:var(--shadow-glow-blue)">
+                    Continue with Seat <span>→</span>
+                  </button>
                 </div>
               </div>
-              
-              <!-- Dynamic Seat Selection Grid -->
-              <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:10px;max-width:380px;margin-bottom:16px;background:var(--color-surface-subtle);padding:16px;border-radius:var(--radius-md);border:1px solid var(--color-border-subtle)">
-                <sc-for list="{{ activeSeatsList }}" as="seat">
-                  <button onClick="{{ selectBusSeat(seat) }}" class="tag {{ seat.isSelected ? 'tag-accent' : (seat.isAvailable ? 'tag-neutral' : '') }}" style="height:40px;font-weight:800;border-radius:var(--radius-sm);cursor:{{ seat.isAvailable ? 'pointer' : 'not-allowed' }};opacity:{{ seat.isAvailable ? '1' : '0.35' }};background:{{ !seat.isAvailable ? 'rgba(0,0,0,0.08)' : '' }}" {{ !seat.isAvailable ? 'disabled' : '' }}>
-                    {{ seat.seatNumber }} ({{ seat.isWindow ? 'Window' : (seat.isAisle ? 'Aisle' : 'Solo') }}) {{ seat.isSelected ? '✓' : (!seat.isAvailable ? '(Taken)' : '') }}
-                  </button>
-                </sc-for>
-              </div>
-
-              <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
-                <span style="font:600 13px/1 var(--font-body);color:var(--color-text)">
-                  <sc-if value="{{ selectedBusSeat }}">
-                    Selected: <strong style="color:var(--color-accent)">Seat {{ selectedBusSeat }}</strong> · Total: <strong>{{ bus.currency }} {{ bus.price }}</strong>
-                  </sc-if>
-                  <sc-if value="{{ !selectedBusSeat }}">
-                    <span style="color:var(--color-text-muted)">Please select an available seat above</span>
-                  </sc-if>
-                </span>
-                <button onClick="{{ continueWithBusSeat(bus) }}" class="btn btn-primary" style="height:44px;padding:0 24px;font-size:13.5px;font-weight:800;border-radius:var(--radius-pill);box-shadow:var(--shadow-glow-blue)">
-                  Continue with Seat <span>→</span>
+            </sc-if>
+            <sc-if value="{{ !bus.isSelectedSchedule }}">
+              <div style="border-top:1px solid var(--color-divider);padding-top:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+                <span style="font:500 12px/1 var(--font-body);color:var(--color-text-secondary)">Direct Operator Route · Real-time Seat Map</span>
+                <button onClick="{{ selectBusSchedule(bus) }}" class="btn btn-secondary" style="height:38px;padding:0 18px;font-size:12.5px;font-weight:800;border-radius:var(--radius-pill)">
+                  Select Seats &amp; Reserve <span>↓</span>
                 </button>
               </div>
-            </div>
+            </sc-if>
           </div>
         </sc-for>
       </sc-if>
@@ -552,8 +562,8 @@
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m15 18-6-6 6-6"/></svg>
       </button>
       <div>
-        <h4 style="margin:0;font-size:16.5px;font-weight:800;color:var(--color-text);letter-spacing:-.01em">Douala (DLA) → Paris (CDG) Flights</h4>
-        <div style="font:500 12px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">12 Oct 2026 · 3 Scheduled Airline Routes</div>
+        <h4 style="margin:0;font-size:16.5px;font-weight:800;color:var(--color-text);letter-spacing:-.01em">{{ travelRouteLabel || (travelFrom + ' → ' + travelTo) }}</h4>
+        <div style="font:500 12px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">{{ travelDate }} · {{ travelSearchResults.length }} Available Route(s)</div>
       </div>
     </div>
   </div>
@@ -772,9 +782,15 @@
     <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;box-shadow:var(--shadow-xs);transition:all .2s var(--ease-spring)">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m15 18-6-6 6-6"/></svg>
     </button>
-    <div>
-      <h4 style="margin:0;font-size:16.5px;font-weight:800;letter-spacing:-.01em">Air France Flight AF949</h4>
-      <div style="font:500 12px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Boeing 777-300ER · Direct Non-Stop Flight</div>
+    <div style="flex:1;min-width:0">
+      <sc-if value="{{ selectedTravelResult }}">
+        <h4 style="margin:0;font-size:16.5px;font-weight:800;letter-spacing:-.01em;color:var(--color-text)">{{ selectedTravelResult.provider }}</h4>
+        <div style="font:500 12px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">{{ selectedTravelResult.origin }} → {{ selectedTravelResult.destination }} · {{ selectedTravelResult.className || selectedTravelResult.type }}</div>
+      </sc-if>
+      <sc-if value="{{ !selectedTravelResult }}">
+        <h4 style="margin:0;font-size:16.5px;font-weight:800;letter-spacing:-.01em;color:var(--color-text)">Air France Flight AF949</h4>
+        <div style="font:500 12px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Boeing 777-300ER · Direct Non-Stop Flight</div>
+      </sc-if>
     </div>
   </div>
 
@@ -783,64 +799,92 @@
       <div class="card-premium" style="padding:24px;border-radius:var(--radius-xl);box-shadow:var(--shadow-sm)">
         <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--color-divider);padding-bottom:16px;margin-bottom:18px">
           <div>
-            <span style="font:800 16.5px/1 var(--font-heading);color:var(--color-text)">{{ selectedTravelResult.provider }}</span>
-            <div style="font:500 12px/1.2 var(--font-body);color:var(--color-text-secondary);margin-top:3px">{{ selectedTravelResult.title }}</div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="font:800 16.5px/1 var(--font-heading);color:var(--color-text)">{{ selectedTravelResult.provider }}</span>
+              <span style="background:var(--color-accent-100);color:var(--color-accent);padding:2px 8px;border-radius:var(--radius-pill);font:800 10px/1 var(--font-heading);text-transform:uppercase">{{ selectedTravelResult.type }}</span>
+            </div>
+            <div style="font:500 12px/1.2 var(--font-body);color:var(--color-text-secondary);margin-top:4px">{{ selectedTravelResult.className || 'VIP Direct Transit' }} · Escrow Protected</div>
           </div>
-          <span style="font:800 22px/1 var(--font-heading);color:var(--color-accent)">{{ selectedTravelResult.currency }} {{ selectedTravelResult.price }}</span>
+          <div style="text-align:right">
+            <span style="font:800 22px/1 var(--font-heading);color:var(--color-accent)">{{ selectedTravelResult.currency }} {{ selectedTravelResult.price }}</span>
+            <div style="font:500 11px/1 var(--font-body);color:var(--color-success);margin-top:2px">All Taxes &amp; Fees Included</div>
+          </div>
         </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 18px;background:var(--color-surface-subtle);border-radius:var(--radius-md)">
-          <div><div style="font:800 18px/1 var(--font-heading)">{{ selectedTravelResult.departure }}</div><div style="font:500 12px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:3px">{{ selectedTravelResult.origin }}</div></div>
-          <div style="font:700 12px/1 var(--font-body);color:var(--color-text-muted)">{{ selectedTravelResult.duration }}</div>
-          <div style="text-align:right"><div style="font:800 18px/1 var(--font-heading)">{{ selectedTravelResult.arrival }}</div><div style="font:500 12px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:3px">{{ selectedTravelResult.destination }}</div></div>
+
+        <div style="display:flex;flex-direction:column;gap:16px;font-size:13.5px">
+          <div style="display:flex;gap:14px;align-items:flex-start">
+            <div style="width:12px;height:12px;border-radius:50%;background:var(--color-accent);margin-top:4px;flex-shrink:0"></div>
+            <div>
+              <div style="font-weight:800;font-size:16px;color:var(--color-text)">{{ selectedTravelResult.departure }} · {{ selectedTravelResult.origin }}</div>
+              <div style="color:var(--color-text-secondary);font-size:12.5px;margin-top:2px">Departure Hub · Verified Boarding Station</div>
+            </div>
+          </div>
+
+          <div style="height:32px;border-left:2px dashed var(--color-divider);margin-left:5px;padding-left:21px;display:flex;align-items:center;color:var(--color-text-muted);font-size:12px;font-weight:600">
+            {{ selectedTravelResult.duration }} Transit Duration · Non-stop Official Corridor
+          </div>
+
+          <div style="display:flex;gap:14px;align-items:flex-start">
+            <div style="width:12px;height:12px;border-radius:50%;background:var(--color-success);margin-top:4px;flex-shrink:0"></div>
+            <div>
+              <div style="font-weight:800;font-size:16px;color:var(--color-text)">{{ selectedTravelResult.arrival }} · {{ selectedTravelResult.destination }}</div>
+              <div style="color:var(--color-text-secondary);font-size:12.5px;margin-top:2px">Arrival Destination · Express Baggage Claim</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:20px;padding:14px 18px;background:var(--color-surface-subtle);border-radius:var(--radius-md);border:1px solid var(--color-border-subtle);display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:12.5px;color:var(--color-text-secondary)">Complimentary luggage allowance + instant digital boarding pass</span>
+          <span style="font:800 12px/1 var(--font-heading);color:var(--color-success)">OFFICIAL</span>
         </div>
       </div>
     </sc-if>
     <sc-if value="{{ !selectedTravelResult }}">
-    
-    <div class="card-premium" style="padding:24px;border-radius:var(--radius-xl);box-shadow:var(--shadow-sm)">
-      <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--color-divider);padding-bottom:16px;margin-bottom:18px">
-        <div>
-          <span style="font:800 16.5px/1 var(--font-heading);color:var(--color-text)">AIR FRANCE · AF949</span>
-          <div style="font:500 12px/1.2 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Operated by Air France · Economy Classic</div>
-        </div>
-        <div style="text-align:right">
-          <span style="font:800 22px/1 var(--font-heading);color:var(--color-accent)">XAF 485 000</span>
-          <div style="font:500 11px/1 var(--font-body);color:var(--color-success);margin-top:2px">Taxes &amp; Fees Included</div>
-        </div>
-      </div>
-
-      <div style="display:flex;flex-direction:column;gap:16px;font-size:13.5px">
-        <div style="display:flex;gap:14px;align-items:flex-start">
-          <div style="width:12px;height:12px;border-radius:50%;background:var(--color-accent);margin-top:4px;flex-shrink:0"></div>
+      <div class="card-premium" style="padding:24px;border-radius:var(--radius-xl);box-shadow:var(--shadow-sm)">
+        <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--color-divider);padding-bottom:16px;margin-bottom:18px">
           <div>
-            <div style="font-weight:800;font-size:16px;color:var(--color-text)">23:45 · Douala International (DLA)</div>
-            <div style="color:var(--color-text-secondary);font-size:12.5px;margin-top:2px">Terminal 1 · Check-in closes at 22:30 · 12 Oct 2026</div>
+            <span style="font:800 16.5px/1 var(--font-heading);color:var(--color-text)">AIR FRANCE · AF949</span>
+            <div style="font:500 12px/1.2 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Operated by Air France · Economy Classic</div>
+          </div>
+          <div style="text-align:right">
+            <span style="font:800 22px/1 var(--font-heading);color:var(--color-accent)">XAF 485 000</span>
+            <div style="font:500 11px/1 var(--font-body);color:var(--color-success);margin-top:2px">Taxes &amp; Fees Included</div>
           </div>
         </div>
 
-        <div style="height:32px;border-left:2px dashed var(--color-divider);margin-left:5px;padding-left:21px;display:flex;align-items:center;color:var(--color-text-muted);font-size:12px;font-weight:600">
-          6h 05m Flight Duration · Non-stop direct over Sahara Corridor
-        </div>
+        <div style="display:flex;flex-direction:column;gap:16px;font-size:13.5px">
+          <div style="display:flex;gap:14px;align-items:flex-start">
+            <div style="width:12px;height:12px;border-radius:50%;background:var(--color-accent);margin-top:4px;flex-shrink:0"></div>
+            <div>
+              <div style="font-weight:800;font-size:16px;color:var(--color-text)">23:45 · Douala International (DLA)</div>
+              <div style="color:var(--color-text-secondary);font-size:12.5px;margin-top:2px">Terminal 1 · Check-in closes at 22:30 · 12 Oct 2026</div>
+            </div>
+          </div>
 
-        <div style="display:flex;gap:14px;align-items:flex-start">
-          <div style="width:12px;height:12px;border-radius:50%;background:var(--color-success);margin-top:4px;flex-shrink:0"></div>
-          <div>
-            <div style="font-weight:800;font-size:16px;color:var(--color-text)">06:50 (+1 day) · Paris Charles de Gaulle (CDG)</div>
-            <div style="color:var(--color-text-secondary);font-size:12.5px;margin-top:2px">Terminal 2E · Baggage Claim Hall 4 · 13 Oct 2026</div>
+          <div style="height:32px;border-left:2px dashed var(--color-divider);margin-left:5px;padding-left:21px;display:flex;align-items:center;color:var(--color-text-muted);font-size:12px;font-weight:600">
+            6h 05m Flight Duration · Non-stop direct over Sahara Corridor
+          </div>
+
+          <div style="display:flex;gap:14px;align-items:flex-start">
+            <div style="width:12px;height:12px;border-radius:50%;background:var(--color-success);margin-top:4px;flex-shrink:0"></div>
+            <div>
+              <div style="font-weight:800;font-size:16px;color:var(--color-text)">06:50 (+1 day) · Paris Charles de Gaulle (CDG)</div>
+              <div style="color:var(--color-text-secondary);font-size:12.5px;margin-top:2px">Terminal 2E · Baggage Claim Hall 4 · 13 Oct 2026</div>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div style="margin-top:20px;padding:14px 18px;background:var(--color-surface-subtle);border-radius:var(--radius-md);border:1px solid var(--color-border-subtle);display:flex;justify-content:space-between;align-items:center">
-        <span style="font-size:12.5px;color:var(--color-text-secondary)">Baggage Allowance: 2 pieces x 23 kg checked + 1 carry-on (12 kg)</span>
-        <span style="font:800 12px/1 var(--font-heading);color:var(--color-success)">INCLUDED</span>
+        <div style="margin-top:20px;padding:14px 18px;background:var(--color-surface-subtle);border-radius:var(--radius-md);border:1px solid var(--color-border-subtle);display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:12.5px;color:var(--color-text-secondary)">Baggage Allowance: 2 pieces x 23 kg checked + 1 carry-on (12 kg)</span>
+          <span style="font:800 12px/1 var(--font-heading);color:var(--color-success)">INCLUDED</span>
+        </div>
       </div>
-    </div>
+    </sc-if>
 
+    <!-- Always visible Continue CTA -->
     <button onClick="{{ on.travelPassenger }}" class="btn btn-primary btn-block" style="height:50px;font-size:15px;font-weight:800;border-radius:var(--radius-pill);box-shadow:var(--shadow-glow-blue)">
       Continue to Passenger Details <span>→</span>
     </button>
-    </sc-if>
   </div>
 </div>
 </sc-if>
@@ -937,115 +981,135 @@
     </span>
   </div>
 
-  <!-- Apple-Wallet Style Boarding Pass -->
-  <div class="boarding-pass" style="background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-xl);overflow:hidden;box-shadow:var(--shadow-xl)">
+  <sc-if value="{{ hasActiveTicket }}">
+    <!-- Apple-Wallet Style Boarding Pass -->
+    <div class="boarding-pass" style="background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-xl);overflow:hidden;box-shadow:var(--shadow-xl)">
 
-    <!-- Airline / Operator Header -->
-    <div class="pass-header" style="background:linear-gradient(135deg, #0b2e5c 0%, #123f7a 55%, #1a5fb4 100%);padding:22px 24px;color:#fff">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <div style="display:flex;align-items:center;gap:12px">
-          <div style="width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1z"/></svg>
+      <!-- Airline / Operator Header -->
+      <div class="pass-header" style="background:linear-gradient(135deg, #0b2e5c 0%, #123f7a 55%, #1a5fb4 100%);padding:22px 24px;color:#fff">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1z"/></svg>
+            </div>
+            <div>
+              <div style="font:800 15px/1 var(--font-heading);letter-spacing:.01em">{{ ticketOperator || 'LOUMOO Travel' }}</div>
+              <div style="font:500 11px/1.2 var(--font-body);opacity:0.85;margin-top:3px">Verified Digital Transit Pass</div>
+            </div>
+          </div>
+          <div style="text-align:right">
+            <div style="font:800 10.5px/1 var(--font-heading);letter-spacing:.14em;opacity:0.85">BOARDING PASS</div>
+            <div style="font:800 11px/1 var(--font-mono);margin-top:5px;background:rgba(255,255,255,0.2);padding:4px 10px;border-radius:var(--radius-pill)">VIP / FIRST</div>
+          </div>
+        </div>
+
+        <!-- Route Codes -->
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:22px">
+          <div style="flex:1">
+            <div style="font:800 36px/1 var(--font-heading)">{{ ticketFromCode }}</div>
+            <div style="font:500 11px/1.3 var(--font-body);opacity:0.9;margin-top:4px">{{ ticketFromCity }}</div>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:0 8px">
+            <div style="font:600 10px/1 var(--font-body);opacity:0.85">Direct Corridor</div>
+            <div style="display:flex;align-items:center;width:100%;gap:4px">
+              <span style="height:2px;flex:1;background:rgba(255,255,255,0.4);border-radius:2px"></span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff" style="transform:rotate(90deg);flex-shrink:0"><path d="M21 16v-2l-8-5V3.5A1.5 1.5 0 0 0 11.5 2 1.5 1.5 0 0 0 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></svg>
+              <span style="height:2px;flex:1;background:rgba(255,255,255,0.4);border-radius:2px"></span>
+            </div>
+            <div style="font:700 9.5px/1 var(--font-mono);opacity:0.8;letter-spacing:.06em">{{ ticketFlightNo }}</div>
+          </div>
+          <div style="flex:1;text-align:right">
+            <div style="font:800 36px/1 var(--font-heading)">{{ ticketToCode }}</div>
+            <div style="font:500 11px/1.3 var(--font-body);opacity:0.9;margin-top:4px">{{ ticketToCity }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pass Body -->
+      <div class="pass-body" style="padding:22px 24px;border-bottom:2px dashed var(--color-divider)">
+        <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:18px 16px;font-size:13px">
+          <div>
+            <div style="color:var(--color-text-muted);font-weight:700;font-size:10px;letter-spacing:.06em">PASSENGER</div>
+            <div style="font-weight:800;font-size:15px;color:var(--color-text);margin-top:4px">{{ ticketPassenger }}</div>
           </div>
           <div>
-            <div style="font:800 15px/1 var(--font-heading);letter-spacing:.01em">Camair-Co</div>
-            <div style="font:500 11px/1.2 var(--font-body);opacity:0.85;margin-top:3px">Cameroon Airlines</div>
+            <div style="color:var(--color-text-muted);font-weight:700;font-size:10px;letter-spacing:.06em">BOOKING REF (PNR)</div>
+            <div style="font-weight:800;font-size:15px;color:var(--color-text);margin-top:4px;font-family:var(--font-mono)">{{ ticketPnr }}</div>
+          </div>
+          <div>
+            <div style="color:var(--color-text-muted);font-weight:700;font-size:10px;letter-spacing:.06em">DATE</div>
+            <div style="font-weight:800;font-size:14px;color:var(--color-text);margin-top:4px">{{ ticketDate }}</div>
+          </div>
+          <div>
+            <div style="color:var(--color-text-muted);font-weight:700;font-size:10px;letter-spacing:.06em">OPERATOR &amp; SERVICE</div>
+            <div style="font-weight:800;font-size:14px;color:var(--color-text);margin-top:4px">{{ ticketFlightNo }} · {{ ticketOperator }}</div>
           </div>
         </div>
-        <div style="text-align:right">
-          <div style="font:800 10.5px/1 var(--font-heading);letter-spacing:.14em;opacity:0.85">BOARDING PASS</div>
-          <div style="font:800 11px/1 var(--font-mono);margin-top:5px;background:rgba(255,255,255,0.2);padding:4px 10px;border-radius:var(--radius-pill)">ECONOMY</div>
-        </div>
-      </div>
 
-      <!-- Route Codes -->
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:22px">
-        <div style="flex:1">
-          <div style="font:800 36px/1 var(--font-heading)">{{ ticketFromCode }}</div>
-          <div style="font:500 11px/1.3 var(--font-body);opacity:0.9;margin-top:4px">{{ ticketFromCity }}</div>
-        </div>
-        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:0 8px">
-          <div style="font:600 10px/1 var(--font-body);opacity:0.85">1h 05m · Direct</div>
-          <div style="display:flex;align-items:center;width:100%;gap:4px">
-            <span style="height:2px;flex:1;background:rgba(255,255,255,0.4);border-radius:2px"></span>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff" style="transform:rotate(90deg);flex-shrink:0"><path d="M21 16v-2l-8-5V3.5A1.5 1.5 0 0 0 11.5 2 1.5 1.5 0 0 0 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></svg>
-            <span style="height:2px;flex:1;background:rgba(255,255,255,0.4);border-radius:2px"></span>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:18px;padding-top:16px;border-top:1px solid var(--color-divider)">
+          <div>
+            <div style="color:var(--color-text-muted);font-weight:700;font-size:9.5px;letter-spacing:.05em">BOARDING</div>
+            <div style="font-weight:800;font-size:16px;color:var(--color-text);margin-top:4px">{{ ticketBoard }}</div>
           </div>
-          <div style="font:700 9.5px/1 var(--font-mono);opacity:0.8;letter-spacing:.06em">{{ ticketFlightNo }}</div>
+          <div>
+            <div style="color:var(--color-text-muted);font-weight:700;font-size:9.5px;letter-spacing:.05em">DEPARTS</div>
+            <div style="font-weight:800;font-size:16px;color:var(--color-text);margin-top:4px">{{ ticketDepart }}</div>
+          </div>
+          <div>
+            <div style="color:var(--color-text-muted);font-weight:700;font-size:9.5px;letter-spacing:.05em">GATE / PLATFORM</div>
+            <div style="font-weight:800;font-size:16px;color:var(--color-accent);margin-top:4px">{{ ticketGate }}</div>
+          </div>
+          <div>
+            <div style="color:var(--color-text-muted);font-weight:700;font-size:9.5px;letter-spacing:.05em">SEAT</div>
+            <div style="font-weight:800;font-size:16px;color:var(--color-accent);margin-top:4px">{{ ticketSeat }}</div>
+          </div>
         </div>
-        <div style="flex:1;text-align:right">
-          <div style="font:800 36px/1 var(--font-heading)">{{ ticketToCode }}</div>
-          <div style="font:500 11px/1.3 var(--font-body);opacity:0.9;margin-top:4px">{{ ticketToCity }}</div>
+      </div>
+
+      <!-- QR & Barcode Stub -->
+      <div class="pass-qr-wrap" style="padding:22px 24px;background:var(--color-surface)">
+        <div style="display:flex;align-items:center;gap:18px">
+          <div style="flex-shrink:0;padding:10px;background:#fff;border-radius:var(--radius-sm);border:1px solid var(--color-divider);box-shadow:var(--shadow-xs)">
+            <svg width="86" height="86" viewBox="0 0 24 24" fill="var(--color-text)"><path d="M3 3h6v6H3V3zm2 2v2h2V5H5zm8-2h6v6h-6V3zm2 2v2h2V5h-2zM3 13h6v6H3v-6zm2 2v2h2v-2H5zm13-2h3v2h-3v-2zm-3 2h2v3h-2v-3zm3 3h3v3h-3v-3zm-5 1h2v2h-2v-2zm2-4h2v2h-2v-2z"/></svg>
+          </div>
+          <div style="flex:1;min-width:0">
+            <div style="height:52px;width:100%;background-image:repeating-linear-gradient(90deg,var(--color-text) 0,var(--color-text) 2px,transparent 2px,transparent 4px,var(--color-text) 4px,var(--color-text) 5px,transparent 5px,transparent 9px,var(--color-text) 9px,var(--color-text) 12px,transparent 12px,transparent 14px);border-radius:2px"></div>
+            <div style="font:700 10.5px/1 var(--font-mono);color:var(--color-text-muted);margin-top:10px;letter-spacing:.12em">ETKT {{ ticketPnr }} · VERIFIED CEMAC PASS</div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Pass Body -->
-    <div class="pass-body" style="padding:22px 24px;border-bottom:2px dashed var(--color-divider)">
-      <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:18px 16px;font-size:13px">
-        <div>
-          <div style="color:var(--color-text-muted);font-weight:700;font-size:10px;letter-spacing:.06em">PASSENGER</div>
-          <div style="font-weight:800;font-size:15px;color:var(--color-text);margin-top:4px">{{ ticketPassenger }}</div>
-        </div>
-        <div>
-          <div style="color:var(--color-text-muted);font-weight:700;font-size:10px;letter-spacing:.06em">BOOKING REF (PNR)</div>
-          <div style="font-weight:800;font-size:15px;color:var(--color-text);margin-top:4px;font-family:var(--font-mono)">{{ ticketPnr }}</div>
-        </div>
-        <div>
-          <div style="color:var(--color-text-muted);font-weight:700;font-size:10px;letter-spacing:.06em">DATE</div>
-          <div style="font-weight:800;font-size:14px;color:var(--color-text);margin-top:4px">{{ ticketDate }}</div>
-        </div>
-        <div>
-          <div style="color:var(--color-text-muted);font-weight:700;font-size:10px;letter-spacing:.06em">FLIGHT &amp; OPERATOR</div>
-          <div style="font-weight:800;font-size:14px;color:var(--color-text);margin-top:4px">{{ ticketFlightNo }} · {{ ticketOperator }}</div>
-        </div>
-      </div>
-
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:18px;padding-top:16px;border-top:1px solid var(--color-divider)">
-        <div>
-          <div style="color:var(--color-text-muted);font-weight:700;font-size:9.5px;letter-spacing:.05em">BOARDING</div>
-          <div style="font-weight:800;font-size:16px;color:var(--color-text);margin-top:4px">{{ ticketBoard }}</div>
-        </div>
-        <div>
-          <div style="color:var(--color-text-muted);font-weight:700;font-size:9.5px;letter-spacing:.05em">DEPARTS</div>
-          <div style="font-weight:800;font-size:16px;color:var(--color-text);margin-top:4px">{{ ticketDepart }}</div>
-        </div>
-        <div>
-          <div style="color:var(--color-text-muted);font-weight:700;font-size:9.5px;letter-spacing:.05em">GATE</div>
-          <div style="font-weight:800;font-size:16px;color:var(--color-accent);margin-top:4px">{{ ticketGate }}</div>
-        </div>
-        <div>
-          <div style="color:var(--color-text-muted);font-weight:700;font-size:9.5px;letter-spacing:.05em">SEAT</div>
-          <div style="font-weight:800;font-size:16px;color:var(--color-accent);margin-top:4px">{{ ticketSeat }}</div>
-        </div>
-      </div>
+    <!-- Actions -->
+    <div style="display:flex;flex-direction:column;gap:12px;margin-top:20px">
+      <button onClick="{{ downloadBoardingPass }}" class="btn btn-primary btn-block" style="height:48px;font-weight:800;border-radius:var(--radius-pill);display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:var(--shadow-glow-blue)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+        <span>Download PDF Boarding Pass</span>
+      </button>
+      <button onClick="{{ shareBoardingPass }}" class="btn btn-secondary btn-block" style="height:48px;font-weight:700;border-radius:var(--radius-pill);color:var(--color-wa-teal);display:flex;align-items:center;justify-content:center;gap:8px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.15-1.7-.85-2-.95-.26-.1-.46-.15-.65.15-.2.3-.75.95-.9 1.15-.17.2-.34.22-.63.07-.3-.15-1.25-.46-2.4-1.47-.9-.8-1.5-1.77-1.67-2.07-.17-.3-.02-.46.13-.6.13-.14.3-.34.44-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.65-1.57-.9-2.15-.24-.57-.48-.5-.65-.5h-.56c-.2 0-.5.07-.77.37-.26.3-1 .98-1 2.4s1.03 2.78 1.17 2.98c.15.2 2.02 3.08 4.9 4.32.68.3 1.22.47 1.63.6.68.22 1.3.18 1.8.11.55-.08 1.7-.7 1.93-1.36.24-.67.24-1.24.17-1.36-.07-.12-.26-.2-.55-.34zM12 2C6.48 2 2 6.48 2 12c0 1.77.46 3.43 1.27 4.87L2 22l5.25-1.38A9.94 9.94 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2z"/></svg>
+        <span>Share via WhatsApp</span>
+      </button>
     </div>
+  </sc-if>
 
-    <!-- QR & Barcode Stub -->
-    <div class="pass-qr-wrap" style="padding:22px 24px;background:var(--color-surface)">
-      <div style="display:flex;align-items:center;gap:18px">
-        <div style="flex-shrink:0;padding:10px;background:#fff;border-radius:var(--radius-sm);border:1px solid var(--color-divider);box-shadow:var(--shadow-xs)">
-          <svg width="86" height="86" viewBox="0 0 24 24" fill="var(--color-text)"><path d="M3 3h6v6H3V3zm2 2v2h2V5H5zm8-2h6v6h-6V3zm2 2v2h2V5h-2zM3 13h6v6H3v-6zm2 2v2h2v-2H5zm13-2h3v2h-3v-2zm-3 2h2v3h-2v-3zm3 3h3v3h-3v-3zm-5 1h2v2h-2v-2zm2-4h2v2h-2v-2z"/></svg>
-        </div>
-        <div style="flex:1;min-width:0">
-          <div style="height:52px;width:100%;background-image:repeating-linear-gradient(90deg,var(--color-text) 0,var(--color-text) 2px,transparent 2px,transparent 4px,var(--color-text) 4px,var(--color-text) 5px,transparent 5px,transparent 9px,var(--color-text) 9px,var(--color-text) 12px,transparent 12px,transparent 14px);border-radius:2px"></div>
-          <div style="font:700 10.5px/1 var(--font-mono);color:var(--color-text-muted);margin-top:10px;letter-spacing:.12em">ETKT 057 2294810294 · QC302DLANSI12A</div>
-        </div>
+  <!-- Empty State When No Active Ticket Exists -->
+  <sc-if value="{{ !hasActiveTicket }}">
+    <div class="card-premium" style="text-align:center;padding:48px 24px;border-radius:var(--radius-xl);box-shadow:var(--shadow-md);display:flex;flex-direction:column;align-items:center;gap:16px">
+      <div style="width:64px;height:64px;border-radius:50%;background:rgba(0,122,255,0.08);border:1px solid rgba(0,122,255,0.2);display:flex;align-items:center;justify-content:center;color:var(--color-accent)">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
       </div>
+      <div>
+        <h3 style="margin:0 0 6px;font-size:18px;font-weight:800;color:var(--color-text)">No Active Boarding Pass</h3>
+        <p style="margin:0;font-size:13px;color:var(--color-text-secondary);max-width:360px;line-height:1.4">
+          Your verified digital boarding passes, VIP bus reservations, and QR tickets will appear here once booked.
+        </p>
+      </div>
+      <button onClick="{{ on.travel }}" class="btn btn-primary" style="height:44px;padding:0 24px;font-size:13.5px;font-weight:800;border-radius:var(--radius-pill);box-shadow:var(--shadow-glow-blue);margin-top:6px">
+        Explore &amp; Book Travel <span>→</span>
+      </button>
     </div>
-  </div>
-
-  <!-- Actions -->
-  <div style="display:flex;flex-direction:column;gap:12px;margin-top:20px">
-    <button onClick="{{ downloadBoardingPass }}" class="btn btn-primary btn-block" style="height:48px;font-weight:800;border-radius:var(--radius-pill);display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:var(--shadow-glow-blue)">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
-      <span>Download PDF Boarding Pass</span>
-    </button>
-    <button onClick="{{ shareBoardingPass }}" class="btn btn-secondary btn-block" style="height:48px;font-weight:700;border-radius:var(--radius-pill);color:var(--color-wa-teal);display:flex;align-items:center;justify-content:center;gap:8px">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.15-1.7-.85-2-.95-.26-.1-.46-.15-.65.15-.2.3-.75.95-.9 1.15-.17.2-.34.22-.63.07-.3-.15-1.25-.46-2.4-1.47-.9-.8-1.5-1.77-1.67-2.07-.17-.3-.02-.46.13-.6.13-.14.3-.34.44-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.65-1.57-.9-2.15-.24-.57-.48-.5-.65-.5h-.56c-.2 0-.5.07-.77.37-.26.3-1 .98-1 2.4s1.03 2.78 1.17 2.98c.15.2 2.02 3.08 4.9 4.32.68.3 1.22.47 1.63.6.68.22 1.3.18 1.8.11.55-.08 1.7-.7 1.93-1.36.24-.67.24-1.24.17-1.36-.07-.12-.26-.2-.55-.34zM12 2C6.48 2 2 6.48 2 12c0 1.77.46 3.43 1.27 4.87L2 22l5.25-1.38A9.94 9.94 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2z"/></svg>
-      <span>Share via WhatsApp</span>
-    </button>
-  </div>
+  </sc-if>
 </div>
 </sc-if>
 
@@ -1078,7 +1142,7 @@
       </div>
       <div style="padding:18px 20px;display:flex;justify-content:space-between;align-items:center;background:var(--color-surface)">
         <span style="font:800 18px/1 var(--font-heading);color:var(--color-accent)">XAF 120 000</span>
-        <button onClick="{{ on.travelPassenger }}" class="btn btn-primary" style="height:38px;padding:0 18px;font-size:12.5px;font-weight:800;border-radius:var(--radius-pill)">Reserve Package</button>
+        <button onClick="{{ selectPackageKribi }}" class="btn btn-primary" style="height:38px;padding:0 18px;font-size:12.5px;font-weight:800;border-radius:var(--radius-pill)">Reserve Package</button>
       </div>
     </div>
 
@@ -1094,7 +1158,7 @@
       </div>
       <div style="padding:18px 20px;display:flex;justify-content:space-between;align-items:center;background:var(--color-surface)">
         <span style="font:800 18px/1 var(--font-heading);color:var(--color-accent)">XAF 75 000</span>
-        <button onClick="{{ on.travelPassenger }}" class="btn btn-primary" style="height:38px;padding:0 18px;font-size:12.5px;font-weight:800;border-radius:var(--radius-pill)">Reserve Package</button>
+        <button onClick="{{ selectPackageLimbe }}" class="btn btn-primary" style="height:38px;padding:0 18px;font-size:12.5px;font-weight:800;border-radius:var(--radius-pill)">Reserve Package</button>
       </div>
     </div>
 
@@ -1110,7 +1174,7 @@
       </div>
       <div style="padding:18px 20px;display:flex;justify-content:space-between;align-items:center;background:var(--color-surface)">
         <span style="font:800 18px/1 var(--font-heading);color:var(--color-accent)">XAF 260 000</span>
-        <button onClick="{{ on.travelPassenger }}" class="btn btn-primary" style="height:38px;padding:0 18px;font-size:12.5px;font-weight:800;border-radius:var(--radius-pill)">Reserve Package</button>
+        <button onClick="{{ selectPackageRhumsiki }}" class="btn btn-primary" style="height:38px;padding:0 18px;font-size:12.5px;font-weight:800;border-radius:var(--radius-pill)">Reserve Package</button>
       </div>
     </div>
 
@@ -1141,10 +1205,10 @@
       
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
         <div>
-          <div style="font:800 16px/1.2 var(--font-heading);color:var(--color-text)">France / Schengen Short Stay (Type C)</div>
-          <div style="font:500 12px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Applicant: ROSTAND TCHUEKAM · Ref: LMT-VSA-91024</div>
+          <div style="font:800 16px/1.2 var(--font-heading);color:var(--color-text)">{{ visaCountryLabel }}</div>
+          <div style="font:500 12px/1 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Applicant: {{ visaApplicantName }} · Ref: {{ visaApplicationRef }}</div>
         </div>
-        <span style="background:rgba(0,122,255,0.1);color:var(--color-accent);padding:4px 10px;border-radius:var(--radius-pill);font:800 11px/1 var(--font-heading)">IN REVIEW</span>
+        <span style="background:rgba(0,122,255,0.1);color:var(--color-accent);padding:4px 10px;border-radius:var(--radius-pill);font:800 11px/1 var(--font-heading)">{{ visaApplicationStatus }}</span>
       </div>
 
       <div style="display:grid;grid-template-columns:repeat(4, 1fr);gap:8px;text-align:center;font-size:11.5px">

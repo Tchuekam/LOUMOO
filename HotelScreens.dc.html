@@ -41,11 +41,11 @@
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
         <div style="background:var(--color-surface-subtle);border:1px solid var(--color-divider);border-radius:var(--radius-sm);padding:8px 12px">
           <label style="font:700 9.5px/1 var(--font-heading);color:var(--color-text-muted);letter-spacing:.05em;margin-bottom:5px;display:block">CHECK-IN</label>
-          <input type="date" class="input" value="{{ hotelCheckIn }}" onChange="{{ updateHotelCheckIn }}" style="border:none;background:transparent;padding:0;font-weight:700;font-size:13px;color:var(--color-text);height:24px;width:100%">
+          <input type="date" class="input" value="{{ hotelCheckIn }}" min="{{ todayIso }}" onChange="{{ updateHotelCheckIn }}" style="border:none;background:transparent;padding:0;font-weight:700;font-size:13px;color:var(--color-text);height:24px;width:100%">
         </div>
         <div style="background:var(--color-surface-subtle);border:1px solid var(--color-divider);border-radius:var(--radius-sm);padding:8px 12px">
           <label style="font:700 9.5px/1 var(--font-heading);color:var(--color-text-muted);letter-spacing:.05em;margin-bottom:5px;display:block">CHECK-OUT</label>
-          <input type="date" class="input" value="{{ hotelCheckOut }}" onChange="{{ updateHotelCheckOut }}" style="border:none;background:transparent;padding:0;font-weight:700;font-size:13px;color:var(--color-text);height:24px;width:100%">
+          <input type="date" class="input" value="{{ hotelCheckOut }}" min="{{ hotelCheckIn || todayIso }}" onChange="{{ updateHotelCheckOut }}" style="border:none;background:transparent;padding:0;font-weight:700;font-size:13px;color:var(--color-text);height:24px;width:100%">
         </div>
       </div>
 

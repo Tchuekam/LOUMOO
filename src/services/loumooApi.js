@@ -1126,6 +1126,131 @@
     });
   };
 
+  /* ══════════════════════════════════════════════════════════════════════════
+     13. TRAVEL, MOBILITY & HOSPITALITY SDK
+     ══════════════════════════════════════════════════════════════════════════ */
+
+  LoumooApiClient.prototype.searchTravel = function (params) {
+    return this.request('/api/travel/search' + qs(params || {}));
+  };
+
+  LoumooApiClient.prototype.getTravelDestinations = function () {
+    return this.request('/api/travel/destinations');
+  };
+
+  LoumooApiClient.prototype.getTravelHotels = function (params) {
+    return this.request('/api/travel/hotels' + qs(params || {}));
+  };
+
+  LoumooApiClient.prototype.getTravelHotel = function (id) {
+    return this.request('/api/travel/hotels/' + encodeURIComponent(id));
+  };
+
+  LoumooApiClient.prototype.getTravelHotelRooms = function (id, params) {
+    return this.request('/api/travel/hotels/' + encodeURIComponent(id) + '/rooms' + qs(params || {}));
+  };
+
+  LoumooApiClient.prototype.getTravelExcursions = function (params) {
+    return this.request('/api/travel/excursions' + qs(params || {}));
+  };
+
+  LoumooApiClient.prototype.getTravelExcursion = function (id) {
+    return this.request('/api/travel/excursions/' + encodeURIComponent(id));
+  };
+
+  LoumooApiClient.prototype.getTravelBuses = function (params) {
+    return this.request('/api/travel/bus/schedules' + qs(params || {}));
+  };
+
+  LoumooApiClient.prototype.getBusSchedules = function (params) {
+    return this.request('/api/travel/bus/schedules' + qs(params || {}));
+  };
+
+  LoumooApiClient.prototype.getTravelBusOperators = function () {
+    return this.request('/api/travel/bus/operators');
+  };
+
+  LoumooApiClient.prototype.getTravelBusSeats = function (scheduleId) {
+    return this.request('/api/travel/bus/seats/' + encodeURIComponent(scheduleId));
+  };
+
+  LoumooApiClient.prototype.getTravelTrains = function (params) {
+    return this.request('/api/travel/train/schedules' + qs(params || {}));
+  };
+
+  LoumooApiClient.prototype.getTravelFlights = function (params) {
+    return this.request('/api/travel/flights' + qs(params || {}));
+  };
+
+  LoumooApiClient.prototype.getTravelRideQuote = function (params) {
+    return this.request('/api/travel/taxi/quote' + qs(params || {}));
+  };
+
+  LoumooApiClient.prototype.getTravelPackages = function () {
+    return this.request('/api/travel/packages');
+  };
+
+  LoumooApiClient.prototype.getTravelPackage = function (id) {
+    return this.request('/api/travel/packages/' + encodeURIComponent(id));
+  };
+
+  LoumooApiClient.prototype.getVisaDestinations = function () {
+    return this.request('/api/travel/visa/destinations');
+  };
+
+  LoumooApiClient.prototype.submitVisaApplication = function (payload) {
+    return this.request('/api/travel/visa/applications', {
+      method: 'POST',
+      body: payload
+    });
+  };
+
+  LoumooApiClient.prototype.createTravelBooking = function (payload, idempotencyKey) {
+    var headers = {};
+    var key = idempotencyKey || ('idem_trv_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8));
+    headers['X-Idempotency-Key'] = key;
+    return this.request('/api/travel/bookings', {
+      method: 'POST',
+      headers: headers,
+      body: payload
+    });
+  };
+
+  LoumooApiClient.prototype.payTravelBooking = function (bookingId, paymentPayload) {
+    return this.request('/api/travel/bookings/' + encodeURIComponent(bookingId) + '/pay', {
+      method: 'POST',
+      body: paymentPayload || {}
+    });
+  };
+
+  LoumooApiClient.prototype.getTravelBooking = function (id) {
+    return this.request('/api/travel/bookings/' + encodeURIComponent(id));
+  };
+
+  LoumooApiClient.prototype.getTravelBookingByReference = function (ref) {
+    return this.request('/api/travel/bookings/reference/' + encodeURIComponent(ref));
+  };
+
+  LoumooApiClient.prototype.cancelTravelBooking = function (id, reason) {
+    return this.request('/api/travel/bookings/' + encodeURIComponent(id) + '/cancel', {
+      method: 'POST',
+      body: { reason: reason || 'Customer request' }
+    });
+  };
+
+  LoumooApiClient.prototype.getMyTrips = function (params) {
+    var query = typeof params === 'string' ? { status: params } : (params || {});
+    return this.request('/api/travel/trips' + qs(query));
+  };
+
+  LoumooApiClient.prototype.getTravelTickets = function () {
+    return this.request('/api/travel/tickets');
+  };
+
+  LoumooApiClient.prototype.getTravelTicket = function (id) {
+    return this.request('/api/travel/tickets/' + encodeURIComponent(id));
+  };
+
   LoumooApiClient.prototype.getHealth = function () {
     return this.request('/api/v1/health').catch(function (e) {
       return { status: 'offline', error: e.message };

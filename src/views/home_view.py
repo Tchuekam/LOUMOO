@@ -443,7 +443,7 @@ def get_home_view():
     <!-- ── 03: CATEGORY QUICK-DISCOVERY LAYER (Apple-Style Squircles) ── -->
     <div class="cat-discovery-rail">
       <!-- 1. Hotels -->
-      <button onClick="{ () => openCategory('hotels') }" class="cat-squircle-card" aria-label="Category Hotels & Accommodations">
+      <button onClick="{{ openHotelSearch }}" class="cat-squircle-card" aria-label="Category Hotels & Accommodations">
         <div class="cat-squircle-icon-wrap" style="background:#fff;border:1px solid rgba(0,0,0,0.06);overflow:hidden;padding:2px">
           <img src="./Assets/Travel&Hotel/Krystal%20Palace%20Hotel%20Douala.jfif" alt="Hotels" style="width:100%;height:100%;object-fit:cover;border-radius:12px" loading="lazy" decoding="async" onerror="this.style.display='none';if(this.nextElementSibling)this.nextElementSibling.style.display='block';">
           <svg style="display:none" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 22v-6.57"/><path d="M12 11h.01"/><path d="M12 7h.01"/><path d="M14 15.43V22"/><path d="M15 11h.01"/><path d="M15 7h.01"/><path d="M16 16h2a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/><path d="M18 22v-4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v4"/><path d="M8 22v-6.57"/><path d="M9 11h.01"/><path d="M9 7h.01"/></svg>
@@ -452,7 +452,7 @@ def get_home_view():
       </button>
 
       <!-- 2. Banks / Finance -->
-      <button onClick="{ () => openCategory('banks') }" class="cat-squircle-card" aria-label="Category Banks & Real Estate">
+      <button onClick="{{ () => openCategory('banks') }}" class="cat-squircle-card" aria-label="Category Banks & Real Estate">
         <div class="cat-squircle-icon-wrap" style="background:#fff;border:1px solid rgba(0,0,0,0.06);overflow:hidden;padding:4px">
           <img src="./Assets/_processed/logo_icons_bank_icon_stock_vector_illustration_of_s_27.png" alt="Banks" style="width:100%;height:100%;object-fit:contain" loading="lazy" decoding="async" onerror="this.style.display='none';if(this.nextElementSibling)this.nextElementSibling.style.display='block';">
           <svg style="display:none" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/><path d="M6 14h2"/><path d="M12 14h6"/></svg>
@@ -461,7 +461,7 @@ def get_home_view():
       </button>
 
       <!-- 3. Fashion -->
-      <button onClick="{ () => openCategory('fashion') }" class="cat-squircle-card" aria-label="Category Fashion & Luxury">
+      <button onClick="{{ () => openCategory('fashion') }}" class="cat-squircle-card" aria-label="Category Fashion & Luxury">
         <div class="cat-squircle-icon-wrap" style="background:#fff;border:1px solid rgba(0,0,0,0.06);overflow:hidden;padding:4px">
           <img src="./Assets/_processed/logo_icons_fashion.png" alt="Fashion" style="width:100%;height:100%;object-fit:contain" loading="lazy" decoding="async" onerror="this.style.display='none';if(this.nextElementSibling)this.nextElementSibling.style.display='block';">
           <svg style="display:none" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/></svg>
@@ -470,7 +470,7 @@ def get_home_view():
       </button>
 
       <!-- 4. Shoes -->
-      <button onClick="{ () => openCategory('fashion') }" class="cat-squircle-card" aria-label="Category Shoes & Sneakers">
+      <button onClick="{{ () => openCategory('fashion') }}" class="cat-squircle-card" aria-label="Category Shoes & Sneakers">
         <div class="cat-squircle-icon-wrap" style="background:#fff;border:1px solid rgba(0,0,0,0.06);overflow:hidden;padding:4px">
           <img src="./Assets/_processed/logo_icons_men_s_shoes_logo_icon_design_illustratio_49.png" alt="Shoes" style="width:100%;height:100%;object-fit:contain" loading="lazy" decoding="async" onerror="this.style.display='none';if(this.nextElementSibling)this.nextElementSibling.style.display='block';">
           <svg style="display:none" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 17h20v2H2zM4 17l2-6 5-1 4 4 5-1 2 4"/></svg>
@@ -479,7 +479,7 @@ def get_home_view():
       </button>
 
       <!-- 5. Tech -->
-      <button onClick="{ () => openCategory('electronics') }" class="cat-squircle-card" aria-label="Category Technology & Gadgets">
+      <button onClick="{{ () => openCategory('electronics') }}" class="cat-squircle-card" aria-label="Category Technology & Gadgets">
         <div class="cat-squircle-icon-wrap" style="background:#fff;border:1px solid rgba(0,0,0,0.06);overflow:hidden;padding:4px">
           <img src="./Assets/_processed/logo_icons_itel_42.png" alt="Tech" style="width:100%;height:100%;object-fit:contain" loading="lazy" decoding="async" onerror="this.style.display='none';if(this.nextElementSibling)this.nextElementSibling.style.display='block';">
           <svg style="display:none" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect width="18" height="12" x="3" y="4" rx="2"/><line x1="2" x2="22" y1="20" y2="20"/></svg>
@@ -488,7 +488,7 @@ def get_home_view():
       </button>
 
       <!-- 6. Markets -->
-      <button onClick="{ () => openCategory('store') }" class="cat-squircle-card" aria-label="Category Markets & Stores">
+      <button onClick="{{ () => openCategory('store') }}" class="cat-squircle-card" aria-label="Category Markets & Stores">
         <div class="cat-squircle-icon-wrap" style="background:#fff;border:1px solid rgba(0,0,0,0.06);overflow:hidden;padding:4px">
           <img src="./Assets/_processed/logo_icons_market_logo_design_logo_logodesigner_mar_47.png" alt="Markets" style="width:100%;height:100%;object-fit:contain" loading="lazy" decoding="async" onerror="this.style.display='none';if(this.nextElementSibling)this.nextElementSibling.style.display='block';">
           <svg style="display:none" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
@@ -497,7 +497,7 @@ def get_home_view():
       </button>
 
       <!-- 7. Travel -->
-      <button onClick="{ on.travel }" class="cat-squircle-card" aria-label="Category Travel & Flights">
+      <button onClick="{{ on.travel }}" class="cat-squircle-card" aria-label="Category Travel & Flights">
         <div class="cat-squircle-icon-wrap" style="background:#fff;border:1px solid rgba(0,0,0,0.06);overflow:hidden;padding:4px">
           <img src="./Assets/_processed/logo_icons_travel_logo_image_premium_vector_62.png" alt="Travel" style="width:100%;height:100%;object-fit:contain" loading="lazy" decoding="async" onerror="this.style.display='none';if(this.nextElementSibling)this.nextElementSibling.style.display='block';">
           <svg style="display:none" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1z"/></svg>
@@ -506,7 +506,7 @@ def get_home_view():
       </button>
 
       <!-- 8. Services -->
-      <button onClick="{ () => openCategory('services') }" class="cat-squircle-card" aria-label="Category Professional Services">
+      <button onClick="{{ () => openCategory('services') }}" class="cat-squircle-card" aria-label="Category Professional Services">
         <div class="cat-squircle-icon-wrap" style="background:#fff;border:1px solid rgba(0,0,0,0.06);overflow:hidden;padding:4px">
           <img src="./Assets/_processed/logo_icons_lettering_service_screwdriver_and_wrench_45.png" alt="Services" style="width:100%;height:100%;object-fit:contain" loading="lazy" decoding="async" onerror="this.style.display='none';if(this.nextElementSibling)this.nextElementSibling.style.display='block';">
           <svg style="display:none" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg>
