@@ -30,7 +30,7 @@ assert(popularStaysMatch, 'Popular stays section must be present in Travel hub')
 assert(popularStaysMatch[0].includes('hotel-card-compact'), 'Popular stays must use compact hotel cards');
 
 // 4. Hotel Search (is.hotelSearch) Redesign
-const hotelSearchMatch = html.match(/<sc-if value="\{\{ is\.hotelSearch \}\}">([\s\S]*?)<\/sc-if>/);
+const hotelSearchMatch = html.match(/<sc-if value="\{\{ is\.hotelSearch \}\}">([\s\S]*?)(?=<sc-if value="\{\{ is\.hotelDetail \}\}">)/);
 assert(hotelSearchMatch, 'is.hotelSearch conditional must be present');
 const hotelSearchContent = hotelSearchMatch[1];
 
@@ -44,7 +44,7 @@ assert(html.includes('Weekend Escapes'), 'Weekend Escapes text-led section must 
 assert(html.includes('CONSULAR DESK'), 'Consular desk advisory card must be present');
 
 // 6. Hotel Detail Restrained Hero
-const hotelDetailMatch = html.match(/<sc-if value="\{\{ is\.hotelDetail \}\}">([\s\S]*?)<\/sc-if>/);
+const hotelDetailMatch = html.match(/<sc-if value="\{\{ is\.hotelDetail \}\}">([\s\S]*?)(?=<sc-if value="\{\{ is\.hotelBooking \}\}">)/);
 assert(hotelDetailMatch, 'is.hotelDetail conditional must be present');
 const hotelDetailContent = hotelDetailMatch[1];
 assert(!hotelDetailContent.includes('height:320px'), 'Hotel detail gallery hero must NOT be oversized 320px');
