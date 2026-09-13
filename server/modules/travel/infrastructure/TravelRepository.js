@@ -9,7 +9,7 @@
  */
 
 const { SupabaseDatabase } = require('../../../infrastructure/database/SupabaseClient');
-const { InfrastructureError, ValidationError } = require('../../../shared/errors/AppError');
+const { InfrastructureError, ValidationError, ConflictError, NotFoundError } = require('../../../shared/errors/AppError');
 const logger = require('../../../shared/logging/logger');
 const travelData = require('../data/travelData');
 const { Booking, BookingPassenger, BOOKING_STATUS } = require('../domain/Booking');
@@ -188,7 +188,6 @@ class TravelRepository {
   }
 
   // --- HOTELS & ROOMS ---
-
   /**
    * Folds case and strips diacritics so a search matches the way Cameroonian
    * users actually type. Half the country's city names carry accents
@@ -202,6 +201,7 @@ class TravelRepository {
       .toLowerCase()
       .trim();
   }
+
   async getHotels(filters = {}) {
     let list = Array.from(this.hotels.values());
     if (filters.city) {
@@ -355,10 +355,17 @@ class TravelRepository {
   async reserveHotelRoom(roomId, roomsCount = 1) {
     const room = this.rooms.get(roomId);
     if (!room) {
-      throw new Error(`Room '${roomId}' not found`);
+      throw new NotFoundError('Room', roomId);
     }
+    // Losing a race for the last room is an ordinary, expected outcome — the
+    // availability check upstream passed, then someone else took it. Throwing
+    // a bare Error made the error handler classify it as an unexpected server
+    // fault, so the traveller was told "Internal Server Error" for something
+    // that is simply a conflict they can act on by picking another room.
     if (!room.isAvailable(roomsCount)) {
-      throw new Error(`Room '${room.name}' has insufficient inventory`);
+      throw new ConflictError(
+        `The selected room '${room.name}' has no available vacancies for the requested quantity.`
+      );
     }
     room.availableInventory -= roomsCount;
     return true;
