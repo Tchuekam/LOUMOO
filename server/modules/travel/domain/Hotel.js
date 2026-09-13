@@ -72,6 +72,7 @@ class Hotel {
     this.latitude = Number(data.latitude ?? 0);
     this.longitude = Number(data.longitude ?? 0);
     this.rating = Number(data.rating ?? 4.5);
+    this.starLabel = (data.starLabel || data.star_label || '').trim();
     this.amenities = Array.isArray(data.amenities) ? data.amenities : [];
     this.images = Array.isArray(data.images) ? data.images : [];
     this.priceFrom = Number(data.priceFrom ?? data.price_from ?? 0);
@@ -103,6 +104,7 @@ class Hotel {
       latitude: this.latitude,
       longitude: this.longitude,
       rating: this.rating,
+      starLabel: this.starLabel,
       amenities: this.amenities,
       images: this.images,
       priceFrom: this.priceFrom,
