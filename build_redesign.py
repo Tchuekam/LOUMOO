@@ -36999,6 +36999,26 @@ class Component extends DCLogic {
 
   selectTravelResult(result) {
     if (!result) return;
+
+    // A stay is not a journey. Unified search returns hotels alongside buses
+    // and flights, and sending one to the transit detail screen framed it with
+    // "Departure Hub", "Transit Duration" and a boarding pass — then tried to
+    // book it as a transport service, without the hotelId/roomId/dates the
+    // server requires, so it could only ever fail. Hotels go to the hotel flow.
+    if (result.type === 'hotel' && result.id) {
+      this.setState({
+        hotelSelectedId: result.id,
+        hotelRoomIndex: 0,
+        hotelSelectedRoomId: '',
+        hotelDetailData: null,
+        hotelRooms: [],
+        hotelSubmitError: ''
+      });
+      this.go('hotelDetail');
+      this.loadHotelDetail(result.id);
+      return;
+    }
+
     this.setState({
       selectedTravelResult: result,
       travelFrom: result.origin || this.state.travelFrom,
