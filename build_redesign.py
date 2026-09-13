@@ -6451,96 +6451,9 @@ function isoDaysFromToday(days) {
   return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
 }
 
-const HOTELS_DATA = {
-  krystal_palace: {
-    id: 'krystal_palace', name: 'Krystal Palace Hotel', city: 'douala',
-    area: 'Boulevard de la Liberté, Akwa · Douala', star: '5-Star Luxury', rating: 4.9, reviews: 312,
-    image: './Assets/Travel&Hotel/Krystal%20Palace%20Hotel%20Douala.jfif',
-    tagline: 'Panoramic port views, a Clarins spa and fine dining in the heart of Akwa.',
-    amenities: ['Infinity pool', 'Clarins spa', 'Airport shuttle', 'Free Wi-Fi', 'Fine dining', '24/7 room service'],
-    rooms: [
-      { name: 'Executive Harbor View Suite', features: '1 King bed · Skyline balcony · Breakfast included', price: 145000, strike: 165000 },
-      { name: 'Deluxe Business Room', features: '1 Queen bed · City view · Breakfast included', price: 98000, strike: 120000 }
-    ]
-  },
-  golden_haven: {
-    id: 'golden_haven', name: 'Golden Haven Retreat', city: 'douala',
-    area: 'Bonapriso · Douala', star: 'Boutique Luxury', rating: 4.8, reviews: 176,
-    image: './Assets/Travel&Hotel/Golden%20Haven%20Retreat%20_%20Warm%20Luxury%20Hotel%20Bedroom%20Design%20with%20Modern%20Organic%20Elegance.jfif',
-    tagline: 'Warm, organic luxury bedrooms with a quiet garden courtyard.',
-    amenities: ['Rooftop bar', 'Spa & sauna', 'Free Wi-Fi', 'Breakfast buffet', 'Airport shuttle', 'Gym'],
-    rooms: [
-      { name: 'Organic Luxury Suite', features: '1 King bed · Lounge area · Breakfast included', price: 68000, strike: 82000 },
-      { name: 'Garden Deluxe Room', features: '1 Queen bed · Garden view · Breakfast included', price: 52000, strike: 60000 }
-    ]
-  },
-  phare_kribi: {
-    id: 'phare_kribi', name: 'Hôtel du Phare', city: 'kribi',
-    area: 'Atlantic Shore · Kribi', star: 'Oceanfront', rating: 4.8, reviews: 204,
-    image: './Assets/Travel&Hotel/Hotel%20du%20Phare%20(Kribi%2C%20Cameroun)%20_%20tarifs%202019%20mis%E2%80%A6.jfif',
-    tagline: 'Steps from the sand, with sunset terraces over the Atlantic.',
-    amenities: ['Private beach', 'Seafood restaurant', 'Free Wi-Fi', 'Terrace bar', 'Airport transfer', 'Breakfast included'],
-    rooms: [
-      { name: 'Ocean Deluxe King Room', features: '1 King bed · Sea-view balcony · Breakfast included', price: 65000, strike: 78000 },
-      { name: 'Coastal Twin Room', features: '2 Twin beds · Partial sea view · Breakfast included', price: 45000, strike: 52000 }
-    ]
-  },
-  jully_kribi: {
-    id: 'jully_kribi', name: 'Résidence JULLY', city: 'kribi',
-    area: 'Lobé Waterfalls Coast · Kribi', star: 'Seaside Villa', rating: 4.7, reviews: 138,
-    image: './Assets/Travel&Hotel/Residence%20JULLY%20Kribi.jfif',
-    tagline: 'A serene seaside villa near the Lobé Falls, made for slow mornings.',
-    amenities: ['Beach access', 'Outdoor pool', 'Free Wi-Fi', 'Kitchenette', 'Free parking', 'Breakfast included'],
-    rooms: [
-      { name: 'Villa Suite', features: '1 King bed · Private terrace · Kitchenette', price: 58000, strike: 68000 },
-      { name: 'Garden Studio', features: '1 Queen bed · Garden view · Kitchenette', price: 38000, strike: 44000 }
-    ]
-  },
-  gites_kribi: {
-    id: 'gites_kribi', name: 'Les Gîtes de Kribi', city: 'kribi',
-    area: 'Plage Tara · Kribi', star: 'Beach Lodge', rating: 4.6, reviews: 96,
-    image: './Assets/Travel&Hotel/lesgitesdekribi.jfif',
-    tagline: 'Relaxed beach cabins on Plage Tara with fresh grilled fish nightly.',
-    amenities: ['Beachfront', 'Restaurant', 'Free Wi-Fi', 'Free parking', 'Bar', 'Breakfast included'],
-    rooms: [
-      { name: 'Beach Cabin Deluxe', features: '1 King bed · Beachfront terrace', price: 42000, strike: 50000 },
-      { name: 'Standard Cabin', features: '1 Queen bed · Garden path', price: 32000, strike: 38000 }
-    ]
-  },
-  kribi_oceanfront: {
-    id: 'kribi_oceanfront', name: 'Kribi Oceanfront Lodge', city: 'kribi',
-    area: 'Boulevard de la Plage · Kribi', star: 'Oceanfront', rating: 4.5, reviews: 112,
-    image: './Assets/Travel&Hotel/Kribi%20Hotel.jfif',
-    tagline: 'A modern lodge on the beach boulevard, minutes from the port.',
-    amenities: ['Sea view', 'Pool', 'Free Wi-Fi', 'Restaurant', 'Airport transfer', 'Breakfast included'],
-    rooms: [
-      { name: 'Panorama Sea Room', features: '1 King bed · Full sea view · Breakfast included', price: 52000, strike: 60000 },
-      { name: 'City Comfort Room', features: '1 Queen bed · Boulevard view', price: 42000, strike: 48000 }
-    ]
-  },
-  bastos_suites: {
-    id: 'bastos_suites', name: 'Bastos Panoramic Suites', city: 'yaounde',
-    area: 'Bastos · Yaoundé', star: 'Business Luxury', rating: 4.7, reviews: 154,
-    image: './Assets/Travel&Hotel/Yaounde%2C%20Cameroon.jfif',
-    tagline: 'Elevated suites over the diplomatic quarter with skyline views.',
-    amenities: ['Rooftop pool', 'Business lounge', 'Free Wi-Fi', 'Gym', 'Airport shuttle', 'Breakfast included'],
-    rooms: [
-      { name: 'Panoramic Executive Suite', features: '1 King bed · Skyline lounge · Breakfast included', price: 55000, strike: 66000 },
-      { name: 'Diplomat Deluxe Room', features: '1 Queen bed · City view · Breakfast included', price: 44000, strike: 50000 }
-    ]
-  },
-  relais_maroua: {
-    id: 'relais_maroua', name: 'Hôtel Le Relais', city: 'maroua',
-    area: 'Maroua Central · Far North', star: 'Comfort Stay', rating: 4.6, reviews: 88,
-    image: './Assets/Travel&Hotel/Hotel%20le%20relais%20-%20Nord%20Cameroun.jfif',
-    tagline: 'A calm courtyard hotel with Sahelian charm in central Maroua.',
-    amenities: ['Courtyard pool', 'Restaurant', 'Free Wi-Fi', 'Free parking', 'Airport transfer', 'Breakfast included'],
-    rooms: [
-      { name: 'Courtyard Suite', features: '1 King bed · Courtyard view · Breakfast included', price: 38000, strike: 45000 },
-      { name: 'Standard Room', features: '1 Queen bed · Garden view', price: 28000, strike: 33000 }
-    ]
-  }
-};
+// The hotel catalog is served by the API (GET /travel/hotels) and is
+// deliberately NOT bundled here: a local copy drifts from the server's real
+// inventory and prices, and lets the UI advertise rooms that cannot be booked.
 
 const PRODUCTS_DATA = {
   "phone_tecno_tecno_camon_50_pro_5g_256gb_12gb_": {
