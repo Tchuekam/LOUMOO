@@ -118,6 +118,12 @@ header_and_styles = """<!DOCTYPE html>
   --color-success: #00c853;
   --color-success-hover: #00b34a;
   --color-success-100: #e6f9ed;
+  /* Error states across travel/hotel screens referenced --color-danger, which
+     was never defined: the declaration was dropped and the message rendered in
+     the inherited body colour, reading as ordinary copy rather than a failure. */
+  --color-danger: #d92d20;
+  --color-danger-hover: #b42318;
+  --color-danger-100: #fee4e2;
   --color-momo-yellow: #ffcc00;
   --color-momo-hover: #f0c000;
   --color-om-orange: #ff6600;
@@ -1067,6 +1073,8 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   --color-neutral-100: #0f1118; --color-neutral-200: #1a1e28; --color-neutral-300: #272d3c;
   --color-neutral-400: #4b5262; --color-neutral-500: #6e7687; --color-neutral-600: #9da4b2;
   --color-neutral-700: #cbd1db; --color-neutral-800: #e4e7ec; --color-neutral-900: #ffffff;
+  /* Lifted so failure text keeps AA contrast on the dark surface. */
+  --color-danger: #ff6b63; --color-danger-hover: #ff8a83; --color-danger-100: #2a1412;
 }
 [data-theme="dark"] body, [data-theme="dark"] .device-frame { background: #090a0f; }
 [data-theme="dark"] .product-card { background: var(--color-surface); border-color: var(--color-divider); }
