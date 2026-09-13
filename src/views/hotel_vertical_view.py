@@ -2,12 +2,17 @@
 """
 LOUMOO HOSPITALITY & LODGING VIEWS (APPLE-GRADE, DATA-DRIVEN)
 
-Vertical #2 — Hotels, beach resorts & boutique lodges across Cameroon. The whole
-flow is driven by HOTELS_DATA so the selection stays coherent end to end:
-  is.hotelSearch   Search + curated stays (each card opens its own hotel)
-  is.hotelDetail   Gallery, amenities, selectable room tiers, stay summary
-  is.hotelBooking  Reservation summary (real hotel/room/dates) + guest + escrow pay
-  is.hotelVoucher  The reservation e-ticket / voucher (NOT a bus boarding pass)
+Vertical #2 — Hotels, beach resorts & boutique lodges across Cameroon.
+
+Every screen below reads from the Travel API (GET /travel/hotels, /hotels/:id,
+/hotels/:id/rooms); the catalog, room inventory and stay price are the server's,
+never the bundle's. Screens therefore render loading, error and empty states.
+
+  is.hotelSearch   Destination/date/guest search over the live catalog
+  is.hotelDetail   Gallery, amenities, selectable rooms with real availability
+  is.hotelBooking  Reservation summary priced by the server's stayQuote
+  is.hotelVoucher  The reservation voucher, labelled with its true status
+                   (a booking is HELD until payment is attested, not CONFIRMED)
 """
 
 def get_hotel_vertical_view():
@@ -34,10 +39,15 @@ def get_hotel_vertical_view():
     <div style="background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-lg);padding:14px;box-shadow:var(--shadow-xs);display:flex;flex-direction:column;gap:12px">
       <div>
         <label style="font:700 10px/1 var(--font-heading);color:var(--color-text-muted);letter-spacing:.06em;margin-bottom:6px;display:block">DESTINATION</label>
+        <!-- "All destinations" is first because it is the real initial state.
+             Without it the control sat on "Kribi" while the unfiltered list
+             below showed every city, so the screen contradicted itself. -->
         <select class="input" style="cursor:pointer;height:44px;font-weight:700;font-size:13.5px;border-radius:var(--radius-sm)" value="{{ hotelCity }}" onChange="{{ updateHotelCity }}">
+          <option value="">All destinations</option>
           <option value="kribi">Kribi Beach &amp; Oceanfront</option>
           <option value="douala">Douala (Bonanjo &amp; Akwa)</option>
           <option value="yaounde">Yaoundé (Bastos &amp; Fébé)</option>
+          <option value="limbe">Limbé (Atlantic Coast)</option>
           <option value="maroua">Maroua (Far North)</option>
         </select>
       </div>
@@ -65,6 +75,30 @@ def get_hotel_vertical_view():
         </div>
       </div>
     </div>
+
+    <!-- Catalog state: the list comes from the server, so the screen has to be
+         honest about loading, failure and genuinely-empty results. -->
+    <sc-if value="{{ hotelListLoading }}">
+      <div style="display:flex;align-items:center;gap:10px;padding:18px;background:var(--color-surface-subtle);border:1px solid var(--color-divider);border-radius:var(--radius-md)">
+        <span class="spinner-dark"></span>
+        <span style="font:600 12.5px/1 var(--font-body);color:var(--color-text-secondary)">Loading verified stays…</span>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ hotelListError }}">
+      <div style="padding:16px;background:var(--color-danger-100);border:1px solid var(--color-danger);border-radius:var(--radius-md)">
+        <div style="font:800 13px/1.3 var(--font-heading);color:var(--color-danger)">Could not load stays</div>
+        <div style="font:500 12px/1.5 var(--font-body);color:var(--color-text-secondary);margin-top:4px">{{ hotelListError }}</div>
+        <button onClick="{{ retryHotelList }}" class="btn btn-secondary" style="margin-top:10px;padding:8px 16px;font:700 12px/1 var(--font-heading);cursor:pointer">Try again</button>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ hotelListEmpty }}">
+      <div style="padding:22px 16px;text-align:center;background:var(--color-surface-subtle);border:1px solid var(--color-divider);border-radius:var(--radius-md)">
+        <div style="font:800 13.5px/1.3 var(--font-heading);color:var(--color-text)">No stays found</div>
+        <div style="font:500 12px/1.5 var(--font-body);color:var(--color-text-secondary);margin-top:4px">We have no verified stays in that destination yet. Try another city.</div>
+      </div>
+    </sc-if>
 
     <!-- Popular stays rail (top rated) -->
     <div>
@@ -108,7 +142,7 @@ def get_hotel_vertical_view():
             <div class="row-info">
               <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
                 <span style="font:800 9.5px/1 var(--font-heading);color:var(--color-accent);letter-spacing:.04em;text-transform:uppercase">{{ hotel.star }}</span>
-                <span style="font:700 10.5px/1 var(--font-heading);color:var(--color-text-secondary)">{{ hotel.ratingLabel }} · {{ hotel.reviews }} reviews</span>
+                <span style="font:700 10.5px/1 var(--font-heading);color:var(--color-text-secondary)">{{ hotel.ratingLabel }}</span>
               </div>
               <div class="lc-1" style="font:700 13.5px/1.2 var(--font-heading);color:var(--color-text);margin-top:2px">{{ hotel.name }}</div>
               <div class="lc-1" style="font:500 11px/1 var(--font-body);color:var(--color-text-secondary)">{{ hotel.area }}</div>
@@ -151,7 +185,7 @@ def get_hotel_vertical_view():
           <div style="font:800 20px/1.2 var(--font-heading);text-shadow:0 1px 4px rgba(0,0,0,0.6)">{{ hotelDetailCard.name }}</div>
           <div style="font:500 12px/1.3 var(--font-body);opacity:.9;margin-top:2px">{{ hotelDetailCard.area }}</div>
         </div>
-        <span style="background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);padding:4px 9px;border-radius:var(--radius-pill);font:700 11px/1 var(--font-heading);white-space:nowrap">{{ hotelDetailCard.ratingLabel }} ({{ hotelDetailCard.reviews }})</span>
+        <span style="background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);padding:4px 9px;border-radius:var(--radius-pill);font:700 11px/1 var(--font-heading);white-space:nowrap">{{ hotelDetailCard.ratingLabel }}</span>
       </div>
     </div>
 
@@ -184,17 +218,41 @@ def get_hotel_vertical_view():
     <!-- Room tiers (selectable) -->
     <div style="background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:16px;box-shadow:var(--shadow-xs);display:flex;flex-direction:column;gap:12px">
       <div style="font:700 10.5px/1 var(--font-heading);letter-spacing:.06em;color:var(--color-text-muted);text-transform:uppercase">Choose your room</div>
+
+      <sc-if value="{{ hotelDetailLoading }}">
+        <div style="display:flex;align-items:center;gap:10px;padding:14px">
+          <span class="spinner-dark"></span>
+          <span style="font:600 12.5px/1 var(--font-body);color:var(--color-text-secondary)">Checking availability for your dates…</span>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ hotelDetailError }}">
+        <div style="padding:14px;background:var(--color-danger-100);border:1px solid var(--color-danger);border-radius:var(--radius-sm)">
+          <div style="font:600 12px/1.5 var(--font-body);color:var(--color-danger)">{{ hotelDetailError }}</div>
+          <button onClick="{{ retryHotelDetail }}" class="btn btn-secondary" style="margin-top:8px;padding:7px 14px;font:700 11.5px/1 var(--font-heading);cursor:pointer">Try again</button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ !hotelDetailLoading && !hotelDetailError && !hotelDetailCard.hasRooms }}">
+        <div style="padding:14px;font:500 12px/1.5 var(--font-body);color:var(--color-text-secondary)">
+          No rooms at this property fit {{ hotelDetailCard.guests }} guest(s) on these dates. Try different dates or fewer guests.
+        </div>
+      </sc-if>
+
       <sc-for list="{{ hotelDetailCard.rooms }}" as="room">
-        <div onClick="{{ () => selectHotelRoom(room.index) }}" style="display:flex;align-items:center;justify-content:space-between;padding:14px;border-radius:var(--radius-sm);cursor:pointer;flex-wrap:wrap;gap:8px;border:{{ room.selected ? '2px solid var(--color-accent)' : '1px solid var(--color-divider)' }};background:{{ room.selected ? 'var(--color-accent-100)' : 'var(--color-surface)' }}">
+        <div onClick="{{ () => selectHotelRoomId(room.id) }}" style="display:flex;align-items:center;justify-content:space-between;padding:14px;border-radius:var(--radius-sm);cursor:{{ room.soldOut ? 'not-allowed' : 'pointer' }};opacity:{{ room.soldOut ? '0.5' : '1' }};flex-wrap:wrap;gap:8px;border:{{ room.selected ? '2px solid var(--color-accent)' : '1px solid var(--color-divider)' }};background:{{ room.selected ? 'var(--color-accent-100)' : 'var(--color-surface)' }}">
           <div style="display:flex;align-items:center;gap:12px;min-width:0">
             <div style="width:20px;height:20px;border-radius:50%;flex-shrink:0;border:{{ room.selected ? '6px solid var(--color-accent)' : '2px solid var(--color-divider)' }};background:var(--color-surface)"></div>
             <div style="min-width:0">
               <div style="font:800 14px/1.2 var(--font-heading);color:var(--color-text)">{{ room.name }}</div>
               <div style="font:400 11.5px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">{{ room.features }}</div>
+              <div style="display:flex;gap:8px;align-items:center;margin-top:4px">
+                <span style="font:700 10px/1 var(--font-heading);color:{{ room.soldOut ? 'var(--color-danger)' : 'var(--color-success)' }}">{{ room.availabilityLabel }}</span>
+                <span style="font:500 10px/1 var(--font-body);color:var(--color-text-muted)">{{ room.capacityLabel }}</span>
+              </div>
             </div>
           </div>
           <div style="text-align:right">
-            <sc-if value="{{ room.strikeLabel }}"><div style="font:500 10.5px/1 var(--font-body);color:var(--color-text-muted);text-decoration:line-through">{{ room.strikeLabel }}</div></sc-if>
             <div style="font:800 15px/1 var(--font-heading);color:var(--color-accent);margin-top:2px">{{ room.priceLabel }} <span style="font-size:10.5px;font-weight:500;color:var(--color-text-muted)">/ night</span></div>
           </div>
         </div>
@@ -270,7 +328,16 @@ def get_hotel_vertical_view():
       <span>Your deposit is held in escrow and released to the hotel only after check-in.</span>
     </div>
 
-    <button onClick="{{ submitHotelReservation }}" class="btn btn-primary btn-block" style="height:52px;font-size:15px;font-weight:800;border-radius:var(--radius-pill);box-shadow:var(--shadow-glow-blue);cursor:pointer">
+    <!-- A refused reservation (room just sold out, dates rejected, room too
+         small) has to be visible. Without this the button appeared to do
+         nothing and the traveller retried, or assumed it had worked. -->
+    <sc-if value="{{ hotelSubmitError }}">
+      <div role="alert" style="padding:12px 14px;background:var(--color-danger-100);border:1px solid var(--color-danger);border-radius:var(--radius-sm);font:600 12px/1.5 var(--font-body);color:var(--color-danger)">
+        {{ hotelSubmitError }}
+      </div>
+    </sc-if>
+
+    <button onClick="{{ submitHotelReservation }}" class="btn btn-primary btn-block" disabled="{{ hotelSubmitting }}" style="height:52px;font-size:15px;font-weight:800;border-radius:var(--radius-pill);box-shadow:var(--shadow-glow-blue);cursor:{{ hotelSubmitting ? 'wait' : 'pointer' }};opacity:{{ hotelSubmitting ? '0.65' : '1' }}">
       {{ hotelBookingSummary.payLabel }} <span>→</span>
     </button>
 
@@ -289,8 +356,11 @@ def get_hotel_vertical_view():
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m15 18-6-6 6-6"/></svg>
     </button>
     <div style="flex:1">
-      <h4 style="margin:0;font-size:16px;font-weight:800">Reservation confirmed</h4>
-      <div style="font:500 11px/1 var(--font-body);color:var(--color-success);margin-top:2px">✓ Paid &amp; escrow-protected</div>
+      <!-- Status comes from the server. A held, unpaid booking said
+           "Reservation confirmed · Paid" here, which would send a traveller to
+           a hotel that has received no money and is holding no room for them. -->
+      <h4 style="margin:0;font-size:16px;font-weight:800">{{ hotelVoucher.isConfirmed ? 'Reservation confirmed' : 'Reservation held' }}</h4>
+      <div style="font:500 11px/1 var(--font-body);color:{{ hotelVoucher.isConfirmed ? 'var(--color-success)' : 'var(--color-text-secondary)' }};margin-top:2px">{{ hotelVoucher.statusLabel }}</div>
     </div>
   </div>
 
@@ -304,7 +374,7 @@ def get_hotel_vertical_view():
         <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.15) 30%, rgba(0,0,0,0.8) 100%)"></div>
         <div style="position:absolute;bottom:12px;left:16px;right:16px;color:#fff;display:flex;justify-content:space-between;align-items:flex-end;gap:8px">
           <div>
-            <span style="background:var(--color-success);color:#fff;padding:3px 9px;border-radius:var(--radius-pill);font:800 9.5px/1 var(--font-heading);text-transform:uppercase;letter-spacing:.04em">Confirmed</span>
+            <span style="background:{{ hotelVoucher.isConfirmed ? 'var(--color-success)' : 'var(--color-accent)' }};color:#fff;padding:3px 9px;border-radius:var(--radius-pill);font:800 9.5px/1 var(--font-heading);text-transform:uppercase;letter-spacing:.04em">{{ hotelVoucher.isConfirmed ? 'Confirmed' : 'Held' }}</span>
             <div style="font:800 18px/1.2 var(--font-heading);text-shadow:0 1px 4px rgba(0,0,0,0.6);margin-top:5px">{{ hotelVoucher.hotelName }}</div>
             <div style="font:500 11.5px/1.3 var(--font-body);opacity:.92">{{ hotelVoucher.area }}</div>
           </div>
@@ -337,7 +407,7 @@ def get_hotel_vertical_view():
             <div style="font:800 13px/1.3 var(--font-heading);color:var(--color-text);margin-top:5px">{{ hotelVoucher.guestName }}</div>
           </div>
           <div>
-            <div style="font:700 9.5px/1 var(--font-heading);color:var(--color-text-muted);letter-spacing:.06em;text-transform:uppercase">Total paid</div>
+            <div style="font:700 9.5px/1 var(--font-heading);color:var(--color-text-muted);letter-spacing:.06em;text-transform:uppercase">{{ hotelVoucher.isConfirmed ? 'Total paid' : 'Amount due' }}</div>
             <div style="font:800 14px/1.2 var(--font-heading);color:var(--color-accent);margin-top:5px">{{ hotelVoucher.totalLabel }}</div>
           </div>
         </div>
@@ -350,7 +420,7 @@ def get_hotel_vertical_view():
           <div style="flex:1;min-width:0">
             <div style="font:700 9.5px/1 var(--font-heading);color:var(--color-text-muted);letter-spacing:.06em;text-transform:uppercase">Confirmation</div>
             <div style="font:800 16px/1 var(--font-mono, var(--font-heading));color:var(--color-text);margin-top:5px;letter-spacing:.05em">{{ hotelVoucher.ref }}</div>
-            <div style="font:500 11px/1.4 var(--font-body);color:var(--color-text-secondary);margin-top:6px">Show this QR at the front desk to check in.</div>
+            <div style="font:500 11px/1.4 var(--font-body);color:var(--color-text-secondary);margin-top:6px">{{ hotelVoucher.statusNote }}</div>
           </div>
         </div>
       </div>
