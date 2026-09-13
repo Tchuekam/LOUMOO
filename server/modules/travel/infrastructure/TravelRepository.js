@@ -203,13 +203,45 @@ class TravelRepository {
     return list.map(h => h.toJSON());
   }
 
+  _findHotel(hotelId) {
+    if (!hotelId) return null;
+    if (this.hotels.has(hotelId)) return this.hotels.get(hotelId);
+    const clean = String(hotelId).trim().toLowerCase().replace(/_/g, '-');
+    if (this.hotels.has(clean)) return this.hotels.get(clean);
+    return Array.from(this.hotels.values()).find(h => {
+      const hid = h.id.toLowerCase();
+      const hname = h.name.toLowerCase();
+      return hid === hotelId || hid === clean || hid.includes(clean) || clean.includes(hid) || hname.includes(clean.replace(/-/g, ' '));
+    }) || null;
+  }
+
+  _findRoom(roomId, hotelId = null) {
+    if (!roomId && roomId !== 0) return null;
+    if (this.rooms.has(roomId)) return this.rooms.get(roomId);
+    const clean = String(roomId).trim().toLowerCase().replace(/_/g, '-');
+    if (this.rooms.has(clean)) return this.rooms.get(clean);
+    if (hotelId) {
+      const hotel = this._findHotel(hotelId);
+      if (hotel && hotel.rooms && hotel.rooms.length > 0) {
+        const idx = parseInt(roomId, 10);
+        if (!isNaN(idx) && idx >= 0 && idx < hotel.rooms.length) {
+          return hotel.rooms[idx];
+        }
+      }
+    }
+    return Array.from(this.rooms.values()).find(r => {
+      const rid = r.id.toLowerCase();
+      return rid === clean || rid.includes(clean);
+    }) || null;
+  }
+
   async getHotelById(hotelId) {
-    const hotel = this.hotels.get(hotelId) || Array.from(this.hotels.values()).find(h => h.id === hotelId);
+    const hotel = this._findHotel(hotelId);
     return hotel ? hotel.toJSON() : null;
   }
 
   async getHotelRooms(hotelId, { checkIn, checkOut, guests } = {}) {
-    const hotel = this.hotels.get(hotelId);
+    const hotel = this._findHotel(hotelId);
     if (!hotel) return [];
     let rooms = hotel.rooms;
     if (guests) {
@@ -236,8 +268,8 @@ class TravelRepository {
     });
   }
 
-  async getRoomById(roomId) {
-    return this.rooms.get(roomId) || null;
+  async getRoomById(roomId, hotelId = null) {
+    return this._findRoom(roomId, hotelId);
   }
 
   // --- TRANSPORT SERVICES ---
@@ -599,6 +631,14 @@ class TravelRepository {
   async getBookingById(idOrRef) {
     if (!idOrRef) return null;
 
+    // This value reaches an untrusted route parameter (/bookings/reference/:ref)
+    // and is interpolated into a PostgREST `or=` filter below, where commas and
+    // dots are filter syntax. Anything outside the identifier/reference alphabet
+    // could rewrite the predicate, so reject it rather than escape it.
+    if (typeof idOrRef !== 'string' || !/^[A-Za-z0-9_-]{1,64}$/.test(idOrRef)) {
+      return null;
+    }
+
     if (this.db) {
       try {
         let q = this.db
@@ -864,6 +904,75 @@ class TravelRepository {
     }
 
     return booking;
+  }
+
+  /**
+   * Promotes a settled booking to CONFIRMED and issues its travel document.
+   *
+   * Tickets are deliberately created here rather than at booking time: a ticket
+   * is a boarding entitlement, and issuing one before payment clears would let
+   * anyone obtain a valid travel document for free. `tickets.status` is
+   * constrained to VALID/USED/CANCELLED/EXPIRED, so there is no honest
+   * "unpaid ticket" row to write — the correct model is no ticket until paid.
+   */
+  async markBookingConfirmed(bookingId, bookingEntity = null) {
+    const booking = bookingEntity || await this.getBookingById(bookingId);
+    if (!booking) return null;
+
+    booking.status = BOOKING_STATUS.CONFIRMED;
+    booking.updatedAt = new Date().toISOString();
+    this.bookings.set(booking.id, booking);
+
+    // Issue the ticket exactly once.
+    let ticket = await this.getTicketByIdOrBooking(booking.id);
+    const isNewTicket = !ticket;
+    if (!ticket) {
+      ticket = new Ticket({
+        userId: booking.userId,
+        bookingId: booking.id,
+        type: booking.type,
+        reference: booking.reference,
+        status: 'VALID',
+        seat: (booking.passengers || []).map(p => p.seat).filter(Boolean).join(', '),
+        departureTime: booking.itinerary?.departureTime || booking.itinerary?.checkIn,
+        itinerary: booking.itinerary || {}
+      });
+      this.tickets.set(ticket.id, ticket);
+    }
+
+    if (this.db) {
+      try {
+        const { error: bkgErr } = await this.db.from('travel_bookings')
+          .update({ status: BOOKING_STATUS.CONFIRMED, updated_at: new Date().toISOString() })
+          .eq('id', booking.id);
+        if (bkgErr) {
+          throw new Error(`Database error confirming booking: ${bkgErr.message}`);
+        }
+
+        // `tickets` has no unique constraint on booking_id, so an upsert has no
+        // conflict target to use; issuance is instead guarded by the
+        // already-issued lookup above.
+        if (isNewTicket) {
+          const { error: tktErr } = await this.db.from('tickets').insert({
+            id: ticket.id,
+            booking_id: booking.id,
+            ticket_number: ticket.ticketNumber,
+            qr_payload: ticket.qrPayload || 'VALID_QR',
+            status: 'VALID',
+            created_at: ticket.issuedAt ? new Date(ticket.issuedAt).toISOString() : new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          });
+          if (tktErr) {
+            throw new Error(`Database error issuing ticket: ${tktErr.message}`);
+          }
+        }
+      } catch (err) {
+        logger.error('[TravelRepo] Failed to confirm booking / issue ticket', err);
+        throw new InfrastructureError('Supabase', 'Failed to confirm booking and issue ticket', err);
+      }
+    }
+
+    return ticket;
   }
 }
 
