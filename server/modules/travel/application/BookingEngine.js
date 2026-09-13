@@ -100,11 +100,7 @@ class BookingEngine {
         throw new NotFoundError(`Transport service '${serviceId}' not found`);
       }
 
-      if (passengers.length > service.availableSeats) {
-        throw new ConflictError(`Service only has ${service.availableSeats} seat(s) available, but ${passengers.length} were requested`);
-      }
-
-      // Collect requested seats from passengers
+      // 3.1 Collect and validate requested seats from passengers
       reservedSeats = passengers.map(p => p.seat).filter(Boolean);
       if (reservedSeats.length > 0) {
         const seenSeats = new Set();
@@ -117,6 +113,18 @@ class BookingEngine {
             throw new ValidationError(`Seat '${seat}' is not a valid seat for this service layout`);
           }
         }
+      }
+
+      // 3.2 Refresh occupancy to ensure service.availableSeats is authoritative
+      if (this.seatService || seatInventoryService) {
+        await (this.seatService || seatInventoryService).getOccupiedSeats(serviceId);
+      }
+
+      if (passengers.length > service.availableSeats) {
+        throw new ConflictError(`Service only has ${service.availableSeats} seat(s) available, but ${passengers.length} were requested`);
+      }
+
+      if (reservedSeats.length > 0) {
         // Concurrency-safe atomic check and reservation
         await (this.seatService || seatInventoryService).reserveSeats(serviceId, reservedSeats);
       }

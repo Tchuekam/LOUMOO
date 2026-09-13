@@ -45,7 +45,9 @@ async function findFreeSeat() {
   for (const svc of list) {
     const id = svc.id || svc.serviceId || svc.scheduleId;
     const map = await request('GET', `/api/travel/bus/seats/${id}`);
-    const layout = map.body?.data?.seatLayout || map.body?.data?.layout || [];
+    const data = map.body?.data || {};
+    if (data.availableSeatsCount !== undefined && data.availableSeatsCount <= 0) continue;
+    const layout = data.seatLayout || data.layout || [];
     for (const row of layout) {
       for (const s of row.seats || []) {
         if (s.status === 'AVAILABLE') return { serviceId: id, seat: s.seatNumber };
@@ -294,6 +296,9 @@ async function run() {
   console.log('───────────────────────────────────────────────────────────\n');
 
   await cleanup();
+  if (failed.length > 0) {
+    throw new Error(`${failed.length} test(s) failed in travel_security_audit: ${failed.map(f => `${f.id}: ${f.err}`).join(', ')}`);
+  }
   return failed;
 }
 

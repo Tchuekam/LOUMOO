@@ -25,6 +25,7 @@ async function run() {
 
   const db = SupabaseDatabase.getAdmin();
   const testIdsToClean = [];
+  const testServiceId = 'bus-sch-1';
 
   const userA = { id: `usr_durable_a_${Date.now()}`, fullName: 'Alice Nkem' };
   const userB = { id: `usr_durable_b_${Date.now()}`, fullName: 'Bob Biya' };
@@ -35,6 +36,7 @@ async function run() {
     // Clean up any stale test bookings from previous runs
     if (db) {
       await db.from('travel_bookings').delete().like('user_id', 'usr_durable_%');
+      await db.from('travel_bookings').delete().eq('item_id', testServiceId);
     }
 
     // ========================================================================
@@ -45,10 +47,9 @@ async function run() {
     const repo1 = travelService.repo;
     const bookingEngine1 = travelService.bookingEngine;
     const testSeat1 = '8A';
-    const testServiceId = 'bus-sch-1';
 
     // Free test seat if occupied
-    await travelService.seatService.releaseSeats(testServiceId, [testSeat1]);
+    await travelService.seatService.releaseSeats(testServiceId, [testSeat1], { reclaimHeldBookings: true });
 
     const createPayload = {
       type: 'bus',
@@ -151,7 +152,7 @@ async function run() {
 
     const raceSeat = '8B';
     // Ensure test seat is free initially
-    await travelService.seatService.releaseSeats(testServiceId, [raceSeat]);
+    await travelService.seatService.releaseSeats(testServiceId, [raceSeat], { reclaimHeldBookings: true });
 
     const racePayloadUserB = {
       type: 'bus',
@@ -200,7 +201,7 @@ async function run() {
 
     const idemKey = `idem_${Date.now()}_unique`;
     const idemSeat = '9A';
-    await travelService.seatService.releaseSeats(testServiceId, [idemSeat]);
+    await travelService.seatService.releaseSeats(testServiceId, [idemSeat], { reclaimHeldBookings: true });
 
     const idemPayload = {
       type: 'bus',

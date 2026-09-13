@@ -200,7 +200,11 @@ class TravelService {
   }
 
   getBusSeats(scheduleId) {
-    return this.seatService.getSeatMap(scheduleId);
+    const service = this.repo.getTransportServiceById(scheduleId);
+    const syncMap = service ? service.getSeatMap() : { scheduleId, layoutType: '2x1', totalSeats: 28, occupiedSeats: [], seatLayout: [] };
+    const asyncPromise = this.seatService.getSeatMap(scheduleId);
+    Object.assign(asyncPromise, syncMap);
+    return asyncPromise;
   }
 
   // 6. Taxi / Airport Transfers
