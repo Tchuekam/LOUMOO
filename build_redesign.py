@@ -36930,6 +36930,96 @@ class Component extends DCLogic {
     });
   }
 
+  // ── Hotels ────────────────────────────────────────────────────────────────
+  // Every hotel screen reads from the server. The server owns inventory and
+  // price; a bundled catalog would let the UI show rooms that are sold out or
+  // priced differently, and a booking built from it is refused on submit.
+
+  loadHotels(city) {
+    const api = getApi();
+    if (!api || !api.getTravelHotels) {
+      this.setState({ hotelListError: 'Hotel search is temporarily unavailable.', hotelListLoading: false });
+      return Promise.resolve();
+    }
+    const params = {};
+    const q = (city !== undefined ? city : this.state.hotelCity) || '';
+    if (q) params.city = q;
+    this.setState({ hotelListLoading: true, hotelListError: '' });
+    return api.getTravelHotels(params).then((res) => {
+      if (this._unmounted) return;
+      const items = (res && res.items) || (res && res.data) || (Array.isArray(res) ? res : []);
+      this.setState({
+        hotelList: Array.isArray(items) ? items : [],
+        hotelListLoading: false,
+        hotelListLoaded: true
+      });
+    }).catch((err) => {
+      if (this._unmounted) return;
+      this.setState({
+        hotelListLoading: false,
+        hotelListLoaded: true,
+        hotelListError: (err && err.message) || 'Could not load hotels. Check your connection and try again.'
+      });
+    });
+  }
+
+  loadHotelDetail(hotelId) {
+    if (!hotelId) return Promise.resolve();
+    const api = getApi();
+    if (!api || !api.getTravelHotel) return Promise.resolve();
+    this.setState({ hotelDetailLoading: true, hotelDetailError: '' });
+    return api.getTravelHotel(hotelId).then((res) => {
+      if (this._unmounted) return;
+      const hotel = (res && res.data) || res || null;
+      this.setState({ hotelDetailData: hotel, hotelDetailLoading: false });
+      return this.loadHotelRooms(hotelId);
+    }).catch((err) => {
+      if (this._unmounted) return;
+      this.setState({
+        hotelDetailLoading: false,
+        hotelDetailError: (err && err.message) || 'Could not load this hotel.'
+      });
+    });
+  }
+
+  /**
+   * Rooms are re-fetched whenever the stay changes, because the server prices
+   * the stay (nights * rate + fees) and returns it as `stayQuote`. The client
+   * never computes the total it shows.
+   */
+  loadHotelRooms(hotelId) {
+    const id = hotelId || this.state.hotelSelectedId;
+    if (!id) return Promise.resolve();
+    const api = getApi();
+    if (!api || !api.getTravelHotelRooms) return Promise.resolve();
+    const params = {
+      checkIn: this.state.hotelCheckIn,
+      checkOut: this.state.hotelCheckOut,
+      guests: this.state.hotelGuests || 2
+    };
+    this.setState({ hotelRoomsLoading: true, hotelRoomsError: '' });
+    return api.getTravelHotelRooms(id, params).then((res) => {
+      if (this._unmounted) return;
+      const items = (res && res.items) || (res && res.data) || (Array.isArray(res) ? res : []);
+      const rooms = Array.isArray(items) ? items : [];
+      // Keep the traveller's chosen room if the new dates still offer it.
+      const keep = rooms.some((r) => r.id === this.state.hotelSelectedRoomId);
+      const firstFree = rooms.find((r) => r.availableInventory > 0);
+      this.setState({
+        hotelRooms: rooms,
+        hotelRoomsLoading: false,
+        hotelSelectedRoomId: keep ? this.state.hotelSelectedRoomId : ((firstFree && firstFree.id) || (rooms[0] && rooms[0].id) || '')
+      });
+    }).catch((err) => {
+      if (this._unmounted) return;
+      this.setState({
+        hotelRooms: [],
+        hotelRoomsLoading: false,
+        hotelRoomsError: (err && err.message) || 'Could not load rooms for these dates.'
+      });
+    });
+  }
+
   selectBusSchedule(bus) {
     if (!bus) return;
     const isSame = this.state.selectedBusSchedule && this.state.selectedBusSchedule.id === bus.id;
