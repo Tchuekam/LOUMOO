@@ -117,8 +117,20 @@ class Booking {
       visa: 'LMT-VSA'
     };
     const prefix = prefixes[type] || 'LMT-TRV';
-    const randomDigits = Math.floor(10000 + Math.random() * 90000);
-    return `${prefix}-${randomDigits}`;
+    // A booking reference is a bearer credential for guest lookup, so it must
+    // not be guessable. The previous 5-digit space (90,000 values behind a known
+    // per-type prefix) was exhaustively enumerable, and collided often enough to
+    // be a data-integrity risk in its own right (~50% chance within ~350
+    // bookings of one type). This uses 8 crypto-random Crockford base32
+    // characters — ~1.1e12 values — excluding I/L/O/U to stay readable aloud
+    // over the phone and unambiguous when transcribed by an agent.
+    const ALPHABET = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';
+    const bytes = crypto.randomBytes(8);
+    let tail = '';
+    for (let i = 0; i < 8; i++) {
+      tail += ALPHABET[bytes[i] % ALPHABET.length];
+    }
+    return `${prefix}-${tail}`;
   }
 
   canCancel() {
