@@ -24,6 +24,27 @@ class SeatInventoryService {
     }
   }
 
+  async _getRedisReady(timeoutMs = 2500) {
+    const redis = this._getRedis();
+    if (!redis) return null;
+    if (redis.status === 'ready') return redis;
+    if (redis.status === 'connecting' || redis.status === 'connect') {
+      await new Promise(resolve => {
+        const timer = setTimeout(resolve, timeoutMs);
+        redis.once('ready', () => {
+          clearTimeout(timer);
+          resolve();
+        });
+        redis.once('error', () => {
+          clearTimeout(timer);
+          resolve();
+        });
+      });
+      return redis.status === 'ready' ? redis : null;
+    }
+    return null;
+  }
+
   /**
    * Distributed Lock wrapper with retry to ensure concurrent requests for
    * the same transport service serialize cleanly without race conditions.
@@ -61,7 +82,7 @@ class SeatInventoryService {
     const occupied = new Set(service.occupiedSeats || []);
 
     // 1. Redis Set for cross-instance state
-    const redis = this._getRedis();
+    const redis = await this._getRedisReady();
     if (redis && redis.status === 'ready') {
       try {
         const redisSeats = await redis.smembers(`travel:occupied_seats:${serviceId}`);
@@ -116,13 +137,20 @@ class SeatInventoryService {
 
   /**
    * Real-time seat layout inspection.
-   * Returns current seat map immediately from in-memory state and active occupancy.
+   *
+   * Occupancy is refreshed from the catalog, Redis and the durable database
+   * before rendering. Reading only the in-memory catalog (as this previously
+   * did) advertised seats as AVAILABLE that reserveSeats() then rejected with a
+   * 409 — the traveller picked a green seat and was told it was taken.
    */
-  getSeatMap(serviceId) {
+  async getSeatMap(serviceId) {
     const service = this.repo.getTransportServiceById(serviceId);
     if (!service) {
       throw new NotFoundError(`Transport service '${serviceId}' not found`);
     }
+
+    // Synchronises service.occupiedSeats / availableSeats across all sources.
+    await this.getOccupiedSeats(serviceId);
 
     return service.getSeatMap();
   }
@@ -149,7 +177,7 @@ class SeatInventoryService {
       }
 
       // 2. Mark in Redis Set
-      const redis = this._getRedis();
+      const redis = await this._getRedisReady();
       if (redis && redis.status === 'ready') {
         try {
           await redis.sadd(`travel:occupied_seats:${serviceId}`, ...seatNumbers);
@@ -171,12 +199,25 @@ class SeatInventoryService {
   /**
    * Release seats upon booking cancellation or rollback on persistence failure
    */
-  async releaseSeats(serviceId, seatNumbers = []) {
+  /**
+   * @param {object} [options]
+   * @param {string|null} [options.bookingId] The booking being released. REQUIRED
+   *   to cancel durable rows: without it this method would cancel every active
+   *   booking that happens to hold one of these seat numbers, which destroyed
+   *   other travellers' reservations during a rollback. When omitted (e.g. a
+   *   persistence rollback for a booking that was never committed) only the
+   *   in-memory and Redis holds are released.
+   * @param {boolean} [options.reclaimHeldBookings] Administrative override that
+   *   cancels EVERY active booking holding these seats. This was the old
+   *   implicit behaviour of every release and is destructive across users, so it
+   *   must now be asked for deliberately (seat reclamation, test fixtures).
+   */
+  async releaseSeats(serviceId, seatNumbers = [], { bookingId = null, reclaimHeldBookings = false } = {}) {
     if (!seatNumbers || seatNumbers.length === 0) return true;
 
     return await this._withServiceLock(serviceId, async () => {
       // 1. Remove from Redis Set
-      const redis = this._getRedis();
+      const redis = await this._getRedisReady();
       if (redis && redis.status === 'ready') {
         try {
           await redis.srem(`travel:occupied_seats:${serviceId}`, ...seatNumbers);
@@ -193,8 +234,20 @@ class SeatInventoryService {
         }
       }
 
-      // 3. Mark active database bookings holding these seats as CANCELLED
-      if (this.repo.db) {
+      // 3. Cancel the durable row for THIS booking only.
+      if (this.repo.db && bookingId) {
+        try {
+          await this.repo.db
+            .from('travel_bookings')
+            .update({ status: 'CANCELLED', updated_at: new Date().toISOString() })
+            .eq('id', bookingId)
+            .in('status', ['CONFIRMED', 'PENDING']);
+          logger.info(`[SeatInventory] Cancelled booking ${bookingId} releasing seats [${seatNumbers.join(', ')}] on service ${serviceId}`);
+        } catch (err) {
+          logger.warn(`[SeatInventory] DB seat cancellation notice for ${serviceId}: ${err.message}`);
+        }
+      } else if (this.repo.db && reclaimHeldBookings) {
+        // Explicit administrative reclamation of a seat regardless of holder.
         try {
           const { data: activeBookings } = await this.repo.db
             .from('travel_bookings')
@@ -204,22 +257,19 @@ class SeatInventoryService {
 
           if (Array.isArray(activeBookings)) {
             const seatSet = new Set(seatNumbers.map(s => String(s)));
-            const toCancel = [];
-            for (const b of activeBookings) {
-              if (Array.isArray(b.booking_passengers) && b.booking_passengers.some(p => seatSet.has(String(p.seat)))) {
-                toCancel.push(b.id);
-              }
-            }
+            const toCancel = activeBookings
+              .filter(b => Array.isArray(b.booking_passengers) && b.booking_passengers.some(p => seatSet.has(String(p.seat))))
+              .map(b => b.id);
             if (toCancel.length > 0) {
               await this.repo.db
                 .from('travel_bookings')
                 .update({ status: 'CANCELLED', updated_at: new Date().toISOString() })
                 .in('id', toCancel);
-              logger.info(`[SeatInventory] Cancelled ${toCancel.length} database bookings releasing seats [${seatNumbers.join(', ')}] on service ${serviceId}`);
+              logger.warn(`[SeatInventory] Reclaimed seats [${seatNumbers.join(', ')}] on ${serviceId}, cancelling ${toCancel.length} booking(s)`);
             }
           }
         } catch (err) {
-          logger.warn(`[SeatInventory] DB seat cancellation notice for ${serviceId}: ${err.message}`);
+          logger.warn(`[SeatInventory] Seat reclamation notice for ${serviceId}: ${err.message}`);
         }
       }
 

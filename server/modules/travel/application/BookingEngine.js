@@ -26,9 +26,14 @@ class BookingEngine {
    * Primary transactional booking creation
    */
   async createBooking(payload = {}, { idempotencyKey = null, user = null } = {}) {
-    const userId = user?.id;
+    let userId = user?.id;
     if (!userId || userId === 'usr_guest') {
-      throw new AuthenticationError('Authentication required to create a booking');
+      const contactProvided = payload.phone || payload.passengerPhone || payload.email || (Array.isArray(payload.passengers) && payload.passengers[0] && (payload.passengers[0].phone || payload.passengers[0].email));
+      if (contactProvided) {
+        userId = `usr_guest_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
+      } else {
+        throw new AuthenticationError('Authentication or passenger contact details required to create a booking');
+      }
     }
     const type = (payload.type || SERVICE_TYPES.BUS).toLowerCase();
 
@@ -42,7 +47,8 @@ class BookingEngine {
     if (finalIdempotencyKey) {
       const existing = await this.repo.findBookingByIdempotencyKey(finalIdempotencyKey);
       if (existing) {
-        if (existing.userId !== userId && userId !== 'admin') {
+        const isPrivileged = user && ['admin', 'super_admin'].includes(user.primaryRole || user.role);
+        if (existing.userId !== userId && !isPrivileged && userId !== 'admin') {
           throw new ConflictError('Idempotency key has already been used by another operation');
         }
         logger.info(`[BookingEngine] Idempotency match for key '${finalIdempotencyKey}', returning existing booking ${existing.id}`);
@@ -263,12 +269,17 @@ class BookingEngine {
 
     // 4. Create Domain Booking with Provider-Agnostic Pending Payment State
     // Travel must NOT pretend payment has already cleared or fake transaction IDs!
+    //
+    // The booking is held as PENDING, not CONFIRMED: inventory is reserved (seat
+    // occupancy queries count PENDING alongside CONFIRMED) but the reservation
+    // does not present to the traveller as a confirmed, paid booking. Only a
+    // settlement attested by PaymentVerificationService promotes it to CONFIRMED.
     const booking = new Booking({
       userId,
       type,
       itemId,
       idempotencyKey: finalIdempotencyKey,
-      status: BOOKING_STATUS.CONFIRMED,
+      status: BOOKING_STATUS.PENDING,
       passengers,
       pricing: verifiedPricing,
       itinerary,
@@ -298,17 +309,13 @@ class BookingEngine {
       details: itinerary
     });
 
-    // 6. Automatic Ticket Generation with Non-Sensitive Signed QR Payload
-    const ticket = new Ticket({
-      userId,
-      bookingId: booking.id,
-      type: booking.type,
-      reference: booking.reference,
-      status: TICKET_STATUS.VALID,
-      seat: reservedSeats.join(', ') || '',
-      departureTime: itinerary.departureTime || itinerary.checkIn,
-      itinerary
-    });
+    // 6. NO ticket is issued here.
+    // A ticket is a boarding entitlement. Issuing a VALID one alongside an
+    // unpaid booking handed out free, scannable travel documents to anyone who
+    // hit the endpoint. It is issued by markBookingConfirmed() once payment is
+    // attested. (`tickets.status` has no unpaid state, so there is no honest
+    // pre-payment row to write.)
+    const ticket = null;
 
     // 7. Persist transactional aggregate with fail-safe rollback
     try {
@@ -348,7 +355,8 @@ class BookingEngine {
     return {
       booking: booking.toJSON(),
       trip: trip.toJSON(),
-      ticket: ticket.toJSON()
+      ticket: null,
+      paymentRequired: true
     };
   }
 
@@ -367,7 +375,7 @@ class BookingEngine {
 
     // Verify ownership - anti-enumeration 404
     const isOwner = booking.userId === userId;
-    const isPrivileged = (options.user && ['admin', 'super_admin'].includes(options.user.primaryRole)) || userId === 'admin';
+    const isPrivileged = (options.user && ['admin', 'super_admin'].includes(options.user.primaryRole || options.user.role)) || userId === 'admin';
     if (!isOwner && !isPrivileged) {
       throw new NotFoundError('Booking', bookingId);
     }
@@ -385,9 +393,13 @@ class BookingEngine {
     // Release seats or room inventory
     if (['bus', 'train', 'flight'].includes(booking.type)) {
       const seats = booking.passengers.map(p => p.seat).filter(Boolean);
-      await (this.seatService || seatInventoryService).releaseSeats(booking.itemId, seats);
+      await (this.seatService || seatInventoryService).releaseSeats(booking.itemId, seats, { bookingId: booking.id });
     } else if (booking.type === 'hotel') {
-      await this.repo.releaseHotelRoom(booking.itemId, 1);
+      // Release every room the reservation held. Hardcoding 1 here silently
+      // destroyed inventory: booking 3 rooms and cancelling returned only 1,
+      // permanently losing the other 2 from the hotel's sellable stock.
+      const heldRooms = Math.max(1, Number(booking.itinerary?.roomsCount) || 1);
+      await this.repo.releaseHotelRoom(booking.itemId, heldRooms);
     } else if (booking.type === 'excursion' || booking.type === 'tour') {
       const exc = await this.repo.getExcursionById(booking.itemId);
       if (exc) {

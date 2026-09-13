@@ -35,6 +35,25 @@ class HotelAvailabilityService {
       throw new ValidationError('checkOut date must be at least 1 night after checkIn date');
     }
 
+    // A stay cannot begin in the past. Compared at UTC day granularity so a
+    // traveller booking a same-day room is never rejected by a timezone offset.
+    const todayUtc = new Date();
+    todayUtc.setUTCHours(0, 0, 0, 0);
+    const checkInDay = new Date(dIn);
+    checkInDay.setUTCHours(0, 0, 0, 0);
+    if (checkInDay.getTime() < todayUtc.getTime()) {
+      throw new ValidationError(
+        `checkIn date ${checkInDay.toISOString().split('T')[0]} is in the past; stays must start today or later`
+      );
+    }
+
+    // Bound the stay so a mis-keyed or hostile date range cannot produce an
+    // absurd total (e.g. a year-2400 checkout billing millions of nights).
+    const MAX_NIGHTS = 365;
+    if (nights > MAX_NIGHTS) {
+      throw new ValidationError(`A single reservation cannot exceed ${MAX_NIGHTS} nights (requested ${nights})`);
+    }
+
     const validRooms = Math.max(1, Number(roomsCount) || 1);
     const rate = Math.max(0, Number(nightlyPrice) || 0);
     const subtotal = rate * nights * validRooms;
