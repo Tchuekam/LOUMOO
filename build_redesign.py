@@ -40996,18 +40996,31 @@ class Component extends DCLogic {
       },
       hotelVoucher: (() => {
         const t = this.state.lastTrip || {};
-        const h = HOTELS_DATA[t.hotelId] || null;
+        const isPaid = t.paymentStatus === 'PAID';
+        const isConfirmed = t.status === 'CONFIRMED';
         return {
-          ref: t.reference || 'LM-HTL-000000',
-          hotelName: t.hotelName || (h && h.name) || 'Your hotel',
-          area: t.area || (h && h.area) || '',
-          image: encImg(t.image || (h && h.image) || ''),
-          roomType: t.roomType || 'Room', roomFeatures: t.roomFeatures || '',
-          checkInLabel: this._hotelDateLabel(t.checkIn), checkOutLabel: this._hotelDateLabel(t.checkOut),
-          nights: t.nights || 1, nightsLabel: (t.nights || 1) + ((t.nights || 1) === 1 ? ' night' : ' nights'),
-          guests: t.guests || 1, guestName: t.passenger || 'Guest',
+          ref: t.reference || '',
+          hotelName: t.hotelName || 'Your hotel',
+          area: t.area || '',
+          image: encImg(t.image || ''),
+          roomType: t.roomType || 'Room',
+          roomFeatures: t.roomFeatures || '',
+          checkInLabel: this._hotelDateLabel(t.checkIn),
+          checkOutLabel: this._hotelDateLabel(t.checkOut),
+          nights: t.nights || 1,
+          nightsLabel: (t.nights || 1) + ((t.nights || 1) === 1 ? ' night' : ' nights'),
+          guests: t.guests || 1,
+          guestName: t.passenger || 'Guest',
           totalLabel: 'XAF ' + fmt(t.amount || 0),
-          isHotel: t.type === 'hotel'
+          isHotel: t.type === 'hotel',
+          // The voucher states what the reservation actually is. Presenting a
+          // held, unpaid booking as "confirmed" sends travellers to a hotel
+          // that has taken no money and owes them no room.
+          statusLabel: isConfirmed && isPaid ? 'Confirmed' : 'Held — payment required',
+          isConfirmed: isConfirmed && isPaid,
+          statusNote: isConfirmed && isPaid
+            ? 'Show this voucher at reception on arrival.'
+            : 'Your room is held. The reservation is confirmed once payment is completed.'
         };
       })(),
       downloadHotelVoucher: () => this.toast('Voucher saved to My Trips'),
