@@ -43324,9 +43324,23 @@ full_html = (
 with open('Commerce App.dc.html', 'w', encoding='utf-8') as f:
     f.write(full_html)
 
-if os.path.exists('public'):
-    with open('public/index.html', 'w', encoding='utf-8') as f:
-        f.write(full_html)
-    print("public/index.html successfully updated!")
+# public/ is owned by scripts/assemble_public.js -- the same script Netlify
+# runs as its build command. It wipes and re-assembles the directory: shell,
+# every *Screens.dc.html chunk, support.js and the whole src/ tree, then drops
+# src/backend (which embeds the Supabase URL), sanitizes filenames Netlify
+# rejects and rewrites the asset references to match.
+#
+# This build used to write public/index.html by itself and nothing else, so a
+# local public/ ended up with a fresh shell beside months-old route chunks and
+# service clients -- the browser then ran code this build had already replaced,
+# and local behaviour silently diverged from the deployed site. Delegating to
+# the real assembler keeps a local run byte-identical to a deploy.
+if os.path.isdir('public') or os.path.isfile(os.path.join('scripts', 'assemble_public.js')):
+    import subprocess
+    try:
+        subprocess.run(['node', os.path.join('scripts', 'assemble_public.js')], check=True)
+    except (OSError, subprocess.CalledProcessError) as exc:
+        print('WARNING: could not assemble public/ (' + str(exc) + ').')
+        print('         Run `node scripts/assemble_public.js` before serving locally.')
 
 print("Commerce App.dc.html successfully rebuilt with all screens and backend integration!")
