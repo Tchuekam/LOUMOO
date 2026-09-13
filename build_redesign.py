@@ -40844,20 +40844,59 @@ class Component extends DCLogic {
         () => this.loadHotelRooms()
       ),
 
+      hotelDetailLoading: this.state.hotelDetailLoading || this.state.hotelRoomsLoading,
+      hotelDetailError: this.state.hotelDetailError || this.state.hotelRoomsError,
+      retryHotelDetail: () => this.loadHotelDetail(this.state.hotelSelectedId),
+      selectHotelRoomId: (roomId) => this.setState({ hotelSelectedRoomId: roomId, hotelSubmitError: '' }),
+
       hotelDetailCard: (() => {
-        const h = HOTELS_DATA[this.state.hotelSelectedId] || HOTELS_DATA.krystal_palace;
-        const ri = Math.min(this.state.hotelRoomIndex || 0, h.rooms.length - 1);
+        const h = this.state.hotelDetailData;
+        // The template dereferences this object every render, including the
+        // first one before the fetch resolves — so it is never null.
+        if (!h) {
+          return {
+            id: '', name: '', area: '', star: '', ratingLabel: '', image: '', tagline: '',
+            amenities: [], rooms: [], hasRooms: false,
+            nights: 0, nightsLabel: '', checkInLabel: '', checkOutLabel: '',
+            guests: this.state.hotelGuests || 2, totalLabel: ''
+          };
+        }
+        const rooms = this.state.hotelRooms || [];
+        const sel = rooms.find((r) => r.id === this.state.hotelSelectedRoomId) || rooms[0] || null;
         const nights = this._hotelNights(this.state.hotelCheckIn, this.state.hotelCheckOut);
+        // `stayQuote` is the server's own arithmetic for this stay. The client
+        // shows what the server will charge, and never recomputes it.
+        const quote = sel && sel.stayQuote ? sel.stayQuote : null;
         return {
-          id: h.id, name: h.name, area: h.area, star: h.star,
-          ratingLabel: '★ ' + h.rating, reviews: h.reviews, image: encImg(h.image), tagline: h.tagline,
-          amenities: h.amenities.map((a) => ({ label: a })),
-          rooms: h.rooms.map((r, i) => ({ index: i, name: r.name, features: r.features, priceLabel: 'XAF ' + fmt(r.price), strikeLabel: r.strike ? ('XAF ' + fmt(r.strike)) : '', selected: i === ri })),
-          nights: nights, nightsLabel: nights + (nights === 1 ? ' night' : ' nights'),
+          id: h.id,
+          name: h.name || '',
+          area: h.location || h.city || '',
+          star: h.starLabel || '',
+          ratingLabel: h.rating ? ('★ ' + h.rating) : '',
+          image: encImg((h.images && h.images[0]) || ''),
+          tagline: h.description || '',
+          amenities: (h.amenities || []).map((a) => ({ label: a })),
+          rooms: rooms.map((r, i) => ({
+            index: i,
+            id: r.id,
+            name: r.name,
+            features: (r.amenities || []).slice(0, 3).join(' · ') || r.description || '',
+            priceLabel: 'XAF ' + fmt(r.price),
+            strikeLabel: '',
+            soldOut: !(r.availableInventory > 0),
+            availabilityLabel: r.availableInventory > 0
+              ? (r.availableInventory <= 3 ? ('Only ' + r.availableInventory + ' left') : 'Available')
+              : 'Sold out',
+            capacityLabel: r.capacity ? ('Sleeps ' + r.capacity) : '',
+            selected: sel ? r.id === sel.id : false
+          })),
+          hasRooms: rooms.length > 0,
+          nights: nights,
+          nightsLabel: nights + (nights === 1 ? ' night' : ' nights'),
           checkInLabel: this._hotelDateLabel(this.state.hotelCheckIn),
           checkOutLabel: this._hotelDateLabel(this.state.hotelCheckOut),
           guests: this.state.hotelGuests || 2,
-          totalLabel: 'XAF ' + fmt(h.rooms[ri].price * nights)
+          totalLabel: quote ? ('XAF ' + fmt(quote.totalAmount)) : ''
         };
       })(),
 
