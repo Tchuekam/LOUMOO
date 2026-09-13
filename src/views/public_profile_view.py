@@ -126,7 +126,7 @@ def get_public_profile_view():
             <h4 style="margin:0;font:800 16px/1.2 var(--font-heading);color:var(--color-text)">Commercial Boutiques & Services</h4>
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px">
               <sc-for items="{{ publicUser.sellerStores }}" var="st">
-                <div onClick="{{ on.openSellerPage(st.slug) }}" style="padding:14px;border:1px solid var(--color-divider);border-radius:var(--radius-md);background:var(--color-surface);cursor:pointer;display:flex;align-items:center;gap:12px;transition:transform 0.15s ease,box-shadow 0.15s ease">
+                <div onClick="{{ () => on.openSellerPage(st.slug) }}" style="padding:14px;border:1px solid var(--color-divider);border-radius:var(--radius-md);background:var(--color-surface);cursor:pointer;display:flex;align-items:center;gap:12px;transition:transform 0.15s ease,box-shadow 0.15s ease">
                   <div style="width:44px;height:44px;border-radius:var(--radius-sm);background:var(--color-surface-subtle);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--color-accent);flex-shrink:0">
                     <sc-if value="{{ st.logoUrl }}">
                       <img src="{{ st.logoUrl }}" alt="{{ st.name }}" style="width:100%;height:100%;object-fit:cover;border-radius:var(--radius-sm)" />
@@ -320,7 +320,7 @@ def get_public_profile_view():
           <sc-if value="{{ publicSeller.listings && publicSeller.listings.length > 0 }}">
             <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px">
               <sc-for items="{{ publicSeller.listings }}" var="item">
-                <div onClick="{{ on.openListing(item.id) }}" style="border:1px solid var(--color-divider);border-radius:var(--radius-md);overflow:hidden;background:var(--color-surface);cursor:pointer;display:flex;flex-direction:column;transition:transform 0.15s ease,box-shadow 0.15s ease">
+                <div onClick="{{ () => on.openListing(item.id) }}" style="border:1px solid var(--color-divider);border-radius:var(--radius-md);overflow:hidden;background:var(--color-surface);cursor:pointer;display:flex;flex-direction:column;transition:transform 0.15s ease,box-shadow 0.15s ease">
                   <div style="height:140px;background:var(--color-surface-subtle);position:relative">
                     <sc-if value="{{ item.cover_image_url }}">
                       <img src="{{ item.cover_image_url }}" alt="{{ item.title }}" style="width:100%;height:100%;object-fit:cover" />
