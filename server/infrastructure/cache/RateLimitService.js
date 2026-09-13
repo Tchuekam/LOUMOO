@@ -86,13 +86,6 @@ class RateLimitService {
     const windowStart = now - windowMs;
 
     try {
-      if (config.isProduction && (!this.redis || this.redis.status !== 'ready')) {
-        // An in-process fallback is not a security boundary when Railway is
-        // running more than one instance. Fail closed until shared state is
-        // available rather than silently making the limiter process-local.
-        throw new ServiceUnavailableError('Request protection is temporarily unavailable');
-      }
-
       if (this.redis && this.redis.status === 'ready') {
         const multi = this.redis.multi();
         // Remove items older than window
@@ -124,12 +117,7 @@ class RateLimitService {
       }
     } catch (err) {
       if (err instanceof RateLimitError) throw err;
-      if (err instanceof ServiceUnavailableError) throw err;
-      if (config.isProduction) {
-        logger.error('[RateLimitService] Shared rate-limit storage unavailable in production', err);
-        throw new ServiceUnavailableError('Request protection is temporarily unavailable');
-      }
-      logger.warn(`[RateLimitService] Redis rate limit check failed, using memory: ${err.message}`);
+      logger.warn(`[RateLimitService] Redis rate limit unavailable, using memory fallback: ${err.message}`);
     }
 
     // In-memory fallback
@@ -224,4 +212,5 @@ class RateLimitService {
 
 const service = new RateLimitService();
 service.normalizeAddress = normalizeAddress;
+service.RateLimitService = RateLimitService;
 module.exports = service;
