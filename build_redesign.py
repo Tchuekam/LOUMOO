@@ -40882,73 +40882,117 @@ class Component extends DCLogic {
         };
       })(),
 
+      /**
+       * Creates the reservation on the server and only then shows a voucher.
+       *
+       * The previous version wrote a CONFIRMED trip with a client-invented
+       * reference, toasted "Reservation confirmed" and navigated to the
+       * voucher BEFORE calling the API — then swallowed every error with an
+       * empty catch. A traveller whose booking the server refused (no
+       * availability, dates in the past, room too small) still saw a confirmed
+       * voucher for a reservation that did not exist, and would arrive at the
+       * hotel with nothing behind it. Nothing is shown now until the server
+       * has actually created the booking, and failures are surfaced.
+       */
       submitHotelReservation: () => {
-        const h = HOTELS_DATA[this.state.hotelSelectedId] || HOTELS_DATA.krystal_palace;
-        const ri = Math.min(this.state.hotelRoomIndex || 0, h.rooms.length - 1);
-        const room = h.rooms[ri];
+        if (this.state.hotelSubmitting) return;
+
+        const h = this.state.hotelDetailData;
+        const rooms = this.state.hotelRooms || [];
+        const room = rooms.find((r) => r.id === this.state.hotelSelectedRoomId) || rooms[0] || null;
+        if (!h || !room) {
+          this.setState({ hotelSubmitError: 'Select a room before reserving.' });
+          return;
+        }
+
+        const guestName = (this.state.hotelGuestName || '').trim();
+        const guestPhone = (this.state.hotelGuestPhone || '').trim();
+        if (!guestName) {
+          this.setState({ hotelSubmitError: 'Enter the name of the lead guest.' });
+          return;
+        }
+        if (!guestPhone) {
+          this.setState({ hotelSubmitError: 'Enter a phone number so the hotel can reach you.' });
+          return;
+        }
+
+        const api = getApi();
+        if (!api || !api.createTravelBooking) {
+          this.setState({ hotelSubmitError: 'Booking is temporarily unavailable. Please try again shortly.' });
+          return;
+        }
+
         const nights = this._hotelNights(this.state.hotelCheckIn, this.state.hotelCheckOut);
-        const guestName = this.state.hotelGuestName || 'Guest';
-        const guestPhone = this.state.hotelGuestPhone || '+237 690 12 34 56';
-        const total = room.price * nights + 3000;
-        const pnrRef = 'LM-HTL-' + Math.floor(100000 + Math.random() * 900000);
-        const trip = {
-          reference: pnrRef,
-          type: 'hotel', passenger: guestName, phone: guestPhone,
-          hotelId: h.id, hotelName: h.name, area: h.area, image: h.image,
-          roomType: room.name, roomFeatures: room.features,
-          checkIn: this.state.hotelCheckIn, checkOut: this.state.hotelCheckOut,
-          nights: nights, guests: this.state.hotelGuests || 2,
-          amount: total, currency: 'XAF', status: 'CONFIRMED', createdAt: Date.now()
-        };
-        const trips = [trip].concat(this.state.trips || []);
-        this.setState({ trips, lastTrip: trip });
-        this._persistTrips(trips);
+        this.setState({ hotelSubmitting: true, hotelSubmitError: '' });
 
-        // Transactional backend booking creation & payment
-        try {
-          const api = getApi();
-          if (api && api.createTravelBooking) {
-            api.createTravelBooking({
-              type: 'hotel',
-              hotelId: h.id,
-              roomId: room.id || ri,
-              checkIn: this.state.hotelCheckIn,
-              checkOut: this.state.hotelCheckOut,
-              roomsCount: 1,
-              guests: this.state.hotelGuests || 2,
-              paymentMethod: 'mtn_momo',
-              passengers: [{ name: guestName, phone: guestPhone }]
-            }).then((res) => {
-              if (this._unmounted || !res) return;
-              const booking = res.booking || (res.data && res.data.booking) || res.data || res;
-              const ref = booking.bookingReference || booking.reference || pnrRef;
-              const bookingId = booking.id;
-
-              // Immediately confirm payment via backend
-              if (bookingId && api.payTravelBooking) {
-                api.payTravelBooking(bookingId, {
-                  paymentMethod: 'mtn_momo',
-                  provider: 'mtn_momo',
-                  phoneNumber: guestPhone
-                }).catch(() => {});
-              }
-
-              const updatedTrip = Object.assign({}, trip, {
-                reference: ref,
-                bookingId: bookingId,
-                qr: booking.qrCodePayload || `LMT:${ref}:${bookingId}`,
-                status: 'CONFIRMED'
-              });
-              const l2 = (this.state.trips || []).map(t => t.createdAt === trip.createdAt ? updatedTrip : t);
-              this.setState({ trips: l2, lastTrip: updatedTrip });
-              this._persistTrips(l2);
-            }).catch(() => {});
+        api.createTravelBooking({
+          type: 'hotel',
+          hotelId: h.id,
+          roomId: room.id,
+          checkIn: this.state.hotelCheckIn,
+          checkOut: this.state.hotelCheckOut,
+          roomsCount: 1,
+          guests: this.state.hotelGuests || 2,
+          passengers: [{ name: guestName, phone: guestPhone }]
+        }).then((res) => {
+          if (this._unmounted) return;
+          const booking = (res && res.booking) || (res && res.data && res.data.booking) || (res && res.data) || res;
+          if (!booking || !booking.id) {
+            this.setState({ hotelSubmitting: false, hotelSubmitError: 'The reservation could not be created. Please try again.' });
+            return;
           }
-        } catch (e) {}
 
-        try { if (typeof this._pushNotif === 'function') this._pushNotif({ tone: 'success', title: 'Reservation confirmed', body: h.name + ' · ' + room.name + ' · ' + nights + (nights === 1 ? ' night' : ' nights') }); } catch (e) {}
-        this.toast('Reservation confirmed at ' + h.name);
-        this.go('hotelVoucher');
+          const q = room.stayQuote || null;
+          const trip = {
+            reference: booking.bookingReference || booking.reference || '',
+            bookingId: booking.id,
+            type: 'hotel',
+            passenger: guestName,
+            phone: guestPhone,
+            hotelId: h.id,
+            hotelName: h.name,
+            area: h.location || h.city || '',
+            image: (h.images && h.images[0]) || '',
+            roomType: room.name,
+            roomFeatures: (room.amenities || []).slice(0, 3).join(' · '),
+            checkIn: this.state.hotelCheckIn,
+            checkOut: this.state.hotelCheckOut,
+            nights: nights,
+            guests: this.state.hotelGuests || 2,
+            amount: (booking.pricing && booking.pricing.totalAmount) || (q && q.totalAmount) || 0,
+            currency: 'XAF',
+            // The server decides the status. A reservation is held PENDING
+            // until payment is attested; it is not a confirmed stay yet.
+            status: booking.status || 'PENDING',
+            paymentStatus: (booking.payment && booking.payment.status) || 'PENDING',
+            qr: booking.qrCodePayload || '',
+            createdAt: Date.now()
+          };
+
+          const trips = [trip].concat(this.state.trips || []);
+          this.setState({ trips, lastTrip: trip, hotelSubmitting: false });
+          this._persistTrips(trips);
+
+          try {
+            if (typeof this._pushNotif === 'function') {
+              this._pushNotif({
+                tone: 'success',
+                title: 'Reservation held',
+                body: h.name + ' · ' + room.name + ' · ' + nights + (nights === 1 ? ' night' : ' nights')
+              });
+            }
+          } catch (e) {}
+          this.toast('Reservation held at ' + h.name);
+          this.go('hotelVoucher');
+          // Availability moved; refresh so the next traveller sees the truth.
+          this.loadHotelRooms(h.id);
+        }).catch((err) => {
+          if (this._unmounted) return;
+          this.setState({
+            hotelSubmitting: false,
+            hotelSubmitError: (err && err.message) || 'The reservation could not be created. Please try again.'
+          });
+        });
       },
       hotelVoucher: (() => {
         const t = this.state.lastTrip || {};
