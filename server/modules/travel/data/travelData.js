@@ -847,6 +847,7 @@ const travelData = {
   hotels: [
     {
       id: 'htl-krystal-douala',
+      starLabel: '5-Star Luxury',
       providerId: 'prv-krystal',
       name: 'Krystal Palace Douala',
       description: 'The standard of 5-star hospitality in Douala. Located in Akwa, offering panoramic ocean & city views, spa wellness, and high-speed fiber connectivity.',
@@ -912,6 +913,7 @@ const travelData = {
     },
     {
       id: 'htl-starland-yaounde',
+      starLabel: 'Boutique Luxury',
       providerId: 'prv-starland',
       name: 'Star Land Hotel Bastos',
       description: 'Boutique elegance in Yaoundé prestigious Bastos neighborhood. Walk to major embassies, restaurants, and art galleries.',
@@ -962,6 +964,7 @@ const travelData = {
     },
     {
       id: 'htl-montfebe-yaounde',
+      starLabel: 'Hillside Classic',
       providerId: 'prv-montfebe',
       name: 'Hôtel Mont Fébé',
       description: 'Perched atop Mont Fébé with commanding views of the seven hills. Features lush gardens, tennis courts, and peaceful elevation.',
@@ -998,6 +1001,7 @@ const travelData = {
     },
     {
       id: 'htl-ilomba-kribi',
+      starLabel: 'Oceanfront',
       providerId: 'prv-ilomba',
       name: 'Hôtel Ilomba Kribi',
       description: 'Charming beachfront resort nestled under coconut palms in Grand Batanga, only 5 minutes from Lobé waterfalls.',
@@ -1048,6 +1052,7 @@ const travelData = {
     },
     {
       id: 'htl-fini-limbe',
+      starLabel: 'Seaside Resort',
       providerId: 'prv-fini',
       name: 'Fini Hotel Bobende Limbe',
       description: 'Coastal haven on the Atlantic with views of Bioko Island on clear days. Famous for freshly caught sea fish and ocean breezes.',
@@ -1083,6 +1088,7 @@ const travelData = {
     },
     {
       id: 'htl-goldenhaven-douala',
+      starLabel: 'Boutique Luxury',
       providerId: 'prv-goldenhaven',
       name: 'Golden Haven Retreat',
       description: 'Warm, organic luxury bedrooms around a quiet garden courtyard in Bonapriso, minutes from the business district.',
@@ -1130,6 +1136,7 @@ const travelData = {
     },
     {
       id: 'htl-phare-kribi',
+      starLabel: 'Oceanfront',
       providerId: 'prv-phare',
       name: 'Hôtel du Phare',
       description: 'Steps from the sand on the Atlantic shore, with sunset terraces and a seafood kitchen built around the daily catch.',
@@ -1177,6 +1184,7 @@ const travelData = {
     },
     {
       id: 'htl-jully-kribi',
+      starLabel: 'Seaside Villa',
       providerId: 'prv-jully',
       name: 'Résidence JULLY',
       description: 'A serene seaside villa near the Lobé Falls, made for slow mornings and long stays.',
@@ -1224,6 +1232,7 @@ const travelData = {
     },
     {
       id: 'htl-gites-kribi',
+      starLabel: 'Beach Lodge',
       providerId: 'prv-gites',
       name: 'Les Gîtes de Kribi',
       description: 'Relaxed beach cabins on Plage Tara, with fresh grilled fish served nightly on the sand.',
@@ -1271,6 +1280,7 @@ const travelData = {
     },
     {
       id: 'htl-oceanfront-kribi',
+      starLabel: 'Oceanfront',
       providerId: 'prv-oceanfront',
       name: 'Kribi Oceanfront Lodge',
       description: 'A modern lodge on the beach boulevard, minutes from the deep-water port.',
@@ -1318,6 +1328,7 @@ const travelData = {
     },
     {
       id: 'htl-bastos-yaounde',
+      starLabel: 'Business Luxury',
       providerId: 'prv-bastos',
       name: 'Bastos Panoramic Suites',
       description: 'Elevated suites over the diplomatic quarter, with skyline views and a rooftop pool.',
@@ -1365,6 +1376,7 @@ const travelData = {
     },
     {
       id: 'htl-relais-maroua',
+      starLabel: 'Comfort Stay',
       providerId: 'prv-relais',
       name: 'Hôtel Le Relais',
       description: 'A calm courtyard hotel with Sahelian character in central Maroua, in the Far North.',
@@ -1410,7 +1422,6 @@ const travelData = {
         }
       ]
     }
-
   ],
 
   // 10. Excursions & Day Tours
