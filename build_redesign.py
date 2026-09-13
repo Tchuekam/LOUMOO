@@ -40806,9 +40806,16 @@ class Component extends DCLogic {
       selectHotelRoom: (idx) => this.setState({ hotelRoomIndex: Number(idx) || 0 }),
       hotelCheckIn: this.state.hotelCheckIn,
       hotelCheckOut: this.state.hotelCheckOut,
+      // Changing the stay changes both the price and what is still available,
+      // so every edit re-asks the server rather than re-doing the maths here.
       updateHotelCheckIn: (e) => {
         const val = e && e.target ? e.target.value : e;
-        const updates = { hotelCheckIn: val };
+        if (!val) return;
+        if (val < isoDaysFromToday(0)) {
+          this.toast('Check-in cannot be in the past');
+          return;
+        }
+        const updates = { hotelCheckIn: val, hotelSubmitError: '' };
         if (this.state.hotelCheckOut && val >= this.state.hotelCheckOut) {
           try {
             const d = new Date(val + 'T00:00:00');
@@ -40816,19 +40823,26 @@ class Component extends DCLogic {
             updates.hotelCheckOut = d.toISOString().slice(0, 10);
           } catch (_) {}
         }
-        this.setState(updates);
+        this.setState(updates, () => this.loadHotelRooms());
       },
       updateHotelCheckOut: (e) => {
         const val = e && e.target ? e.target.value : e;
+        if (!val) return;
         if (this.state.hotelCheckIn && val <= this.state.hotelCheckIn) {
           this.toast('Check-out date must be after check-in date');
           return;
         }
-        this.setState({ hotelCheckOut: val });
+        this.setState({ hotelCheckOut: val, hotelSubmitError: '' }, () => this.loadHotelRooms());
       },
       hotelGuests: this.state.hotelGuests || 2,
-      incHotelGuests: () => this.setState((s) => ({ hotelGuests: Math.min(9, (s.hotelGuests || 2) + 1) })),
-      decHotelGuests: () => this.setState((s) => ({ hotelGuests: Math.max(1, (s.hotelGuests || 2) - 1) })),
+      incHotelGuests: () => this.setState(
+        (s) => ({ hotelGuests: Math.min(9, (s.hotelGuests || 2) + 1) }),
+        () => this.loadHotelRooms()
+      ),
+      decHotelGuests: () => this.setState(
+        (s) => ({ hotelGuests: Math.max(1, (s.hotelGuests || 2) - 1) }),
+        () => this.loadHotelRooms()
+      ),
 
       hotelDetailCard: (() => {
         const h = HOTELS_DATA[this.state.hotelSelectedId] || HOTELS_DATA.krystal_palace;
