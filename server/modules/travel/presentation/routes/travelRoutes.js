@@ -7,7 +7,7 @@
 
 const express = require('express');
 const { travelService } = require('../../application/TravelService');
-const { requireAuth } = require('../../../identity/presentation/guards/authGuard');
+const { requireAuth, optionalAuth } = require('../../../identity/presentation/guards/authGuard');
 const { ValidationError, NotFoundError, UnauthorizedError, AuthenticationError, AuthorizationError } = require('../../../../shared/errors/AppError');
 const logger = require('../../../../shared/logging/logger');
 
@@ -276,8 +276,8 @@ router.get('/rides', async (req, res, next) => {
 // 5. BOOKINGS (AUTHENTICATED & OWNER BOUND)
 // ============================================================================
 
-// POST /api/travel/bookings - Transactional booking creation
-router.post('/bookings', requireAuth, async (req, res, next) => {
+// POST /api/travel/bookings - Transactional booking creation (Registered or Guest Checkout)
+router.post('/bookings', optionalAuth, async (req, res, next) => {
   try {
     const idempotencyKey = req.headers['x-idempotency-key'] || req.body.idempotencyKey;
     const user = req.principal;
@@ -289,11 +289,64 @@ router.post('/bookings', requireAuth, async (req, res, next) => {
 
     res.status(201).json({
       success: true,
-      message: 'Booking confirmed, trip created, and digital ticket issued.',
+      message: 'Reservation held. Payment is required to confirm the booking and issue your ticket.',
       data: result.booking,
       booking: result.booking,
       trip: result.trip,
-      ticket: result.ticket
+      ticket: result.ticket,           // null until payment is attested
+      paymentRequired: true,
+      amountDue: result.booking?.pricing?.totalAmount ?? null,
+      currency: result.booking?.pricing?.currency || 'XAF'
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// POST /api/travel/bookings/:id/pay - Record a payment confirmation.
+//
+// SECURITY: this endpoint transitions money-bearing state, so it never accepts
+// the caller's word that a payment happened. The settlement itself must be
+// attested by PaymentVerificationService against a real gateway; the client may
+// only supply the provider reference to be verified.
+router.post('/bookings/:id/pay', optionalAuth, async (req, res, next) => {
+  try {
+    const { paymentMethod = 'momo', provider = 'mtn_momo', transactionRef } = req.body || {};
+    const userId = req.principal?.id;
+
+    const booking = await travelService.repo.getBookingById(req.params.id);
+    if (!booking) {
+      throw new NotFoundError('Booking', req.params.id);
+    }
+
+    const isGuest = Boolean(booking.userId && booking.userId.startsWith('usr_guest_'));
+    const isOwner = Boolean(userId && booking.userId === userId);
+    const isPrivileged = Boolean(req.principal && ['admin', 'super_admin'].includes(req.principal.primaryRole || req.principal.role));
+
+    // A guest holder proves possession of the reservation with a contact detail
+    // recorded on it — never merely by knowing the booking id.
+    const guestVerified = isGuest && travelService.verifyGuestHolder(booking, {
+      phone: req.get('x-guest-contact') || req.body?.phoneNumber || req.body?.phone,
+      email: req.body?.email,
+      lastName: req.body?.lastName
+    });
+
+    if (!isPrivileged && !isOwner && !guestVerified) {
+      // Anti-enumeration: identical response whether or not the booking exists.
+      throw new NotFoundError('Booking', req.params.id);
+    }
+
+    const confirmed = await travelService.confirmPayment(booking.id, {
+      provider: provider || paymentMethod,
+      transactionRef,
+      expectedAmount: booking.pricing?.totalAmount || booking.amount
+    });
+
+    res.json({
+      success: true,
+      message: 'Payment verified with the provider. Booking is fully confirmed.',
+      data: confirmed,
+      booking: confirmed
     });
   } catch (err) {
     next(err);
@@ -334,7 +387,32 @@ router.get('/bookings/my-trips', requireAuth, async (req, res, next) => {
   }
 });
 
-// GET /api/travel/bookings/:id - Caller must own the booking
+// GET /api/travel/bookings/reference/:ref - Check booking by reference (OTA standard)
+//
+// Guests authenticate with reference + a contact detail from the reservation.
+// The contact travels in the `x-guest-contact` header rather than the query
+// string so it never lands in access logs, proxy caches or browser history.
+router.get('/bookings/reference/:ref', optionalAuth, async (req, res, next) => {
+  try {
+    const userId = req.principal?.id;
+    const booking = await travelService.getBookingByReference(req.params.ref, userId, {
+      user: req.principal,
+      verification: {
+        phone: req.get('x-guest-contact'),
+        email: req.get('x-guest-email'),
+        lastName: req.get('x-guest-surname')
+      }
+    });
+    res.json({
+      success: true,
+      data: booking
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// GET /api/travel/bookings/:id - Caller must own the booking (authenticated)
 router.get('/bookings/:id', requireAuth, async (req, res, next) => {
   try {
     const userId = req.principal.id;
@@ -348,7 +426,7 @@ router.get('/bookings/:id', requireAuth, async (req, res, next) => {
   }
 });
 
-// POST /api/travel/bookings/:id/cancel - Caller must own the booking
+// POST /api/travel/bookings/:id/cancel - Cancel booking
 router.post('/bookings/:id/cancel', requireAuth, async (req, res, next) => {
   try {
     const userId = req.principal.id;

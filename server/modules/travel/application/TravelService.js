@@ -10,8 +10,9 @@ const { travelSearchEngine } = require('./TravelSearchEngine');
 const { hotelAvailabilityService } = require('./HotelAvailabilityService');
 const { seatInventoryService } = require('./SeatInventoryService');
 const { bookingEngine } = require('./BookingEngine');
+const { paymentVerificationService } = require('./PaymentVerificationService');
 const travelData = require('../data/travelData');
-const { NotFoundError, ValidationError, AuthenticationError, AuthorizationError } = require('../../../shared/errors/AppError');
+const { NotFoundError, ValidationError, AuthenticationError, AuthorizationError, ConflictError } = require('../../../shared/errors/AppError');
 const logger = require('../../../shared/logging/logger');
 
 class TravelService {
@@ -282,6 +283,43 @@ class TravelService {
     return this.bookingEngine.createBooking(payload, options);
   }
 
+  /**
+   * Normalizes a contact string for guest-verification comparison.
+   * Phone numbers are reduced to digits so '+237 671 00 11 22' matches
+   * '237671001122'; emails are lowercased and trimmed.
+   */
+  static _normalizeContact(value) {
+    if (!value || typeof value !== 'string') return '';
+    const trimmed = value.trim().toLowerCase();
+    if (trimmed.includes('@')) return trimmed;
+    const digits = trimmed.replace(/\D/g, '');
+    // Compare on the national significant number so country-code formatting
+    // differences ('+237 6..' vs '6..') do not cause false rejections.
+    return digits.length > 9 ? digits.slice(-9) : digits;
+  }
+
+  /**
+   * A guest booking has no authenticated owner, so the caller must prove
+   * possession of a contact detail recorded on the reservation — the same
+   * "reference + surname/phone" factor every OTA requires. Without this,
+   * knowing a booking reference alone would disclose the full passenger
+   * roster and the boarding QR payload.
+   */
+  static _guestVerificationMatches(booking, verification = {}) {
+    const candidates = [];
+    for (const p of booking.passengers || []) {
+      if (p.phone) candidates.push(TravelService._normalizeContact(p.phone));
+      if (p.email) candidates.push(TravelService._normalizeContact(p.email));
+      if (p.name) candidates.push(String(p.name).trim().toLowerCase());
+    }
+    const supplied = [verification.phone, verification.email, verification.lastName, verification.name]
+      .map(v => TravelService._normalizeContact(v) || String(v || '').trim().toLowerCase())
+      .filter(Boolean);
+
+    if (supplied.length === 0) return false;
+    return supplied.some(s => candidates.includes(s));
+  }
+
   async getBookingById(bookingId, userOrId = null, options = {}) {
     const b = await this.repo.getBookingById(bookingId);
     if (!b) {
@@ -290,11 +328,23 @@ class TravelService {
     const userId = typeof userOrId === 'object' && userOrId !== null ? userOrId.id : userOrId;
     const userObj = typeof userOrId === 'object' && userOrId !== null ? userOrId : options.user;
     const isPrivileged = (userObj && ['admin', 'super_admin'].includes(userObj.primaryRole || userObj.role)) || userId === 'admin';
-    if (userId && b.userId !== userId && !isPrivileged) {
+    const isGuestBooking = Boolean(b.userId && b.userId.startsWith('usr_guest_'));
+    const isOwner = Boolean(userId && b.userId === userId);
+
+    // Guest reservations are reachable only via the reference endpoint, and
+    // only when the caller supplies a matching contact detail.
+    const guestVerified = isGuestBooking
+      && options.allowGuestVerification === true
+      && TravelService._guestVerificationMatches(b, options.verification || {});
+
+    if (!isPrivileged && !isOwner && !guestVerified) {
+      // Anti-enumeration: never distinguish "exists but not yours" from "absent".
       throw new NotFoundError('Booking', bookingId);
     }
-    const trip = await this.repo.getTripById(b.id, isPrivileged ? null : userId);
-    const ticket = await this.repo.getTicketByIdOrBooking(b.id, isPrivileged ? null : userId);
+
+    const scopeUserId = (isPrivileged || guestVerified) ? null : userId;
+    const trip = await this.repo.getTripById(b.id, scopeUserId);
+    const ticket = await this.repo.getTicketByIdOrBooking(b.id, scopeUserId);
     return {
       ...b.toJSON(),
       trip,
@@ -303,20 +353,71 @@ class TravelService {
     };
   }
 
+  async getBookingByReference(reference, userOrId = null, options = {}) {
+    return this.getBookingById(reference, userOrId, {
+      ...options,
+      allowGuestVerification: true
+    });
+  }
+
   async cancelBooking(bookingId, userId, reason, options = {}) {
     const targetUserId = typeof userId === 'object' && userId !== null ? userId.id : userId;
     const userObj = typeof userId === 'object' && userId !== null ? userId : options.user;
     return this.bookingEngine.cancelBooking(bookingId, targetUserId, reason, { ...options, user: userObj });
   }
 
+  /** Exposes guest-holder proof-of-possession to the presentation layer. */
+  verifyGuestHolder(booking, verification = {}) {
+    return TravelService._guestVerificationMatches(booking, verification);
+  }
+
+  /**
+   * The only sanctioned path from PENDING_PAYMENT to PAID. Settlement is
+   * attested by PaymentVerificationService against the provider; the caller
+   * cannot assert it. On success the booking is promoted to CONFIRMED and its
+   * ticket becomes valid for travel.
+   */
+  async confirmPayment(bookingId, { provider, transactionRef, expectedAmount } = {}) {
+    const booking = await this.repo.getBookingById(bookingId);
+    if (!booking) {
+      throw new NotFoundError('Booking', bookingId);
+    }
+
+    const attested = await paymentVerificationService.verify({
+      provider,
+      transactionRef,
+      expectedAmount: expectedAmount ?? booking.pricing?.totalAmount,
+      currency: booking.pricing?.currency || 'XAF'
+    });
+
+    return this.recordPaymentConfirmation(booking.id, {
+      provider: attested.provider,
+      transactionRef: attested.transactionRef,
+      amount: attested.amount,
+      confirmedAt: attested.confirmedAt
+    });
+  }
+
+  /**
+   * Applies an already-attested settlement. Internal/trusted callers only
+   * (confirmPayment above, or a signed provider webhook) — never bind this
+   * directly to a client-facing route.
+   */
   async recordPaymentConfirmation(bookingId, confirmationDetails = {}) {
     const booking = await this.repo.getBookingById(bookingId);
     if (!booking) {
       throw new NotFoundError('Booking', bookingId);
     }
-    booking.recordPaymentConfirmation(confirmationDetails);
+    try {
+      booking.recordPaymentConfirmation(confirmationDetails);
+    } catch (err) {
+      // Lifecycle violations (already paid, cancelled) are client conflicts,
+      // not unhandled server faults leaking a stack trace as a 500.
+      throw new ConflictError(err.message);
+    }
     await this.repo.updatePaymentStatus(booking.id, booking.payment);
-    return booking.toJSON();
+    const ticket = await this.repo.markBookingConfirmed(booking.id, booking);
+    return { ...booking.toJSON(), ticket: ticket ? ticket.toJSON() : null };
   }
 
   async getUserBookings(userId, status = 'all') {
