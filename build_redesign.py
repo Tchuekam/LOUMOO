@@ -40917,21 +40917,47 @@ class Component extends DCLogic {
       updateHotelGuestName: (e) => this.setState({ hotelGuestName: e && e.target ? e.target.value : e }),
       updateHotelGuestPhone: (e) => this.setState({ hotelGuestPhone: e && e.target ? e.target.value : e }),
 
+      hotelSubmitting: this.state.hotelSubmitting,
+      hotelSubmitError: this.state.hotelSubmitError,
+
       hotelBookingSummary: (() => {
-        const h = HOTELS_DATA[this.state.hotelSelectedId] || HOTELS_DATA.krystal_palace;
-        const ri = Math.min(this.state.hotelRoomIndex || 0, h.rooms.length - 1);
+        const h = this.state.hotelDetailData;
+        const rooms = this.state.hotelRooms || [];
+        const room = rooms.find((r) => r.id === this.state.hotelSelectedRoomId) || rooms[0] || null;
+        if (!h || !room) {
+          return {
+            hotelName: '', area: '', image: '', roomName: '', roomFeatures: '',
+            nights: 0, nightsLabel: '', guests: this.state.hotelGuests || 2,
+            checkInLabel: '', checkOutLabel: '', perNightLabel: '', subtotalLabel: '',
+            escrowLabel: '', totalLabel: '', cancellationLabel: '', payLabel: 'Reserve'
+          };
+        }
         const nights = this._hotelNights(this.state.hotelCheckIn, this.state.hotelCheckOut);
-        const room = h.rooms[ri];
-        const subtotal = room.price * nights;
-        const escrow = 3000;
+        // Every figure below is the server's. The old screen added a flat
+        // 3 000 XAF "escrow" the server knew nothing about, so the total the
+        // traveller approved was never the total the server would charge.
+        const q = room.stayQuote || null;
         return {
-          hotelName: h.name, area: h.area, image: encImg(h.image),
-          roomName: room.name, roomFeatures: room.features,
-          nights: nights, nightsLabel: nights + (nights === 1 ? ' night' : ' nights'), guests: this.state.hotelGuests || 2,
-          checkInLabel: this._hotelDateLabel(this.state.hotelCheckIn), checkOutLabel: this._hotelDateLabel(this.state.hotelCheckOut),
-          perNightLabel: 'XAF ' + fmt(room.price), subtotalLabel: 'XAF ' + fmt(subtotal),
-          escrowLabel: 'XAF ' + fmt(escrow), totalLabel: 'XAF ' + fmt(subtotal + escrow),
-          payLabel: 'Confirm & Pay XAF ' + fmt(subtotal + escrow) + ' with MoMo'
+          hotelName: h.name,
+          area: h.location || h.city || '',
+          image: encImg((h.images && h.images[0]) || ''),
+          roomName: room.name,
+          roomFeatures: (room.amenities || []).slice(0, 3).join(' · ') || room.description || '',
+          nights: nights,
+          nightsLabel: nights + (nights === 1 ? ' night' : ' nights'),
+          guests: this.state.hotelGuests || 2,
+          checkInLabel: this._hotelDateLabel(this.state.hotelCheckIn),
+          checkOutLabel: this._hotelDateLabel(this.state.hotelCheckOut),
+          perNightLabel: 'XAF ' + fmt(room.price),
+          subtotalLabel: q ? ('XAF ' + fmt(q.subtotal)) : '',
+          escrowLabel: q ? ('XAF ' + fmt(q.serviceFee)) : '',
+          totalLabel: q ? ('XAF ' + fmt(q.totalAmount)) : '',
+          cancellationLabel: room.cancellationPolicy === 'NON_REFUNDABLE'
+            ? 'Non-refundable'
+            : (room.cancellationPolicy === 'MODERATE_48H' ? 'Free cancellation up to 48h before check-in' : 'Free cancellation up to 24h before check-in'),
+          payLabel: this.state.hotelSubmitting
+            ? 'Reserving…'
+            : (q ? ('Reserve for XAF ' + fmt(q.totalAmount)) : 'Reserve')
         };
       })(),
 
