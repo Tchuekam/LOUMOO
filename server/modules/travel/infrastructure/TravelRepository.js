@@ -188,11 +188,28 @@ class TravelRepository {
   }
 
   // --- HOTELS & ROOMS ---
+
+  /**
+   * Folds case and strips diacritics so a search matches the way Cameroonian
+   * users actually type. Half the country's city names carry accents
+   * (Yaoundé, Limbé, Bafoussam's neighbours) and phone keyboards routinely
+   * omit them; a plain toLowerCase() made "yaounde" match nothing at all.
+   */
+  static _foldText(value) {
+    return String(value || '')
+      .normalize('NFD')
+      .replace(/[̀-ͯ]/g, '')
+      .toLowerCase()
+      .trim();
+  }
   async getHotels(filters = {}) {
     let list = Array.from(this.hotels.values());
     if (filters.city) {
-      const c = filters.city.toLowerCase();
-      list = list.filter(h => h.city.toLowerCase().includes(c) || h.location.toLowerCase().includes(c));
+      const c = TravelRepository._foldText(filters.city);
+      list = list.filter(h =>
+        TravelRepository._foldText(h.city).includes(c) ||
+        TravelRepository._foldText(h.location).includes(c)
+      );
     }
     if (filters.rating) {
       list = list.filter(h => h.rating >= Number(filters.rating));
