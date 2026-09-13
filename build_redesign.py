@@ -38973,6 +38973,21 @@ class Component extends DCLogic {
     // ampersands (e.g. "telephone&PC"), which break the URL and 404 the image.
     // Encode them defensively (already-encoded %20 is left untouched).
     const encImg = (u) => u ? String(u).replace(/ /g, '%20').replace(/&/g, '%26') : '';
+
+    // Maps a hotel as the API returns it onto the card the template renders.
+    // Only fields the server actually sends are shown — there is no review
+    // corpus behind a "312 reviews" label, so no such label is produced.
+    const hotelCard = (h) => ({
+      id: h.id,
+      name: h.name || '',
+      area: h.location || h.city || '',
+      star: h.starLabel || '',
+      ratingLabel: h.rating ? ('★ ' + h.rating) : '',
+      image: encImg((h.images && h.images[0]) || ''),
+      priceLabel: 'XAF ' + fmt(h.priceFrom || 0)
+    });
+    const hotelCards = (list) => (Array.isArray(list) ? list : []).map(hotelCard);
+
     // Real cart totals derived from the line items in the bag.
     const cartList = this.state.cartItems || [];
     const cartSubtotal = cartList.reduce((a, it) => a + (Number(it.priceXaf) || 0) * (Number(it.qty) || 1), 0);
