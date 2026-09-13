@@ -84,6 +84,12 @@
   --color-success: #00c853;
   --color-success-hover: #00b34a;
   --color-success-100: #e6f9ed;
+  /* Error states across travel/hotel screens referenced --color-danger, which
+     was never defined: the declaration was dropped and the message rendered in
+     the inherited body colour, reading as ordinary copy rather than a failure. */
+  --color-danger: #d92d20;
+  --color-danger-hover: #b42318;
+  --color-danger-100: #fee4e2;
   --color-momo-yellow: #ffcc00;
   --color-momo-hover: #f0c000;
   --color-om-orange: #ff6600;
@@ -1033,6 +1039,8 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   --color-neutral-100: #0f1118; --color-neutral-200: #1a1e28; --color-neutral-300: #272d3c;
   --color-neutral-400: #4b5262; --color-neutral-500: #6e7687; --color-neutral-600: #9da4b2;
   --color-neutral-700: #cbd1db; --color-neutral-800: #e4e7ec; --color-neutral-900: #ffffff;
+  /* Lifted so failure text keeps AA contrast on the dark surface. */
+  --color-danger: #ff6b63; --color-danger-hover: #ff8a83; --color-danger-100: #2a1412;
 }
 [data-theme="dark"] body, [data-theme="dark"] .device-frame { background: #090a0f; }
 [data-theme="dark"] .product-card { background: var(--color-surface); border-color: var(--color-divider); }
@@ -9191,96 +9199,21 @@ function getClerk() {
 // Curated hospitality inventory — the single source of truth for the hotel
 // vertical (search → detail → booking → voucher). Each hotel carries its own
 // rooms so the selection is coherent end to end (no hardcoded mismatches).
-const HOTELS_DATA = {
-  krystal_palace: {
-    id: 'krystal_palace', name: 'Krystal Palace Hotel', city: 'douala',
-    area: 'Boulevard de la Liberté, Akwa · Douala', star: '5-Star Luxury', rating: 4.9, reviews: 312,
-    image: './Assets/Travel&Hotel/Krystal%20Palace%20Hotel%20Douala.jfif',
-    tagline: 'Panoramic port views, a Clarins spa and fine dining in the heart of Akwa.',
-    amenities: ['Infinity pool', 'Clarins spa', 'Airport shuttle', 'Free Wi-Fi', 'Fine dining', '24/7 room service'],
-    rooms: [
-      { name: 'Executive Harbor View Suite', features: '1 King bed · Skyline balcony · Breakfast included', price: 145000, strike: 165000 },
-      { name: 'Deluxe Business Room', features: '1 Queen bed · City view · Breakfast included', price: 98000, strike: 120000 }
-    ]
-  },
-  golden_haven: {
-    id: 'golden_haven', name: 'Golden Haven Retreat', city: 'douala',
-    area: 'Bonapriso · Douala', star: 'Boutique Luxury', rating: 4.8, reviews: 176,
-    image: './Assets/Travel&Hotel/Golden%20Haven%20Retreat%20_%20Warm%20Luxury%20Hotel%20Bedroom%20Design%20with%20Modern%20Organic%20Elegance.jfif',
-    tagline: 'Warm, organic luxury bedrooms with a quiet garden courtyard.',
-    amenities: ['Rooftop bar', 'Spa & sauna', 'Free Wi-Fi', 'Breakfast buffet', 'Airport shuttle', 'Gym'],
-    rooms: [
-      { name: 'Organic Luxury Suite', features: '1 King bed · Lounge area · Breakfast included', price: 68000, strike: 82000 },
-      { name: 'Garden Deluxe Room', features: '1 Queen bed · Garden view · Breakfast included', price: 52000, strike: 60000 }
-    ]
-  },
-  phare_kribi: {
-    id: 'phare_kribi', name: 'Hôtel du Phare', city: 'kribi',
-    area: 'Atlantic Shore · Kribi', star: 'Oceanfront', rating: 4.8, reviews: 204,
-    image: './Assets/Travel&Hotel/Hotel%20du%20Phare%20(Kribi%2C%20Cameroun)%20_%20tarifs%202019%20mis%E2%80%A6.jfif',
-    tagline: 'Steps from the sand, with sunset terraces over the Atlantic.',
-    amenities: ['Private beach', 'Seafood restaurant', 'Free Wi-Fi', 'Terrace bar', 'Airport transfer', 'Breakfast included'],
-    rooms: [
-      { name: 'Ocean Deluxe King Room', features: '1 King bed · Sea-view balcony · Breakfast included', price: 65000, strike: 78000 },
-      { name: 'Coastal Twin Room', features: '2 Twin beds · Partial sea view · Breakfast included', price: 45000, strike: 52000 }
-    ]
-  },
-  jully_kribi: {
-    id: 'jully_kribi', name: 'Résidence JULLY', city: 'kribi',
-    area: 'Lobé Waterfalls Coast · Kribi', star: 'Seaside Villa', rating: 4.7, reviews: 138,
-    image: './Assets/Travel&Hotel/Residence%20JULLY%20Kribi.jfif',
-    tagline: 'A serene seaside villa near the Lobé Falls, made for slow mornings.',
-    amenities: ['Beach access', 'Outdoor pool', 'Free Wi-Fi', 'Kitchenette', 'Free parking', 'Breakfast included'],
-    rooms: [
-      { name: 'Villa Suite', features: '1 King bed · Private terrace · Kitchenette', price: 58000, strike: 68000 },
-      { name: 'Garden Studio', features: '1 Queen bed · Garden view · Kitchenette', price: 38000, strike: 44000 }
-    ]
-  },
-  gites_kribi: {
-    id: 'gites_kribi', name: 'Les Gîtes de Kribi', city: 'kribi',
-    area: 'Plage Tara · Kribi', star: 'Beach Lodge', rating: 4.6, reviews: 96,
-    image: './Assets/Travel&Hotel/lesgitesdekribi.jfif',
-    tagline: 'Relaxed beach cabins on Plage Tara with fresh grilled fish nightly.',
-    amenities: ['Beachfront', 'Restaurant', 'Free Wi-Fi', 'Free parking', 'Bar', 'Breakfast included'],
-    rooms: [
-      { name: 'Beach Cabin Deluxe', features: '1 King bed · Beachfront terrace', price: 42000, strike: 50000 },
-      { name: 'Standard Cabin', features: '1 Queen bed · Garden path', price: 32000, strike: 38000 }
-    ]
-  },
-  kribi_oceanfront: {
-    id: 'kribi_oceanfront', name: 'Kribi Oceanfront Lodge', city: 'kribi',
-    area: 'Boulevard de la Plage · Kribi', star: 'Oceanfront', rating: 4.5, reviews: 112,
-    image: './Assets/Travel&Hotel/Kribi%20Hotel.jfif',
-    tagline: 'A modern lodge on the beach boulevard, minutes from the port.',
-    amenities: ['Sea view', 'Pool', 'Free Wi-Fi', 'Restaurant', 'Airport transfer', 'Breakfast included'],
-    rooms: [
-      { name: 'Panorama Sea Room', features: '1 King bed · Full sea view · Breakfast included', price: 52000, strike: 60000 },
-      { name: 'City Comfort Room', features: '1 Queen bed · Boulevard view', price: 42000, strike: 48000 }
-    ]
-  },
-  bastos_suites: {
-    id: 'bastos_suites', name: 'Bastos Panoramic Suites', city: 'yaounde',
-    area: 'Bastos · Yaoundé', star: 'Business Luxury', rating: 4.7, reviews: 154,
-    image: './Assets/Travel&Hotel/Yaounde%2C%20Cameroon.jfif',
-    tagline: 'Elevated suites over the diplomatic quarter with skyline views.',
-    amenities: ['Rooftop pool', 'Business lounge', 'Free Wi-Fi', 'Gym', 'Airport shuttle', 'Breakfast included'],
-    rooms: [
-      { name: 'Panoramic Executive Suite', features: '1 King bed · Skyline lounge · Breakfast included', price: 55000, strike: 66000 },
-      { name: 'Diplomat Deluxe Room', features: '1 Queen bed · City view · Breakfast included', price: 44000, strike: 50000 }
-    ]
-  },
-  relais_maroua: {
-    id: 'relais_maroua', name: 'Hôtel Le Relais', city: 'maroua',
-    area: 'Maroua Central · Far North', star: 'Comfort Stay', rating: 4.6, reviews: 88,
-    image: './Assets/Travel&Hotel/Hotel%20le%20relais%20-%20Nord%20Cameroun.jfif',
-    tagline: 'A calm courtyard hotel with Sahelian charm in central Maroua.',
-    amenities: ['Courtyard pool', 'Restaurant', 'Free Wi-Fi', 'Free parking', 'Airport transfer', 'Breakfast included'],
-    rooms: [
-      { name: 'Courtyard Suite', features: '1 King bed · Courtyard view · Breakfast included', price: 38000, strike: 45000 },
-      { name: 'Standard Room', features: '1 Queen bed · Garden view', price: 28000, strike: 33000 }
-    ]
-  }
-};
+/**
+ * ISO date (YYYY-MM-DD) N days from today, in the viewer's local calendar.
+ * Default stay dates must be computed, never written as literals — a literal
+ * date quietly turns into a past date and the server rejects the search.
+ */
+function isoDaysFromToday(days) {
+  const d = new Date();
+  d.setDate(d.getDate() + (Number(days) || 0));
+  const pad = (n) => (n < 10 ? '0' + n : String(n));
+  return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+}
+
+// The hotel catalog is served by the API (GET /travel/hotels) and is
+// deliberately NOT bundled here: a local copy drifts from the server's real
+// inventory and prices, and lets the UI advertise rooms that cannot be booked.
 
 const PRODUCTS_DATA = {
   "phone_tecno_tecno_camon_50_pro_5g_256gb_12gb_": {
@@ -38080,15 +38013,35 @@ class Component extends DCLogic {
     payoutMethod: 'mtn',
     payoutPhone: '690 12 34 56',
     payoutAmount: '500 000',
-    hotelCity: 'kribi',
-    hotelSelectedId: 'krystal_palace',
+    hotelCity: '',
+    hotelSelectedId: '',
     hotelRoomIndex: 0,
-    hotelCheckIn: '2026-10-15',
-    hotelCheckOut: '2026-10-18',
+    // Dates are derived from today, never hardcoded: a literal date silently
+    // becomes a PAST date as time passes, and the server rejects those.
+    hotelCheckIn: isoDaysFromToday(1),
+    hotelCheckOut: isoDaysFromToday(4),
     hotelGuests: 2,
     hotelGuestName: 'Rostand Tchuekam',
     hotelGuestPhone: '+237 690 12 34 56',
     hotelReservation: null,
+
+    // ── Hotel catalog, served by the backend (GET /travel/hotels) ──
+    // The catalog is NOT held in the bundle: a local copy drifts from the
+    // server's real inventory and prices, and lets the UI advertise rooms
+    // that cannot actually be booked.
+    hotelList: [],
+    hotelListLoading: false,
+    hotelListError: '',
+    hotelListLoaded: false,
+    hotelDetailData: null,
+    hotelDetailLoading: false,
+    hotelDetailError: '',
+    hotelRooms: [],
+    hotelRoomsLoading: false,
+    hotelRoomsError: '',
+    hotelSelectedRoomId: '',
+    hotelSubmitting: false,
+    hotelSubmitError: '',
 
     // ── Travel & Mobility Ecosystem State ──
     travelServiceTab: 'bus',
@@ -39658,6 +39611,96 @@ class Component extends DCLogic {
     });
   }
 
+  // ── Hotels ────────────────────────────────────────────────────────────────
+  // Every hotel screen reads from the server. The server owns inventory and
+  // price; a bundled catalog would let the UI show rooms that are sold out or
+  // priced differently, and a booking built from it is refused on submit.
+
+  loadHotels(city) {
+    const api = getApi();
+    if (!api || !api.getTravelHotels) {
+      this.setState({ hotelListError: 'Hotel search is temporarily unavailable.', hotelListLoading: false });
+      return Promise.resolve();
+    }
+    const params = {};
+    const q = (city !== undefined ? city : this.state.hotelCity) || '';
+    if (q) params.city = q;
+    this.setState({ hotelListLoading: true, hotelListError: '' });
+    return api.getTravelHotels(params).then((res) => {
+      if (this._unmounted) return;
+      const items = (res && res.items) || (res && res.data) || (Array.isArray(res) ? res : []);
+      this.setState({
+        hotelList: Array.isArray(items) ? items : [],
+        hotelListLoading: false,
+        hotelListLoaded: true
+      });
+    }).catch((err) => {
+      if (this._unmounted) return;
+      this.setState({
+        hotelListLoading: false,
+        hotelListLoaded: true,
+        hotelListError: (err && err.message) || 'Could not load hotels. Check your connection and try again.'
+      });
+    });
+  }
+
+  loadHotelDetail(hotelId) {
+    if (!hotelId) return Promise.resolve();
+    const api = getApi();
+    if (!api || !api.getTravelHotel) return Promise.resolve();
+    this.setState({ hotelDetailLoading: true, hotelDetailError: '' });
+    return api.getTravelHotel(hotelId).then((res) => {
+      if (this._unmounted) return;
+      const hotel = (res && res.data) || res || null;
+      this.setState({ hotelDetailData: hotel, hotelDetailLoading: false });
+      return this.loadHotelRooms(hotelId);
+    }).catch((err) => {
+      if (this._unmounted) return;
+      this.setState({
+        hotelDetailLoading: false,
+        hotelDetailError: (err && err.message) || 'Could not load this hotel.'
+      });
+    });
+  }
+
+  /**
+   * Rooms are re-fetched whenever the stay changes, because the server prices
+   * the stay (nights * rate + fees) and returns it as `stayQuote`. The client
+   * never computes the total it shows.
+   */
+  loadHotelRooms(hotelId) {
+    const id = hotelId || this.state.hotelSelectedId;
+    if (!id) return Promise.resolve();
+    const api = getApi();
+    if (!api || !api.getTravelHotelRooms) return Promise.resolve();
+    const params = {
+      checkIn: this.state.hotelCheckIn,
+      checkOut: this.state.hotelCheckOut,
+      guests: this.state.hotelGuests || 2
+    };
+    this.setState({ hotelRoomsLoading: true, hotelRoomsError: '' });
+    return api.getTravelHotelRooms(id, params).then((res) => {
+      if (this._unmounted) return;
+      const items = (res && res.items) || (res && res.data) || (Array.isArray(res) ? res : []);
+      const rooms = Array.isArray(items) ? items : [];
+      // Keep the traveller's chosen room if the new dates still offer it.
+      const keep = rooms.some((r) => r.id === this.state.hotelSelectedRoomId);
+      const firstFree = rooms.find((r) => r.availableInventory > 0);
+      this.setState({
+        hotelRooms: rooms,
+        hotelRoomsLoading: false,
+        hotelSelectedRoomId: keep ? this.state.hotelSelectedRoomId : ((firstFree && firstFree.id) || (rooms[0] && rooms[0].id) || '')
+      });
+    }).catch((err) => {
+      if (this._unmounted) return;
+      this.setState({
+        hotelRooms: [],
+        hotelRoomsLoading: false,
+        hotelRoomsError: (err && err.message) || 'Could not load rooms for these dates.'
+      });
+    });
+  }
+
   selectBusSchedule(bus) {
     if (!bus) return;
     const isSame = this.state.selectedBusSchedule && this.state.selectedBusSchedule.id === bus.id;
@@ -39716,6 +39759,26 @@ class Component extends DCLogic {
 
   selectTravelResult(result) {
     if (!result) return;
+
+    // A stay is not a journey. Unified search returns hotels alongside buses
+    // and flights, and sending one to the transit detail screen framed it with
+    // "Departure Hub", "Transit Duration" and a boarding pass — then tried to
+    // book it as a transport service, without the hotelId/roomId/dates the
+    // server requires, so it could only ever fail. Hotels go to the hotel flow.
+    if (result.type === 'hotel' && result.id) {
+      this.setState({
+        hotelSelectedId: result.id,
+        hotelRoomIndex: 0,
+        hotelSelectedRoomId: '',
+        hotelDetailData: null,
+        hotelRooms: [],
+        hotelSubmitError: ''
+      });
+      this.go('hotelDetail');
+      this.loadHotelDetail(result.id);
+      return;
+    }
+
     this.setState({
       selectedTravelResult: result,
       travelFrom: result.origin || this.state.travelFrom,
@@ -41611,6 +41674,21 @@ class Component extends DCLogic {
     // ampersands (e.g. "telephone&PC"), which break the URL and 404 the image.
     // Encode them defensively (already-encoded %20 is left untouched).
     const encImg = (u) => u ? String(u).replace(/ /g, '%20').replace(/&/g, '%26') : '';
+
+    // Maps a hotel as the API returns it onto the card the template renders.
+    // Only fields the server actually sends are shown — there is no review
+    // corpus behind a "312 reviews" label, so no such label is produced.
+    const hotelCard = (h) => ({
+      id: h.id,
+      name: h.name || '',
+      area: h.location || h.city || '',
+      star: h.starLabel || '',
+      ratingLabel: h.rating ? ('★ ' + h.rating) : '',
+      image: encImg((h.images && h.images[0]) || ''),
+      priceLabel: 'XAF ' + fmt(h.priceFrom || 0)
+    });
+    const hotelCards = (list) => (Array.isArray(list) ? list : []).map(hotelCard);
+
     // Real cart totals derived from the line items in the bag.
     const cartList = this.state.cartItems || [];
     const cartSubtotal = cartList.reduce((a, it) => a + (Number(it.priceXaf) || 0) * (Number(it.qty) || 1), 0);
@@ -43387,35 +43465,58 @@ class Component extends DCLogic {
         this.go('seller');
       },
       todayIso: new Date().toISOString().slice(0, 10),
-      openHotelSearch: () => this.go('hotelSearch'),
+      openHotelSearch: () => {
+        this.go('hotelSearch');
+        if (!this.state.hotelListLoaded && !this.state.hotelListLoading) this.loadHotels();
+      },
       hotelCity: this.state.hotelCity,
-      updateHotelCity: (e) => this.setState({ hotelCity: e && e.target ? e.target.value : e }),
+      updateHotelCity: (e) => {
+        const val = e && e.target ? e.target.value : e;
+        this.setState({ hotelCity: val });
+        this.loadHotels(val);
+      },
+      retryHotelList: () => this.loadHotels(),
+      hotelListLoading: this.state.hotelListLoading,
+      hotelListError: this.state.hotelListError,
+      // An empty result is a real answer ("no hotels in that city"), not an
+      // error, and it must not be shown while the request is still running.
+      hotelListEmpty: this.state.hotelListLoaded
+        && !this.state.hotelListLoading
+        && !this.state.hotelListError
+        && this.state.hotelList.length === 0,
 
-      // Data-driven search cards — every card opens its own hotel (was: all
-      // eight cards hardcoded to open Krystal Palace).
-      hotelPopularCards: (() => {
-        const map = (h) => ({ id: h.id, name: h.name, area: h.area, star: h.star, ratingLabel: '★ ' + h.rating, reviews: h.reviews, image: encImg(h.image), priceLabel: 'XAF ' + fmt(Math.min.apply(null, h.rooms.map((r) => r.price))) });
-        return Object.keys(HOTELS_DATA).map((k) => HOTELS_DATA[k]).sort((a, b) => b.rating - a.rating).map(map);
-      })(),
-      hotelAllCards: (() => {
-        const city = this.state.hotelCity || '';
-        const map = (h) => ({ id: h.id, name: h.name, area: h.area, star: h.star, ratingLabel: '★ ' + h.rating, reviews: h.reviews, image: encImg(h.image), priceLabel: 'XAF ' + fmt(Math.min.apply(null, h.rooms.map((r) => r.price))) });
-        const all = Object.keys(HOTELS_DATA).map((k) => HOTELS_DATA[k]);
-        const inCity = all.filter((h) => h.city === city);
-        return (inCity.length ? inCity : all).map(map);
-      })(),
+      hotelPopularCards: hotelCards(
+        this.state.hotelList.slice().sort((a, b) => (b.rating || 0) - (a.rating || 0))
+      ),
+      hotelAllCards: hotelCards(this.state.hotelList),
 
       openHotelDetail: (id) => {
-        const hid = (typeof id === 'string' && HOTELS_DATA[id]) ? id : (this.state.hotelSelectedId || 'krystal_palace');
-        this.setState({ hotelSelectedId: hid, hotelRoomIndex: 0 });
+        const hid = (typeof id === 'string' && id) ? id : this.state.hotelSelectedId;
+        if (!hid) return;
+        this.setState({
+          hotelSelectedId: hid,
+          hotelRoomIndex: 0,
+          hotelSelectedRoomId: '',
+          hotelDetailData: null,
+          hotelRooms: [],
+          hotelSubmitError: ''
+        });
         this.go('hotelDetail');
+        this.loadHotelDetail(hid);
       },
       selectHotelRoom: (idx) => this.setState({ hotelRoomIndex: Number(idx) || 0 }),
       hotelCheckIn: this.state.hotelCheckIn,
       hotelCheckOut: this.state.hotelCheckOut,
+      // Changing the stay changes both the price and what is still available,
+      // so every edit re-asks the server rather than re-doing the maths here.
       updateHotelCheckIn: (e) => {
         const val = e && e.target ? e.target.value : e;
-        const updates = { hotelCheckIn: val };
+        if (!val) return;
+        if (val < isoDaysFromToday(0)) {
+          this.toast('Check-in cannot be in the past');
+          return;
+        }
+        const updates = { hotelCheckIn: val, hotelSubmitError: '' };
         if (this.state.hotelCheckOut && val >= this.state.hotelCheckOut) {
           try {
             const d = new Date(val + 'T00:00:00');
@@ -43423,34 +43524,80 @@ class Component extends DCLogic {
             updates.hotelCheckOut = d.toISOString().slice(0, 10);
           } catch (_) {}
         }
-        this.setState(updates);
+        this.setState(updates, () => this.loadHotelRooms());
       },
       updateHotelCheckOut: (e) => {
         const val = e && e.target ? e.target.value : e;
+        if (!val) return;
         if (this.state.hotelCheckIn && val <= this.state.hotelCheckIn) {
           this.toast('Check-out date must be after check-in date');
           return;
         }
-        this.setState({ hotelCheckOut: val });
+        this.setState({ hotelCheckOut: val, hotelSubmitError: '' }, () => this.loadHotelRooms());
       },
       hotelGuests: this.state.hotelGuests || 2,
-      incHotelGuests: () => this.setState((s) => ({ hotelGuests: Math.min(9, (s.hotelGuests || 2) + 1) })),
-      decHotelGuests: () => this.setState((s) => ({ hotelGuests: Math.max(1, (s.hotelGuests || 2) - 1) })),
+      incHotelGuests: () => this.setState(
+        (s) => ({ hotelGuests: Math.min(9, (s.hotelGuests || 2) + 1) }),
+        () => this.loadHotelRooms()
+      ),
+      decHotelGuests: () => this.setState(
+        (s) => ({ hotelGuests: Math.max(1, (s.hotelGuests || 2) - 1) }),
+        () => this.loadHotelRooms()
+      ),
+
+      hotelDetailLoading: this.state.hotelDetailLoading || this.state.hotelRoomsLoading,
+      hotelDetailError: this.state.hotelDetailError || this.state.hotelRoomsError,
+      retryHotelDetail: () => this.loadHotelDetail(this.state.hotelSelectedId),
+      selectHotelRoomId: (roomId) => this.setState({ hotelSelectedRoomId: roomId, hotelSubmitError: '' }),
 
       hotelDetailCard: (() => {
-        const h = HOTELS_DATA[this.state.hotelSelectedId] || HOTELS_DATA.krystal_palace;
-        const ri = Math.min(this.state.hotelRoomIndex || 0, h.rooms.length - 1);
+        const h = this.state.hotelDetailData;
+        // The template dereferences this object every render, including the
+        // first one before the fetch resolves — so it is never null.
+        if (!h) {
+          return {
+            id: '', name: '', area: '', star: '', ratingLabel: '', image: '', tagline: '',
+            amenities: [], rooms: [], hasRooms: false,
+            nights: 0, nightsLabel: '', checkInLabel: '', checkOutLabel: '',
+            guests: this.state.hotelGuests || 2, totalLabel: ''
+          };
+        }
+        const rooms = this.state.hotelRooms || [];
+        const sel = rooms.find((r) => r.id === this.state.hotelSelectedRoomId) || rooms[0] || null;
         const nights = this._hotelNights(this.state.hotelCheckIn, this.state.hotelCheckOut);
+        // `stayQuote` is the server's own arithmetic for this stay. The client
+        // shows what the server will charge, and never recomputes it.
+        const quote = sel && sel.stayQuote ? sel.stayQuote : null;
         return {
-          id: h.id, name: h.name, area: h.area, star: h.star,
-          ratingLabel: '★ ' + h.rating, reviews: h.reviews, image: encImg(h.image), tagline: h.tagline,
-          amenities: h.amenities.map((a) => ({ label: a })),
-          rooms: h.rooms.map((r, i) => ({ index: i, name: r.name, features: r.features, priceLabel: 'XAF ' + fmt(r.price), strikeLabel: r.strike ? ('XAF ' + fmt(r.strike)) : '', selected: i === ri })),
-          nights: nights, nightsLabel: nights + (nights === 1 ? ' night' : ' nights'),
+          id: h.id,
+          name: h.name || '',
+          area: h.location || h.city || '',
+          star: h.starLabel || '',
+          ratingLabel: h.rating ? ('★ ' + h.rating) : '',
+          image: encImg((h.images && h.images[0]) || ''),
+          tagline: h.description || '',
+          amenities: (h.amenities || []).map((a) => ({ label: a })),
+          rooms: rooms.map((r, i) => ({
+            index: i,
+            id: r.id,
+            name: r.name,
+            features: (r.amenities || []).slice(0, 3).join(' · ') || r.description || '',
+            priceLabel: 'XAF ' + fmt(r.price),
+            strikeLabel: '',
+            soldOut: !(r.availableInventory > 0),
+            availabilityLabel: r.availableInventory > 0
+              ? (r.availableInventory <= 3 ? ('Only ' + r.availableInventory + ' left') : 'Available')
+              : 'Sold out',
+            capacityLabel: r.capacity ? ('Sleeps ' + r.capacity) : '',
+            selected: sel ? r.id === sel.id : false
+          })),
+          hasRooms: rooms.length > 0,
+          nights: nights,
+          nightsLabel: nights + (nights === 1 ? ' night' : ' nights'),
           checkInLabel: this._hotelDateLabel(this.state.hotelCheckIn),
           checkOutLabel: this._hotelDateLabel(this.state.hotelCheckOut),
           guests: this.state.hotelGuests || 2,
-          totalLabel: 'XAF ' + fmt(h.rooms[ri].price * nights)
+          totalLabel: quote ? ('XAF ' + fmt(quote.totalAmount)) : ''
         };
       })(),
 
@@ -43471,106 +43618,189 @@ class Component extends DCLogic {
       updateHotelGuestName: (e) => this.setState({ hotelGuestName: e && e.target ? e.target.value : e }),
       updateHotelGuestPhone: (e) => this.setState({ hotelGuestPhone: e && e.target ? e.target.value : e }),
 
+      hotelSubmitting: this.state.hotelSubmitting,
+      hotelSubmitError: this.state.hotelSubmitError,
+
       hotelBookingSummary: (() => {
-        const h = HOTELS_DATA[this.state.hotelSelectedId] || HOTELS_DATA.krystal_palace;
-        const ri = Math.min(this.state.hotelRoomIndex || 0, h.rooms.length - 1);
+        const h = this.state.hotelDetailData;
+        const rooms = this.state.hotelRooms || [];
+        const room = rooms.find((r) => r.id === this.state.hotelSelectedRoomId) || rooms[0] || null;
+        if (!h || !room) {
+          return {
+            hotelName: '', area: '', image: '', roomName: '', roomFeatures: '',
+            nights: 0, nightsLabel: '', guests: this.state.hotelGuests || 2,
+            checkInLabel: '', checkOutLabel: '', perNightLabel: '', subtotalLabel: '',
+            escrowLabel: '', totalLabel: '', cancellationLabel: '', payLabel: 'Reserve'
+          };
+        }
         const nights = this._hotelNights(this.state.hotelCheckIn, this.state.hotelCheckOut);
-        const room = h.rooms[ri];
-        const subtotal = room.price * nights;
-        const escrow = 3000;
+        // Every figure below is the server's. The old screen added a flat
+        // 3 000 XAF "escrow" the server knew nothing about, so the total the
+        // traveller approved was never the total the server would charge.
+        const q = room.stayQuote || null;
         return {
-          hotelName: h.name, area: h.area, image: encImg(h.image),
-          roomName: room.name, roomFeatures: room.features,
-          nights: nights, nightsLabel: nights + (nights === 1 ? ' night' : ' nights'), guests: this.state.hotelGuests || 2,
-          checkInLabel: this._hotelDateLabel(this.state.hotelCheckIn), checkOutLabel: this._hotelDateLabel(this.state.hotelCheckOut),
-          perNightLabel: 'XAF ' + fmt(room.price), subtotalLabel: 'XAF ' + fmt(subtotal),
-          escrowLabel: 'XAF ' + fmt(escrow), totalLabel: 'XAF ' + fmt(subtotal + escrow),
-          payLabel: 'Confirm & Pay XAF ' + fmt(subtotal + escrow) + ' with MoMo'
+          hotelName: h.name,
+          area: h.location || h.city || '',
+          image: encImg((h.images && h.images[0]) || ''),
+          roomName: room.name,
+          roomFeatures: (room.amenities || []).slice(0, 3).join(' · ') || room.description || '',
+          nights: nights,
+          nightsLabel: nights + (nights === 1 ? ' night' : ' nights'),
+          guests: this.state.hotelGuests || 2,
+          checkInLabel: this._hotelDateLabel(this.state.hotelCheckIn),
+          checkOutLabel: this._hotelDateLabel(this.state.hotelCheckOut),
+          perNightLabel: 'XAF ' + fmt(room.price),
+          subtotalLabel: q ? ('XAF ' + fmt(q.subtotal)) : '',
+          escrowLabel: q ? ('XAF ' + fmt(q.serviceFee)) : '',
+          totalLabel: q ? ('XAF ' + fmt(q.totalAmount)) : '',
+          cancellationLabel: room.cancellationPolicy === 'NON_REFUNDABLE'
+            ? 'Non-refundable'
+            : (room.cancellationPolicy === 'MODERATE_48H' ? 'Free cancellation up to 48h before check-in' : 'Free cancellation up to 24h before check-in'),
+          payLabel: this.state.hotelSubmitting
+            ? 'Reserving…'
+            : (q ? ('Reserve for XAF ' + fmt(q.totalAmount)) : 'Reserve')
         };
       })(),
 
+      /**
+       * Creates the reservation on the server and only then shows a voucher.
+       *
+       * The previous version wrote a CONFIRMED trip with a client-invented
+       * reference, toasted "Reservation confirmed" and navigated to the
+       * voucher BEFORE calling the API — then swallowed every error with an
+       * empty catch. A traveller whose booking the server refused (no
+       * availability, dates in the past, room too small) still saw a confirmed
+       * voucher for a reservation that did not exist, and would arrive at the
+       * hotel with nothing behind it. Nothing is shown now until the server
+       * has actually created the booking, and failures are surfaced.
+       */
       submitHotelReservation: () => {
-        const h = HOTELS_DATA[this.state.hotelSelectedId] || HOTELS_DATA.krystal_palace;
-        const ri = Math.min(this.state.hotelRoomIndex || 0, h.rooms.length - 1);
-        const room = h.rooms[ri];
+        if (this.state.hotelSubmitting) return;
+
+        const h = this.state.hotelDetailData;
+        const rooms = this.state.hotelRooms || [];
+        const room = rooms.find((r) => r.id === this.state.hotelSelectedRoomId) || rooms[0] || null;
+        if (!h || !room) {
+          this.setState({ hotelSubmitError: 'Select a room before reserving.' });
+          return;
+        }
+
+        const guestName = (this.state.hotelGuestName || '').trim();
+        const guestPhone = (this.state.hotelGuestPhone || '').trim();
+        if (!guestName) {
+          this.setState({ hotelSubmitError: 'Enter the name of the lead guest.' });
+          return;
+        }
+        if (!guestPhone) {
+          this.setState({ hotelSubmitError: 'Enter a phone number so the hotel can reach you.' });
+          return;
+        }
+
+        const api = getApi();
+        if (!api || !api.createTravelBooking) {
+          this.setState({ hotelSubmitError: 'Booking is temporarily unavailable. Please try again shortly.' });
+          return;
+        }
+
         const nights = this._hotelNights(this.state.hotelCheckIn, this.state.hotelCheckOut);
-        const guestName = this.state.hotelGuestName || 'Guest';
-        const guestPhone = this.state.hotelGuestPhone || '+237 690 12 34 56';
-        const total = room.price * nights + 3000;
-        const pnrRef = 'LM-HTL-' + Math.floor(100000 + Math.random() * 900000);
-        const trip = {
-          reference: pnrRef,
-          type: 'hotel', passenger: guestName, phone: guestPhone,
-          hotelId: h.id, hotelName: h.name, area: h.area, image: h.image,
-          roomType: room.name, roomFeatures: room.features,
-          checkIn: this.state.hotelCheckIn, checkOut: this.state.hotelCheckOut,
-          nights: nights, guests: this.state.hotelGuests || 2,
-          amount: total, currency: 'XAF', status: 'CONFIRMED', createdAt: Date.now()
-        };
-        const trips = [trip].concat(this.state.trips || []);
-        this.setState({ trips, lastTrip: trip });
-        this._persistTrips(trips);
+        this.setState({ hotelSubmitting: true, hotelSubmitError: '' });
 
-        // Transactional backend booking creation & payment
-        try {
-          const api = getApi();
-          if (api && api.createTravelBooking) {
-            api.createTravelBooking({
-              type: 'hotel',
-              hotelId: h.id,
-              roomId: room.id || ri,
-              checkIn: this.state.hotelCheckIn,
-              checkOut: this.state.hotelCheckOut,
-              roomsCount: 1,
-              guests: this.state.hotelGuests || 2,
-              paymentMethod: 'mtn_momo',
-              passengers: [{ name: guestName, phone: guestPhone }]
-            }).then((res) => {
-              if (this._unmounted || !res) return;
-              const booking = res.booking || (res.data && res.data.booking) || res.data || res;
-              const ref = booking.bookingReference || booking.reference || pnrRef;
-              const bookingId = booking.id;
-
-              // Immediately confirm payment via backend
-              if (bookingId && api.payTravelBooking) {
-                api.payTravelBooking(bookingId, {
-                  paymentMethod: 'mtn_momo',
-                  provider: 'mtn_momo',
-                  phoneNumber: guestPhone
-                }).catch(() => {});
-              }
-
-              const updatedTrip = Object.assign({}, trip, {
-                reference: ref,
-                bookingId: bookingId,
-                qr: booking.qrCodePayload || `LMT:${ref}:${bookingId}`,
-                status: 'CONFIRMED'
-              });
-              const l2 = (this.state.trips || []).map(t => t.createdAt === trip.createdAt ? updatedTrip : t);
-              this.setState({ trips: l2, lastTrip: updatedTrip });
-              this._persistTrips(l2);
-            }).catch(() => {});
+        api.createTravelBooking({
+          type: 'hotel',
+          hotelId: h.id,
+          roomId: room.id,
+          checkIn: this.state.hotelCheckIn,
+          checkOut: this.state.hotelCheckOut,
+          roomsCount: 1,
+          guests: this.state.hotelGuests || 2,
+          passengers: [{ name: guestName, phone: guestPhone }]
+        }).then((res) => {
+          if (this._unmounted) return;
+          const booking = (res && res.booking) || (res && res.data && res.data.booking) || (res && res.data) || res;
+          if (!booking || !booking.id) {
+            this.setState({ hotelSubmitting: false, hotelSubmitError: 'The reservation could not be created. Please try again.' });
+            return;
           }
-        } catch (e) {}
 
-        try { if (typeof this._pushNotif === 'function') this._pushNotif({ tone: 'success', title: 'Reservation confirmed', body: h.name + ' · ' + room.name + ' · ' + nights + (nights === 1 ? ' night' : ' nights') }); } catch (e) {}
-        this.toast('Reservation confirmed at ' + h.name);
-        this.go('hotelVoucher');
+          const q = room.stayQuote || null;
+          const trip = {
+            reference: booking.bookingReference || booking.reference || '',
+            bookingId: booking.id,
+            type: 'hotel',
+            passenger: guestName,
+            phone: guestPhone,
+            hotelId: h.id,
+            hotelName: h.name,
+            area: h.location || h.city || '',
+            image: (h.images && h.images[0]) || '',
+            roomType: room.name,
+            roomFeatures: (room.amenities || []).slice(0, 3).join(' · '),
+            checkIn: this.state.hotelCheckIn,
+            checkOut: this.state.hotelCheckOut,
+            nights: nights,
+            guests: this.state.hotelGuests || 2,
+            amount: (booking.pricing && booking.pricing.totalAmount) || (q && q.totalAmount) || 0,
+            currency: 'XAF',
+            // The server decides the status. A reservation is held PENDING
+            // until payment is attested; it is not a confirmed stay yet.
+            status: booking.status || 'PENDING',
+            paymentStatus: (booking.payment && booking.payment.status) || 'PENDING',
+            qr: booking.qrCodePayload || '',
+            createdAt: Date.now()
+          };
+
+          const trips = [trip].concat(this.state.trips || []);
+          this.setState({ trips, lastTrip: trip, hotelSubmitting: false });
+          this._persistTrips(trips);
+
+          try {
+            if (typeof this._pushNotif === 'function') {
+              this._pushNotif({
+                tone: 'success',
+                title: 'Reservation held',
+                body: h.name + ' · ' + room.name + ' · ' + nights + (nights === 1 ? ' night' : ' nights')
+              });
+            }
+          } catch (e) {}
+          this.toast('Reservation held at ' + h.name);
+          this.go('hotelVoucher');
+          // Availability moved; refresh so the next traveller sees the truth.
+          this.loadHotelRooms(h.id);
+        }).catch((err) => {
+          if (this._unmounted) return;
+          this.setState({
+            hotelSubmitting: false,
+            hotelSubmitError: (err && err.message) || 'The reservation could not be created. Please try again.'
+          });
+        });
       },
       hotelVoucher: (() => {
         const t = this.state.lastTrip || {};
-        const h = HOTELS_DATA[t.hotelId] || null;
+        const isPaid = t.paymentStatus === 'PAID';
+        const isConfirmed = t.status === 'CONFIRMED';
         return {
-          ref: t.reference || 'LM-HTL-000000',
-          hotelName: t.hotelName || (h && h.name) || 'Your hotel',
-          area: t.area || (h && h.area) || '',
-          image: encImg(t.image || (h && h.image) || ''),
-          roomType: t.roomType || 'Room', roomFeatures: t.roomFeatures || '',
-          checkInLabel: this._hotelDateLabel(t.checkIn), checkOutLabel: this._hotelDateLabel(t.checkOut),
-          nights: t.nights || 1, nightsLabel: (t.nights || 1) + ((t.nights || 1) === 1 ? ' night' : ' nights'),
-          guests: t.guests || 1, guestName: t.passenger || 'Guest',
+          ref: t.reference || '',
+          hotelName: t.hotelName || 'Your hotel',
+          area: t.area || '',
+          image: encImg(t.image || ''),
+          roomType: t.roomType || 'Room',
+          roomFeatures: t.roomFeatures || '',
+          checkInLabel: this._hotelDateLabel(t.checkIn),
+          checkOutLabel: this._hotelDateLabel(t.checkOut),
+          nights: t.nights || 1,
+          nightsLabel: (t.nights || 1) + ((t.nights || 1) === 1 ? ' night' : ' nights'),
+          guests: t.guests || 1,
+          guestName: t.passenger || 'Guest',
           totalLabel: 'XAF ' + fmt(t.amount || 0),
-          isHotel: t.type === 'hotel'
+          isHotel: t.type === 'hotel',
+          // The voucher states what the reservation actually is. Presenting a
+          // held, unpaid booking as "confirmed" sends travellers to a hotel
+          // that has taken no money and owes them no room.
+          statusLabel: isConfirmed && isPaid ? 'Confirmed' : 'Held — payment required',
+          isConfirmed: isConfirmed && isPaid,
+          statusNote: isConfirmed && isPaid
+            ? 'Show this voucher at reception on arrival.'
+            : 'Your room is held. The reservation is confirmed once payment is completed.'
         };
       })(),
       downloadHotelVoucher: () => this.toast('Voucher saved to My Trips'),

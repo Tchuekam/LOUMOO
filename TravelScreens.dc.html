@@ -176,7 +176,7 @@
         <h3 style="margin:0 0 10px;font-size:15px;font-weight:800;color:var(--color-text)">Live travel inventory</h3>
         <div style="display:flex;flex-direction:column;gap:10px">
           <sc-for list="{{ travelLandingItems }}" as="item">
-            <div onClick="{{ selectTravelResult(item) }}" class="card-premium" style="padding:14px;display:flex;justify-content:space-between;align-items:center;gap:12px;cursor:pointer">
+            <div onClick="{{ () => selectTravelResult(item) }}" class="card-premium" style="padding:14px;display:flex;justify-content:space-between;align-items:center;gap:12px;cursor:pointer">
               <div><div style="font:800 13px/1.2 var(--font-heading)">{{ item.provider }}</div><div style="font:500 11px/1.2 var(--font-body);color:var(--color-text-secondary);margin-top:4px">{{ item.origin }} → {{ item.destination }} · {{ item.type }}</div></div>
               <div style="font:800 14px/1 var(--font-heading);color:var(--color-accent);white-space:nowrap">{{ item.currency }} {{ item.price }}</div>
             </div>
@@ -513,7 +513,7 @@
                 <!-- Dynamic Seat Selection Grid -->
                 <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:10px;max-width:380px;margin-bottom:16px;background:var(--color-surface-subtle);padding:16px;border-radius:var(--radius-md);border:1px solid var(--color-border-subtle)">
                   <sc-for list="{{ activeSeatsList }}" as="seat">
-                    <button onClick="{{ selectBusSeat(seat) }}" class="tag {{ seat.isSelected ? 'tag-accent' : (seat.isAvailable ? 'tag-neutral' : '') }}" style="height:40px;font-weight:800;border-radius:var(--radius-sm);cursor:{{ seat.isAvailable ? 'pointer' : 'not-allowed' }};opacity:{{ seat.isAvailable ? '1' : '0.35' }};background:{{ !seat.isAvailable ? 'rgba(0,0,0,0.08)' : '' }}" {{ !seat.isAvailable ? 'disabled' : '' }}>
+                    <button onClick="{{ () => selectBusSeat(seat) }}" class="tag {{ seat.isSelected ? 'tag-accent' : (seat.isAvailable ? 'tag-neutral' : '') }}" style="height:40px;font-weight:800;border-radius:var(--radius-sm);cursor:{{ seat.isAvailable ? 'pointer' : 'not-allowed' }};opacity:{{ seat.isAvailable ? '1' : '0.35' }};background:{{ !seat.isAvailable ? 'rgba(0,0,0,0.08)' : '' }}" {{ !seat.isAvailable ? 'disabled' : '' }}>
                       {{ seat.seatNumber }} ({{ seat.isWindow ? 'Window' : (seat.isAisle ? 'Aisle' : 'Solo') }}) {{ seat.isSelected ? '✓' : (!seat.isAvailable ? '(Taken)' : '') }}
                     </button>
                   </sc-for>
@@ -528,7 +528,7 @@
                       <span style="color:var(--color-text-muted)">Please select an available seat above</span>
                     </sc-if>
                   </span>
-                  <button onClick="{{ continueWithBusSeat(bus) }}" class="btn btn-primary" style="height:44px;padding:0 24px;font-size:13.5px;font-weight:800;border-radius:var(--radius-pill);box-shadow:var(--shadow-glow-blue)">
+                  <button onClick="{{ () => continueWithBusSeat(bus) }}" class="btn btn-primary" style="height:44px;padding:0 24px;font-size:13.5px;font-weight:800;border-radius:var(--radius-pill);box-shadow:var(--shadow-glow-blue)">
                     Continue with Seat <span>→</span>
                   </button>
                 </div>
@@ -537,7 +537,7 @@
             <sc-if value="{{ !bus.isSelectedSchedule }}">
               <div style="border-top:1px solid var(--color-divider);padding-top:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
                 <span style="font:500 12px/1 var(--font-body);color:var(--color-text-secondary)">Direct Operator Route · Real-time Seat Map</span>
-                <button onClick="{{ selectBusSchedule(bus) }}" class="btn btn-secondary" style="height:38px;padding:0 18px;font-size:12.5px;font-weight:800;border-radius:var(--radius-pill)">
+                <button onClick="{{ () => selectBusSchedule(bus) }}" class="btn btn-secondary" style="height:38px;padding:0 18px;font-size:12.5px;font-weight:800;border-radius:var(--radius-pill)">
                   Select Seats &amp; Reserve <span>↓</span>
                 </button>
               </div>
@@ -586,7 +586,7 @@
         </sc-if>
         <sc-if value="{{ travelSearchDone && !travelSearchLoading && !travelSearchError && travelSearchResults.length }}">
           <sc-for list="{{ travelSearchResults }}" as="result">
-            <div onClick="{{ selectTravelResult(result) }}" class="card-premium" style="cursor:pointer;padding:22px;border-radius:var(--radius-lg);box-shadow:var(--shadow-sm)">
+            <div onClick="{{ () => selectTravelResult(result) }}" class="card-premium" style="cursor:pointer;padding:22px;border-radius:var(--radius-lg);box-shadow:var(--shadow-sm)">
               <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
                 <div>
                   <div style="font:800 15px/1 var(--font-heading);color:var(--color-text)">{{ result.provider }}</div>
