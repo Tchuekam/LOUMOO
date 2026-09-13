@@ -40764,28 +40764,44 @@ class Component extends DCLogic {
         this.go('seller');
       },
       todayIso: new Date().toISOString().slice(0, 10),
-      openHotelSearch: () => this.go('hotelSearch'),
+      openHotelSearch: () => {
+        this.go('hotelSearch');
+        if (!this.state.hotelListLoaded && !this.state.hotelListLoading) this.loadHotels();
+      },
       hotelCity: this.state.hotelCity,
-      updateHotelCity: (e) => this.setState({ hotelCity: e && e.target ? e.target.value : e }),
+      updateHotelCity: (e) => {
+        const val = e && e.target ? e.target.value : e;
+        this.setState({ hotelCity: val });
+        this.loadHotels(val);
+      },
+      retryHotelList: () => this.loadHotels(),
+      hotelListLoading: this.state.hotelListLoading,
+      hotelListError: this.state.hotelListError,
+      // An empty result is a real answer ("no hotels in that city"), not an
+      // error, and it must not be shown while the request is still running.
+      hotelListEmpty: this.state.hotelListLoaded
+        && !this.state.hotelListLoading
+        && !this.state.hotelListError
+        && this.state.hotelList.length === 0,
 
-      // Data-driven search cards — every card opens its own hotel (was: all
-      // eight cards hardcoded to open Krystal Palace).
-      hotelPopularCards: (() => {
-        const map = (h) => ({ id: h.id, name: h.name, area: h.area, star: h.star, ratingLabel: '★ ' + h.rating, reviews: h.reviews, image: encImg(h.image), priceLabel: 'XAF ' + fmt(Math.min.apply(null, h.rooms.map((r) => r.price))) });
-        return Object.keys(HOTELS_DATA).map((k) => HOTELS_DATA[k]).sort((a, b) => b.rating - a.rating).map(map);
-      })(),
-      hotelAllCards: (() => {
-        const city = this.state.hotelCity || '';
-        const map = (h) => ({ id: h.id, name: h.name, area: h.area, star: h.star, ratingLabel: '★ ' + h.rating, reviews: h.reviews, image: encImg(h.image), priceLabel: 'XAF ' + fmt(Math.min.apply(null, h.rooms.map((r) => r.price))) });
-        const all = Object.keys(HOTELS_DATA).map((k) => HOTELS_DATA[k]);
-        const inCity = all.filter((h) => h.city === city);
-        return (inCity.length ? inCity : all).map(map);
-      })(),
+      hotelPopularCards: hotelCards(
+        this.state.hotelList.slice().sort((a, b) => (b.rating || 0) - (a.rating || 0))
+      ),
+      hotelAllCards: hotelCards(this.state.hotelList),
 
       openHotelDetail: (id) => {
-        const hid = (typeof id === 'string' && HOTELS_DATA[id]) ? id : (this.state.hotelSelectedId || 'krystal_palace');
-        this.setState({ hotelSelectedId: hid, hotelRoomIndex: 0 });
+        const hid = (typeof id === 'string' && id) ? id : this.state.hotelSelectedId;
+        if (!hid) return;
+        this.setState({
+          hotelSelectedId: hid,
+          hotelRoomIndex: 0,
+          hotelSelectedRoomId: '',
+          hotelDetailData: null,
+          hotelRooms: [],
+          hotelSubmitError: ''
+        });
         this.go('hotelDetail');
+        this.loadHotelDetail(hid);
       },
       selectHotelRoom: (idx) => this.setState({ hotelRoomIndex: Number(idx) || 0 }),
       hotelCheckIn: this.state.hotelCheckIn,
