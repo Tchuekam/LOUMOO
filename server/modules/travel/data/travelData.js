@@ -790,7 +790,7 @@ const travelData = {
       currency: 'XAF',
       amenities: ['Free High-Speed Wi-Fi', 'Rooftop Infinity Pool', 'Spa & Hammam', 'Fitness Centre', 'Airport Shuttle', 'Fine Dining Restaurant', '24/7 Room Service', 'Business Lounge'],
       images: [
-        'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=700&auto=format&fit=crop&q=80',
+        './Assets/Travel&Hotel/Krystal Palace Hotel Douala.jfif',
         'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=700&auto=format&fit=crop&q=80',
         'https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=700&auto=format&fit=crop&q=80'
       ],
