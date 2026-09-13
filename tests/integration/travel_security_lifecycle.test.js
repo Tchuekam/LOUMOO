@@ -141,7 +141,9 @@ async function run() {
   }
 
   // 2.2 Public bus seat map must expose only availability, never passenger names
-  const seatMap = seatService.getSeatMap(testBusServiceId);
+  // getSeatMap is async: it now reconciles occupancy against Redis and the
+  // durable store before rendering, instead of trusting stale in-memory state.
+  const seatMap = await seatService.getSeatMap(testBusServiceId);
   assert.ok(seatMap.seatLayout && seatMap.seatLayout.length > 0);
   for (const row of seatMap.seatLayout) {
     const seats = Array.isArray(row.seats) ? row.seats : (Array.isArray(row) ? row : []);

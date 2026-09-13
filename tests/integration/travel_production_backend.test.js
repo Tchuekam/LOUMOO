@@ -73,7 +73,7 @@ async function run() {
   console.log('═══════════════════════════════════════════════════════════\n');
 
   // Reset test seat inventory to prevent collisions with prior test runs
-  await seatInventoryService.releaseSeats('bus-sch-1', ['6A', '6C']);
+  await seatInventoryService.releaseSeats('bus-sch-1', ['6A', '6C', '7A'], { reclaimHeldBookings: true });
 
   // Provision verified test users
   const primaryUser = await createUser({ stage: 'ready', suffix: 'prodTrv1' });
@@ -188,8 +188,12 @@ async function run() {
   assert.ok(createdBusBooking.id, 'Booking ID generated');
   assert.strictEqual(createdBusBooking.userId, primaryUser.id, 'Booking userId must equal authenticated principal');
   assert.ok(createdBusBooking.bookingReference.startsWith('LMT-BUS-'), 'Booking reference generated');
-  assert.strictEqual(createdBusBooking.status, 'CONFIRMED');
-  
+  // A new reservation is held as PENDING. It is only promoted to CONFIRMED once
+  // a settlement is attested by the payment provider — creating it as CONFIRMED
+  // meant an unpaid booking presented as a paid, ticketed one.
+  assert.strictEqual(createdBusBooking.status, 'PENDING');
+  assert.strictEqual(createdBusBooking.payment.status, 'PENDING_PAYMENT');
+
   // Verify server OVERRODE fake client price with real service price
   assert.ok(
     createdBusBooking.pricing.totalAmount >= 6000,
@@ -342,10 +346,24 @@ async function run() {
     'Rival user must not see primary user trips'
   );
 
+  // Tickets follow payment, not booking creation. Settle both reservations so
+  // there are travel documents to query.
+  process.env.LOUMOO_ALLOW_SIMULATED_PAYMENTS = 'true';
+  const { paymentVerificationService } = require('../../server/modules/travel/application/PaymentVerificationService');
+  paymentVerificationService.simulationEnabled = true;
+  for (const bkg of [createdBusBooking, createdHotelBooking]) {
+    const pr = await makeRequest('POST', `/api/travel/bookings/${bkg.id}/pay`, {
+      provider: 'mtn_momo',
+      transactionRef: `MOMO-BACKEND-${bkg.id.slice(-8)}-${Date.now()}`
+    }, primaryAuth);
+    assert.strictEqual(pr.status, 200, `Payment must succeed for ${bkg.id}`);
+    assert.strictEqual(pr.body.data.status, 'CONFIRMED', 'Paid booking must become CONFIRMED');
+  }
+
   // Query tickets for primary user
   const ticketsRes = await makeRequest('GET', '/api/travel/tickets', null, primaryAuth);
   assert.strictEqual(ticketsRes.status, 200);
-  assert.ok(ticketsRes.body.items.length >= 2, 'Tickets issued for bookings');
+  assert.ok(ticketsRes.body.items.length >= 2, 'Tickets issued for paid bookings');
 
   const busTicket = ticketsRes.body.items.find(t => t.bookingId === createdBusBooking.id);
   assert.ok(busTicket, 'Digital ticket issued for bus booking');

@@ -60,7 +60,25 @@ async function run() {
     const result1 = await bookingEngine1.createBooking(createPayload, { user: userA });
     assert.ok(result1.booking.id, 'Booking ID must be generated');
     assert.ok(result1.trip.id, 'Trip must be generated');
-    assert.ok(result1.ticket.ticketNumber, 'Ticket must be generated');
+
+    // A ticket is a boarding entitlement and is NOT issued until payment is
+    // attested — issuing one alongside an unpaid booking handed out free,
+    // scannable travel documents. The reservation starts PENDING.
+    assert.strictEqual(result1.ticket, null, 'No ticket may exist before payment');
+    assert.strictEqual(result1.booking.status, 'PENDING', 'Unpaid booking must be PENDING');
+
+    // Settle the booking so there is a durable ticket to test recovery against.
+    process.env.LOUMOO_ALLOW_SIMULATED_PAYMENTS = 'true';
+    const { paymentVerificationService } = require('../../server/modules/travel/application/PaymentVerificationService');
+    paymentVerificationService.simulationEnabled = true;
+    const settled = await travelService.confirmPayment(result1.booking.id, {
+      provider: 'mtn_momo',
+      transactionRef: `MOMO-DURABLE-${Date.now()}`
+    });
+    assert.strictEqual(settled.status, 'CONFIRMED', 'Paid booking must be CONFIRMED');
+    assert.ok(settled.ticket && settled.ticket.ticketNumber, 'Ticket must be issued on payment');
+    result1.ticket = settled.ticket;
+
     testIdsToClean.push(result1.booking.id);
 
     console.log(`    Created booking ${result1.booking.id} (${result1.booking.reference}) for ${userA.fullName}`);

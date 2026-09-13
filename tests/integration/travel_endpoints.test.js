@@ -66,7 +66,7 @@ async function run() {
   console.log('  Testing Travel REST API endpoints, public discovery & authorization boundaries...');
 
   // Reset test seat inventory to prevent collisions with prior test runs
-  await seatInventoryService.releaseSeats('bus-sch-1', ['4A']);
+  await seatInventoryService.releaseSeats('bus-sch-1', ['4A', '1B'], { reclaimHeldBookings: true });
 
   // ==========================================================================
   // 1. PUBLIC DISCOVERY ENDPOINTS (UNAUTHENTICATED ACCESS ALLOWED)
@@ -190,7 +190,8 @@ async function run() {
   assert.ok(createdBooking.id);
   assert.strictEqual(createdBooking.userId, userA.id, 'Booking must be strictly bound to authenticated User A');
   assert.ok(createdBooking.reference.startsWith('LMT-BUS-'));
-  assert.strictEqual(createdBooking.status, 'CONFIRMED');
+  // Unpaid reservations are PENDING until a provider-attested settlement.
+  assert.strictEqual(createdBooking.status, 'PENDING');
 
   // User A checks my-trips
   const myTripsRes = await makeRequest('GET', '/api/v1/travel/bookings/my-trips', null, authA);
@@ -209,10 +210,22 @@ async function run() {
   assert.strictEqual(userATrips.status, 200);
   assert.ok(userATrips.body.items.some(t => t.bookingId === createdBooking.id));
 
+  // Tickets are boarding entitlements and are only issued once payment is
+  // attested, so settle the reservation before expecting one to exist.
+  process.env.LOUMOO_ALLOW_SIMULATED_PAYMENTS = 'true';
+  const { paymentVerificationService } = require('../../server/modules/travel/application/PaymentVerificationService');
+  paymentVerificationService.simulationEnabled = true;
+  const payRes = await makeRequest('POST', `/api/v1/travel/bookings/${createdBooking.id}/pay`, {
+    provider: 'mtn_momo',
+    transactionRef: `MOMO-ENDPOINTS-${Date.now()}`
+  }, authA);
+  assert.strictEqual(payRes.status, 200, 'Payment confirmation must succeed for the owner');
+  assert.strictEqual(payRes.body.data.status, 'CONFIRMED', 'Paid booking must become CONFIRMED');
+
   const userATickets = await makeRequest('GET', '/api/v1/travel/tickets', null, authA);
   assert.strictEqual(userATickets.status, 200);
   const ticketA = userATickets.body.items.find(t => t.bookingId === createdBooking.id);
-  assert.ok(ticketA, 'Ticket created for User A');
+  assert.ok(ticketA, 'Ticket issued for User A after payment');
 
   // ==========================================================================
   // 4. CROSS-USER ISOLATION & ANTI-ENUMERATION (USER B CANNOT ACCESS USER A)
