@@ -9,6 +9,17 @@
         "dev"
       ],
       "port": 8080
+    },
+    {
+      "name": "dev-verify",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "server/index.js"
+      ],
+      "env": {
+        "PORT": "8099"
+      },
+      "port": 8099
     }
   ]
 }
