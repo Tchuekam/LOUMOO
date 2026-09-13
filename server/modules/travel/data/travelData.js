@@ -702,6 +702,76 @@ const travelData = {
       verificationStatus: 'VERIFIED'
     },
     {
+      id: 'prv-goldenhaven',
+      name: 'Golden Haven Retreat',
+      type: 'hotel',
+      logo: '🏨',
+      description: 'Boutique garden retreat in Bonapriso with organic interiors and a rooftop bar',
+      contact: { phone: '+237 233 42 71 10', email: 'stay@goldenhaven.cm', address: 'Rue Njo-Njo, Bonapriso, Douala' },
+      rating: 4.8,
+      verificationStatus: 'VERIFIED'
+    },
+    {
+      id: 'prv-phare',
+      name: 'Hôtel du Phare',
+      type: 'hotel',
+      logo: '🌊',
+      description: 'Oceanfront hotel on the Kribi shore with sunset terraces and a seafood kitchen',
+      contact: { phone: '+237 233 46 15 30', email: 'reservation@hotelduphare.cm', address: 'Atlantic Shore, Kribi' },
+      rating: 4.8,
+      verificationStatus: 'VERIFIED'
+    },
+    {
+      id: 'prv-jully',
+      name: 'Résidence JULLY',
+      type: 'hotel',
+      logo: '🌴',
+      description: 'Seaside villa residence near the Lobé Falls with kitchenette suites',
+      contact: { phone: '+237 677 84 22 019', email: 'contact@residencejully.cm', address: 'Lobé Waterfalls Coast, Kribi' },
+      rating: 4.7,
+      verificationStatus: 'VERIFIED'
+    },
+    {
+      id: 'prv-gites',
+      name: 'Les Gîtes de Kribi',
+      type: 'hotel',
+      logo: '🏖️',
+      description: 'Beach cabins on Plage Tara with a nightly grilled-fish restaurant',
+      contact: { phone: '+237 699 31 07 44', email: 'bonjour@gitesdekribi.cm', address: 'Plage Tara, Kribi' },
+      rating: 4.6,
+      verificationStatus: 'VERIFIED'
+    },
+    {
+      id: 'prv-oceanfront',
+      name: 'Kribi Oceanfront Lodge',
+      type: 'hotel',
+      logo: '🌊',
+      description: 'Modern beach-boulevard lodge minutes from the Kribi deep-water port',
+      contact: { phone: '+237 233 46 20 88', email: 'stay@kribioceanfront.cm', address: 'Boulevard de la Plage, Kribi' },
+      rating: 4.5,
+      verificationStatus: 'VERIFIED'
+    },
+    {
+      id: 'prv-bastos',
+      name: 'Bastos Panoramic Suites',
+      type: 'hotel',
+      logo: '🏙️',
+      description: 'Business suites above the Yaoundé diplomatic quarter with a rooftop pool',
+      contact: { phone: '+237 222 21 44 90', email: 'reservation@bastossuites.cm', address: 'Bastos, Yaoundé' },
+      rating: 4.7,
+      verificationStatus: 'VERIFIED'
+    },
+    {
+      id: 'prv-relais',
+      name: 'Hôtel Le Relais',
+      type: 'hotel',
+      logo: '🏜️',
+      description: 'Courtyard hotel with Sahelian character in central Maroua, Far North',
+      contact: { phone: '+237 222 29 13 05', email: 'accueil@lerelaismaroua.cm', address: 'Maroua Central, Far North' },
+      rating: 4.6,
+      verificationStatus: 'VERIFIED'
+    },
+    {
       id: 'prv-zingana',
       name: 'Hôtel Zingana',
       type: 'hotel',
