@@ -6431,6 +6431,18 @@ function getClerk() {
 // Curated hospitality inventory — the single source of truth for the hotel
 // vertical (search → detail → booking → voucher). Each hotel carries its own
 // rooms so the selection is coherent end to end (no hardcoded mismatches).
+/**
+ * ISO date (YYYY-MM-DD) N days from today, in the viewer's local calendar.
+ * Default stay dates must be computed, never written as literals — a literal
+ * date quietly turns into a past date and the server rejects the search.
+ */
+function isoDaysFromToday(days) {
+  const d = new Date();
+  d.setDate(d.getDate() + (Number(days) || 0));
+  const pad = (n) => (n < 10 ? '0' + n : String(n));
+  return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+}
+
 const HOTELS_DATA = {
   krystal_palace: {
     id: 'krystal_palace', name: 'Krystal Palace Hotel', city: 'douala',
@@ -35320,15 +35332,35 @@ class Component extends DCLogic {
     payoutMethod: 'mtn',
     payoutPhone: '690 12 34 56',
     payoutAmount: '500 000',
-    hotelCity: 'kribi',
-    hotelSelectedId: 'krystal_palace',
+    hotelCity: '',
+    hotelSelectedId: '',
     hotelRoomIndex: 0,
-    hotelCheckIn: '2026-10-15',
-    hotelCheckOut: '2026-10-18',
+    // Dates are derived from today, never hardcoded: a literal date silently
+    // becomes a PAST date as time passes, and the server rejects those.
+    hotelCheckIn: isoDaysFromToday(1),
+    hotelCheckOut: isoDaysFromToday(4),
     hotelGuests: 2,
     hotelGuestName: 'Rostand Tchuekam',
     hotelGuestPhone: '+237 690 12 34 56',
     hotelReservation: null,
+
+    // ── Hotel catalog, served by the backend (GET /travel/hotels) ──
+    // The catalog is NOT held in the bundle: a local copy drifts from the
+    // server's real inventory and prices, and lets the UI advertise rooms
+    // that cannot actually be booked.
+    hotelList: [],
+    hotelListLoading: false,
+    hotelListError: '',
+    hotelListLoaded: false,
+    hotelDetailData: null,
+    hotelDetailLoading: false,
+    hotelDetailError: '',
+    hotelRooms: [],
+    hotelRoomsLoading: false,
+    hotelRoomsError: '',
+    hotelSelectedRoomId: '',
+    hotelSubmitting: false,
+    hotelSubmitError: '',
 
     // ── Travel & Mobility Ecosystem State ──
     travelServiceTab: 'bus',
