@@ -50,6 +50,8 @@ class CatalogRepository {
     search,
     storeId,
     brand,
+    city,
+    verified,
     page = 1,
     limit = 20,
     sortBy = 'recent'
@@ -179,13 +181,27 @@ class CatalogRepository {
       dbTotal = 0;
     }
 
+    // Marketplace refinement filters (city + verified store). Both live on the
+    // hydrated card (merchantCity / verified), so they are applied uniformly to
+    // DB and curated items rather than in SQL — keeping the two sources
+    // consistent. After a JS filter the DB `count` no longer reflects the result
+    // set, so treat the filtered page as the authoritative DB total.
+    const wantVerified = verified === true || verified === 'true' || verified === '1';
+    const cityMatch = CatalogRepository._cityMatcher(city);
+    if (cityMatch || wantVerified) {
+      dbItems = dbItems.filter((it) =>
+        (!cityMatch || cityMatch(it.merchantCity)) &&
+        (!wantVerified || it.verified === true));
+      dbTotal = dbItems.length;
+    }
+
     // Fill from the curated storefront catalogue. Real seller listings always
     // take precedence; curated products fill the remainder of the page so the
     // marketplace is never empty while inventory is still being onboarded.
     let items = dbItems;
     let total = dbTotal;
     if (dbItems.length < limitNum) {
-      let curated = this._filterCurated(this._curatedCards(), { category, vertical, search, brand, storeId });
+      let curated = this._filterCurated(this._curatedCards(), { category, vertical, search, brand, storeId, city, verified });
       curated = this._sortCurated(curated, sortBy);
       const seen = new Set(dbItems.map(i => i.id));
       curated = curated.filter(c => !seen.has(c.id));
@@ -387,6 +403,26 @@ class CatalogRepository {
     };
   }
 
+  // Accent- and case-insensitive normaliser (e.g. "Yaoundé" → "yaounde") so a
+  // filter chip with no diacritics still matches stored city names.
+  static _norm(s) {
+    return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').trim().toLowerCase();
+  }
+
+  // Builds a predicate over a card's merchantCity, or null when no city filter
+  // is requested. The "kribi" chip covers the Kribi/Limbe coastal cluster.
+  static _cityMatcher(city) {
+    const c = CatalogRepository._norm(city);
+    if (!c) return null;
+    const accepted = c === 'kribi' ? ['kribi', 'limbe'] : [c];
+    // merchantCity is often "Neighborhood, City" (e.g. "Akwa, Douala"), so match
+    // the city token as a substring rather than requiring an exact equal.
+    return (value) => {
+      const v = CatalogRepository._norm(value);
+      return accepted.some((a) => v.includes(a));
+    };
+  }
+
   // ── Curated storefront catalogue ──────────────────────────────────────────
   // The products the app ships with (src/data/catalog_products.js, generated
   // from PRODUCTS_DATA). They back discovery/search/detail until — and
@@ -486,10 +522,17 @@ class CatalogRepository {
     };
   }
 
-  static _filterCurated(cards, { category, vertical, search, brand, storeId } = {}) {
+  static _filterCurated(cards, { category, vertical, search, brand, storeId, city, verified } = {}) {
     // Curated products have no store id, so a store-scoped query excludes them.
     if (storeId) return [];
     let out = cards;
+    const cityMatch = CatalogRepository._cityMatcher(city);
+    if (cityMatch) {
+      out = out.filter((p) => cityMatch(p.merchantCity));
+    }
+    if (verified === true || verified === 'true' || verified === '1') {
+      out = out.filter((p) => p.verified === true);
+    }
     if (category && category !== 'all') {
       const c = String(category).toLowerCase();
       out = out.filter((p) => String(p.category || '').toLowerCase() === c);
