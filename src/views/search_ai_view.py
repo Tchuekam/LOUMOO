@@ -63,7 +63,7 @@ def get_search_and_ai_view():
 
     <!-- ── RESULTS ─────────────────────────────────────────────── -->
     <sc-if value="{{ searchShowResults }}">
-      <div style="font:800 12px/1 var(--font-heading);letter-spacing:.08em;color:var(--color-text-muted);text-transform:uppercase;margin-bottom:12px">{{ searchResultCount }} results for &ldquo;{{ searchQueryTrimmed }}&rdquo;</div>
+      <div style="font:800 12px/1 var(--font-heading);letter-spacing:.08em;color:var(--color-text-muted);text-transform:uppercase;margin-bottom:12px">{{ searchResultsHeading }}</div>
       <div style="display:flex;flex-direction:column;gap:10px">
         <sc-for list="{{ searchResultCards }}" as="prod">
         <sc-if value="{{ prod && prod.title }}">
@@ -88,8 +88,8 @@ def get_search_and_ai_view():
     <!-- ── NO RESULTS ──────────────────────────────────────────── -->
     <sc-if value="{{ searchShowEmpty }}">
       <div style="text-align:center;padding:48px 24px">
-        <div style="font:700 16px/1.3 var(--font-heading);color:var(--color-text);margin-bottom:8px">No results for &ldquo;{{ searchQueryTrimmed }}&rdquo;</div>
-        <div style="font:400 13px/1.5 var(--font-body);color:var(--color-text-secondary);margin-bottom:18px">Try another search or explore a category.</div>
+        <div style="font:700 16px/1.3 var(--font-heading);color:var(--color-text);margin-bottom:8px">{{ searchEmptyLabel }}</div>
+        <div style="font:400 13px/1.5 var(--font-body);color:var(--color-text-secondary);margin-bottom:18px">Try another search, adjust your filters, or explore a category.</div>
         <button onClick="{{ () => openCategory('all') }}" class="btn btn-secondary" style="height:44px;padding:0 22px;font-size:13px">Browse categories</button>
       </div>
     </sc-if>
@@ -141,7 +141,7 @@ def get_search_and_ai_view():
       </button>
       <h4 style="margin:0;font-size:16px">Filter &amp; Refine Results</h4>
     </div>
-    <button onClick="{{ back }}" style="border:none;background:transparent;color:var(--color-accent);font:700 12.5px/1 var(--font-heading);cursor:pointer">Reset</button>
+    <button onClick="{{ resetFilters }}" style="border:none;background:transparent;color:var(--color-accent);font:700 12.5px/1 var(--font-heading);cursor:pointer">Reset</button>
   </div>
 
   <div style="padding:16px;max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:18px">
@@ -150,30 +150,30 @@ def get_search_and_ai_view():
     <div class="card-premium">
       <div style="font:800 12px/1 var(--font-heading);letter-spacing:.08em;color:var(--color-text-secondary);text-transform:uppercase;margin-bottom:10px">CITY &amp; REGION</div>
       <div style="display:flex;flex-wrap:wrap;gap:8px">
-        <button onClick="{{ pick.catChip.douala }}" class="tag {{ st.catChip.douala.w === '2px' ? 'tag-accent' : 'tag-neutral' }}">Douala</button>
-        <button onClick="{{ pick.catChip.yaounde }}" class="tag {{ st.catChip.yaounde.w === '2px' ? 'tag-accent' : 'tag-neutral' }}">Yaoundé</button>
-        <button onClick="{{ pick.catChip.kribi }}" class="tag {{ st.catChip.kribi.w === '2px' ? 'tag-accent' : 'tag-neutral' }}">Kribi / Limbe</button>
+        <button onClick="{{ () => setFilterCity('douala') }}" class="{{ cityChipClass.douala }}">Douala</button>
+        <button onClick="{{ () => setFilterCity('yaounde') }}" class="{{ cityChipClass.yaounde }}">Yaoundé</button>
+        <button onClick="{{ () => setFilterCity('kribi') }}" class="{{ cityChipClass.kribi }}">Kribi / Limbe</button>
       </div>
     </div>
 
     <!-- Trust & Verification -->
     <div class="card-premium">
       <div style="font:800 12px/1 var(--font-heading);letter-spacing:.08em;color:var(--color-text-secondary);text-transform:uppercase;margin-bottom:10px">BUYER ASSURANCE</div>
-      <div style="display:flex;flex-direction:column;gap:10px">
-        <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer">
-          <span style="font-weight:600;font-size:13px;color:var(--color-text)">Official &amp; Verified Stores Only</span>
-          <input type="checkbox" checked style="accent-color:var(--color-accent);width:18px;height:18px">
-        </label>
-        <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer">
-          <span style="font-weight:600;font-size:13px;color:var(--color-text)">Escrow Protected Listings</span>
-          <input type="checkbox" checked style="accent-color:var(--color-accent);width:18px;height:18px">
-        </label>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <button type="button" role="switch" aria-checked="{{ filterVerifiedOnly ? 'true' : 'false' }}" onClick="{{ toggleVerifiedOnly }}" style="display:flex;align-items:center;justify-content:space-between;width:100%;gap:12px;background:transparent;border:none;padding:0;cursor:pointer">
+          <span style="font-weight:600;font-size:13px;color:var(--color-text);text-align:left">Official &amp; Verified stores only</span>
+          <span aria-hidden="true" style="{{ vfTrackStyle }}"><span style="{{ vfKnobStyle }}"></span></span>
+        </button>
+        <div style="display:flex;align-items:center;gap:8px;font-weight:600;font-size:12.5px;color:var(--color-text-secondary)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--color-success)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+          <span>Every LOUMOO order is escrow-protected</span>
+        </div>
       </div>
     </div>
 
     <!-- Apply CTA -->
-    <button onClick="{{ on.search }}" class="btn btn-primary btn-block" style="height:48px;font-size:14px">
-      SHOW 24 MATCHING RESULTS <span>→</span>
+    <button onClick="{{ applyFilters }}" class="btn btn-primary btn-block" style="height:48px;font-size:14px">
+      Show results <span>→</span>
     </button>
   </div>
 </div>
