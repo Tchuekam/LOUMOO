@@ -9705,6 +9705,9 @@ class Component extends DCLogic {
     searchResults: null,
     searchBusy: false,
     searchError: '',
+    // Marketplace refinement filters (feed the same /products query as search).
+    filterCity: '',            // '' = all cities; else 'douala' | 'yaounde' | 'kribi'
+    filterVerifiedOnly: false, // true = only verified/official stores
 
     // ── Phase F: Universal Publishing Engine ──
     // ONE draft object drives the whole studio (src/services/publishingEngine.js).
@@ -12883,9 +12886,16 @@ class Component extends DCLogic {
   // slow response for an earlier query can never overwrite a newer one.
   _executeSearch(rawQuery) {
     const query = String(rawQuery == null ? '' : rawQuery).trim();
+    // Active refinement filters travel with the query on the same /products call.
+    const params = {};
+    if (this.state.filterCity) params.city = this.state.filterCity;
+    if (this.state.filterVerifiedOnly) params.verified = true;
+    const hasFilter = Object.keys(params).length > 0;
     this._searchSeq = (this._searchSeq || 0) + 1;
     const seq = this._searchSeq;
-    if (query.length < 2) {
+    // Need at least a 2-char query OR an active filter to have anything to run
+    // (a filter with no query is a valid "browse verified stores in Douala").
+    if (query.length < 2 && !hasFilter) {
       this.setState({ searchResults: null, searchBusy: false, searchError: '' });
       return;
     }
@@ -12895,7 +12905,7 @@ class Component extends DCLogic {
     // failures are surfaced by the .catch below, not here.
     if (!api) return;
     this.setState({ searchBusy: true, searchError: '' });
-    api.searchProducts(query)
+    api.searchProducts(query, params)
       .then(res => {
         if (this._unmounted || seq !== this._searchSeq) return;
         // request() unwraps the envelope, so the payload IS { items, total, ... }.
@@ -16640,6 +16650,14 @@ class Component extends DCLogic {
       // A query is "active" once it is long enough to have reached the backend.
       searchActive: (this.state.searchQuery || '').trim().length >= 2,
       searchResultCount: Array.isArray(this.state.searchResults) ? this.state.searchResults.length : 0,
+      // Result-list heading and empty-state copy. Both read naturally whether the
+      // result set came from a text query, an active filter, or both.
+      searchResultsHeading: (Array.isArray(this.state.searchResults) ? this.state.searchResults.length : 0)
+        + (Array.isArray(this.state.searchResults) && this.state.searchResults.length === 1 ? ' result' : ' results')
+        + ((this.state.searchQuery || '').trim() ? (' for “' + (this.state.searchQuery || '').trim() + '”') : ''),
+      searchEmptyLabel: (this.state.searchQuery || '').trim()
+        ? ('No results for “' + (this.state.searchQuery || '').trim() + '”')
+        : 'No results match your filters',
       // Mutually-exclusive view flags so the search screen shows exactly one state.
       searchShowLoading: Boolean(this.state.searchBusy),
       searchShowError: !this.state.searchBusy && !!this.state.searchError,
@@ -16667,8 +16685,15 @@ class Component extends DCLogic {
         // an earlier query is dropped the instant the user types again.
         this._searchSeq = (this._searchSeq || 0) + 1;
         if (String(query).trim().length < 2) {
-          // Clearing (or a 0/1-char query) returns immediately to the default state.
-          this.setState({ searchResults: null, searchBusy: false, searchError: '' });
+          // A short/empty query with an active filter is still a valid browse
+          // ("all verified stores"); otherwise return to the default state.
+          if (this.state.filterCity || this.state.filterVerifiedOnly) {
+            this._searchTimer = setTimeout(() => {
+              if (!this._unmounted) this._executeSearch(query);
+            }, 240);
+          } else {
+            this.setState({ searchResults: null, searchBusy: false, searchError: '' });
+          }
           return;
         }
         this._searchTimer = setTimeout(() => {
@@ -16697,6 +16722,42 @@ class Component extends DCLogic {
         clearTimeout(this._searchTimer);
         this._executeSearch(q);
         this.go('search');
+      },
+
+      // ── Filter drawer (is.filters) — refines the same /products query ──
+      filterCity: this.state.filterCity || '',
+      filterVerifiedOnly: Boolean(this.state.filterVerifiedOnly),
+      hasActiveFilters: Boolean(this.state.filterCity) || Boolean(this.state.filterVerifiedOnly),
+      // Precompute chip classes in JS: the DC template engine does not evaluate
+      // `a === 'literal'` inside {{…}}, so the active state must be resolved here
+      // and interpolated as a ready-made class string.
+      cityChipClass: {
+        douala: 'tag ' + (this.state.filterCity === 'douala' ? 'tag-accent' : 'tag-neutral'),
+        yaounde: 'tag ' + (this.state.filterCity === 'yaounde' ? 'tag-accent' : 'tag-neutral'),
+        kribi: 'tag ' + (this.state.filterCity === 'kribi' ? 'tag-accent' : 'tag-neutral')
+      },
+      // Full inline styles for the verified switch (full-attribute interpolation
+      // is the DC-safe way to make a style depend on state).
+      vfTrackStyle: 'width:42px;height:24px;border-radius:999px;position:relative;flex-shrink:0;transition:background .18s ease;background:'
+        + (this.state.filterVerifiedOnly ? 'var(--color-accent)' : 'var(--color-neutral-300)'),
+      vfKnobStyle: 'position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .18s ease;transform:'
+        + (this.state.filterVerifiedOnly ? 'translateX(18px)' : 'translateX(0)'),
+      // City chip: single-select, tapping the active one clears it (back to all).
+      setFilterCity: (c) => {
+        this.setState({ filterCity: this.state.filterCity === c ? '' : c });
+      },
+      toggleVerifiedOnly: () => {
+        this.setState({ filterVerifiedOnly: !this.state.filterVerifiedOnly });
+      },
+      // Apply: run the current query with the chosen filters and reveal results.
+      applyFilters: () => {
+        clearTimeout(this._searchTimer);
+        this._executeSearch(this.state.searchQuery);
+        this.go('search');
+      },
+      // Reset: clear filters in place (stays on the drawer so chips visibly clear).
+      resetFilters: () => {
+        this.setState({ filterCity: '', filterVerifiedOnly: false });
       },
 
       // Authentication State & Header CTA Reactivity
