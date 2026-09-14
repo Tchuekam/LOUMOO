@@ -133,9 +133,8 @@ const isTest = nodeEnv === 'test';
  * request behavior.
  */
 function parseTrustProxy(rawValue, environment) {
-  const raw = String(rawValue == null
-    ? (environment === 'test' ? '1' : 'false')
-    : rawValue).trim();
+  const defaultVal = (environment === 'test' || environment === 'production') ? '1' : 'false';
+  const raw = String(rawValue == null ? defaultVal : rawValue).trim();
 
   if (!raw || ['false', '0', 'off', 'none'].includes(raw.toLowerCase())) return false;
   if (['true', 'on', 'all'].includes(raw.toLowerCase())) return true;
@@ -160,7 +159,7 @@ const config = {
   corsOrigins: env.CORS_ORIGINS || ['*'],
   proxy: {
     trust: parseTrustProxy(env.TRUST_PROXY, nodeEnv),
-    trustRaw: trustProxyRaw || (isTest ? '1' : 'false'),
+    trustRaw: trustProxyRaw || ((isTest || isProduction) ? '1' : 'false'),
     explicitlyConfigured: Boolean(trustProxyRaw)
   },
 
@@ -292,7 +291,7 @@ function validateProductionConfig() {
   if (!config.proxy.explicitlyConfigured) {
     problems.push({
       variable: 'TRUST_PROXY',
-      reason: 'Not configured; forwarded client metadata is ignored. Set TRUST_PROXY=1 for the Railway ingress hop, or use an exact trusted proxy policy for another deployment.',
+      reason: 'Not explicitly configured; defaulted to 1 (Railway single-hop ingress). For multi-tier proxies or custom CIDRs, set TRUST_PROXY explicitly.',
       severity: 'warning'
     });
   }
