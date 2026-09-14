@@ -85,15 +85,17 @@ router.get('/products/compare/candidates', handleCompareCandidates);
 // GET /api/v1/products
 router.get('/products', async (req, res, next) => {
   try {
-    const { category, search, q, vertical, storeId, brand, sortBy } = req.query;
+    const { category, search, q, vertical, storeId, brand, sortBy, city } = req.query;
     const searchQuery = search || q || '';
+    // Verified-store refinement: any explicit truthy value opts in.
+    const verified = ['1', 'true', 'yes'].includes(String(req.query.verified || '').toLowerCase());
 
     const rawLimit = parseInt(req.query.limit, 10);
     const rawPage = parseInt(req.query.page, 10);
     const limit = Number.isFinite(rawLimit) && rawLimit >= 1 ? Math.min(rawLimit, 100) : 50;
     const page = Number.isFinite(rawPage) && rawPage >= 1 ? rawPage : 1;
 
-    const cacheKey = `catalog:list:${category || 'all'}:${vertical || 'all'}:${searchQuery}:${storeId || 'all'}:${brand || 'all'}:${sortBy || 'recent'}:${page}:${limit}`;
+    const cacheKey = `catalog:list:${category || 'all'}:${vertical || 'all'}:${searchQuery}:${storeId || 'all'}:${brand || 'all'}:${city || 'all'}:${verified ? 'v' : 'all'}:${sortBy || 'recent'}:${page}:${limit}`;
 
     const data = await CacheService.remember(cacheKey, 60, async () => {
       return CatalogRepository.listPublishedListings({
@@ -102,6 +104,8 @@ router.get('/products', async (req, res, next) => {
         search: searchQuery,
         storeId,
         brand,
+        city,
+        verified,
         page,
         limit,
         sortBy
