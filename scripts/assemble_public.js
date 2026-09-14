@@ -54,7 +54,7 @@ for (const file of ['support.js', 'robots.txt', 'favicon.ico']) {
   }
 }
 
-for (const dir of ['Assets', 'src', '_ds']) {
+for (const dir of ['Assets', 'src', '_ds', 'data']) {
   const from = path.join(root, dir);
   if (fs.existsSync(from)) {
     fs.cpSync(from, path.join(out, dir), { recursive: true });
