@@ -51,8 +51,9 @@ const app = express();
 // Trust only the ingress policy configured for this deployment. The previous
 // hard-coded hop count made a directly reachable process treat attacker-owned
 // X-Forwarded-* headers as authoritative. Railway's public service should set
-// TRUST_PROXY=1; local development defaults to no proxy trust.
+// TRUST_PROXY=1; production defaults to 1 hop, local development defaults to no proxy trust.
 app.set('trust proxy', config.proxy.trust);
+logger.info(`[Ingress] Express proxy trust policy configured: ${JSON.stringify(config.proxy.trust)}`);
 app.disable('x-powered-by');
 
 // 0. Security headers (before anything can write a response).
