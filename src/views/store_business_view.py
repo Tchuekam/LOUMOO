@@ -389,6 +389,7 @@ def get_store_business_view():
       <sc-if value="{{ analyticsHasTopProducts }}">
         <div style="display:flex;flex-direction:column;gap:0">
           <sc-for list="{{ analyticsTopProducts }}" as="prod">
+            <sc-if value="{{ prod && prod.title }}">
             <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--color-divider)">
               <div style="min-width:0;flex:1;padding-right:12px">
                 <div style="font:700 13.5px/1.2 var(--font-heading);color:var(--color-text);text-overflow:ellipsis;white-space:nowrap;overflow:hidden">{{ prod.title }}</div>
@@ -396,6 +397,7 @@ def get_store_business_view():
               </div>
               <div style="font:800 14px/1 var(--font-heading);color:var(--color-text);white-space:nowrap">{{ prod.revenueFormatted }}</div>
             </div>
+            </sc-if>
           </sc-for>
         </div>
       </sc-if>
