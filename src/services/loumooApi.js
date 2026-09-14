@@ -957,11 +957,13 @@
     return this.request('/api/v1/categories');
   };
 
+  // GET /api/v1/products?q=... — request() unwraps the envelope, so a successful
+  // call resolves to the canonical { items, total, page, limit } payload. The
+  // rejection is re-thrown so callers can distinguish a real failure (show the
+  // error state) from a genuine zero-result response ({ items: [] }).
   LoumooApiClient.prototype.searchProducts = function (query, params) {
     var p = Object.assign({ q: query }, params || {});
-    return this.request('/api/v1/products' + qs(p)).catch(function () {
-      return { products: [] };
-    });
+    return this.request('/api/v1/products' + qs(p));
   };
 
 
