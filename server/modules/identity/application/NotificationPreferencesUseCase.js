@@ -48,9 +48,9 @@ class NotificationPreferencesUseCase {
         .from('notification_preferences')
         .select('*')
         .eq('user_id', userId)
-        .single();
+        .maybeSingle();
 
-      if (error) { handleDatabaseFailure(error, 'NotificationPreferences'); }
+      if (error && error.code !== 'PGRST116') { handleDatabaseFailure(error, 'NotificationPreferences'); }
       if (!error && data) {
         prefs = this._mapRow(data);
       }
