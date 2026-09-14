@@ -235,17 +235,54 @@ class SupabaseDatabase {
   }
 }
 
+let Sentry = null;
+try {
+  Sentry = require('@sentry/node');
+} catch (_) {}
+
+function isReadOperation(context, err) {
+  if (err && (err.code === 'PGRST301' || err.code === 'PGRST116' || err.code === 'PGRST204')) {
+    return true;
+  }
+  const ctx = String(context || '').toLowerCase();
+  const writeVerbs = ['insert', 'update', 'delete', 'upsert', 'create', 'remove', 'submit', 'mutate', 'provision'];
+  if (writeVerbs.some(w => ctx.includes(w))) {
+    return false;
+  }
+  const readVerbs = ['query', 'get', 'list', 'select', 'count', 'check', 'fetch', 'read', 'aggregation', 'search', 'find', 'preferences', 'profile', 'addresses', 'analytics', 'history'];
+  return readVerbs.some(r => ctx.includes(r));
+}
+
 /**
  * Central database-failure policy. Every caught Supabase query error in the
- * codebase must route through this function so behaviour is uniform:
- *   - production : log ERROR  ->  throw InfrastructureError (no fallback)
- *   - dev/test   : log ERROR with context (loud, not silent) -> return false
- *                  so the caller may continue with its in-memory fallback.
+ * codebase routes through this function so behaviour is uniform:
+ *   - production : send alert to Sentry; for read queries, log warning and
+ *                  allow caller fallback so benign errors (PGRST301 / transient
+ *                  jitter) do not crash landing pages with 500; for mutating
+ *                  writes, throw InfrastructureError to prevent silent data loss.
+ *   - dev/test   : log ERROR with context -> return false so the caller
+ *                  continues with its in-memory fallback.
  */
-function handleDatabaseFailure(err, context = 'database operation') {
+function handleDatabaseFailure(err, context = 'database operation', options = {}) {
+  const code = err && err.code ? err.code : 'N/A';
   const detail = (err && (err.code || err.details || err.message)) || String(err);
-  logger.error(`[DB-FAILURE] ${context} failed. code=${err && err.code ? err.code : 'N/A'} detail=${detail}`);
+  logger.error(`[DB-FAILURE] ${context} failed. code=${code} detail=${detail}`);
+
+  if (Sentry && typeof Sentry.captureException === 'function') {
+    try {
+      Sentry.captureException(err instanceof Error ? err : new Error(detail), {
+        tags: { component: 'SupabaseClient', context, dbErrorCode: code },
+        extra: { detail, isProduction: config.isProduction }
+      });
+    } catch (_) {}
+  }
+
   if (config.isProduction) {
+    const allowReadFallback = options.allowFallback || isReadOperation(context, err);
+    if (allowReadFallback) {
+      logger.warn(`[DB-FAILURE] Graceful read fallback triggered for "${context}" (code=${code}). Serving cached / in-memory read model.`);
+      return false;
+    }
     throw new InfrastructureError('Supabase', context, err);
   }
   logger.warn(`[DB-FAILURE] DEV MODE: continuing with in-memory fallback for "${context}". Set NODE_ENV=production to enforce real persistence.`);
