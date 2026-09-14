@@ -51,3 +51,7 @@ uploads/temp/
 *.log
 *.bak
 scratch/
+
+# Local Netlify & Vercel folders
+.netlify
+.vercel
