@@ -78,11 +78,11 @@ def get_home_view():
       </button>
 
       <!-- 3. [Search input + search icon] (Dominant Center Element) -->
-      <div onClick="{{ on.search }}" class="lsb-search-wrap" role="button" tabindex="0" aria-label="Search products, stores, services">
-        <span class="lsb-search-text">Search anything...</span>
-        <span class="lsb-search-icon">
+      <div class="lsb-search-wrap">
+        <input type="search" class="lsb-search-input" value="{{ searchQuery }}" onInput="{{ handleSearchInput }}" onKeyDown="{{ handleHubSearchKey }}" placeholder="Search anything..." aria-label="Search products, stores, services" enterkeyhint="search" autocomplete="off">
+        <button onClick="{{ submitSearch }}" class="lsb-search-icon" aria-label="Search" title="Search">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4 4"/></svg>
-        </span>
+        </button>
       </div>
 
       <!-- 4. [Microphone] Button -->
@@ -2622,6 +2622,7 @@ def get_home_view():
     </div>
     <div id="liveCatalogueRail" class="new-arrivals-rail" style="display:flex;flex-direction:row;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;gap:18px;margin-bottom:32px;padding:4px 4px 16px 4px">
       <sc-for list="{{ catalogCards }}" as="prod">
+      <sc-if value="{{ prod && prod.title }}">
       <div onClick="{{ () => openProduct(prod.id) }}" class="loumoo-media-card na-card" style="cursor:pointer" aria-label="View product">
         <div class="na-card-media-wrap">
           <sc-if value="{{ prod.badge }}"><span class="loumoo-card-badge badge-pill-sale">{{ prod.badge }}</span></sc-if>
@@ -2645,6 +2646,7 @@ def get_home_view():
           </div>
         </div>
       </div>
+      </sc-if>
       </sc-for>
     </div>
     </sc-if>
