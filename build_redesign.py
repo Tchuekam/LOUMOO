@@ -481,6 +481,17 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 .store-cta:hover { background: var(--color-text); color: var(--color-surface); border-color: var(--color-text); }
 
 /* -- Minimal storefront sub-tabs ---------------------------------------- */
+.storefront-tabs-bar {
+  position: -webkit-sticky !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 30 !important;
+  background: var(--color-surface) !important;
+  backdrop-filter: saturate(180%) blur(20px) !important;
+  -webkit-backdrop-filter: saturate(180%) blur(20px) !important;
+  border-bottom: 1px solid var(--color-divider) !important;
+  width: 100% !important;
+}
 .store-tabs {
   display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none;
   max-width: 1040px; margin: 0 auto; padding: 0 16px;
@@ -845,6 +856,16 @@ html, body {
   .desktop-topbar { display: none !important; }
   .scr { flex: 1; overflow-y: auto; overflow-x: hidden; padding-bottom: 48px; }
   .scr > sc-if > div { max-width: 1300px; margin: 0 auto; padding: 24px 32px 64px !important; }
+  .scr > sc-if > div.storefront-page-wrap,
+  .scr > sc-if > div.store-page-wrap,
+  .scr > sc-if > div.brand-page-wrap,
+  .scr > sc-if > div.seller-page-wrap,
+  .scr > sc-if > div.store-admin-wrap {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 0 64px 0 !important;
+  }
   .home-grid, .home-grid-3 { grid-template-columns: repeat(4, 1fr) !important; gap: 18px !important; }
   .hotel-sticky-reserve-bar { left: 260px !important; }
 }

@@ -17,7 +17,7 @@ def get_store_business_view():
      05.01 CREATE A STORE (is.createStore)
      ══════════════════════════════════════════════════════════════════════ -->
 <sc-if value="{{ is.createStore }}">
-<div style="padding-bottom:32px">
+<div class="store-admin-wrap" style="padding-bottom:32px">
 
   <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
     <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;flex-shrink:0">
@@ -141,7 +141,7 @@ def get_store_business_view():
      05.02 STORE ONBOARDING WIZARD (is.storeOnboarding)
      ══════════════════════════════════════════════════════════════════════ -->
 <sc-if value="{{ is.storeOnboarding }}">
-<div style="padding-bottom:32px">
+<div class="store-admin-wrap" style="padding-bottom:32px">
 
   <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
     <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;flex-shrink:0">
@@ -239,7 +239,7 @@ def get_store_business_view():
      05.05 STORE VERIFICATION PORTAL (is.storeVerification)
      ══════════════════════════════════════════════════════════════════════ -->
 <sc-if value="{{ is.storeVerification }}">
-<div style="padding-bottom:32px">
+<div class="store-admin-wrap" style="padding-bottom:32px">
 
   <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
     <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;flex-shrink:0">
@@ -331,7 +331,7 @@ def get_store_business_view():
      05.09 STORE ANALYTICS (is.storeAnalytics)
      ══════════════════════════════════════════════════════════════════════ -->
 <sc-if value="{{ is.storeAnalytics }}">
-<div style="padding-bottom:48px">
+<div class="store-admin-wrap" style="padding-bottom:48px">
 
   <!-- Header with Calm Spacing & Refresh -->
   <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
@@ -469,7 +469,7 @@ def get_store_business_view():
      05.10 STORE SETTINGS, HOURS & LOCATION (is.storeSettings)
      ══════════════════════════════════════════════════════════════════════ -->
 <sc-if value="{{ is.storeSettings }}">
-<div style="padding-bottom:32px">
+<div class="store-admin-wrap" style="padding-bottom:32px">
 
   <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:20">
     <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;flex-shrink:0">
