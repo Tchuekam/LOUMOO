@@ -445,95 +445,274 @@
       <button onClick="{{ on.vsCompare }}" class="cmp-go">Compare <span aria-hidden="true">→</span></button>
     </div>
     <h1 class="cmp-title">Compare</h1>
-    <p class="cmp-subtitle">Put products head-to-head. See what actually separates them before you buy.</p>
+    <p class="cmp-subtitle">Put products, stores, or stays head-to-head. See what actually separates them before you commit.</p>
   </header>
 
   <div class="cmp-body">
 
+    <!-- 1. PRISTINE CLEAN EMPTY COMPARISON PAGE -->
     <sc-if value="{{ vsEmpty }}">
-      <div class="cmp-empty">
-        <div class="cmp-empty-mark" aria-hidden="true">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect width="8" height="18" x="3" y="3" rx="1.5"/><rect width="8" height="18" x="13" y="3" rx="1.5"/></svg>
+      <div class="cmp-empty-hero">
+        <span class="cmp-kicker">LOUMOO Comparison Studio</span>
+        <h2 class="cmp-empty-title">Nothing to compare yet</h2>
+        <p class="cmp-empty-desc">Compare any products, verified merchant stores, or hotel stays head-to-head across Cameroon with guaranteed inventory, spec breakdowns, and Tier-1 buyer escrow.</p>
+
+        <!-- Live Universal Search & Filter -->
+        <div class="cmp-search-bar">
+          <div class="cmp-search-input-wrap">
+            <span class="cmp-search-icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            </span>
+            <input class="cmp-search-input" type="text" placeholder="Search any product, store, stay to compare..." value="{{ vsPickerQuery }}" onInput="{{ handleVsPickerInput }}" />
+          </div>
+          <div class="cmp-picker-pills" role="tablist">
+            <button onClick="{{ () => setVsPickerCat('all') }}" class="cmp-picker-pill {{ vsPickerCat === 'all' ? 'is-active' : '' }}">All Entities</button>
+            <button onClick="{{ () => setVsPickerCat('laptops') }}" class="cmp-picker-pill {{ vsPickerCat === 'laptops' ? 'is-active' : '' }}">Laptops</button>
+            <button onClick="{{ () => setVsPickerCat('phones') }}" class="cmp-picker-pill {{ vsPickerCat === 'phones' ? 'is-active' : '' }}">Smartphones</button>
+            <button onClick="{{ () => setVsPickerCat('stores') }}" class="cmp-picker-pill {{ vsPickerCat === 'stores' ? 'is-active' : '' }}">Verified Stores</button>
+            <button onClick="{{ () => setVsPickerCat('hotels') }}" class="cmp-picker-pill {{ vsPickerCat === 'hotels' ? 'is-active' : '' }}">Hotels &amp; Stays</button>
+          </div>
         </div>
-        <h4>Nothing to compare yet</h4>
-        <p>Add two products, or restore the MacBook Air vs Pro example.</p>
-        <div class="cmp-empty-actions">
-          <button onClick="{{ resetVsDefaults }}" class="cmp-btn-dark">Restore example</button>
+
+        <!-- Live Search Candidates -->
+        <sc-if value="{{ vsPickerHasResults }}">
+          <div class="cmp-picker-results">
+            <sc-for list="{{ vsPickerResults }}" as="cand">
+              <div class="cmp-picker-card">
+                <img class="cmp-picker-card-thumb" src="{{ cand.image }}" alt="{{ cand.title }}"  loading="lazy"  decoding="async" />
+                <div class="cmp-picker-card-info">
+                  <div class="cmp-picker-card-title">{{ cand.title }}</div>
+                  <div class="cmp-picker-card-meta">{{ cand.meta }}</div>
+                  <div class="cmp-stock-badge">✓ {{ cand.stockLabel }}</div>
+                </div>
+                <button onClick="{{ () => addToCompare(cand.id) }}" class="cmp-picker-add-btn">+ Compare</button>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <!-- Curated Starter Presets -->
+        <div class="cmp-presets-wrap">
+          <div class="cmp-presets-head">Or start with a curated benchmark</div>
+          <div class="cmp-presets-grid">
+            <div class="cmp-preset-card" onClick="{{ () => loadVsPreset('ultrabooks') }}">
+              <div>
+                <div class="cmp-preset-top">
+                  <span class="cmp-preset-badge">Computing</span>
+                  <span class="cmp-badge-tag">2 Laptops</span>
+                </div>
+                <h4 class="cmp-preset-title">Top Ultrabooks</h4>
+                <p class="cmp-preset-desc">MacBook Air 13” M2 vs MacBook Pro 14” M3 Pro. Fanless silence vs studio power.</p>
+              </div>
+              <div class="cmp-preset-cta">Load comparison <span>→</span></div>
+            </div>
+
+            <div class="cmp-preset-card" onClick="{{ () => loadVsPreset('stores') }}">
+              <div>
+                <div class="cmp-preset-top">
+                  <span class="cmp-preset-badge">Merchants</span>
+                  <span class="cmp-badge-tag">2 Stores</span>
+                </div>
+                <h4 class="cmp-preset-title">Verified Tech Stores</h4>
+                <p class="cmp-preset-desc">Orca Electronics (Akwa, Douala) vs KamerTech Direct (Bastos, Yaoundé).</p>
+              </div>
+              <div class="cmp-preset-cta">Load comparison <span>→</span></div>
+            </div>
+
+            <div class="cmp-preset-card" onClick="{{ () => loadVsPreset('stays') }}">
+              <div>
+                <div class="cmp-preset-top">
+                  <span class="cmp-preset-badge">Hotels &amp; Stays</span>
+                  <span class="cmp-badge-tag">2 Lodgings</span>
+                </div>
+                <h4 class="cmp-preset-title">Douala Luxury Stays</h4>
+                <p class="cmp-preset-desc">Sawa Luxury Hotel (Bonanjo) vs Résidence Akwa Palm (Akwa). 5-star amenities &amp; rates.</p>
+              </div>
+              <div class="cmp-preset-cta">Load comparison <span>→</span></div>
+            </div>
+
+            <div class="cmp-preset-card" onClick="{{ () => loadVsPreset('smartphones') }}">
+              <div>
+                <div class="cmp-preset-top">
+                  <span class="cmp-preset-badge">Smartphones</span>
+                  <span class="cmp-badge-tag">2 Phones</span>
+                </div>
+                <h4 class="cmp-preset-title">Flagship Smartphones</h4>
+                <p class="cmp-preset-desc">Tecno Camon 50 Pro 5G vs Google Pixel 8 Pro Unlocked. Cameras &amp; performance.</p>
+              </div>
+              <div class="cmp-preset-cta">Load comparison <span>→</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3 Value Pillars -->
+        <div class="cmp-pillars-grid">
+          <div class="cmp-pillar-card">
+            <div class="cmp-pillar-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 16v1a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v1"/><path d="M18 8h4a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-4"/><circle cx="8" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg>
+            </div>
+            <div class="cmp-pillar-title">Universal Comparison</div>
+            <p class="cmp-pillar-text">Compare products, merchant stores, or hotel stays side-by-side without limits or category lock-in.</p>
+          </div>
+
+          <div class="cmp-pillar-card">
+            <div class="cmp-pillar-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+            </div>
+            <div class="cmp-pillar-title">1,000+ Units Guaranteed</div>
+            <p class="cmp-pillar-text">Every catalog item is guaranteed in stock with at least 1,000 pieces ready for express dispatch.</p>
+          </div>
+
+          <div class="cmp-pillar-card">
+            <div class="cmp-pillar-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <div class="cmp-pillar-title">LOUMOO Tier-1 Escrow</div>
+            <p class="cmp-pillar-text">Funds remain in secure escrow until you receive and verify the item or complete your stay.</p>
+          </div>
+        </div>
+
+        <div class="cmp-empty-actions" style="margin-top:24px">
+          <button onClick="{{ resetVsDefaults }}" class="cmp-btn-dark">Restore Ultrabooks example</button>
           <button onClick="{{ on.search }}" class="cmp-btn-ghost">Browse catalog</button>
         </div>
       </div>
     </sc-if>
 
-    <div class="cmp-pick">
-      <sc-if value="{{ vsSlot1Active }}">
-      <div class="cmp-pick-card">
-        <button onClick="{{ removeVsSlot1 }}" aria-label="Remove product" class="cmp-pick-remove">✕</button>
-        <div class="cmp-pick-media cmp-media-a">MacBook Air</div>
-        <div class="cmp-pick-cat">Apple Laptops</div>
-        <h3 class="cmp-pick-name">MacBook Air 13” (M2)</h3>
-        <div class="cmp-pick-price">XAF 745 000</div>
-        <div class="cmp-pick-spec">Apple M2 · 8GB · 1.24 kg · 18h</div>
+    <!-- 2. ACTIVE COMPARISON SLOTS & UNIVERSAL TRAY -->
+    <sc-if value="{{ !vsEmpty }}">
+      <div class="cmp-pick">
+        <sc-if value="{{ vsSlot1Active }}">
+        <div class="cmp-pick-card">
+          <button onClick="{{ removeVsSlot1 }}" aria-label="Remove product" class="cmp-pick-remove">✕</button>
+          <div class="cmp-pick-media cmp-media-a">MacBook Air</div>
+          <div class="cmp-pick-cat">Apple Laptops</div>
+          <h3 class="cmp-pick-name">MacBook Air 13” (M2)</h3>
+          <div class="cmp-pick-price">XAF 745 000</div>
+          <div class="cmp-pick-spec">Apple M2 · 8GB · 1.24 kg · 18h</div>
+          <div class="cmp-stock-badge">✓ En stock (1 000+ disponibles)</div>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ vsSlot2Active }}">
+        <div class="cmp-pick-card">
+          <button onClick="{{ removeVsSlot2 }}" aria-label="Remove product" class="cmp-pick-remove">✕</button>
+          <div class="cmp-pick-media cmp-media-b">MacBook Pro</div>
+          <div class="cmp-pick-cat">Apple Laptops</div>
+          <h3 class="cmp-pick-name">MacBook Pro 14” (M3 Pro)</h3>
+          <div class="cmp-pick-price">XAF 1 250 000</div>
+          <div class="cmp-pick-spec">Apple M3 Pro · 18GB · 120Hz XDR</div>
+          <div class="cmp-stock-badge">✓ En stock (1 000+ disponibles)</div>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ vsSlot3Active }}">
+        <div class="cmp-pick-card">
+          <button onClick="{{ toggleVsSlot3 }}" aria-label="Remove product" class="cmp-pick-remove">✕</button>
+          <div class="cmp-pick-media cmp-media-c">ThinkPad X1</div>
+          <div class="cmp-pick-cat">Windows Laptops</div>
+          <h3 class="cmp-pick-name">Lenovo ThinkPad X1 Carbon</h3>
+          <div class="cmp-pick-price">XAF 890 000</div>
+          <div class="cmp-pick-spec">Intel i7 · 16GB · 1.12 kg · Carbon</div>
+          <div class="cmp-stock-badge">✓ En stock (1 000+ disponibles)</div>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ vsSlot4Active }}">
+        <div class="cmp-pick-card">
+          <button onClick="{{ removeVsSlot4 }}" aria-label="Remove product" class="cmp-pick-remove">✕</button>
+          <div class="cmp-pick-media cmp-media-c">Dell XPS 15</div>
+          <div class="cmp-pick-cat">Windows Workstations</div>
+          <h3 class="cmp-pick-name">Dell XPS 15 (RTX 4060)</h3>
+          <div class="cmp-pick-price">XAF 1 180 000</div>
+          <div class="cmp-pick-spec">32GB · 1TB · RTX 4060 · OLED</div>
+          <div class="cmp-stock-badge">✓ En stock (1 000+ disponibles)</div>
+        </div>
+        </sc-if>
+
+        <!-- Dynamic Custom Entities (e.g. stores, stays, or other products) -->
+        <sc-for list="{{ vsCustomCompareCards }}" as="card">
+          <div class="cmp-pick-card">
+            <button onClick="{{ () => removeFromCompare(card.id) }}" aria-label="Remove item" class="cmp-pick-remove">✕</button>
+            <div class="cmp-pick-media">{{ card.badge || card.brand }}</div>
+            <div class="cmp-pick-cat">{{ card.category }}</div>
+            <h3 class="cmp-pick-name">{{ card.title }}</h3>
+            <div class="cmp-pick-price">{{ card.price }}</div>
+            <div class="cmp-pick-spec">{{ card.spec }}</div>
+            <div class="cmp-stock-badge">✓ {{ card.stockLabel }}</div>
+          </div>
+        </sc-for>
+
+        <sc-if value="{{ vsCanAddMore }}">
+        <button onClick="{{ () => setVsPickerCat('all') }}" class="cmp-pick-add" aria-label="Add a product or store to compare">
+          <span class="cmp-pick-add-mark"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+          <span class="cmp-pick-add-text">Add to compare</span>
+        </button>
+        </sc-if>
       </div>
-      </sc-if>
 
-      <sc-if value="{{ vsSlot2Active }}">
-      <div class="cmp-pick-card">
-        <button onClick="{{ removeVsSlot2 }}" aria-label="Remove product" class="cmp-pick-remove">✕</button>
-        <div class="cmp-pick-media cmp-media-b">MacBook Pro</div>
-        <div class="cmp-pick-cat">Apple Laptops</div>
-        <h3 class="cmp-pick-name">MacBook Pro 14” (M3 Pro)</h3>
-        <div class="cmp-pick-price">XAF 1 250 000</div>
-        <div class="cmp-pick-spec">Apple M3 Pro · 18GB · 120Hz XDR</div>
+      <!-- Quick Add Universal Search -->
+      <div class="cmp-search-bar" style="margin-top: 18px;">
+        <div class="cmp-search-input-wrap">
+          <span class="cmp-search-icon" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          </span>
+          <input class="cmp-search-input" type="text" placeholder="Add any product, store, stay to this comparison..." value="{{ vsPickerQuery }}" onInput="{{ handleVsPickerInput }}" />
+        </div>
       </div>
+
+      <sc-if value="{{ vsPickerHasResults }}">
+        <div class="cmp-picker-results">
+          <sc-for list="{{ vsPickerResults }}" as="cand">
+            <div class="cmp-picker-card">
+              <img class="cmp-picker-card-thumb" src="{{ cand.image }}" alt="{{ cand.title }}"  loading="lazy"  decoding="async" />
+              <div class="cmp-picker-card-info">
+                <div class="cmp-picker-card-title">{{ cand.title }}</div>
+                <div class="cmp-picker-card-meta">{{ cand.meta }}</div>
+                <div class="cmp-stock-badge">✓ {{ cand.stockLabel }}</div>
+              </div>
+              <button onClick="{{ () => addToCompare(cand.id) }}" class="cmp-picker-add-btn">+ Add</button>
+            </div>
+          </sc-for>
+        </div>
       </sc-if>
 
-      <sc-if value="{{ vsSlot3Active }}">
-      <div class="cmp-pick-card">
-        <button onClick="{{ toggleVsSlot3 }}" aria-label="Remove product" class="cmp-pick-remove">✕</button>
-        <div class="cmp-pick-media cmp-media-c">ThinkPad X1</div>
-        <div class="cmp-pick-cat">Windows Laptops</div>
-        <h3 class="cmp-pick-name">Lenovo ThinkPad X1 Carbon</h3>
-        <div class="cmp-pick-price">XAF 890 000</div>
-        <div class="cmp-pick-spec">Intel i7 · 16GB · 1.12 kg · Carbon</div>
+      <div class="cmp-suggest">
+        <div class="cmp-suggest-head">Quick additions</div>
+        <button onClick="{{ toggleVsSlot3 }}" class="cmp-suggest-row">
+          <span class="cmp-suggest-info">
+            <span class="cmp-suggest-name">Lenovo ThinkPad X1 Carbon Gen 11</span>
+            <span class="cmp-suggest-meta">1.12 kg · Intel i7 · 16GB — XAF 890 000 · 1 000+ pcs</span>
+          </span>
+          <span class="cmp-suggest-add">Add</span>
+        </button>
+        <button onClick="{{ addVsXps }}" class="cmp-suggest-row">
+          <span class="cmp-suggest-info">
+            <span class="cmp-suggest-name">Dell XPS 15 OLED (RTX 4060)</span>
+            <span class="cmp-suggest-meta">32GB · 1TB SSD · RTX 4060 — XAF 1 180 000 · 1 000+ pcs</span>
+          </span>
+          <span class="cmp-suggest-add">Add</span>
+        </button>
+        <button onClick="{{ () => addToCompare('store_orca_electronics') }}" class="cmp-suggest-row">
+          <span class="cmp-suggest-info">
+            <span class="cmp-suggest-name">Orca Electronics (Verified Store)</span>
+            <span class="cmp-suggest-meta">Akwa Douala · ★ 4.9 · 1,420+ Products · Tier-1 Escrow</span>
+          </span>
+          <span class="cmp-suggest-add">Add Store</span>
+        </button>
+        <button onClick="{{ () => addToCompare('hotel-1') }}" class="cmp-suggest-row">
+          <span class="cmp-suggest-info">
+            <span class="cmp-suggest-name">Sawa Luxury Hotel (Douala)</span>
+            <span class="cmp-suggest-meta">Bonanjo Douala · ★ 4.8 · 5-Star · XAF 65 000 / nuit</span>
+          </span>
+          <span class="cmp-suggest-add">Add Stay</span>
+        </button>
       </div>
-      </sc-if>
 
-      <sc-if value="{{ vsSlot4Active }}">
-      <div class="cmp-pick-card">
-        <button onClick="{{ removeVsSlot4 }}" aria-label="Remove product" class="cmp-pick-remove">✕</button>
-        <div class="cmp-pick-media cmp-media-c">Dell XPS 15</div>
-        <div class="cmp-pick-cat">Windows Workstations</div>
-        <h3 class="cmp-pick-name">Dell XPS 15 (RTX 4060)</h3>
-        <div class="cmp-pick-price">XAF 1 180 000</div>
-        <div class="cmp-pick-spec">32GB · 1TB · RTX 4060 · OLED</div>
+      <div style="display:flex;justify-content:center;margin-top:20px;">
+        <button onClick="{{ clearVsAll }}" class="cmp-btn-ghost" style="font-size:12.5px;height:38px;">Clear workspace</button>
       </div>
-      </sc-if>
-
-      <sc-if value="{{ !vsSlot3Active }}">
-      <button onClick="{{ toggleVsSlot3 }}" class="cmp-pick-add" aria-label="Add a product to compare">
-        <span class="cmp-pick-add-mark"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
-        <span class="cmp-pick-add-text">Add a product</span>
-      </button>
-      </sc-if>
-    </div>
-
-    <div class="cmp-suggest">
-      <div class="cmp-suggest-head">Suggested in laptops</div>
-      <button onClick="{{ toggleVsSlot3 }}" class="cmp-suggest-row">
-        <span class="cmp-suggest-info">
-          <span class="cmp-suggest-name">Lenovo ThinkPad X1 Carbon Gen 11</span>
-          <span class="cmp-suggest-meta">1.12 kg · Intel i7 · 16GB — XAF 890 000</span>
-        </span>
-        <span class="cmp-suggest-add">Add</span>
-      </button>
-      <button onClick="{{ addVsXps }}" class="cmp-suggest-row">
-        <span class="cmp-suggest-info">
-          <span class="cmp-suggest-name">Dell XPS 15 OLED (RTX 4060)</span>
-          <span class="cmp-suggest-meta">32GB · 1TB SSD · RTX 4060 — XAF 1 180 000</span>
-        </span>
-        <span class="cmp-suggest-add">Add</span>
-      </button>
-    </div>
+    </sc-if>
 
   </div>
 
@@ -559,31 +738,53 @@
         <button onClick="{{ setVsFilterDiff }}" class="cmp-filter-btn {{ vsFilterDiff ? 'is-active' : '' }}">Differences</button>
       </div>
     </div>
-    <h1 class="cmp-title cmp-title-sm">MacBook Air M2 <span class="cmp-vs-word">vs</span> MacBook Pro 14”</h1>
+    <h1 class="cmp-title cmp-title-sm">{{ vsCompareTitle }}</h1>
   </header>
 
   <div class="cmp-body">
 
-    <!-- Head-to-head hero -->
-    <div class="cmp-hero">
-      <div class="cmp-hero-card">
-        <div class="cmp-hero-media cmp-media-a">MacBook Air</div>
-        <div class="cmp-hero-cat">Apple Laptops</div>
-        <h2 class="cmp-hero-name">MacBook Air 13” (M2)</h2>
-        <div class="cmp-hero-price">XAF 745 000</div>
-        <div class="cmp-hero-meta">★ 4.9 · Orca Electronics</div>
-        <span class="cmp-hero-tag cmp-tag-a">Best value</span>
+    <!-- Head-to-head hero: Dynamic if custom comparison, or default benchmark cards -->
+    <sc-if value="{{ !vsIsCustomComparison }}">
+      <div class="cmp-hero">
+        <div class="cmp-hero-card">
+          <div class="cmp-hero-media cmp-media-a">MacBook Air</div>
+          <div class="cmp-hero-cat">Apple Laptops</div>
+          <h2 class="cmp-hero-name">MacBook Air 13” (M2)</h2>
+          <div class="cmp-hero-price">XAF 745 000</div>
+          <div class="cmp-hero-meta">★ 4.9 · Orca Electronics</div>
+          <div class="cmp-stock-badge">✓ En stock (1 000+ disponibles)</div>
+          <span class="cmp-hero-tag cmp-tag-a">Best value</span>
+        </div>
+        <div class="cmp-hero-vs" aria-hidden="true">VS</div>
+        <div class="cmp-hero-card">
+          <div class="cmp-hero-media cmp-media-b">MacBook Pro</div>
+          <div class="cmp-hero-cat">Apple Laptops</div>
+          <h2 class="cmp-hero-name">MacBook Pro 14” (M3 Pro)</h2>
+          <div class="cmp-hero-price">XAF 1 250 000</div>
+          <div class="cmp-hero-meta">★ 5.0 · KamerTech Direct</div>
+          <div class="cmp-stock-badge">✓ En stock (1 000+ disponibles)</div>
+          <span class="cmp-hero-tag cmp-tag-b">Best overall</span>
+        </div>
       </div>
-      <div class="cmp-hero-vs" aria-hidden="true">VS</div>
-      <div class="cmp-hero-card">
-        <div class="cmp-hero-media cmp-media-b">MacBook Pro</div>
-        <div class="cmp-hero-cat">Apple Laptops</div>
-        <h2 class="cmp-hero-name">MacBook Pro 14” (M3 Pro)</h2>
-        <div class="cmp-hero-price">XAF 1 250 000</div>
-        <div class="cmp-hero-meta">★ 5.0 · KamerTech Direct</div>
-        <span class="cmp-hero-tag cmp-tag-b">Best overall</span>
+    </sc-if>
+
+    <sc-if value="{{ vsIsCustomComparison }}">
+      <div class="cmp-hero" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
+        <sc-for list="{{ vsActiveCards }}" as="card">
+          <div class="cmp-hero-card">
+            <div class="cmp-hero-media">{{ card.badge || card.brand }}</div>
+            <div class="cmp-hero-cat">{{ card.category }}</div>
+            <h2 class="cmp-hero-name">{{ card.title }}</h2>
+            <div class="cmp-hero-price">{{ card.price }}</div>
+            <div class="cmp-hero-meta">★ {{ card.rating }} · {{ card.merchant }}</div>
+            <div class="cmp-stock-badge">✓ {{ card.stockLabel }}</div>
+            <sc-if value="{{ card.badge }}">
+              <span class="cmp-hero-tag cmp-tag-a">{{ card.badge }}</span>
+            </sc-if>
+          </div>
+        </sc-for>
       </div>
-    </div>
+    </sc-if>
 
     <!-- Reasons to choose (Versus signature) -->
     <section class="cmp-reasons">
@@ -751,8 +952,8 @@
   </div>
 
   <div class="cmp-sticky">
-    <span class="cmp-sticky-text">Recommended · Pro 14” · XAF 1.25M</span>
-    <button onClick="{{ () => addToCart('macbook_m2') }}" class="cmp-sticky-btn">Add to bag <span aria-hidden="true">→</span></button>
+    <span class="cmp-sticky-text">{{ vsStickyText || 'Recommended · Pro 14” · XAF 1.25M' }}</span>
+    <button onClick="{{ vsStickyAction }}" class="cmp-sticky-btn">{{ vsStickyActionLabel || 'Add to bag' }} <span aria-hidden="true">→</span></button>
   </div>
 
 </div>

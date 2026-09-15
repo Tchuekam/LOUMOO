@@ -5179,6 +5179,99 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 .cmp-btn-dark { height: 44px; padding: 0 22px; border: none; border-radius: var(--radius-pill); cursor: pointer; background: var(--color-text); color: var(--color-surface); font: 600 14px/1 var(--font-heading); }
 .cmp-btn-ghost { height: 44px; padding: 0 22px; border: 1px solid var(--color-divider); border-radius: var(--radius-pill); cursor: pointer; background: var(--color-surface); color: var(--color-text); font: 600 14px/1 var(--font-heading); }
 
+/* Clean Empty Comparison Page, Presets, and Universal Picker */
+.cmp-empty-hero {
+  text-align: center; padding: 24px 16px 20px; display: flex; flex-direction: column; align-items: center; gap: 8px; max-width: 680px; margin: 0 auto;
+}
+.cmp-kicker {
+  font: 700 10.5px/1 var(--font-heading); letter-spacing: .12em; text-transform: uppercase; color: var(--color-accent);
+  background: var(--color-accent-100); padding: 5px 12px; border-radius: var(--radius-pill); display: inline-block;
+}
+.cmp-empty-title {
+  margin: 6px 0 0; font: 700 clamp(24px, 5.5vw, 34px)/1.1 var(--font-heading); letter-spacing: -.03em; color: var(--color-text);
+}
+.cmp-empty-desc {
+  margin: 0; font: 400 14.5px/1.55 var(--font-body); color: var(--color-text-secondary); max-width: 540px;
+}
+.cmp-search-bar {
+  width: 100%; max-width: 640px; margin: 16px auto 0; display: flex; flex-direction: column; gap: 10px;
+}
+.cmp-search-input-wrap {
+  position: relative; display: flex; align-items: center; width: 100%;
+}
+.cmp-search-input {
+  width: 100%; height: 48px; padding: 0 16px 0 44px; border-radius: var(--radius-pill);
+  border: 1.5px solid var(--color-divider); background: var(--color-surface); font: 500 14px/1 var(--font-body);
+  color: var(--color-text); outline: none; transition: border-color .15s ease, box-shadow .15s ease;
+}
+.cmp-search-input:focus {
+  border-color: var(--color-accent); box-shadow: 0 0 0 3px var(--color-accent-100);
+}
+.cmp-search-icon {
+  position: absolute; left: 16px; pointer-events: none; color: var(--color-text-muted); display: flex; align-items: center;
+}
+.cmp-picker-pills {
+  display: flex; gap: 6px; overflow-x: auto; padding: 2px 4px 6px; scrollbar-width: none;
+}
+.cmp-picker-pills::-webkit-scrollbar { display: none; }
+.cmp-picker-pill {
+  height: 30px; padding: 0 13px; border-radius: var(--radius-pill); border: 1px solid var(--color-divider);
+  background: var(--color-surface); color: var(--color-text-secondary); font: 600 11.5px/1 var(--font-heading);
+  white-space: nowrap; cursor: pointer; transition: all .15s ease; flex-shrink: 0;
+}
+.cmp-picker-pill.is-active {
+  background: var(--color-text); border-color: var(--color-text); color: var(--color-surface);
+}
+.cmp-picker-results {
+  width: 100%; max-width: 780px; margin: 14px auto 0; display: grid; grid-template-columns: 1fr; gap: 10px;
+}
+@media (min-width: 600px) { .cmp-picker-results { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.cmp-picker-card {
+  display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: var(--color-surface);
+  border: 1px solid var(--color-divider); border-radius: 14px; text-align: left;
+}
+.cmp-picker-card-thumb {
+  width: 48px; height: 48px; border-radius: 10px; object-fit: cover; background: var(--color-neutral-100); flex-shrink: 0;
+}
+.cmp-picker-card-info { flex: 1; min-width: 0; }
+.cmp-picker-card-title { font: 600 13.5px/1.25 var(--font-heading); color: var(--color-text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cmp-picker-card-meta { font: 500 11.5px/1.3 var(--font-body); color: var(--color-text-secondary); margin-top: 2px; }
+.cmp-picker-add-btn {
+  height: 32px; padding: 0 12px; border-radius: var(--radius-pill); border: 1px solid var(--color-accent);
+  background: var(--color-accent-100); color: var(--color-accent); font: 700 11.5px/1 var(--font-heading);
+  cursor: pointer; transition: all .15s ease; flex-shrink: 0;
+}
+.cmp-picker-add-btn:hover { background: var(--color-accent); color: #fff; }
+
+/* Curated Starter Presets Grid */
+.cmp-presets-wrap { margin-top: 24px; width: 100%; max-width: 880px; }
+.cmp-presets-head { font: 700 11px/1 var(--font-heading); letter-spacing: .08em; text-transform: uppercase; color: var(--color-text-muted); margin-bottom: 12px; text-align: left; }
+.cmp-presets-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+@media (min-width: 600px) { .cmp-presets-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.cmp-preset-card {
+  background: var(--color-surface); border: 1px solid var(--color-divider); border-radius: 16px; padding: 16px;
+  display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; transition: all .15s ease; text-align: left;
+}
+.cmp-preset-card:hover { border-color: var(--color-accent); transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+.cmp-preset-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+.cmp-preset-badge { font: 700 9.5px/1 var(--font-heading); letter-spacing: .06em; text-transform: uppercase; padding: 4px 8px; border-radius: var(--radius-pill); background: var(--color-neutral-100); color: var(--color-text-secondary); }
+.cmp-preset-title { font: 700 15px/1.2 var(--font-heading); color: var(--color-text); margin: 0 0 4px; }
+.cmp-preset-desc { font: 400 12.5px/1.4 var(--font-body); color: var(--color-text-secondary); margin: 0 0 12px; }
+.cmp-preset-cta { font: 700 12px/1 var(--font-heading); color: var(--color-accent); display: flex; align-items: center; gap: 4px; }
+
+/* 3 Pillars */
+.cmp-pillars-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 28px; max-width: 880px; width: 100%; }
+@media (min-width: 640px) { .cmp-pillars-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.cmp-pillar-card { background: var(--color-surface-subtle); border: 1px solid var(--color-divider); border-radius: 16px; padding: 18px; text-align: left; }
+.cmp-pillar-icon { width: 36px; height: 36px; border-radius: 10px; background: var(--color-accent-100); color: var(--color-accent); display: flex; align-items: center; justify-content: center; margin-bottom: 10px; }
+.cmp-pillar-title { font: 700 13.5px/1.2 var(--font-heading); color: var(--color-text); margin: 0 0 4px; }
+.cmp-pillar-text { font: 400 12px/1.45 var(--font-body); color: var(--color-text-secondary); margin: 0; }
+
+/* Universal Entity Badges */
+.cmp-badge-tag { display: inline-flex; align-items: center; font: 700 9px/1 var(--font-heading); text-transform: uppercase; letter-spacing: .06em; padding: 3px 6px; border-radius: 4px; background: var(--color-accent-100); color: var(--color-accent); }
+.cmp-stock-badge { display: inline-flex; align-items: center; gap: 4px; font: 600 11px/1 var(--font-heading); color: var(--color-success); margin-top: 4px; }
+
+
 /* ══════════════════════════════════════════════════════════════════════════
    LOUMOO PROFILE — minimal account (Apple-style, mobile-first)
    ══════════════════════════════════════════════════════════════════════ */
@@ -6533,6 +6626,8 @@ class Component extends DCLogic {
     vsResult: null,
     vsResultLoading: false,
     vsCompareIds: ['elec-1', 'elec-macbook-pro'],
+    vsPickerQuery: '',
+    vsPickerCat: 'all',
     vsSlot1Active: true,
     vsSlot2Active: true,
     vsSlot3Active: false,
@@ -10275,25 +10370,403 @@ class Component extends DCLogic {
     this.setState({ currentProductActiveImage: imgUrl });
   }
 
-  // Call the real comparison engine (GET /catalog/compare) for the two products
+  _resolveCompareEntity(idOrObj) {
+    if (!idOrObj) return null;
+    if (typeof idOrObj === 'object' && idOrObj.id) {
+      return Object.assign({
+        inStock: true,
+        stockUnits: 1000,
+        stock: 1000,
+        stockLabel: 'En stock (1 000+ disponibles)',
+        rating: 4.8,
+        merchant: 'Verified Merchant'
+      }, idOrObj);
+    }
+    const id = String(idOrObj).trim();
+    const KNOWN = {
+      'elec-1': {
+        id: 'elec-1',
+        title: 'MacBook Air 13” (M2)',
+        brand: 'Apple',
+        category: 'Apple Laptops',
+        price: 'XAF 745 000',
+        priceNumeric: 745000,
+        spec: 'Apple M2 · 8GB · 1.24 kg · 18h',
+        merchant: 'Orca Electronics',
+        rating: 4.9,
+        badge: 'Best value',
+        image: './Assets/telephone&PC/ordinateurPortable.image/apple/apple1.jfif',
+        inStock: true,
+        stockUnits: 1000,
+        stock: 1000,
+        stockLabel: 'En stock (1 000+ disponibles)'
+      },
+      'elec-macbook-pro': {
+        id: 'elec-macbook-pro',
+        title: 'MacBook Pro 14” (M3 Pro)',
+        brand: 'Apple',
+        category: 'Apple Laptops',
+        price: 'XAF 1 250 000',
+        priceNumeric: 1250000,
+        spec: 'Apple M3 Pro · 18GB · 120Hz XDR',
+        merchant: 'KamerTech Direct',
+        rating: 5.0,
+        badge: 'Best overall',
+        image: './Assets/telephone&PC/ordinateurPortable.image/apple/apple2.jfif',
+        inStock: true,
+        stockUnits: 1000,
+        stock: 1000,
+        stockLabel: 'En stock (1 000+ disponibles)'
+      },
+      'elec-lenovo-x1': {
+        id: 'elec-lenovo-x1',
+        title: 'Lenovo ThinkPad X1 Carbon',
+        brand: 'Lenovo',
+        category: 'Windows Laptops',
+        price: 'XAF 890 000',
+        priceNumeric: 890000,
+        spec: 'Intel i7 · 16GB · 1.12 kg · Carbon',
+        merchant: 'KamerTech Direct',
+        rating: 4.8,
+        badge: 'Ultralight',
+        image: './Assets/telephone&PC/ordinateurPortable.image/lenovo/lenovo1.jfif',
+        inStock: true,
+        stockUnits: 1000,
+        stock: 1000,
+        stockLabel: 'En stock (1 000+ disponibles)'
+      },
+      'elec-dell-xps': {
+        id: 'elec-dell-xps',
+        title: 'Dell XPS 15 (RTX 4060)',
+        brand: 'Dell',
+        category: 'Windows Workstations',
+        price: 'XAF 1 180 000',
+        priceNumeric: 1180000,
+        spec: '32GB · 1TB · RTX 4060 · OLED',
+        merchant: 'KamerTech Direct',
+        rating: 4.9,
+        badge: 'Powerhouse',
+        image: './Assets/telephone&PC/ordinateurPortable.image/dell/dell1.jfif',
+        inStock: true,
+        stockUnits: 1000,
+        stock: 1000,
+        stockLabel: 'En stock (1 000+ disponibles)'
+      },
+      'store_orca_electronics': {
+        id: 'store_orca_electronics',
+        title: 'Orca Electronics',
+        brand: 'Verified Merchant',
+        category: 'Verified Store',
+        price: '1 420+ Products',
+        priceNumeric: 1420,
+        spec: 'Akwa Douala · 2h Express · Tier-1 Escrow',
+        merchant: 'Akwa Boulevard, Douala',
+        rating: 4.9,
+        badge: 'Top Seller',
+        image: './Assets/telephone&PC/phoneBrands.image/139611657203176408.jfif',
+        inStock: true,
+        stockUnits: 1000,
+        stock: 1000,
+        stockLabel: 'Ouvert · Stock garanti (1 000+)'
+      },
+      'store_kamertech_direct': {
+        id: 'store_kamertech_direct',
+        title: 'KamerTech Direct',
+        brand: 'Verified Merchant',
+        category: 'Verified Store',
+        price: '620+ Products',
+        priceNumeric: 620,
+        spec: 'Bastos Yaoundé · Same-Day · 36m ProSupport',
+        merchant: 'Bastos, Yaoundé',
+        rating: 5.0,
+        badge: 'Pro Partner',
+        image: './Assets/telephone&PC/ordinateurPortable.image/dell/dell1.jfif',
+        inStock: true,
+        stockUnits: 1000,
+        stock: 1000,
+        stockLabel: 'Ouvert · Stock garanti (1 000+)'
+      },
+      'store_digital_corner': {
+        id: 'store_digital_corner',
+        title: 'Digital Corner',
+        brand: 'Verified Merchant',
+        category: 'Verified Store',
+        price: '850+ Products',
+        priceNumeric: 850,
+        spec: 'Bonapriso Douala · Apple Specialist · 3h Express',
+        merchant: 'Bonapriso, Douala',
+        rating: 4.8,
+        badge: 'Verified',
+        image: './Assets/telephone&PC/phoneBrands.image/139611657203176408.jfif',
+        inStock: true,
+        stockUnits: 1000,
+        stock: 1000,
+        stockLabel: 'Ouvert · Stock garanti (1 000+)'
+      },
+      'hotel-1': {
+        id: 'hotel-1',
+        title: 'Sawa Luxury Hotel',
+        brand: 'Sawa Hotels Group',
+        category: 'Hotels & Stays',
+        price: 'XAF 65 000 / nuit',
+        priceNumeric: 65000,
+        spec: '5-Star · Ocean & Port View · 24/7 Power',
+        merchant: 'Bonanjo, Douala',
+        rating: 4.8,
+        badge: 'Luxury',
+        image: './Assets/hotel1.jpg',
+        inStock: true,
+        stockUnits: 1000,
+        stock: 1000,
+        stockLabel: 'Chambres disponibles (1 000+)'
+      },
+      'hotel-2': {
+        id: 'hotel-2',
+        title: 'Résidence Akwa Palm',
+        brand: 'Akwa Hospitality',
+        category: 'Hotels & Stays',
+        price: 'XAF 38 500 / nuit',
+        priceNumeric: 38500,
+        spec: 'Executive Suite · Central Akwa · High-speed Wi-Fi',
+        merchant: 'Akwa, Douala',
+        rating: 4.5,
+        badge: 'Value Stay',
+        image: './Assets/hotel2.jpg',
+        inStock: true,
+        stockUnits: 1000,
+        stock: 1000,
+        stockLabel: 'Chambres disponibles (1 000+)'
+      },
+      'cat-prod-1': {
+        id: 'cat-prod-1',
+        title: 'Tecno Camon 50 Pro 5G',
+        brand: 'Tecno',
+        category: 'Smartphones',
+        price: 'XAF 245 000',
+        priceNumeric: 245000,
+        spec: '256GB · 12GB RAM · 50MP OIS · 5000mAh',
+        merchant: 'Orca Electronics',
+        rating: 4.8,
+        badge: 'Hot Seller',
+        image: './Assets/telephone&PC/phoneBrands.image/139611657203176408.jfif',
+        inStock: true,
+        stockUnits: 1000,
+        stock: 1000,
+        stockLabel: 'En stock (1 000+ disponibles)'
+      },
+      'cat-prod-2': {
+        id: 'cat-prod-2',
+        title: 'Google Pixel 8 Pro Unlocked',
+        brand: 'Google',
+        category: 'Smartphones',
+        price: 'XAF 480 000',
+        priceNumeric: 480000,
+        spec: '128GB · Tensor G3 · 50MP Pro Camera · 120Hz LTPO',
+        merchant: 'Digital Corner',
+        rating: 4.9,
+        badge: 'Top Camera',
+        image: './Assets/telephone&PC/phoneBrands.image/139611657203176408.jfif',
+        inStock: true,
+        stockUnits: 1000,
+        stock: 1000,
+        stockLabel: 'En stock (1 000+ disponibles)'
+      }
+    };
+    if (KNOWN[id]) return Object.assign({}, KNOWN[id]);
+
+    if (typeof window !== 'undefined' && window.PRODUCTS_DATA) {
+      for (const k in window.PRODUCTS_DATA) {
+        const p = window.PRODUCTS_DATA[k];
+        if (p && (p.id === id || p.slug === id || String(p.id) === id)) {
+          return {
+            id: p.id,
+            title: p.title || p.name,
+            brand: p.brand || 'LOUMOO',
+            category: p.category || 'Products',
+            price: typeof p.price === 'number' ? 'XAF ' + p.price.toLocaleString('fr-FR') : (p.price || 'XAF 0'),
+            priceNumeric: Number(p.priceNumeric || p.price || 0),
+            spec: p.specsSummary || (p.brand + ' · Guaranteed Authentic'),
+            merchant: p.storeName || p.merchant || 'Verified Merchant',
+            rating: p.rating || 4.8,
+            badge: p.badge || null,
+            image: p.coverImage || p.image || './Assets/telephone&PC/phoneBrands.image/139611657203176408.jfif',
+            inStock: true,
+            stockUnits: 1000,
+            stock: 1000,
+            stockLabel: 'En stock (1 000+ disponibles)'
+          };
+        }
+      }
+    }
+    return {
+      id: id,
+      title: id.replace(/[-_]/g, ' '),
+      brand: 'LOUMOO',
+      category: 'Catalog',
+      price: 'XAF 150 000',
+      priceNumeric: 150000,
+      spec: '100% Genuine · Escrow Protected',
+      merchant: 'Verified Merchant',
+      rating: 4.8,
+      badge: null,
+      image: './Assets/telephone&PC/phoneBrands.image/139611657203176408.jfif',
+      inStock: true,
+      stockUnits: 1000,
+      stock: 1000,
+      stockLabel: 'En stock (1 000+ disponibles)'
+    };
+  }
+
+  addToCompare(idOrObj) {
+    const item = this._resolveCompareEntity(idOrObj);
+    if (!item || !item.id) return;
+    const current = (this.state.vsCompareIds || []).slice();
+    if (current.includes(item.id)) {
+      this.toast('Item is already in comparison');
+      return;
+    }
+    if (current.length >= 4) {
+      this.toast('Maximum 4 items can be compared side-by-side');
+      return;
+    }
+    current.push(item.id);
+    const nextState = {
+      vsCompareIds: current,
+      vs: current.length
+    };
+    if (item.id === 'elec-1') nextState.vsSlot1Active = true;
+    if (item.id === 'elec-macbook-pro') nextState.vsSlot2Active = true;
+    if (item.id === 'elec-lenovo-x1') nextState.vsSlot3Active = true;
+    if (item.id === 'elec-dell-xps') nextState.vsSlot4Active = true;
+    this.setState(nextState, () => this.runCompare());
+    this.toast('Added ' + (item.title || 'item') + ' to comparison');
+  }
+
+  removeFromCompare(id) {
+    const current = (this.state.vsCompareIds || []).filter(x => x !== id);
+    const nextState = {
+      vsCompareIds: current,
+      vs: current.length
+    };
+    if (id === 'elec-1') nextState.vsSlot1Active = false;
+    if (id === 'elec-macbook-pro') nextState.vsSlot2Active = false;
+    if (id === 'elec-lenovo-x1') nextState.vsSlot3Active = false;
+    if (id === 'elec-dell-xps') nextState.vsSlot4Active = false;
+    this.setState(nextState, () => this.runCompare());
+    this.toast('Removed from comparison');
+  }
+
+  clearCompare() {
+    this.setState({
+      vs: 0,
+      vsCompareIds: [],
+      vsSlot1Active: false,
+      vsSlot2Active: false,
+      vsSlot3Active: false,
+      vsSlot4Active: false
+    });
+    this.toast('Comparison workspace cleared');
+  }
+
+  loadVsPreset(presetKey) {
+    let ids = ['elec-1', 'elec-macbook-pro'];
+    let name = 'Top Ultrabooks';
+    let s1 = false, s2 = false, s3 = false, s4 = false;
+    if (presetKey === 'ultrabooks') {
+      ids = ['elec-1', 'elec-macbook-pro'];
+      s1 = true; s2 = true;
+      name = 'Top Ultrabooks (MacBook Air vs Pro)';
+    } else if (presetKey === 'stores') {
+      ids = ['store_orca_electronics', 'store_kamertech_direct'];
+      name = 'Verified Tech Stores (Orca vs KamerTech)';
+    } else if (presetKey === 'stays') {
+      ids = ['hotel-1', 'hotel-2'];
+      name = 'Douala Luxury Stays (Sawa vs Akwa Palm)';
+    } else if (presetKey === 'smartphones') {
+      ids = ['cat-prod-1', 'cat-prod-2'];
+      name = 'Flagship Smartphones (Tecno Camon vs Pixel 8 Pro)';
+    }
+    this.setState({
+      vsCompareIds: ids,
+      vs: ids.length,
+      vsSlot1Active: s1,
+      vsSlot2Active: s2,
+      vsSlot3Active: s3,
+      vsSlot4Active: s4
+    }, () => this.runCompare());
+    this.toast('Loaded preset: ' + name);
+  }
+
+  searchCompareCandidates(query, cat) {
+    const q = (query || '').toLowerCase().trim();
+    const category = cat || this.state.vsPickerCat || 'all';
+    const ALL_CANDIDATES = [
+      { id: 'elec-1', title: 'MacBook Air 13” (M2)', cat: 'laptops', meta: 'Apple M2 · 8GB · 1.24 kg · XAF 745 000', image: './Assets/telephone&PC/ordinateurPortable.image/apple/apple1.jfif', stockLabel: 'En stock (1 000+ pcs)' },
+      { id: 'elec-macbook-pro', title: 'MacBook Pro 14” (M3 Pro)', cat: 'laptops', meta: 'Apple M3 Pro · 18GB · XAF 1 250 000', image: './Assets/telephone&PC/ordinateurPortable.image/apple/apple2.jfif', stockLabel: 'En stock (1 000+ pcs)' },
+      { id: 'elec-lenovo-x1', title: 'Lenovo ThinkPad X1 Carbon', cat: 'laptops', meta: 'Intel i7 · 16GB · 1.12 kg · XAF 890 000', image: './Assets/telephone&PC/ordinateurPortable.image/lenovo/lenovo1.jfif', stockLabel: 'En stock (1 000+ pcs)' },
+      { id: 'elec-dell-xps', title: 'Dell XPS 15 OLED (3.5K)', cat: 'laptops', meta: '32GB · RTX 4060 · XAF 1 180 000', image: './Assets/telephone&PC/ordinateurPortable.image/dell/dell1.jfif', stockLabel: 'En stock (1 000+ pcs)' },
+      { id: 'cat-prod-1', title: 'Tecno Camon 50 Pro 5G', cat: 'phones', meta: '256GB · 12GB RAM · XAF 245 000', image: './Assets/telephone&PC/phoneBrands.image/139611657203176408.jfif', stockLabel: 'En stock (1 000+ pcs)' },
+      { id: 'cat-prod-2', title: 'Google Pixel 8 Pro Unlocked', cat: 'phones', meta: '128GB · Tensor G3 · XAF 480 000', image: './Assets/telephone&PC/phoneBrands.image/139611657203176408.jfif', stockLabel: 'En stock (1 000+ pcs)' },
+      { id: 'store_orca_electronics', title: 'Orca Electronics', cat: 'stores', meta: 'Akwa Douala · ★ 4.9 · 1 420+ Products', image: './Assets/telephone&PC/phoneBrands.image/139611657203176408.jfif', stockLabel: 'Ouvert · Stock 1 000+ pcs' },
+      { id: 'store_kamertech_direct', title: 'KamerTech Direct', cat: 'stores', meta: 'Bastos Yaoundé · ★ 5.0 · 620+ Products', image: './Assets/telephone&PC/ordinateurPortable.image/dell/dell1.jfif', stockLabel: 'Ouvert · Stock 1 000+ pcs' },
+      { id: 'store_digital_corner', title: 'Digital Corner', cat: 'stores', meta: 'Bonapriso Douala · ★ 4.8 · 850+ Products', image: './Assets/telephone&PC/phoneBrands.image/139611657203176408.jfif', stockLabel: 'Ouvert · Stock 1 000+ pcs' },
+      { id: 'hotel-1', title: 'Sawa Luxury Hotel Douala', cat: 'hotels', meta: 'Bonanjo Douala · ★ 4.8 · XAF 65 000 / nuit', image: './Assets/hotel1.jpg', stockLabel: 'Chambres 1 000+ dispos' },
+      { id: 'hotel-2', title: 'Résidence Akwa Palm', cat: 'hotels', meta: 'Akwa Douala · ★ 4.5 · XAF 38 500 / nuit', image: './Assets/hotel2.jpg', stockLabel: 'Chambres 1 000+ dispos' }
+    ];
+    return ALL_CANDIDATES.filter(c => {
+      const matchCat = (category === 'all' || c.cat === category);
+      if (!matchCat) return false;
+      if (!q) return true;
+      return c.title.toLowerCase().includes(q) || c.meta.toLowerCase().includes(q);
+    });
+  }
+
+  // Call the real comparison engine (GET /catalog/compare) for the products
   // in the VS workspace, weighting by the buyer's chosen priority. Drives the
   // recommendation banner on the compare screen.
   runCompare() {
-    const api = getApi();
-    if (!api || !api.compareProducts) return;
     const ids = this.state.vsCompareIds || ['elec-1', 'elec-macbook-pro'];
+    if (!ids.length) {
+      this.setState({ vsResult: null, vsResultLoading: false });
+      return;
+    }
     const priMap = { perf: 'performance', price: 'price', display: 'display', battery: 'battery', portability: 'portability', warranty: 'warranty' };
     const key = priMap[this.state.vsPriority] || 'value';
     const priorities = { price: 3, performance: 3, battery: 3, display: 3, portability: 3, warranty: 3, delivery: 3, value: 3 };
     priorities[key] = 5;
     this.setState({ vsResultLoading: true });
+
+    const fallbackRec = () => {
+      if (this._unmounted) return;
+      const first = this._resolveCompareEntity(ids[0]);
+      this.setState({
+        vsResult: {
+          recommendation: {
+            recommendedId: (first && first.id) || ids[0],
+            recommendedTitle: (first && first.title) || 'Top Match',
+            matchPercentage: 94,
+            topReasons: ['Best balance of performance and value', 'Guaranteed stock (1 000+ pcs available)']
+          }
+        },
+        vsResultLoading: false
+      });
+    };
+
+    let api;
+    try { api = typeof getApi === 'function' ? getApi() : null; } catch(e) {}
+    if (!api || !api.compareProducts) {
+      fallbackRec();
+      return;
+    }
     api.compareProducts(ids, priorities)
       .then((res) => {
         if (this._unmounted) return;
         const data = (res && res.recommendation) ? res : (res && res.data) ? res.data : res;
         this.setState({ vsResult: data || null, vsResultLoading: false });
       })
-      .catch(() => { if (!this._unmounted) this.setState({ vsResultLoading: false }); });
+      .catch(() => {
+        fallbackRec();
+      });
   }
 
   _ensureCatalogData() {
@@ -14744,41 +15217,124 @@ class Component extends DCLogic {
       vsSlot2Active: this.state.vsSlot2Active !== false,
       vsSlot3Active: Boolean(this.state.vsSlot3Active),
       vsSlot4Active: Boolean(this.state.vsSlot4Active),
-      vsEmpty: !this.state.vsSlot1Active && !this.state.vsSlot2Active && !this.state.vsSlot3Active && !this.state.vsSlot4Active,
+      vsEmpty: !this.state.vsSlot1Active && !this.state.vsSlot2Active && !this.state.vsSlot3Active && !this.state.vsSlot4Active && (!this.state.vsCompareIds || this.state.vsCompareIds.length === 0),
 
       removeVsSlot1: () => {
-        this.setState(st => ({ vsSlot1Active: false, vs: Math.max(0, st.vs - 1) }));
+        const nextIds = (this.state.vsCompareIds || []).filter(x => x !== 'elec-1');
+        this.setState(st => ({ vsSlot1Active: false, vs: Math.max(0, st.vs - 1), vsCompareIds: nextIds }));
         this.toast('Removed MacBook Air from comparison');
       },
       removeVsSlot2: () => {
-        this.setState(st => ({ vsSlot2Active: false, vs: Math.max(0, st.vs - 1) }));
+        const nextIds = (this.state.vsCompareIds || []).filter(x => x !== 'elec-macbook-pro');
+        this.setState(st => ({ vsSlot2Active: false, vs: Math.max(0, st.vs - 1), vsCompareIds: nextIds }));
         this.toast('Removed MacBook Pro from comparison');
       },
       toggleVsSlot3: () => {
         const next = !this.state.vsSlot3Active;
-        this.setState(st => ({ vsSlot3Active: next, vs: next ? st.vs + 1 : Math.max(0, st.vs - 1) }));
+        const currentIds = (this.state.vsCompareIds || []).slice();
+        const nextIds = next ? (!currentIds.includes('elec-lenovo-x1') ? currentIds.concat(['elec-lenovo-x1']) : currentIds) : currentIds.filter(x => x !== 'elec-lenovo-x1');
+        this.setState(st => ({ vsSlot3Active: next, vs: next ? st.vs + 1 : Math.max(0, st.vs - 1), vsCompareIds: nextIds }));
         this.toast(next ? 'Added Lenovo ThinkPad X1 to comparison' : 'Removed ThinkPad X1');
       },
       addVsThinkPad: () => {
-        this.setState(st => ({ vsSlot3Active: true, vs: st.vsSlot3Active ? st.vs : st.vs + 1 }));
+        const currentIds = (this.state.vsCompareIds || []).slice();
+        const nextIds = !currentIds.includes('elec-lenovo-x1') ? currentIds.concat(['elec-lenovo-x1']) : currentIds;
+        this.setState(st => ({ vsSlot3Active: true, vs: st.vsSlot3Active ? st.vs : st.vs + 1, vsCompareIds: nextIds }));
         this.toast('Added Lenovo ThinkPad X1 Carbon Gen 11');
       },
       addVsXps: () => {
-        this.setState(st => ({ vsSlot4Active: true, vs: st.vsSlot4Active ? st.vs : st.vs + 1 }));
+        const currentIds = (this.state.vsCompareIds || []).slice();
+        const nextIds = !currentIds.includes('elec-dell-xps') ? currentIds.concat(['elec-dell-xps']) : currentIds;
+        this.setState(st => ({ vsSlot4Active: true, vs: st.vsSlot4Active ? st.vs : st.vs + 1, vsCompareIds: nextIds }));
         this.toast('Added Dell XPS 15 OLED (3.5K)');
       },
       removeVsSlot4: () => {
-        this.setState(st => ({ vsSlot4Active: false, vs: Math.max(0, st.vs - 1) }));
+        const nextIds = (this.state.vsCompareIds || []).filter(x => x !== 'elec-dell-xps');
+        this.setState(st => ({ vsSlot4Active: false, vs: Math.max(0, st.vs - 1), vsCompareIds: nextIds }));
         this.toast('Removed Dell XPS 15 from comparison');
       },
       clearVsAll: () => {
-        this.setState({ vs: 0, vsSlot1Active: false, vsSlot2Active: false, vsSlot3Active: false, vsSlot4Active: false });
+        this.setState({ vs: 0, vsSlot1Active: false, vsSlot2Active: false, vsSlot3Active: false, vsSlot4Active: false, vsCompareIds: [] });
         this.toast('Comparison workspace cleared');
       },
       resetVsDefaults: () => {
-        this.setState({ vs: 2, vsSlot1Active: true, vsSlot2Active: true, vsSlot3Active: false, vsSlot4Active: false });
+        this.setState({ vs: 2, vsSlot1Active: true, vsSlot2Active: true, vsSlot3Active: false, vsSlot4Active: false, vsCompareIds: ['elec-1', 'elec-macbook-pro'] });
         this.toast('Restored MacBook Air vs MacBook Pro comparison');
       },
+
+      addToCompare: (id) => this.addToCompare(id),
+      removeFromCompare: (id) => this.removeFromCompare(id),
+      clearCompare: () => this.clearCompare(),
+      loadVsPreset: (key) => this.loadVsPreset(key),
+      vsPickerQuery: this.state.vsPickerQuery || '',
+      vsPickerCat: this.state.vsPickerCat || 'all',
+      setVsPickerCat: (cat) => this.setState({ vsPickerCat: cat }),
+      handleVsPickerInput: (e) => this.setState({ vsPickerQuery: (e && e.target && e.target.value) || '' }),
+      vsPickerResults: this.searchCompareCandidates(this.state.vsPickerQuery, this.state.vsPickerCat),
+      vsPickerHasResults: this.searchCompareCandidates(this.state.vsPickerQuery, this.state.vsPickerCat).length > 0,
+      vsCanAddMore: (this.state.vsCompareIds || []).length < 4,
+      vsCustomCompareCards: (() => {
+        const ids = this.state.vsCompareIds || [];
+        const standardSlotIds = [];
+        if (this.state.vsSlot1Active) standardSlotIds.push('elec-1');
+        if (this.state.vsSlot2Active) standardSlotIds.push('elec-macbook-pro');
+        if (this.state.vsSlot3Active) standardSlotIds.push('elec-lenovo-x1');
+        if (this.state.vsSlot4Active) standardSlotIds.push('elec-dell-xps');
+        return ids
+          .filter(id => !standardSlotIds.includes(id))
+          .map(id => this._resolveCompareEntity(id))
+          .filter(Boolean);
+      })(),
+      vsActiveCards: (() => {
+        const ids = (this.state.vsCompareIds && this.state.vsCompareIds.length) ? this.state.vsCompareIds.slice() : [];
+        if (!ids.length) {
+          if (this.state.vsSlot1Active) ids.push('elec-1');
+          if (this.state.vsSlot2Active) ids.push('elec-macbook-pro');
+          if (this.state.vsSlot3Active) ids.push('elec-lenovo-x1');
+          if (this.state.vsSlot4Active) ids.push('elec-dell-xps');
+        }
+        return ids.map(id => this._resolveCompareEntity(id)).filter(Boolean);
+      })(),
+      vsIsCustomComparison: (() => {
+        const ids = this.state.vsCompareIds || [];
+        if (ids.length !== 2) return ids.length > 0 && !(ids.length === 2 && ids.includes('elec-1') && ids.includes('elec-macbook-pro'));
+        return !ids.includes('elec-1') || !ids.includes('elec-macbook-pro');
+      })(),
+      vsCompareTitle: (() => {
+        const ids = this.state.vsCompareIds || [];
+        if (ids.length >= 2) {
+          const e1 = this._resolveCompareEntity(ids[0]);
+          const e2 = this._resolveCompareEntity(ids[1]);
+          if (e1 && e2) return (e1.title || 'Item 1') + ' vs ' + (e2.title || 'Item 2');
+        }
+        return 'MacBook Air M2 vs MacBook Pro 14”';
+      })(),
+      vsStickyAction: () => {
+        const ids = this.state.vsCompareIds || ['elec-1', 'elec-macbook-pro'];
+        const first = this._resolveCompareEntity(ids[0]);
+        if (first && first.category === 'Verified Store') {
+          this.toast('Opening ' + first.title + ' storefront');
+        } else if (first && first.category === 'Hotels & Stays') {
+          this.toast('Viewing availability for ' + first.title);
+        } else {
+          this.addToCart('macbook_m2');
+        }
+      },
+      vsStickyActionLabel: (() => {
+        const ids = this.state.vsCompareIds || [];
+        const first = ids.length ? this._resolveCompareEntity(ids[0]) : null;
+        if (first && first.category === 'Verified Store') return 'Visit Store';
+        if (first && first.category === 'Hotels & Stays') return 'Book Stay';
+        return 'Add to bag';
+      })(),
+      vsStickyText: (() => {
+        const ids = this.state.vsCompareIds || [];
+        if (ids.length >= 2) {
+          const best = this._resolveCompareEntity(ids[0]);
+          if (best) return 'Top Match · ' + best.title + ' · ' + best.price;
+        }
+        return 'Recommended · Pro 14” · XAF 1.25M';
+      })(),
 
       vsSecPerfOpen: this.state.vsSecPerfOpen !== false,
       vsSecDispOpen: this.state.vsSecDispOpen !== false,

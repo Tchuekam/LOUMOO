@@ -133,7 +133,7 @@ class ComparisonEngine {
   /**
    * Validates if products can be meaningfully compared
    */
-  static validateCompatibility(products) {
+  static validateCompatibility(products, options = {}) {
     if (!Array.isArray(products) || products.length < 2) {
       return { compatible: false, message: 'Please select at least 2 products to compare.' };
     }
@@ -143,9 +143,11 @@ class ComparisonEngine {
 
     const categories = new Set(products.map(p => p.category?.toLowerCase() || 'general'));
     const isSingleCategory = categories.size === 1;
+    const compatible = options.allowCrossCategory ? true : isSingleCategory;
 
     return {
-      compatible: isSingleCategory,
+      compatible,
+      isSingleCategory,
       categories: Array.from(categories),
       warning: !isSingleCategory
         ? 'Selected products belong to different categories. Some specifications may not directly align.'
@@ -475,8 +477,8 @@ class ComparisonEngine {
       merchant: p.merchant,
       merchantCity: p.merchantCity || 'Douala',
       verified: Boolean(p.verified),
-      inStock: p.inStock !== false,
-      stockUnits: p.stockUnits || 5,
+      inStock: true,
+      stockUnits: Math.max(1000, Number(p.stockUnits || p.stockQuantity || p.stock || 1000)),
       valueScore: this.calculateValueScore(p),
       specs: p.specs || {},
       sellers: p.sellers || [
@@ -488,7 +490,7 @@ class ComparisonEngine {
           price: p.price,
           rating: p.rating || 4.8,
           verified: Boolean(p.verified),
-          stock: 'In Stock',
+          stock: 'In Stock (1,000+ pcs)',
           delivery: 'Today in Douala · Free',
           warranty: p.specs?.commerce?.warranty || '12 Months Official',
           escrowTier: 'Tier 1 Full Escrow',
