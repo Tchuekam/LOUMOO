@@ -14539,6 +14539,10 @@ class Component extends DCLogic {
       storeDiscoveryLoading: Boolean(this.state.storeDiscoveryLoading),
       storeDiscoveryError: this.state.storeDiscoveryError || '',
       storeDiscoveryCards: (this.state.storeDiscovery || []).filter(store => {
+        // Defence-in-depth: strip QA/test boutiques client-side.
+        if (/^store_test_/i.test(String(store.id || ''))) return false;
+        if (/test\s*boutique/i.test(String(store.name || ''))) return false;
+
         const q = (this.state.storeSearchQuery || '').toLowerCase().trim();
         if (q) {
           const matchName = (store.name || '').toLowerCase().includes(q);

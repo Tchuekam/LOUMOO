@@ -92,6 +92,13 @@ class StoreDiscoveryUseCase {
         return publicView;
       });
 
+      // Keep QA/test boutiques out of the public store directory — mirrors the
+      // same guard applied to product listings in CatalogRepository.
+      stores = stores.filter(st =>
+        !/^store_test_/i.test(String(st.id || '')) &&
+        !/test\s*boutique/i.test(String(st.name || ''))
+      );
+
       // City lives on store_locations, one join away, so attach it after the
       // primary query while keeping filtering and pagination database-backed.
       if (stores.length > 0) {
