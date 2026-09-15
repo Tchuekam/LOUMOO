@@ -410,7 +410,7 @@ _TEMPLATE = """
         </button>
         <div>
           <h3 style="margin:0;font-size:16px;font-weight:800">Commercial Broadcast Details</h3>
-          <span style="font-size:11px;color:var(--color-text-secondary)">Ref: ANN-2026-M3DK</span>
+          <span style="font-size:11px;color:var(--color-text-secondary)">Ref: {{ activeAnnouncementCard.refCode || ('ANN-' + (activeAnnouncementId || '2026')) }}</span>
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:8px">
@@ -435,9 +435,17 @@ _TEMPLATE = """
           <h1 style="margin:0;font-size:clamp(24px,4vw,34px);line-height:1.12;letter-spacing:-.035em">{{ activeAnnouncementCard.title }}</h1>
           <sc-if value="{{ activeAnnouncementCard.body }}"><p style="margin:0;font:400 15px/1.65 var(--font-body);color:var(--color-text-secondary)">{{ activeAnnouncementCard.body }}</p></sc-if>
           <sc-if value="{{ activeAnnouncementCard.highlights && activeAnnouncementCard.highlights.length }}"><div style="display:flex;flex-wrap:wrap;gap:8px"><sc-for list="{{ activeAnnouncementCard.highlights }}" as="item"><span class="tag tag-neutral">✓ {{ item.label }}</span></sc-for></div></sc-if>
-          <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;padding-top:14px;border-top:1px solid var(--color-divider)"><span style="font:800 18px/1 var(--font-heading);color:var(--color-accent)">{{ activeAnnouncementCard.priceLine }}</span><button onClick="{{ activateAnnouncementCta }}" class="btn btn-primary" style="height:42px;padding:0 16px">{{ activeAnnouncementCard.ctaLabel || 'Contact seller' }} →</button></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;padding-top:14px;border-top:1px solid var(--color-divider)"><sc-if value="{{ activeAnnouncementCard.priceLine }}"><span style="font:800 18px/1 var(--font-heading);color:var(--color-accent)">{{ activeAnnouncementCard.priceLine }}</span></sc-if><button onClick="{{ activateAnnouncementCta }}" class="btn btn-primary" style="height:42px;padding:0 18px;font-weight:700;display:inline-flex;align-items:center;gap:6px">{{ activeAnnouncementCard.ctaLabel || 'Contact seller' }} <span aria-hidden="true">→</span></button></div>
         </div>
       </article>
+    </sc-if>
+
+    <sc-if value="{{ !announceDetailLoading && !hasActiveAnnouncement }}">
+      <div class="ann-empty" style="text-align:center;padding:48px 16px;background:var(--color-surface);border:1px dashed var(--color-divider);border-radius:var(--radius-md)">
+        <h4 style="font-size:18px;margin-bottom:8px">Broadcast not found</h4>
+        <p style="color:var(--color-text-secondary);font-size:13px;max-width:400px;margin:0 auto 16px">This commercial broadcast may have concluded or is no longer active.</p>
+        <button onClick="{{ on.announce }}" class="btn btn-primary" style="height:38px;padding:0 16px;font-size:13px">Return to Announce feed</button>
+      </div>
     </sc-if>
 
 

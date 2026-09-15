@@ -123,8 +123,14 @@ def get_store_business_view():
       </div>
     </div>
 
-    <button onClick="{{ submitCreateStore }}" class="btn btn-primary btn-block" style="height:48px;font-size:14px;cursor:pointer">
-      {{ createStoreBusy ? 'INITIALIZING STOREFRONT...' : 'CREATE STOREFRONT &amp; START ONBOARDING →' }}
+    <button onClick="{{ submitCreateStore }}" class="btn btn-primary btn-block {{ createStoreBusy ? 'disabled' : '' }}" disabled="{{ createStoreBusy }}" style="height:48px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
+      <sc-if value="{{ createStoreBusy }}">
+        <span class="pub-spinner" style="width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite" aria-hidden="true"></span>
+        <span>INITIALIZING STOREFRONT...</span>
+      </sc-if>
+      <sc-if value="{{ !createStoreBusy }}">
+        <span>CREATE STOREFRONT &amp; START ONBOARDING →</span>
+      </sc-if>
     </button>
 
   </div>
@@ -307,8 +313,14 @@ def get_store_business_view():
       </div>
     </div>
 
-    <button onClick="{{ submitStoreVerificationDocs }}" class="btn btn-primary btn-block" style="height:48px;font-size:14px;cursor:pointer">
-      SUBMIT VERIFICATION FOR REVIEW <span>→</span>
+    <button onClick="{{ submitStoreVerificationDocs }}" class="btn btn-primary btn-block {{ verSubmitting ? 'disabled' : '' }}" disabled="{{ verSubmitting }}" style="height:48px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
+      <sc-if value="{{ verSubmitting }}">
+        <span class="pub-spinner" style="width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite" aria-hidden="true"></span>
+        <span>SUBMITTING FOR OFFICIAL REVIEW...</span>
+      </sc-if>
+      <sc-if value="{{ !verSubmitting }}">
+        <span>SUBMIT VERIFICATION FOR REVIEW →</span>
+      </sc-if>
     </button>
 
   </div>
@@ -578,8 +590,27 @@ def get_store_business_view():
       </div>
     </div>
 
-    <button onClick="{{ saveStoreSettingsAll }}" class="btn btn-primary btn-block" style="height:48px;font-size:14px;cursor:pointer">
-      SAVE ALL STORE SETTINGS <span>✓</span>
+    <sc-if value="{{ storeSettingsSaving }}">
+      <div class="pub-banner is-busy" role="status" style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--color-surface);border:1px solid var(--color-accent);border-radius:var(--radius-md);box-shadow:var(--shadow-xs);margin-bottom:4px">
+        <span class="pub-spinner" style="width:18px;height:18px;border:2.5px solid var(--color-divider);border-top-color:var(--color-accent);border-radius:50%;animation:spin .8s linear infinite" aria-hidden="true"></span>
+        <span style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Saving boutique settings to LOUMOO…</span>
+      </div>
+    </sc-if>
+    <sc-if value="{{ storeSettingsError }}">
+      <div class="pub-banner is-error" role="alert" style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:rgba(239,68,68,0.08);border:1px solid var(--color-danger);border-radius:var(--radius-md);margin-bottom:4px">
+        <span style="font:600 13px/1.2 var(--font-heading);color:var(--color-danger)">{{ storeSettingsError }}</span>
+      </div>
+    </sc-if>
+
+    <button onClick="{{ saveStoreSettingsAll }}" class="btn btn-primary btn-block {{ storeSettingsSaving ? 'disabled' : '' }}" disabled="{{ storeSettingsSaving }}" style="height:50px;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:all .2s ease">
+      <sc-if value="{{ storeSettingsSaving }}">
+        <span class="pub-spinner" style="width:18px;height:18px;border:2.5px solid rgba(255,255,255,0.35);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite" aria-hidden="true"></span>
+        <span>SAVING STORE SETTINGS…</span>
+      </sc-if>
+      <sc-if value="{{ !storeSettingsSaving }}">
+        <span>SAVE ALL STORE SETTINGS</span>
+        <span style="font-weight:900">✓</span>
+      </sc-if>
     </button>
 
   </div>
