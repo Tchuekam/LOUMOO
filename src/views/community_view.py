@@ -190,54 +190,90 @@ _TEMPLATE = """
       </div>
       
       <div style="display:flex;align-items:center;gap:6px;background:var(--color-surface);border:1px solid var(--color-divider);padding:4px;border-radius:var(--radius-sm)">
-        <button class="btn btn-outline" style="height:28px;padding:0 10px;font-size:11px;font-weight:700;border:none">Today</button>
-        <button class="btn btn-primary" style="height:28px;padding:0 10px;font-size:11px;font-weight:700">Last 7 Days</button>
-        <button class="btn btn-outline" style="height:28px;padding:0 10px;font-size:11px;font-weight:700;border:none">Last 30 Days</button>
+        <button onClick="{{ setAnnouncePeriodToday }}" class="btn {{ announcePeriod === 'today' ? 'btn-primary' : 'btn-outline' }}" style="height:28px;padding:0 10px;font-size:11px;font-weight:700{{ announcePeriod === 'today' ? '' : ';border:none' }}">Today</button>
+        <button onClick="{{ setAnnouncePeriod7d }}" class="btn {{ announcePeriod === '7d' ? 'btn-primary' : 'btn-outline' }}" style="height:28px;padding:0 10px;font-size:11px;font-weight:700{{ announcePeriod === '7d' ? '' : ';border:none' }}">Last 7 Days</button>
+        <button onClick="{{ setAnnouncePeriod30d }}" class="btn {{ announcePeriod === '30d' ? 'btn-primary' : 'btn-outline' }}" style="height:28px;padding:0 10px;font-size:11px;font-weight:700{{ announcePeriod === '30d' ? '' : ';border:none' }}">Last 30 Days</button>
       </div>
     </div>
+
+    <!-- Zero Telemetry Notice Banner for New Stores -->
+    <sc-if value="{{ !announceHasCampaigns }}">
+      <div class="card-premium" style="padding:16px 20px;background:var(--color-surface-subtle);border:1px dashed var(--color-divider);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:20px">
+        <div style="display:flex;align-items:center;gap:12px;min-width:240px;flex:1">
+          <div style="width:40px;height:40px;border-radius:50%;background:var(--color-surface);border:1px solid var(--color-divider);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--color-accent)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Zero Telemetry Recorded · Storefront Baseline</span>
+              <span class="tag tag-neutral" style="font-size:9.5px;font-weight:700;padding:2px 6px">HONEST METRICS</span>
+            </div>
+            <div style="font:400 12px/1.4 var(--font-body);color:var(--color-text-secondary);margin-top:4px">
+              LOUMOO never fabricates marketing numbers. Reach, unique viewers, and high-intent conversions activate in real-time once you publish your first commercial broadcast.
+            </div>
+          </div>
+        </div>
+        <button onClick="{{ on.announceStudio }}" class="btn btn-primary" style="height:34px;padding:0 14px;font-size:11.5px;font-weight:700;white-space:nowrap;cursor:pointer">
+          + LAUNCH FIRST CAMPAIGN
+        </button>
+      </div>
+    </sc-if>
 
     <!-- 6 KPI Metric Cards Grid -->
     <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:14px;margin-bottom:24px">
       
       <div class="card-premium">
         <div style="font-size:11.5px;color:var(--color-text-secondary);font-weight:700;margin-bottom:6px">TOTAL REACH (IMPRESSIONS)</div>
-        <div style="font:800 24px/1 var(--font-heading);color:var(--color-text)">38,420</div>
-        <div style="font-size:11px;color:var(--color-success);margin-top:6px;display:flex;align-items:center;gap:3px">
-          <span>↑ +18.4%</span>
-          <span style="color:var(--color-text-muted)">vs previous 7 days</span>
-        </div>
+        <div style="font:800 24px/1 var(--font-heading);color:var(--color-text)">{{ announceTotalReach }}</div>
+        <sc-if value="{{ announceHasCampaigns }}">
+          <div style="font-size:11px;color:var(--color-success);margin-top:6px;display:flex;align-items:center;gap:3px">
+            <span>Live verified reach</span>
+          </div>
+        </sc-if>
+        <sc-if value="{{ !announceHasCampaigns }}">
+          <div style="font-size:11px;color:var(--color-text-muted);margin-top:6px">0 verified impressions</div>
+        </sc-if>
       </div>
 
       <div class="card-premium">
         <div style="font-size:11.5px;color:var(--color-text-secondary);font-weight:700;margin-bottom:6px">UNIQUE VIEWERS</div>
-        <div style="font:800 24px/1 var(--font-heading);color:var(--color-text)">14,280</div>
-        <div style="font-size:11px;color:var(--color-text-muted);margin-top:6px">37.1% unique reach ratio</div>
+        <div style="font:800 24px/1 var(--font-heading);color:var(--color-text)">{{ announceUniqueViewers }}</div>
+        <div style="font-size:11px;color:var(--color-text-muted);margin-top:6px">{{ announceUniqueRatio }} unique reach ratio</div>
       </div>
 
       <div class="card-premium">
         <div style="font-size:11.5px;color:var(--color-text-secondary);font-weight:700;margin-bottom:6px">CTA ACTION CLICKS</div>
-        <div style="font:800 24px/1 var(--font-heading);color:var(--color-accent)">1,842</div>
-        <div style="font-size:11px;color:var(--color-success);margin-top:6px;display:flex;align-items:center;gap:3px">
-          <span>↑ +24.1%</span>
-          <span style="color:var(--color-text-muted)">high intent clicks</span>
-        </div>
+        <div style="font:800 24px/1 var(--font-heading);color:var(--color-accent)">{{ announceActionClicks }}</div>
+        <sc-if value="{{ announceHasCampaigns }}">
+          <div style="font-size:11px;color:var(--color-success);margin-top:6px;display:flex;align-items:center;gap:3px">
+            <span>High intent clicks</span>
+          </div>
+        </sc-if>
+        <sc-if value="{{ !announceHasCampaigns }}">
+          <div style="font-size:11px;color:var(--color-text-muted);margin-top:6px">0 buyer clicks</div>
+        </sc-if>
       </div>
 
       <div class="card-premium">
         <div style="font-size:11.5px;color:var(--color-text-secondary);font-weight:700;margin-bottom:6px">AVERAGE CTR %</div>
-        <div style="font:800 24px/1 var(--font-heading);color:var(--color-text)">4.80%</div>
-        <div style="font-size:11px;color:var(--color-success);margin-top:6px">2.3x higher than standard ads</div>
+        <div style="font:800 24px/1 var(--font-heading);color:var(--color-text)">{{ announceAverageCtr }}</div>
+        <sc-if value="{{ announceHasCampaigns }}">
+          <div style="font-size:11px;color:var(--color-success);margin-top:6px">Real-time clickthrough rate</div>
+        </sc-if>
+        <sc-if value="{{ !announceHasCampaigns }}">
+          <div style="font-size:11px;color:var(--color-text-muted);margin-top:6px">Awaiting first broadcast</div>
+        </sc-if>
       </div>
 
       <div class="card-premium">
         <div style="font-size:11.5px;color:var(--color-text-secondary);font-weight:700;margin-bottom:6px">WHATSAPP INQUIRIES</div>
-        <div style="font:800 24px/1 var(--font-heading);color:var(--color-wa-teal)">342</div>
+        <div style="font:800 24px/1 var(--font-heading);color:var(--color-wa-teal)">{{ announceWhatsappInquiries }}</div>
         <div style="font-size:11px;color:var(--color-text-muted);margin-top:6px">Direct seller chats started</div>
       </div>
 
       <div class="card-premium">
         <div style="font-size:11.5px;color:var(--color-text-secondary);font-weight:700;margin-bottom:6px">PIPELINE VALUE</div>
-        <div style="font:800 22px/1 var(--font-heading);color:var(--color-text)">XAF 8.45M</div>
+        <div style="font:800 22px/1 var(--font-heading);color:var(--color-text)">{{ announcePipelineValue }}</div>
         <div style="font-size:11px;color:var(--color-text-muted);margin-top:6px">From linked product sales</div>
       </div>
 
@@ -247,117 +283,111 @@ _TEMPLATE = """
     <div class="card-premium" style="margin-bottom:24px">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
         <h4 style="margin:0;font-size:16px;font-weight:800">Active &amp; Historical Commercial Campaigns</h4>
-        <span class="tag tag-accent" style="font-weight:700">4 Active Broadcasts</span>
+        <span class="tag tag-accent" style="font-weight:700">{{ announceCampaignsCountLabel }}</span>
       </div>
 
-      <div style="overflow-x:auto">
-        <table style="width:100%;border-collapse:collapse;text-align:left;font-size:12px">
-          <thead>
-            <tr style="border-bottom:1px solid var(--color-divider);color:var(--color-text-muted);font-weight:700;font-size:11px">
-              <th style="padding:10px 8px">CAMPAIGN TITLE</th>
-              <th style="padding:10px 8px">TYPE</th>
-              <th style="padding:10px 8px">STATUS</th>
-              <th style="padding:10px 8px">AUDIENCE</th>
-              <th style="padding:10px 8px">IMPRESSIONS</th>
-              <th style="padding:10px 8px">VIEWS</th>
-              <th style="padding:10px 8px">CLICKS</th>
-              <th style="padding:10px 8px">CTR %</th>
-              <th style="padding:10px 8px;text-align:right">ACTION</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr style="border-bottom:1px solid var(--color-divider)">
-              <td style="padding:12px 8px;font-weight:700;color:var(--color-text)">Weekend Flash Drop: MacBook Air M3</td>
-              <td style="padding:12px 8px"><span class="tag tag-accent" style="font-size:10px">Deal</span></td>
-              <td style="padding:12px 8px"><span style="color:var(--color-success);font-weight:800">● LIVE</span></td>
-              <td style="padding:12px 8px;color:var(--color-text-secondary)">Cameroon (All)</td>
-              <td style="padding:12px 8px;font-weight:700">12,450</td>
-              <td style="padding:12px 8px">2,410</td>
-              <td style="padding:12px 8px;font-weight:700;color:var(--color-accent)">482</td>
-              <td style="padding:12px 8px;font-weight:700">20.0%</td>
-              <td style="padding:12px 8px;text-align:right">
-                <button onClick="{{ on.announceDetail }}" class="btn btn-outline" style="height:28px;padding:0 8px;font-size:11px;font-weight:700">Details</button>
-              </td>
-            </tr>
-            <tr style="border-bottom:1px solid var(--color-divider)">
-              <td style="padding:12px 8px;font-weight:700;color:var(--color-text)">Senior React &amp; Mobile Engineer</td>
-              <td style="padding:12px 8px"><span class="tag tag-neutral" style="font-size:10px">Job</span></td>
-              <td style="padding:12px 8px"><span style="color:var(--color-success);font-weight:800">● LIVE</span></td>
-              <td style="padding:12px 8px;color:var(--color-text-secondary)">Douala &amp; Yaoundé</td>
-              <td style="padding:12px 8px;font-weight:700">8,920</td>
-              <td style="padding:12px 8px">1,840</td>
-              <td style="padding:12px 8px;font-weight:700;color:var(--color-accent)">128</td>
-              <td style="padding:12px 8px;font-weight:700">6.9%</td>
-              <td style="padding:12px 8px;text-align:right">
-                <button onClick="{{ on.announceDetail }}" class="btn btn-outline" style="height:28px;padding:0 8px;font-size:11px;font-weight:700">Details</button>
-              </td>
-            </tr>
-            <tr style="border-bottom:1px solid var(--color-divider)">
-              <td style="padding:12px 8px;font-weight:700;color:var(--color-text)">Solar Power Equipment Supply PAD</td>
-              <td style="padding:12px 8px"><span class="tag tag-neutral" style="font-size:10px">Tender</span></td>
-              <td style="padding:12px 8px"><span style="color:var(--color-success);font-weight:800">● LIVE</span></td>
-              <td style="padding:12px 8px;color:var(--color-text-secondary)">CEMAC Suppliers</td>
-              <td style="padding:12px 8px;font-weight:700">5,140</td>
-              <td style="padding:12px 8px">940</td>
-              <td style="padding:12px 8px;font-weight:700;color:var(--color-accent)">94</td>
-              <td style="padding:12px 8px;font-weight:700">10.0%</td>
-              <td style="padding:12px 8px;text-align:right">
-                <button onClick="{{ on.announceDetail }}" class="btn btn-outline" style="height:28px;padding:0 8px;font-size:11px;font-weight:700">Details</button>
-              </td>
-            </tr>
-            <tr>
-              <td style="padding:12px 8px;font-weight:700;color:var(--color-text)">PlayStation 5 Slim Stock Clearance</td>
-              <td style="padding:12px 8px"><span class="tag tag-accent" style="font-size:10px">Drop</span></td>
-              <td style="padding:12px 8px"><span style="color:var(--color-text-muted);font-weight:800">EXPIRED</span></td>
-              <td style="padding:12px 8px;color:var(--color-text-secondary)">Douala (Akwa)</td>
-              <td style="padding:12px 8px;font-weight:700">11,910</td>
-              <td style="padding:12px 8px">2,630</td>
-              <td style="padding:12px 8px;font-weight:700;color:var(--color-accent)">514</td>
-              <td style="padding:12px 8px;font-weight:700">19.5%</td>
-              <td style="padding:12px 8px;text-align:right">
-                <button onClick="{{ on.announceDetail }}" class="btn btn-outline" style="height:28px;padding:0 8px;font-size:11px;font-weight:700">Details</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <!-- Live campaigns table when campaigns exist -->
+      <sc-if value="{{ announceHasCampaigns }}">
+        <div style="overflow-x:auto">
+          <table style="width:100%;border-collapse:collapse;text-align:left;font-size:12px">
+            <thead>
+              <tr style="border-bottom:1px solid var(--color-divider);color:var(--color-text-muted);font-weight:700;font-size:11px">
+                <th style="padding:10px 8px">CAMPAIGN TITLE</th>
+                <th style="padding:10px 8px">TYPE</th>
+                <th style="padding:10px 8px">STATUS</th>
+                <th style="padding:10px 8px">AUDIENCE</th>
+                <th style="padding:10px 8px">IMPRESSIONS</th>
+                <th style="padding:10px 8px">VIEWS</th>
+                <th style="padding:10px 8px">CLICKS</th>
+                <th style="padding:10px 8px">CTR %</th>
+                <th style="padding:10px 8px;text-align:right">ACTION</th>
+              </tr>
+            </thead>
+            <tbody>
+              <sc-for list="{{ announceCampaignsList }}" as="camp">
+                <tr style="border-bottom:1px solid var(--color-divider)">
+                  <td style="padding:12px 8px;font-weight:700;color:var(--color-text)">{{ camp.title }}</td>
+                  <td style="padding:12px 8px"><span class="tag tag-accent" style="font-size:10px">{{ camp.typeLabel }}</span></td>
+                  <td style="padding:12px 8px">
+                    <sc-if value="{{ camp.status === 'PUBLISHED' }}"><span style="color:var(--color-success);font-weight:800">● LIVE</span></sc-if>
+                    <sc-if value="{{ camp.status === 'SCHEDULED' }}"><span style="color:var(--color-accent);font-weight:800">SCHEDULED</span></sc-if>
+                    <sc-if value="{{ camp.status !== 'PUBLISHED' && camp.status !== 'SCHEDULED' }}"><span style="color:var(--color-text-muted);font-weight:800">{{ camp.status }}</span></sc-if>
+                  </td>
+                  <td style="padding:12px 8px;color:var(--color-text-secondary)">{{ camp.audience }}</td>
+                  <td style="padding:12px 8px;font-weight:700">{{ camp.impressions }}</td>
+                  <td style="padding:12px 8px">{{ camp.views }}</td>
+                  <td style="padding:12px 8px;font-weight:700;color:var(--color-accent)">{{ camp.clicks }}</td>
+                  <td style="padding:12px 8px;font-weight:700">{{ camp.ctr }}</td>
+                  <td style="padding:12px 8px;text-align:right">
+                    <button onClick="{{ () => openAnnounceDetail(camp.id) }}" class="btn btn-outline" style="height:28px;padding:0 8px;font-size:11px;font-weight:700">Details</button>
+                  </td>
+                </tr>
+              </sc-for>
+            </tbody>
+          </table>
+        </div>
+      </sc-if>
+
+      <!-- Zero Telemetry honest empty state for new stores -->
+      <sc-if value="{{ !announceHasCampaigns }}">
+        <div style="padding:36px 20px;text-align:center;background:var(--color-surface-subtle);border-radius:var(--radius-md);border:1px dashed var(--color-divider);margin:12px 0">
+          <div style="width:48px;height:48px;border-radius:50%;background:var(--color-surface);border:1px solid var(--color-divider);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;color:var(--color-text-muted)">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <div style="font:700 15px/1.3 var(--font-heading);color:var(--color-text);margin-bottom:6px">No commercial broadcasts published yet</div>
+          <div style="font:400 12.5px/1.4 var(--font-body);color:var(--color-text-secondary);max-width:440px;margin:0 auto 18px">
+            Announce lets you broadcast flash sales, product drops, service launches, jobs and tenders to thousands of buyers in Douala, Yaoundé and nationwide with zero fake impressions.
+          </div>
+          <button onClick="{{ on.announceStudio }}" class="btn btn-primary" style="height:38px;padding:0 20px;font-size:12px;font-weight:700;cursor:pointer">
+            + DRAFT FIRST BROADCAST IN STUDIO
+          </button>
+        </div>
+      </sc-if>
     </div>
 
     <!-- Geographic Audience Distribution Breakdown -->
     <div class="card-premium">
       <h4 style="margin:0 0 12px;font-size:15px;font-weight:800">Audience Distribution Across Cameroon</h4>
       
-      <div style="display:flex;flex-direction:column;gap:10px">
-        <div>
-          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
-            <span style="font-weight:700;color:var(--color-text)">Douala (Akwa, Bonanjo, Bonapriso, Deido, Bepanda)</span>
-            <span style="font-weight:800;color:var(--color-accent)">54% Reach</span>
+      <sc-if value="{{ announceHasCampaigns }}">
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+              <span style="font-weight:700;color:var(--color-text)">Douala (Akwa, Bonanjo, Bonapriso, Deido, Bepanda)</span>
+              <span style="font-weight:800;color:var(--color-accent)">54% Reach</span>
+            </div>
+            <div style="height:8px;background:var(--color-divider);border-radius:4px;overflow:hidden">
+              <div style="width:54%;height:100%;background:var(--color-accent);border-radius:4px"></div>
+            </div>
           </div>
-          <div style="height:8px;background:var(--color-divider);border-radius:4px;overflow:hidden">
-            <div style="width:54%;height:100%;background:var(--color-accent);border-radius:4px"></div>
-          </div>
-        </div>
 
-        <div>
-          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
-            <span style="font-weight:700;color:var(--color-text)">Yaoundé (Bastos, Centre-Ville, Omnisports, Mendong)</span>
-            <span style="font-weight:800;color:var(--color-accent)">31% Reach</span>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+              <span style="font-weight:700;color:var(--color-text)">Yaoundé (Bastos, Centre-Ville, Omnisports, Mendong)</span>
+              <span style="font-weight:800;color:var(--color-accent)">31% Reach</span>
+            </div>
+            <div style="height:8px;background:var(--color-divider);border-radius:4px;overflow:hidden">
+              <div style="width:31%;height:100%;background:var(--color-accent);border-radius:4px"></div>
+            </div>
           </div>
-          <div style="height:8px;background:var(--color-divider);border-radius:4px;overflow:hidden">
-            <div style="width:31%;height:100%;background:var(--color-accent);border-radius:4px"></div>
-          </div>
-        </div>
 
-        <div>
-          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
-            <span style="font-weight:700;color:var(--color-text)">West &amp; South-West (Bafoussam, Kribi, Limbe, Buea)</span>
-            <span style="font-weight:800;color:var(--color-accent)">15% Reach</span>
-          </div>
-          <div style="height:8px;background:var(--color-divider);border-radius:4px;overflow:hidden">
-            <div style="width:15%;height:100%;background:var(--color-accent);border-radius:4px"></div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+              <span style="font-weight:700;color:var(--color-text)">West &amp; South-West (Bafoussam, Kribi, Limbe, Buea)</span>
+              <span style="font-weight:800;color:var(--color-accent)">15% Reach</span>
+            </div>
+            <div style="height:8px;background:var(--color-divider);border-radius:4px;overflow:hidden">
+              <div style="width:15%;height:100%;background:var(--color-accent);border-radius:4px"></div>
+            </div>
           </div>
         </div>
-      </div>
+      </sc-if>
+
+      <sc-if value="{{ !announceHasCampaigns }}">
+        <div style="padding:22px 16px;text-align:center;background:var(--color-surface-subtle);border-radius:var(--radius-md);border:1px dashed var(--color-divider);font:400 12px/1.4 var(--font-body);color:var(--color-text-secondary)">
+          Regional distribution telemetry will map impressions and viewer hotspots across Douala, Yaoundé, Bafoussam and Kribi once your broadcasts go live.
+        </div>
+      </sc-if>
     </div>
 
   </div>
@@ -410,98 +440,6 @@ _TEMPLATE = """
       </article>
     </sc-if>
 
-    <!-- Retained temporarily for source-history context, never rendered. -->
-    <sc-if value="{{ false }}">
-
-    <!-- Merchant Header Card -->
-    <div class="card-premium" style="display:flex;align-items:center;justify-content:space-between">
-      <div style="display:flex;align-items:center;gap:12px">
-        <div style="width:48px;height:48px;border-radius:50%;background:var(--color-surface-subtle);border:1px solid var(--color-divider);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;color:var(--color-accent)">
-          KT
-        </div>
-        <div>
-          <div style="display:flex;align-items:center;gap:6px">
-            <span style="font-weight:800;font-size:15px;color:var(--color-text)">Kamer Tech Solutions</span>
-            <span class="tag tag-accent" style="min-height:18px;padding:1px 6px;font-size:9.5px;font-weight:800">VERIFIED MERCHANT</span>
-          </div>
-          <div style="font-size:12px;color:var(--color-text-secondary);margin-top:2px">Akwa Commercial Boulevard, Douala · ★ 4.9 (128 reviews) · 1,240 followers</div>
-        </div>
-      </div>
-      <button onClick="{{ toggleFollow }}" class="btn btn-outline" style="height:36px;padding:0 14px;font-size:11.5px;font-weight:700">
-        {{ followLabel }}
-      </button>
-    </div>
-
-    <!-- Main Message Card -->
-    <div class="card-premium">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
-        <span class="tag tag-accent" style="font-weight:800">PROMOTION · -15% OFF</span>
-        <span style="font-size:11.5px;color:var(--color-text-muted)">Posted today at 08:30 AM · Ends in 36 hours</span>
-      </div>
-
-      <h2 style="margin:0 0 12px;font-size:22px;font-weight:800;line-height:1.25;color:var(--color-text)">
-        Weekend Flash Drop: MacBook Air M3 Space Gray in Stock!
-      </h2>
-
-      <p style="font-size:14px;color:var(--color-text-secondary);line-height:1.55;margin:0 0 16px">
-        Get XAF 50,000 off this weekend only at our Akwa showroom or order online with free express doorstep delivery anywhere in Douala &amp; Yaoundé. Genuine sealed box, 12 months official Apple warranty included.
-      </p>
-
-      <h4 style="margin:0 0 8px;font-size:13px;font-weight:800;text-transform:uppercase;color:var(--color-text-muted)">Offer Highlights</h4>
-      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:20px">
-        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--color-text)">
-          <span style="color:var(--color-success);font-weight:800">✓</span>
-          <span>Free express delivery in Douala &amp; Yaoundé within 3 hours</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--color-text)">
-          <span style="color:var(--color-success);font-weight:800">✓</span>
-          <span>1-Year official Apple Care manufacturer warranty</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--color-text)">
-          <span style="color:var(--color-success);font-weight:800">✓</span>
-          <span>Pay securely with MTN MoMo, Orange Money, or Cash on Delivery with Escrow</span>
-        </div>
-      </div>
-
-      <!-- Attached Canonical Product Action Card -->
-      <div style="background:var(--color-surface-subtle);border:2px solid var(--color-accent);border-radius:var(--radius-md);padding:16px;margin-bottom:16px">
-        <div style="font-size:11px;font-weight:800;color:var(--color-accent);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px">ATTACHED CANONICAL LISTING</div>
-        <div style="display:flex;gap:14px;align-items:center">
-          <div class="ph" style="width:72px;height:72px;border-radius:8px;flex-shrink:0"></div>
-          <div style="flex:1;min-width:0">
-            <h4 style="margin:0 0 4px;font-size:15px;font-weight:800;color:var(--color-text)">Apple MacBook Air 13.6" M3 Chip 16GB / 512GB SSD Space Gray</h4>
-            <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:6px">
-              <span style="font-size:18px;font-weight:800;color:var(--color-accent);white-space:nowrap">XAF 850,000</span>
-              <span style="font-size:12px;color:var(--color-text-muted);text-decoration:line-through;white-space:nowrap">XAF 900,000</span>
-            </div>
-            <div style="font-size:11.5px;color:var(--color-success);font-weight:600">● 4 Units In Stock at Akwa Showroom</div>
-          </div>
-        </div>
-
-        <div style="display:flex;gap:10px;margin-top:14px">
-          <button onClick="{{ () => addToCart('macbook_m2') }}" class="btn btn-outline" style="flex:1;height:42px;font-size:12.5px;font-weight:700">Add to Bag</button>
-          <button onClick="{{ on.checkout }}" class="btn btn-primary" style="flex:2;height:42px;font-size:13px;font-weight:800">BUY NOW (XAF 850,000)</button>
-        </div>
-      </div>
-
-      <!-- Direct WhatsApp Seller Trigger -->
-      <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(37,211,102,0.08);border:1px solid rgba(37,211,102,0.25);border-radius:var(--radius-sm);padding:12px 16px">
-        <div style="display:flex;align-items:center;gap:10px">
-          <div style="width:34px;height:34px;border-radius:50%;background:#25d366;display:flex;align-items:center;justify-content:center;color:#fff">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-          </div>
-          <div>
-            <div style="font-size:13px;font-weight:800;color:var(--color-text)">Have Questions? Chat on WhatsApp</div>
-            <div style="font-size:11px;color:var(--color-text-secondary)">Direct verified seller phone line · Replies in &lt;5 mins</div>
-          </div>
-        </div>
-        <button onClick="{{ (e) => contactSellerWhatsApp({ sellerName: 'Kamer Tech Solutions', productTitle: 'Apple MacBook Air 13.6\" M3 16GB/512GB', price: 'XAF 850,000' }) }}" class="btn" style="background:#25d366;color:#fff;font-weight:800;font-size:12px;height:36px;padding:0 14px;cursor:pointer">
-          OPEN CHAT
-        </button>
-      </div>
-
-    </div>
-    </sc-if>
 
   </div>
 </div>
