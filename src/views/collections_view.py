@@ -752,6 +752,24 @@ def get_collections_view():
 
         </div>
 
+        <!-- Infinite Scroll Loading / End State -->
+        <sc-if value="{{ !categoryShowEmptyState }}">
+          <div style="margin:32px 0 24px;text-align:center">
+            <sc-if value="{{ catalogLoading }}">
+              <div style="display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:var(--radius-pill);background:var(--color-surface);border:1px solid var(--color-divider);color:var(--color-text-secondary);font:600 12px/1 var(--font-body)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation: spin 1s linear infinite"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+                <span>Loading more products...</span>
+              </div>
+            </sc-if>
+            <sc-if value="{{ !catalogLoading && !catalogHasMore }}">
+              <div style="display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:var(--radius-pill);background:var(--color-surface);border:1px solid var(--color-divider);color:var(--color-text-secondary);font:600 12px/1 var(--font-body)">
+                <span style="width:7px;height:7px;border-radius:50%;background:var(--color-success)"></span>
+                <span>You've reached the end of this category</span>
+              </div>
+            </sc-if>
+          </div>
+        </sc-if>
+
         <!-- Honest, professional empty state for categories still onboarding sellers -->
         <sc-if value="{{ categoryShowEmptyState }}">
           <div class="card-premium" style="text-align:center;padding:48px 24px;display:flex;flex-direction:column;align-items:center;gap:14px">

@@ -9772,7 +9772,10 @@ class Component extends DCLogic {
     currentProductActiveImage: null,
     catalogProducts: [],
     catalogLoading: false,
-    catalogError: ''
+    catalogError: '',
+    catalogPage: 1,
+    catalogHasMore: true,
+    categoryFeedLimit: 24
   };
 
   go = (s) => {
@@ -12862,7 +12865,7 @@ class Component extends DCLogic {
     }
   }
 
-  loadCatalogProducts(params) {
+  loadCatalogProducts(params, append = false) {
     const api = getApi();
     if (!api) return;
     this.setState({ catalogLoading: true, catalogError: '' });
@@ -12873,7 +12876,10 @@ class Component extends DCLogic {
         // payload IS { items, total, page, limit }. Reading `res.data.items`
         // could only ever yield undefined and fall through to [].
         const items = (res && res.items) || (res && res.data && res.data.items) || (Array.isArray(res) ? res : []);
-        this.setState({ catalogProducts: items, catalogLoading: false });
+        const limit = (params && params.limit) ? params.limit : 16;
+        const hasMore = items.length >= limit;
+        const newProducts = append ? (this.state.catalogProducts || []).concat(items) : items;
+        this.setState({ catalogProducts: newProducts, catalogLoading: false, catalogHasMore: hasMore });
       })
       .catch(err => {
         if (this._unmounted) return;
@@ -15929,7 +15935,8 @@ class Component extends DCLogic {
           const n = parseInt(String(str || '').replace(/[^0-9]/g, ''), 10);
           return isNaN(n) ? 0 : n;
         };
-        return pool.map((p) => {
+        const limit = this.state.categoryFeedLimit || 24;
+        return pool.slice(0, limit).map((p) => {
           const rawP = p.price || (p.priceNumeric ? ('XAF ' + fmt(p.priceNumeric)) : (p.base_price_minor ? ('XAF ' + fmt(p.base_price_minor)) : ''));
           const rawSale = p.salePrice || '';
           let heroPrice = rawP || 'Ask price';
@@ -17149,13 +17156,31 @@ class Component extends DCLogic {
         if (el && !this._scrollAttached) {
           this._scrollAttached = true;
           el.addEventListener('scroll', () => {
-            if (this.state.screen === 'home' && el.scrollTop + el.clientHeight >= el.scrollHeight - 380) {
-              if ((this.state.infiniteFeedBatch || 1) < 3 && !this._loadingBatch) {
-                this._loadingBatch = true;
-                const nextBatch = (this.state.infiniteFeedBatch || 1) + 1;
-                this.setState({ infiniteFeedBatch: nextBatch });
-                this.toast(nextBatch === 2 ? 'Loaded African heritage & outdoor collections' : 'Loaded audio studio & smart living discoveries');
-                setTimeout(() => { this._loadingBatch = false; }, 600);
+            if (el.scrollTop + el.clientHeight >= el.scrollHeight - 380) {
+              if (this.state.screen === 'home') {
+                if ((this.state.infiniteFeedBatch || 1) < 3 && !this._loadingBatch) {
+                  this._loadingBatch = true;
+                  const nextBatch = (this.state.infiniteFeedBatch || 1) + 1;
+                  this.setState({ infiniteFeedBatch: nextBatch });
+                  this.toast(nextBatch === 2 ? 'Loaded African heritage & outdoor collections' : 'Loaded audio studio & smart living discoveries');
+                  setTimeout(() => { this._loadingBatch = false; }, 600);
+                }
+              } else if (this.state.screen === 'category' || this.state.screen === 'collections') {
+                if (!this._loadingCategoryBatch) {
+                  this._loadingCategoryBatch = true;
+                  const currentLimit = this.state.categoryFeedLimit || 24;
+                  this.setState({ categoryFeedLimit: currentLimit + 24 });
+                  
+                  const poolSize = this._categoryProductPool(this.state.activeCategorySlug || 'all').length;
+                  if (currentLimit + 24 >= poolSize && this.state.catalogHasMore && !this.state.catalogLoading) {
+                    const nextPage = (this.state.catalogPage || 1) + 1;
+                    this.setState({ catalogPage: nextPage });
+                    const activeCat = this.state.activeCategorySlug || 'all';
+                    this.loadCatalogProducts({ page: nextPage, limit: 16, category: activeCat !== 'all' ? activeCat : undefined }, true);
+                  }
+                  
+                  setTimeout(() => { this._loadingCategoryBatch = false; }, 400);
+                }
               }
             }
           });
