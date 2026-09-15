@@ -21,7 +21,7 @@ def get_hotel_vertical_view():
      HOTEL SEARCH (is.hotelSearch)
      ══════════════════════════════════════════════════════════════════════ -->
 <sc-if value="{{ is.hotelSearch }}">
-<div style="padding-bottom:60px">
+<div style="padding-bottom:calc(96px + env(safe-area-inset-bottom, 16px))">
 
   <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface-glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:30">
     <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;box-shadow:var(--shadow-xs);flex-shrink:0">
@@ -242,7 +242,7 @@ def get_hotel_vertical_view():
     </div>
 
     <!-- Stay summary -->
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+    <div class="hotel-stay-grid">
       <div style="background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-sm);padding:12px;text-align:center">
         <div style="font:700 9.5px/1 var(--font-heading);color:var(--color-text-muted);letter-spacing:.05em;text-transform:uppercase">Check-in</div>
         <div style="font:800 13px/1.2 var(--font-heading);color:var(--color-text);margin-top:5px">{{ hotelDetailCard.checkInLabel }}</div>

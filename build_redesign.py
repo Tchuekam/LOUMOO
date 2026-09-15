@@ -765,16 +765,25 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
 }
 @keyframes slideUp { from { opacity: 0; transform: translate(-50%, 12px); } to { opacity: 1; transform: translate(-50%, 0); } }
 
-/* Responsive Layout Viewports */
+/* Responsive Layout Viewports & Strict Horizontal Overflow Containment */
+html, body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+*, *::before, *::after {
+  box-sizing: border-box;
+}
 .outer-wrap {
-  width: 100%; min-height: 100vh; min-height: 100dvh; height: 100dvh;
+  width: 100%; max-width: 100vw; min-height: 100vh; min-height: 100dvh; height: 100dvh;
   display: flex; flex-direction: column; background: var(--color-bg);
-  padding: 0; margin: 0; overflow: hidden; position: relative;
+  padding: 0; margin: 0; overflow-x: hidden; overflow-y: hidden; position: relative;
 }
 .device-frame {
-  width: 100%; height: 100%; max-width: 100%; border: none; box-shadow: none;
+  width: 100%; height: 100%; max-width: 100vw; border: none; box-shadow: none;
   display: flex; flex-direction: column; background: var(--color-bg);
-  overflow: hidden; flex: 1; position: relative;
+  overflow-x: hidden; overflow-y: hidden; flex: 1; position: relative;
 }
 /*
  * Desktop side panels (Account Settings, Account Hub, …) render as bare
@@ -6025,6 +6034,259 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   background: #090a0f;
 }
 
+/* ══════════════════════════════════════════════════════════════════════════
+   LOUMOO MASTER RESPONSIVE DESIGN ENGINE (MOBILE-FIRST COMPREHENSIVE OVERHAUL)
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* 1. Global Safe Bottom Clearance & Overflow Guards */
+.safe-bottom-clearance {
+  padding-bottom: calc(96px + env(safe-area-inset-bottom, 16px)) !important;
+}
+
+/* 2. Responsive Home User Context Bar */
+.home-user-context-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+  width: 100%;
+}
+.home-user-context-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1;
+}
+.home-user-context-greeting {
+  min-width: 0;
+  flex: 1;
+}
+.home-user-context-name {
+  font: 800 18px/1.1 var(--font-heading);
+  letter-spacing: -0.025em;
+  margin-top: 2px;
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.home-user-context-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.home-header-btn {
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--color-divider);
+  border-radius: 50%;
+  background: var(--color-surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  color: var(--color-text);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+@media (max-width: 420px) {
+  .home-user-context-bar { gap: 6px; }
+  .home-user-context-left { gap: 8px; }
+  .home-user-context-actions { gap: 5px; }
+  .home-header-btn { width: 34px; height: 34px; }
+  .home-header-btn svg { width: 16px; height: 16px; }
+  .home-user-context-name { font-size: 16px; }
+}
+@media (max-width: 360px) {
+  .home-user-context-actions { gap: 4px; }
+  .home-header-btn { width: 32px; height: 32px; }
+  .home-header-btn svg { width: 15px; height: 15px; }
+}
+
+/* 3. PDP Mobile Architecture & Sticky Purchase Bar */
+.pdp-main-wrap {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 16px 16px 100px;
+}
+@media (max-width: 480px) {
+  .pdp-main-wrap {
+    padding: 12px 12px 100px;
+  }
+}
+.pdp-thumbs-row {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  padding: 4px 2px;
+  margin-bottom: 18px;
+}
+.pdp-thumbs-row::-webkit-scrollbar { display: none; }
+.pdp-thumb {
+  width: 60px;
+  height: 60px;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--color-divider);
+  background: var(--color-surface);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  overflow: hidden;
+  padding: 2px;
+}
+.pdp-thumb:hover { border-color: var(--color-neutral-400); }
+.pdp-thumb.active { border-color: var(--color-accent); box-shadow: 0 0 0 2px var(--color-accent-100); }
+
+.pdp-sticky-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--color-surface);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid var(--color-divider);
+  padding: 10px 16px max(12px, env(safe-area-inset-bottom, 12px));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  z-index: 60;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+}
+[data-theme="dark"] .pdp-sticky-bar {
+  background: rgba(20, 23, 33, 0.95);
+  border-top-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 -4px 25px rgba(0, 0, 0, 0.35);
+}
+@media (min-width: 1024px) {
+  .pdp-sticky-bar { display: none !important; }
+}
+
+/* 4. Comparison Engine Mobile Polish */
+@media (max-width: 560px) {
+  .cmp-spec-headrow, .cmp-spec-row {
+    grid-template-columns: 100px 1fr 1fr !important;
+    gap: 6px !important;
+  }
+  .cmp-spec-k, .cmp-spec-v {
+    font-size: 11.5px !important;
+    word-break: break-word;
+  }
+  .cmp-hero {
+    gap: 12px !important;
+  }
+  .cmp-reasons {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+  .cmp-buy-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  .cmp-buy-act {
+    justify-content: space-between;
+  }
+}
+@media (max-width: 380px) {
+  .cmp-spec-headrow, .cmp-spec-row {
+    grid-template-columns: 80px 1fr 1fr !important;
+    gap: 4px !important;
+  }
+  .cmp-spec-k, .cmp-spec-v {
+    font-size: 10.5px !important;
+  }
+  .compare-matrix-header, .compare-matrix-row {
+    grid-template-columns: 84px 1fr 1fr !important;
+    gap: 4px !important;
+    padding: 6px 4px !important;
+    font-size: 10.5px !important;
+  }
+}
+
+/* 5. Verticals Responsive Grids */
+.travel-boarding-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-divider);
+}
+@media (max-width: 600px) {
+  .travel-boarding-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+}
+.travel-visa-steps-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  text-align: center;
+  font-size: 11.5px;
+}
+@media (max-width: 480px) {
+  .travel-visa-steps-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+}
+.hotel-stay-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+@media (max-width: 420px) {
+  .hotel-stay-grid {
+    gap: 6px !important;
+  }
+  .hotel-stay-grid > div {
+    padding: 8px 4px !important;
+  }
+  .hotel-stay-grid div[style*="font:800 13px"] {
+    font-size: 11.5px !important;
+  }
+}
+
+/* 6. Liquid Glass Bottom Nav Refinement for Narrow Phones (<=380px) */
+@media (max-width: 380px) {
+  .bottom-nav-mobile {
+    width: calc(100% - 12px) !important;
+    height: 66px !important;
+    padding: 0 4px !important;
+    bottom: max(8px, env(safe-area-inset-bottom, 8px)) !important;
+  }
+  .bottom-nav-mobile .lm-nav-item {
+    padding: 5px 0 3px !important;
+    gap: 1.5px !important;
+  }
+  .bottom-nav-mobile .lm-nav-label {
+    font-size: 7.5px !important;
+  }
+  .bottom-nav-mobile .lm-nav-icon-wrap svg {
+    width: 17px !important;
+    height: 17px !important;
+  }
+  .bottom-nav-mobile .nav-upload-btn {
+    width: 48px !important;
+    height: 48px !important;
+    min-width: 48px !important;
+    max-width: 48px !important;
+    top: -10px !important;
+  }
+}
+
 </style>
 </helmet>
 
@@ -6406,6 +6668,7 @@ const GROUPS = {
   uqty: ['one','multi','order']
 };
 const NO_NAV = [
+  'product',
   'visual','visualScan','visualResults','threadAi','threadSeller','checkout','paying','success','travelTicket',
   'voice','filters','payFailed','networkError','loading',
   'onboardWelcome','onboardType','onboardIdentity','onboardOtp','onboardAdaptive','onboardBuyer','onboardSeller','onboardBusiness','onboardVerify','onboardReview','onboardSuccess',

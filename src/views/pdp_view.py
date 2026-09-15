@@ -25,29 +25,29 @@ def get_product_view():
 <div style="padding-bottom:120px">
   
   <!-- PDP Navigation Header Bar -->
-  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:30;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)">
-    <div style="display:flex;align-items:center;gap:12px">
-      <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;transition:transform 0.16s ease">
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 14px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:30;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)">
+    <div style="display:flex;align-items:center;gap:8px;min-width:0;flex:1">
+      <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;transition:transform 0.16s ease;flex-shrink:0">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
       </button>
-      <div style="font:600 12.5px/1 var(--font-body);color:var(--color-text-secondary);display:flex;align-items:center;gap:6px">
+      <div style="font:600 12px/1 var(--font-body);color:var(--color-text-secondary);display:flex;align-items:center;gap:4px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
         <span>LOUMOO</span>
         <span>›</span>
-        <span>{{ currentProductCategoryLabel || 'Marketplace' }}</span>
+        <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100px">{{ currentProductCategoryLabel || 'Marketplace' }}</span>
         <span>›</span>
-        <span style="color:var(--color-text);font-weight:700">{{ currentProductBrand || 'Boutique' }}</span>
+        <span style="color:var(--color-text);font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:90px">{{ currentProductBrand || 'Boutique' }}</span>
       </div>
     </div>
     
-    <div style="display:flex;align-items:center;gap:10px">
-      <button onClick="{{ () => toggleProductWishlist(currentProduct && currentProduct.id, currentProductTitle) }}" aria-label="Save product" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:{{ isWishlisted(currentProduct && currentProduct.id) ? 'var(--color-accent-sale)' : 'var(--color-text)' }};cursor:pointer;transition:all 0.16s ease">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="{{ isWishlisted(currentProduct && currentProduct.id) ? 'currentColor' : 'none' }}" stroke="currentColor" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+      <button onClick="{{ () => toggleProductWishlist(currentProduct && currentProduct.id, currentProductTitle) }}" aria-label="Save product" style="border:1px solid var(--color-divider);background:var(--color-surface);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:{{ isWishlisted(currentProduct && currentProduct.id) ? 'var(--color-accent-sale)' : 'var(--color-text)' }};cursor:pointer;transition:all 0.16s ease">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted(currentProduct && currentProduct.id) ? 'currentColor' : 'none' }}" stroke="currentColor" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
       </button>
-      <button onClick="{{ on.vsCompare }}" aria-label="Compare with other products" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect width="8" height="18" x="3" y="3" rx="1"/><rect width="8" height="18" x="13" y="3" rx="1"/></svg>
+      <button onClick="{{ on.vsCompare }}" aria-label="Compare with other products" style="border:1px solid var(--color-divider);background:var(--color-surface);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect width="8" height="18" x="3" y="3" rx="1"/><rect width="8" height="18" x="13" y="3" rx="1"/></svg>
       </button>
-      <button onClick="{{ on.store }}" class="btn btn-secondary" style="height:34px;padding:0 14px;font-size:11.5px;font-weight:700;display:flex;align-items:center;gap:4px">
-        <span>{{ productStoreName || 'BOUTIQUE' }}</span>
+      <button onClick="{{ on.store }}" class="btn btn-secondary" style="height:32px;padding:0 10px;font-size:11px;font-weight:700;display:flex;align-items:center;gap:3px">
+        <span style="max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ productStoreName || 'STORE' }}</span>
         <span>→</span>
       </button>
     </div>

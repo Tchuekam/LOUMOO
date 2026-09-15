@@ -14,43 +14,49 @@ def get_home_view():
 
   <!-- ── 01: MOBILE TOP HEADER & UNIVERSAL SEARCH BAR ── -->
   <div style="padding:0 16px 14px">
-    <!-- User Context Bar (Mobile View) -->
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+    <!-- User Context Bar (Mobile-Responsive Header) -->
+    <div class="home-user-context-bar">
       <sc-if value="{{ isLoggedIn }}">
-        <button onClick="{{ on.profile }}" aria-label="Open profile" class="user-avatar" style="width:42px;height:42px;border:2px solid var(--color-text);border-radius:var(--radius-sm);background:var(--color-surface);display:flex;align-items:center;justify-content:center;font:800 15px/1 var(--font-heading);letter-spacing:-.02em;padding:0;color:var(--color-text);box-shadow:var(--shadow-xs);cursor:pointer"><sc-if value="{{ hasUserAvatar }}"><img src="{{ userAvatar }}" alt=""></sc-if><sc-if value="{{ !hasUserAvatar }}">{{ userInitials }}</sc-if></button>
-        <div style="flex:1;min-width:0">
-          <div style="font:700 9px/1 var(--font-heading);letter-spacing:.14em;color:var(--color-text-muted);text-transform:uppercase">WELCOME BACK</div>
-          <div style="font:800 19px/1.1 var(--font-heading);letter-spacing:-.025em;margin-top:3px;color:var(--color-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ userName }}</div>
+        <div class="home-user-context-left">
+          <button onClick="{{ on.profile }}" aria-label="Open profile" class="user-avatar" style="width:40px;height:40px;border:2px solid var(--color-text);border-radius:var(--radius-sm);background:var(--color-surface);display:flex;align-items:center;justify-content:center;font:800 14px/1 var(--font-heading);letter-spacing:-.02em;padding:0;color:var(--color-text);box-shadow:var(--shadow-xs);cursor:pointer;flex-shrink:0"><sc-if value="{{ hasUserAvatar }}"><img src="{{ userAvatar }}" alt=""></sc-if><sc-if value="{{ !hasUserAvatar }}">{{ userInitials }}</sc-if></button>
+          <div class="home-user-context-greeting">
+            <div style="font:700 8.5px/1 var(--font-heading);letter-spacing:.14em;color:var(--color-text-muted);text-transform:uppercase">WELCOME BACK</div>
+            <div class="home-user-context-name">{{ userName }}</div>
+          </div>
         </div>
       </sc-if>
       <sc-if value="{{ !isLoggedIn }}">
-        <div style="width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--color-accent),#003d8a);color:#fff;display:flex;align-items:center;justify-content:center;font:800 15px/1 var(--font-heading);letter-spacing:-.02em;flex-shrink:0">LM</div>
-        <div style="flex:1;min-width:0">
-          <div style="font:700 9px/1 var(--font-heading);letter-spacing:.14em;color:var(--color-accent);text-transform:uppercase">LOUMOO MARKETPLACE</div>
-          <div style="font:800 18px/1.1 var(--font-heading);letter-spacing:-.025em;margin-top:2px;color:var(--color-text)">Discover what's next</div>
+        <div class="home-user-context-left">
+          <div style="width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,var(--color-accent),#003d8a);color:#fff;display:flex;align-items:center;justify-content:center;font:800 14px/1 var(--font-heading);letter-spacing:-.02em;flex-shrink:0">LM</div>
+          <div class="home-user-context-greeting">
+            <div style="font:700 8.5px/1 var(--font-heading);letter-spacing:.14em;color:var(--color-accent);text-transform:uppercase">LOUMOO</div>
+            <div class="home-user-context-name" style="font-size:16px">Marketplace Hub</div>
+          </div>
+          <button onClick="{{ on.signIn }}" class="btn btn-secondary" style="height:30px;padding:0 10px;font-size:10.5px;font-weight:800;border-radius:var(--radius-pill);cursor:pointer;flex-shrink:0">SIGN IN</button>
         </div>
-        <button onClick="{{ on.signIn }}" class="btn btn-secondary" style="height:32px;padding:0 12px;font-size:11px;font-weight:800;border-radius:var(--radius-pill);cursor:pointer">SIGN IN</button>
       </sc-if>
-      <button onClick="{{ toggleDark }}" aria-label="Toggle dark and light mode" title="{{ darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode' }}" style="width:38px;height:38px;border:1px solid var(--color-divider);border-radius:50%;background:var(--color-surface);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--color-text);transition:all .15s ease">
-        <sc-if value="{{ darkMode }}">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-        </sc-if>
-        <sc-if value="{{ !darkMode }}">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-        </sc-if>
-      </button>
-      <button onClick="{{ on.saved }}" aria-label="Open saved wishlist" title="Wishlist" style="width:38px;height:38px;border:1px solid var(--color-divider);border-radius:50%;background:var(--color-surface);display:flex;align-items:center;justify-content:center;position:relative;color:{{ wishlistHasItems ? 'var(--color-accent-sale)' : 'var(--color-text)' }};cursor:pointer">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ wishlistHasItems ? 'currentColor' : 'none' }}" stroke="currentColor" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-        <sc-if value="{{ wishlistHasItems }}"><span style="position:absolute;top:-4px;right:-4px;min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:var(--color-accent-sale);color:#fff;font:800 9.5px/16px var(--font-heading);text-align:center">{{ wishlistCount }}</span></sc-if>
-      </button>
-      <button onClick="{{ on.cart }}" aria-label="Open bag" style="width:38px;height:38px;border:1px solid var(--color-divider);border-radius:50%;background:var(--color-surface);display:flex;align-items:center;justify-content:center;position:relative;color:var(--color-text);cursor:pointer">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
-        <span style="position:absolute;top:-2px;right:-2px;min-width:16px;height:16px;border-radius:8px;background:var(--color-accent);color:#fff;font:800 9.5px/16px var(--font-heading);text-align:center;padding:0 3px">{{ cartCount }}</span>
-      </button>
-      <button onClick="{{ on.notifications }}" aria-label="Open notifications" style="width:38px;height:38px;border:1px solid var(--color-divider);border-radius:50%;background:var(--color-surface);display:flex;align-items:center;justify-content:center;position:relative;color:var(--color-text);cursor:pointer">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
-        <sc-if value="{{ notifHasUnread }}"><span style="position:absolute;top:1px;right:1px;min-width:15px;height:15px;padding:0 3px;border-radius:8px;background:var(--color-accent-sale);color:#fff;font:800 9px/15px var(--font-heading);text-align:center">{{ notifBadgeLabel }}</span></sc-if>
-      </button>
+      <div class="home-user-context-actions">
+        <button onClick="{{ toggleDark }}" aria-label="Toggle dark and light mode" title="{{ darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode' }}" class="home-header-btn">
+          <sc-if value="{{ darkMode }}">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          </sc-if>
+          <sc-if value="{{ !darkMode }}">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          </sc-if>
+        </button>
+        <button onClick="{{ on.saved }}" aria-label="Open saved wishlist" title="Wishlist" class="home-header-btn" style="color:{{ wishlistHasItems ? 'var(--color-accent-sale)' : 'var(--color-text)' }}">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="{{ wishlistHasItems ? 'currentColor' : 'none' }}" stroke="currentColor" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          <sc-if value="{{ wishlistHasItems }}"><span style="position:absolute;top:-4px;right:-4px;min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:var(--color-accent-sale);color:#fff;font:800 9.5px/16px var(--font-heading);text-align:center">{{ wishlistCount }}</span></sc-if>
+        </button>
+        <button onClick="{{ on.cart }}" aria-label="Open bag" class="home-header-btn">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+          <span style="position:absolute;top:-2px;right:-2px;min-width:16px;height:16px;border-radius:8px;background:var(--color-accent);color:#fff;font:800 9.5px/16px var(--font-heading);text-align:center;padding:0 3px">{{ cartCount }}</span>
+        </button>
+        <button onClick="{{ on.notifications }}" aria-label="Open notifications" class="home-header-btn">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+          <sc-if value="{{ notifHasUnread }}"><span style="position:absolute;top:1px;right:1px;min-width:15px;height:15px;padding:0 3px;border-radius:8px;background:var(--color-accent-sale);color:#fff;font:800 9px/15px var(--font-heading);text-align:center">{{ notifBadgeLabel }}</span></sc-if>
+        </button>
+      </div>
     </div>
 
     <!-- ── LIQUID-GLASS REFINED SEARCH BAR CAPSULE (Reference Design) ── -->

@@ -510,7 +510,7 @@ def get_travel_view():
                 </div>
                 
                 <!-- Dynamic Seat Selection Grid -->
-                <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:10px;max-width:380px;margin-bottom:16px;background:var(--color-surface-subtle);padding:16px;border-radius:var(--radius-md);border:1px solid var(--color-border-subtle)">
+                <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(88px, 1fr));gap:8px;max-width:380px;width:100%;margin-bottom:16px;background:var(--color-surface-subtle);padding:14px;border-radius:var(--radius-md);border:1px solid var(--color-border-subtle)">
                   <sc-for list="{{ activeSeatsList }}" as="seat">
                     <button onClick="{{ () => selectBusSeat(seat) }}" class="tag {{ seat.isSelected ? 'tag-accent' : (seat.isAvailable ? 'tag-neutral' : '') }}" style="height:40px;font-weight:800;border-radius:var(--radius-sm);cursor:{{ seat.isAvailable ? 'pointer' : 'not-allowed' }};opacity:{{ seat.isAvailable ? '1' : '0.35' }};background:{{ !seat.isAvailable ? 'rgba(0,0,0,0.08)' : '' }}" {{ !seat.isAvailable ? 'disabled' : '' }}>
                       {{ seat.seatNumber }} ({{ seat.isWindow ? 'Window' : (seat.isAisle ? 'Aisle' : 'Solo') }}) {{ seat.isSelected ? '✓' : (!seat.isAvailable ? '(Taken)' : '') }}
@@ -1045,7 +1045,7 @@ def get_travel_view():
           </div>
         </div>
 
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:18px;padding-top:16px;border-top:1px solid var(--color-divider)">
+        <div class="travel-boarding-grid">
           <div>
             <div style="color:var(--color-text-muted);font-weight:700;font-size:9.5px;letter-spacing:.05em">BOARDING</div>
             <div style="font-weight:800;font-size:16px;color:var(--color-text);margin-top:4px">{{ ticketBoard }}</div>
@@ -1210,7 +1210,7 @@ def get_travel_view():
         <span style="background:rgba(0,122,255,0.1);color:var(--color-accent);padding:4px 10px;border-radius:var(--radius-pill);font:800 11px/1 var(--font-heading)">{{ visaApplicationStatus }}</span>
       </div>
 
-      <div style="display:grid;grid-template-columns:repeat(4, 1fr);gap:8px;text-align:center;font-size:11.5px">
+      <div class="travel-visa-steps-grid">
         <div style="padding:10px 4px;background:rgba(16, 185, 129, 0.15);color:var(--color-success);border-radius:var(--radius-sm);font-weight:800">
           ✓ 1. Submitted
         </div>
