@@ -12638,8 +12638,8 @@ class Component extends DCLogic {
             `${nights} nuit${nights > 1 ? 's' : ''} · ${guests} voyageur${guests > 1 ? 's' : ''}`,
             amount ? `Montant total: ${amount}` : '',
             '',
-            'Merci de confirmer la disponibilité de la chambre et de préparer l'accueil.'
-          ].filter(Boolean).join('\n');
+            'Merci de confirmer la disponibilité de la chambre et de préparer l\\'accueil.'
+          ].filter(Boolean).join('\\n');
           const base = hotelWa ? ('https://wa.me/' + hotelWa) : 'https://wa.me/';
           window.open(base + '?text=' + encodeURIComponent(msg), '_blank');
         } catch (e) {
