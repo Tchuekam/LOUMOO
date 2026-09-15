@@ -43194,34 +43194,42 @@ window.PRODUCTS_DATA = {
   },
   "shea_lotion": {
     "id": "shea_lotion",
-    "title": "Shea & Baobab Nourishing Body Lotion",
-    "brand": "Nubian Glow",
+    "title": "Lait Corporel Nourrissant au Pur Beurre de Karité Bio (500ml)",
+    "brand": "AfriPure Botanicals",
     "category": "beauty",
-    "categoryLabel": "Skincare",
-    "subcategory": "beauty",
-    "conditionLabel": "Neuf certifié authentique",
-    "fulfillmentLabel": "Livraison Express Douala & Yaoundé",
-    "badge": "-10% PROMO",
-    "rating": "4.8",
-    "reviewCount": 35,
-    "soldCount": 65,
-    "price": "XAF 7.700",
-    "salePrice": "XAF 8.600",
-    "storeName": "LOUMOO Verified Partner",
-    "storeCity": "Douala",
+    "categoryLabel": "Beauté & Soins Corps",
+    "subcategory": "skincare",
+    "conditionLabel": "Neuf Flacon Pompe Scellé",
+    "fulfillmentLabel": "Livraison Express Douala / Yaoundé 24h",
+    "badge": "100% ORGANIC",
+    "rating": "4.9",
+    "reviewCount": 87,
+    "soldCount": 245,
+    "price": "XAF 12.500",
+    "salePrice": "XAF 16.000",
+    "storeName": "AfriPure Botanicals Douala",
+    "storeCity": "Bonapriso, Douala",
     "storeRating": "4.9",
     "storeVerified": true,
-    "coverImage": "./Assets/perfume&lotion/MEET%20THE%204%20AFRICAN-OWNED%20BRANDS%20BRIDGING%20THE%20GAP%20IN%20THE%20SKINCARE%20MARKET%20FOR%20DARKER%20CONSUMERS.jfif",
+    "coverImage": "./Assets/perfume&lotion/MEET%20THE%204%20AFRICAN-OWNED%20CLEAN%20BEAUTY%20BRANDS%20THAT%20WE%20CAN%27T%20GET%20ENOUGH%20OF.jfif",
     "images": [
-      "./Assets/perfume&lotion/MEET%20THE%204%20AFRICAN-OWNED%20BRANDS%20BRIDGING%20THE%20GAP%20IN%20THE%20SKINCARE%20MARKET%20FOR%20DARKER%20CONSUMERS.jfif"
+      "./Assets/perfume&lotion/MEET%20THE%204%20AFRICAN-OWNED%20CLEAN%20BEAUTY%20BRANDS%20THAT%20WE%20CAN%27T%20GET%20ENOUGH%20OF.jfif"
     ],
     "attributes": [
       {
-        "key": "Catégorie",
-        "val": "Beauty"
+        "key": "Formule",
+        "val": "Beurre de karité brut non raffiné, huile de jojoba & vitamine E"
+      },
+      {
+        "key": "Bénéfice",
+        "val": "Hydratation intense 48 heures, répare les peaux sèches"
+      },
+      {
+        "key": "Parfum",
+        "val": "Notes gourmandes douces de vanille des îles"
       }
     ],
-    "description": "Article sélectionné Shea & Baobab Nourishing Body Lotion avec 10% de réduction LOUMOO.",
+    "description": "Soin corps quotidien ultra-riche sans parabènes ni huiles minérales. Pénètre rapidement sans laisser de film gras pour une peau veloutée et éclatante.",
     "inStock": true,
     "stock": 1000,
     "stockQuantity": 1000,
@@ -43230,21 +43238,21 @@ window.PRODUCTS_DATA = {
   },
   "na_tobacco_vanille_10": {
     "id": "na_tobacco_vanille_10",
-    "title": "Tobacco Vanille Artisanal Extrait De Parfum (30ml)",
-    "brand": "L’Artisan Parfumeur",
+    "title": "Tobacco Vanille Extrait De Parfum (30ml Flacon Luxe Vaporisateur)",
+    "brand": "Tom Ford",
     "category": "beauty",
-    "categoryLabel": "Niche Haute Parfumerie",
-    "subcategory": "beauty",
-    "conditionLabel": "Neuf certifié authentique",
-    "fulfillmentLabel": "Livraison Express Douala & Yaoundé",
-    "badge": "-10% PROMO",
-    "rating": "4.8",
-    "reviewCount": 35,
-    "soldCount": 65,
-    "price": "XAF 28.400",
-    "salePrice": "XAF 31.500",
-    "storeName": "LOUMOO Verified Partner",
-    "storeCity": "Douala",
+    "categoryLabel": "Parfums & Fragrances",
+    "subcategory": "perfume",
+    "conditionLabel": "Neuf Sous Blister d'Origine",
+    "fulfillmentLabel": "Livraison Express Douala / Yaoundé 24h",
+    "badge": "Extrait · 30ml",
+    "rating": "4.9",
+    "reviewCount": 45,
+    "soldCount": 110,
+    "price": "XAF 35.000",
+    "salePrice": "XAF 45.000",
+    "storeName": "Parfumerie Royale Akwa",
+    "storeCity": "Akwa, Douala",
     "storeRating": "4.9",
     "storeVerified": true,
     "coverImage": "./Assets/_processed/new_arrivals_10.jpg",
@@ -43253,11 +43261,23 @@ window.PRODUCTS_DATA = {
     ],
     "attributes": [
       {
-        "key": "Catégorie",
-        "val": "Beauty"
+        "key": "Famille",
+        "val": "Oriental Épicé Chaud"
+      },
+      {
+        "key": "Notes de tête",
+        "val": "Feuille de tabac et notes aromatiques épicées"
+      },
+      {
+        "key": "Notes de cœur",
+        "val": "Fève tonka, fleur de tabac, vanille crémeuse et cacao"
+      },
+      {
+        "key": "Sillage",
+        "val": "Tenue exceptionnelle 24 heures"
       }
     ],
-    "description": "Article sélectionné Tobacco Vanille Artisanal Extrait De Parfum (30ml) avec 10% de réduction LOUMOO.",
+    "description": "Une fragrance opulente et chaleureuse qui réinvente le genre classique du tabac avec de la vanille crémeuse et du cacao raffiné. Sillage inoubliable.",
     "inStock": true,
     "stock": 1000,
     "stockQuantity": 1000,
@@ -43366,6 +43386,1822 @@ window.PRODUCTS_DATA = {
       }
     ],
     "description": "Article sélectionné Senior Cloud Architecture & DevSecOps Engineering Consulting avec 10% de réduction LOUMOO.",
+    "inStock": true,
+    "stock": 1000,
+    "stockQuantity": 1000,
+    "stockUnits": 1000,
+    "inStockLabel": "En stock (1 000+ disponibles)"
+  },
+  "tecno_camon40": {
+    "id": "tecno_camon40",
+    "title": "TECNO Camon 40 AI Camera 256GB / 8GB RAM",
+    "brand": "Tecno",
+    "category": "electronics",
+    "categoryLabel": "Smartphones & Mobile",
+    "subcategory": "smartphones",
+    "conditionLabel": "Neuf Scellé d'Origine · Garantie 24 Mois Constructeur",
+    "fulfillmentLabel": "Livraison Express Douala / Yaoundé 24h",
+    "badge": "TOP DISCOVERY",
+    "rating": "4.8",
+    "reviewCount": 42,
+    "soldCount": 88,
+    "price": "XAF 155.000",
+    "salePrice": "XAF 175.000",
+    "storeName": "Orca Electronics",
+    "storeCity": "Akwa, Douala",
+    "storeRating": "4.9",
+    "storeVerified": true,
+    "coverImage": "./Assets/telephone&PC/phoneBrands.image/TECNO%20CAMON%2040%20Series_%20Redefining%20Imagery%20with%C2%A0TECNO%C2%A0AI.jfif",
+    "images": [
+      "./Assets/telephone&PC/phoneBrands.image/TECNO%20CAMON%2040%20Series_%20Redefining%20Imagery%20with%C2%A0TECNO%C2%A0AI.jfif"
+    ],
+    "attributes": [
+      {
+        "key": "Stockage",
+        "val": "256GB ROM UFS 2.2 · 8GB RAM extensible"
+      },
+      {
+        "key": "Appareil Photo",
+        "val": "50MP Sony OIS Ultra Nuit · IA Camon Engine"
+      },
+      {
+        "key": "Batterie",
+        "val": "5000 mAh · Charge Rapide 33W"
+      },
+      {
+        "key": "Écran",
+        "val": "6.78\" FHD+ AMOLED 120Hz"
+      }
+    ],
+    "description": "Smartphone haut de gamme TECNO Camon 40 Series 256GB avec intelligence artificielle avancée TECNO AI. 100% authentique garanti avec LOUMOO Escrow.",
+    "inStock": true,
+    "stock": 1000,
+    "stockQuantity": 1000,
+    "stockUnits": 1000,
+    "inStockLabel": "En stock (1 000+ disponibles)"
+  },
+  "samsung_s24_ultra": {
+    "id": "samsung_s24_ultra",
+    "title": "Samsung Galaxy S24 Ultra 256GB Titanium",
+    "brand": "Samsung",
+    "category": "electronics",
+    "categoryLabel": "Smartphones & Mobile",
+    "subcategory": "smartphones",
+    "conditionLabel": "Neuf Scellé d'Origine · Garantie 24 Mois Constructeur",
+    "fulfillmentLabel": "Livraison Express Douala / Yaoundé 24h",
+    "badge": "FLAGSHIP",
+    "rating": "4.9",
+    "reviewCount": 76,
+    "soldCount": 164,
+    "price": "XAF 680.000",
+    "salePrice": "XAF 750.000",
+    "storeName": "SmartTech Cameroun",
+    "storeCity": "Akwa, Douala",
+    "storeRating": "4.9",
+    "storeVerified": true,
+    "coverImage": "./Assets/telephone&PC/phoneBrands.image/Samsung%20Galaxy%20S24%20Ultra.jfif",
+    "images": [
+      "./Assets/telephone&PC/phoneBrands.image/Samsung%20Galaxy%20S24%20Ultra.jfif"
+    ],
+    "attributes": [
+      {
+        "key": "Processeur",
+        "val": "Snapdragon 8 Gen 3 for Galaxy"
+      },
+      {
+        "key": "Appareil Photo",
+        "val": "200MP Quad Telephoto · Zoom 100x Space Zoom"
+      },
+      {
+        "key": "Stylet",
+        "val": "S-Pen intégré avec commandes gestuelles"
+      },
+      {
+        "key": "Matériaux",
+        "val": "Cadre en Titane spatial Grade 5 · Gorilla Glass Armor"
+      }
+    ],
+    "description": "Le flagship ultime Samsung Galaxy S24 Ultra avec Galaxy AI intégrée. Écran Dynamic AMOLED 2X 6.8 pouces 2600 nits sans reflets.",
+    "inStock": true,
+    "stock": 1000,
+    "stockQuantity": 1000,
+    "stockUnits": 1000,
+    "inStockLabel": "En stock (1 000+ disponibles)"
+  },
+  "galaxy_s26_ultra": {
+    "id": "galaxy_s26_ultra",
+    "title": "Samsung Galaxy S26 Ultra 512GB Titanium Black",
+    "brand": "Samsung",
+    "category": "electronics",
+    "categoryLabel": "Smartphones & Mobile",
+    "subcategory": "smartphones",
+    "conditionLabel": "Neuf Scellé d'Origine · Garantie 24 Mois Constructeur",
+    "fulfillmentLabel": "Livraison Express Douala / Yaoundé 24h",
+    "badge": "NEW ARRIVAL",
+    "rating": "4.9",
+    "reviewCount": 31,
+    "soldCount": 72,
+    "price": "XAF 820.000",
+    "salePrice": "XAF 900.000",
+    "storeName": "SmartTech Cameroun",
+    "storeCity": "Akwa, Douala",
+    "storeRating": "4.9",
+    "storeVerified": true,
+    "coverImage": "./Assets/telephone&PC/phoneBrands.image/Samsung%20Galaxy%20S24%20Ultra.jfif",
+    "images": [
+      "./Assets/telephone&PC/phoneBrands.image/Samsung%20Galaxy%20S24%20Ultra.jfif"
+    ],
+    "attributes": [
+      {
+        "key": "Processeur",
+        "val": "Exynos 2600 / Snapdragon 8 Gen 4 Ultra"
+      },
+      {
+        "key": "Écran",
+        "val": "Dynamic AMOLED 3X 1-144Hz variable"
+      },
+      {
+        "key": "Batterie",
+        "val": "5500 mAh · Charge Ultra-Rapide 65W"
+      },
+      {
+        "key": "IA",
+        "val": "Galaxy AI 2.0 Live Translation & Photo Assist"
+      }
+    ],
+    "description": "Samsung Galaxy S26 Ultra Nouvelle Génération. Conception titane avant-gardiste, capteur 200MP ProVisual Engine et autonomie record.",
+    "inStock": true,
+    "stock": 1000,
+    "stockQuantity": 1000,
+    "stockUnits": 1000,
+    "inStockLabel": "En stock (1 000+ disponibles)"
+  },
+  "iphone_17_pro_max": {
+    "id": "iphone_17_pro_max",
+    "title": "Apple iPhone 17 Pro Max 512GB Cosmic Blue",
+    "brand": "Apple",
+    "category": "electronics",
+    "categoryLabel": "Smartphones & Mobile",
+    "subcategory": "smartphones",
+    "conditionLabel": "Neuf Scellé d'Origine · Garantie 24 Mois Constructeur",
+    "fulfillmentLabel": "Livraison Express Douala / Yaoundé 24h",
+    "badge": "FLAGSHIP",
+    "rating": "5.0",
+    "reviewCount": 89,
+    "soldCount": 210,
+    "price": "XAF 950.000",
+    "salePrice": "XAF 1.050.000",
+    "storeName": "Apple Premium Reseller Akwa",
+    "storeCity": "Akwa, Douala",
+    "storeRating": "4.9",
+    "storeVerified": true,
+    "coverImage": "./Assets/telephone&PC/phoneBrands.image/iPhone%2017%20Pro%20Max.jfif",
+    "images": [
+      "./Assets/telephone&PC/phoneBrands.image/iPhone%2017%20Pro%20Max.jfif"
+    ],
+    "attributes": [
+      {
+        "key": "Puce",
+        "val": "Apple A19 Pro Bionic 2nm"
+      },
+      {
+        "key": "Écran",
+        "val": "Super Retina XDR OLED 6.9\" ProMotion 120Hz"
+      },
+      {
+        "key": "Optique",
+        "val": "Triple capteur Fusion 48MP avec zoom périscope 10x"
+      },
+      {
+        "key": "Châssis",
+        "val": "Titane brossé de grade aérospatial"
+      }
+    ],
+    "description": "Le sommet de l'ingénierie mobile Apple : iPhone 17 Pro Max avec puce A19 Pro, autonomie de 33 heures et Apple Intelligence complète.",
+    "inStock": true,
+    "stock": 1000,
+    "stockQuantity": 1000,
+    "stockUnits": 1000,
+    "inStockLabel": "En stock (1 000+ disponibles)"
+  },
+  "iphone_15_pro": {
+    "id": "iphone_15_pro",
+    "title": "Apple iPhone 15 Pro 256GB Natural Titanium",
+    "brand": "Apple",
+    "category": "electronics",
+    "categoryLabel": "Smartphones & Mobile",
+    "subcategory": "smartphones",
+    "conditionLabel": "Neuf Scellé d'Origine · Garantie 24 Mois Constructeur",
+    "fulfillmentLabel": "Livraison Express Douala / Yaoundé 24h",
+    "badge": "-10% PROMO",
+    "rating": "4.9",
+    "reviewCount": 54,
+    "soldCount": 138,
+    "price": "XAF 650.000",
+    "salePrice": "XAF 720.000",
+    "storeName": "Apple Premium Reseller Akwa",
+    "storeCity": "Akwa, Douala",
+    "storeRating": "4.9",
+    "storeVerified": true,
+    "coverImage": "./Assets/telephone&PC/phoneBrands.image/Apple%20iPhone%2015%20Pro.jfif",
+    "images": [
+      "./Assets/telephone&PC/phoneBrands.image/Apple%20iPhone%2015%20Pro.jfif"
+    ],
+    "attributes": [
+      {
+        "key": "Puce",
+        "val": "A17 Pro Bionic avec GPU 6 cœurs"
+      },
+      {
+        "key": "Caméra",
+        "val": "48MP principal · Ultra grand-angle · Téléobjectif 3x"
+      },
+      {
+        "key": "Connectivité",
+        "val": "USB-C 3.0 ultra rapide (10 Gb/s) · 5G Dual SIM"
+      }
+    ],
+    "description": "iPhone 15 Pro en titane naturel d'origine. Format ergonomique 6.1 pouces avec Dynamic Island et bouton Action personnalisable.",
+    "inStock": true,
+    "stock": 1000,
+    "stockQuantity": 1000,
+    "stockUnits": 1000,
+    "inStockLabel": "En stock (1 000+ disponibles)"
+  },
+  "macbook_m2": {
+    "id": "macbook_m2",
+    "title": "MacBook Air 13” (Puce M2, 8GB RAM, 256GB SSD)",
+    "brand": "Apple",
+    "category": "electronics",
+    "categoryLabel": "Ordinateurs & Portables",
+    "subcategory": "laptops",
+    "conditionLabel": "Neuf Scellé d'Origine · Garantie 24 Mois Constructeur",
+    "fulfillmentLabel": "Livraison Express Douala / Yaoundé 24h",
+    "badge": "BESTSELLER",
+    "rating": "4.9",
+    "reviewCount": 68,
+    "soldCount": 182,
+    "price": "XAF 745.000",
+    "salePrice": "XAF 820.000",
+    "storeName": "Orca Electronics",
+    "storeCity": "Akwa, Douala",
+    "storeRating": "4.9",
+    "storeVerified": true,
+    "coverImage": "./Assets/telephone&PC/Macbook.jfif",
+    "images": [
+      "./Assets/telephone&PC/Macbook.jfif"
+    ],
+    "attributes": [
+      {
+        "key": "Processeur",
+        "val": "Apple Silicon M2 (CPU 8 cœurs, GPU 8 cœurs)"
+      },
+      {
+        "key": "Mémoire",
+        "val": "8GB mémoire unifiée ultra rapide"
+      },
+      {
+        "key": "Écran",
+        "val": "Liquid Retina 13.6 pouces 500 nits True Tone"
+      },
+      {
+        "key": "Autonomie",
+        "val": "Jusqu'à 18 heures d'autonomie"
+      },
+      {
+        "key": "Poids",
+        "val": "1.24 kg seulement"
+      }
+    ],
+    "description": "MacBook Air avec puce M2 d'Apple. Conception ultra-fine sans ventilateur, boîtier aluminium unibody robuste et connecteur MagSafe 3.",
+    "inStock": true,
+    "stock": 1000,
+    "stockQuantity": 1000,
+    "stockUnits": 1000,
+    "inStockLabel": "En stock (1 000+ disponibles)"
+  },
+  "surface_laptop": {
+    "id": "surface_laptop",
+    "title": "Microsoft Surface Laptop 5 (13.5” Touch, Core i7, 512GB)",
+    "brand": "Microsoft",
+    "category": "electronics",
+    "categoryLabel": "Ordinateurs & Portables",
+    "subcategory": "laptops",
+    "conditionLabel": "Neuf Scellé d'Origine · Garantie 24 Mois Constructeur",
+    "fulfillmentLabel": "Livraison Express Douala / Yaoundé 24h",
+    "badge": "OFFICE PRO",
+    "rating": "4.8",
+    "reviewCount": 39,
+    "soldCount": 94,
+    "price": "XAF 685.000",
+    "salePrice": "XAF 760.000",
+    "storeName": "Digital Corner Douala",
+    "storeCity": "Bonanjo, Douala",
+    "storeRating": "4.8",
+    "storeVerified": true,
+    "coverImage": "./Assets/telephone&PC/Microsoft%20Surface%20Laptop%20Studio%202.jfif",
+    "images": [
+      "./Assets/telephone&PC/Microsoft%20Surface%20Laptop%20Studio%202.jfif"
+    ],
+    "attributes": [
+      {
+        "key": "Processeur",
+        "val": "Intel Core i7-1255U 12e Génération Intel Evo"
+      },
+      {
+        "key": "Écran",
+        "val": "13.5\" PixelSense Tactile 2256 x 1504 format 3:2"
+      },
+      {
+        "key": "Mémoire & Disque",
+        "val": "16GB LPDDR5x · 512GB SSD amovible"
+      },
+      {
+        "key": "Connectique",
+        "val": "Thunderbolt 4 · USB-A 3.1 · Surface Connect"
+      }
+    ],
+    "description": "Ordinateur portable élégant et ultraléger avec écran tactile PixelSense. Parfait pour les professionnels exigeants et les créatifs sous Windows 11 Pro.",
+    "inStock": true,
+    "stock": 1000,
+    "stockQuantity": 1000,
+    "stockUnits": 1000,
+    "inStockLabel": "En stock (1 000+ disponibles)"
+  },
+  "ps5_slim": {
+    "id": "ps5_slim",
+    "title": "Sony PlayStation 5 Slim Edition 1TB SSD",
+    "brand": "Sony",
+    "category": "electronics",
+    "categoryLabel": "Jeux & Consoles",
+    "subcategory": "gaming",
+    "conditionLabel": "Neuf Scellé d'Origine · Garantie 24 Mois Constructeur",
+    "fulfillmentLabel": "Livraison Express Douala / Yaoundé 24h",
+    "badge": "HOT GAMING",
+    "rating": "4.9",
+    "reviewCount": 112,
+    "soldCount": 315,
+    "price": "XAF 380.000",
+    "salePrice": "XAF 420.000",
+    "storeName": "GamerZone Cameroun",
+    "storeCity": "Akwa, Douala",
+    "storeRating": "4.9",
+    "storeVerified": true,
+    "coverImage": "./Assets/telephone&PC/phoneBrands.image/316800155099233075.jfif",
+    "images": [
+      "./Assets/telephone&PC/phoneBrands.image/316800155099233075.jfif"
+    ],
+    "attributes": [
+      {
+        "key": "Stockage",
+        "val": "1TB SSD ultra-rapide personnalisé"
+      },
+      {
+        "key": "Performances",
+        "val": "4K 120 FPS · Ray Tracing matériel · HDR"
+      },
+      {
+        "key": "Manette",
+        "val": "DualSense avec retours haptiques et gâchettes adaptatives"
+      }
+    ],
+    "description": "La console nouvelle génération Sony PS5 Slim dans son format plus compact avec 1 To de stockage. Plongez dans des graphismes 4K spectaculaires.",
+    "inStock": true,
+    "stock": 1000,
+    "stockQuantity": 1000,
+    "stockUnits": 1000,
+    "inStockLabel": "En stock (1 000+ disponibles)"
+  },
+  "airpods_max": {
+    "id": "airpods_max",
+    "title": "Apple AirPods Max (Casque Sans Fil ANC Haute Fidélité)",
+    "brand": "Apple",
+    "category": "electronics",
+    "categoryLabel": "Audio & Casques",
+    "subcategory": "audio",
+    "conditionLabel": "Neuf Scellé d'Origine · Garantie 24 Mois Constructeur",
+    "fulfillmentLabel": "Livraison Express Douala / Yaoundé 24h",
+    "badge": "AUDIOPHILE",
+    "rating": "4.9",
+    "reviewCount": 47,
+    "soldCount": 109,
+    "price": "XAF 350.000",
+    "salePrice": "XAF 395.000",
+    "storeName": "Apple Premium Reseller Akwa",
+    "storeCity": "Akwa, Douala",
+    "storeRating": "4.9",
+    "storeVerified": true,
+    "coverImage": "./Assets/_processed/acessories_gadgets_apple_air_pods_max_wireless_over_ear_headphones.jpg",
+    "images": [
+      "./Assets/_processed/acessories_gadgets_apple_air_pods_max_wireless_over_ear_headphones.jpg"
+    ],
+    "attributes": [
+      {
+        "key": "Transducteur",
+        "val": "Dynamique 40mm conçu par Apple"
+      },
+      {
+        "key": "Réduction de bruit",
+        "val": "Active Noise Cancelling de niveau studio"
+      },
+      {
+        "key": "Audio Spatial",
+        "val": "Audio spatial personnalisé avec suivi dynamique de la tête"
+      },
+      {
+        "key": "Autonomie",
+        "val": "20 heures d'écoute continue"
+      }
+    ],
+    "description": "AirPods Max : l'alliance parfaite d'un son haute fidélité grisant et de la magie intuitive des AirPods. Arceau en tissu mesh respirant et coussinets à mémoire de forme.",
+    "inStock": true,
+    "stock": 1000,
+    "stockQuantity": 1000,
+    "stockUnits": 1000,
+    "inStockLabel": "En stock (1 000+ disponibles)"
+  },
+  "airpods_4": {
+    "id": "airpods_4",
+    "title": "Apple AirPods 4 (Édition Réduction Active du Bruit)",
+    "brand": "Apple",
+    "category": "electronics",
+    "categoryLabel": "Audio & Écouteurs",
+    "subcategory": "audio",
+    "conditionLabel": "Neuf Scellé d'Origine · Garantie 24 Mois Constructeur",
+    "fulfillmentLabel": "Livraison Express Douala / Yaoundé 24h",
+    "badge": "NEW 2026",
+    "rating": "4.8",
+    "reviewCount": 63,
+    "soldCount": 178,
+    "price": "XAF 150.000",
+    "salePrice": "XAF 175.000",
+    "storeName": "Apple Premium Reseller Akwa",
+    "storeCity": "Akwa, Douala",
+    "storeRating": "4.9",
+    "storeVerified": true,
+    "coverImage": "./Assets/acessories&gadgets/Apple%20AirPods%204%20Wireless%20Earbuds,%20Bluetooth%20Headphones,%20Personalized%20Spatial%20Audio,%20Sweat%20and%20Water%20Resistant,%20USB-C%20Charging%20Case,%20H2%20Chip,%20Up%20to%2030%20Hours%20Battery%20Life.jfif",
+    "images": [
+      "./Assets/acessories&gadgets/Apple%20AirPods%204%20Wireless%20Earbuds,%20Bluetooth%20Headphones,%20Personalized%20Spatial%20Audio,%20Sweat%20and%20Water%20Resistant,%20USB-C%20Charging%20Case,%20H2%20Chip,%20Up%20to%2030%20Hours%20Battery%20Life.jfif"
+    ],
+    "attributes": [
+      {
+        "key": "Puce",
+        "val": "Apple H2 avec traitement audio informatique"
+      },
+      {
+        "key": "Réduction Active",
+        "val": "ANC intégrée pour la première fois en format semi-ouvert"
+      },
+      {
+        "key": "Boîtier",
+        "val": "USB-C avec haut-parleur Localiser"
+      },
+      {
+        "key": "Autonomie",
+        "val": "Jusqu'à 30 heures d'autonomie totale"
+      }
+    ],
+    "description": "Nouvelle génération Apple AirPods 4 avec réduction active du bruit. Confort inégalé toute la journée et qualité sonore cristalline.",
+    "inStock": true,
+    "stock": 1000,
+    "stockQuantity": 1000,
+    "stockUnits": 1000,
+    "inStockLabel": "En stock (1 000+ disponibles)"
+  },
+  "jbl_flip6": {
+    "id": "jbl_flip6",
+    "title": "JBL Flip 6 Enceinte Bluetooth Portable (30W IP67)",
+    "brand": "JBL",
+    "category": "electronics",
+    "categoryLabel": "Audio & Enceintes",
+    "subcategory": "audio",
+    "conditionLabel": "Neuf Scellé d'Origine · Garantie 24 Mois Constructeur",
+    "fulfillmentLabel": "Livraison Express Douala / Yaoundé 24h",
+    "badge": "OUTDOOR HIT",
+    "rating": "4.9",
+    "reviewCount": 95,
+    "soldCount": 240,
+    "price": "XAF 89.000",
+    "salePrice": "XAF 105.000",
+    "storeName": "Acoustic Pro Yaoundé",
+    "storeCity": "Bastos, Yaoundé",
+    "storeRating": "4.9",
+    "storeVerified": true,
+    "coverImage": "./Assets/acessories&gadgets/JBL%20Flip%206%20-%20F%C4%B1rat%20T%C3%BCz%C3%BCnkan.jfif",
+    "images": [
+      "./Assets/acessories&gadgets/JBL%20Flip%206%20-%20F%C4%B1rat%20T%C3%BCz%C3%BCnkan.jfif"
+    ],
+    "attributes": [
+      {
+        "key": "Puissance",
+        "val": "30W RMS système à deux voies JBL Original Pro"
+      },
+      {
+        "key": "Étanchéité",
+        "val": "Certification IP67 eau et poussière"
+      },
+      {
+        "key": "Autonomie",
+        "val": "12 heures de lecture non-stop"
+      },
+      {
+        "key": "PartyBoost",
+        "val": "Jumelez plusieurs enceintes compatibles"
+      }
+    ],
+    "description": "L'enceinte tout-terrain par excellence. Le son puissant JBL Pro Sound avec radiateurs de basses passifs doubles pour des basses profondes.",
+    "inStock": true,
+    "stock": 1000,
+    "stockQuantity": 1000,
+    "stockUnits": 1000,
+    "inStockLabel": "En stock (1 000+ disponibles)"
+  },
+  "alexa_speaker": {
+    "id": "alexa_speaker",
+    "title": "Amazon Echo Dot 5th Gen (Enceinte Connectée Alexa + Horloge LED)",
+    "brand": "Amazon",
+    "category": "electronics",
+    "categoryLabel": "Audio & Maison Intelligente",
+    "subcategory": "audio",
+    "conditionLabel": "Neuf Scellé d'Origine · Garantie 24 Mois Constructeur",
+    "fulfillmentLabel": "Livraison Express Douala / Yaoundé 24h",
+    "badge": "SMART HOME",
+    "rating": "4.8",
+    "reviewCount": 51,
+    "soldCount": 130,
+    "price": "XAF 32.000",
+    "salePrice": "XAF 40.000",
+    "storeName": "Smart Living Douala",
+    "storeCity": "Bonapriso, Douala",
+    "storeRating": "4.8",
+    "storeVerified": true,
+    "coverImage": "./Assets/acessories&gadgets/Alexa%20Smart%20Speaker%20with%20Clock.jfif",
+    "images": [
+      "./Assets/acessories&gadgets/Alexa%20Smart%20Speaker%20with%20Clock.jfif"
+    ],
+    "attributes": [
+      {
+        "key": "Assistant",
+        "val": "Amazon Alexa en Français et Anglais"
+      },
+      {
+        "key": "Affichage",
+        "val": "Horloge LED digitale haute clarté"
+      },
+      {
+        "key": "Audio",
+        "val": "Haut-parleur frontal 44mm pour un son net et des basses riches"
+      }
+    ],
+    "description": "Contrôlez votre musique, vos lumières et réveillez-vous avec l'Echo Dot 5ème génération avec affichage de l'heure et des minuteries.",
+    "inStock": true,
+    "stock": 1000,
+    "stockQuantity": 1000,
+    "stockUnits": 1000,
+    "inStockLabel": "En stock (1 000+ disponibles)"
+  },
+  "apple_airtag": {
+    "id": "apple_airtag",
+    "title": "Apple AirTag (Pack de 4 Balises de Localisation Précise)",
+    "brand": "Apple",
+    "category": "electronics",
+    "categoryLabel": "Accessoires & Gadgets",
+    "subcategory": "accessories",
+    "conditionLabel": "Neuf Scellé d'Origine · Garantie 24 Mois Constructeur",
+    "fulfillmentLabel": "Livraison Express Douala / Yaoundé 24h",
+    "badge": "ESSENTIAL",
+    "rating": "4.9",
+    "reviewCount": 82,
+    "soldCount": 210,
+    "price": "XAF 75.000",
+    "salePrice": "XAF 89.000",
+    "storeName": "Apple Premium Reseller Akwa",
+    "storeCity": "Akwa, Douala",
+    "storeRating": "4.9",
+    "storeVerified": true,
+    "coverImage": "./Assets/telephone&PC/Best%20Selling%20Apple%20AirTag.jfif",
+    "images": [
+      "./Assets/telephone&PC/Best%20Selling%20Apple%20AirTag.jfif"
+    ],
+    "attributes": [
+      {
+        "key": "Localisation",
+        "val": "Technologie Ultra Wideband (UWB) Localisation précise"
+      },
+      {
+        "key": "Réseau",
+        "val": "Réseau Localiser sécurisé avec des centaines de millions d'appareils Apple"
+      },
+      {
+        "key": "Étanchéité",
+        "val": "IP67 résistant à l'eau et à la poussière"
+      }
+    ],
+    "description": "Accrochez un AirTag à vos clés, sacs ou valises. Retrouvez instantanément vos objets égarés depuis l'application Localiser sur votre iPhone.",
+    "inStock": true,
+    "stock": 1000,
+    "stockQuantity": 1000,
+    "stockUnits": 1000,
+    "inStockLabel": "En stock (1 000+ disponibles)"
+  },
+  "dji_osmo_pocket3": {
+    "id": "dji_osmo_pocket3",
+    "title": "DJI Osmo Pocket 3 Creator Combo (Stabilisateur 3 Axes 4K/120fps)",
+    "brand": "DJI",
+    "category": "electronics",
+    "categoryLabel": "Caméras & Photo",
+    "subcategory": "camera",
+    "conditionLabel": "Neuf Scellé d'Origine · Garantie 24 Mois Constructeur",
+    "fulfillmentLabel": "Livraison Express Douala / Yaoundé 24h",
+    "badge": "PRO CREATOR",
+    "rating": "5.0",
+    "reviewCount": 44,
+    "soldCount": 98,
+    "price": "XAF 420.000",
+    "salePrice": "XAF 480.000",
+    "storeName": "CineGear Cameroun",
+    "storeCity": "Bonapriso, Douala",
+    "storeRating": "4.9",
+    "storeVerified": true,
+    "coverImage": "./Assets/acessories&gadgets/DJI%20Osmo%20Pocket%203%20%285%29.jfif",
+    "images": [
+      "./Assets/acessories&gadgets/DJI%20Osmo%20Pocket%203%20%285%29.jfif"
+    ],
+    "attributes": [
+      {
+        "key": "Capteur",
+        "val": "Grand capteur CMOS 1 pouce pour basse lumière"
+      },
+      {
+        "key": "Vidéo",
+        "val": "4K/120fps fluide & D-Log M 10 bits"
+      },
+      {
+        "key": "Écran",
+        "val": "Écran tactile OLED 2 pouces rotatif horizontal/vertical"
+      },
+      {
+        "key": "Suivi",
+        "val": "ActiveTrack 6.0 avec mise au point rapide tout pixel"
+      }
+    ],
+    "description": "L'outil ultime des créateurs de contenu vidéo. Qualité cinématographique dans le creux de la main avec stabilisation mécanique sur trois axes.",
+    "inStock": true,
+    "stock": 1000,
+    "stockQuantity": 1000,
+    "stockUnits": 1000,
+    "inStockLabel": "En stock (1 000+ disponibles)"
+  },
+  "action_cam": {
+    "id": "action_cam",
+    "title": "4K POV Wearable Action Cam (Ordro EP7 Ultra HD 60fps)",
+    "brand": "Ordro",
+    "category": "electronics",
+    "categoryLabel": "Caméras & Photo",
+    "subcategory": "camera",
+    "conditionLabel": "Neuf Scellé d'Origine · Garantie 24 Mois Constructeur",
+    "fulfillmentLabel": "Livraison Express Douala / Yaoundé 24h",
+    "badge": "VLOG HIT",
+    "rating": "4.7",
+    "reviewCount": 38,
+    "soldCount": 85,
+    "price": "XAF 85.000",
+    "salePrice": "XAF 98.000",
+    "storeName": "Adventure Hub Douala",
+    "storeCity": "Akwa, Douala",
+    "storeRating": "4.8",
+    "storeVerified": true,
+    "coverImage": "./Assets/acessories&gadgets/Ordro%20EP7%20YouTube%20Vlogging%20Camera%204k%2060fps%20Head%20Wearable%20Camera.jfif",
+    "images": [
+      "./Assets/acessories&gadgets/Ordro%20EP7%20YouTube%20Vlogging%20Camera%204k%2060fps%20Head%20Wearable%20Camera.jfif"
+    ],
+    "attributes": [
+      {
+        "key": "Résolution",
+        "val": "4K 60fps Ultra HD avec capteur Sony CMOS"
+      },
+      {
+        "key": "Portage",
+        "val": "Support tour de tête ergonomique POV à la première personne"
+      },
+      {
+        "key": "Stabilisation",
+        "val": "Stabilisateur cardan à deux axes intégré"
+      }
+    ],
+    "description": "Caméra mains libres portable Ordro EP7 pour vlogging, cuisine, bricolage et sports avec vue subjective immersive et contrôle WiFi.",
+    "inStock": true,
+    "stock": 1000,
+    "stockQuantity": 1000,
+    "stockUnits": 1000,
+    "inStockLabel": "En stock (1 000+ disponibles)"
+  },
+  "lapel_mic": {
+    "id": "lapel_mic",
+    "title": "Micro Cravate Sans Fil Double Émetteur (Plug & Play Type-C & iOS)",
+    "brand": "Saramonic",
+    "category": "electronics",
+    "categoryLabel": "Audio & Créateurs",
+    "subcategory": "audio",
+    "conditionLabel": "Neuf Scellé d'Origine · Garantie 24 Mois Constructeur",
+    "fulfillmentLabel": "Livraison Express Douala / Yaoundé 24h",
+    "badge": "CREATOR CHOICE",
+    "rating": "4.8",
+    "reviewCount": 79,
+    "soldCount": 215,
+    "price": "XAF 18.000",
+    "salePrice": "XAF 25.000",
+    "storeName": "CreatorTech Bonanjo",
+    "storeCity": "Bonanjo, Douala",
+    "storeRating": "4.9",
+    "storeVerified": true,
+    "coverImage": "./Assets/acessories&gadgets/Microfone%20Lapela%20Sem%20Fio%20Plug%20And%20Play%20Entrada%20Tipo%20C%20e%20Lightning%20Para%20Celular%20-%20Duplo%20_%20Shopee%20Brasil.jfif",
+    "images": [
+      "./Assets/acessories&gadgets/Microfone%20Lapela%20Sem%20Fio%20Plug%20And%20Play%20Entrada%20Tipo%20C%20e%20Lightning%20Para%20Celular%20-%20Duplo%20_%20Shopee%20Brasil.jfif"
+    ],
+    "attributes": [
+      {
+        "key": "Portée",
+        "val": "Transmission numérique 2.4GHz jusqu'à 20 mètres sans latence"
+      },
+      {
+        "key": "Réduction",
+        "val": "Puce DSP de réduction intelligente du bruit ambiant"
+      },
+      {
+        "key": "Compatibilité",
+        "val": "Direct iPhone, iPad, Android USB-C sans application"
+      }
+    ],
+    "description": "Kit micro-cravate sans fil pour interviews, TikTok, podcasts et diffusions en direct avec qualité audio broadcast professionnelle.",
+    "inStock": true,
+    "stock": 1000,
+    "stockQuantity": 1000,
+    "stockUnits": 1000,
+    "inStockLabel": "En stock (1 000+ disponibles)"
+  },
+  "mifa_a90": {
+    "id": "mifa_a90",
+    "title": "MIFA A90 Enceinte Bluetooth Boombox 60W (IPX8 Waterproof & RGB)",
+    "brand": "MIFA",
+    "category": "electronics",
+    "categoryLabel": "Audio & Enceintes",
+    "subcategory": "audio",
+    "conditionLabel": "Neuf Scellé d'Origine · Garantie 24 Mois Constructeur",
+    "fulfillmentLabel": "Livraison Express Douala / Yaoundé 24h",
+    "badge": "HEAVY BASS",
+    "rating": "4.9",
+    "reviewCount": 58,
+    "soldCount": 142,
+    "price": "XAF 65.000",
+    "salePrice": "XAF 78.000",
+    "storeName": "Acoustic Pro Yaoundé",
+    "storeCity": "Bastos, Yaoundé",
+    "storeRating": "4.9",
+    "storeVerified": true,
+    "coverImage": "./Assets/acessories&gadgets/mifa%20A90%20Bluetooth%20Lautsprecher%2060W%20Ausgangsleistung%20mit%20Klasse-D%20Verst%C3%A4rker%20Hervorragende%20Bassleistung%20IPX8%20Wasserdicht%20-%20Schwarz.jfif",
+    "images": [
+      "./Assets/acessories&gadgets/mifa%20A90%20Bluetooth%20Lautsprecher%2060W%20Ausgangsleistung%20mit%20Klasse-D%20Verst%C3%A4rker%20Hervorragende%20Bassleistung%20IPX8%20Wasserdicht%20-%20Schwarz.jfif"
+    ],
+    "attributes": [
+      {
+        "key": "Puissance",
+        "val": "60W RMS amplificateur Classe-D double basse"
+      },
+      {
+        "key": "Protection",
+        "val": "IPX8 immersible sous l'eau"
+      },
+      {
+        "key": "Autonomie",
+        "val": "Batterie 8000 mAh · jusqu'à 30h de musique"
+      },
+      {
+        "key": "Lumières",
+        "val": "Jeux de lumières LED dynamiques synchronisés au rythme"
+      }
+    ],
+    "description": "Le monstre sonore MIFA A90 délivre une puissance sonore colossale avec des basses percutantes et une étanchéité totale IPX8 pour toutes vos fêtes.",
+    "inStock": true,
+    "stock": 1000,
+    "stockQuantity": 1000,
+    "stockUnits": 1000,
+    "inStockLabel": "En stock (1 000+ disponibles)"
+  },
+  "power_bank": {
+    "id": "power_bank",
+    "title": "Batterie Externe Solaire 30,000mAh Ultra-Rapide (4 Câbles Intégrés)",
+    "brand": "PowerCore",
+    "category": "electronics",
+    "categoryLabel": "Accessoires & Gadgets",
+    "subcategory": "accessories",
+    "conditionLabel": "Neuf Scellé d'Origine · Garantie 24 Mois Constructeur",
+    "fulfillmentLabel": "Livraison Express Douala / Yaoundé 24h",
+    "badge": "POWERPACK",
+    "rating": "4.8",
+    "reviewCount": 104,
+    "soldCount": 290,
+    "price": "XAF 22.000",
+    "salePrice": "XAF 28.000",
+    "storeName": "SmartTech Cameroun",
+    "storeCity": "Akwa, Douala",
+    "storeRating": "4.9",
+    "storeVerified": true,
+    "coverImage": "./Assets/acessories&gadgets/pawer%20bank%20with%20solar%20panel.jfif",
+    "images": [
+      "./Assets/acessories&gadgets/pawer%20bank%20with%20solar%20panel.jfif"
+    ],
+    "attributes": [
+      {
+        "key": "Capacité",
+        "val": "30,000mAh haute densité (charge 7 à 9 fois un téléphone)"
+      },
+      {
+        "key": "Câbles",
+        "val": "4 câbles intégrés (Lightning, Type-C, Micro-USB, USB-A)"
+      },
+      {
+        "key": "Solaire",
+        "val": "Panneau solaire de secours monocristallin"
+      },
+      {
+        "key": "Éclairage",
+        "val": "Double lampe torche LED puissante pour pannes"
+      }
+    ],
+    "description": "Power Bank autonome haute capacité avec recharge solaire d'urgence. Alimentez tous vos appareils simultanément sans transporter de câbles.",
+    "inStock": true,
+    "stock": 1000,
+    "stockQuantity": 1000,
+    "stockUnits": 1000,
+    "inStockLabel": "En stock (1 000+ disponibles)"
+  },
+  "nike_air_force_1": {
+    "id": "nike_air_force_1",
+    "title": "Nike Air Force 1 '07 Low (Triple White Classic Sneakers)",
+    "brand": "Nike",
+    "category": "fashion",
+    "categoryLabel": "Chaussures & Sneakers",
+    "subcategory": "shoes",
+    "conditionLabel": "Neuf Authentique en Boîte d'Origine",
+    "fulfillmentLabel": "Livraison Express Douala / Yaoundé 24h",
+    "badge": "ICONIC",
+    "rating": "4.9",
+    "reviewCount": 118,
+    "soldCount": 350,
+    "price": "XAF 65.000",
+    "salePrice": "XAF 75.000",
+    "storeName": "SneakerLab Douala",
+    "storeCity": "Akwa, Douala",
+    "storeRating": "4.9",
+    "storeVerified": true,
+    "coverImage": "./Assets/fashion/shoes/Look%20at%20this%20new%20Nike%20Air%20Force%201%20Low%20_Triple%20White_%20on%20DailySole_%20Available%20now%20via%20Nike%20US%20for%20%24100%20USD_%20Style%20Code_%20CW2288-111%20%20%20Grab%20a%20pair%20now%20below_.jfif",
+    "images": [
+      "./Assets/fashion/shoes/Look%20at%20this%20new%20Nike%20Air%20Force%201%20Low%20_Triple%20White_%20on%20DailySole_%20Available%20now%20via%20Nike%20US%20for%20%24100%20USD_%20Style%20Code_%20CW2288-111%20%20%20Grab%20a%20pair%20now%20below_.jfif"
+    ],
+    "attributes": [
+      {
+        "key": "Matière",
+        "val": "100% Cuir véritable cousu haute résistance"
+      },
+      {
+        "key": "Amorti",
+        "val": "Unité Nike Air encapsulée au talon"
+      },
+      {
+        "key": "Semelle",
+        "val": "Caoutchouc non marquant avec points de pivot classiques"
+      }
+    ],
+    "description": "L'icône streetwear indémodable Nike Air Force 1 '07 dans son coloris légendaire Triple White. Cuir premium épuré et confort durable.",
+    "inStock": true,
+    "stock": 1000,
+    "stockQuantity": 1000,
+    "stockUnits": 1000,
+    "inStockLabel": "En stock (1 000+ disponibles)"
+  },
+  "chelsea_boots": {
+    "id": "chelsea_boots",
+    "title": "Kraasa Bottines Chelsea en Daim Véritable (Slip-On Homme)",
+    "brand": "Kraasa",
+    "category": "fashion",
+    "categoryLabel": "Chaussures & Bottes",
+    "subcategory": "shoes",
+    "conditionLabel": "Neuf Authentique en Boîte d'Origine",
+    "fulfillmentLabel": "Livraison Express Douala / Yaoundé 24h",
+    "badge": "ELEGANCE",
+    "rating": "4.8",
+    "reviewCount": 46,
+    "soldCount": 112,
+    "price": "XAF 42.000",
+    "salePrice": "XAF 52.000",
+    "storeName": "Armonía Milano · Bonapriso",
+    "storeCity": "Bonapriso, Douala",
+    "storeRating": "4.9",
+    "storeVerified": true,
+    "coverImage": "./Assets/fashion/shoes/Kraasa%20Men%27s%20Slip%20On%20Ankle%20Chelsea%20Boots.jfif",
+    "images": [
+      "./Assets/fashion/shoes/Kraasa%20Men%27s%20Slip%20On%20Ankle%20Chelsea%20Boots.jfif"
+    ],
+    "attributes": [
+      {
+        "key": "Tige",
+        "val": "Daim velours suédé hydrofuge"
+      },
+      {
+        "key": "Fermeture",
+        "val": "Goussets élastiques latéraux haute durabilité"
+      },
+      {
+        "key": "Semelle",
+        "val": "Semelle crantée TPR anti-glisse cousue"
+      }
+    ],
+    "description": "Bottines Chelsea élégantes et confortables pour hommes. Silhouette intemporelle sublimant à la fois un costume habillé et un jean casual chic.",
+    "inStock": true,
+    "stock": 1000,
+    "stockQuantity": 1000,
+    "stockUnits": 1000,
+    "inStockLabel": "En stock (1 000+ disponibles)"
+  },
+  "dress_loafers": {
+    "id": "dress_loafers",
+    "title": "Mocassins Richelieu Bicolores en Cuir Fait Main (Spectator Loafers)",
+    "brand": "Armonía",
+    "category": "fashion",
+    "categoryLabel": "Chaussures & Souliers",
+    "subcategory": "shoes",
+    "conditionLabel": "Neuf Authentique Fait Main",
+    "fulfillmentLabel": "Livraison Express Douala / Yaoundé 24h",
+    "badge": "ARTISAN LUXURY",
+    "rating": "4.9",
+    "reviewCount": 37,
+    "soldCount": 89,
+    "price": "XAF 48.000",
+    "salePrice": "XAF 60.000",
+    "storeName": "Armonía Milano · Bonapriso",
+    "storeCity": "Bonapriso, Douala",
+    "storeRating": "4.9",
+    "storeVerified": true,
+    "coverImage": "./Assets/fashion/shoes/Timeless%20Elegance%20Luxury%20Handmade%20Men%27s%20Dress%20Shoes%20Collection.jfif",
+    "images": [
+      "./Assets/fashion/shoes/Timeless%20Elegance%20Luxury%20Handmade%20Men%27s%20Dress%20Shoes%20Collection.jfif"
+    ],
+    "attributes": [
+      {
+        "key": "Cuir",
+        "val": "Cuir de veau pleine fleur patiné bicolore noir & blanc"
+      },
+      {
+        "key": "Doublure",
+        "val": "Cuir respirant anti-odeurs"
+      },
+      {
+        "key": "Montage",
+        "val": "Cousu Blake traditionnel ultra souple"
+      }
+    ],
+    "description": "Souliers de ville Spectator bicolores d'une distinction rare. Chaque paire est découpée et patinée à la main pour les cérémonies et réceptions.",
+    "inStock": true,
+    "stock": 1000,
+    "stockQuantity": 1000,
+    "stockUnits": 1000,
+    "inStockLabel": "En stock (1 000+ disponibles)"
+  },
+  "leather_satchel": {
+    "id": "leather_satchel",
+    "title": "Sac à Main Trapèze en Cuir Grainé Structuré (Monogramme Luxe)",
+    "brand": "Armonía",
+    "category": "fashion",
+    "categoryLabel": "Sacs & Maroquinerie",
+    "subcategory": "bags",
+    "conditionLabel": "Neuf d'Origine avec Housse Antipoussière",
+    "fulfillmentLabel": "Livraison Express Douala / Yaoundé 24h",
+    "badge": "PREMIUM LEATHER",
+    "rating": "4.8",
+    "reviewCount": 49,
+    "soldCount": 115,
+    "price": "XAF 55.000",
+    "salePrice": "XAF 70.000",
+    "storeName": "Maison Blanche Douala",
+    "storeCity": "Akwa, Douala",
+    "storeRating": "4.9",
+    "storeVerified": true,
+    "coverImage": "./Assets/fashion/handbag/Luxury%20Designer%20Leather%20Handbag.jfif",
+    "images": [
+      "./Assets/fashion/handbag/Luxury%20Designer%20Leather%20Handbag.jfif"
+    ],
+    "attributes": [
+      {
+        "key": "Matière",
+        "val": "Cuir de vachette véritable finition grainée saffiano"
+      },
+      {
+        "key": "Détails",
+        "val": "Bouclerie dorée inoxydable et cadenas gravé"
+      },
+      {
+        "key": "Portage",
+        "val": "Poignée double rigide et bandoulière amovible ajustable"
+      }
+    ],
+    "description": "Sacoche de luxe à silhouette architecturale. Compartiments intérieurs zippés multiples pour organiser vos effets personnels avec élégance.",
+    "inStock": true,
+    "stock": 1000,
+    "stockQuantity": 1000,
+    "stockUnits": 1000,
+    "inStockLabel": "En stock (1 000+ disponibles)"
+  },
+  "stiletto_heels": {
+    "id": "stiletto_heels",
+    "title": "Escarpins Stiletto Banquet Chic 10cm (Bout Pointu Soirée)",
+    "brand": "Soirée Chic",
+    "category": "fashion",
+    "categoryLabel": "Chaussures & Escarpins",
+    "subcategory": "shoes",
+    "conditionLabel": "Neuf en Boîte d'Origine",
+    "fulfillmentLabel": "Livraison Express Douala / Yaoundé 24h",
+    "badge": "PARTY CHIC",
+    "rating": "4.8",
+    "reviewCount": 41,
+    "soldCount": 97,
+    "price": "XAF 38.000",
+    "salePrice": "XAF 48.000",
+    "storeName": "Maison Blanche Douala",
+    "storeCity": "Akwa, Douala",
+    "storeRating": "4.9",
+    "storeVerified": true,
+    "coverImage": "./Assets/fashion/shoes/Shoes%20Women%2010%20Cm%20Moderate%20Heels%20Banquet%20Dress%20Stiletto%20Heels.jfif",
+    "images": [
+      "./Assets/fashion/shoes/Shoes%20Women%2010%20Cm%20Moderate%20Heels%20Banquet%20Dress%20Stiletto%20Heels.jfif"
+    ],
+    "attributes": [
+      {
+        "key": "Hauteur",
+        "val": "Talon aiguille 10cm équilibré haute cambrure"
+      },
+      {
+        "key": "Semelle",
+        "val": "Semelle confort avec coussinet métatarsien rembourré"
+      },
+      {
+        "key": "Finition",
+        "val": "Empeigne satinée réfléchissant délicatement la lumière"
+      }
+    ],
+    "description": "Escarpins de banquet irrésistibles au design pointu affirmé. Dessinés pour sublimer vos tenues de soirée, galas et mariages.",
+    "inStock": true,
+    "stock": 1000,
+    "stockQuantity": 1000,
+    "stockUnits": 1000,
+    "inStockLabel": "En stock (1 000+ disponibles)"
+  },
+  "ankara_palazzo": {
+    "id": "ankara_palazzo",
+    "title": "Ensemble Pantalon Palazzo & Kimono Wax Africain (100% Coton)",
+    "brand": "AfroChic Atelier",
+    "category": "fashion",
+    "categoryLabel": "Mode Africaine & Ensembles",
+    "subcategory": "clothing",
+    "conditionLabel": "Neuf Cousu Main Créateur",
+    "fulfillmentLabel": "Livraison Express Douala / Yaoundé 24h",
+    "badge": "HERITAGE WAX",
+    "rating": "4.9",
+    "reviewCount": 53,
+    "soldCount": 128,
+    "price": "XAF 22.000",
+    "salePrice": "XAF 30.000",
+    "storeName": "AfroChic Douala",
+    "storeCity": "Bali, Douala",
+    "storeRating": "4.9",
+    "storeVerified": true,
+    "coverImage": "./Assets/fashion/EnsembleModel/100%25%20Cotton%20Ankara%20wax%20fabric%20palazzo%20pants%20and%20kimono.jfif",
+    "images": [
+      "./Assets/fashion/EnsembleModel/100%25%20Cotton%20Ankara%20wax%20fabric%20palazzo%20pants%20and%20kimono.jfif"
+    ],
+    "attributes": [
+      {
+        "key": "Tissu",
+        "val": "100% Coton Wax Hollandais authentique grand teint"
+      },
+      {
+        "key": "Coupe",
+        "val": "Taille haute ceinturée et jambes évasées amples"
+      },
+      {
+        "key": "Ensemble",
+        "val": "Comprend le pantalon palazzo et le kimono coordonné"
+      }
+    ],
+    "description": "Ensemble deux pièces flamboyant confectionné à Douala. L'alliance parfaite du confort estival et de l'authenticité culturelle africaine.",
+    "inStock": true,
+    "stock": 1000,
+    "stockQuantity": 1000,
+    "stockUnits": 1000,
+    "inStockLabel": "En stock (1 000+ disponibles)"
+  },
+  "artisan_sandals": {
+    "id": "artisan_sandals",
+    "title": "Sandales Artisanales Tressées en Cuir Marron Homme",
+    "brand": "Artisan Cuir",
+    "category": "fashion",
+    "categoryLabel": "Chaussures & Sandales",
+    "subcategory": "shoes",
+    "conditionLabel": "Neuf Fait Main",
+    "fulfillmentLabel": "Livraison Express Douala / Yaoundé 24h",
+    "badge": "HANDMADE",
+    "rating": "4.8",
+    "reviewCount": 34,
+    "soldCount": 82,
+    "price": "XAF 15.000",
+    "salePrice": "XAF 20.000",
+    "storeName": "Artisan Cuir Yaoundé",
+    "storeCity": "Centre Ville, Yaoundé",
+    "storeRating": "4.8",
+    "storeVerified": true,
+    "coverImage": "./Assets/fashion/shoes/Men%20brown%20leather%20strappy%20sandals.jfif",
+    "images": [
+      "./Assets/fashion/shoes/Men%20brown%20leather%20strappy%20sandals.jfif"
+    ],
+    "attributes": [
+      {
+        "key": "Tannage",
+        "val": "Cuir végétal naturel sans produits chimiques nocifs"
+      },
+      {
+        "key": "Semelle",
+        "val": "Semelle ergonomique épousant la voûte plantaire"
+      },
+      {
+        "key": "Lanières",
+        "val": "Tressage artisanal double piqûre ultra solide"
+      }
+    ],
+    "description": "Sandales estivales robustes confectionnées avec du cuir camerounais de premier choix. Aération maximale et durabilité exceptionnelle.",
+    "inStock": true,
+    "stock": 1000,
+    "stockQuantity": 1000,
+    "stockUnits": 1000,
+    "inStockLabel": "En stock (1 000+ disponibles)"
+  },
+  "beaded_bracelet": {
+    "id": "beaded_bracelet",
+    "title": "Bracelet pour Homme en Pierres Naturelles Noires & Charms",
+    "brand": "Zulu Heritage",
+    "category": "jewelry",
+    "categoryLabel": "Bijoux & Bracelets",
+    "subcategory": "bracelets",
+    "conditionLabel": "Neuf dans son Coffret Cadeau",
+    "fulfillmentLabel": "Livraison Express Douala / Yaoundé 24h",
+    "badge": "NATURAL STONE",
+    "rating": "4.9",
+    "reviewCount": 61,
+    "soldCount": 160,
+    "price": "XAF 12.000",
+    "salePrice": "XAF 18.000",
+    "storeName": "Zulu Heritage Akwa",
+    "storeCity": "Akwa, Douala",
+    "storeRating": "4.9",
+    "storeVerified": true,
+    "coverImage": "./Assets/jelweries/bracelet/Men%20Charm%20Black%20Stone%20Beaded%20Bracelet.jfif",
+    "images": [
+      "./Assets/jelweries/bracelet/Men%20Charm%20Black%20Stone%20Beaded%20Bracelet.jfif"
+    ],
+    "attributes": [
+      {
+        "key": "Pierres",
+        "val": "Perles de pierre de lave et onyx mat 8mm"
+      },
+      {
+        "key": "Charms",
+        "val": "Acier inoxydable 316L résistant à l'eau et à la transpiration"
+      },
+      {
+        "key": "Taille",
+        "val": "Élastique renforcé ajustable pour tous les poignets (18-21cm)"
+      }
+    ],
+    "description": "Bracelet masculin épuré et mystique associant la pierre de lave protectrice et l'onyx mat. Livré dans sa pochette velours LOUMOO.",
+    "inStock": true,
+    "stock": 1000,
+    "stockQuantity": 1000,
+    "stockUnits": 1000,
+    "inStockLabel": "En stock (1 000+ disponibles)"
+  },
+  "home_station_expresso_infusion_barista_maison": {
+    "id": "home_station_expresso_infusion_barista_maison",
+    "title": "Station Expresso & Infusion Barista Maison (15 Bar Italienne)",
+    "brand": "DeLonghi",
+    "category": "home",
+    "categoryLabel": "Maison & Électroménager",
+    "subcategory": "kitchen",
+    "conditionLabel": "Neuf Scellé d'Origine · Garantie 24 Mois Constructeur",
+    "fulfillmentLabel": "Livraison Express Douala / Yaoundé 24h",
+    "badge": "BARISTA PRO",
+    "rating": "4.9",
+    "reviewCount": 42,
+    "soldCount": 96,
+    "price": "XAF 245.000",
+    "salePrice": "XAF 285.000",
+    "storeName": "ElectroHome Douala",
+    "storeCity": "Akwa, Douala",
+    "storeRating": "4.9",
+    "storeVerified": true,
+    "coverImage": "./Assets/ElectroMenage/Make%20Great%20Coffee%20at%20Home.jfif",
+    "images": [
+      "./Assets/ElectroMenage/Make%20Great%20Coffee%20at%20Home.jfif"
+    ],
+    "attributes": [
+      {
+        "key": "Pression",
+        "val": "Pompe italienne professionnelle 15 bars"
+      },
+      {
+        "key": "Vapeur",
+        "val": "Buse vapeur inox orientable pour mousse de lait cappuccino"
+      },
+      {
+        "key": "Réservoir",
+        "val": "1.8 litre amovible avec indicateur de niveau"
+      }
+    ],
+    "description": "Savourez l'arôme authentique d'un espresso barista chez vous. Compatible café moulu et dosettes ESE avec plateau chauffe-tasses supérieur.",
+    "inStock": true,
+    "stock": 1000,
+    "stockQuantity": 1000,
+    "stockUnits": 1000,
+    "inStockLabel": "En stock (1 000+ disponibles)"
+  },
+  "cold_press_juicer": {
+    "id": "cold_press_juicer",
+    "title": "Extracteur de Jus Slow Juicer à Froid (Mastication Lente 150W)",
+    "brand": "Hurom",
+    "category": "home",
+    "categoryLabel": "Maison & Électroménager",
+    "subcategory": "kitchen",
+    "conditionLabel": "Neuf Scellé d'Origine · Garantie 24 Mois Constructeur",
+    "fulfillmentLabel": "Livraison Express Douala / Yaoundé 24h",
+    "badge": "HEALTHY LIVING",
+    "rating": "4.8",
+    "reviewCount": 35,
+    "soldCount": 81,
+    "price": "XAF 48.000",
+    "salePrice": "XAF 60.000",
+    "storeName": "ElectroHome Douala",
+    "storeCity": "Akwa, Douala",
+    "storeRating": "4.9",
+    "storeVerified": true,
+    "coverImage": "./Assets/ElectroMenage/Cold%20Press%20Juicer%20Machine.jfif",
+    "images": [
+      "./Assets/ElectroMenage/Cold%20Press%20Juicer%20Machine.jfif"
+    ],
+    "attributes": [
+      {
+        "key": "Vitesse",
+        "val": "Extraction lente 60 tr/min préservant 100% des vitamines"
+      },
+      {
+        "key": "Matériaux",
+        "val": "Sans BPA · Vis sans fin en Tritan ultra résistante"
+      },
+      {
+        "key": "Rendement",
+        "val": "+30% de jus par rapport aux centrifugeuses traditionnelles"
+      }
+    ],
+    "description": "Préservez tous les nutriments de vos fruits et légumes avec cet extracteur de jus silencieux. Nettoyage express en moins de 3 minutes.",
+    "inStock": true,
+    "stock": 1000,
+    "stockQuantity": 1000,
+    "stockUnits": 1000,
+    "inStockLabel": "En stock (1 000+ disponibles)"
+  },
+  "espresso_maker": {
+    "id": "espresso_maker",
+    "title": "Machine à Café Expresso Rétro Compacte avec Buse Vapeur",
+    "brand": "DeLonghi",
+    "category": "home",
+    "categoryLabel": "Maison & Électroménager",
+    "subcategory": "kitchen",
+    "conditionLabel": "Neuf Scellé d'Origine · Garantie 24 Mois Constructeur",
+    "fulfillmentLabel": "Livraison Express Douala / Yaoundé 24h",
+    "badge": "COFFEE LOVER",
+    "rating": "4.8",
+    "reviewCount": 52,
+    "soldCount": 118,
+    "price": "XAF 58.000",
+    "salePrice": "XAF 72.000",
+    "storeName": "ElectroHome Douala",
+    "storeCity": "Akwa, Douala",
+    "storeRating": "4.9",
+    "storeVerified": true,
+    "coverImage": "./Assets/ElectroMenage/Make%20Great%20Coffee%20at%20Home.jfif",
+    "images": [
+      "./Assets/ElectroMenage/Make%20Great%20Coffee%20at%20Home.jfif"
+    ],
+    "attributes": [
+      {
+        "key": "Thermoblock",
+        "val": "Chauffe rapide prête en seulement 35 secondes"
+      },
+      {
+        "key": "Filtre",
+        "val": "Porte-filtre pressurisé pour une crème dense noisette"
+      },
+      {
+        "key": "Design",
+        "val": "Corps vintage noir mat et finitions chromées soignées"
+      }
+    ],
+    "description": "L'expresso italien traditionnel condensé dans un format compact qui s'intègre harmonieusement sur tous les plans de travail.",
+    "inStock": true,
+    "stock": 1000,
+    "stockQuantity": 1000,
+    "stockUnits": 1000,
+    "inStockLabel": "En stock (1 000+ disponibles)"
+  },
+  "oraimo_airfryer": {
+    "id": "oraimo_airfryer",
+    "title": "Friteuse Sans Huile Oraimo SmartFryer 5L Écran Tactile (1500W)",
+    "brand": "Oraimo",
+    "category": "home",
+    "categoryLabel": "Maison & Électroménager",
+    "subcategory": "kitchen",
+    "conditionLabel": "Neuf Scellé d'Origine · Garantie 24 Mois Constructeur",
+    "fulfillmentLabel": "Livraison Express Douala / Yaoundé 24h",
+    "badge": "HEALTHY CHOICE",
+    "rating": "4.9",
+    "reviewCount": 73,
+    "soldCount": 210,
+    "price": "XAF 62.000",
+    "salePrice": "XAF 75.000",
+    "storeName": "SmartTech Cameroun",
+    "storeCity": "Akwa, Douala",
+    "storeRating": "4.9",
+    "storeVerified": true,
+    "coverImage": "./Assets/acessories&gadgets/Oraimo%20Oraimo%20Smart%20Air%20Fryer%20with%20Touch%20Screen%20Display,%205L%20Capacity,%201500W%20-%20Black.jfif",
+    "images": [
+      "./Assets/acessories&gadgets/Oraimo%20Oraimo%20Smart%20Air%20Fryer%20with%20Touch%20Screen%20Display,%205L%20Capacity,%201500W%20-%20Black.jfif"
+    ],
+    "attributes": [
+      {
+        "key": "Capacité",
+        "val": "Cuve anti-adhésive 5 litres pour toute la famille"
+      },
+      {
+        "key": "Cuisson",
+        "val": "Circulation d'air chaud 360° : 85% d'huile en moins"
+      },
+      {
+        "key": "Commandes",
+        "val": "Panneau tactile LED avec 8 programmes automatiques"
+      }
+    ],
+    "description": "Cuisinez croustillant et sain avec l'Air Fryer connecté Oraimo 5L. Poulet entier, frites dorées, beignets et légumes rôtis en quelques minutes.",
+    "inStock": true,
+    "stock": 1000,
+    "stockQuantity": 1000,
+    "stockUnits": 1000,
+    "inStockLabel": "En stock (1 000+ disponibles)"
+  },
+  "na_double_monk_01": {
+    "id": "na_double_monk_01",
+    "title": "Armonía Double-Monk Shoes (Glossy Italian Box Calfskin)",
+    "brand": "Armonía",
+    "category": "fashion",
+    "categoryLabel": "Chaussures de Luxe",
+    "subcategory": "shoes",
+    "conditionLabel": "Neuf Fait Main · Édition Limitée",
+    "fulfillmentLabel": "Livraison Express Douala / Yaoundé 24h",
+    "badge": "Save 30.000 FCFA",
+    "rating": "4.9",
+    "reviewCount": 29,
+    "soldCount": 65,
+    "price": "XAF 85.000",
+    "salePrice": "XAF 115.000",
+    "storeName": "Armonía Milano · Bonapriso",
+    "storeCity": "Bonapriso, Douala",
+    "storeRating": "4.9",
+    "storeVerified": true,
+    "coverImage": "./Assets/_processed/new_arrivals_01.jpg",
+    "images": [
+      "./Assets/_processed/new_arrivals_01.jpg"
+    ],
+    "attributes": [
+      {
+        "key": "Cuir",
+        "val": "Box calfskin italien lustré à la main"
+      },
+      {
+        "key": "Bouclerie",
+        "val": "Boucles en laiton doré poli inoxydable"
+      },
+      {
+        "key": "Semelle",
+        "val": "Semelle cuir véritable avec trépointe piquée"
+      }
+    ],
+    "description": "Souliers double boucle Armonía d'une perfection architecturale. L'excellence de la maroquinerie italienne livrée avec garantie d'authenticité LOUMOO.",
+    "inStock": true,
+    "stock": 1000,
+    "stockQuantity": 1000,
+    "stockUnits": 1000,
+    "inStockLabel": "En stock (1 000+ disponibles)"
+  },
+  "na_danbaoly_bag_02": {
+    "id": "na_danbaoly_bag_02",
+    "title": "Danbaoly Crimson Red Handbag (Bow-Tie Charm Edition)",
+    "brand": "Danbaoly",
+    "category": "fashion",
+    "categoryLabel": "Sacs & Maroquinerie",
+    "subcategory": "bags",
+    "conditionLabel": "Neuf d'Origine avec Certificat",
+    "fulfillmentLabel": "Livraison Express Douala / Yaoundé 24h",
+    "badge": "Trending · Gold Charm",
+    "rating": "4.8",
+    "reviewCount": 38,
+    "soldCount": 84,
+    "price": "XAF 42.000",
+    "salePrice": "XAF 55.000",
+    "storeName": "Maison Blanche Douala",
+    "storeCity": "Akwa, Douala",
+    "storeRating": "4.9",
+    "storeVerified": true,
+    "coverImage": "./Assets/_processed/new_arrivals_02.jpg",
+    "images": [
+      "./Assets/_processed/new_arrivals_02.jpg"
+    ],
+    "attributes": [
+      {
+        "key": "Coloris",
+        "val": "Rouge carmin profond verni"
+      },
+      {
+        "key": "Détails",
+        "val": "Nœud décoratif sculpté et breloque dorée monogrammée"
+      },
+      {
+        "key": "Rangement",
+        "val": "Trois compartiments intérieurs doublés de satin"
+      }
+    ],
+    "description": "Sac à main Danbaoly Crimson Tote d'une sensualité captivante. Sublimé par son nœud sculpté et son médaillon doré emblématique.",
+    "inStock": true,
+    "stock": 1000,
+    "stockQuantity": 1000,
+    "stockUnits": 1000,
+    "inStockLabel": "En stock (1 000+ disponibles)"
+  },
+  "na_pedro_backpack_03": {
+    "id": "na_pedro_backpack_03",
+    "title": "Pedro Tri-Tone Heritage Rucksack (Travel Tech Backpack)",
+    "brand": "Pedro",
+    "category": "fashion",
+    "categoryLabel": "Sacs & Bagagerie",
+    "subcategory": "bags",
+    "conditionLabel": "Neuf d'Origine avec Étiquette",
+    "fulfillmentLabel": "Livraison Express Douala / Yaoundé 24h",
+    "badge": "City Escape · 15.6”",
+    "rating": "4.8",
+    "reviewCount": 42,
+    "soldCount": 95,
+    "price": "XAF 68.000",
+    "salePrice": "XAF 85.000",
+    "storeName": "City Sport Douala",
+    "storeCity": "Akwa, Douala",
+    "storeRating": "4.8",
+    "storeVerified": true,
+    "coverImage": "./Assets/_processed/new_arrivals_03.jpg",
+    "images": [
+      "./Assets/_processed/new_arrivals_03.jpg"
+    ],
+    "attributes": [
+      {
+        "key": "Compatibilité",
+        "val": "Compartiment rembourré dédié ordinateur 15.6 pouces"
+      },
+      {
+        "key": "Textile",
+        "val": "Nylon déperlant haute densité et garnitures en cuir nappa"
+      },
+      {
+        "key": "Confort",
+        "val": "Bretelles ergonomiques matelassées et sangle pour valise"
+      }
+    ],
+    "description": "Sac à dos urbain chic Pedro associant style rétro et ergonomie moderne pour vos voyages et déplacements professionnels.",
+    "inStock": true,
+    "stock": 1000,
+    "stockQuantity": 1000,
+    "stockUnits": 1000,
+    "inStockLabel": "En stock (1 000+ disponibles)"
+  },
+  "na_boat_speaker_04": {
+    "id": "na_boat_speaker_04",
+    "title": "boAt Stone 1400 Crimson Wireless Speaker (30W Dynamic Bass)",
+    "brand": "boAt",
+    "category": "electronics",
+    "categoryLabel": "Audio & Enceintes",
+    "subcategory": "audio",
+    "conditionLabel": "Neuf Scellé d'Origine · Garantie 24 Mois Constructeur",
+    "fulfillmentLabel": "Livraison Express Douala / Yaoundé 24h",
+    "badge": "IPX5 Rugged · 30W",
+    "rating": "4.7",
+    "reviewCount": 56,
+    "soldCount": 132,
+    "price": "XAF 45.000",
+    "salePrice": "XAF 58.000",
+    "storeName": "Acoustic Pro Yaoundé",
+    "storeCity": "Bastos, Yaoundé",
+    "storeRating": "4.9",
+    "storeVerified": true,
+    "coverImage": "./Assets/_processed/new_arrivals_04.jpg",
+    "images": [
+      "./Assets/_processed/new_arrivals_04.jpg"
+    ],
+    "attributes": [
+      {
+        "key": "Puissance",
+        "val": "30W RMS avec transducteurs 70mm"
+      },
+      {
+        "key": "Autonomie",
+        "val": "Batterie lithium 2500 mAh · 7 heures à plein volume"
+      },
+      {
+        "key": "Connectivité",
+        "val": "Bluetooth 5.0, AUX 3.5mm, USB et entrée micro"
+      }
+    ],
+    "description": "Enceinte d'extérieur puissante boAt Stone 1400. Conception robuste anti-chocs avec sangle de transport intégrée.",
+    "inStock": true,
+    "stock": 1000,
+    "stockQuantity": 1000,
+    "stockUnits": 1000,
+    "inStockLabel": "En stock (1 000+ disponibles)"
+  },
+  "na_pixel_10_pro_05": {
+    "id": "na_pixel_10_pro_05",
+    "title": "Google Pixel 10 Pro 5G Titanium (256GB Google Tensor G5)",
+    "brand": "Google",
+    "category": "electronics",
+    "categoryLabel": "Smartphones & Mobile",
+    "subcategory": "smartphones",
+    "conditionLabel": "Neuf Scellé d'Origine · Garantie 24 Mois Constructeur",
+    "fulfillmentLabel": "Livraison Express Douala / Yaoundé 24h",
+    "badge": "Tensor G5 · 50MP",
+    "rating": "5.0",
+    "reviewCount": 71,
+    "soldCount": 145,
+    "price": "XAF 650.000",
+    "salePrice": "XAF 720.000",
+    "storeName": "SmartTech Cameroun",
+    "storeCity": "Akwa, Douala",
+    "storeRating": "4.9",
+    "storeVerified": true,
+    "coverImage": "./Assets/_processed/new_arrivals_05.jpg",
+    "images": [
+      "./Assets/_processed/new_arrivals_05.jpg"
+    ],
+    "attributes": [
+      {
+        "key": "Puce",
+        "val": "Google Tensor G5 avec puce de sécurité Titan M2"
+      },
+      {
+        "key": "Photo",
+        "val": "Triple capteur 50MP avec Super Res Zoom 30x & Magic Editor"
+      },
+      {
+        "key": "Écran",
+        "val": "Super Actua OLED 6.8\" 1-120Hz 3000 nits de luminosité"
+      },
+      {
+        "key": "Mises à jour",
+        "val": "7 ans de mises à jour Android et sécurité"
+      }
+    ],
+    "description": "Le smartphone Android par excellence. Photographie computationnelle inégalée, finitions en titane brossé et toute l'intelligence de Gemini Nano.",
+    "inStock": true,
+    "stock": 1000,
+    "stockQuantity": 1000,
+    "stockUnits": 1000,
+    "inStockLabel": "En stock (1 000+ disponibles)"
+  },
+  "na_amina_muaddi_06": {
+    "id": "na_amina_muaddi_06",
+    "title": "Amina Muaddi Sunburst Duo (Escarpins Sculptés Ornés de Cristaux)",
+    "brand": "Amina Muaddi",
+    "category": "fashion",
+    "categoryLabel": "Chaussures de Luxe",
+    "subcategory": "shoes",
+    "conditionLabel": "Neuf Authentique en Boîte d'Origine",
+    "fulfillmentLabel": "Livraison Express Douala / Yaoundé 24h",
+    "badge": "Couture · Crystal",
+    "rating": "4.9",
+    "reviewCount": 24,
+    "soldCount": 51,
+    "price": "XAF 125.000",
+    "salePrice": "XAF 160.000",
+    "storeName": "Luxury Club Douala",
+    "storeCity": "Bonapriso, Douala",
+    "storeRating": "4.9",
+    "storeVerified": true,
+    "coverImage": "./Assets/_processed/new_arrivals_06.jpg",
+    "images": [
+      "./Assets/_processed/new_arrivals_06.jpg"
+    ],
+    "attributes": [
+      {
+        "key": "Talon",
+        "val": "Talon pyramide évasé emblématique 9.5cm"
+      },
+      {
+        "key": "Embellissement",
+        "val": "Broche soleil sertie de cristaux étincelants"
+      },
+      {
+        "key": "Tige",
+        "val": "Satin de soie luxueux et bride cheville ajustable"
+      }
+    ],
+    "description": "Création haute couture Amina Muaddi reconnue mondialement. La silhouette iconique au talon flare pyramide magnifiée par des cristaux précieux.",
+    "inStock": true,
+    "stock": 1000,
+    "stockQuantity": 1000,
+    "stockUnits": 1000,
+    "inStockLabel": "En stock (1 000+ disponibles)"
+  },
+  "na_noire_birkin_07": {
+    "id": "na_noire_birkin_07",
+    "title": "NOIRE Alligator Birkin Luxury Handbag (Gold Plated Hardware)",
+    "brand": "NOIRE",
+    "category": "fashion",
+    "categoryLabel": "Sacs de Luxe",
+    "subcategory": "bags",
+    "conditionLabel": "Neuf d'Origine avec Certificat d'Authenticité",
+    "fulfillmentLabel": "Livraison Sécurisée Douala / Yaoundé 24h",
+    "badge": "Ultra Luxe · 30cm",
+    "rating": "5.0",
+    "reviewCount": 19,
+    "soldCount": 38,
+    "price": "XAF 195.000",
+    "salePrice": "XAF 250.000",
+    "storeName": "Luxury Club Douala",
+    "storeCity": "Bonapriso, Douala",
+    "storeRating": "4.9",
+    "storeVerified": true,
+    "coverImage": "./Assets/_processed/new_arrivals_07.jpg",
+    "images": [
+      "./Assets/_processed/new_arrivals_07.jpg"
+    ],
+    "attributes": [
+      {
+        "key": "Cuir",
+        "val": "Cuir alligator d'élevage certifié avec écailles régulières"
+      },
+      {
+        "key": "Finitions",
+        "val": "Plaqué or 24 carats sur cadenas, clés et pieds de fond"
+      },
+      {
+        "key": "Confection",
+        "val": "Cousu main point sellier traditionnel"
+      }
+    ],
+    "description": "Le summum absolu de la maroquinerie d'exception. Sac Birkin 30cm noir profond façon alligator avec détails dorés pour collectionneurs.",
+    "inStock": true,
+    "stock": 1000,
+    "stockQuantity": 1000,
+    "stockUnits": 1000,
+    "inStockLabel": "En stock (1 000+ disponibles)"
+  },
+  "na_bigtree_heels_08": {
+    "id": "na_bigtree_heels_08",
+    "title": "Bigtree Emerald Stiletto Pumps (Finition Velours Émeraude)",
+    "brand": "Bigtree",
+    "category": "fashion",
+    "categoryLabel": "Chaussures & Escarpins",
+    "subcategory": "shoes",
+    "conditionLabel": "Neuf en Boîte d'Origine",
+    "fulfillmentLabel": "Livraison Express Douala / Yaoundé 24h",
+    "badge": "Velvet · 85mm",
+    "rating": "4.8",
+    "reviewCount": 33,
+    "soldCount": 78,
+    "price": "XAF 38.000",
+    "salePrice": "XAF 50.000",
+    "storeName": "Maison Blanche Douala",
+    "storeCity": "Akwa, Douala",
+    "storeRating": "4.9",
+    "storeVerified": true,
+    "coverImage": "./Assets/_processed/new_arrivals_08.jpg",
+    "images": [
+      "./Assets/_processed/new_arrivals_08.jpg"
+    ],
+    "attributes": [
+      {
+        "key": "Coloris",
+        "val": "Vert émeraude royal en velours soyeux"
+      },
+      {
+        "key": "Talon",
+        "val": "Talon aiguille 8.5cm offrant un maintien stable"
+      },
+      {
+        "key": "Semelle",
+        "val": "Semelle rouge glamour antidérapante"
+      }
+    ],
+    "description": "Escarpins raffinés Bigtree habillés d'un velours émeraude profond. Un classique intemporel pour apporter une touche de noblesse à toutes vos tenues.",
+    "inStock": true,
+    "stock": 1000,
+    "stockQuantity": 1000,
+    "stockUnits": 1000,
+    "inStockLabel": "En stock (1 000+ disponibles)"
+  },
+  "na_artisan_brogue_09": {
+    "id": "na_artisan_brogue_09",
+    "title": "Artisan Lug-Sole Chunky Brogues (Derbies Cuir Patiné Homme)",
+    "brand": "Artisan Cuir",
+    "category": "fashion",
+    "categoryLabel": "Chaussures & Souliers",
+    "subcategory": "shoes",
+    "conditionLabel": "Neuf Fait Main d'Origine",
+    "fulfillmentLabel": "Livraison Express Douala / Yaoundé 24h",
+    "badge": "Goodyear · Lug",
+    "rating": "4.9",
+    "reviewCount": 27,
+    "soldCount": 62,
+    "price": "XAF 75.000",
+    "salePrice": "XAF 95.000",
+    "storeName": "Armonía Milano · Bonapriso",
+    "storeCity": "Bonapriso, Douala",
+    "storeRating": "4.9",
+    "storeVerified": true,
+    "coverImage": "./Assets/_processed/new_arrivals_09.jpg",
+    "images": [
+      "./Assets/_processed/new_arrivals_09.jpg"
+    ],
+    "attributes": [
+      {
+        "key": "Perforations",
+        "val": "Détails brogue anglaise traditionnels perforés à la main"
+      },
+      {
+        "key": "Semelle",
+        "val": "Semelle commando crantée en gomme légère amortissante"
+      },
+      {
+        "key": "Cuir",
+        "val": "Cuir pleine fleur tannage végétal patine marron cognac"
+      }
+    ],
+    "description": "Derbies brogues à semelle crantée affirmée. Conçues pour allier le chic anglais intemporel à une adhérence moderne sur tous les terrains urbains.",
+    "inStock": true,
+    "stock": 1000,
+    "stockQuantity": 1000,
+    "stockUnits": 1000,
+    "inStockLabel": "En stock (1 000+ disponibles)"
+  },
+  "na_infinity_necklace_11": {
+    "id": "na_infinity_necklace_11",
+    "title": "Crystal Infinity Parure Set (Collier Infini & Boucles Cristaux)",
+    "brand": "Swarovski Elements",
+    "category": "jewelry",
+    "categoryLabel": "Bijoux & Parures",
+    "subcategory": "necklaces",
+    "conditionLabel": "Neuf dans son Écrin de Luxe",
+    "fulfillmentLabel": "Livraison Express Douala / Yaoundé 24h",
+    "badge": "Parure · Rhodium",
+    "rating": "4.9",
+    "reviewCount": 39,
+    "soldCount": 92,
+    "price": "XAF 55.000",
+    "salePrice": "XAF 75.000",
+    "storeName": "Bijouterie du Centre Douala",
+    "storeCity": "Akwa, Douala",
+    "storeRating": "4.9",
+    "storeVerified": true,
+    "coverImage": "./Assets/_processed/new_arrivals_11.jpg",
+    "images": [
+      "./Assets/_processed/new_arrivals_11.jpg"
+    ],
+    "attributes": [
+      {
+        "key": "Métal",
+        "val": "Argent 925 plaqué rhodium hypoallergénique inaltérable"
+      },
+      {
+        "key": "Pierres",
+        "val": "Cristaux Swarovski taille brillant facettés"
+      },
+      {
+        "key": "Composition",
+        "val": "Collier pendentif symbole infini + paire de boucles d'oreilles pendantes"
+      }
+    ],
+    "description": "Parure complète étincelante célébrant l'amour éternel avec le motif infini entrelacé. Présentée dans son coffret satin blanc avec certificat.",
     "inStock": true,
     "stock": 1000,
     "stockQuantity": 1000,
