@@ -98,6 +98,19 @@ class StoreProfileUseCase {
       handleDatabaseFailure(err, 'Update profile');
     }
 
+    if (updates.logoUrl !== undefined || updates.logo_url !== undefined) {
+      const logoUrl = updates.logoUrl !== undefined ? updates.logoUrl : updates.logo_url;
+      try {
+        await supabase
+          .from('stores')
+          .update({ logo_url: logoUrl || null, updated_at: new Date().toISOString() })
+          .eq('id', store.id);
+        store.logoUrl = logoUrl || null;
+      } catch (err) {
+        handleDatabaseFailure(err, 'Update store logo');
+      }
+    }
+
     await CacheService.del(`store:public:${store.id}`);
     await CacheService.del(`store:public:${store.slug}`);
     await CacheService.del(`store:management:${store.id}`);

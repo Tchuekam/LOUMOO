@@ -36,7 +36,9 @@ const CreateStoreSchema = z.object({
   phoneNumber: z.string().trim().max(32).optional().nullable(),
   email: z.string().email('Enter a valid store email address').optional().nullable(),
   tagline: z.string().trim().max(255).optional().nullable(),
-  streetAddress: z.string().trim().max(255).optional().nullable()
+  streetAddress: z.string().trim().max(255).optional().nullable(),
+  logoUrl: z.string().trim().max(1000000).optional().nullable(),
+  logo_url: z.string().trim().max(1000000).optional().nullable()
 });
 
 class CreateStoreUseCase {
@@ -109,6 +111,7 @@ class CreateStoreUseCase {
       slug: Store.generateSlug(input.name),
       description: input.description || `Official store for ${input.name} in ${city}, Cameroon.`,
       category_id: input.categoryId.toLowerCase(),
+      logo_url: input.logoUrl || input.logo_url || null,
       phone_number: input.phoneNumber || principal.phoneNumber || '',
       email: input.email || principal.email || '',
       // A created storefront is immediately discoverable. Onboarding still

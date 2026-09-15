@@ -60,11 +60,25 @@ def get_store_business_view():
           </div>
           <div style="flex:1">
             <input type="file" id="createStoreLogoInput" accept="image/jpeg,image/png,image/webp" onChange="{{ handleCreateStoreLogoUpload }}" style="display:none">
-            <button onClick="{{ () => { const el = document.getElementById('createStoreLogoInput'); if(el) el.click(); } }}" class="btn btn-outline" style="height:36px;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-              <span>{{ createStoreLogoUrl ? 'Change Photo' : 'Upload Store Photo' }}</span>
-            </button>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button onClick="{{ () => { const el = document.getElementById('createStoreLogoInput'); if(el) el.click(); } }}" class="btn btn-outline" style="height:36px;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                <span>{{ createStoreLogoUrl ? 'Change Photo' : 'Upload Store Photo' }}</span>
+              </button>
+              <sc-if value="{{ createStoreLogoUrl }}">
+                <button onClick="{{ removeCreateStoreLogo }}" class="btn btn-outline" style="height:36px;font-size:12px;font-weight:700;color:var(--color-danger)">Remove</button>
+              </sc-if>
+            </div>
             <div style="font:400 11px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:5px">PNG, JPG or WebP (square recommended, max 5MB)</div>
+            <div style="margin-top:8px;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+              <span style="font:600 10.5px/1 var(--font-heading);color:var(--color-text-muted);margin-right:2px">Brand presets:</span>
+              <button onClick="{{ () => selectCreateStorePresetLogo('tech_blue') }}" class="tag tag-neutral" style="font-size:10px;padding:3px 7px;cursor:pointer">🔵 Blue</button>
+              <button onClick="{{ () => selectCreateStorePresetLogo('emerald') }}" class="tag tag-neutral" style="font-size:10px;padding:3px 7px;cursor:pointer">🟢 Green</button>
+              <button onClick="{{ () => selectCreateStorePresetLogo('luxury_gold') }}" class="tag tag-neutral" style="font-size:10px;padding:3px 7px;cursor:pointer">🟡 Gold</button>
+              <button onClick="{{ () => selectCreateStorePresetLogo('royal_purple') }}" class="tag tag-neutral" style="font-size:10px;padding:3px 7px;cursor:pointer">🟣 Purple</button>
+              <button onClick="{{ () => selectCreateStorePresetLogo('crimson') }}" class="tag tag-neutral" style="font-size:10px;padding:3px 7px;cursor:pointer">🔴 Crimson</button>
+              <button onClick="{{ () => selectCreateStorePresetLogo('dark_carbon') }}" class="tag tag-neutral" style="font-size:10px;padding:3px 7px;cursor:pointer">⚫ Dark</button>
+            </div>
           </div>
         </div>
       </div>
@@ -485,6 +499,15 @@ def get_store_business_view():
               </sc-if>
             </div>
             <div style="font:400 11px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:6px">Displays across your boutique profile, product badges and chat.</div>
+            <div style="margin-top:8px;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+              <span style="font:600 10.5px/1 var(--font-heading);color:var(--color-text-muted);margin-right:2px">Brand presets:</span>
+              <button onClick="{{ () => selectStoreSettingsPresetLogo('tech_blue') }}" class="tag tag-neutral" style="font-size:10px;padding:3px 7px;cursor:pointer">🔵 Blue</button>
+              <button onClick="{{ () => selectStoreSettingsPresetLogo('emerald') }}" class="tag tag-neutral" style="font-size:10px;padding:3px 7px;cursor:pointer">🟢 Green</button>
+              <button onClick="{{ () => selectStoreSettingsPresetLogo('luxury_gold') }}" class="tag tag-neutral" style="font-size:10px;padding:3px 7px;cursor:pointer">🟡 Gold</button>
+              <button onClick="{{ () => selectStoreSettingsPresetLogo('royal_purple') }}" class="tag tag-neutral" style="font-size:10px;padding:3px 7px;cursor:pointer">🟣 Purple</button>
+              <button onClick="{{ () => selectStoreSettingsPresetLogo('crimson') }}" class="tag tag-neutral" style="font-size:10px;padding:3px 7px;cursor:pointer">🔴 Crimson</button>
+              <button onClick="{{ () => selectStoreSettingsPresetLogo('dark_carbon') }}" class="tag tag-neutral" style="font-size:10px;padding:3px 7px;cursor:pointer">⚫ Dark</button>
+            </div>
           </div>
         </div>
       </div>

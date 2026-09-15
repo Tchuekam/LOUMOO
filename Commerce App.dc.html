@@ -9695,6 +9695,8 @@ class Component extends DCLogic {
 
     // ── Phase E: Store & Business System State ──
     createStoreName: '',
+    createStoreLogoUrl: '',
+    storeLogoUrl: '',
     createStoreCategory: 'electronics',
     createStoreDesc: '',
     createStoreCity: 'douala',
@@ -9903,6 +9905,76 @@ class Component extends DCLogic {
   removeAvatar = () => {
     this.setState({ regAvatar: '' });
     try { localStorage.removeItem('loumoo_user_avatar'); } catch (e) {}
+  };
+  processStoreLogoFile = (file, callback, errorCallback) => {
+    if (!file) return;
+    if (file.type && !file.type.startsWith('image/')) {
+      if (errorCallback) errorCallback('Please select a valid image file (PNG, JPG, WebP)');
+      return;
+    }
+    if (file.size && file.size > 5 * 1024 * 1024) {
+      if (errorCallback) errorCallback('Image file must be less than 5MB');
+      return;
+    }
+    if (typeof FileReader === 'undefined') {
+      if (callback) callback((file && file.name) ? ('data:image/jpeg;base64,mock_' + file.name) : 'data:image/jpeg;base64,mock');
+      return;
+    }
+    try {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const rawResult = reader.result;
+        if (typeof Image === 'undefined' || typeof document === 'undefined') {
+          if (callback) callback(rawResult);
+          return;
+        }
+        try {
+          const img = new Image();
+          img.onload = () => {
+            try {
+              const size = 256;
+              const canvas = document.createElement('canvas');
+              canvas.width = size; canvas.height = size;
+              const ctx = canvas.getContext('2d');
+              const s = Math.min(img.width, img.height);
+              const sx = (img.width - s) / 2;
+              const sy = (img.height - s) / 2;
+              ctx.drawImage(img, sx, sy, s, s, 0, 0, size, size);
+              let dataUrl;
+              try { dataUrl = canvas.toDataURL('image/jpeg', 0.88); }
+              catch (_) { dataUrl = rawResult; }
+              if (callback) callback(dataUrl);
+            } catch (_) {
+              if (callback) callback(rawResult);
+            }
+          };
+          img.onerror = () => { if (callback) callback(rawResult); };
+          img.src = rawResult;
+        } catch (_) {
+          if (callback) callback(rawResult);
+        }
+      };
+      reader.onerror = () => {
+        if (errorCallback) errorCallback('Could not read image file. Please try another.');
+      };
+      reader.readAsDataURL(file);
+    } catch (e) {
+      if (errorCallback) errorCallback('Upload failed: ' + (e && e.message || 'unknown error'));
+    }
+  };
+  generateStorePresetAvatar = (preset, storeName) => {
+    const init = String(storeName || 'S').trim().charAt(0).toUpperCase() || 'S';
+    const from = (preset && preset.from) || '#1e3a8a';
+    const to = (preset && preset.to) || '#3b82f6';
+    const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">' +
+      '<defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">' +
+      '<stop offset="0%" stop-color="' + from + '"/>' +
+      '<stop offset="100%" stop-color="' + to + '"/>' +
+      '</linearGradient></defs>' +
+      '<rect width="256" height="256" rx="56" fill="url(%23g)"/>' +
+      '<text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif" font-size="110" font-weight="800" fill="#ffffff">' + init + '</text>' +
+      '</svg>';
+    return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
   };
 
   // ── Wishlist / Saved items ────────────────────────────────────────────────
@@ -10969,6 +11041,7 @@ class Component extends DCLogic {
       if (!store || typeof store !== 'object') throw new Error('Store profile was not found.');
       this.setState({
         currentStore: store,
+        storeLogoUrl: store.logoUrl || store.logo_url || this.state.storeLogoUrl,
         storeProfileLoading: false
       });
     }).catch(err => {
@@ -15601,12 +15674,48 @@ class Component extends DCLogic {
       analyticsHasTopProducts: (this.state.analyticsTopProducts || []).length > 0,
       analyticsPeriodLabel: this.state.analyticsPeriod === 'today' ? 'Today' : this.state.analyticsPeriod === '7d' ? 'Last 7 Days' : this.state.analyticsPeriod === '90d' ? 'Last 90 Days' : 'Last 30 Days',
       createStoreName: this.state.createStoreName,
+      createStoreLogoUrl: this.state.createStoreLogoUrl || '',
       createStoreCategory: this.state.createStoreCategory,
       createStoreDesc: this.state.createStoreDesc,
       createStoreCity: this.state.createStoreCity,
       createStorePhone: this.state.createStorePhone,
       createStoreBusy: this.state.createStoreBusy,
       createStoreError: this.state.createStoreError,
+      handleCreateStoreLogoUpload: (e) => {
+        const file = (e && e.target && e.target.files && e.target.files[0]) || (e && e.file);
+        if (!file) {
+          if (e && typeof e === 'string' && (e.startsWith('data:') || e.startsWith('http'))) {
+            this.setState({ createStoreLogoUrl: e });
+            this.toast('Store photo selected');
+          }
+          return;
+        }
+        this.processStoreLogoFile(file, (dataUrl) => {
+          this.setState({ createStoreLogoUrl: dataUrl });
+          this.toast('Store logo selected');
+        }, (err) => {
+          this.setState({ createStoreError: err });
+          this.toast(err);
+        });
+      },
+      removeCreateStoreLogo: () => {
+        this.setState({ createStoreLogoUrl: '' });
+        this.toast('Store logo removed');
+      },
+      selectCreateStorePresetLogo: (presetKey) => {
+        const presets = {
+          tech_blue: { from: '#1e3a8a', to: '#3b82f6' },
+          emerald: { from: '#064e3b', to: '#10b981' },
+          luxury_gold: { from: '#78350f', to: '#f59e0b' },
+          royal_purple: { from: '#4c1d95', to: '#8b5cf6' },
+          crimson: { from: '#881337', to: '#f43f5e' },
+          dark_carbon: { from: '#09090b', to: '#27272a' }
+        };
+        const p = presets[presetKey] || presets.tech_blue;
+        const avatar = this.generateStorePresetAvatar(p, this.state.createStoreName);
+        this.setState({ createStoreLogoUrl: avatar });
+        this.toast('Preset brand avatar selected');
+      },
       updateCreateStoreName: (e) => this.setState({ createStoreName: e && e.target ? e.target.value : e }),
       updateCreateStoreCategory: (e) => this.setState({ createStoreCategory: e && e.target ? e.target.value : e }),
       updateCreateStoreDesc: (e) => this.setState({ createStoreDesc: e && e.target ? e.target.value : e }),
@@ -15633,12 +15742,13 @@ class Component extends DCLogic {
           categoryId: this.state.createStoreCategory,
           description: this.state.createStoreDesc,
           city: this.state.createStoreCity,
-          phoneNumber: this.state.createStorePhone
+          phoneNumber: this.state.createStorePhone,
+          logoUrl: this.state.createStoreLogoUrl || null
         }).then(res => {
           const store = (res && res.data) || res;
           const storeId = (store && store.id) || null;
           if (storeId) {
-            this.setState({ primaryStoreId: storeId, store: store });
+            this.setState({ primaryStoreId: storeId, store: store, storeLogoUrl: this.state.createStoreLogoUrl });
           }
           this._syncAccountState(true);
           this.setState({ createStoreBusy: false });
@@ -15814,6 +15924,71 @@ class Component extends DCLogic {
           }).catch(() => {});
         }
       },
+      storeLogoUrl: this.state.storeLogoUrl || (this.state.currentStore && (this.state.currentStore.logoUrl || this.state.currentStore.logo_url)) || '',
+      currentStoreInitial: String((this.state.currentStore && this.state.currentStore.name) || this.state.businessStoreName || 'S').trim().charAt(0).toUpperCase(),
+      handleStoreLogoUpload: (e) => {
+        const file = (e && e.target && e.target.files && e.target.files[0]) || (e && e.file);
+        if (!file) {
+          if (e && typeof e === 'string' && (e.startsWith('data:') || e.startsWith('http'))) {
+            this.setState({ storeLogoUrl: e });
+            if (this.state.currentStore) {
+              this.setState(st => ({ currentStore: { ...st.currentStore, logoUrl: e } }));
+            }
+            this.toast('Store profile picture updated');
+          }
+          return;
+        }
+        this.processStoreLogoFile(file, (dataUrl) => {
+          this.setState({ storeLogoUrl: dataUrl });
+          if (this.state.currentStore) {
+            this.setState(st => ({ currentStore: { ...st.currentStore, logoUrl: dataUrl } }));
+          }
+          const api = getApi();
+          const storeId = this.state.primaryStoreId || (this.state.currentStore && this.state.currentStore.id);
+          if (api && storeId) {
+            api.updateStore(storeId, { logoUrl: dataUrl }).catch(() => {});
+          }
+          this.toast('Store profile picture updated!');
+        }, (err) => {
+          this.setState({ storeSettingsError: err });
+          this.toast(err);
+        });
+      },
+      removeStoreLogo: () => {
+        this.setState({ storeLogoUrl: '' });
+        if (this.state.currentStore) {
+          this.setState(st => ({ currentStore: { ...st.currentStore, logoUrl: '' } }));
+        }
+        const api = getApi();
+        const storeId = this.state.primaryStoreId || (this.state.currentStore && this.state.currentStore.id);
+        if (api && storeId) {
+          api.updateStore(storeId, { logoUrl: null }).catch(() => {});
+        }
+        this.toast('Store profile picture removed');
+      },
+      selectStoreSettingsPresetLogo: (presetKey) => {
+        const presets = {
+          tech_blue: { from: '#1e3a8a', to: '#3b82f6' },
+          emerald: { from: '#064e3b', to: '#10b981' },
+          luxury_gold: { from: '#78350f', to: '#f59e0b' },
+          royal_purple: { from: '#4c1d95', to: '#8b5cf6' },
+          crimson: { from: '#881337', to: '#f43f5e' },
+          dark_carbon: { from: '#09090b', to: '#27272a' }
+        };
+        const p = presets[presetKey] || presets.tech_blue;
+        const storeName = (this.state.currentStore && this.state.currentStore.name) || this.state.businessStoreName || 'S';
+        const avatar = this.generateStorePresetAvatar(p, storeName);
+        this.setState({ storeLogoUrl: avatar });
+        if (this.state.currentStore) {
+          this.setState(st => ({ currentStore: { ...st.currentStore, logoUrl: avatar } }));
+        }
+        const api = getApi();
+        const storeId = this.state.primaryStoreId || (this.state.currentStore && this.state.currentStore.id);
+        if (api && storeId) {
+          api.updateStore(storeId, { logoUrl: avatar }).catch(() => {});
+        }
+        this.toast('Preset brand avatar selected');
+      },
       storeTagline: this.state.storeTagline,
       storeWarrantyPolicy: this.state.storeWarrantyPolicy,
       storeOpenStatusBadge: this.state.storeOpenStatusBadge,
@@ -15849,11 +16024,15 @@ class Component extends DCLogic {
 
         this.setState({ storeSettingsSaving: true, storeSettingsError: '' });
         Promise.all([
-          api.updateStoreProfile(storeId, { tagline: this.state.storeTagline, warrantyPolicy: this.state.storeWarrantyPolicy }),
+          api.updateStore(storeId, { logoUrl: this.state.storeLogoUrl || null }),
+          api.updateStoreProfile(storeId, { tagline: this.state.storeTagline, warrantyPolicy: this.state.storeWarrantyPolicy, logoUrl: this.state.storeLogoUrl || null }),
           api.updateStoreHours(storeId, { schedule: { open: this.state.storeOpenTime, close: this.state.storeCloseTime } }),
           api.updateStoreLocation(storeId, { streetAddress: this.state.storeLocationStreet, landmark: this.state.storeLocationLandmark })
         ]).then(() => {
           if (this._unmounted) return;
+          if (this.state.currentStore) {
+            this.setState(st => ({ currentStore: { ...st.currentStore, logoUrl: this.state.storeLogoUrl } }));
+          }
           this.setState({ storeSettingsSaving: false });
           this.toast('All store settings saved successfully');
           this.go('storeOnboarding');
@@ -15896,14 +16075,36 @@ class Component extends DCLogic {
       storeDiscoveryTotal: this.state.storeDiscoveryTotal || 0,
       storeDiscoveryLoading: Boolean(this.state.storeDiscoveryLoading),
       storeDiscoveryError: this.state.storeDiscoveryError || '',
-      storeDiscoveryCards: (this.state.storeDiscovery || []).map(store => ({
+      storeDiscoveryCards: (this.state.storeDiscovery || []).filter(store => {
+        const q = (this.state.storeSearchQuery || '').toLowerCase().trim();
+        if (q) {
+          const matchName = (store.name || '').toLowerCase().includes(q);
+          const matchDesc = (store.description || '').toLowerCase().includes(q);
+          const matchCity = (store.city || '').toLowerCase().includes(q);
+          if (!matchName && !matchDesc && !matchCity) return false;
+        }
+        const city = (this.state.storeCityFilter || 'all').toLowerCase();
+        if (city !== 'all' && (store.city || '').toLowerCase() !== city) {
+          return false;
+        }
+        const cat = (this.state.storeCategoryFilter || 'all').toLowerCase();
+        if (cat !== 'all') {
+          const storeCat = (store.categoryId || store.category_id || '').toLowerCase();
+          if (storeCat && !storeCat.includes(cat) && !cat.includes(storeCat)) return false;
+        }
+        if (this.state.storeVerifiedOnly && !store.isVerified && !store.is_verified) {
+          return false;
+        }
+        return true;
+      }).map(store => ({
         id: store.id,
         name: store.name || 'Unnamed store',
         description: store.description || 'LOUMOO storefront',
         rating: Number(store.rating || 0).toFixed(1),
         city: store.city || '',
         isVerified: Boolean(store.isVerified || store.is_verified),
-        initial: String(store.name || 'S').trim().charAt(0).toUpperCase()
+        initial: String(store.name || 'S').trim().charAt(0).toUpperCase(),
+        logoUrl: store.logoUrl || store.logo_url || store.logo || store.avatar || ''
       })),
       reloadStoreDiscovery: () => this.loadStoreDiscovery(),
       openDiscoveredStore: (store) => {
@@ -15916,6 +16117,7 @@ class Component extends DCLogic {
         this.go('business');
       },
       businessStoreName: (this.state.currentStore && this.state.currentStore.name) || 'Orca Electronics',
+      businessStoreLogoUrl: (this.state.currentStore && (this.state.currentStore.logoUrl || this.state.currentStore.logo_url || this.state.currentStore.logo)) || (this.state.primaryStoreId && this.state.currentStore && this.state.currentStore.id === this.state.primaryStoreId ? this.state.storeLogoUrl : '') || '',
       businessStoreDescription: (this.state.currentStore && (this.state.currentStore.description || this.state.currentStore.tagline)) || 'Authorized electronics reseller · Akwa, Douala',
       businessStoreCity: (this.state.currentStore && this.state.currentStore.city) || 'Douala',
       businessStoreRating: Number((this.state.currentStore && this.state.currentStore.rating) || 4.9).toFixed(1),

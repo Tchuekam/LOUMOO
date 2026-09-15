@@ -373,7 +373,14 @@
 
         <div style="display:flex;align-items:center;gap:20px;min-width:0">
           <!-- Logo Avatar -->
-          <div style="width:76px;height:76px;border-radius:20px;background:#0b0d14;color:#fff;display:flex;align-items:center;justify-content:center;font:600 30px/1 var(--font-heading);flex-shrink:0">{{ businessStoreInitial }}</div>
+          <div style="width:76px;height:76px;border-radius:20px;background:#0b0d14;color:#fff;display:flex;align-items:center;justify-content:center;font:600 30px/1 var(--font-heading);flex-shrink:0;overflow:hidden;box-shadow:var(--shadow-sm)">
+            <sc-if value="{{ businessStoreLogoUrl }}">
+              <img src="{{ businessStoreLogoUrl }}" alt="{{ businessStoreName }}" style="width:100%;height:100%;object-fit:cover" loading="lazy" decoding="async">
+            </sc-if>
+            <sc-if value="{{ !businessStoreLogoUrl }}">
+              <span>{{ businessStoreInitial }}</span>
+            </sc-if>
+          </div>
 
           <div style="min-width:0">
             <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">
