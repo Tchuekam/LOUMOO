@@ -304,7 +304,7 @@ def get_hotel_vertical_view():
   </div>
 
   <!-- Sticky reserve bar: High z-index (9999) + mobile safe area padding ensures 100% visibility -->
-  <div style="position:fixed;bottom:0;left:0;right:0;z-index:9999;background:var(--color-surface-glass);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid var(--color-divider);padding:14px 16px;padding-bottom:max(14px, env(safe-area-inset-bottom, 14px));display:flex;align-items:center;justify-content:space-between;gap:14px;box-shadow:0 -8px 25px rgba(0,0,0,0.15)">
+  <div class="hotel-sticky-reserve-bar" style="position:fixed;bottom:0;left:0;right:0;z-index:9999;background:var(--color-surface-glass);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid var(--color-divider);padding:14px 16px;padding-bottom:max(14px, env(safe-area-inset-bottom, 14px));display:flex;align-items:center;justify-content:space-between;gap:14px;box-shadow:0 -8px 25px rgba(0,0,0,0.15)">
     <div>
       <div style="font:500 11px/1 var(--font-body);color:var(--color-text-secondary)">{{ hotelDetailCard.nightsLabel }} total</div>
       <div style="font:800 18px/1.1 var(--font-heading);color:var(--color-text);margin-top:3px">{{ hotelDetailCard.totalLabel }}</div>

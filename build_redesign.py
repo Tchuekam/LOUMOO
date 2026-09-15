@@ -837,6 +837,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text-secondary); line-height:
   .scr { flex: 1; overflow-y: auto; overflow-x: hidden; padding-bottom: 48px; }
   .scr > sc-if > div { max-width: 1300px; margin: 0 auto; padding: 24px 32px 64px !important; }
   .home-grid, .home-grid-3 { grid-template-columns: repeat(4, 1fr) !important; gap: 18px !important; }
+  .hotel-sticky-reserve-bar { left: 260px !important; }
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -6316,7 +6317,7 @@ const NO_NAV = [
   'voice','filters','payFailed','networkError','loading',
   'onboardWelcome','onboardType','onboardIdentity','onboardOtp','onboardAdaptive','onboardBuyer','onboardSeller','onboardBusiness','onboardVerify','onboardReview','onboardSuccess',
   'signIn','forgotPassword','resetPassword','verifyEmail',
-  'editProfile','addAddress','editAddress','deleteAccount','refundRequest','writeReview','sellerOrderDetail','hotelBooking','hotelVoucher',
+  'editProfile','addAddress','editAddress','deleteAccount','refundRequest','writeReview','sellerOrderDetail','hotelDetail','hotelBooking','hotelVoucher',
   'createStore','storeOnboarding','storeSettings','storeVerification','storeAnalytics',
   'publishIntent','publishStudio','publishReview','publishSuccess',
   'publicUserProfile','sellerPublicPage'
@@ -12602,7 +12603,7 @@ class Component extends DCLogic {
             paymentStatus: (booking.payment && booking.payment.status) || 'PENDING',
             qr: booking.qrCodePayload || '',
             // Hotel WhatsApp contact — persisted so the voucher can notify the hotel directly.
-            hotelWhatsApp: h.whatsapp || h.phone || '',
+            hotelWhatsApp: (booking.itinerary && (booking.itinerary.hotelWhatsapp || booking.itinerary.hotelPhone)) || h.whatsapp || h.phone || (h.contact && (h.contact.whatsapp || h.contact.phone)) || '',
             createdAt: Date.now()
           };
 
@@ -12670,7 +12671,7 @@ class Component extends DCLogic {
        */
       notifyHotelWhatsApp: () => {
         const t = this.state.lastTrip || {};
-        const hotelWa = (t.hotelWhatsApp || '').replace(/[^0-9+]/g, '');
+        const cleanWa = (t.hotelWhatsApp || '').replace(/[^0-9]/g, '').replace(/^00/, '');
         const ref = t.reference || 'N/A';
         const guestName = t.passenger || 'Guest';
         const roomType = t.roomType || 'Room';
@@ -12695,8 +12696,10 @@ class Component extends DCLogic {
             '',
             "Merci de confirmer la disponibilité de la chambre et de préparer l'accueil."
           ].filter(Boolean).join('\\n');
-          const base = hotelWa ? ('https://wa.me/' + hotelWa) : 'https://wa.me/';
-          window.open(base + '?text=' + encodeURIComponent(msg), '_blank');
+          const url = cleanWa
+            ? ('https://wa.me/' + cleanWa + '?text=' + encodeURIComponent(msg))
+            : ('https://api.whatsapp.com/send?text=' + encodeURIComponent(msg));
+          window.open(url, '_blank');
         } catch (e) {
           this.toast("Impossible d'ouvrir WhatsApp");
         }
@@ -12705,7 +12708,7 @@ class Component extends DCLogic {
       downloadHotelVoucher: () => this.toast('Voucher saved to My Trips'),
       shareHotelVoucher: () => {
         const t = this.state.lastTrip || {};
-        const hotelWa = (t.hotelWhatsApp || '').replace(/[^0-9+]/g, '');
+        const cleanWa = (t.hotelWhatsApp || '').replace(/[^0-9]/g, '').replace(/^00/, '');
         const ref = t.reference || 'N/A';
         const guestName = t.passenger || 'Guest';
         const hotelName = t.hotelName || 'hotel';
@@ -12725,8 +12728,10 @@ class Component extends DCLogic {
           ].filter(Boolean).join('\\n');
           // Send directly to the hotel if we have a number, otherwise fallback
           // to the user's WhatsApp contact picker.
-          const base = hotelWa ? ('https://wa.me/' + hotelWa) : 'https://wa.me/';
-          window.open(base + '?text=' + encodeURIComponent(msg), '_blank');
+          const url = cleanWa
+            ? ('https://wa.me/' + cleanWa + '?text=' + encodeURIComponent(msg))
+            : ('https://api.whatsapp.com/send?text=' + encodeURIComponent(msg));
+          window.open(url, '_blank');
         } catch (e) { this.toast("Impossible d'ouvrir WhatsApp"); }
       },
 

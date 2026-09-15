@@ -78,8 +78,9 @@ class Hotel {
     this.priceFrom = Number(data.priceFrom ?? data.price_from ?? 0);
     this.currency = data.currency || 'XAF';
     this.status = data.status || 'ACTIVE';
-    this.phone = data.phone || '';
-    this.whatsapp = data.whatsapp || data.phone || '';
+    this.contact = data.contact || {};
+    this.phone = data.phone || (data.contact && data.contact.phone) || '';
+    this.whatsapp = data.whatsapp || (data.contact && (data.contact.whatsapp || data.contact.phone)) || this.phone || '';
     this.rooms = Array.isArray(data.rooms)
       ? data.rooms.map(r => (r instanceof Room ? r : new Room({ ...r, hotelId: this.id })))
       : [];
@@ -112,6 +113,7 @@ class Hotel {
       priceFrom: this.priceFrom,
       currency: this.currency,
       status: this.status,
+      contact: this.contact,
       phone: this.phone,
       whatsapp: this.whatsapp,
       rooms: this.rooms.map(r => r.toJSON())

@@ -186,6 +186,9 @@ class BookingEngine {
       itinerary = {
         hotelId,
         hotelName: availability.hotelName,
+        hotelPhone: availability.hotelPhone || '',
+        hotelWhatsapp: availability.hotelWhatsapp || '',
+        hotelContact: availability.hotelContact || {},
         roomId,
         roomName: availability.roomName,
         checkIn: availability.pricing.checkIn,
