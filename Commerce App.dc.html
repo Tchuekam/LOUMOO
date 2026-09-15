@@ -11446,9 +11446,19 @@ class Component extends DCLogic {
   loadStoreProfile() {
     const storeId = this.state.currentStoreId;
     const api = getApi();
-    if (!storeId || !api || !api.getStore) return Promise.resolve();
+    if (!storeId || !api) return Promise.resolve();
+
+    // Prefer the public profile endpoint (no auth required) so visitors can
+    // browse any storefront without triggering management-only auth guards.
+    const fetcher = api.getStoreProfile
+      ? api.getStoreProfile(storeId)
+      : api.getStore
+        ? api.getStore(storeId)
+        : null;
+    if (!fetcher) return Promise.resolve();
+
     this.setState({ storeProfileLoading: true, storeProfileError: '' });
-    return api.getStore(storeId).then(res => {
+    return fetcher.then(res => {
       if (this._unmounted) return;
       const store = (res && res.data) || res;
       if (!store || typeof store !== 'object') throw new Error('Store profile was not found.');
@@ -11459,9 +11469,16 @@ class Component extends DCLogic {
       });
     }).catch(err => {
       if (this._unmounted) return;
+      const msg = (err && err.message) || '';
+      // Silently suppress permission/authorization errors on the public
+      // storefront — they are management-only concerns and confuse visitors.
+      if (/permission|authorized|authorization|forbidden/i.test(msg)) {
+        this.setState({ storeProfileLoading: false, storeProfileError: '' });
+        return;
+      }
       this.setState({
         storeProfileLoading: false,
-        storeProfileError: (err && err.message) || 'Could not load this storefront.'
+        storeProfileError: msg || 'Could not load this storefront.'
       });
     });
   }
