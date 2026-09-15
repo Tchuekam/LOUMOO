@@ -7013,7 +7013,8 @@ class Component extends DCLogic {
     catalogError: '',
     catalogPage: 1,
     catalogHasMore: true,
-    categoryFeedLimit: 24
+    categoryFeedLimit: 24,
+    homeFeedLimit: 24
   };
 
   go = (s) => {
@@ -7118,7 +7119,7 @@ class Component extends DCLogic {
   // top-level category slug. Powers the category drill-down grid so no category
   // ever renders a blank screen. Returns raw product objects (no view formatting).
   _categoryProductPool = (slug) => {
-    if (!slug || slug === 'all') return [];
+    if (!slug) return [];
     const MAP = {
       electronics: ['electronics','smartphones','laptops','audio','wearables','gaming','power_accessories','tech'],
       fashion: ['fashion','footwear','clothing','shoes','watches_jewelry','jewelry','jewelries','bijoux','apparel','streetwear','bags','luxury'],
@@ -7135,11 +7136,12 @@ class Component extends DCLogic {
       sports: ['sports','fitness','footwear','athletic','gear'],
       groceries: ['groceries','grocery','supermarket','food','fmcg','fresh','pantry','beverages']
     };
-    const cats = MAP[slug] || [slug];
     const seen = {}, merged = [];
     const add = (p) => { if (p && p.id && !seen[p.id]) { seen[p.id] = 1; merged.push(p); } };
     try { if (typeof PRODUCTS_DATA !== 'undefined') Object.keys(PRODUCTS_DATA).forEach((k) => add(Object.assign({ id: k }, PRODUCTS_DATA[k]))); } catch (e) {}
     (this.state.catalogProducts || []).forEach(add);
+    if (slug === 'all') return merged;
+    const cats = MAP[slug] || [slug];
     return merged.filter((p) => cats.indexOf(String(p.category || '').toLowerCase()) !== -1);
   };
   _matchesSubcategory = (p, sub) => {
@@ -10116,7 +10118,16 @@ class Component extends DCLogic {
         const items = (res && res.items) || (res && res.data && res.data.items) || (Array.isArray(res) ? res : []);
         const limit = (params && params.limit) ? params.limit : 16;
         const hasMore = items.length >= limit;
-        const newProducts = append ? (this.state.catalogProducts || []).concat(items) : items;
+        let newProducts;
+        if (append) {
+          const existing = this.state.catalogProducts || [];
+          const seen = {};
+          existing.forEach(p => { if (p && p.id) seen[p.id] = true; });
+          const uniqueItems = items.filter(p => p && p.id && !seen[p.id]);
+          newProducts = existing.concat(uniqueItems);
+        } else {
+          newProducts = items;
+        }
         this.setState({ catalogProducts: newProducts, catalogLoading: false, catalogHasMore: hasMore });
       })
       .catch(err => {
@@ -10623,6 +10634,50 @@ class Component extends DCLogic {
         tagline: p.tagline || (p.description ? String(p.description).split('. ')[0].slice(0, 80) : '') || p.categoryLabel || '',
         badge: p.badge || ''
       })),
+
+      // Continuous smart infinite marketplace feed cards on Home screen
+      hasHomeFeedCards: (() => {
+        const pool = this._categoryProductPool('all');
+        return pool.length > 0;
+      })(),
+      homeFeedCards: (() => {
+        const pool = this._categoryProductPool('all');
+        const parseNum = (str) => {
+          const n = parseInt(String(str || '').replace(/[^0-9]/g, ''), 10);
+          return isNaN(n) ? 0 : n;
+        };
+        const limit = this.state.homeFeedLimit || 24;
+        return pool.slice(0, limit).map((p) => {
+          const rawP = p.price || (p.priceNumeric ? ('XAF ' + fmt(p.priceNumeric)) : (p.base_price_minor ? ('XAF ' + fmt(p.base_price_minor)) : ''));
+          const rawSale = p.salePrice || '';
+          let heroPrice = rawP || 'Ask price';
+          let strikePrice = '';
+          if (rawSale && rawP && rawSale !== rawP) {
+            const n1 = parseNum(rawP);
+            const n2 = parseNum(rawSale);
+            if (n1 > 0 && n2 > 0 && n1 !== n2) {
+              heroPrice = n1 < n2 ? rawP : rawSale;
+              strikePrice = n1 < n2 ? rawSale : rawP;
+            } else {
+              heroPrice = rawSale;
+              strikePrice = rawP;
+            }
+          } else if (rawSale && !rawP) {
+            heroPrice = rawSale;
+          }
+          return {
+            id: p.id,
+            title: p.title || p.name || 'Untitled listing',
+            imageUrl: encImg(p.coverImage || p.imageUrl || p.image || (p.images && p.images[0]) || ''),
+            priceLabel: heroPrice,
+            strikeLabel: strikePrice,
+            ratingLabel: '★ ' + (p.rating != null ? p.rating : '4.9'),
+            storeLabel: (p.storeName || p.merchant || p.store || 'LOUMOO verified seller') + (p.merchantCity || p.storeCity ? (' · ' + (p.merchantCity || p.storeCity)) : ''),
+            badge: p.badge || (p.isSale ? 'PROMO' : (p.verified ? '✓ Verified' : '')),
+            verified: Boolean(p.verified)
+          };
+        });
+      })(),
       ship: { home: shipStyle(sh.home), pickup: shipStyle(sh.pickup), nation: shipStyle(sh.nation) },
       toggleShip: {
         home: () => this.setState(s => ({ ship: { ...s.ship, home: !s.ship.home } })),
@@ -14391,35 +14446,61 @@ class Component extends DCLogic {
         this._sc = el;
         if (el && !this._scrollAttached) {
           this._scrollAttached = true;
-          el.addEventListener('scroll', () => {
-            if (el.scrollTop + el.clientHeight >= el.scrollHeight - 380) {
+          let scrollThrottle = false;
+          const handleScroll = () => {
+            if (scrollThrottle) return;
+            scrollThrottle = true;
+            setTimeout(() => { scrollThrottle = false; }, 120);
+
+            const target = el || document.documentElement || document.body;
+            const scrollTop = target.scrollTop || window.pageYOffset || 0;
+            const clientHeight = target.clientHeight || window.innerHeight || 0;
+            const scrollHeight = target.scrollHeight || document.documentElement.scrollHeight || 0;
+            const distanceToBottom = scrollHeight - (scrollTop + clientHeight);
+
+            // SMART PROACTIVE PREFETCH: Triggers 1000px before the bottom
+            // Loads well before the user ever reaches the bottom of the feed
+            if (distanceToBottom <= 1000) {
               if (this.state.screen === 'home') {
-                if ((this.state.infiniteFeedBatch || 1) < 3 && !this._loadingBatch) {
-                  this._loadingBatch = true;
-                  const nextBatch = (this.state.infiniteFeedBatch || 1) + 1;
-                  this.setState({ infiniteFeedBatch: nextBatch });
-                  this.toast(nextBatch === 2 ? 'Loaded African heritage & outdoor collections' : 'Loaded audio studio & smart living discoveries');
-                  setTimeout(() => { this._loadingBatch = false; }, 600);
+                if ((this.state.infiniteFeedBatch || 1) < 3) {
+                  this.setState({ infiniteFeedBatch: 3 });
+                }
+                if (!this._loadingHomeBatch) {
+                  this._loadingHomeBatch = true;
+                  const currentLimit = this.state.homeFeedLimit || 24;
+                  const pool = this._categoryProductPool('all');
+                  const nextLimit = currentLimit + 24;
+                  this.setState({ homeFeedLimit: nextLimit });
+
+                  if (nextLimit >= pool.length && this.state.catalogHasMore && !this.state.catalogLoading) {
+                    const nextPage = (this.state.catalogPage || 1) + 1;
+                    this.setState({ catalogPage: nextPage });
+                    this.loadCatalogProducts({ page: nextPage, limit: 16 }, true);
+                  }
+                  setTimeout(() => { this._loadingHomeBatch = false; }, 300);
                 }
               } else if (this.state.screen === 'category' || this.state.screen === 'collections') {
                 if (!this._loadingCategoryBatch) {
                   this._loadingCategoryBatch = true;
                   const currentLimit = this.state.categoryFeedLimit || 24;
-                  this.setState({ categoryFeedLimit: currentLimit + 24 });
-                  
-                  const poolSize = this._categoryProductPool(this.state.activeCategorySlug || 'all').length;
-                  if (currentLimit + 24 >= poolSize && this.state.catalogHasMore && !this.state.catalogLoading) {
+                  const activeCat = this.state.activeCategorySlug || 'all';
+                  const pool = this._categoryProductPool(activeCat);
+                  const nextLimit = currentLimit + 24;
+                  this.setState({ categoryFeedLimit: nextLimit });
+
+                  if (nextLimit >= pool.length && this.state.catalogHasMore && !this.state.catalogLoading) {
                     const nextPage = (this.state.catalogPage || 1) + 1;
                     this.setState({ catalogPage: nextPage });
-                    const activeCat = this.state.activeCategorySlug || 'all';
                     this.loadCatalogProducts({ page: nextPage, limit: 16, category: activeCat !== 'all' ? activeCat : undefined }, true);
                   }
-                  
-                  setTimeout(() => { this._loadingCategoryBatch = false; }, 400);
+                  setTimeout(() => { this._loadingCategoryBatch = false; }, 300);
                 }
               }
             }
-          });
+          };
+
+          el.addEventListener('scroll', handleScroll, { passive: true });
+          window.addEventListener('scroll', handleScroll, { passive: true });
         }
       },
       addToCart: (arg) => {
@@ -14614,14 +14695,17 @@ class Component extends DCLogic {
       isInfiniteBatch2OrMore: (this.state.infiniteFeedBatch || 1) >= 2,
       isInfiniteBatch3: (this.state.infiniteFeedBatch || 1) >= 3,
       loadMoreDiscoveries: () => {
-        const currentBatch = this.state.infiniteFeedBatch || 1;
-        if (currentBatch >= 3) {
-          this.toast('You have reached the end of today’s curated discoveries!');
-          return;
+        const nextLimit = (this.state.homeFeedLimit || 24) + 24;
+        this.setState({
+          infiniteFeedBatch: 3,
+          homeFeedLimit: nextLimit
+        });
+        const pool = this._categoryProductPool('all');
+        if (nextLimit >= pool.length && this.state.catalogHasMore && !this.state.catalogLoading) {
+          const nextPage = (this.state.catalogPage || 1) + 1;
+          this.setState({ catalogPage: nextPage });
+          this.loadCatalogProducts({ page: nextPage, limit: 16 }, true);
         }
-        const nextBatch = currentBatch + 1;
-        this.setState({ infiniteFeedBatch: nextBatch });
-        this.toast(nextBatch === 2 ? 'Loaded African heritage & outdoor gear' : 'Loaded pro audio & smart living innovations');
       },
 
       // ── Travel & Mobility Ecosystem Getters & Actions ──

@@ -2593,20 +2593,63 @@ def get_home_view():
       </div>
     </sc-if>
 
-    <!-- ── INFINITE FEED SCROLL SENTINEL & EXPANSION TRIGGER ── -->
-    <div style="margin:36px 0 20px;text-align:center">
-      <sc-if value="{{ infiniteFeedBatch < 3 }}">
-        <button onClick="{{ loadMoreDiscoveries }}" class="btn btn-secondary" style="height:44px;padding:0 24px;border-radius:var(--radius-pill);font-size:13px;font-weight:700;letter-spacing:-.01em;cursor:pointer;border:1.5px solid var(--color-divider);background:var(--color-surface)">
-          <span>Explore More Discoveries ↓</span>
-        </button>
-      </sc-if>
-      <sc-if value="{{ infiniteFeedBatch >= 3 }}">
-        <div style="display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:var(--radius-pill);background:var(--color-surface);border:1px solid var(--color-divider);color:var(--color-text-secondary);font:600 12px/1 var(--font-body)">
-          <span style="width:7px;height:7px;border-radius:50%;background:var(--color-success)"></span>
-          <span>You're all caught up with today's LOUMOO discoveries</span>
+    <!-- ── 09.4: CONTINUOUS INFINITE MARKETPLACE FEED ── -->
+    <sc-if value="{{ hasHomeFeedCards }}">
+      <div style="margin-top:40px;padding-top:24px;border-top:1px solid var(--color-divider)">
+        <div class="editorial-section-header" style="margin-bottom:18px">
+          <div>
+            <div style="font:800 11px/1 var(--font-heading);letter-spacing:.12em;color:var(--color-accent);text-transform:uppercase">MARKETPLACE FEED</div>
+            <h2 class="editorial-section-title" style="margin-top:4px">Discover More Listings</h2>
+          </div>
+          <div style="font:500 13px/1.3 var(--font-body);color:var(--color-text-secondary)">Explore verified products from trusted merchants across Cameroon</div>
         </div>
-      </sc-if>
-    </div>
+
+        <div class="home-grid">
+          <sc-for list="{{ homeFeedCards }}" as="card">
+            <div onClick="{{ () => openProduct(card.id) }}" class="loumoo-media-card" aria-label="{{ card.title }}">
+              <div class="loumoo-card-media-cutout">
+                <sc-if value="{{ card.badge }}"><span class="loumoo-card-badge">{{ card.badge }}</span></sc-if>
+                <sc-if value="{{ !card.badge && card.verified }}"><span class="loumoo-card-badge">✓ Verified</span></sc-if>
+                <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist(card.id, card.title); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted(card.id) ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted(card.id) ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                </button>
+                <img src="{{ card.imageUrl }}" alt="{{ card.title }}" loading="lazy">
+              </div>
+              <div class="loumoo-card-body">
+                <h4 class="loumoo-card-title">{{ card.title }}</h4>
+                <div class="loumoo-card-tagline">{{ card.storeLabel }}</div>
+                <div class="loumoo-card-rating-row"><span>{{ card.ratingLabel }}</span></div>
+                <div class="loumoo-card-bottom-row">
+                  <div class="loumoo-card-pricing-block">
+                    <div class="loumoo-card-price-main">
+                      <span class="loumoo-card-price-val">{{ card.priceLabel }}</span>
+                      <sc-if value="{{ card.strikeLabel }}"><span class="loumoo-card-price-strike">{{ card.strikeLabel }}</span></sc-if>
+                    </div>
+                  </div>
+                  <button class="loumoo-card-pill-btn" aria-label="Buy {{ card.title }}">Buy now</button>
+                </div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+
+        <!-- Dynamic Infinite Scroll Loading / End Sentinel -->
+        <div style="margin:28px 0 20px;text-align:center">
+          <sc-if value="{{ catalogLoading }}">
+            <div style="display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:var(--radius-pill);background:var(--color-surface);border:1px solid var(--color-divider);color:var(--color-text-secondary);font:600 12px/1 var(--font-body)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation: spin 1s linear infinite"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+              <span>Loading more marketplace listings...</span>
+            </div>
+          </sc-if>
+          <sc-if value="{{ !catalogLoading && !catalogHasMore }}">
+            <div style="display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:var(--radius-pill);background:var(--color-surface);border:1px solid var(--color-divider);color:var(--color-text-secondary);font:600 12px/1 var(--font-body)">
+              <span style="width:7px;height:7px;border-radius:50%;background:var(--color-success)"></span>
+              <span>You've explored all current marketplace listings</span>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+    </sc-if>
 
     <!-- ── 09.5: LIVE ON LOUMOO MARKETPLACE RAIL (BOTTOM OF PAGE) ── -->
     <sc-if value="{{ catalogHasCards }}">
