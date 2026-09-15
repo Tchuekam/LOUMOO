@@ -152,7 +152,7 @@
      HOTEL DETAIL (is.hotelDetail)
      ══════════════════════════════════════════════════════════════════════ -->
 <sc-if value="{{ is.hotelDetail }}">
-<div style="padding-bottom:96px">
+<div style="padding-bottom:120px">
 
   <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface-glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:30">
     <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;box-shadow:var(--shadow-xs);flex-shrink:0">
@@ -187,6 +187,48 @@
         <sc-for list="{{ hotelDetailCard.amenities }}" as="amenity">
           <span style="background:var(--color-surface-subtle);border:1px solid var(--color-divider);color:var(--color-text-secondary);padding:5px 10px;border-radius:var(--radius-pill);font-size:11px;font-weight:600">{{ amenity.label }}</span>
         </sc-for>
+      </div>
+    </div>
+
+    <!-- Virtual Tour 360° Showcase -->
+    <div style="background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:16px;box-shadow:var(--shadow-xs);display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font:800 11px/1 var(--font-heading);letter-spacing:.08em;color:var(--color-accent);text-transform:uppercase">VISITE VIRTUELLE 360°</span>
+          <span class="tag tag-accent" style="font-size:9.5px;font-weight:800;padding:2px 7px">VR IMMERSIVE</span>
+        </div>
+        <span style="font:600 11px/1 var(--font-body);color:var(--color-text-secondary)">Vue panoramique</span>
+      </div>
+
+      <!-- 360 Panoramic Frame -->
+      <div style="height:190px;border-radius:var(--radius-sm);overflow:hidden;position:relative;background:#0d1117">
+        <img src="{{ hotelVirtualTourImage || hotelDetailCard.image }}" alt="Virtual Tour 360" style="width:100%;height:100%;object-fit:cover;filter:brightness(0.95)" loading="lazy" decoding="async">
+        <div style="position:absolute;inset:0;background:radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.55) 100%)"></div>
+        
+        <!-- 360 Compass & Badge -->
+        <div style="position:absolute;top:12px;left:12px;background:rgba(0,0,0,0.65);backdrop-filter:blur(8px);color:#fff;padding:4px 10px;border-radius:var(--radius-pill);font:700 11px/1 var(--font-heading);display:flex;align-items:center;gap:6px">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+          <span>{{ hotelVirtualTourSceneTitle || 'Suite Deluxe Panoramique' }}</span>
+        </div>
+
+        <!-- Hotspot Indicator -->
+        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(255,255,255,0.25);border:2px solid #fff;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;animation:pulse 2s infinite">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21.5 12H19M5 12H2.5M12 21.5V19M12 5V2.5"/><circle cx="12" cy="12" r="3"/></svg>
+        </div>
+
+        <!-- Pan Controls Overlay -->
+        <div style="position:absolute;bottom:10px;right:10px;display:flex;gap:6px">
+          <button onClick="{{ prevVirtualScene }}" aria-label="Pan Left" style="background:rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.3);color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center">‹</button>
+          <button onClick="{{ nextVirtualScene }}" aria-label="Pan Right" style="background:rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.3);color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center">›</button>
+        </div>
+      </div>
+
+      <!-- Scene Switcher Chips -->
+      <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:2px">
+        <button onClick="{{ () => setVirtualScene('suite') }}" class="tag {{ (hotelVirtualScene || 'suite') === 'suite' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer;font-weight:700">🛏️ Suite Deluxe</button>
+        <button onClick="{{ () => setVirtualScene('lobby') }}" class="tag {{ hotelVirtualScene === 'lobby' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer;font-weight:700">🏛️ Grand Lobby</button>
+        <button onClick="{{ () => setVirtualScene('rooftop') }}" class="tag {{ hotelVirtualScene === 'rooftop' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer;font-weight:700">🍸 Rooftop &amp; Piscine</button>
+        <button onClick="{{ () => setVirtualScene('dining') }}" class="tag {{ hotelVirtualScene === 'dining' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer;font-weight:700">🍽️ Restaurant</button>
       </div>
     </div>
 
@@ -252,8 +294,8 @@
 
   </div>
 
-  <!-- Sticky reserve bar -->
-  <div style="position:fixed;bottom:0;left:0;right:0;z-index:40;background:var(--color-surface-glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--color-divider);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:14px;max-width:960px;margin:0 auto">
+  <!-- Sticky reserve bar: High z-index (9999) + mobile safe area padding ensures 100% visibility -->
+  <div style="position:fixed;bottom:0;left:0;right:0;z-index:9999;background:var(--color-surface-glass);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid var(--color-divider);padding:14px 16px;padding-bottom:max(14px, env(safe-area-inset-bottom, 14px));display:flex;align-items:center;justify-content:space-between;gap:14px;box-shadow:0 -8px 25px rgba(0,0,0,0.15)">
     <div>
       <div style="font:500 11px/1 var(--font-body);color:var(--color-text-secondary)">{{ hotelDetailCard.nightsLabel }} total</div>
       <div style="font:800 18px/1.1 var(--font-heading);color:var(--color-text);margin-top:3px">{{ hotelDetailCard.totalLabel }}</div>
@@ -419,6 +461,12 @@
 
     <!-- Actions -->
     <div style="display:flex;flex-direction:column;gap:12px">
+      <!-- Direct WhatsApp Notification to the Hotel/Store -->
+      <button onClick="{{ notifyHotelWhatsApp }}" class="btn btn-block" style="height:50px;font-weight:800;border-radius:var(--radius-pill);background:var(--color-wa-teal);color:#fff;border:none;display:flex;align-items:center;justify-content:center;gap:9px;box-shadow:0 4px 16px rgba(37,211,102,0.35);font-size:14px;cursor:pointer">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.15-1.7-.85-2-.95-.26-.1-.46-.15-.65.15-.2.3-.75.95-.9 1.15-.17.2-.34.22-.63.07-.3-.15-1.25-.46-2.4-1.47-.9-.8-1.5-1.77-1.67-2.07-.17-.3-.02-.46.13-.6.13-.14.3-.34.44-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.65-1.57-.9-2.15-.24-.57-.48-.5-.65-.5h-.56c-.2 0-.5.07-.77.37-.26.3-1 .98-1 2.4s1.03 2.78 1.17 2.98c.15.2 2.02 3.08 4.9 4.32.68.3 1.22.47 1.63.6.68.22 1.3.18 1.8.11.55-.08 1.7-.7 1.93-1.36.24-.67.24-1.24.17-1.36-.07-.12-.26-.2-.55-.34zM12 2C6.48 2 2 6.48 2 12c0 1.77.46 3.43 1.27 4.87L2 22l5.25-1.38A9.94 9.94 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2z"/></svg>
+        <span>Notify Hotel via WhatsApp (Direct)</span>
+      </button>
+
       <button onClick="{{ downloadHotelVoucher }}" class="btn btn-primary btn-block" style="height:48px;font-weight:800;border-radius:var(--radius-pill);display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:var(--shadow-glow-blue)">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
         <span>Download PDF Voucher</span>

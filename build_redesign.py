@@ -12540,6 +12540,8 @@ class Component extends DCLogic {
             status: booking.status || 'PENDING',
             paymentStatus: (booking.payment && booking.payment.status) || 'PENDING',
             qr: booking.qrCodePayload || '',
+            // Hotel WhatsApp contact — persisted so the voucher can notify the hotel directly.
+            hotelWhatsApp: h.whatsapp || h.phone || '',
             createdAt: Date.now()
           };
 
@@ -12597,13 +12599,74 @@ class Component extends DCLogic {
             : 'Your room is held. The reservation is confirmed once payment is completed.'
         };
       })(),
+      /**
+       * Sends a structured booking notice DIRECTLY to the hotel's WhatsApp
+       * front-desk line. The message includes: guest name, room type, check-in,
+       * check-out, number of guests, and booking reference — everything the
+       * front desk needs to prepare the room before arrival.
+       *
+       * Falls back to the generic share sheet if no hotel number is on file.
+       */
+      notifyHotelWhatsApp: () => {
+        const t = this.state.lastTrip || {};
+        const hotelWa = (t.hotelWhatsApp || '').replace(/[^0-9+]/g, '');
+        const ref = t.reference || 'N/A';
+        const guestName = t.passenger || 'Guest';
+        const roomType = t.roomType || 'Room';
+        const nights = t.nights || 1;
+        const guests = t.guests || 1;
+        const checkIn = t.checkIn || '';
+        const checkOut = t.checkOut || '';
+        const amount = t.amount ? ('XAF ' + Number(t.amount).toLocaleString('fr-FR')) : '';
+        const hotelName = t.hotelName || 'your hotel';
+        try {
+          const msg = [
+            '🏨 *Nouvelle réservation LOUMOO*',
+            '',
+            `Référence: *${ref}*`,
+            `Hôtel: ${hotelName}`,
+            `Chambre: ${roomType}`,
+            `Nom du client: ${guestName}`,
+            `Arrivée: ${checkIn}`,
+            `Départ: ${checkOut}`,
+            `${nights} nuit${nights > 1 ? 's' : ''} · ${guests} voyageur${guests > 1 ? 's' : ''}`,
+            amount ? `Montant total: ${amount}` : '',
+            '',
+            'Merci de confirmer la disponibilité de la chambre et de préparer l'accueil.'
+          ].filter(Boolean).join('\n');
+          const base = hotelWa ? ('https://wa.me/' + hotelWa) : 'https://wa.me/';
+          window.open(base + '?text=' + encodeURIComponent(msg), '_blank');
+        } catch (e) {
+          this.toast('Impossible d\'ouvrir WhatsApp');
+        }
+      },
+
       downloadHotelVoucher: () => this.toast('Voucher saved to My Trips'),
       shareHotelVoucher: () => {
         const t = this.state.lastTrip || {};
+        const hotelWa = (t.hotelWhatsApp || '').replace(/[^0-9+]/g, '');
+        const ref = t.reference || 'N/A';
+        const guestName = t.passenger || 'Guest';
+        const hotelName = t.hotelName || 'hotel';
+        const roomType = t.roomType || 'Room';
+        const checkIn = t.checkIn || '';
+        const checkOut = t.checkOut || '';
+        const nights = t.nights || 1;
+        const amount = t.amount ? ('XAF ' + Number(t.amount).toLocaleString('fr-FR')) : '';
         try {
-          const msg = 'My LOUMOO reservation at ' + (t.hotelName || 'hotel') + ' (' + (t.roomType || '') + '), ref ' + (t.reference || '') + '.';
-          window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
-        } catch (e) { this.toast('Could not open WhatsApp'); }
+          const msg = [
+            '🏨 *Réservation LOUMOO*',
+            `Hôtel: ${hotelName} — ${roomType}`,
+            `Client: ${guestName}`,
+            `Arrivée: ${checkIn} | Départ: ${checkOut} | ${nights} nuit${nights > 1 ? 's' : ''}`,
+            amount ? `Total: ${amount}` : '',
+            `Référence: ${ref}`
+          ].filter(Boolean).join('\n');
+          // Send directly to the hotel if we have a number, otherwise fallback
+          // to the user's WhatsApp contact picker.
+          const base = hotelWa ? ('https://wa.me/' + hotelWa) : 'https://wa.me/';
+          window.open(base + '?text=' + encodeURIComponent(msg), '_blank');
+        } catch (e) { this.toast('Impossible d\'ouvrir WhatsApp'); }
       },
 
       // ══════════════════════════════════════════════════════════════════
