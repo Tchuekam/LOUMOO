@@ -14,9 +14,25 @@
  * Refuses to run against a production environment.
  */
 
+const fs = require('fs');
+const path = require('path');
+const dotenv = require('dotenv');
+
+// Must run BEFORE tests/setup: it rewrites NODE_ENV=production to 'test', so a
+// guard on config.isProduction evaluated afterwards can never fire. Read the
+// same env file server/config/env.js would load (dotenv never overrides it).
+const envFile = ['.env.local', '.env'].map(f => path.resolve(process.cwd(), f)).find(f => fs.existsSync(f));
+const declaredEnv = process.env.NODE_ENV
+  || (envFile ? dotenv.parse(fs.readFileSync(envFile)).NODE_ENV : '');
+if (declaredEnv === 'production') {
+  console.error('[purge] Refusing to run with NODE_ENV=production.');
+  process.exit(2);
+}
+
 require('../tests/setup');
 
 const { SupabaseDatabase } = require('../server/infrastructure/database/SupabaseClient');
+const MediaStorageService = require('../server/infrastructure/storage/MediaStorageService');
 const config = require('../server/config/env');
 
 if (config.isProduction) {
@@ -39,7 +55,24 @@ async function quietDelete(table, column, value, schema = null) {
   }
 }
 
+/**
+ * Reclaims the storage objects behind a test owner's/store's unattached
+ * uploads. Must run before the rows go: deleting the store or profile
+ * cascades upload_sessions away and the objects become unreachable.
+ */
+async function reclaimUploads(column, value) {
+  const { data: staged } = await db
+    .schema('system').from('upload_sessions')
+    .select('id').eq(column, value).in('status', ['STAGED', 'ORPHANED']);
+
+  if (staged && staged.length) {
+    const result = await MediaStorageService.discard(staged.map(u => u.id), 'test data purge');
+    console.log(`[purge] reclaimed ${result.removed || 0} storage object(s)`);
+  }
+}
+
 async function purgeStore(storeId) {
+  await reclaimUploads('store_id', storeId);
   const { data: listings } = await db.from('listings').select('id').eq('store_id', storeId);
   for (const listing of listings || []) {
     await quietDelete('listing_attribute_values', 'listing_id', listing.id);
@@ -55,6 +88,7 @@ async function purgeStore(storeId) {
 }
 
 async function purgeProfile(userId) {
+  await reclaimUploads('owner_id', userId);
   await quietDelete('upload_sessions', 'owner_id', userId, 'system');
   await quietDelete('verification_challenges', 'user_id', userId, 'system');
   await quietDelete('privacy_preferences', 'user_id', userId, 'system');
@@ -79,17 +113,6 @@ async function purgeProfile(userId) {
   const { data: profiles } = await db.from('profiles').select('id').like('clerk_user_id', 'user_test_%');
   console.log(`[purge] ${(profiles || []).length} test profile(s)`);
   for (const profile of profiles || []) await purgeProfile(profile.id);
-
-  // Reclaim any storage objects the suites staged and never attached.
-  const MediaStorageService = require('../server/infrastructure/storage/MediaStorageService');
-  const { data: staged } = await db
-    .schema('system').from('upload_sessions')
-    .select('id').in('status', ['STAGED', 'ORPHANED']);
-
-  if (staged && staged.length) {
-    const result = await MediaStorageService.discard(staged.map(u => u.id), 'test data purge');
-    console.log(`[purge] reclaimed ${result.removed || 0} storage object(s)`);
-  }
 
   console.log('[purge] done');
   process.exit(0);

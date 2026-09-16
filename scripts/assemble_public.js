@@ -135,6 +135,19 @@ for (const file of routeChunks) rewriteRefs(file);
     else if (entry.name.endsWith('.css')) rewriteRefs(full);
   }
 })(path.join(out, '_ds'));
+// The catalogue datasets the shell loads at runtime (src/data/*_bundle.js,
+// data/catalog.json) carry hashtag asset URLs too; left unrewritten they point
+// at the pre-rename filenames and every such image 404s on the CDN.
+for (const dir of [path.join(out, 'src', 'data'), path.join(out, 'data')]) {
+  (function walkData(d) {
+    if (!fs.existsSync(d)) return;
+    for (const entry of fs.readdirSync(d, { withFileTypes: true })) {
+      const full = path.join(d, entry.name);
+      if (entry.isDirectory()) walkData(full);
+      else if (/\.(js|json)$/.test(entry.name)) rewriteRefs(full);
+    }
+  })(dir);
+}
 
 function dirSize(p) {
   let bytes = 0;

@@ -26,6 +26,9 @@ async function main() {
   if (bkgRes.error) throw new Error(`Booking insert error: ${bkgRes.error.message}`);
   console.log('Booking inserted:', bkgRes.data[0].id);
 
+  // From here on a failure must still remove the probe booking: it is a
+  // CONFIRMED/PAID row in the live travel tables.
+  try {
   console.log('2. Inserting booking_passengers...');
   const passRes = await db.from('booking_passengers').insert({
     booking_id: testId,
@@ -74,10 +77,12 @@ async function main() {
   console.log('- Passengers:', queryRes.data.booking_passengers.length);
   console.log('- Trips:', queryRes.data.trips.length);
   console.log('- Tickets:', queryRes.data.tickets.length);
-
-  console.log('6. Cleaning up test data...');
-  await db.from('travel_bookings').delete().eq('id', testId);
-  console.log('Cleaned up successfully! CASCADE deletion verified.');
+  } finally {
+    console.log('6. Cleaning up test data...');
+    const delRes = await db.from('travel_bookings').delete().eq('id', testId);
+    if (delRes.error) console.error(`Cleanup error for ${testId}: ${delRes.error.message}`);
+    else console.log('Cleaned up successfully! CASCADE deletion verified.');
+  }
 }
 
 main().then(() => process.exit(0)).catch(e => { console.error('FAILED:', e); process.exit(1); });

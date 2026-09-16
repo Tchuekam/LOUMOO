@@ -5,12 +5,20 @@
 const fs = require('fs');
 const path = require('path');
 
+// dataLoader resolves datasets against process.cwd() and returns [] when a file
+// is missing or fails to parse; run from anywhere else, this script would then
+// overwrite the real datasets below with empty ones.
+process.chdir(path.join(__dirname, '..'));
 const dataLoader = require('../server/modules/catalog/dataLoader.js');
 
 // 1. Update src/data/catalog_products.js
 const catalogJsPath = path.join(__dirname, '../src/data/catalog_products.js');
 const catalogProducts = dataLoader.catalogProducts || {};
 const catKeys = Object.keys(catalogProducts);
+if (catKeys.length === 0) {
+  console.error('Refusing to write: src/data/catalog_products.js loaded no products.');
+  process.exit(1);
+}
 
 console.log(`Updating ${catKeys.length} catalog products with at least 1000 pcs stock...`);
 for (const key of catKeys) {
@@ -32,6 +40,10 @@ console.log(`✓ Updated src/data/catalog_products.js with ${catKeys.length} pro
 const productsJsPath = path.join(__dirname, '../src/data/products.js');
 const rawProducts = dataLoader.products || {};
 const categories = Object.keys(rawProducts);
+if (categories.length === 0) {
+  console.error('Refusing to write: src/data/products.js loaded no categories.');
+  process.exit(1);
+}
 let productCount = 0;
 
 for (const cat of categories) {

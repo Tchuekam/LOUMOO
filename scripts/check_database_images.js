@@ -44,7 +44,7 @@ async function main() {
     console.log(`Retrieved ${media.length} media rows from database.`);
     const brokenM = [];
     for (const m of media) {
-      const img = m.media_url;
+      const img = m.url;
       if (!img) {
         brokenM.push({ id: m.id, reason: 'EMPTY' });
       } else if (!img.startsWith('http')) {
