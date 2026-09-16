@@ -28,7 +28,7 @@ class AnnouncementService {
     }
 
     if (store.owner_id === principal.id) {
-      return { store, organization: null };
+      return { store, organizationId: store.organization_id || null };
     }
 
     if (store.organization_id) {
@@ -88,7 +88,7 @@ class AnnouncementService {
     const announcementRow = {
       store_id: input.storeId || null,
       author_id: principal.id,
-      organization_id: organizationId || input.organizationId || null,
+      organization_id: organizationId || null,
       title: input.title.trim(),
       slug,
       type: (input.type || 'ANNOUNCEMENT').toUpperCase(),
@@ -234,7 +234,11 @@ class AnnouncementService {
       if (input.targetCities) targetUpdates.target_cities = input.targetCities;
       if (input.targetCategories) targetUpdates.target_categories = input.targetCategories;
 
-      await adminDb.from('announcement_targets').update(targetUpdates).eq('announcement_id', id);
+      const { error: targetErr } = await adminDb.from('announcement_targets').update(targetUpdates).eq('announcement_id', id);
+      if (targetErr) {
+        logger.error('[AnnouncementService] Failed to update announcement audience', targetErr);
+        throw targetErr;
+      }
     }
 
     return new Announcement(updated).toAuthorJSON();
@@ -343,6 +347,10 @@ class AnnouncementService {
       await this._verifyStoreAndOrgAccess(principal, existing.store_id);
     }
 
+    if (!Announcement.canTransition(existing.status, ANNOUNCEMENT_STATUSES.DRAFT)) {
+      throw new ConflictError("Cannot cancel the schedule of an announcement currently in '" + existing.status + "' status.");
+    }
+
     const { data: updated, error } = await adminDb
       .from('announcements')
       .update({
@@ -400,10 +408,15 @@ class AnnouncementService {
       await this._verifyStoreAndOrgAccess(principal, existing.store_id);
     }
 
-    await adminDb
+    const { error: deleteErr } = await adminDb
       .from('announcements')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id);
+
+    if (deleteErr) {
+      logger.error('[AnnouncementService] Failed to delete announcement ' + id, deleteErr);
+      throw deleteErr;
+    }
 
     return { success: true, message: 'Announcement deleted successfully.' };
   }

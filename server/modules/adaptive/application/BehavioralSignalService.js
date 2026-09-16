@@ -86,7 +86,12 @@ class BehavioralSignalService {
     const crossed = [];
     for (const [key, count] of Object.entries(counts)) {
       if (count < REPETITION_THRESHOLD) continue;
-      const [type, id] = key.split(':');
+      // Only the FIRST separator delimits theme from id — a category coming
+      // from a free-text search may itself contain ':', and split(':') would
+      // promote a truncated id.
+      const sep = key.indexOf(':');
+      const type = key.slice(0, sep);
+      const id = key.slice(sep + 1);
       const already = signals.some(s => s.signal_type === type && s.value && s.value.id === id);
       if (already) continue;
       const row = await AdaptiveRepository.insertSignal(userId, {

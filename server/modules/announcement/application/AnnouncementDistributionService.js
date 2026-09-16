@@ -8,6 +8,11 @@ const { SupabaseClient } = require('../../../infrastructure/database/SupabaseCli
 const { Announcement, ANNOUNCEMENT_STATUSES } = require('../domain/Announcement');
 const logger = require('../../../shared/logging/logger');
 
+// City matching runs in memory (target cities live in JSONB), so the scan has
+// to be bounded — without it a city-filtered request pulls the entire
+// published feed into the process.
+const CITY_SCAN_LIMIT = 500;
+
 class AnnouncementDistributionService {
   static async getDistributionFeed(viewerPrincipal = null, options = {}) {
     const adminDb = SupabaseClient.getAdmin();
@@ -30,11 +35,14 @@ class AnnouncementDistributionService {
       `, { count: 'exact' })
       .eq('status', ANNOUNCEMENT_STATUSES.PUBLISHED)
       .is('deleted_at', null)
+      .or('expires_at.is.null,expires_at.gt.' + new Date().toISOString())
       .order('is_pinned', { ascending: false })
       .order('published_at', { ascending: false });
 
     if (!cityFilter) {
       query = query.range(offset, offset + limit - 1);
+    } else {
+      query = query.range(0, CITY_SCAN_LIMIT - 1);
     }
 
     if (type && type !== 'ALL') {

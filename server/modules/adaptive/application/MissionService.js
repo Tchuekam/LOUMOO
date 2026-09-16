@@ -72,6 +72,13 @@ class MissionService {
     const mission = missions.find(m => m.id === missionId);
     if (!mission) throw new NotFoundError('That mission was not found on your account.');
 
+    // The transition table above is the lifecycle contract; without this check
+    // it was decoration and a completed mission could be reopened as active.
+    const allowedNext = STATUS_TRANSITIONS[mission.status];
+    if (allowedNext && !allowedNext.includes(status)) {
+      throw new ValidationError(`A ${mission.status} mission cannot become '${status}'.`);
+    }
+
     const updated = await AdaptiveRepository.updateMissionStatus(principal.id, missionId, status);
     logger.info(`[Mission] user=${principal.id} mission=${missionId} -> ${status}`);
     return updated;

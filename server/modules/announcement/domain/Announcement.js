@@ -396,8 +396,8 @@ class Announcement {
     const upper = String(type || '').toUpperCase();
 
     if (upper === 'PROMOTION') {
-      const original = Number(metadata.originalPriceMinor);
-      const promo = Number(metadata.promoPriceMinor);
+      const original = Number(metadata?.originalPriceMinor);
+      const promo = Number(metadata?.promoPriceMinor);
       if (Number.isFinite(original) && Number.isFinite(promo) && promo >= original) {
         errors.push({
           field: 'metadata.promoPriceMinor',
@@ -406,7 +406,7 @@ class Announcement {
       }
     }
 
-    if (upper === 'EVENT' && metadata.startTime && metadata.endTime
+    if (upper === 'EVENT' && metadata?.startTime && metadata?.endTime
         && TIME_ONLY.test(metadata.startTime) && TIME_ONLY.test(metadata.endTime)
         && metadata.endTime <= metadata.startTime) {
       errors.push({ field: 'metadata.endTime', message: 'The event ends at or before it starts.' });

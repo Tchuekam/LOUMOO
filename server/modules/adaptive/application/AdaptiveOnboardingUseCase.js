@@ -271,7 +271,12 @@ class AdaptiveOnboardingUseCase {
       }
 
       // Inferred signals from extraction (only those not already declared).
+      // Without this filter the inferred row is written AFTER the declared one
+      // and, since the engine reads the newest row per type, a guess made from
+      // the free text would silently replace the chip the user tapped.
+      const declaredTypes = new Set(declared.map(s => s.type));
       for (const inf of extraction.signals) {
+        if (declaredTypes.has(inf.type)) continue;
         await AdaptiveRepository.saveSignal(principal.id, {
           signalType: inf.type,
           value: inf.value,
@@ -379,13 +384,30 @@ class AdaptiveOnboardingUseCase {
     await this._sealOnboarding(principal, ctx, mission);
 
     const clerkId = principal && (principal.clerkUserId || principal.clerk_user_id);
-    const { principal: fresh, accountState } = clerkId ? await AccountStateService.reloadLocal(clerkId) : { principal };
+    let fresh = null;
+    let accountState = null;
+    if (clerkId) {
+      try {
+        const res = await AccountStateService.reloadLocal(clerkId);
+        fresh = res && res.principal;
+        accountState = res && res.accountState;
+      } catch (err) {
+        logger.warn(`[Adaptive] reloadLocal error handled: ${err.message}`);
+      }
+    }
 
     logger.info(`[Adaptive] user=${principal.id} COMPLETED ALL ONBOARDING mission="${title}"`);
     const conv = await this.getConversation(fresh || principal);
     return {
       ...conv,
-      accountState: AccountStateService.toClientState(fresh || principal, accountState)
+      // toClientState dereferences the state envelope, so never hand it an
+      // absent one: a principal with no clerk_user_id (Supabase-native account)
+      // skipped the reload entirely and used to crash here AFTER the mission,
+      // goal and profile writes had already committed.
+      accountState: AccountStateService.toClientState(
+        fresh || principal,
+        accountState || AccountStateService.derive(fresh || principal)
+      )
     };
   }
 

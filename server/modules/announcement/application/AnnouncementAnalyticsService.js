@@ -37,13 +37,19 @@ class AnnouncementAnalyticsService {
 
     await CacheService.set(dedupKey, '1', 900);
 
-    await adminDb.from('announcement_events').insert({
+    const { error: insertError } = await adminDb.from('announcement_events').insert({
       announcement_id: announcementId,
       user_id: viewerPrincipal ? viewerPrincipal.id : null,
       event_type: normalizedType,
       user_agent: reqMeta.userAgent || null,
       metadata: metadata || {}
     });
+
+    if (insertError) {
+      if (insertError.code === '23503') throw new NotFoundError('Announcement', announcementId);
+      logger.error('[AnnouncementAnalyticsService] Failed to record event', insertError);
+      throw insertError;
+    }
 
     const { data: metrics } = await adminDb
       .from('announcement_metrics')
@@ -175,6 +181,7 @@ class AnnouncementAnalyticsService {
       .from('announcements')
       .select('id, title, slug, type, status, published_at, scheduled_for, expires_at, created_at')
       .eq('store_id', storeId)
+      .is('deleted_at', null)
       .order('created_at', { ascending: false });
 
     if (annErr) throw annErr;

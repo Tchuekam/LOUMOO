@@ -43,7 +43,12 @@ function buildContext({ profile = {}, onboardingDraft = {}, answers = [], signal
   const byType = {};
   for (const s of signals) {
     if (!s || !s.signal_type) continue;
-    byType[s.signal_type] = s; // last write wins per type (rows ordered oldest→newest)
+    // Last write wins per type (rows ordered oldest→newest), except that a
+    // declared answer outranks later inferred evidence: behavior aggregates and
+    // free-text guesses never override what the user explicitly chose.
+    const prev = byType[s.signal_type];
+    if (prev && prev.source === 'declared' && s.source !== 'declared') continue;
+    byType[s.signal_type] = s;
   }
 
   const sig = (type, sub) => {
