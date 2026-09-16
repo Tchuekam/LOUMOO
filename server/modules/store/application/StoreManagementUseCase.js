@@ -92,6 +92,26 @@ class StoreManagementUseCase {
       dbUpdates.phone_number = updates.phoneNumber;
       store.phoneNumber = updates.phoneNumber;
     }
+    if (updates.email !== undefined) {
+      // Same rule CreateStoreUseCase enforces with z.string().email(): this path
+      // must not become a way around store-creation validation.
+      const email = updates.email == null ? '' : String(updates.email).trim();
+      if (email && (email.length > 255 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))) {
+        throw new ValidationError('Enter a valid store email address', { email: 'invalid' });
+      }
+      dbUpdates.email = email || null;
+      store.email = email;
+    }
+    if (updates.websiteUrl !== undefined) {
+      // websiteUrl is part of the public storefront projection, so only plain
+      // http(s) links are stored (no javascript:/data: URLs).
+      const websiteUrl = updates.websiteUrl == null ? '' : String(updates.websiteUrl).trim();
+      if (websiteUrl && (websiteUrl.length > 2048 || !/^https?:\/\/[^\s]+$/i.test(websiteUrl))) {
+        throw new ValidationError('Enter a valid website URL starting with http:// or https://', { websiteUrl: 'invalid' });
+      }
+      dbUpdates.website_url = websiteUrl || null;
+      store.websiteUrl = websiteUrl;
+    }
     if (updates.visibility && ['PUBLIC', 'PRIVATE', 'UNLISTED'].includes(updates.visibility)) {
       dbUpdates.visibility = updates.visibility;
       store.visibility = updates.visibility;

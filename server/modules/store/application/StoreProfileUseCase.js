@@ -32,6 +32,12 @@ class StoreProfileUseCase {
 
     const store = new Store(storeData);
 
+    // A storefront that is switched off is not public. UNLISTED stays reachable
+    // by direct link on purpose - it only means "kept out of discovery".
+    if (store.visibility === 'PRIVATE' || ['SUSPENDED', 'CLOSED', 'ARCHIVED'].includes(store.status)) {
+      throw new NotFoundError('Store', identifier);
+    }
+
     // Fetch Profile, Location, Hours
     let profileData = {};
     let locationData = {};
@@ -54,7 +60,7 @@ class StoreProfileUseCase {
 
     const publicView = {
       ...store.toPublicJSON(),
-      tagline: profile.tagline || 'Certified Tech & Electronics Distributor',
+      tagline: profile.tagline || '',
       bio: profile.bio || store.description,
       returnPolicy: profile.returnPolicy,
       warrantyPolicy: profile.warrantyPolicy,

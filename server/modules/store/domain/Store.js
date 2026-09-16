@@ -98,7 +98,6 @@ class Store {
       responseRatePercent: this.responseRatePercent,
       productCount: this.productCount,
       phoneNumber: this.phoneNumber,
-      email: this.email,
       websiteUrl: this.websiteUrl,
       status: this.status,
       createdAt: this.createdAt
@@ -109,6 +108,7 @@ class Store {
     return {
       ...this.toPublicJSON(),
       ownerId: this.ownerId,
+      email: this.email,
       visibility: this.visibility,
       onboardingStep: this.onboardingStep,
       onboardingCompleted: this.onboardingCompleted,

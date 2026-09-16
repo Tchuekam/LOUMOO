@@ -68,7 +68,7 @@ class StoreFollowService {
   }
 
   static async getFollowStatus(userId, storeId) {
-    const isFollowing = await FollowedStoresUseCase.isFollowing(userId, storeId);
+    const isFollowing = await FollowedStoresUseCase.isStoreFollowed(userId, storeId);
     return {
       storeId: storeId,
       isFollowing: isFollowing

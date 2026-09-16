@@ -147,9 +147,9 @@ router.delete('/:storeId/follow', requireAuth, resolveStore(), async (req, res, 
 });
 
 // GET /api/v1/stores/:storeId/follow-status
-router.get('/:storeId/follow-status', requireAuth, async (req, res, next) => {
+router.get('/:storeId/follow-status', requireAuth, resolveStore(), async (req, res, next) => {
   try {
-    const status = await StoreFollowService.getFollowStatus(req.principal.id, req.params.storeId);
+    const status = await StoreFollowService.getFollowStatus(req.principal.id, req.store.id);
     res.json({ status: 'success', data: status });
   } catch (err) {
     next(err);

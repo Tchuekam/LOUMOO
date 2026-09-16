@@ -13,10 +13,12 @@ const { SupabaseDatabase } = require('../../../infrastructure/database/SupabaseC
 const { InfrastructureError } = require('../../../shared/errors/AppError');
 
 const STORE_COLUMNS = [
-  'id', 'owner_id', 'name', 'slug', 'description', 'category_id', 'logo_url',
-  'cover_url', 'phone_number', 'email', 'website_url', 'status', 'visibility',
-  'is_verified', 'verification_tier', 'rating', 'rating_count', 'follower_count',
-  'product_count', 'onboarding_step', 'onboarding_completed', 'metadata',
+  'id', 'owner_id', 'organization_id', 'seller_type', 'name', 'slug', 'description',
+  'category_id', 'logo_url', 'cover_url', 'phone_number', 'email', 'website_url',
+  'status', 'visibility', 'is_verified', 'verification_tier', 'rating', 'rating_count',
+  'follower_count', 'recommendation_count', 'reputation_score', 'trust_tier',
+  'completed_orders_count', 'response_rate_percent', 'product_count',
+  'onboarding_step', 'onboarding_completed', 'metadata',
   'created_at', 'updated_at', 'deleted_at'
 ].join(', ');
 
