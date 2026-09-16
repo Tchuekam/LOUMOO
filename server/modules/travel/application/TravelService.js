@@ -314,7 +314,15 @@ class TravelService {
     for (const p of booking.passengers || []) {
       if (p.phone) candidates.push(TravelService._normalizeContact(p.phone));
       if (p.email) candidates.push(TravelService._normalizeContact(p.email));
-      if (p.name) candidates.push(String(p.name).trim().toLowerCase());
+      if (p.name) {
+        const fullName = String(p.name).trim().toLowerCase();
+        candidates.push(fullName);
+        // The documented factor is reference + SURNAME, but only the full name
+        // as recorded on the reservation was ever a candidate, so a traveller
+        // sending just their surname was always rejected.
+        const surname = fullName.split(/\s+/).pop();
+        if (surname && surname !== fullName) candidates.push(surname);
+      }
     }
     const supplied = [verification.phone, verification.email, verification.lastName, verification.name]
       .map(v => TravelService._normalizeContact(v) || String(v || '').trim().toLowerCase())

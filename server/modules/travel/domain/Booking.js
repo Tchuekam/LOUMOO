@@ -41,7 +41,9 @@ class BookingPassenger {
     this.name = (data.name || '').trim();
     this.phone = data.phone || '';
     this.email = data.email || '';
-    this.seat = data.seat || '';
+    // Normalised: isValidSeat() folds case, so '1a' passed validation and was
+    // then held as a distinct seat from '1A' — the same seat could be sold twice.
+    this.seat = String(data.seat || '').trim().toUpperCase();
     this.passportNumber = data.passportNumber || data.passport || data.idNumber || '';
   }
 

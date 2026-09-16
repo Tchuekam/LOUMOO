@@ -353,7 +353,10 @@ class TravelRepository {
   }
 
   async reserveHotelRoom(roomId, roomsCount = 1) {
-    const room = this.rooms.get(roomId);
+    // Resolve exactly as checkRoomAvailability does (getRoomById -> _findRoom):
+    // an exact Map lookup rejected every id the availability check had just
+    // accepted by normalisation, so a verified-available room failed to reserve.
+    const room = this._findRoom(roomId);
     if (!room) {
       throw new NotFoundError('Room', roomId);
     }
@@ -372,7 +375,9 @@ class TravelRepository {
   }
 
   async releaseHotelRoom(roomId, roomsCount = 1) {
-    const room = this.rooms.get(roomId);
+    // Same resolution as reserveHotelRoom: an exact lookup silently released
+    // nothing, permanently losing the rooms held by a cancelled reservation.
+    const room = this._findRoom(roomId);
     if (room) {
       room.availableInventory = Math.min(room.totalInventory, room.availableInventory + roomsCount);
     }
@@ -764,6 +769,12 @@ class TravelRepository {
   async getTripById(tripId, userId = null) {
     if (!tripId) return null;
 
+    // Interpolated into a PostgREST `or=` filter below, where commas and dots
+    // are filter syntax; reject anything outside the identifier alphabet.
+    if (typeof tripId !== 'string' || !/^[A-Za-z0-9_-]{1,64}$/.test(tripId)) {
+      return null;
+    }
+
     if (this.db) {
       try {
         let q = this.db
@@ -792,6 +803,12 @@ class TravelRepository {
 
   async getTicketByIdOrBooking(idOrBookingId, userId = null) {
     if (!idOrBookingId) return null;
+
+    // Interpolated into a PostgREST `or=` filter below, where commas and dots
+    // are filter syntax; reject anything outside the identifier alphabet.
+    if (typeof idOrBookingId !== 'string' || !/^[A-Za-z0-9_-]{1,64}$/.test(idOrBookingId)) {
+      return null;
+    }
 
     if (this.db) {
       try {
@@ -962,6 +979,9 @@ class TravelRepository {
         itinerary: booking.itinerary || {}
       });
       this.tickets.set(ticket.id, ticket);
+    } else {
+      // getTicketByIdOrBooking yields a plain row; callers expect the entity.
+      ticket = this.tickets.get(ticket.id) || new Ticket(ticket);
     }
 
     if (this.db) {

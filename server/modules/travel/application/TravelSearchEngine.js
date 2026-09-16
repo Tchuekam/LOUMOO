@@ -6,6 +6,7 @@
  */
 
 const { travelRepository } = require('../infrastructure/TravelRepository');
+const logger = require('../../../shared/logging/logger');
 
 /**
  * Base adapter contract for pluggable external travel APIs (GDS, Amadeus, Camrail API, Hotel PMS)
@@ -170,6 +171,7 @@ class TravelSearchEngine {
         allItems.push(...results);
       } catch (err) {
         // Structured logging for adapter search errors
+        logger.warn(`[TravelSearch] Adapter '${adapter.name}' search failed: ${err.message}`);
       }
     }
 
