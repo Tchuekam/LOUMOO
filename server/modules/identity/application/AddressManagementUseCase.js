@@ -178,7 +178,16 @@ class AddressManagementUseCase {
       const msg = parseResult.error.issues.map(i => `${i.path.join('.')}: ${i.message}`).join(', ');
       throw new ValidationError(`Invalid address update data: ${msg}`);
     }
-    const data = parseResult.data;
+    // `.partial()` makes the fields optional but keeps AddressSchema's
+    // `.default()`s, so a one-field PATCH would otherwise reset city to Douala,
+    // region to Littoral, country to Cameroon, category to shipping and
+    // is_default to false. Keep only the fields the caller actually sent.
+    const data = {};
+    for (const key of Object.keys(parseResult.data)) {
+      if (updateData && Object.prototype.hasOwnProperty.call(updateData, key)) {
+        data[key] = parseResult.data[key];
+      }
+    }
 
     let updated = null;
 

@@ -58,7 +58,7 @@ class SupabaseIdentityProvider {
         throw new AuthenticationError('Authentication failed: invalid session token');
       }
       const [, secret, userId] = token.split(':');
-      if (!secret || secret !== config.testAuth.secret || !userId) {
+      if (!secret || !SessionToken.timingSafeEqualStrings(secret, config.testAuth.secret) || !userId) {
         throw new AuthenticationError('Authentication failed: invalid session token');
       }
       return { userId, email: `${userId}@test.loumoo.cm`, metadata: {}, source: 'test-harness' };

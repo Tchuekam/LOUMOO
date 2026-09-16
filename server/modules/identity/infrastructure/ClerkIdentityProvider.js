@@ -18,6 +18,7 @@
 const { createClerkClient, verifyToken } = require('@clerk/backend');
 const config = require('../../../config/env');
 const logger = require('../../../shared/logging/logger');
+const SessionToken = require('./SessionToken');
 const { AuthenticationError, InfrastructureError } = require('../../../shared/errors/AppError');
 
 let clerkClient = null;
@@ -68,7 +69,7 @@ class ClerkIdentityProvider {
         throw new AuthenticationError('Authentication failed: invalid session token');
       }
       const [, secret, userId] = token.split(':');
-      if (!secret || secret !== config.testAuth.secret || !userId) {
+      if (!secret || !SessionToken.timingSafeEqualStrings(secret, config.testAuth.secret) || !userId) {
         throw new AuthenticationError('Authentication failed: invalid session token');
       }
       return { userId, sessionId: null, source: 'test-harness' };

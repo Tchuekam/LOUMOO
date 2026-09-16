@@ -410,6 +410,9 @@ class SocialGraphService {
       await this._recalculateRecommendationCount(existing.target_type, existing.target_id);
       return { success: true, deletedId: recommendationId };
     } catch (err) {
+      if (err instanceof NotFoundError || err instanceof UnauthorizedError) {
+        throw err;
+      }
       handleDatabaseFailure(err, 'Delete recommendation');
       return { success: true, deletedId: recommendationId };
     }

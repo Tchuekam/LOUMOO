@@ -366,7 +366,14 @@ class OrganizationService {
       }
     }
 
-    const assignedPermissions = permissions || ROLE_PERMISSIONS[targetRole] || ['org.view'];
+    // Only the OWNER may hand out the OWNER role. Without this an ADMIN could
+    // upsert their own membership to OWNER through this endpoint and bypass the
+    // owner-only guard in updateMember().
+    if (targetRole === ORG_ROLES.OWNER && (!requesterMembership || requesterMembership.role !== ORG_ROLES.OWNER)) {
+      throw new UnauthorizedError('Only the organization owner can grant the OWNER role.');
+    }
+
+    const assignedPermissions = this._resolveGrantedPermissions(requesterMembership, targetRole, permissions);
     const adminDb = SupabaseClient.getAdmin();
 
     try {
@@ -400,6 +407,27 @@ class OrganizationService {
   }
 
   /**
+   * Client-supplied permissions may never exceed what the requester holds.
+   * Without this an ADMIN could upsert ['*'] onto any non-owner membership —
+   * their own included — and become owner-equivalent via hasPermission().
+   */
+  static _resolveGrantedPermissions(requesterMembership, role, permissions) {
+    if (permissions === undefined || permissions === null) {
+      return ROLE_PERMISSIONS[role] || ['org.view'];
+    }
+    if (!Array.isArray(permissions) || !permissions.every(p => typeof p === 'string' && p)) {
+      throw new ValidationError('permissions must be an array of permission strings.');
+    }
+    if (requesterMembership.role !== ORG_ROLES.OWNER) {
+      const exceeding = permissions.filter(p => p === '*' || !requesterMembership.hasPermission(p));
+      if (exceeding.length) {
+        throw new UnauthorizedError(`You cannot grant permissions you do not hold: ${exceeding.join(', ')}`);
+      }
+    }
+    return permissions;
+  }
+
+  /**
    * Update a member's role or status.
    */
   static async updateMember(orgId, requestingPrincipal, targetUserId, payload = {}) {
@@ -424,7 +452,7 @@ class OrganizationService {
         throw new ValidationError(`Invalid role '${payload.role}'.`);
       }
       updateData.role = role;
-      updateData.permissions = payload.permissions || ROLE_PERMISSIONS[role] || ['org.view'];
+      updateData.permissions = this._resolveGrantedPermissions(requesterMembership, role, payload.permissions);
     }
     if (payload.status) {
       updateData.status = String(payload.status).toUpperCase();

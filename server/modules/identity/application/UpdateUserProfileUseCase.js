@@ -130,7 +130,11 @@ class UpdateUserProfileUseCase {
       logger.warn(`[ProfileCache] Read error: ${cacheReadErr.message}`);
     }
 
-    const profile = new UserProfile(cached || currentUser);
+    // `cached` is a toPublicJSON() projection, which omits taxNiuNumber,
+    // rccmNumber, businessAddress and shoppingPriorities. Layering it over the
+    // authenticated principal keeps those fields instead of writing null/[]
+    // over them on the next update.
+    const profile = new UserProfile(cached ? { ...currentUser, ...cached } : currentUser);
 
     // 3. Optimistic Locking Check
     if (data.version !== undefined && profile.version !== undefined) {
@@ -147,6 +151,13 @@ class UpdateUserProfileUseCase {
       const transitionCheck = profile.canTransitionKycStatus(data.kycDocStatus);
       if (!transitionCheck.valid) {
         throw new ValidationError(transitionCheck.reason || 'Invalid KYC state transition attempted.');
+      }
+      // submitted -> verified is a LEGAL transition, but it is a reviewer's
+      // decision, not the account holder's. Without this the owner of a profile
+      // could PATCH themselves to `verified` and show isVerifiedSeller on their
+      // public merchant card.
+      if (['verified', 'rejected'].includes(data.kycDocStatus) && !profile.isAdmin()) {
+        throw new AuthorizationError('KYC verification status is decided by LOUMOO review, not by the account holder.');
       }
     }
 
@@ -229,6 +240,8 @@ class UpdateUserProfileUseCase {
       completion_percentage: profile.completionPercentage,
       updated_at: profile.updatedAt.toISOString()
     };
+    // kycDocType is validated and audited above; without this it was never persisted.
+    if (data.kycDocType) payload.kyc_doc_type = profile.kycDocType;
 
     let dbSuccess = false;
     let lastError = null;

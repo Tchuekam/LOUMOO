@@ -388,6 +388,9 @@ class ReviewService {
 
       return { success: true, deletedId: reviewId };
     } catch (err) {
+      if (err instanceof NotFoundError || err instanceof UnauthorizedError) {
+        throw err;
+      }
       handleDatabaseFailure(err, 'Delete review');
       return { success: true, deletedId: reviewId };
     }

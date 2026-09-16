@@ -48,8 +48,8 @@ router.get('/status/:targetType/:targetId', optionalAuth, async (req, res, next)
 // GET /api/v1/social/followers/:targetType/:targetId (List followers)
 router.get('/followers/:targetType/:targetId', async (req, res, next) => {
   try {
-    const limit = parseInt(req.query.limit, 10) || 20;
-    const offset = parseInt(req.query.offset, 10) || 0;
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit, 10) || 20));
+    const offset = Math.max(0, parseInt(req.query.offset, 10) || 0);
     const result = await SocialGraphService.listFollowers(req.params.targetType, req.params.targetId, { limit, offset });
     res.json({ status: 'success', data: result });
   } catch (err) {
@@ -60,8 +60,8 @@ router.get('/followers/:targetType/:targetId', async (req, res, next) => {
 // GET /api/v1/social/following/:userId (List who a user follows)
 router.get('/following/:userId', async (req, res, next) => {
   try {
-    const limit = parseInt(req.query.limit, 10) || 20;
-    const offset = parseInt(req.query.offset, 10) || 0;
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit, 10) || 20));
+    const offset = Math.max(0, parseInt(req.query.offset, 10) || 0);
     const result = await SocialGraphService.listFollowing(req.params.userId, { limit, offset });
     res.json({ status: 'success', data: result });
   } catch (err) {
@@ -92,8 +92,8 @@ router.delete('/recommendations/:id', requireAuth, async (req, res, next) => {
 // GET /api/v1/social/recommendations/:targetType/:targetId (List recommendations)
 router.get('/recommendations/:targetType/:targetId', async (req, res, next) => {
   try {
-    const limit = parseInt(req.query.limit, 10) || 20;
-    const offset = parseInt(req.query.offset, 10) || 0;
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit, 10) || 20));
+    const offset = Math.max(0, parseInt(req.query.offset, 10) || 0);
     const result = await SocialGraphService.listRecommendations(req.params.targetType, req.params.targetId, { limit, offset });
     res.json({ status: 'success', data: result });
   } catch (err) {

@@ -34,6 +34,8 @@ const PROFILE_COLUMNS = [
   'email_verified_at', 'phone_verified_at', 'is_email_verified', 'is_phone_verified',
   'onboarding_status', 'onboarding_started_at', 'onboarding_completed_at',
   'seller_status', 'primary_store_id', 'clerk_last_synced_at', 'clerk_deleted_at',
+  'username', 'bio', 'headline', 'social_links', 'badges',
+  'follower_count', 'following_count', 'reputation_score',
   'buyer_interests', 'shopping_priorities', 'seller_type', 'business_name',
   'tax_niu_number', 'rccm_number', 'business_address', 'kyc_doc_type',
   'kyc_doc_status', 'completion_percentage', 'account_status',
@@ -132,13 +134,17 @@ class ProfileRepository {
     const existing = await this.findByClerkUserId(identity.clerkUserId, { useCache: false });
     if (existing) {
       if (existing.deleted_at || existing.clerk_deleted_at || existing.account_status === 'anonymized') {
-        await this.db.from('profiles').update({
+        const reactivation = {
           clerk_deleted_at: null,
           deleted_at: null,
           status: 'active',
           account_status: 'active'
-        }).eq('id', existing.id);
+        };
+        await this.db.from('profiles').update(reactivation).eq('id', existing.id);
         await this.invalidate(identity.clerkUserId, existing.id);
+        // The row we return must reflect the reactivation we just wrote;
+        // returning the pre-update copy reports the account as still deleted.
+        Object.assign(existing, reactivation);
       }
       return { profile: existing, created: false };
     }

@@ -29,8 +29,8 @@ router.post('/reviews', requireAuth, async (req, res, next) => {
 // GET /api/v1/reviews/:targetType/:targetId (List reviews)
 router.get('/reviews/:targetType/:targetId', async (req, res, next) => {
   try {
-    const limit = parseInt(req.query.limit, 10) || 20;
-    const offset = parseInt(req.query.offset, 10) || 0;
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit, 10) || 20));
+    const offset = Math.max(0, parseInt(req.query.offset, 10) || 0);
     const verifiedOnly = req.query.verified === 'true';
     const minRating = req.query.minRating ? parseInt(req.query.minRating, 10) : null;
 

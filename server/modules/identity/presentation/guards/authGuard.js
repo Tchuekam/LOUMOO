@@ -116,6 +116,13 @@ async function optionalAuth(req, res, next) {
     const { principal, accountState } = await AccountStateService.resolve(claims.userId, {
       source: claims.source
     });
+    // A blocked account is NOT a session. `requireAuth` refuses these states, so
+    // the optional path must not hand a suspended or deleted account to the
+    // endpoints (including the write ones) that personalise on `req.principal`.
+    if (accountState.state === ACCOUNT_STATES.DELETED || accountState.state === ACCOUNT_STATES.SUSPENDED) {
+      attachPrincipal(req, { principal: null, accountState, auth: null });
+      return next();
+    }
     attachPrincipal(req, {
       principal,
       accountState,

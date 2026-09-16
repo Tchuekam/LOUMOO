@@ -49,6 +49,7 @@ class PublicProfileService {
     if (!isSelf) {
       try {
         const { data: privacy } = await adminDb
+          .schema('system')
           .from('privacy_preferences')
           .select('profile_visibility')
           .eq('user_id', row.id)

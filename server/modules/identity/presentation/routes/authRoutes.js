@@ -426,7 +426,7 @@ router.post('/verify-otp', async (req, res, next) => {
     }, userId);
 
     await ProfileRepository.recordLogin(profile.id, userId);
-    const { accountState } = await AccountStateService.resolve(userId, { source: 'supabase' });
+    const { principal, accountState } = await AccountStateService.resolve(userId, { source: 'supabase' });
 
     // (The OTP was already consumed above, before provisioning, for single-use.)
     logger.info(`[Auth] User ${cleanEmail} verified and logged in successfully (id=${userId})`);
@@ -442,7 +442,7 @@ router.post('/verify-otp', async (req, res, next) => {
           firstName: cached.firstName,
           lastName: cached.lastName
         },
-        accountState: AccountStateService.toClientState(profile, accountState)
+        accountState: AccountStateService.toClientState(principal, accountState)
       }
     });
   } catch (err) { next(err); }
