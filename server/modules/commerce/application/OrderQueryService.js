@@ -36,7 +36,7 @@ class OrderQueryService {
     // Strict ownership boundary: Caller must be the buyer, seller, or system admin
     const isBuyer = order.buyerId === callerId;
     const isSeller = order.sellerId === callerId;
-    const isAdmin = userRole === 'admin' || userRole === 'superadmin';
+    const isAdmin = userRole === 'admin' || userRole === 'super_admin';
 
     if (!isBuyer && !isSeller && !isAdmin) {
       // 404 Anti-Enumeration Defense

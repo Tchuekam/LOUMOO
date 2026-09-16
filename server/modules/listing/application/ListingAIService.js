@@ -111,7 +111,7 @@ class ListingAIService {
   }
 
   static async classifyCategory(text = '') {
-    const q = text.toLowerCase();
+    const q = (text || '').toLowerCase();
     if (q.includes('phone') || q.includes('iphone') || q.includes('samsung') || q.includes('tecno')) {
       return { categoryId: 'smartphones', confidence: 0.94, vertical: 'electronics' };
     }
@@ -131,7 +131,7 @@ class ListingAIService {
   }
 
   static async extractAttributes(text = '', categoryId = 'smartphones') {
-    const q = text.toLowerCase();
+    const q = (text || '').toLowerCase();
     const attrs = {};
 
     if (categoryId === 'smartphones' || categoryId === 'laptops') {
@@ -158,7 +158,7 @@ class ListingAIService {
 
   static async estimatePriceRange(categoryId, attributes = {}) {
     if (categoryId === 'smartphones') {
-      if (attributes.storage === '256GB') return { minXaf: 550000, maxXaf: 680000, suggestedXaf: 620000 };
+      if ((attributes || {}).storage === '256GB') return { minXaf: 550000, maxXaf: 680000, suggestedXaf: 620000 };
       return { minXaf: 350000, maxXaf: 500000, suggestedXaf: 420000 };
     }
     if (categoryId === 'laptops') {

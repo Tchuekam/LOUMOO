@@ -79,7 +79,7 @@ class OrderCreationService {
         const cachedResponse = idempotencyCheck.responseBody;
         if (cachedResponse && cachedResponse.order) {
           logger.info(`[OrderCreationService] Idempotency hit: returning existing order for key ${effectiveIdempotencyKey}`);
-          return cachedResponse.order;
+          return new Order(cachedResponse.order);
         }
       }
       lockAcquired = true;
@@ -240,8 +240,8 @@ class OrderCreationService {
 
       // 8. Invalidate Buyer's Purchase History Cache
       try {
-        if (CacheService.deletePattern) {
-          await CacheService.deletePattern(`purchases:${userId}:*`);
+        if (CacheService.delPattern) {
+          await CacheService.delPattern(`purchases:${userId}:*`);
         } else if (CacheService.del) {
           await CacheService.del(`purchases:${userId}:all:20:0`);
         }

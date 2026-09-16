@@ -416,9 +416,6 @@ class OrderRepository {
     };
 
     const updatedTimeline = [...(existing.timeline || []), newTimelineEntry];
-    existing.fulfillmentStatus = nextStatus;
-    existing.timeline = updatedTimeline;
-    existing.updatedAt = new Date().toISOString();
 
     if (this.db) {
       try {
@@ -451,7 +448,10 @@ class OrderRepository {
       }
     }
 
-    // In-memory update
+    // In-memory update (only after the durable write path has been attempted)
+    existing.fulfillmentStatus = nextStatus;
+    existing.timeline = updatedTimeline;
+    existing.updatedAt = new Date().toISOString();
     this._inMemoryOrders.set(existing.id, existing);
     return existing;
   }

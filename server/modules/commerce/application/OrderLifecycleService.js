@@ -44,7 +44,7 @@ class OrderLifecycleService {
     // Ownership check (404 Anti-Enumeration for non-owners)
     const isBuyer = order.buyerId === callerId;
     const isSeller = order.sellerId === callerId;
-    const isAdmin = userRole === 'admin' || userRole === 'superadmin';
+    const isAdmin = userRole === 'admin' || userRole === 'super_admin';
 
     if (!isBuyer && !isSeller && !isAdmin) {
       throw new NotFoundError('Order not found');
@@ -66,8 +66,8 @@ class OrderLifecycleService {
 
     // Invalidate Buyer's Cache
     try {
-      if (CacheService.deletePattern) {
-        await CacheService.deletePattern(`purchases:${order.buyerId}:*`);
+      if (CacheService.delPattern) {
+        await CacheService.delPattern(`purchases:${order.buyerId}:*`);
       } else if (CacheService.del) {
         await CacheService.del(`purchases:${order.buyerId}:all:20:0`);
       }
@@ -119,7 +119,7 @@ class OrderLifecycleService {
     }
 
     const isSeller = order.sellerId === callerId;
-    const isAdmin = userRole === 'admin' || userRole === 'superadmin';
+    const isAdmin = userRole === 'admin' || userRole === 'super_admin';
 
     if (!isSeller && !isAdmin) {
       throw new NotFoundError('Order not found');
@@ -137,8 +137,8 @@ class OrderLifecycleService {
 
     // Invalidate Buyer's Cache
     try {
-      if (CacheService.deletePattern) {
-        await CacheService.deletePattern(`purchases:${order.buyerId}:*`);
+      if (CacheService.delPattern) {
+        await CacheService.delPattern(`purchases:${order.buyerId}:*`);
       }
     } catch (e) {}
 

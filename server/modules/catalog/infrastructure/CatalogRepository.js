@@ -88,8 +88,12 @@ class CatalogRepository {
         query = query.ilike('brand', `%${brand}%`);
       }
 
-      if (search && search.trim()) {
-        const q = search.trim();
+      // PostgREST parses the `or()` argument as a filter expression, so a comma,
+      // parenthesis or quote typed into the search box rewrites the filter set
+      // and 400s the whole query — which the catch below silently turns into
+      // "no seller listings". Strip those the same way the detail lookup does.
+      const q = String(search || '').trim().replace(/["(),]/g, ' ').trim();
+      if (q) {
         // Searches across title, description, and brand
         query = query.or(`title.ilike.%${q}%,description.ilike.%${q}%,brand.ilike.%${q}%`);
       }

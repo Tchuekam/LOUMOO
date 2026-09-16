@@ -7,6 +7,7 @@ const { ValidationError } = require('../../../shared/errors/AppError');
 
 const SUPPORTED_CURRENCIES = Object.freeze({
   XAF: { symbol: 'FCFA', decimals: 0, name: 'Central African CFA Franc' },
+  XOF: { symbol: 'CFA', decimals: 0, name: 'West African CFA Franc' },
   NGN: { symbol: '₦', decimals: 2, name: 'Nigerian Naira' },
   GHS: { symbol: 'GH₵', decimals: 2, name: 'Ghanaian Cedi' },
   KES: { symbol: 'KSh', decimals: 2, name: 'Kenyan Shilling' },

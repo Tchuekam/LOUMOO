@@ -96,6 +96,7 @@ class ListingPublishUseCase {
     });
 
     await CacheService.delete(`catalog:detail:${updated.id}`, 'catalog').catch(() => null);
+    await CacheService.delete(`listing:${updated.id}`, 'catalog').catch(() => null);
     await CacheService.delPattern('catalog:list:*', 'catalog').catch(() => null);
     await CacheService.delPattern('list:*', 'catalog').catch(() => null);
 
@@ -121,6 +122,7 @@ class ListingPublishUseCase {
     this.assertTransition(listingRow.status, 'PAUSED');
     const updated = await ListingRepository.update(listingRow.id, { status: 'PAUSED' });
     await CacheService.delete(`catalog:detail:${updated.id}`, 'catalog').catch(() => null);
+    await CacheService.delete(`listing:${updated.id}`, 'catalog').catch(() => null);
     await CacheService.delPattern('catalog:list:*', 'catalog').catch(() => null);
     await CacheService.delPattern('list:*', 'catalog').catch(() => null);
     AnalyticsService.track(principal.id, 'listing_paused', { listingId: updated.id });
@@ -132,6 +134,7 @@ class ListingPublishUseCase {
     this.assertTransition(listingRow.status, 'ARCHIVED');
     const updated = await ListingRepository.softDelete(listingRow.id);
     await CacheService.delete(`catalog:detail:${updated.id}`, 'catalog').catch(() => null);
+    await CacheService.delete(`listing:${updated.id}`, 'catalog').catch(() => null);
     await CacheService.delPattern('catalog:list:*', 'catalog').catch(() => null);
     await CacheService.delPattern('list:*', 'catalog').catch(() => null);
     AnalyticsService.track(principal.id, 'listing_archived', { listingId: updated.id });

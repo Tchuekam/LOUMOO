@@ -184,10 +184,22 @@ class ComparisonService {
       ]);
     }
 
+    // The engine compares at most 4 entities (validateCompatibility), so enforce
+    // the limit before resolving: every unresolved id costs one database round
+    // trip, and an uncapped ?ids= turns a single request into an unbounded query
+    // fan-out. Reject rather than silently truncate, so a caller never gets a
+    // comparison of products it did not fully ask for.
+    if (productIds.length > 4) {
+      throw new ValidationError('Comparison is limited to a maximum of 4 products.', [
+        { field: 'ids', message: 'Provide 2 to 4 product IDs.' }
+      ]);
+    }
+    const requestedIds = productIds;
+
     const allEntities = getAllEntities();
     const resolvedProducts = [];
 
-    for (const id of productIds) {
+    for (const id of requestedIds) {
       const found = allEntities.find(p => p.id === id || p.slug === id);
       if (found) {
         resolvedProducts.push({
@@ -227,7 +239,7 @@ class ComparisonService {
     }
 
     if (resolvedProducts.length === 0) {
-      throw new NotFoundError('Products', productIds.join(', '));
+      throw new NotFoundError('Products', requestedIds.join(', '));
     }
 
     return ComparisonEngine.run(resolvedProducts, userPriorities);

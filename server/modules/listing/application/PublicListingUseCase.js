@@ -33,7 +33,7 @@ class PublicListingUseCase {
       throw new NotFoundError('Listing', String(listingOrId));
     }
 
-    const detail = await CacheService.remember(`listing:public:${row.id}`, 120, async () => {
+    const detail = await CacheService.remember(`listing:${row.id}`, 120, async () => {
       const [media, attributes, store, blocks] = await Promise.all([
         ListingRepository.listMedia(row.id),
         ListingRepository.listAttributes(row.id),

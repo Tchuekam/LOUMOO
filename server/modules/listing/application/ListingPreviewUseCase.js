@@ -5,7 +5,9 @@
 
 class ListingPreviewUseCase {
   static async getPreview(listing, store = null) {
-    const pub = listing.toPublicJSON();
+    // `CreateListingUseCase.hydrate()` returns the owner projection as a plain
+    // object, not a domain entity, so calling toPublicJSON() on it threw.
+    const pub = typeof listing.toPublicJSON === 'function' ? listing.toPublicJSON() : listing;
     return {
       ...pub,
       isPreview: true,
