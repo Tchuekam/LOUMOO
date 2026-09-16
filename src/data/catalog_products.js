@@ -43211,9 +43211,9 @@ export const catalogProducts = {
     "storeCity": "Bonapriso, Douala",
     "storeRating": "4.9",
     "storeVerified": true,
-    "coverImage": "./Assets/perfume&lotion/MEET%20THE%204%20AFRICAN-OWNED%20CLEAN%20BEAUTY%20BRANDS%20THAT%20WE%20CAN%27T%20GET%20ENOUGH%20OF.jfif",
+    "coverImage": "./Assets/perfume&lotion/MEET%20THE%204%20AFRICAN-OWNED%20BRANDS%20BRIDGING%20THE%20GAP%20IN%20THE%20SKINCARE%20MARKET%20FOR%20DARKER%20CONSUMERS.jfif",
     "images": [
-      "./Assets/perfume&lotion/MEET%20THE%204%20AFRICAN-OWNED%20CLEAN%20BEAUTY%20BRANDS%20THAT%20WE%20CAN%27T%20GET%20ENOUGH%20OF.jfif"
+      "./Assets/perfume&lotion/MEET%20THE%204%20AFRICAN-OWNED%20BRANDS%20BRIDGING%20THE%20GAP%20IN%20THE%20SKINCARE%20MARKET%20FOR%20DARKER%20CONSUMERS.jfif"
     ],
     "attributes": [
       {
@@ -43555,9 +43555,9 @@ export const catalogProducts = {
     "storeCity": "Akwa, Douala",
     "storeRating": "4.9",
     "storeVerified": true,
-    "coverImage": "./Assets/telephone&PC/phoneBrands.image/iPhone%2017%20Pro%20Max.jfif",
+    "coverImage": "./Assets/telephone&PC/phoneBrands.image/iPhone%2017%20Pro%20Max%20Colors%20%E2%80%93%20Every%20Stunning%20Finish%20in%20One%20Premium%20Look%20%F0%9F%93%B1%E2%9C%A8.jfif",
     "images": [
-      "./Assets/telephone&PC/phoneBrands.image/iPhone%2017%20Pro%20Max.jfif"
+      "./Assets/telephone&PC/phoneBrands.image/iPhone%2017%20Pro%20Max%20Colors%20%E2%80%93%20Every%20Stunning%20Finish%20in%20One%20Premium%20Look%20%F0%9F%93%B1%E2%9C%A8.jfif"
     ],
     "attributes": [
       {
@@ -43603,9 +43603,9 @@ export const catalogProducts = {
     "storeCity": "Akwa, Douala",
     "storeRating": "4.9",
     "storeVerified": true,
-    "coverImage": "./Assets/telephone&PC/phoneBrands.image/Apple%20iPhone%2015%20Pro.jfif",
+    "coverImage": "./Assets/telephone&PC/phoneBrands.image/iphone%2015%20Pro%20Max%20-%20Best%20Features%20in%202025.jfif",
     "images": [
-      "./Assets/telephone&PC/phoneBrands.image/Apple%20iPhone%2015%20Pro.jfif"
+      "./Assets/telephone&PC/phoneBrands.image/iphone%2015%20Pro%20Max%20-%20Best%20Features%20in%202025.jfif"
     ],
     "attributes": [
       {
@@ -43699,9 +43699,9 @@ export const catalogProducts = {
     "storeCity": "Bonanjo, Douala",
     "storeRating": "4.8",
     "storeVerified": true,
-    "coverImage": "./Assets/telephone&PC/Microsoft%20Surface%20Laptop%20Studio%202.jfif",
+    "coverImage": "./Assets/telephone&PC/Microsoft%20Surface%20Laptop_%20Overview.jfif",
     "images": [
-      "./Assets/telephone&PC/Microsoft%20Surface%20Laptop%20Studio%202.jfif"
+      "./Assets/telephone&PC/Microsoft%20Surface%20Laptop_%20Overview.jfif"
     ],
     "attributes": [
       {
@@ -43791,9 +43791,9 @@ export const catalogProducts = {
     "storeCity": "Akwa, Douala",
     "storeRating": "4.9",
     "storeVerified": true,
-    "coverImage": "./Assets/_processed/acessories_gadgets_apple_air_pods_max_wireless_over_ear_headphones.jpg",
+    "coverImage": "./Assets/_processed/acessories_gadgets_apple_air_pod_max_airpodmax_apple_keysho_16.png",
     "images": [
-      "./Assets/_processed/acessories_gadgets_apple_air_pods_max_wireless_over_ear_headphones.jpg"
+      "./Assets/_processed/acessories_gadgets_apple_air_pod_max_airpodmax_apple_keysho_16.png"
     ],
     "attributes": [
       {
@@ -43839,9 +43839,9 @@ export const catalogProducts = {
     "storeCity": "Akwa, Douala",
     "storeRating": "4.9",
     "storeVerified": true,
-    "coverImage": "./Assets/acessories&gadgets/Apple%20AirPods%204%20Wireless%20Earbuds,%20Bluetooth%20Headphones,%20Personalized%20Spatial%20Audio,%20Sweat%20and%20Water%20Resistant,%20USB-C%20Charging%20Case,%20H2%20Chip,%20Up%20to%2030%20Hours%20Battery%20Life.jfif",
+    "coverImage": "./Assets/acessories&gadgets/Apple%20AirPods%204%20%F0%9F%8E%A7%20Active%20Noise%20Cancellation%20_%20Premium%20Sound%20for%20Less%21%20%F0%9F%8D%8E.jfif",
     "images": [
-      "./Assets/acessories&gadgets/Apple%20AirPods%204%20Wireless%20Earbuds,%20Bluetooth%20Headphones,%20Personalized%20Spatial%20Audio,%20Sweat%20and%20Water%20Resistant,%20USB-C%20Charging%20Case,%20H2%20Chip,%20Up%20to%2030%20Hours%20Battery%20Life.jfif"
+      "./Assets/acessories&gadgets/Apple%20AirPods%204%20%F0%9F%8E%A7%20Active%20Noise%20Cancellation%20_%20Premium%20Sound%20for%20Less%21%20%F0%9F%8D%8E.jfif"
     ],
     "attributes": [
       {
@@ -43935,9 +43935,9 @@ export const catalogProducts = {
     "storeCity": "Bonapriso, Douala",
     "storeRating": "4.8",
     "storeVerified": true,
-    "coverImage": "./Assets/acessories&gadgets/Alexa%20Smart%20Speaker%20with%20Clock.jfif",
+    "coverImage": "./Assets/acessories&gadgets/Alexa%20Smart%20Speaker%20with%20LED%20Light%20Ring%20%E2%80%93%20Compact%20Voice%20Assistant.jfif",
     "images": [
-      "./Assets/acessories&gadgets/Alexa%20Smart%20Speaker%20with%20Clock.jfif"
+      "./Assets/acessories&gadgets/Alexa%20Smart%20Speaker%20with%20LED%20Light%20Ring%20%E2%80%93%20Compact%20Voice%20Assistant.jfif"
     ],
     "attributes": [
       {
@@ -43979,9 +43979,9 @@ export const catalogProducts = {
     "storeCity": "Akwa, Douala",
     "storeRating": "4.9",
     "storeVerified": true,
-    "coverImage": "./Assets/telephone&PC/Best%20Selling%20Apple%20AirTag.jfif",
+    "coverImage": "./Assets/telephone&PC/Best%20Selling%20Apple%20AirTag%21.jfif",
     "images": [
-      "./Assets/telephone&PC/Best%20Selling%20Apple%20AirTag.jfif"
+      "./Assets/telephone&PC/Best%20Selling%20Apple%20AirTag%21.jfif"
     ],
     "attributes": [
       {
@@ -44023,9 +44023,9 @@ export const catalogProducts = {
     "storeCity": "Bonapriso, Douala",
     "storeRating": "4.9",
     "storeVerified": true,
-    "coverImage": "./Assets/acessories&gadgets/DJI%20Osmo%20Pocket%203%20%285%29.jfif",
+    "coverImage": "./Assets/acessories&gadgets/DJI%20Osmo%20Pocket%203.jfif",
     "images": [
-      "./Assets/acessories&gadgets/DJI%20Osmo%20Pocket%203%20%285%29.jfif"
+      "./Assets/acessories&gadgets/DJI%20Osmo%20Pocket%203.jfif"
     ],
     "attributes": [
       {
@@ -44071,9 +44071,9 @@ export const catalogProducts = {
     "storeCity": "Akwa, Douala",
     "storeRating": "4.8",
     "storeVerified": true,
-    "coverImage": "./Assets/acessories&gadgets/Ordro%20EP7%20YouTube%20Vlogging%20Camera%204k%2060fps%20Head%20Wearable%20Camera.jfif",
+    "coverImage": "./Assets/acessories&gadgets/Ordro%20EP7%20YouTube%20Video%20Vlog%20Camera%204K%2060fps%20Head%20Wearable%20WiFi%20POV%20Digital%20Action%20Camcorder.jfif",
     "images": [
-      "./Assets/acessories&gadgets/Ordro%20EP7%20YouTube%20Vlogging%20Camera%204k%2060fps%20Head%20Wearable%20Camera.jfif"
+      "./Assets/acessories&gadgets/Ordro%20EP7%20YouTube%20Video%20Vlog%20Camera%204K%2060fps%20Head%20Wearable%20WiFi%20POV%20Digital%20Action%20Camcorder.jfif"
     ],
     "attributes": [
       {
@@ -44115,9 +44115,9 @@ export const catalogProducts = {
     "storeCity": "Bonanjo, Douala",
     "storeRating": "4.9",
     "storeVerified": true,
-    "coverImage": "./Assets/acessories&gadgets/Microfone%20Lapela%20Sem%20Fio%20Plug%20And%20Play%20Entrada%20Tipo%20C%20e%20Lightning%20Para%20Celular%20-%20Duplo%20_%20Shopee%20Brasil.jfif",
+    "coverImage": "./Assets/acessories&gadgets/Microfone%20Lapela%20Sem%20Fio%20Profissional%20para%20Smartphone,%20Microfone%20Sem%20Fio%20Plug%20and%20Play,%20Microfone___.jfif",
     "images": [
-      "./Assets/acessories&gadgets/Microfone%20Lapela%20Sem%20Fio%20Plug%20And%20Play%20Entrada%20Tipo%20C%20e%20Lightning%20Para%20Celular%20-%20Duplo%20_%20Shopee%20Brasil.jfif"
+      "./Assets/acessories&gadgets/Microfone%20Lapela%20Sem%20Fio%20Profissional%20para%20Smartphone,%20Microfone%20Sem%20Fio%20Plug%20and%20Play,%20Microfone___.jfif"
     ],
     "attributes": [
       {
@@ -44159,9 +44159,9 @@ export const catalogProducts = {
     "storeCity": "Bastos, Yaoundé",
     "storeRating": "4.9",
     "storeVerified": true,
-    "coverImage": "./Assets/acessories&gadgets/mifa%20A90%20Bluetooth%20Lautsprecher%2060W%20Ausgangsleistung%20mit%20Klasse-D%20Verst%C3%A4rker%20Hervorragende%20Bassleistung%20IPX8%20Wasserdicht%20-%20Schwarz.jfif",
+    "coverImage": "./Assets/acessories&gadgets/mifa%20A90%20Bluetooth%20Speaker%2060W%20Output%20Power%20Bluetooth%20Speaker%20with%20Class%20D%20Amplifier%20Excellent%20Bass.jfif",
     "images": [
-      "./Assets/acessories&gadgets/mifa%20A90%20Bluetooth%20Lautsprecher%2060W%20Ausgangsleistung%20mit%20Klasse-D%20Verst%C3%A4rker%20Hervorragende%20Bassleistung%20IPX8%20Wasserdicht%20-%20Schwarz.jfif"
+      "./Assets/acessories&gadgets/mifa%20A90%20Bluetooth%20Speaker%2060W%20Output%20Power%20Bluetooth%20Speaker%20with%20Class%20D%20Amplifier%20Excellent%20Bass.jfif"
     ],
     "attributes": [
       {
@@ -44207,9 +44207,9 @@ export const catalogProducts = {
     "storeCity": "Akwa, Douala",
     "storeRating": "4.9",
     "storeVerified": true,
-    "coverImage": "./Assets/acessories&gadgets/pawer%20bank%20with%20solar%20panel.jfif",
+    "coverImage": "./Assets/acessories&gadgets/pawer%20bank%20with%204%20Data%20cables%20best%20power%20bank.jfif",
     "images": [
-      "./Assets/acessories&gadgets/pawer%20bank%20with%20solar%20panel.jfif"
+      "./Assets/acessories&gadgets/pawer%20bank%20with%204%20Data%20cables%20best%20power%20bank.jfif"
     ],
     "attributes": [
       {
@@ -44255,9 +44255,9 @@ export const catalogProducts = {
     "storeCity": "Akwa, Douala",
     "storeRating": "4.9",
     "storeVerified": true,
-    "coverImage": "./Assets/fashion/shoes/Look%20at%20this%20new%20Nike%20Air%20Force%201%20Low%20_Triple%20White_%20on%20DailySole_%20Available%20now%20via%20Nike%20US%20for%20%24100%20USD_%20Style%20Code_%20CW2288-111%20%20%20Grab%20a%20pair%20now%20below_.jfif",
+    "coverImage": "./Assets/fashion/shoes/Look%20at%20this%20new%20Nike%20Air%20Force.jfif",
     "images": [
-      "./Assets/fashion/shoes/Look%20at%20this%20new%20Nike%20Air%20Force%201%20Low%20_Triple%20White_%20on%20DailySole_%20Available%20now%20via%20Nike%20US%20for%20%24100%20USD_%20Style%20Code_%20CW2288-111%20%20%20Grab%20a%20pair%20now%20below_.jfif"
+      "./Assets/fashion/shoes/Look%20at%20this%20new%20Nike%20Air%20Force.jfif"
     ],
     "attributes": [
       {
@@ -44299,9 +44299,9 @@ export const catalogProducts = {
     "storeCity": "Bonapriso, Douala",
     "storeRating": "4.9",
     "storeVerified": true,
-    "coverImage": "./Assets/fashion/shoes/Kraasa%20Men%27s%20Slip%20On%20Ankle%20Chelsea%20Boots.jfif",
+    "coverImage": "./Assets/fashion/shoes/Kraasa%20Men%27s%20Slip%20On%20Fashion%20Chelsea%20Boots.jfif",
     "images": [
-      "./Assets/fashion/shoes/Kraasa%20Men%27s%20Slip%20On%20Ankle%20Chelsea%20Boots.jfif"
+      "./Assets/fashion/shoes/Kraasa%20Men%27s%20Slip%20On%20Fashion%20Chelsea%20Boots.jfif"
     ],
     "attributes": [
       {
@@ -44343,9 +44343,9 @@ export const catalogProducts = {
     "storeCity": "Bonapriso, Douala",
     "storeRating": "4.9",
     "storeVerified": true,
-    "coverImage": "./Assets/fashion/shoes/Timeless%20Elegance%20Luxury%20Handmade%20Men%27s%20Dress%20Shoes%20Collection.jfif",
+    "coverImage": "./Assets/fashion/shoes/Timeless%20Elegance%20Luxury%20Black%20&%20White%20Dress%20Loafers.jfif",
     "images": [
-      "./Assets/fashion/shoes/Timeless%20Elegance%20Luxury%20Handmade%20Men%27s%20Dress%20Shoes%20Collection.jfif"
+      "./Assets/fashion/shoes/Timeless%20Elegance%20Luxury%20Black%20&%20White%20Dress%20Loafers.jfif"
     ],
     "attributes": [
       {
@@ -44387,9 +44387,9 @@ export const catalogProducts = {
     "storeCity": "Akwa, Douala",
     "storeRating": "4.9",
     "storeVerified": true,
-    "coverImage": "./Assets/fashion/handbag/Luxury%20Designer%20Leather%20Handbag.jfif",
+    "coverImage": "./Assets/fashion/handbag/Luxury%20Designer%20Leather%20Satchels%20&%20Monogram%20Clutches%20_%20Handbag%20Collection.jfif",
     "images": [
-      "./Assets/fashion/handbag/Luxury%20Designer%20Leather%20Handbag.jfif"
+      "./Assets/fashion/handbag/Luxury%20Designer%20Leather%20Satchels%20&%20Monogram%20Clutches%20_%20Handbag%20Collection.jfif"
     ],
     "attributes": [
       {
@@ -44431,9 +44431,9 @@ export const catalogProducts = {
     "storeCity": "Akwa, Douala",
     "storeRating": "4.9",
     "storeVerified": true,
-    "coverImage": "./Assets/fashion/shoes/Shoes%20Women%2010%20Cm%20Moderate%20Heels%20Banquet%20Dress%20Stiletto%20Heels.jfif",
+    "coverImage": "./Assets/fashion/shoes/Shoes%20Women%2010%20Cm%20Metal%20Buckle%20Ladies%20Pumps%20Luxury%20Womens%20Banquet%20Shoes%20Stilettos%20High%20Heels%20Women%20Sexy%20Party%20Shoes.jfif",
     "images": [
-      "./Assets/fashion/shoes/Shoes%20Women%2010%20Cm%20Moderate%20Heels%20Banquet%20Dress%20Stiletto%20Heels.jfif"
+      "./Assets/fashion/shoes/Shoes%20Women%2010%20Cm%20Metal%20Buckle%20Ladies%20Pumps%20Luxury%20Womens%20Banquet%20Shoes%20Stilettos%20High%20Heels%20Women%20Sexy%20Party%20Shoes.jfif"
     ],
     "attributes": [
       {
@@ -44475,9 +44475,9 @@ export const catalogProducts = {
     "storeCity": "Bali, Douala",
     "storeRating": "4.9",
     "storeVerified": true,
-    "coverImage": "./Assets/fashion/EnsembleModel/100%25%20Cotton%20Ankara%20wax%20fabric%20palazzo%20pants%20and%20kimono.jfif",
+    "coverImage": "./Assets/fashion/EnsembleModel/100%25%20Cotton%20Ankara%20Palazzo%20Pants.jfif",
     "images": [
-      "./Assets/fashion/EnsembleModel/100%25%20Cotton%20Ankara%20wax%20fabric%20palazzo%20pants%20and%20kimono.jfif"
+      "./Assets/fashion/EnsembleModel/100%25%20Cotton%20Ankara%20Palazzo%20Pants.jfif"
     ],
     "attributes": [
       {
@@ -44519,9 +44519,9 @@ export const catalogProducts = {
     "storeCity": "Centre Ville, Yaoundé",
     "storeRating": "4.8",
     "storeVerified": true,
-    "coverImage": "./Assets/fashion/shoes/Men%20brown%20leather%20strappy%20sandals.jfif",
+    "coverImage": "./Assets/fashion/shoes/Men%20brown%20leather%20strap%20sandal%20handmade%20barefoot%20woven%20band%20summer%20footwear%20casual%20everyday%20comfort%20Arabian%20style%20Middle%20East%20men%20sandal.jfif",
     "images": [
-      "./Assets/fashion/shoes/Men%20brown%20leather%20strappy%20sandals.jfif"
+      "./Assets/fashion/shoes/Men%20brown%20leather%20strap%20sandal%20handmade%20barefoot%20woven%20band%20summer%20footwear%20casual%20everyday%20comfort%20Arabian%20style%20Middle%20East%20men%20sandal.jfif"
     ],
     "attributes": [
       {
@@ -44563,9 +44563,9 @@ export const catalogProducts = {
     "storeCity": "Akwa, Douala",
     "storeRating": "4.9",
     "storeVerified": true,
-    "coverImage": "./Assets/jelweries/bracelet/Men%20Charm%20Black%20Stone%20Beaded%20Bracelet.jfif",
+    "coverImage": "./Assets/jelweries/bracelet/Men%20Charm%20Black%20Spartan%20Helmet%20Beaded%20Natural%20Stone%20Adjustable%20Macrame%20Bracelets%20_%20eBay.jfif",
     "images": [
-      "./Assets/jelweries/bracelet/Men%20Charm%20Black%20Stone%20Beaded%20Bracelet.jfif"
+      "./Assets/jelweries/bracelet/Men%20Charm%20Black%20Spartan%20Helmet%20Beaded%20Natural%20Stone%20Adjustable%20Macrame%20Bracelets%20_%20eBay.jfif"
     ],
     "attributes": [
       {
@@ -44651,9 +44651,9 @@ export const catalogProducts = {
     "storeCity": "Akwa, Douala",
     "storeRating": "4.9",
     "storeVerified": true,
-    "coverImage": "./Assets/ElectroMenage/Cold%20Press%20Juicer%20Machine.jfif",
+    "coverImage": "./Assets/ElectroMenage/Cold%20Press%20Juicer%20Machine%20for%20Fresh%20Juice%20and%20Modern%20Kitchen%20Countertops.jfif",
     "images": [
-      "./Assets/ElectroMenage/Cold%20Press%20Juicer%20Machine.jfif"
+      "./Assets/ElectroMenage/Cold%20Press%20Juicer%20Machine%20for%20Fresh%20Juice%20and%20Modern%20Kitchen%20Countertops.jfif"
     ],
     "attributes": [
       {
@@ -44739,9 +44739,9 @@ export const catalogProducts = {
     "storeCity": "Akwa, Douala",
     "storeRating": "4.9",
     "storeVerified": true,
-    "coverImage": "./Assets/acessories&gadgets/Oraimo%20Oraimo%20Smart%20Air%20Fryer%20with%20Touch%20Screen%20Display,%205L%20Capacity,%201500W%20-%20Black.jfif",
+    "coverImage": "./Assets/acessories&gadgets/Oraimo%20Oraimo%20Smart%20Air%20Fryer%20OH-AF210N%201500W%205%20Liters%205%20L%201500%20W%20OH-AF210N%20Black%20_%20Best%20Price%20Egypt%20_%20Cairo,%20Giza.jfif",
     "images": [
-      "./Assets/acessories&gadgets/Oraimo%20Oraimo%20Smart%20Air%20Fryer%20with%20Touch%20Screen%20Display,%205L%20Capacity,%201500W%20-%20Black.jfif"
+      "./Assets/acessories&gadgets/Oraimo%20Oraimo%20Smart%20Air%20Fryer%20OH-AF210N%201500W%205%20Liters%205%20L%201500%20W%20OH-AF210N%20Black%20_%20Best%20Price%20Egypt%20_%20Cairo,%20Giza.jfif"
     ],
     "attributes": [
       {
