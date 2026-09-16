@@ -52,7 +52,9 @@ class TravelApiClient {
         headers
       });
 
-      const data = await response.json();
+      // A gateway error page or empty body is not JSON; keep the HTTP status
+      // instead of throwing a SyntaxError that hides it from the caller.
+      const data = (await response.json().catch(() => null)) || {};
       if (!response.ok) {
         const errorMsg = data.error?.message || `Request failed with status ${response.status}`;
         const err = new Error(errorMsg);

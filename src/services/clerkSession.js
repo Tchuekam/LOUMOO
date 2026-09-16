@@ -36,6 +36,18 @@
     return (typeof window !== 'undefined' && window.LoumooAPI) || null;
   }
 
+  // A proxy/gateway failure (502 HTML page, empty body) is not JSON. Parsing it
+  // blindly surfaced "Unexpected token <" to the user and dropped the status.
+  function readJson(res) {
+    return res.json().catch(function () { return null; }).then(function (body) {
+      if (!body || typeof body !== 'object') body = {};
+      if (!res.ok && body.status !== 'error' && !body.error) {
+        return { status: 'error', message: 'The LOUMOO service is temporarily unavailable. Please try again.' };
+      }
+      return body;
+    });
+  }
+
   var LoumooAuthService = {
     init: function (configOptions) {
       if (configOptions) state.config = configOptions;
@@ -66,7 +78,10 @@
     },
 
     isSignedIn: function () {
-      return Boolean(state.session || (typeof localStorage !== 'undefined' && localStorage.getItem('loumoo_token')));
+      // init() hands the stored token to LoumooAPI, which moves it out of
+      // localStorage — so the API client's token must count as signed in too.
+      var api = getApi();
+      return Boolean(state.session || (api && api.getAuthToken()) || (typeof localStorage !== 'undefined' && localStorage.getItem('loumoo_token')));
     },
 
     getToken: function () {
@@ -96,7 +111,7 @@
           city: params.city
         })
       })
-      .then(function (res) { return res.json(); })
+      .then(readJson)
       .then(function (res) {
         if (res.status === 'error' || res.error) {
           throw new Error(res.message || (res.error && res.error.message) || 'Registration failed');
@@ -122,7 +137,7 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email, code: cleanCode })
       })
-      .then(function (res) { return res.json(); })
+      .then(readJson)
       .then(function (res) {
         if (res.status === 'error' || res.error) {
           throw new Error(res.message || (res.error && res.error.message) || 'Verification failed');
@@ -150,10 +165,10 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email })
       })
-      .then(function (res) { return res.json(); })
+      .then(readJson)
       .then(function (res) {
         if (res.status === 'error' || res.error) {
-          throw new Error(res.message || 'Could not resend code');
+          throw new Error(res.message || (res.error && res.error.message) || 'Could not resend code');
         }
         return true;
       });
@@ -168,7 +183,7 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email, password: password })
       })
-      .then(function (res) { return res.json(); })
+      .then(readJson)
       .then(function (res) {
         if (res.status === 'error' || res.error) {
           throw new Error(res.message || (res.error && res.error.message) || 'That email or password is incorrect.');
@@ -198,7 +213,7 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email })
       })
-      .then(function (res) { return res.json(); })
+      .then(readJson)
       .then(function (res) {
         if (res.status === 'error' || res.error) {
           throw new Error(res.message || (res.error && res.error.message) || 'Could not send reset code');
@@ -216,7 +231,7 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email, code: cleanCode, newPassword: newPassword })
       })
-      .then(function (res) { return res.json(); })
+      .then(readJson)
       .then(function (res) {
         if (res.status === 'error' || res.error) {
           throw new Error(res.message || (res.error && res.error.message) || 'Could not reset password');

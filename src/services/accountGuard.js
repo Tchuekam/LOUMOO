@@ -29,7 +29,8 @@
   var cache = {
     state: null,       // the last server answer
     fetchedAt: 0,
-    inflight: null
+    inflight: null,
+    generation: 0      // bumped by invalidate() so a late answer is discarded
   };
 
   var FRESHNESS_MS = 15000;
@@ -63,35 +64,46 @@
       if (fresh) return Promise.resolve(cache.state);
       if (cache.inflight) return cache.inflight;
 
+      // A request started before invalidate() (e.g. sign-out) must not write its
+      // now-stale answer back into the cache when it finally settles.
+      var generation = cache.generation;
+
       // Do not make an unauthenticated network call if no token exists
       return client.resolveToken().then(function (token) {
         if (!token) {
-          cache.state = null;
-          cache.fetchedAt = Date.now();
-          cache.inflight = null;
+          if (generation === cache.generation) {
+            cache.state = null;
+            cache.fetchedAt = Date.now();
+            cache.inflight = null;
+          }
           return null;
         }
 
-        cache.inflight = client.getAccountState()
+        var request = client.getAccountState()
         .then(function (state) {
+          if (generation !== cache.generation) return state;
           cache.state = state;
           cache.fetchedAt = Date.now();
           cache.inflight = null;
           return state;
         })
         .catch(function (err) {
-          cache.inflight = null;
+          var current = generation === cache.generation;
+          if (current) cache.inflight = null;
           // A rejected session is a real answer: the user is signed out.
           if (err && (err.status === 401 || err.status === 403)) {
-            cache.state = null;
-            cache.fetchedAt = Date.now();
+            if (current) {
+              cache.state = null;
+              cache.fetchedAt = Date.now();
+            }
             return null;
           }
           // A network failure is NOT proof of anything. Keep what we had.
           throw err;
         });
 
-        return cache.inflight;
+        if (generation === cache.generation) cache.inflight = request;
+        return request;
       });
     },
 
@@ -105,6 +117,7 @@
       cache.state = null;
       cache.fetchedAt = 0;
       cache.inflight = null;
+      cache.generation += 1;
     },
 
     /** Replaces the cache with a state the server just returned. */
