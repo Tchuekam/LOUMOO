@@ -137,8 +137,9 @@ class ImageBackgroundService {
       return (flags & 0x10) !== 0;
     }
     if (fourCC === 'VP8L') {
-      // Lossless WebP can contain alpha
-      return true;
+      // Lossless header: 1 signature byte, 14-bit width, 14-bit height, then the
+      // alpha_is_used bit (bit 28). Opaque lossless images must not be TRANSPARENT.
+      return ((buf.readUInt32LE(21) >>> 28) & 1) === 1;
     }
     return false;
   }

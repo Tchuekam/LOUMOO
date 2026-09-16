@@ -87,6 +87,9 @@ function nativeFetch(url, options = {}) {
       timeout: 45000
     }, (res) => {
       const chunks = [];
+      // A socket reset mid-body errors the response, not the request; without
+      // this listener the promise never settles and the 'error' is uncaught.
+      res.on('error', reject);
       res.on('data', c => chunks.push(c));
       res.on('end', () => {
         const buf = Buffer.concat(chunks);
@@ -111,7 +114,12 @@ function nativeFetch(url, options = {}) {
       req.destroy(new Error(`Request to ${parsed.host} timed out after 15000ms`));
     });
 
-    req.on('error', reject);
+    req.on('error', (err) => {
+      // An idle keep-alive socket closed by the server resets before the request
+      // is read (Node's documented reusedSocket case), so a resend is safe.
+      if (req.reusedSocket && err && err.code === 'ECONNRESET') err.reusedSocket = true;
+      reject(err);
+    });
 
     if (bodyBuffer) {
       req.write(bodyBuffer);
@@ -120,8 +128,14 @@ function nativeFetch(url, options = {}) {
   });
 }
 
+// Errors raised before a connection exists, so the request never reached
+// PostgREST and resending it cannot duplicate a write.
+const PRE_CONNECT_ERRORS = ['ENOTFOUND', 'EAI_AGAIN', 'ECONNREFUSED', 'UND_ERR_CONNECT_TIMEOUT'];
+
 async function resilientNativeFetch(url, options = {}) {
   const maxAttempts = 4;
+  const method = String(options.method || 'GET').toUpperCase();
+  const idempotentMethod = method === 'GET' || method === 'HEAD' || method === 'OPTIONS';
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
       return await nativeFetch(url, options);
@@ -144,7 +158,11 @@ async function resilientNativeFetch(url, options = {}) {
         code === 'EAI_AGAIN' ||
         code === 'ECONNREFUSED'
       );
-      if (attempt === maxAttempts || !isTransient) {
+      // A timeout or reset after the request was sent may mean the insert/update
+      // already committed; replaying a POST/PATCH/DELETE would duplicate it.
+      const safeToResend = idempotentMethod || Boolean(err && err.reusedSocket) ||
+        PRE_CONNECT_ERRORS.some(e => code === e || msg.includes(e));
+      if (attempt === maxAttempts || !isTransient || !safeToResend) {
         throw err;
       }
       logger.warn(`[SupabaseClient] Retrying HTTP request (${attempt}/${maxAttempts}) due to: ${err.message || code}`);

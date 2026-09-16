@@ -55,14 +55,18 @@ if (adminDb) {
           this._dispatchAsync(event);
           return data.id;
         }
+        // A returned (not thrown) insert error used to fall through to the
+        // memory queue with no trace, hiding that the event is not durable.
+        logger.error(`[OutboxService] Outbox insert for ${event.eventType} failed, queuing in memory: ${(error && (error.code || error.message)) || 'no row returned'}`);
       }
     } catch (err) {
       handleDatabaseFailure(err, 'Supabase outbox write failed, queuing in memory');
     }
 
-    this.inMemoryOutbox.push({ ...record, id: `mem_${Date.now()}_${Math.random()}` });
+    const fallbackId = `mem_${Date.now()}_${Math.random()}`;
+    this.inMemoryOutbox.push({ ...record, id: fallbackId });
     this._dispatchAsync(event);
-    return record.id;
+    return fallbackId;
   }
 
   /**
@@ -168,6 +172,10 @@ if (adminDb) {
       }
       processed += 1;
     }
+
+    // Settled in-memory rows are never claimed again; dropping them keeps the
+    // degraded-mode queue from growing without bound for the process lifetime.
+    this.inMemoryOutbox = this.inMemoryOutbox.filter(e => e.status === 'PENDING');
 
     return { processed };
   }

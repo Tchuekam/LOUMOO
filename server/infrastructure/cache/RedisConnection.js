@@ -33,11 +33,15 @@ class RedisConnection {
             return false;
           },
           retryStrategy(times) {
-            if (times > 1) {
-              logger.warn('[Redis] Redis unavailable; using in-memory distributed lock fallback.');
-              return null;
+            // Returning a non-number makes ioredis abandon the connection for
+            // the remaining life of the process: `status` never reaches 'ready'
+            // again, so every Redis-backed service stays pinned to its degraded
+            // fallback even after Redis comes back. Keep reconnecting with
+            // capped backoff and warn once instead of giving up.
+            if (times === 2) {
+              logger.warn('[Redis] Redis unavailable; using in-memory fallbacks until the connection is restored.');
             }
-            return 250;
+            return Math.min(times * 250, 10000);
           }
         });
 
@@ -62,6 +66,31 @@ class RedisConnection {
       }
     }
     return instance;
+  }
+
+  /**
+   * Resolve true once `client` can serve commands. A client that is still
+   * connecting (cold start) or reconnecting gets a bounded wait instead of
+   * being reported unavailable on the first request after boot. The listener
+   * is removed on timeout so an outage cannot accumulate 'ready' handlers.
+   */
+  static waitForReady(client, timeoutMs = 2500) {
+    if (!client) return Promise.resolve(false);
+    if (client.status === 'ready') return Promise.resolve(true);
+    if (!['connecting', 'connect', 'reconnecting'].includes(client.status)) {
+      return Promise.resolve(false);
+    }
+    return new Promise(resolve => {
+      const onReady = () => {
+        clearTimeout(timer);
+        resolve(true);
+      };
+      const timer = setTimeout(() => {
+        client.removeListener('ready', onReady);
+        resolve(client.status === 'ready');
+      }, timeoutMs);
+      client.once('ready', onReady);
+    });
   }
 }
 

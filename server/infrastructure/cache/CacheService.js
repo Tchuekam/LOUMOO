@@ -6,10 +6,31 @@
 const RedisConnection = require('./RedisConnection');
 const logger = require('../../shared/logging/logger');
 
+// The memory fallback has no server-side reaper the way Redis EXPIRE does, so
+// expired entries are swept here. Sweeping is time-gated so a full scan never
+// runs per operation.
+const MEMORY_SWEEP_INTERVAL_MS = 30000;
+
 class CacheService {
   constructor() {
     this.redis = RedisConnection.getInstance();
     this.memoryFallback = new Map(); // key -> { value, expiresAt }
+    this.lastMemorySweepAt = 0;
+  }
+
+  /**
+   * Drop entries whose TTL has elapsed. Without this, a key that is written
+   * while Redis is down and never read again stays resident forever, so the
+   * fallback map grows without bound for the life of the process.
+   */
+  _sweepMemoryFallback(now) {
+    if (now - this.lastMemorySweepAt < MEMORY_SWEEP_INTERVAL_MS) return;
+    this.lastMemorySweepAt = now;
+    for (const [key, item] of this.memoryFallback) {
+      if (!item || item.expiresAt <= now) {
+        this.memoryFallback.delete(key);
+      }
+    }
   }
 
   _getKey(key, namespace = 'loumoo') {
@@ -56,10 +77,12 @@ class CacheService {
     }
 
     // Memory fallback
+    const now = Date.now();
     this.memoryFallback.set(fullKey, {
       value,
-      expiresAt: Date.now() + (ttlSeconds * 1000)
+      expiresAt: now + (ttlSeconds * 1000)
     });
+    this._sweepMemoryFallback(now);
     return true;
   }
 

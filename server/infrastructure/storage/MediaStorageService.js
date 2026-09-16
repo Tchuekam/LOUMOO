@@ -180,7 +180,11 @@ class MediaStorageService {
         width: probe.width || null,
         height: probe.height || null,
         checksum_sha256: checksum,
-        status: 'STAGED'
+        // Nothing ever attaches a verification document, so a STAGED row would be
+        // deleted from the bucket by the 24h orphan sweep while it is still
+        // pending review (its URL is stored on the store verification record).
+        status: 'ATTACHED',
+        attached_at: new Date().toISOString()
       })
       .select('*')
       .single();
@@ -199,14 +203,15 @@ class MediaStorageService {
         });
 
       if (uploadError) {
-        if (process.env.NODE_ENV === 'test' || /mime type.*not supported|fetch failed|ENOTFOUND|ECONNREFUSED/i.test(uploadError.message || '')) {
+        // Production must not report a document that never reached storage as uploaded.
+        if (process.env.NODE_ENV === 'test' || (process.env.NODE_ENV !== 'production' && /mime type.*not supported|fetch failed|ENOTFOUND|ECONNREFUSED/i.test(uploadError.message || ''))) {
           logger.warn(`[MediaStorage] Storage warning: ${uploadError.message}. Staging verification document record.`);
         } else {
           throw uploadError;
         }
       }
     } catch (err) {
-      if (process.env.NODE_ENV === 'test' || /mime type.*not supported|fetch failed|ENOTFOUND|ECONNREFUSED/i.test(err.message || '')) {
+      if (process.env.NODE_ENV === 'test' || (process.env.NODE_ENV !== 'production' && /mime type.*not supported|fetch failed|ENOTFOUND|ECONNREFUSED/i.test(err.message || ''))) {
         logger.warn(`[MediaStorage] Storage error fallback: ${err.message}. Proceeding with staged document.`);
       } else {
         await quiet(() => this.db.schema('system').from('upload_sessions').delete().eq('id', session.id));
@@ -353,7 +358,11 @@ class MediaStorageService {
     if (at === -1) return url;
 
     const storagePath = decodeURIComponent(url.slice(at + marker.length).split('?')[0]);
-    if (!storagePath) return url;
+    // The URL is caller-supplied (announcement media) and the key is spliced raw
+    // into the service-role storage API path: a `..` segment would sign objects
+    // in other buckets, and a private verification document must never be
+    // re-signed for a public viewer. Only listing media keys are refreshed.
+    if (!/^stores\/[A-Za-z0-9_\-./]+$/.test(storagePath) || storagePath.split('/').includes('..')) return url;
 
     const fresh = await this.createSignedUrl(storagePath);
     return fresh || url;
@@ -398,6 +407,14 @@ class MediaStorageService {
       });
     }
 
+    // A DISCARDED/ORPHANED upload's object has been (or is about to be) deleted
+    // from the bucket; attaching it would publish a broken image and flip the
+    // row back to ATTACHED.
+    const gone = found.filter(u => u.status === 'DISCARDED' || u.status === 'ORPHANED');
+    if (gone.length > 0) {
+      throw new NotFoundError('Upload', gone.map(u => u.id).join(', '));
+    }
+
     return found;
   }
 
@@ -420,11 +437,20 @@ class MediaStorageService {
   static async discard(uploadIds, reason = 'rolled back') {
     if (!Array.isArray(uploadIds) || uploadIds.length === 0) return { removed: 0 };
 
-    const { data } = await this.db
+    const { data, error: lookupError } = await this.db
       .schema('system')
       .from('upload_sessions')
       .select('id, storage_path')
       .in('id', uploadIds);
+
+    if (lookupError) {
+      // Without the paths we cannot delete the objects; marking the rows
+      // DISCARDED here would hide real files from the sweeper forever.
+      await quiet(() => this.db.schema('system').from('upload_sessions')
+        .update({ status: 'ORPHANED' }).in('id', uploadIds));
+      logger.error(`[MediaStorage] Discard lookup failed (${reason}); marked ORPHANED: ${lookupError.message}`);
+      return { removed: 0, orphaned: uploadIds.length };
+    }
 
     const paths = (data || []).map(r => r.storage_path).filter(Boolean);
 
@@ -507,3 +533,7 @@ function sanitizeSegment(value) {
 
 module.exports = MediaStorageService;
 module.exports.LIMITS = LIMITS;
+// server/index.js destructures `{ MediaStorageService }` from this module; without
+// the named alias its hourly orphan sweep calls a method on undefined and the
+// sweeper is silently dead.
+module.exports.MediaStorageService = MediaStorageService;

@@ -8,13 +8,15 @@ if (typeof dns.setDefaultResultOrder === 'function') {
   dns.setDefaultResultOrder('ipv4first');
 }
 
+// Sentry v8 only instruments Express when it is initialised before express is
+// required; loading it after express silently disabled request tracing.
+const { Sentry } = require('./clients/sentry');
 const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
 const config = require('./config/env');
 const { assertProductionConfig, validateProductionConfig } = require('./config/env');
-const { Sentry } = require('./clients/sentry');
 const logger = require('./shared/logging/logger');
 const requestContext = require('./shared/middleware/requestContext');
 const errorHandler = require('./shared/middleware/errorHandler');
@@ -291,7 +293,7 @@ if (require.main === module) {
   // killing the process. Drained in-flight requests, stopped workers, closed
   // Redis and exited cleanly so no event is half-written.
   let shuttingDown = false;
-  async function shutdown(signal) {
+  async function shutdown(signal, exitCode = 0) {
     if (shuttingDown) return;
     shuttingDown = true;
     logger.info(`[Shutdown] Received ${signal} — draining connections (max 10s).`);
@@ -309,7 +311,7 @@ if (require.main === module) {
         if (redis && redis.status === 'ready') await redis.quit();
       } catch (_) { /* Redis optional at shutdown */ }
       logger.info('[Shutdown] Complete. Bye.');
-      process.exit(0);
+      process.exit(exitCode);
     });
   }
   process.on('SIGTERM', () => shutdown('SIGTERM'));
@@ -318,7 +320,10 @@ if (require.main === module) {
     logger.warn(`[Process] Unhandled Rejection: ${reason && reason.message || reason}`);
   });
   process.on('uncaughtException', (err) => {
-    logger.error(`[Process] Uncaught Exception: ${err && err.message || err}`);
+    logger.error(`[Process] Uncaught Exception: ${err && err.stack || err}`);
+    // Node's state is undefined after an uncaught exception (and a failed
+    // listen() lands here too); drain and exit non-zero so the platform restarts.
+    shutdown('uncaughtException', 1);
   });
 }
 

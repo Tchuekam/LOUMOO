@@ -7,12 +7,13 @@
 const nodemailer = require('nodemailer');
 const config = require('../config');
 
-const appPass = ((config.google && config.google.appPassword) || config.googleAppPassword || process.env.GOOGLE_APP_PASSWORD || 'xvck bffw bohe smyw').replace(/\s+/g, '');
+const appPass = ((config.google && config.google.appPassword) || process.env.GOOGLE_APP_PASSWORD || '').replace(/\s+/g, '');
 const smtpUser = 'rebornedbetalpha@gmail.com';
 
 let smtpTransporter = null;
 
 try {
+  if (!appPass) throw new Error('GOOGLE_APP_PASSWORD not configured — Gmail SMTP transport is DISABLED.');
   smtpTransporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {

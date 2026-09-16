@@ -22,7 +22,7 @@ class VoiceProvider {
     }
 
     try {
-      const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
+      const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${encodeURIComponent(voiceId)}`, {
         method: 'POST',
         headers: {
           'xi-api-key': config.elevenlabs.apiKey,

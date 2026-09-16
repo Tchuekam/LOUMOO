@@ -19,6 +19,16 @@ if (config.resend.apiKey) {
   }
 }
 
+/** Display names come from the identity provider, so they never enter the markup raw. */
+function escapeHtml(value) {
+  return String(value == null ? '' : value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 class EmailProvider {
   /**
    * Dispatch transactional email
@@ -38,18 +48,27 @@ class EmailProvider {
       return { id: null, sent: false, reason: 'RESEND_API_KEY not configured' };
     }
 
+    if (!resendInstance) {
+      // The key is configured but the client never initialised. Falling through
+      // would return undefined and report an unsent email as sent.
+      throw new ExternalServiceError('Resend', 'Resend client is not initialized', { to, subject });
+    }
+
     try {
-      if (resendInstance) {
-        const result = await resendInstance.emails.send({
-          from,
-          to: Array.isArray(to) ? to : [to],
-          subject,
-          html,
-          text: text || undefined
-        });
-        logger.info(`[EmailProvider] Email sent to ${to} (${result.id || 'ok'})`);
-        return result;
+      const result = await resendInstance.emails.send({
+        from,
+        to: Array.isArray(to) ? to : [to],
+        subject,
+        html,
+        text: text || undefined
+      });
+      // The Resend SDK resolves with { data, error } and does NOT reject on an
+      // API error, so an unchecked result swallows every delivery failure.
+      if (result && result.error) {
+        throw new Error(result.error.message || result.error.name || 'Resend rejected the message');
       }
+      logger.info(`[EmailProvider] Email sent to ${to} (${(result && result.data && result.data.id) || 'ok'})`);
+      return result;
     } catch (err) {
       logger.error(`[EmailProvider] Failed sending email to ${to}`, err);
       throw new ExternalServiceError('Resend', err.message, { to, subject });
@@ -65,7 +84,7 @@ class EmailProvider {
       subject: 'Welcome to LOUMOO — Universal Commerce Ecosystem',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; color: #111;">
-          <h1 style="color: #007aff; font-size: 24px;">Welcome to LOUMOO, ${userName}!</h1>
+          <h1 style="color: #007aff; font-size: 24px;">Welcome to LOUMOO, ${escapeHtml(userName)}!</h1>
           <p style="font-size: 15px; line-height: 1.6;">Your universal digital commerce account is ready. Explore physical goods, verified hotel suites, intercity transit, and services across Central Africa.</p>
           <div style="margin: 24px 0;">
             <a href="${config.baseUrl}/app" style="background: #007aff; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold; display: inline-block;">Open LOUMOO App</a>

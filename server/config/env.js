@@ -110,18 +110,27 @@ const envSchema = z.object({
   RESEND_API_KEY: z.string().optional()
 });
 
-const parsedEnv = envSchema.safeParse(process.env);
+let parsedEnv = envSchema.safeParse(process.env);
 
 if (!parsedEnv.success) {
   console.error('[EnvValidation] Critical environment configuration errors:');
   parsedEnv.error.issues.forEach(issue => {
     console.error(`  - ${issue.path.join('.')}: ${issue.message}`);
   });
+  // Discard only the invalid variables. Falling back to raw process.env for
+  // everything (e.g. because SUPABASE_ANON_KEY= is empty) left CORS_ORIGINS a
+  // plain string, so `corsOrigins.includes(origin)` became a substring match
+  // that admitted look-alike origins with credentials.
+  const validOnly = { ...process.env };
+  parsedEnv.error.issues.forEach(issue => { delete validOnly[issue.path[0]]; });
+  parsedEnv = envSchema.safeParse(validOnly);
 }
 
 const env = parsedEnv.success ? parsedEnv.data : process.env;
 
-const nodeEnv = env.NODE_ENV || 'development';
+// An invalid NODE_ENV (e.g. "prod") must not be discarded in favour of the
+// 'development' default, which would enable development-only behaviour.
+const nodeEnv = process.env.NODE_ENV || env.NODE_ENV || 'development';
 const isProduction = nodeEnv === 'production';
 const isTest = nodeEnv === 'test';
 

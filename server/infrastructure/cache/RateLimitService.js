@@ -40,10 +40,31 @@ function normalizeAddress(value) {
   }
 }
 
+// The memory fallback has no server-side reaper the way Redis EXPIRE does, so
+// exhausted buckets are swept here. Sweeping is time-gated so a full scan never
+// runs per request.
+const MEMORY_SWEEP_INTERVAL_MS = 30000;
+
 class RateLimitService {
   constructor() {
     this.redis = RedisConnection.getInstance();
-    this.memoryBuckets = new Map(); // key -> [timestamps]
+    this.memoryBuckets = new Map(); // key -> { timestamps, expiresAt }
+    this.lastMemorySweepAt = 0;
+  }
+
+  /**
+   * Drop buckets whose window has fully elapsed. Without this the fallback map
+   * keeps one entry per distinct caller key forever, so a Redis outage plus
+   * rotating source addresses grows it without bound until the process dies.
+   */
+  _sweepMemoryBuckets(now) {
+    if (now - this.lastMemorySweepAt < MEMORY_SWEEP_INTERVAL_MS) return;
+    this.lastMemorySweepAt = now;
+    for (const [key, bucket] of this.memoryBuckets) {
+      if (!bucket || bucket.expiresAt <= now) {
+        this.memoryBuckets.delete(key);
+      }
+    }
   }
 
   /**
@@ -121,10 +142,12 @@ class RateLimitService {
     }
 
     // In-memory fallback
-    let timestamps = this.memoryBuckets.get(rateLimitKey) || [];
+    const bucket = this.memoryBuckets.get(rateLimitKey);
+    let timestamps = bucket ? bucket.timestamps : [];
     timestamps = timestamps.filter(ts => ts > windowStart);
     timestamps.push(now);
-    this.memoryBuckets.set(rateLimitKey, timestamps);
+    this.memoryBuckets.set(rateLimitKey, { timestamps, expiresAt: now + windowMs });
+    this._sweepMemoryBuckets(now);
 
     if (timestamps.length > maxRequests) {
       throw new RateLimitError(`Rate limit exceeded (${timestamps.length}/${maxRequests}).`, windowSeconds);
@@ -172,7 +195,8 @@ class RateLimitService {
         // signed webhook is also allowed to reach its signature verifier so a
         // missing Redis instance cannot turn an unsigned-event configuration
         // check into a generic infrastructure response. All other API traffic
-        // fails closed below because it cannot be safely rate-limited.
+        // falls through to the in-memory sliding window below: an unreachable
+        // Redis must degrade the limiter, never take the whole API down.
         const path = req.originalUrl || req.path || '';
         const operationalProbe = /^\/api\/v1\/(?:health|healthz)(?:[/?]|$)/.test(path);
         const signedWebhook = /^\/api\/v1\/webhooks\/clerk(?:[/?]|$)/.test(path);

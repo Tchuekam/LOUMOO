@@ -5,6 +5,8 @@
 
 const crypto = require('crypto');
 const RedisConnection = require('./RedisConnection');
+const { config } = require('../../config/env');
+const { ServiceUnavailableError } = require('../../shared/errors/AppError');
 const logger = require('../../shared/logging/logger');
 
 class DistributedLockService {
@@ -18,21 +20,41 @@ class DistributedLockService {
    * @param {string} resourceKey - Name of resource to lock
    * @param {number} ttlMs - Lock expiration in milliseconds
    * @returns {Promise<string|null>} Lock token if acquired, null if already locked
+   * @throws {ServiceUnavailableError} in production when Redis is configured but
+   *   cannot be reached. This is deliberately NOT a null return: callers such as
+   *   SeatInventoryService retry a null up to 25 times, and each retry would sit
+   *   in waitForReady again (~60s in total) before reporting a misleading
+   *   "busy" conflict instead of an infrastructure outage.
    */
   async acquireLock(resourceKey, ttlMs = 5000) {
     const lockKey = `lock:${resourceKey}`;
     const lockToken = crypto.randomUUID();
 
     try {
-      if (this.redis && this.redis.status === 'ready') {
+      const redisReady = this.redis && (this.redis.status === 'ready' ||
+        (config.isProduction && await RedisConnection.waitForReady(this.redis)));
+      if (redisReady) {
         const result = await this.redis.set(lockKey, lockToken, 'PX', ttlMs, 'NX');
         if (result === 'OK') {
           return lockToken;
         }
         return null;
       }
+      if (this.redis && config.isProduction) {
+        // Redis is the configured cross-instance source of truth. A per-process
+        // map would let every instance grant this same lock, so refuse instead.
+        logger.warn(`[DistributedLockService] Redis not ready (status=${this.redis.status}); lock '${resourceKey}' not acquired.`);
+        throw new ServiceUnavailableError('Reservation locking is temporarily unavailable');
+      }
     } catch (err) {
+      if (err instanceof ServiceUnavailableError) throw err;
       logger.warn(`[DistributedLockService] Redis lock acquisition error: ${err.message}`);
+      // A mutex must never silently degrade to a per-process map while Redis is
+      // the configured source of truth in production: every instance would then
+      // hand out the same lock. Refuse explicitly (503) rather than fail open.
+      if (config.isProduction) {
+        throw new ServiceUnavailableError('Reservation locking is temporarily unavailable');
+      }
     }
 
     // In-memory fallback
@@ -65,8 +87,10 @@ class DistributedLockService {
             return 0
           end
         `;
-        await this.redis.eval(luaScript, 1, lockKey, lockToken);
-        return true;
+        // A 0 reply means the key was gone or already owned by someone else
+        // (TTL elapsed mid-work), so the caller must not be told it released it.
+        const released = await this.redis.eval(luaScript, 1, lockKey, lockToken);
+        return Number(released) === 1;
       }
     } catch (err) {
       logger.warn(`[DistributedLockService] Redis lock release error: ${err.message}`);

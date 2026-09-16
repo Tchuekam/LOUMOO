@@ -61,6 +61,10 @@ function readJpegDimensions(buf) {
 
     const marker = buf[offset + 1];
 
+    // Any marker may be preceded by 0xFF fill bytes; reading a length here
+    // would skip to a garbage offset and reject a valid JPEG as corrupt.
+    if (marker === 0xFF) { offset++; continue; }
+
     // Standalone markers carry no length field.
     if (marker === 0xD8 || marker === 0x01 || (marker >= 0xD0 && marker <= 0xD7)) {
       offset += 2;

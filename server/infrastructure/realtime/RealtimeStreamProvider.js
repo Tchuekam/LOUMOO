@@ -14,16 +14,24 @@ class RealtimeStreamProvider {
     this.subscribers = new Set();
     this.isConnected = false;
     this.reconnectTimer = null;
+    this.boundingBoxes = null;
+    this.stopped = false;
   }
 
   /**
    * Connect to global AIS maritime stream with geographic bounding box
    */
-  connect(boundingBoxes = [[[3.0, 9.0], [5.0, 10.5]]]) { // Gulf of Guinea / Cameroon coast
+  connect(boundingBoxes = this.boundingBoxes || [[[3.0, 9.0], [5.0, 10.5]]]) { // Gulf of Guinea / Cameroon coast
     if (!this.apiKey) {
       logger.warn('[AISStream] API key missing; stream disabled.');
       return;
     }
+
+    // A reconnect must not resurrect a stream that close() deliberately stopped.
+    this.stopped = false;
+    // Remembered so a reconnect re-subscribes to the caller's geofence rather
+    // than silently falling back to the default bounding box.
+    this.boundingBoxes = boundingBoxes;
 
     if (this.socket && (this.socket.readyState === WebSocket.OPEN || this.socket.readyState === WebSocket.CONNECTING)) {
       return;
@@ -66,8 +74,11 @@ class RealtimeStreamProvider {
   }
 
   _scheduleReconnect() {
+    if (this.stopped) return;
     if (this.reconnectTimer) clearTimeout(this.reconnectTimer);
     this.reconnectTimer = setTimeout(() => this.connect(), 10000);
+    // A pending reconnect must not hold the process open during shutdown.
+    if (typeof this.reconnectTimer.unref === 'function') this.reconnectTimer.unref();
   }
 
   _broadcast(message) {
@@ -86,11 +97,23 @@ class RealtimeStreamProvider {
   }
 
   close() {
-    if (this.reconnectTimer) clearTimeout(this.reconnectTimer);
+    // Set before closing the socket: the 'close' listener fires afterwards and
+    // would otherwise schedule a reconnect that revives the stream we just shut
+    // down (and keeps a live timer behind).
+    this.stopped = true;
+    if (this.reconnectTimer) {
+      clearTimeout(this.reconnectTimer);
+      this.reconnectTimer = null;
+    }
     if (this.socket) {
+      this.socket.removeAllListeners();
+      // close() on a CONNECTING socket emits 'error' on the next tick; with no
+      // listener left that event is thrown and crashes the process.
+      this.socket.on('error', () => {});
       this.socket.close();
       this.socket = null;
     }
+    this.isConnected = false;
   }
 }
 
