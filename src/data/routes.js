@@ -65,12 +65,13 @@ export const routes = {
   transactions: { title: 'Transactions Ledger', section: 'tools' },
   settings: { title: 'Settings', section: 'profile' },
   profile: { title: 'User Profile', section: 'profile' },
-  publicUserProfile: { title: 'Member Profile', section: 'profile' }
+  publicUserProfile: { title: 'Member Profile', section: 'profile' },
+  superAdmin: { title: 'Super Admin Control Center', section: 'admin' }
 };
 
 export const NO_NAV_SCREENS = [
   'filters', 'voice', 'visual', 'visualScan', 'visualResults',
   'threadAi', 'threadSeller', 'checkout', 'paying', 'success',
   'upload', 'uploadDetails', 'uploadPrice', 'uploadSuccess',
-  'travelPassenger', 'travelTicket'
+  'travelPassenger', 'travelTicket', 'superAdmin'
 ];
