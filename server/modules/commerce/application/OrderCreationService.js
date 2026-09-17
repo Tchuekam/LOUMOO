@@ -177,10 +177,29 @@ class OrderCreationService {
       }
 
       // 4. Server-Authoritative Pricing Calculation
+      let standardShippingFeeXaf = null;
+      if (data.deliveryMethod !== DELIVERY_METHOD.STORE_PICKUP) {
+        try {
+          const SuperAdminRepository = require('../../../../SuperAdmin/backend/repositories/SuperAdminRepository');
+          const cityRates = await SuperAdminRepository.getSetting('shipping_rates_by_city');
+          const city = data.shippingAddress?.city || data.city;
+          if (cityRates && typeof cityRates === 'object' && city) {
+            const normalizedCity = String(city).trim().toLowerCase();
+            for (const [cityName, rate] of Object.entries(cityRates)) {
+              if (cityName.toLowerCase() === normalizedCity && Number.isInteger(Number(rate))) {
+                standardShippingFeeXaf = Number(rate);
+                break;
+              }
+            }
+          }
+        } catch (_) {}
+      }
+
       const clientSuppliedTotal = data.totalAmountXaf ?? data.totalXaf ?? null;
       const pricing = PricingEngine.calculateOrderPricing(evaluatedItems, {
         deliveryMethod: data.deliveryMethod,
-        clientSuppliedTotal
+        clientSuppliedTotal,
+        standardShippingFeeXaf
       });
 
       // 5. Construct Order Aggregate
