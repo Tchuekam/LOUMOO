@@ -37,6 +37,7 @@ const adaptiveRoutes = require('./modules/adaptive/presentation/routes/adaptiveR
 const announcementRoutes = require('./modules/announcement/presentation/routes/announcementRoutes');
 const travelRoutes = require('./modules/travel/presentation/routes/travelRoutes');
 const orderRoutes = require('./modules/commerce/presentation/routes/orderRoutes');
+const superAdminRoutes = require('../SuperAdmin/backend/routes/superAdminRoutes');
 
 // Fail fast rather than boot a production server that cannot enforce its own
 // security model. In development the same problems are logged as warnings.
@@ -162,11 +163,13 @@ v1Router.use('/uploads', uploadRoutes);
 v1Router.use('/announcements', announcementRoutes);
 v1Router.use('/travel', travelRoutes);
 v1Router.use('/orders', orderRoutes);
+v1Router.use('/admin', superAdminRoutes);
 
 app.use('/api/v1', v1Router);
 // Direct REST path mount for Travel & Orders API
 app.use('/api/travel', travelRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/admin', superAdminRoutes);
 
 // Root health fallbacks for cloud load balancers
 app.use('/', healthRoutes);
@@ -179,7 +182,18 @@ app.use('/', healthRoutes);
  * secret) are never included — a public key is designed to be seen; a secret
  * key grants full administrative access.
  */
-app.get('/api/config', (req, res) => {
+app.get('/api/config', async (req, res) => {
+  let systemSettings = null;
+  try {
+    const SuperAdminService = require('../SuperAdmin/backend/services/SuperAdminService');
+    systemSettings = await SuperAdminService.getSystemSettings();
+  } catch (err) {
+    try {
+      const SuperAdminRepository = require('../SuperAdmin/backend/repositories/SuperAdminRepository');
+      systemSettings = await SuperAdminRepository.getAllSettings();
+    } catch (_) {}
+  }
+
   res.json({
     supabase: {
       url: config.supabase.url,
@@ -201,8 +215,27 @@ app.get('/api/config', (req, res) => {
       emailProvider: config.verification.emailProvider,
       phoneProvider: config.verification.phoneProvider,
       phoneEnabled: config.verification.phoneEnabled
-    }
+    },
+    systemSettings
   });
+});
+
+/**
+ * Public Cached System Configuration
+ * /api/v1/config & /api/config/system
+ */
+app.get(['/api/v1/config', '/api/config/system'], async (req, res, next) => {
+  try {
+    const SuperAdminService = require('../SuperAdmin/backend/services/SuperAdminService');
+    const systemSettings = await SuperAdminService.getSystemSettings();
+    res.set('Cache-Control', 'public, max-age=60, stale-while-revalidate=120');
+    res.json({
+      success: true,
+      data: { systemSettings }
+    });
+  } catch (err) {
+    next(err);
+  }
 });
 
 // Unknown API routes must never fall through to static assets or an HTML SPA
@@ -224,6 +257,37 @@ const publicIndex = path.join(publicRoot, 'index.html');
 const appShell = fs.existsSync(publicIndex)
   ? publicIndex
   : path.resolve(__dirname, '..', 'Commerce App.dc.html');
+
+// Dedicated SuperAdmin control center page
+const superAdminRoot = path.resolve(__dirname, '..', 'SuperAdmin', 'frontend');
+const superAdminIndex = path.join(superAdminRoot, 'index.html');
+
+if (fs.existsSync(superAdminRoot)) {
+  app.use('/superadmin', express.static(superAdminRoot, {
+    dotfiles: 'deny',
+    index: false,
+    fallthrough: true
+  }));
+  app.use('/admin', express.static(superAdminRoot, {
+    dotfiles: 'deny',
+    index: false,
+    fallthrough: true
+  }));
+  app.use('/css', express.static(path.join(superAdminRoot, 'css'), {
+    dotfiles: 'deny',
+    index: false,
+    fallthrough: true
+  }));
+  app.use('/js', express.static(path.join(superAdminRoot, 'js'), {
+    dotfiles: 'deny',
+    index: false,
+    fallthrough: true
+  }));
+}
+
+app.get(['/superadmin', '/superadmin/', '/admin', '/admin/'], (req, res) => {
+  res.sendFile(superAdminIndex);
+});
 
 app.get(['/', '/index.html', '/app'], (req, res) => {
   res.sendFile(appShell);
