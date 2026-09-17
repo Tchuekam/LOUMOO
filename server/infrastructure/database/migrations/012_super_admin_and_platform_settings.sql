@@ -22,3 +22,20 @@ VALUES
     ('maintenance_mode', '{"enabled": false, "banner_text": "Maintenance programmée en cours"}'::jsonb, 'Platform maintenance mode toggle', true),
     ('announcement_banner', '{"enabled": true, "text_fr": "Livraison express offerte dès 50 000 XAF d''achats sur LOUMOO !"}'::jsonb, 'Global broadcast banner', true)
 ON CONFLICT (key) DO NOTHING;
+
+-- Part 3: Tamper-Evident Audit Logs Table
+CREATE TABLE IF NOT EXISTS iam.audit_logs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    admin_id VARCHAR(128) NOT NULL,
+    action VARCHAR(64) NOT NULL,
+    resource_type VARCHAR(64) NOT NULL,
+    resource_id VARCHAR(128) NOT NULL,
+    reason TEXT,
+    metadata JSONB DEFAULT '{}'::jsonb,
+    ip_address VARCHAR(45),
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_audit_logs_action ON iam.audit_logs(action);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_resource ON iam.audit_logs(resource_type, resource_id);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_created_at ON iam.audit_logs(created_at DESC);
