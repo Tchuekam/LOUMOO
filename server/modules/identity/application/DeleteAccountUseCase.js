@@ -41,10 +41,18 @@ class DeleteAccountUseCase {
       email: anonymizedEmail,
       phone_number: null,
       avatar_url: null,
+      username: null,
+      bio: null,
+      headline: null,
+      social_links: {},
+      buyer_interests: null,
+      shopping_priorities: null,
       business_name: null,
       tax_niu_number: null,
       rccm_number: null,
       business_address: null,
+      kyc_doc_type: null,
+      kyc_doc_status: 'pending',
       // Verification cannot outlive the identity it belonged to.
       email_verified_at: null,
       phone_verified_at: null,
@@ -112,9 +120,31 @@ class DeleteAccountUseCase {
       piiErrors.push(`followed_stores: ${fsErr.message}`);
     }
 
-    // Deactivate any owned stores
+    // Deactivate any owned stores and purge their store and catalog listing caches
     try {
-      await db.from('stores').update({ status: 'deactivated', is_active: false }).eq('owner_id', userId);
+      const { data: ownedStores } = await db
+        .from('stores')
+        .select('id, slug')
+        .eq('owner_id', userId);
+
+      await db.from('stores').update({
+        status: 'CLOSED',
+        visibility: 'PRIVATE',
+        deleted_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      }).eq('owner_id', userId);
+
+      if (Array.isArray(ownedStores) && ownedStores.length > 0) {
+        for (const s of ownedStores) {
+          if (s.id) {
+            await CacheService.del(`store:public:${s.id}`);
+            await CacheService.delPattern(`listings:store:${s.id}:*`, 'catalog');
+          }
+          if (s.slug) {
+            await CacheService.del(`store:public:${s.slug}`);
+          }
+        }
+      }
     } catch (storeErr) {
       logger.warn(`[DeleteAccount] Could not deactivate stores for user ${userId}: ${storeErr.message}`);
     }
@@ -150,12 +180,26 @@ class DeleteAccountUseCase {
       }
     }
 
-    // 3. Purge every cached copy of the principal, so no request served from
-    //    cache can still resolve the deleted account.
+    // 3. Purge every cached copy of the principal and user-scoped caches,
+    //    so no request served from cache can still resolve the deleted account.
     await ProfileRepository.invalidate(clerkUserId, userId);
-    await CacheService.delete(`identity:profile:${clerkUserId}`);
-    await CacheService.delete(`identity:profile:${userId}`);
-    await CacheService.delete(`identity:public:${userId}`);
+
+    const userDirectKeys = [
+      `addresses:${userId}`,
+      `dashboard:${userId}`,
+      `identity:privacy:${userId}`,
+      `notif_prefs:${userId}`
+    ];
+    await CacheService.delMany(userDirectKeys);
+
+    await Promise.all([
+      CacheService.delPattern(`user_activity:${userId}:*`),
+      CacheService.delPattern(`saved_items:${userId}:*`),
+      CacheService.delPattern(`saved_check:${userId}:*`),
+      CacheService.delPattern(`followed_stores:${userId}:*`),
+      CacheService.delPattern(`follow_check:${userId}:*`),
+      CacheService.delPattern(`purchases:${userId}:*`)
+    ]);
 
     // 4. Log Immutable Security Event
     await AccountSecurityService.logSecurityEvent({

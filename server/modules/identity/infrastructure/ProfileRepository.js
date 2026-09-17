@@ -297,10 +297,27 @@ class ProfileRepository {
   }
 
   static async invalidate(clerkUserId, userId) {
-    const keys = [];
-    if (clerkUserId) keys.push(cacheKey(clerkUserId));
-    if (userId) keys.push(`profile:id:${userId}`);
-    await Promise.all(keys.map(k => CacheService.delete(k, CACHE_NAMESPACE).catch(() => null)));
+    const identityKeys = [];
+    if (clerkUserId) identityKeys.push(cacheKey(clerkUserId));
+    if (userId) {
+      identityKeys.push(`profile:id:${userId}`);
+      identityKeys.push(`profile:public:${userId}`);
+    }
+
+    const loumooKeys = [];
+    if (userId) {
+      loumooKeys.push(`identity:public:${userId}`);
+      loumooKeys.push(`identity:profile_card:${userId}`);
+      loumooKeys.push(`identity:profile:${userId}`);
+    }
+    if (clerkUserId) {
+      loumooKeys.push(`identity:profile:${clerkUserId}`);
+    }
+
+    await Promise.all([
+      identityKeys.length > 0 ? CacheService.deleteMany(identityKeys, CACHE_NAMESPACE).catch(() => null) : Promise.resolve(),
+      loumooKeys.length > 0 ? CacheService.deleteMany(loumooKeys, 'loumoo').catch(() => null) : Promise.resolve()
+    ]);
   }
 }
 
