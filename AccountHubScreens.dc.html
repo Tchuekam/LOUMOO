@@ -368,6 +368,13 @@
 
   <div style="padding:16px;max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:14px">
 
+    <sc-if value="{{ checkoutReturn }}">
+      <div style="background:var(--color-accent-100);border:1px solid var(--color-accent-300);border-radius:var(--radius-sm);padding:10px 14px;display:flex;align-items:center;justify-content:space-between">
+        <span style="font:600 12.5px/1.3 var(--font-body);color:var(--color-accent)">Select a delivery address for your current order</span>
+        <button onClick="{{ cancelAddressSelect }}" class="pub-linkbtn" style="color:var(--color-accent);font-size:12px">Back to Checkout</button>
+      </div>
+    </sc-if>
+
     <sc-if value="{{ addressesLoading }}">
       <div style="display:flex;flex-direction:column;gap:12px">
         <div class="skel" style="height:96px;border-radius:var(--radius-md)"></div>
@@ -412,7 +419,15 @@
               <span>+237 {{ addr.phoneNumber }}</span>
             </div>
 
-            <sc-if value="{{ !addr.isDefault }}">
+            <sc-if value="{{ checkoutReturn }}">
+              <div style="border-top:1px solid var(--color-divider);padding-top:10px;margin-top:2px">
+                <button onClick="{{ () => selectCheckoutAddress(addr) }}" class="btn btn-primary btn-sm" style="height:32px;padding:0 14px;font-size:12px;font-weight:700">
+                  Deliver here
+                </button>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ !checkoutReturn && !addr.isDefault }}">
               <div style="border-top:1px solid var(--color-divider);padding-top:8px;margin-top:2px">
                 <button onClick="{{ () => makeDefaultAddress(addr.id) }}" style="border:none;background:transparent;color:var(--color-text-secondary);font:600 11.5px/1 var(--font-body);padding:0;cursor:pointer;display:flex;align-items:center;gap:4px">
                   <span>☆ Set as default delivery address</span>

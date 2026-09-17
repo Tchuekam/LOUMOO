@@ -148,11 +148,11 @@ def get_checkout_view():
     <div class="card-premium">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
         <div style="font:800 12px/1 var(--font-heading);letter-spacing:.06em;color:var(--color-text-secondary);text-transform:uppercase">1. DELIVERY DESTINATION</div>
-        <button class="btn btn-secondary btn-sm">CHANGE</button>
+        <button class="btn btn-secondary btn-sm" onClick="{{ changeDeliveryDestination }}">CHANGE</button>
       </div>
-      <div style="font:700 14px/1.2 var(--font-heading);color:var(--color-text)">Rostand Tchuekam · +237 690 12 34 56</div>
+      <div style="font:700 14px/1.2 var(--font-heading);color:var(--color-text)">{{ checkoutRecipientName }} · +237 {{ checkoutRecipientPhone }}</div>
       <div style="font:400 12.5px/1.4 var(--font-body);color:var(--color-text-secondary);margin-top:4px">
-        Rue Joss, Bonanjo Commercial District (Near Standard Chartered Bank), Douala
+        {{ checkoutDeliveryAddress }}
       </div>
     </div>
 
