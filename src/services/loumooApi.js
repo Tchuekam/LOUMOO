@@ -57,8 +57,11 @@
     return safeSessionStorage() || safeStorage();
   }
 
-  function baseUrl() {
+  function baseUrl(instance) {
+    if (instance && instance._baseUrl) return instance._baseUrl;
     if (hasWindow() && window.LOUMOO_API_URL) return window.LOUMOO_API_URL;
+    if (typeof globalThis !== 'undefined' && globalThis.LOUMOO_API_URL) return globalThis.LOUMOO_API_URL;
+    if (typeof process !== 'undefined' && process.env && process.env.LOUMOO_API_URL) return process.env.LOUMOO_API_URL;
     if (hasWindow()) return '';           // same-origin: server/index.js serves the app
     return 'http://localhost:8080';
   }
@@ -112,8 +115,14 @@
     var store = tokenStorage();
     this.token = store ? (store.getItem(TOKEN_KEY) || store.getItem('loumoo_supabase_session_token')) : null;
     this._tokenProvider = null;
+    this._baseUrl = null;
     this._inflight = {};
   }
+
+  LoumooApiClient.prototype.setBaseUrl = function (url) {
+    this._baseUrl = url || null;
+    return this;
+  };
 
   /* ---------------------------------------------------------------------- */
   /* Session token                                                          */
@@ -214,7 +223,7 @@
         init.body = JSON.stringify(options.body);
       }
 
-      return fetch(baseUrl() + endpoint, init);
+      return fetch(baseUrl(self) + endpoint, init);
     }).then(function (res) {
       return res.json().catch(function () { return {}; }).then(function (body) {
         if (!res.ok) {
@@ -1283,6 +1292,247 @@
     return this.request('/api/v1/health').catch(function (e) {
       return { status: 'offline', error: e.message };
     });
+  };
+
+  /* ══════════════════════════════════════════════════════════════════════════
+     14. SUPERADMIN & PLATFORM CONTROL (PHASE 3)
+     ══════════════════════════════════════════════════════════════════════════ */
+
+  /**
+   * GET /api/v1/admin/overview
+   * Real-time operational dashboard metrics (GMV, active stores, orders, KYC queue).
+   */
+  LoumooApiClient.prototype.getAdminOverview = function () {
+    return this.request('/api/v1/admin/overview');
+  };
+
+  /**
+   * GET /api/v1/admin/stores
+   * Filterable store directory for administration and compliance.
+   */
+  LoumooApiClient.prototype.getAdminStores = function (filter) {
+    return this.request('/api/v1/admin/stores' + qs(filter));
+  };
+
+  /**
+   * GET /api/v1/admin/stores/:id
+   */
+  LoumooApiClient.prototype.getAdminStore = function (id) {
+    return this.request('/api/v1/admin/stores/' + encodeURIComponent(id));
+  };
+
+  /**
+   * PATCH /api/v1/admin/stores/:id
+   * Updates store metadata, verified status, contact details, or tier.
+   */
+  LoumooApiClient.prototype.updateAdminStore = function (id, updates) {
+    return this.request('/api/v1/admin/stores/' + encodeURIComponent(id), {
+      method: 'PATCH',
+      body: updates || {}
+    });
+  };
+
+  /**
+   * POST /api/v1/admin/stores/:id/verify-kyc
+   */
+  LoumooApiClient.prototype.verifyAdminStoreKyc = function (id, tier, reason) {
+    return this.request('/api/v1/admin/stores/' + encodeURIComponent(id) + '/verify-kyc', {
+      method: 'POST',
+      body: { tier: tier || 'pro_merchant', reason: reason || 'Store KYC verified' }
+    });
+  };
+
+  /**
+   * POST /api/v1/admin/stores/:id/reject-kyc
+   */
+  LoumooApiClient.prototype.rejectAdminStoreKyc = function (id, reason) {
+    return this.request('/api/v1/admin/stores/' + encodeURIComponent(id) + '/reject-kyc', {
+      method: 'POST',
+      body: { reason: reason || 'KYC documentation insufficient' }
+    });
+  };
+
+  /**
+   * POST /api/v1/admin/stores/:id/suspend
+   */
+  LoumooApiClient.prototype.suspendAdminStore = function (id, reason) {
+    return this.request('/api/v1/admin/stores/' + encodeURIComponent(id) + '/suspend', {
+      method: 'POST',
+      body: { reason: reason || 'Violation of marketplace terms' }
+    });
+  };
+
+  /**
+   * POST /api/v1/admin/stores/:id/reactivate
+   */
+  LoumooApiClient.prototype.reactivateAdminStore = function (id, reason) {
+    return this.request('/api/v1/admin/stores/' + encodeURIComponent(id) + '/reactivate', {
+      method: 'POST',
+      body: { reason: reason || 'Store reactivated by administrator' }
+    });
+  };
+
+  /**
+   * GET /api/v1/admin/listings
+   * Filterable listings catalog for content and price moderation.
+   */
+  LoumooApiClient.prototype.getAdminListings = function (filter) {
+    return this.request('/api/v1/admin/listings' + qs(filter));
+  };
+
+  /**
+   * GET /api/v1/admin/listings/:id
+   */
+  LoumooApiClient.prototype.getAdminListing = function (id) {
+    return this.request('/api/v1/admin/listings/' + encodeURIComponent(id));
+  };
+
+  /**
+   * POST /api/v1/admin/listings/:id/moderate
+   * Moderates a listing (e.g. APPROVED, REJECTED, SUSPENDED, or custom updates).
+   */
+  LoumooApiClient.prototype.moderateListing = function (id, action) {
+    var body = typeof action === 'string' ? { action: action } : (action || {});
+    return this.request('/api/v1/admin/listings/' + encodeURIComponent(id) + '/moderate', {
+      method: 'POST',
+      body: body
+    });
+  };
+
+  /**
+   * GET /api/v1/admin/users
+   * User directory query with role and KYC filters.
+   */
+  LoumooApiClient.prototype.getAdminUsers = function (filter) {
+    return this.request('/api/v1/admin/users' + qs(filter));
+  };
+
+  /**
+   * GET /api/v1/admin/users/:id
+   */
+  LoumooApiClient.prototype.getAdminUser = function (id) {
+    return this.request('/api/v1/admin/users/' + encodeURIComponent(id));
+  };
+
+  /**
+   * PATCH /api/v1/admin/users/:id
+   */
+  LoumooApiClient.prototype.updateAdminUser = function (id, updates) {
+    return this.request('/api/v1/admin/users/' + encodeURIComponent(id), {
+      method: 'PATCH',
+      body: updates || {}
+    });
+  };
+
+  /**
+   * PATCH /api/v1/admin/users/:id/role
+   * Updates a user's RBAC role (customer, seller, moderator, admin, super_admin).
+   */
+  LoumooApiClient.prototype.updateAdminUserRole = function (id, role) {
+    var body = typeof role === 'string' ? { role: role } : (role || {});
+    return this.request('/api/v1/admin/users/' + encodeURIComponent(id) + '/role', {
+      method: 'PATCH',
+      body: body
+    });
+  };
+
+  /**
+   * PATCH /api/v1/admin/users/:id/kyc
+   * Updates user identity verification status (unverified, pending, verified, rejected).
+   */
+  LoumooApiClient.prototype.updateAdminUserKyc = function (id, status) {
+    var body = typeof status === 'string' ? { status: status } : (status || {});
+    return this.request('/api/v1/admin/users/' + encodeURIComponent(id) + '/kyc', {
+      method: 'PATCH',
+      body: body
+    });
+  };
+
+  /**
+   * GET /api/v1/admin/orders
+   * Comprehensive order and payment inspection.
+   */
+  LoumooApiClient.prototype.getAdminOrders = function (filter) {
+    return this.request('/api/v1/admin/orders' + qs(filter));
+  };
+
+  /**
+   * GET /api/v1/admin/orders/:id
+   */
+  LoumooApiClient.prototype.getAdminOrder = function (id) {
+    return this.request('/api/v1/admin/orders/' + encodeURIComponent(id));
+  };
+
+  /**
+   * POST /api/v1/admin/orders/:id/escrow
+   * Arbitrates and settles escrow transactions (RELEASE, REFUND, HOLD).
+   */
+  LoumooApiClient.prototype.resolveAdminEscrow = function (id, action) {
+    var body = typeof action === 'string' ? { action: action } : (action || {});
+    return this.request('/api/v1/admin/orders/' + encodeURIComponent(id) + '/escrow', {
+      method: 'POST',
+      body: body
+    });
+  };
+
+  /**
+   * GET /api/config
+   * Retrieves public platform configuration and dynamic system settings.
+   */
+  LoumooApiClient.prototype.getPublicConfig = function () {
+    return this.request('/api/config');
+  };
+
+  /**
+   * GET /api/v1/admin/config
+   * Admin configuration retrieval alias.
+   */
+  LoumooApiClient.prototype.getAdminConfig = function () {
+    return this.request('/api/v1/admin/config');
+  };
+
+  /**
+   * GET /api/v1/admin/settings
+   * Retrieves all dynamic, zero-code system configurations.
+   */
+  LoumooApiClient.prototype.getSystemSettings = function () {
+    return this.request('/api/v1/admin/settings');
+  };
+
+  /**
+   * GET /api/v1/admin/settings/:key
+   */
+  LoumooApiClient.prototype.getSystemSetting = function (key) {
+    return this.request('/api/v1/admin/settings/' + encodeURIComponent(key));
+  };
+
+  /**
+   * PUT /api/v1/admin/settings
+   * Updates platform configuration parameters dynamically.
+   */
+  LoumooApiClient.prototype.updateSystemSettings = function (payload) {
+    return this.request('/api/v1/admin/settings', {
+      method: 'PUT',
+      body: payload || {}
+    });
+  };
+
+  /**
+   * PUT /api/v1/admin/settings/:key
+   */
+  LoumooApiClient.prototype.updateSystemSetting = function (key, value, reason) {
+    return this.request('/api/v1/admin/settings/' + encodeURIComponent(key), {
+      method: 'PUT',
+      body: { value: value, reason: reason }
+    });
+  };
+
+  /**
+   * GET /api/v1/admin/audit-logs
+   * Immutable audit history recording all administrative actions.
+   */
+  LoumooApiClient.prototype.getAdminAuditLogs = function (filter) {
+    return this.request('/api/v1/admin/audit-logs' + qs(filter));
   };
 
   var instance = new LoumooApiClient();
