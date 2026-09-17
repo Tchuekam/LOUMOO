@@ -23,7 +23,8 @@ class PricingEngine {
    */
   static calculateOrderPricing(evaluatedItems, {
     deliveryMethod = DELIVERY_METHOD.HOME_DELIVERY,
-    clientSuppliedTotal = null
+    clientSuppliedTotal = null,
+    standardShippingFeeXaf = null
   } = {}) {
     if (!Array.isArray(evaluatedItems) || evaluatedItems.length === 0) {
       throw new ValidationError('Cannot calculate pricing for an empty order.');
@@ -33,30 +34,35 @@ class PricingEngine {
     const lineItems = [];
 
     for (const item of evaluatedItems) {
-      const quantity = item.quantity;
-      const unitPriceXaf = item.unitPriceXaf;
-
-      if (!Number.isInteger(quantity) || quantity <= 0) {
-        throw new ValidationError(`Invalid quantity: ${quantity}. Must be a positive integer.`);
+      if (!item || typeof item !== 'object') {
+        throw new ValidationError('Invalid item in evaluation payload.');
       }
-      if (!Number.isInteger(unitPriceXaf) || unitPriceXaf < 0) {
-        throw new ValidationError(`Invalid unit price: ${unitPriceXaf}. Must be a non-negative integer.`);
-      }
+      const qty = Number(item.quantity);
+      const price = Number(item.unitPriceXaf);
 
-      // Safe integer arithmetic check
-      const totalLineXaf = unitPriceXaf * quantity;
-      if (!Number.isSafeInteger(totalLineXaf)) {
-        throw new ValidationError('Order total exceeds maximum safe integer calculation limit.');
+      if (!Number.isInteger(qty) || qty <= 0) {
+        throw new ValidationError(`Quantity must be a positive integer, got ${item.quantity}.`);
+      }
+      if (!Number.isInteger(price) || price < 0) {
+        throw new ValidationError(`Price must be a non-negative integer, got ${item.unitPriceXaf}.`);
       }
 
-      subtotalXaf += totalLineXaf;
-      if (!Number.isSafeInteger(subtotalXaf)) {
-        throw new ValidationError('Order subtotal exceeds maximum safe integer calculation limit.');
-      }
+      const lineTotalXaf = qty * price;
+      subtotalXaf += lineTotalXaf;
 
       lineItems.push({
-        ...item,
-        totalLineXaf
+        listingId: item.listing?.id || item.listingId || null,
+        variantId: item.variantId || null,
+        title: item.listing?.title || item.title || 'Item',
+        sku: item.sku || null,
+        unitPriceXaf: price,
+        quantity: qty,
+        lineTotalXaf,
+        sellerId: item.sellerId || item.listing?.sellerId || null,
+        storeId: item.storeId || item.listing?.storeId || null,
+        storeName: item.storeName || item.listing?.storeName || null,
+        storePhone: item.storePhone || item.listing?.storePhone || null,
+        imageUrl: item.imageUrl || null
       });
     }
 
@@ -85,6 +91,8 @@ class PricingEngine {
         shippingFeeXaf = 0;
       } else if (maxCustomDeliveryFee != null) {
         shippingFeeXaf = maxCustomDeliveryFee;
+      } else if (Number.isInteger(standardShippingFeeXaf) && standardShippingFeeXaf >= 0) {
+        shippingFeeXaf = standardShippingFeeXaf;
       } else {
         shippingFeeXaf = DEFAULT_STANDARD_SHIPPING_XAF;
       }
