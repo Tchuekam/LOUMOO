@@ -14,6 +14,7 @@
 const { z } = require('zod');
 const { tryGetAdmin } = require('../../../infrastructure/database/SupabaseClient');
 const CacheService = require('../../../infrastructure/cache/CacheService');
+const ProfileRepository = require('../infrastructure/ProfileRepository');
 const UserProfile = require('../entities/UserProfile');
 const {
   ValidationError,
@@ -148,16 +149,18 @@ class UpdateUserProfileUseCase {
 
     // 4. KYC State Transition Validation
     if (data.kycDocStatus && data.kycDocStatus !== profile.kycDocStatus) {
-      const transitionCheck = profile.canTransitionKycStatus(data.kycDocStatus);
-      if (!transitionCheck.valid) {
-        throw new ValidationError(transitionCheck.reason || 'Invalid KYC state transition attempted.');
-      }
+      const isAdmin = profile.isAdmin();
       // submitted -> verified is a LEGAL transition, but it is a reviewer's
       // decision, not the account holder's. Without this the owner of a profile
       // could PATCH themselves to `verified` and show isVerifiedSeller on their
       // public merchant card.
-      if (['verified', 'rejected'].includes(data.kycDocStatus) && !profile.isAdmin()) {
+      if (['verified', 'rejected'].includes(data.kycDocStatus) && !isAdmin) {
         throw new AuthorizationError('KYC verification status is decided by LOUMOO review, not by the account holder.');
+      }
+
+      const transitionCheck = profile.canTransitionKycStatus(data.kycDocStatus, { isAdmin });
+      if (!transitionCheck.valid) {
+        throw new ValidationError(transitionCheck.reason || 'Invalid KYC state transition attempted.');
       }
     }
 
@@ -278,14 +281,24 @@ class UpdateUserProfileUseCase {
       throw new InfrastructureError('Supabase', lastError?.message || 'Database update failed');
     }
 
-    // 8. Cache-Aside Invalidation & Fresh Population (Non-blocking)
-    try {
-      await CacheService.set(cacheKey, profile.toPublicJSON(), 300, 'identity');
-      await CacheService.delete(`identity:public:${internalUserId}`);
-      if (profile.clerkUserId) {
-        await CacheService.delete(`profile:clerk:${profile.clerkUserId}`, 'identity');
-        await CacheService.delete(`identity:profile:${profile.clerkUserId}`);
+    // 8. Synchronize Store Verification & Cache Invalidation
+    if (data.kycDocStatus && profile.primaryStoreId) {
+      const isVerified = data.kycDocStatus === 'verified';
+      try {
+        await adminDb.from('stores').update({
+          is_verified: isVerified,
+          updated_at: new Date().toISOString()
+        }).eq('id', profile.primaryStoreId);
+
+        await CacheService.del(`store:public:${profile.primaryStoreId}`);
+      } catch (storeSyncErr) {
+        logger.warn(`[UpdateProfile] Could not synchronize store verification for ${profile.primaryStoreId}: ${storeSyncErr.message}`);
       }
+    }
+
+    try {
+      await ProfileRepository.invalidate(profile.clerkUserId, internalUserId);
+      await CacheService.set(cacheKey, profile.toPublicJSON(), 300, 'identity');
     } catch (cacheErr) {
       logger.warn(`[ProfileCache] Cache invalidation warning: ${cacheErr.message}`);
     }

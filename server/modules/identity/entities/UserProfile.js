@@ -122,21 +122,29 @@ class UserProfile {
 
   /**
    * Validates if a KYC state transition is legal according to the account state machine.
+   * Admins can approve, reject, or revoke verification; standard users can submit or resubmit documents.
    */
-  canTransitionKycStatus(targetStatus) {
+  canTransitionKycStatus(targetStatus, { isAdmin = false } = {}) {
     const current = this.kycDocStatus || 'pending';
     const target = targetStatus || current;
 
     if (current === target) return { valid: true };
 
-    const LEGAL_TRANSITIONS = {
+    const LEGAL_TRANSITIONS_USER = {
       pending: ['submitted'],
-      submitted: ['verified', 'rejected'],
+      submitted: [],
       rejected: ['submitted'],
       verified: []
     };
 
-    const allowed = LEGAL_TRANSITIONS[current] || [];
+    const LEGAL_TRANSITIONS_ADMIN = {
+      pending: ['submitted', 'verified', 'rejected'],
+      submitted: ['verified', 'rejected', 'pending'],
+      rejected: ['submitted', 'verified', 'pending'],
+      verified: ['rejected', 'pending', 'submitted']
+    };
+
+    const allowed = (isAdmin ? LEGAL_TRANSITIONS_ADMIN : LEGAL_TRANSITIONS_USER)[current] || [];
     if (!allowed.includes(target)) {
       return {
         valid: false,
