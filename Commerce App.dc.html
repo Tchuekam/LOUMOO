@@ -10246,6 +10246,17 @@ class Component extends DCLogic {
   collapseSidebar = () => {
     this.setState({ sidebarCollapsed: true });
   };
+  openAddresses = () => {
+    this.go('addresses');
+    const api = getApi();
+    if (api && typeof api.getAddresses === 'function') {
+      this.setState({ addressesLoading: true });
+      api.getAddresses().then(list => {
+        if (!this._unmounted && Array.isArray(list)) this.setState({ addressesList: list, addressesLoading: false });
+        else if (!this._unmounted) this.setState({ addressesLoading: false });
+      }).catch(() => { if (!this._unmounted) this.setState({ addressesLoading: false }); });
+    }
+  };
 
   // ── Profile photo ────────────────────────────────────────────────────────
   // Stored as a downscaled data URL so it survives reloads and reflects in
@@ -13501,12 +13512,42 @@ class Component extends DCLogic {
     const tab = this.state.sellerListingTab || 'all';
     const statusFor = { live: 'PUBLISHED', drafts: 'DRAFT', paused: 'PAUSED', all: 'all' };
 
-    return api.getSellerListings({ status: statusFor[tab] || 'all', limit: 60 })
-      .then(res => {
+    const storeId = (this.state.store && this.state.store.id) || this.state.primaryStoreId || null;
+    const listingsPromise = api.getSellerListings({ status: statusFor[tab] || 'all', limit: 60 });
+    const announcementsPromise = storeId && typeof api.getSellerAnnouncements === 'function'
+      ? api.getSellerAnnouncements(storeId, { status: statusFor[tab] || 'all', limit: 60 }).catch(() => null)
+      : Promise.resolve(null);
+
+    return Promise.all([listingsPromise, announcementsPromise])
+      .then(([res, resAnn]) => {
         if (this._unmounted) return;
+        const catalogListings = (res && res.listings) || [];
+        const rawAnnouncements = (resAnn && resAnn.announcements) || [];
+        const announcements = rawAnnouncements.map(a => Object.assign({}, a, {
+          kind: 'BROADCAST',
+          base_price_minor: 0,
+          currency: 'XAF',
+          coverUrl: (a.mediaUrls && a.mediaUrls[0]) || null
+        }));
+
+        const combined = catalogListings.concat(announcements).sort((a, b) => {
+          const da = new Date(a.published_at || a.created_at || a.createdAt || 0).getTime();
+          const db = new Date(b.published_at || b.created_at || b.createdAt || 0).getTime();
+          return db - da;
+        });
+
+        const counts = Object.assign({}, (res && res.tabCounts) || { all: 0, live: 0, drafts: 0, sold: 0, paused: 0, archived: 0 });
+        rawAnnouncements.forEach(a => {
+          counts.all = (counts.all || 0) + 1;
+          if (a.status === 'PUBLISHED') counts.live = (counts.live || 0) + 1;
+          else if (a.status === 'DRAFT') counts.drafts = (counts.drafts || 0) + 1;
+          else if (a.status === 'PAUSED') counts.paused = (counts.paused || 0) + 1;
+          else if (a.status === 'ARCHIVED') counts.archived = (counts.archived || 0) + 1;
+        });
+
         this.setState({
-          sellerListings: (res && res.listings) || [],
-          sellerTabCounts: (res && res.tabCounts) || {},
+          sellerListings: combined,
+          sellerTabCounts: counts,
           sellerListingsLoading: false
         });
       })
@@ -13528,9 +13569,21 @@ class Component extends DCLogic {
 
     if (confirmMessage && typeof confirm === 'function' && !confirm(confirmMessage)) return;
 
-    const call = action === 'publish' ? api.publishListing(id)
-      : action === 'pause' ? api.pauseListing(id)
-        : api.archiveListing(id);
+    const item = (this.state.sellerListings || []).find(x => x.id === id);
+    const isBroadcast = item && (item.kind === 'BROADCAST' || item.type === 'ANNOUNCEMENT' || item.broadcastType);
+
+    let call;
+    if (isBroadcast) {
+      call = action === 'publish'
+        ? (api.publishAnnouncement ? api.publishAnnouncement(id) : Promise.resolve())
+        : action === 'archive'
+          ? (api.archiveAnnouncement ? api.archiveAnnouncement(id) : Promise.resolve())
+          : Promise.resolve();
+    } else {
+      call = action === 'publish' ? api.publishListing(id)
+        : action === 'pause' ? api.pauseListing(id)
+          : api.archiveListing(id);
+    }
 
     this.setState({ sellerListingsLoading: true, sellerListingsError: '' });
 
@@ -16082,6 +16135,18 @@ class Component extends DCLogic {
       addressFormIsDefault: this.state.addressFormIsDefault,
       addressFormSaving: this.state.addressFormSaving,
       addressFormError: this.state.addressFormError,
+      checkoutReturn: Boolean(this.state.checkoutReturn),
+
+      selectCheckoutAddress: (addr) => {
+        if (!addr) return;
+        this.setState({ selectedDeliveryAddress: addr, checkoutReturn: false });
+        this.toast('Delivery destination updated');
+        this.go('checkout');
+      },
+      cancelAddressSelect: () => {
+        this.setState({ checkoutReturn: false });
+        this.go('checkout');
+      },
 
       openAddresses: () => {
         this.go('addresses');
@@ -16142,16 +16207,32 @@ class Component extends DCLogic {
         this.setState({ addressFormSaving: true, addressFormError: '' });
         const done = (item) => {
           const list = this.state.addressesList.slice();
+          let savedItem = item;
           if (this.state.editingAddressId) {
             const idx = list.findIndex(a => a.id === this.state.editingAddressId);
-            if (idx >= 0) list[idx] = { ...list[idx], ...payload };
+            if (idx >= 0) {
+              list[idx] = { ...list[idx], ...payload };
+              savedItem = list[idx];
+            }
           } else {
-            list.unshift(item || { id: 'addr_' + Date.now(), ...payload });
+            savedItem = item || { id: 'addr_' + Date.now(), ...payload };
+            list.unshift(savedItem);
           }
           if (payload.isDefault) {
             list.forEach(a => {
               if (a.id !== (item ? item.id : this.state.editingAddressId)) a.isDefault = false;
             });
+          }
+          if (this.state.checkoutReturn) {
+            this.setState({
+              addressesList: list,
+              addressFormSaving: false,
+              selectedDeliveryAddress: savedItem,
+              checkoutReturn: false
+            });
+            this.toast('Delivery destination updated');
+            this.go('checkout');
+            return;
           }
           this.setState({ addressesList: list, addressFormSaving: false });
           this.toast('Address saved successfully');
@@ -18283,9 +18364,21 @@ class Component extends DCLogic {
 
           /* ---------- My Listings ---------- */
           sellerListingCards: listings.map(l => {
+            const isBroadcast = l.kind === 'BROADCAST' || l.type === 'ANNOUNCEMENT' || l.broadcastType;
+            if (isBroadcast && pub && pub.cardFromAnnouncement) {
+              try {
+                const card = pub.cardFromAnnouncement(l, ctx);
+                card.kind = 'BROADCAST';
+                card.canPublish = l.status === 'DRAFT';
+                card.canPause = l.status === 'PUBLISHED';
+                card.canResume = l.status === 'PAUSED';
+                return card;
+              } catch (e) {}
+            }
             if (pub && pub.cardFromListing) {
               try {
                 const card = pub.cardFromListing(l, { storeName: (this.state.store && this.state.store.name) || '' });
+                card.kind = 'PRODUCT';
                 card.canPublish = l.status === 'DRAFT';
                 card.canPause = l.status === 'PUBLISHED';
                 card.canResume = l.status === 'PAUSED';
@@ -18294,8 +18387,9 @@ class Component extends DCLogic {
             }
             return {
               id: l.id,
+              kind: isBroadcast ? 'BROADCAST' : 'PRODUCT',
               title: l.title || 'Untitled listing',
-              priceLine: l.base_price_minor ? (typeof fmt === 'function' ? 'XAF ' + fmt(l.base_price_minor) : l.base_price_minor + ' XAF') : '0 XAF',
+              priceLine: l.base_price_minor ? (typeof fmt === 'function' ? 'XAF ' + fmt(l.base_price_minor) : l.base_price_minor + ' XAF') : '',
               coverUrl: l.coverUrl || (l.mediaUrls && l.mediaUrls[0]) || '',
               statusLabel: l.status || 'PUBLISHED',
               canPublish: l.status === 'DRAFT',
@@ -18318,18 +18412,31 @@ class Component extends DCLogic {
             this.loadSellerListings();
           },
           reloadSellerListings: () => this.loadSellerListings(),
-          editListing: (id) => this.editPublication(id, 'PRODUCT'),
+          editListing: (id) => {
+            const item = (this.state.sellerListings || []).find(x => x.id === id);
+            const kind = (item && (item.kind === 'BROADCAST' || item.type === 'ANNOUNCEMENT' || item.broadcastType)) ? 'BROADCAST' : 'PRODUCT';
+            this.editPublication(id, kind);
+          },
           publishExisting: (id) => this.transitionListing(id, 'publish'),
           pauseListing: (id) => this.transitionListing(id, 'pause'),
           archiveListing: (id, title) => this.transitionListing(
             id, 'archive',
-            'Remove "' + (title || 'this listing') + '" from the marketplace? Buyers will no longer see it.'
+            'Remove "' + (title || 'this item') + '" from the marketplace? Buyers will no longer see it.'
           ),
-          shareListing: (id, title) => this.sharePublication(id, 'PRODUCT', title),
+          shareListing: (id, title) => {
+            const item = (this.state.sellerListings || []).find(x => x.id === id);
+            const kind = (item && (item.kind === 'BROADCAST' || item.type === 'ANNOUNCEMENT' || item.broadcastType)) ? 'BROADCAST' : 'PRODUCT';
+            this.sharePublication(id, kind, title);
+          },
           openPublication: (card) => {
             if (!card || !card.id) return;
-            if (card.statusLabel === 'PUBLISHED') this.openProduct(card.id);
-            else this.editPublication(card.id, card.kind === 'BROADCAST' ? 'BROADCAST' : 'PRODUCT');
+            if (card.kind === 'BROADCAST' || card.type === 'ANNOUNCEMENT') {
+              if (card.statusLabel === 'PUBLISHED') this.openAnnouncement(card.id);
+              else this.editPublication(card.id, 'BROADCAST');
+            } else {
+              if (card.statusLabel === 'PUBLISHED') this.openProduct(card.id);
+              else this.editPublication(card.id, 'PRODUCT');
+            }
           }
         };
       })(),
@@ -18628,6 +18735,42 @@ class Component extends DCLogic {
         if (n === 0) return 'Your bag is empty';
         return n + (n === 1 ? ' item' : ' items') + (sellers > 1 ? (' · ' + sellers + ' sellers') : '');
       })(),
+
+      // ── Checkout Delivery Destination ──
+      checkoutRecipientName: (() => {
+        const sel = this.state.selectedDeliveryAddress;
+        if (sel && sel.recipientName) return sel.recipientName;
+        const addrs = this.state.addressesList || [];
+        const def = addrs.find(a => a.isDefault) || addrs[0];
+        if (def && def.recipientName) return def.recipientName;
+        const name = [this.state.regFirstName, this.state.regLastName].filter(Boolean).join(' ');
+        return name || 'Rostand Tchuekam';
+      })(),
+      checkoutRecipientPhone: (() => {
+        const sel = this.state.selectedDeliveryAddress;
+        if (sel && sel.phoneNumber) return sel.phoneNumber;
+        const addrs = this.state.addressesList || [];
+        const def = addrs.find(a => a.isDefault) || addrs[0];
+        if (def && def.phoneNumber) return def.phoneNumber;
+        return this.state.regPhone || '690 12 34 56';
+      })(),
+      checkoutDeliveryAddress: (() => {
+        const sel = this.state.selectedDeliveryAddress;
+        if (sel && sel.streetAddress) {
+          return sel.streetAddress + (sel.city ? ', ' + (sel.city.charAt(0).toUpperCase() + sel.city.slice(1)) : '') + (sel.region ? ', ' + sel.region : ', Cameroon');
+        }
+        const addrs = this.state.addressesList || [];
+        const def = addrs.find(a => a.isDefault) || addrs[0];
+        if (def && def.streetAddress) {
+          return def.streetAddress + (def.city ? ', ' + (def.city.charAt(0).toUpperCase() + def.city.slice(1)) : '') + (def.region ? ', ' + def.region : ', Cameroon');
+        }
+        return 'Rue Joss, Bonanjo Commercial District (Near Standard Chartered Bank), Douala';
+      })(),
+      changeDeliveryDestination: () => {
+        this.setState({ checkoutReturn: true });
+        this.openAddresses();
+      },
+
       // ── Notifications feed ──
       notifHasItems: (this.state.notifications || []).length > 0,
       notifUnreadCount: (this.state.notifications || []).filter((n) => !n.read).length,
@@ -18840,8 +18983,14 @@ class Component extends DCLogic {
       toggleVsPortsSec: () => this.setState(st => ({ vsSecPortsOpen: !st.vsSecPortsOpen })),
       toggleVsCommSec: () => this.setState(st => ({ vsSecCommOpen: !st.vsSecCommOpen })),
       toast: this.state.toast,
-      clearToast: () => this.setState({ toast: '' }),
-      back: this.back,
+      back: () => {
+        if (this.state.checkoutReturn) {
+          this.setState({ checkoutReturn: false });
+          this.go('checkout');
+          return;
+        }
+        this.back();
+      },
       showNav: !NO_NAV.includes(s),
       isNavHome: ['home', 'category', 'bestpicks', 'freeday', 'notifications', 'search', 'product', 'cart', 'chat'].includes(s),
       isNavStore: ['store', 'business', 'sellerPublicPage'].includes(s),
@@ -18980,12 +19129,29 @@ class Component extends DCLogic {
         const orderNumber = 'LM-' + Date.now().toString(36).toUpperCase().slice(-6);
         const payMap = { mtn: 'MTN MoMo', om: 'Orange Money', card: 'Bank card' };
         const method = payMap[this.state.sel && this.state.sel.pay] || 'Pay on delivery';
+
+        const selAddr = this.state.selectedDeliveryAddress || (this.state.addressesList && (this.state.addressesList.find(a => a.isDefault) || this.state.addressesList[0]));
+        const recipientName = (selAddr && selAddr.recipientName)
+          || [this.state.regFirstName, this.state.regLastName].filter(Boolean).join(' ')
+          || 'LOUMOO customer';
+        const recipientPhone = (selAddr && selAddr.phoneNumber) || this.state.regPhone || '690 12 34 56';
+        const street = (selAddr && selAddr.streetAddress) || 'Rue Joss, Bonanjo Commercial District';
+        const city = (selAddr && selAddr.city) || this.state.regCity || 'Douala';
+
         const address = {
-          name: [this.state.regFirstName, this.state.regLastName].filter(Boolean).join(' ') || 'LOUMOO customer',
-          phone: this.state.regPhone || '',
-          city: this.state.regCity || 'Douala'
+          name: recipientName,
+          phone: recipientPhone,
+          city: city,
+          street: street
         };
-        const items = cart.map((it) => ({ id: it.id, name: it.name, image: it.image, priceXaf: it.priceXaf, qty: it.qty, store: it.store }));
+        const items = cart.map((it) => ({
+          id: it.id,
+          name: it.name || it.title || 'Product',
+          image: it.image || '',
+          priceXaf: it.priceXaf,
+          qty: it.qty,
+          store: it.store || 'LOUMOO seller'
+        }));
         const order = {
           orderNumber: orderNumber,
           status: 'pending',
@@ -19004,25 +19170,56 @@ class Component extends DCLogic {
         this.setState({ orders: list, lastOrder: order, cartItems: [] });
         this._persistOrders(list);
         this._persistCart([]);
-        // Mirror to the backend as a real order row when the user is signed in.
+
+        // Instant Realtime Notification: Push immediately to in-app notification center and update unread badge
+        const firstItemName = (items[0] && items[0].name) || 'item';
+        const notifBody = 'Order ' + orderNumber + ' confirmed (' + firstItemName + (items.length > 1 ? ' +' + (items.length - 1) + ' more' : '') + ') · Pay on delivery via ' + method + ' (XAF ' + fmt(total) + ').';
+        this._pushNotif({
+          tone: 'accent',
+          title: 'Order ' + orderNumber + ' confirmed',
+          body: notifBody
+        });
+
+        // Try Web Notification if supported and permitted
+        try {
+          if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
+            new Notification('LOUMOO — Order Confirmed', {
+              body: notifBody,
+              icon: '/favicon.ico'
+            });
+          }
+        } catch (_) {}
+
+        // Mirror to backend order service
         const authed = this.state.authStatus === 'authenticated';
         try {
-          if (authed) {
-            const api = getApi();
-            if (api && api.createOrder) {
-              // The server creates the order notification; pull it back once saved.
-              api.createOrder({ orderNumber: orderNumber, items: items, totalAmountXaf: total, shippingAddress: address })
-                .then(() => { if (!this._unmounted) this.loadServerNotifications(); })
-                .catch(() => {});
-            }
+          const api = getApi();
+          if (api && typeof api.createOrder === 'function') {
+            const serverPayload = {
+              orderNumber: orderNumber,
+              items: cart.map(it => ({
+                id: String(it.id || it.listingId || it.productId || 'item_1'),
+                listingId: String(it.listingId || it.productId || it.id || 'item_1'),
+                quantity: Math.max(1, parseInt(it.qty, 10) || 1),
+                unitPriceXaf: Number(it.priceXaf) || 0,
+                title: it.name || it.title || 'Product'
+              })),
+              shippingAddress: {
+                fullName: recipientName,
+                phone: recipientPhone,
+                street: street,
+                city: city
+              },
+              deliveryMethod: 'HOME_DELIVERY',
+              totalAmountXaf: total
+            };
+            api.createOrder(serverPayload)
+              .then(() => { if (!this._unmounted) this.loadServerNotifications(); })
+              .catch(() => {});
           }
         } catch (e) {}
-        // Guests get an instant local notification; signed-in users get the
-        // authoritative one from the server (above) to avoid a duplicate.
-        if (!authed) {
-          this._pushNotif({ tone: 'accent', title: 'Order ' + orderNumber + ' placed', body: 'Your order is confirmed — pay on delivery via ' + method + '.' });
-        }
-        this.toast('Order ' + orderNumber + ' placed');
+
+        this.toast('🎉 Order ' + orderNumber + ' confirmed! Notification sent.');
         this.go('success');
       },
       addToVs: () => { this.setState(st => ({ vs: st.vs + 1 })); this.go('vsCompare'); },
