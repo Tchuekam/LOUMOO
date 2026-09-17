@@ -1253,6 +1253,32 @@
     return this.request('/api/travel/tickets/' + encodeURIComponent(id));
   };
 
+  /* ══════════════════════════════════════════════════════════════════════════
+     13. ORDER CORE & COMMERCE LIFECYCLE
+     ══════════════════════════════════════════════════════════════════════════ */
+
+  LoumooApiClient.prototype.createOrder = function (payload) {
+    return this.request('/api/v1/orders', {
+      method: 'POST',
+      body: payload
+    });
+  };
+
+  LoumooApiClient.prototype.getOrders = function (params) {
+    return this.request('/api/v1/orders' + qs(params));
+  };
+
+  LoumooApiClient.prototype.getOrder = function (id) {
+    return this.request('/api/v1/orders/' + encodeURIComponent(id));
+  };
+
+  LoumooApiClient.prototype.cancelOrder = function (id, reason) {
+    return this.request('/api/v1/orders/' + encodeURIComponent(id) + '/cancel', {
+      method: 'POST',
+      body: { reason: reason }
+    });
+  };
+
   LoumooApiClient.prototype.getHealth = function () {
     return this.request('/api/v1/health').catch(function (e) {
       return { status: 'offline', error: e.message };
