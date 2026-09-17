@@ -130,7 +130,9 @@ class CacheService {
     const fullPattern = this._getKey(pattern, namespace);
     try {
       if (this.redis && this.redis.status === 'ready') {
-        const keys = await this.redis.keys(fullPattern);
+        // Escape Redis glob metacharacters [ and ] so literal bracketed segments aren't treated as character classes
+        const redisPattern = fullPattern.replace(/\[/g, '\\[').replace(/\]/g, '\\]');
+        const keys = await this.redis.keys(redisPattern);
         if (keys && keys.length > 0) {
           await this.redis.del(...keys);
         }
