@@ -103,6 +103,29 @@ class CacheService {
     return this.delete(key, namespace);
   }
 
+  async deleteMany(keys, namespace = 'loumoo') {
+    if (!Array.isArray(keys) || keys.length === 0) return true;
+    const fullKeys = keys.filter(Boolean).map(k => this._getKey(k, namespace));
+    if (fullKeys.length === 0) return true;
+
+    try {
+      if (this.redis && this.redis.status === 'ready') {
+        await this.redis.del(...fullKeys);
+      }
+    } catch (e) {
+      logger.warn(`[CacheService] Redis deleteMany failed: ${e.message}`);
+    }
+
+    for (const k of fullKeys) {
+      this.memoryFallback.delete(k);
+    }
+    return true;
+  }
+
+  async delMany(keys, namespace = 'loumoo') {
+    return this.deleteMany(keys, namespace);
+  }
+
   async delPattern(pattern, namespace = 'loumoo') {
     const fullPattern = this._getKey(pattern, namespace);
     try {
@@ -116,8 +139,9 @@ class CacheService {
       logger.warn(`[CacheService] Redis delPattern failed for ${fullPattern}: ${e.message}`);
     }
 
-    // Pattern matching on memory fallback
-    const regexPattern = new RegExp('^' + fullPattern.replace(/\*/g, '.*') + '$');
+    // Pattern matching on memory fallback: escape regex metacharacters first, then replace wildcard * with .*
+    const escaped = fullPattern.replace(/[.+?^${}()|[\]\\]/g, '\\$&');
+    const regexPattern = new RegExp('^' + escaped.replace(/\*/g, '.*') + '$');
     for (const key of this.memoryFallback.keys()) {
       if (regexPattern.test(key)) {
         this.memoryFallback.delete(key);
