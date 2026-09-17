@@ -50,6 +50,8 @@ class OrderItem {
     sellerId,
     storeId = null,
     storeName = null,
+    storePhone = null,
+    sellerPhone = null,
     imageUrl = null
   }) {
     if (!listingId) throw new Error('OrderItem requires listingId');
@@ -71,6 +73,8 @@ class OrderItem {
     this.sellerId = String(sellerId);
     this.storeId = storeId ? String(storeId) : null;
     this.storeName = storeName ? String(storeName) : null;
+    this.storePhone = storePhone || sellerPhone || null;
+    this.sellerPhone = this.storePhone;
     this.imageUrl = imageUrl ? String(imageUrl) : null;
   }
 
@@ -86,6 +90,8 @@ class OrderItem {
       sellerId: this.sellerId,
       storeId: this.storeId,
       storeName: this.storeName,
+      storePhone: this.storePhone,
+      sellerPhone: this.sellerPhone,
       imageUrl: this.imageUrl
     };
   }
@@ -98,6 +104,8 @@ class Order {
    * @param {string} params.orderNumber
    * @param {string} params.buyerId
    * @param {string} params.sellerId
+   * @param {string|null} [params.sellerPhone]
+   * @param {string|null} [params.sellerWhatsapp]
    * @param {OrderItem[]} params.items
    * @param {number} params.subtotalXaf
    * @param {number} [params.shippingFeeXaf=0]
@@ -117,6 +125,8 @@ class Order {
     orderNumber,
     buyerId,
     sellerId,
+    sellerPhone = null,
+    sellerWhatsapp = null,
     items = [],
     subtotalXaf,
     shippingFeeXaf = 0,
@@ -140,6 +150,8 @@ class Order {
     this.buyerId = String(buyerId);
     this.sellerId = String(sellerId);
     this.items = items.map(it => it instanceof OrderItem ? it : new OrderItem(it));
+    this.sellerPhone = sellerPhone || sellerWhatsapp || (this.items[0] && this.items[0].storePhone) || null;
+    this.sellerWhatsapp = this.sellerPhone;
     this.subtotalXaf = Number.isInteger(subtotalXaf) ? subtotalXaf : this.calculateSubtotal();
     this.shippingFeeXaf = Number.isInteger(shippingFeeXaf) ? shippingFeeXaf : 0;
     this.totalAmountXaf = Number.isInteger(totalAmountXaf) ? totalAmountXaf : (this.subtotalXaf + this.shippingFeeXaf);
@@ -170,6 +182,8 @@ class Order {
       orderNumber: this.orderNumber,
       buyerId: this.buyerId,
       sellerId: this.sellerId,
+      sellerPhone: this.sellerPhone,
+      sellerWhatsapp: this.sellerWhatsapp,
       subtotalXaf: this.subtotalXaf,
       shippingFeeXaf: this.shippingFeeXaf,
       totalAmountXaf: this.totalAmountXaf,

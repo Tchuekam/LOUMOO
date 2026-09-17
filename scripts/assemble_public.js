@@ -28,7 +28,7 @@ const path = require('path');
 const root = path.resolve(__dirname, '..');
 const out = path.join(root, 'public');
 
-fs.rmSync(out, { recursive: true, force: true });
+fs.rmSync(out, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
 fs.mkdirSync(out, { recursive: true });
 
 const app = path.join(root, 'Commerce App.dc.html');

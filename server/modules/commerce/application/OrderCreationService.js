@@ -170,6 +170,7 @@ class OrderCreationService {
           sellerId,
           storeId: listing.storeId,
           storeName: listing.storeName,
+          storePhone: listing.storePhone || null,
           imageUrl: null,
           listing
         });
@@ -193,16 +194,19 @@ class OrderCreationService {
         sellerId: it.sellerId,
         storeId: it.storeId,
         storeName: it.storeName,
+        storePhone: it.storePhone,
         imageUrl: it.imageUrl
       }));
 
       const primarySellerId = evaluatedItems[0].sellerId;
+      const primarySellerPhone = evaluatedItems[0].storePhone || null;
       const orderNumber = Order.generateOrderNumber();
 
       const order = new Order({
         orderNumber,
         buyerId: userId,
         sellerId: primarySellerId,
+        sellerPhone: primarySellerPhone,
         items: orderItems,
         subtotalXaf: pricing.subtotalXaf,
         shippingFeeXaf: pricing.shippingFeeXaf,

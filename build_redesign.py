@@ -7745,6 +7745,7 @@ class Component extends DCLogic {
       price: priceStr,
       priceXaf: this._priceToXaf(priceStr) || Number(p.priceNumeric) || Number(p.base_price_minor) || 0,
       store: p.storeName || p.merchant || 'LOUMOO seller',
+      storePhone: p.sellerPhone || p.storePhone || p.phoneNumber || p.phone || (p.store && (p.store.phoneNumber || p.store.phone || p.store.phone_number)) || null,
       qty: 1
     };
   };
@@ -10551,13 +10552,28 @@ class Component extends DCLogic {
     const sellerName = opts.sellerName || p.storeName || 'LOUMOO Seller';
     const productTitle = opts.productTitle || p.title || '';
     const price = opts.price || p.salePrice || p.price || '';
-    const phone = typeof resolveSellerWhatsApp === 'function' ? resolveSellerWhatsApp(sellerName) : '+237690000000';
-    let msg = 'Hello ' + sellerName + ', I found ';
-    msg += productTitle ? ('the "' + productTitle + '"') : 'your listing';
-    msg += ' on LOUMOO';
-    if (price) msg += ' (' + price + ')';
-    msg += ' — is it still available?';
-    const url = 'https://wa.me/' + String(phone).replace(/[^0-9]/g, '') + '?text=' + encodeURIComponent(msg);
+    const rawPhone = opts.phone || opts.sellerPhone || opts.whatsapp || p.sellerPhone || p.storePhone || p.phoneNumber || p.phone || (p.store && (p.store.phoneNumber || p.store.phone || p.store.phone_number)) || (typeof resolveSellerWhatsApp === 'function' ? resolveSellerWhatsApp(sellerName) : '') || '+237690000000';
+    let cleanPhone = String(rawPhone || '').replace(/[^0-9]/g, '');
+    if (cleanPhone.length === 9 && (cleanPhone.startsWith('6') || cleanPhone.startsWith('2'))) {
+      cleanPhone = '237' + cleanPhone;
+    }
+    if (!cleanPhone) cleanPhone = '237690000000';
+
+    let msg = '';
+    if (opts.orderNumber) {
+      msg = 'Hello ' + sellerName + '! I am contacting you regarding my LOUMOO order #' + opts.orderNumber;
+      if (productTitle) msg += ' for "' + productTitle + '"';
+      if (price) msg += ' (' + price + ')';
+      msg += '. Could you please provide an update on delivery/fulfillment?';
+    } else {
+      msg = 'Hello ' + sellerName + ', I found ';
+      msg += productTitle ? ('the "' + productTitle + '"') : 'your listing';
+      msg += ' on LOUMOO';
+      if (price) msg += ' (' + price + ')';
+      msg += ' — is it still available?';
+    }
+
+    const url = 'https://wa.me/' + cleanPhone + '?text=' + encodeURIComponent(msg);
     try {
       if (typeof window !== 'undefined' && window.open) window.open(url, '_blank', 'noopener,noreferrer');
       else if (typeof window !== 'undefined' && window.location) window.location.href = url;
@@ -14532,6 +14548,7 @@ class Component extends DCLogic {
       },
       storeTagline: this.state.storeTagline,
       storeWarrantyPolicy: this.state.storeWarrantyPolicy,
+      storePhone: this.state.storePhone || (this.state.currentStore && (this.state.currentStore.phoneNumber || this.state.currentStore.phone || this.state.currentStore.phone_number)) || '',
       storeOpenStatusBadge: this.state.storeOpenStatusBadge,
       storeOpenTime: this.state.storeOpenTime,
       storeCloseTime: this.state.storeCloseTime,
@@ -14539,6 +14556,7 @@ class Component extends DCLogic {
       storeLocationLandmark: this.state.storeLocationLandmark,
       updateStoreTagline: (e) => this.setState({ storeTagline: e && e.target ? e.target.value : e }),
       updateStoreWarrantyPolicy: (e) => this.setState({ storeWarrantyPolicy: e && e.target ? e.target.value : e }),
+      updateStorePhone: (e) => this.setState({ storePhone: e && e.target ? e.target.value : e }),
       updateStoreOpenTime: (e) => this.setState({ storeOpenTime: e && e.target ? e.target.value : e }),
       updateStoreCloseTime: (e) => this.setState({ storeCloseTime: e && e.target ? e.target.value : e }),
       updateStoreLocationStreet: (e) => this.setState({ storeLocationStreet: e && e.target ? e.target.value : e }),
@@ -14562,7 +14580,7 @@ class Component extends DCLogic {
           setTimeout(() => {
             if (this._unmounted) return;
             if (this.state.currentStore) {
-              this.setState(st => ({ currentStore: { ...st.currentStore, logoUrl: this.state.storeLogoUrl } }));
+              this.setState(st => ({ currentStore: { ...st.currentStore, logoUrl: this.state.storeLogoUrl, phoneNumber: this.state.storePhone } }));
             }
             this.setState({ storeSettingsSaving: false });
             this.toast('All store settings saved successfully');
@@ -14572,14 +14590,14 @@ class Component extends DCLogic {
         }
 
         Promise.all([
-          api.updateStore(storeId, { logoUrl: this.state.storeLogoUrl || null }),
+          api.updateStore(storeId, { logoUrl: this.state.storeLogoUrl || null, phoneNumber: this.state.storePhone || null }),
           api.updateStoreProfile(storeId, { tagline: this.state.storeTagline, warrantyPolicy: this.state.storeWarrantyPolicy, logoUrl: this.state.storeLogoUrl || null }),
           api.updateStoreHours(storeId, { schedule: { open: this.state.storeOpenTime, close: this.state.storeCloseTime } }),
           api.updateStoreLocation(storeId, { streetAddress: this.state.storeLocationStreet, landmark: this.state.storeLocationLandmark })
         ]).then(() => {
           if (this._unmounted) return;
           if (this.state.currentStore) {
-            this.setState(st => ({ currentStore: { ...st.currentStore, logoUrl: this.state.storeLogoUrl } }));
+            this.setState(st => ({ currentStore: { ...st.currentStore, logoUrl: this.state.storeLogoUrl, phoneNumber: this.state.storePhone } }));
           }
           this.setState({ storeSettingsSaving: false });
           this.toast('All store settings saved successfully');
@@ -15981,6 +15999,7 @@ class Component extends DCLogic {
       lastOrderNumber: this.state.lastOrder ? this.state.lastOrder.orderNumber : '',
       lastOrderTotal: this.state.lastOrder ? ('XAF ' + fmt(this.state.lastOrder.totalXaf)) : '',
       lastOrderSeller: this.state.lastOrder ? this.state.lastOrder.seller : 'the seller',
+      lastOrderSellerPhone: this.state.lastOrder ? (this.state.lastOrder.sellerPhone || this.state.lastOrder.sellerWhatsapp || '') : '',
       lastOrderPayMethod: this.state.lastOrder ? this.state.lastOrder.paymentMethod : '',
       lastOrderItemsLabel: (() => {
         const o = this.state.lastOrder;
@@ -15998,6 +16017,8 @@ class Component extends DCLogic {
         itemCountLabel: o.itemCount + (o.itemCount === 1 ? ' item' : ' items'),
         totalLabel: 'XAF ' + fmt(o.totalXaf),
         seller: o.seller,
+        sellerPhone: o.sellerPhone || o.sellerWhatsapp || (o.items && o.items[0] && o.items[0].storePhone) || '',
+        sellerWhatsapp: o.sellerWhatsapp || o.sellerPhone || (o.items && o.items[0] && o.items[0].storePhone) || '',
         payLabel: (o.paymentMethod || 'Pay on delivery') + ' · pay on delivery'
       })),
       vsCount: this.state.vs,
@@ -16339,8 +16360,10 @@ class Component extends DCLogic {
           image: it.image || '',
           priceXaf: it.priceXaf,
           qty: it.qty,
-          store: it.store || 'LOUMOO seller'
+          store: it.store || 'LOUMOO seller',
+          storePhone: it.storePhone || it.sellerPhone || null
         }));
+        const primarySellerPhone = (items[0] && (items[0].storePhone || items[0].sellerPhone)) || null;
         const order = {
           orderNumber: orderNumber,
           status: 'pending',
@@ -16352,6 +16375,8 @@ class Component extends DCLogic {
           escrowXaf: escrow,
           totalXaf: total,
           seller: (items[0] && items[0].store) || 'LOUMOO seller',
+          sellerPhone: primarySellerPhone,
+          sellerWhatsapp: primarySellerPhone,
           address: address,
           createdAt: Date.now()
         };

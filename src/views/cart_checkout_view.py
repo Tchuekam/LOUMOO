@@ -297,7 +297,7 @@ def get_success_view():
 
   <div style="display:flex;flex-direction:column;gap:10px">
     <button onClick="{{ on.orders }}" class="btn btn-primary btn-block" style="height:48px">VIEW MY ORDERS</button>
-    <button onClick="{{ contactSellerWhatsApp }}" class="btn btn-secondary btn-block" style="height:44px;color:var(--color-wa-teal)">WHATSAPP MERCHANT</button>
+    <button onClick="{{ () => contactSellerWhatsApp({ sellerName: lastOrderSeller, phone: lastOrderSellerPhone, orderNumber: lastOrderNumber, price: lastOrderTotal }) }}" class="btn btn-secondary btn-block" style="height:44px;color:var(--color-wa-teal);font-weight:700">WHATSAPP MERCHANT</button>
     <button onClick="{{ on.home }}" style="border:none;background:transparent;padding:8px;font:700 12.5px/1 var(--font-heading);color:var(--color-text-secondary);cursor:pointer">Back to Marketplace</button>
   </div>
 
@@ -386,7 +386,7 @@ def get_orders_and_transactions_view():
       </div>
 
       <div style="display:flex;gap:10px;margin-top:14px;border-top:1px solid var(--color-divider);padding-top:12px">
-        <button onClick="{{ () => contactSellerWhatsApp({ sellerName: order.seller }) }}" class="btn btn-secondary btn-block" style="height:38px;font-size:12px;color:var(--color-wa-teal)">CONTACT SELLER</button>
+        <button onClick="{{ () => contactSellerWhatsApp({ sellerName: order.seller, phone: order.sellerPhone || order.sellerWhatsapp, orderNumber: order.orderNumber, productTitle: order.itemsSummary, price: order.totalLabel }) }}" class="btn btn-secondary btn-block" style="height:38px;font-size:12px;color:var(--color-wa-teal);font-weight:700">CONTACT SELLER</button>
       </div>
     </div>
     </sc-for>

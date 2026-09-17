@@ -275,8 +275,11 @@ class CatalogRepository {
       altText: m.alt_text
     }));
 
-    const cover = media.find(m => m.isCover) || media[0] || null;
+    return this._formatProductDetail(row, store, media, attributes);
+  }
 
+  static _formatProductDetail(row, store, media = [], attributes = []) {
+    const cover = (media && media.find(m => m.isCover)) || (media && media[0]) || null;
     return {
       ...this._formatProductCard(row, cover ? cover.url : null, store, media),
       description: row.description || '',
@@ -284,7 +287,7 @@ class CatalogRepository {
       attributes,
       media,
       coverImage: cover ? cover.url : null,
-      images: media.map(m => m.url),
+      images: (media || []).map(m => m.url),
       condition: row.condition || 'new',
       fulfillmentModel: row.fulfillment_model || 'DELIVERY_OR_PICKUP',
       tags: row.tags || [],
@@ -294,6 +297,8 @@ class CatalogRepository {
         name: store.name,
         slug: store.slug,
         logoUrl: store.logo_url,
+        phoneNumber: store.phone_number || (store.metadata && store.metadata.phone) || null,
+        whatsapp: store.phone_number || (store.metadata && store.metadata.phone) || null,
         isVerified: Boolean(store.is_verified),
         verificationTier: store.verification_tier,
         rating: Number(store.rating) || 5.0,
@@ -319,7 +324,7 @@ class CatalogRepository {
     if (!storeIds.length) return [];
     const { data, error } = await this.db
       .from('stores')
-      .select('id, name, slug, logo_url, is_verified, verification_tier, rating, rating_count, metadata')
+      .select('id, name, slug, logo_url, phone_number, is_verified, verification_tier, rating, rating_count, metadata')
       .in('id', storeIds);
 
     if (error) return [];
@@ -396,6 +401,9 @@ class CatalogRepository {
       storeName: storeName,
       storeId: listing.store_id,
       merchantCity: (store && store.metadata && store.metadata.city) || 'Douala',
+      phoneNumber: store ? (store.phone_number || (store.metadata && store.metadata.phone) || null) : null,
+      storePhone: store ? (store.phone_number || (store.metadata && store.metadata.phone) || null) : null,
+      sellerPhone: store ? (store.phone_number || (store.metadata && store.metadata.phone) || null) : null,
       verified: store ? Boolean(store.is_verified) : true,
       rating: Number(listing.rating) || 5.0,
       reviewsCount: listing.rating_count || 0,
@@ -647,6 +655,8 @@ class CatalogRepository {
         name: card.storeName,
         slug: null,
         logoUrl: null,
+        phoneNumber: card.phoneNumber || card.storePhone || null,
+        whatsapp: card.phoneNumber || card.storePhone || null,
         isVerified: card.verified,
         verificationTier: null,
         rating: card.rating,

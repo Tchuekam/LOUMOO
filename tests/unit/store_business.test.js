@@ -170,7 +170,7 @@ async function testStoreDiscoveryUseCase() {
   // curated list of fictional boutiques, which used to lead shoppers to store
   // pages that did not exist. So the test provisions a real one.
   const owner = await harness.createUser({ stage: 'seller_ready', suffix: 'disc' });
-  const store = await harness.createStore(owner);
+  const store = await harness.createStore(owner, { id: `str_disc_${Date.now().toString(36)}`, name: 'Kribi Tech Commerce' });
   await harness.db().from('store_locations').insert({
     store_id: store.id, city: 'Kribi', region: 'Sud', street_address: 'Route des Chutes'
   });

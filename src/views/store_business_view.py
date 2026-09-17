@@ -533,6 +533,12 @@ def get_store_business_view():
         <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">WARRANTY POLICY</label>
         <input type="text" class="input" value="{{ storeWarrantyPolicy }}" onChange="{{ updateStoreWarrantyPolicy }}">
       </div>
+
+      <div>
+        <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">STORE WHATSAPP / CONTACT PHONE</label>
+        <input type="tel" class="input" placeholder="e.g. 690 12 34 56 or +237 677 88 99 00" value="{{ storePhone }}" onChange="{{ updateStorePhone }}">
+        <div style="font:400 11px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:4px">Direct WhatsApp contact number for buyers to ask questions and follow up on orders.</div>
+      </div>
     </div>
 
     <!-- Section 2: Opening Hours (05.11) -->

@@ -154,15 +154,17 @@ async function createUser({ stage = 'ready', suffix = '' } = {}) {
 }
 
 /** Creates an ACTIVE boutique owned by `user` and links it to their profile. */
-async function createStore(user, { status = 'ACTIVE' } = {}) {
+async function createStore(user, { status = 'ACTIVE', name = null, id = null } = {}) {
   const unique = `${Date.now().toString(36)}${crypto.randomBytes(3).toString('hex')}`;
-  const storeId = `store_test_${unique}`;
+  const storeId = id || `store_test_${unique}`;
+  const storeName = name || `Test Boutique ${unique}`;
+  const slug = `${storeName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${unique}`;
 
   const { data, error } = await db().from('stores').insert({
     id: storeId,
     owner_id: user.id,
-    name: `Test Boutique ${unique}`,
-    slug: `test-boutique-${unique}`,
+    name: storeName,
+    slug,
     description: 'Harness-created boutique for automated tests.',
     category_id: 'electronics',
     phone_number: '+237690112233',

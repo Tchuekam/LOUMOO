@@ -12,8 +12,9 @@ const { ConflictError, NotFoundError, InfrastructureError } = require('../../../
 const logger = require('../../../shared/logging/logger');
 
 class OrderRepository {
-  constructor({ db } = {}) {
-    this._customDb = db;
+  constructor(options = {}) {
+    const opts = options || {};
+    this._customDb = opts.db;
     // In-memory fallback for local unit tests when DB credentials are absent
     this._inMemoryOrders = new Map();
     this._inMemoryListings = new Map();
@@ -52,7 +53,7 @@ class OrderRepository {
           id, store_id, seller_id, title, slug, status, visibility,
           currency, base_price_minor, sale_price_minor, has_variants,
           fulfillment_model, metadata, deleted_at,
-          stores(id, name, status, owner_id)
+          stores(id, name, status, owner_id, phone_number, metadata)
         `)
         .eq('id', listingId)
         .is('deleted_at', null)
@@ -63,12 +64,15 @@ class OrderRepository {
       }
 
       if (data) {
+        const storePhone = data.stores?.phone_number || (data.stores?.metadata && data.stores.metadata.phone) || null;
         return {
           id: data.id,
           storeId: data.store_id,
           sellerId: data.seller_id || (data.stores && data.stores.owner_id) || null,
           storeName: data.stores ? data.stores.name : null,
           storeStatus: data.stores ? data.stores.status : 'ACTIVE',
+          storePhone,
+          sellerPhone: storePhone,
           title: data.title,
           status: data.status,
           visibility: data.visibility,
@@ -89,12 +93,15 @@ class OrderRepository {
       const CatalogRepository = require('../../catalog/infrastructure/CatalogRepository');
       const product = await CatalogRepository.findPublicProductByIdOrSlug(listingId);
       if (product) {
+        const storePhone = product.storePhone || product.phoneNumber || (product.store && (product.store.phoneNumber || product.store.whatsapp)) || null;
         return {
           id: product.id,
           storeId: product.storeId || 'str_default',
           sellerId: product.sellerId || (product.store && product.store.id) || 'usr_seller_default',
           storeName: product.merchant || (product.store && product.store.name) || 'LOUMOO Merchant',
           storeStatus: 'ACTIVE',
+          storePhone,
+          sellerPhone: storePhone,
           title: product.title,
           status: 'PUBLISHED',
           visibility: 'PUBLIC',
@@ -262,6 +269,7 @@ class OrderRepository {
           _subtotalXaf: order.subtotalXaf,
           _shippingFeeXaf: order.shippingFeeXaf,
           _idempotencyKey: order.idempotencyKey,
+          _sellerPhone: order.sellerPhone || null,
           _timeline: order.timeline
         },
         payment_status: order.paymentStatus || 'pending',
@@ -482,6 +490,7 @@ class OrderRepository {
       sellerId: it.sellerId || row.seller_id || 'usr_seller',
       storeId: it.storeId || null,
       storeName: it.storeName || null,
+      storePhone: it.storePhone || it.sellerPhone || shippingMeta._sellerPhone || null,
       imageUrl: it.imageUrl || it.image || null
     }));
 
@@ -490,6 +499,8 @@ class OrderRepository {
       orderNumber: row.order_number,
       buyerId: row.buyer_id,
       sellerId: row.seller_id || (items[0] && items[0].sellerId) || 'usr_seller',
+      sellerPhone: row.seller_phone || shippingMeta._sellerPhone || (items[0] && items[0].storePhone) || null,
+      sellerWhatsapp: row.seller_phone || shippingMeta._sellerPhone || (items[0] && items[0].storePhone) || null,
       items,
       subtotalXaf: shippingMeta._subtotalXaf != null ? Number(shippingMeta._subtotalXaf) : undefined,
       shippingFeeXaf: shippingMeta._shippingFeeXaf != null ? Number(shippingMeta._shippingFeeXaf) : undefined,
