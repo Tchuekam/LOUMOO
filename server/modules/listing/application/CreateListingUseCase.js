@@ -24,6 +24,7 @@ const AnalyticsService = require('../../../infrastructure/analytics/AnalyticsSer
 const BehavioralSignalService = require('../../adaptive/application/BehavioralSignalService');
 const Listing = require('../domain/Listing');
 const Store = require('../../store/domain/Store');
+const CacheService = require('../../../infrastructure/cache/CacheService');
 const logger = require('../../../shared/logging/logger');
 const {
   AuthorizationError,
@@ -205,6 +206,8 @@ class CreateListingUseCase {
       categoryId: value.categoryId,
       imageCount: staged.length
     });
+
+    await CacheService.delPattern(`listings:store:${store.id}:*`, 'catalog').catch(() => null);
 
     logger.info(`[CreateListing] user=${principal.id} store=${store.id} listing=${row.id} created with ${staged.length} image(s)`);
     return { listing: await this.hydrate(row), duplicate: false };

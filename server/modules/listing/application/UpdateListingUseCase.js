@@ -101,6 +101,7 @@ class UpdateListingUseCase {
     }, { categorySchema });
 
     await CacheService.delete(`listing:${updated.id}`, 'catalog').catch(() => null);
+    await CacheService.delPattern(`listings:store:${updated.store_id}:*`, 'catalog').catch(() => null);
 
     AnalyticsService.track(principal.id, 'listing_updated', {
       listingId: updated.id,

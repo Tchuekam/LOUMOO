@@ -99,6 +99,7 @@ class ListingPublishUseCase {
     await CacheService.delete(`listing:${updated.id}`, 'catalog').catch(() => null);
     await CacheService.delPattern('catalog:list:*', 'catalog').catch(() => null);
     await CacheService.delPattern('list:*', 'catalog').catch(() => null);
+    await CacheService.delPattern(`listings:store:${updated.store_id}:*`, 'catalog').catch(() => null);
 
     await OutboxService.enqueue({
       eventType: 'listing.published',
@@ -125,6 +126,7 @@ class ListingPublishUseCase {
     await CacheService.delete(`listing:${updated.id}`, 'catalog').catch(() => null);
     await CacheService.delPattern('catalog:list:*', 'catalog').catch(() => null);
     await CacheService.delPattern('list:*', 'catalog').catch(() => null);
+    await CacheService.delPattern(`listings:store:${listingRow.store_id}:*`, 'catalog').catch(() => null);
     AnalyticsService.track(principal.id, 'listing_paused', { listingId: updated.id });
     logger.info(`[Publish] user=${principal.id} listing=${updated.id} PAUSED`);
     return CreateListingUseCase.hydrate(updated);
@@ -137,6 +139,7 @@ class ListingPublishUseCase {
     await CacheService.delete(`listing:${updated.id}`, 'catalog').catch(() => null);
     await CacheService.delPattern('catalog:list:*', 'catalog').catch(() => null);
     await CacheService.delPattern('list:*', 'catalog').catch(() => null);
+    await CacheService.delPattern(`listings:store:${listingRow.store_id}:*`, 'catalog').catch(() => null);
     AnalyticsService.track(principal.id, 'listing_archived', { listingId: updated.id });
     logger.info(`[Publish] user=${principal.id} listing=${updated.id} ARCHIVED`);
     return { id: updated.id, status: updated.status, archivedAt: updated.deleted_at };
