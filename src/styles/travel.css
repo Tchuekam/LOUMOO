@@ -203,36 +203,9 @@
   flex: 1;
 }
 
-/* ── Compact Hotel List Row ── */
-.hotel-row-compact {
-  display: flex;
-  background: var(--color-surface);
-  border: 1px solid var(--color-divider);
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  cursor: pointer;
-  box-shadow: var(--shadow-xs);
-  transition: transform 0.2s var(--ease-spring), border-color 0.2s ease;
-}
-.hotel-row-compact:hover {
-  transform: translateY(-1px);
-  border-color: var(--color-accent-200);
-}
-.hotel-row-compact .row-img {
-  width: 100px;
-  height: 90px;
-  object-fit: cover;
-  flex-shrink: 0;
-}
-.hotel-row-compact .row-info {
-  padding: 8px 12px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 2px;
-  min-width: 0;
-  flex: 1;
-}
+/* The premium hotel experience (search results, detail hero, rooms, spaces,
+   booking panel) lives in src/styles/hotel.css, loaded by the shell. The old
+   `.hotel-row-compact` scan row it replaced has been removed. */
 
 /* ── Compact Corridor Route Pill / Card ── */
 .travel-corridor-card {

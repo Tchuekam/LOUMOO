@@ -66,7 +66,13 @@ async function run() {
   assert.ok(verifyOut.includes('Total unique screen conditionals found: 92'), 'Must find 92 screen conditionals');
   assert.ok(verifyOut.includes('Total screens declared in SCREENS: 92'), 'Must match 92 declared screens');
   assert.ok(verifyOut.includes('Missing screens count: 0'), 'Missing screens count must be 0');
-  assert.ok(verifyOut.includes('Open sc-if: 718, Close sc-if: 718') || verifyOut.includes('Open sc-if: 717, Close sc-if: 717'), 'sc-if tags must be perfectly balanced');
+  // The exact tag count shifts as screens evolve (e.g. the premium hotel
+  // redesign added conditional sections); what must hold is that every
+  // <sc-if> is closed. Assert true balance from the reporter's own numbers
+  // rather than pinning a magic total.
+  const scIfMatch = verifyOut.match(/Open sc-if:\s*(\d+),\s*Close sc-if:\s*(\d+)/);
+  assert.ok(scIfMatch, 'verify_screens must report the sc-if tag counts');
+  assert.strictEqual(scIfMatch[1], scIfMatch[2], 'sc-if tags must be perfectly balanced');
   console.log('    ✓ 5. 92/92 screens verified with balanced sc-if tags');
 
   console.log('  All SuperAdmin Phase 4 tests passed successfully!');
