@@ -1,5 +1,8 @@
 # ── Dependencies (installed inside the image, never copied) ──────────────
 node_modules
+# public/ is assembled inside the image (assets stage); never ship a local copy.
+public
+scratch
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -17,7 +20,9 @@ yarn-error.log*
 # ── Tests, docs & non-runtime tooling ───────────────────────────────────
 tests
 docs
-scripts
+# scripts/ is not shipped, but the frontend assembler runs at build time.
+scripts/*
+!scripts/assemble_public.js
 README.md
 verify_runtime.js
 verify_screens.py
@@ -25,7 +30,8 @@ build_redesign.py
 
 # ── Local/dev artifacts ──────────────────────────────────────────────────
 .claude
-_ds
+# _ds (design system) IS needed by the build: assemble_public.js copies it into
+# public/ and prunes it to runtime-loadable asset types only.
 .thumbnail
 uploads
 coverage

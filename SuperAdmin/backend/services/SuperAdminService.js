@@ -51,16 +51,83 @@ class SuperAdminService {
 
     // Specific domain validations
     if (key === 'platform_commission_rate') {
-      if (typeof value.rate_percent !== 'number' || value.rate_percent < 0 || value.rate_percent > 50) {
+      if (typeof value.rate_percent !== 'number' || !Number.isFinite(value.rate_percent) || value.rate_percent < 0 || value.rate_percent > 50) {
         throw new ValidationError('Platform commission rate must be a number between 0% and 50%.');
+      }
+      if (value.payout_fee_fixed_xaf !== undefined) {
+        if (typeof value.payout_fee_fixed_xaf !== 'number' || !Number.isInteger(value.payout_fee_fixed_xaf) || value.payout_fee_fixed_xaf < 0 || value.payout_fee_fixed_xaf > 50000) {
+          throw new ValidationError('Payout fee must be an integer between 0 and 50,000 XAF.');
+        }
+      }
+      if (value.escrow_hold_days !== undefined) {
+        if (typeof value.escrow_hold_days !== 'number' || !Number.isInteger(value.escrow_hold_days) || value.escrow_hold_days < 1 || value.escrow_hold_days > 60) {
+          throw new ValidationError('Escrow hold period must be an integer between 1 and 60 days.');
+        }
       }
     } else if (key === 'seller_whatsapp_default') {
       if (!value.number || String(value.number).replace(/\D/g, '').length < 8) {
         throw new ValidationError('A valid WhatsApp phone number must be provided.');
       }
+      if (value.label && (typeof value.label !== 'string' || value.label.length > 100)) {
+        throw new ValidationError('WhatsApp hotline label must be a string up to 100 characters.');
+      }
     } else if (key === 'maintenance_mode') {
       if (typeof value.enabled !== 'boolean') {
         throw new ValidationError('Maintenance mode enabled must be a boolean flag.');
+      }
+      if (value.banner_text !== undefined && (typeof value.banner_text !== 'string' || value.banner_text.length > 500)) {
+        throw new ValidationError('Maintenance banner text must be a string up to 500 characters.');
+      }
+      if (value.allow_admin_bypass !== undefined && typeof value.allow_admin_bypass !== 'boolean') {
+        throw new ValidationError('allow_admin_bypass must be a boolean flag.');
+      }
+    } else if (key === 'shipping_rates_by_city') {
+      if (!value || typeof value !== 'object' || Array.isArray(value) || Object.keys(value).length === 0) {
+        throw new ValidationError('Shipping rates must be a non-empty object mapping city names to delivery fees.');
+      }
+      for (const [city, rate] of Object.entries(value)) {
+        if (typeof city !== 'string' || !city.trim() || city.length > 60) {
+          throw new ValidationError('City name must be a valid non-empty string up to 60 characters.');
+        }
+        if (typeof rate !== 'number' || !Number.isInteger(rate) || rate < 0 || rate > 100000) {
+          throw new ValidationError(`Delivery fee for ${city} must be an integer between 0 and 100,000 XAF.`);
+        }
+      }
+    } else if (key === 'announcement_banner') {
+      const active = value.active !== undefined ? value.active : value.enabled;
+      if (typeof active !== 'boolean') {
+        throw new ValidationError('Announcement active status must be a boolean.');
+      }
+      const msg = value.message || value.text_fr;
+      if (!msg || typeof msg !== 'string' || msg.trim().length === 0) {
+        throw new ValidationError('Announcement banner must include a non-empty message.');
+      }
+      if (msg.length > 500) {
+        throw new ValidationError('Announcement banner text must not exceed 500 characters.');
+      }
+      const ctaUrl = value.cta_url || value.link;
+      if (ctaUrl !== undefined && ctaUrl !== null && ctaUrl !== '') {
+        if (typeof ctaUrl !== 'string' || ctaUrl.length > 2048) {
+          throw new ValidationError('Call to action URL must be a valid string up to 2048 characters.');
+        }
+        if (/^\s*(javascript|data|vbscript):/i.test(ctaUrl) || /^\/\//.test(ctaUrl)) {
+          throw new ValidationError('Unsafe URL scheme detected in announcement banner.');
+        }
+        if (!/^(\/[^/\\]|https?:\/\/)/i.test(ctaUrl)) {
+          throw new ValidationError('Announcement CTA URL must be a relative path or an http/https URL.');
+        }
+      }
+    } else if (key === 'feature_flags') {
+      if (!value || typeof value !== 'object' || Array.isArray(value) || Object.keys(value).length === 0) {
+        throw new ValidationError('Feature flags must be a non-empty object of key-value boolean flags.');
+      }
+      for (const [flag, enabled] of Object.entries(value)) {
+        if (!/^[a-z0-9_]{2,64}$/i.test(flag)) {
+          throw new ValidationError(`Invalid feature flag name [${flag}]. Use alphanumeric characters and underscores.`);
+        }
+        if (typeof enabled !== 'boolean') {
+          throw new ValidationError(`Feature flag [${flag}] must be a boolean value.`);
+        }
       }
     }
 
@@ -88,6 +155,90 @@ class SuperAdminService {
 
     logger.info(`[SuperAdminService] Setting updated: ${key} by ${adminId}`);
     return { success: true, key, value };
+  }
+
+  /**
+   * Resets a setting back to factory seed defaults.
+   */
+  static async resetSystemSetting(key, { adminId = 'super_admin', reason = null, ipAddress = null } = {}) {
+    if (!key || typeof key !== 'string') {
+      throw new ValidationError('A valid setting key is required.');
+    }
+    if (reason && (typeof reason !== 'string' || reason.length > 500)) {
+      throw new ValidationError('Reset reason must be a string up to 500 characters.');
+    }
+    const updateRes = await SuperAdminRepository.resetSetting(key, adminId);
+
+    // Invalidate cache immediately
+    try {
+      if (CacheService && typeof CacheService.delete === 'function') {
+        await CacheService.delete('system_settings:all', 'admin');
+        await CacheService.delete(`system_setting:${key}`, 'admin');
+      }
+    } catch (err) {
+      logger.warn(`[SuperAdminService] Cache invalidation warning for ${key}:`, err.message);
+    }
+
+    // Record audit log
+    await SuperAdminRepository.recordAuditLog({
+      adminId,
+      action: 'setting.reset',
+      resourceType: 'system_setting',
+      resourceId: key,
+      oldValues: updateRes.oldVal,
+      newValues: updateRes.value,
+      reason: reason || `Reverted system setting [${key}] to factory defaults`,
+      ipAddress
+    });
+
+    logger.info(`[SuperAdminService] Setting reset to default: ${key} by ${adminId}`);
+    return { success: true, key, value: updateRes.value };
+  }
+
+  /**
+   * Retrieves list of setting categories.
+   */
+  static getSettingCategories() {
+    return SuperAdminRepository.getSettingCategories();
+  }
+
+  /**
+   * Retrieves settings grouped by category.
+   */
+  static async getSettingsByCategory(category) {
+    if (!category || typeof category !== 'string') {
+      throw new ValidationError('A valid category name is required.');
+    }
+    return await SuperAdminRepository.getSettingsByCategory(category);
+  }
+
+  /**
+   * Dedicated emergency maintenance mode toggle.
+   */
+  static async setMaintenanceMode({ enabled, bannerText = null, allowAdminBypass = true } = {}, { adminId = 'super_admin', ipAddress = null } = {}) {
+    if (typeof enabled !== 'boolean') {
+      throw new ValidationError('Maintenance status must be specified as a boolean (enabled: true/false).');
+    }
+    if (bannerText !== null && bannerText !== undefined) {
+      if (typeof bannerText !== 'string' || bannerText.length > 500) {
+        throw new ValidationError('Maintenance banner text must be a string up to 500 characters.');
+      }
+    }
+    const current = (await SuperAdminRepository.getSetting('maintenance_mode')) || {};
+    const updated = {
+      ...current,
+      enabled,
+      banner_text: bannerText || current.banner_text || 'LOUMOO platform upgrade in progress.',
+      allow_admin_bypass: allowAdminBypass !== undefined ? Boolean(allowAdminBypass) : true
+    };
+
+    const result = await this.updateSystemSetting('maintenance_mode', updated, {
+      adminId,
+      reason: `Maintenance mode ${enabled ? 'ACTIVATED' : 'DEACTIVATED'} by executive command`,
+      ipAddress
+    });
+
+    return result;
   }
 
   /**
@@ -121,10 +272,107 @@ class SuperAdminService {
   }
 
   /**
-   * Retrieves paginated audit logs.
+   * Retrieves paginated and filtered audit logs.
    */
   static async getAuditLogs(options = {}) {
     return await SuperAdminRepository.getAuditLogs(options);
+  }
+
+  /**
+   * Retrieves unique distinct action types.
+   */
+  static async getAuditActions() {
+    return await SuperAdminRepository.getAuditActions();
+  }
+
+  /**
+   * Exports audit logs with compliance tracking.
+   */
+  static async exportAuditLogs(filters = {}, format = 'csv', { adminId = 'super_admin', ipAddress = null } = {}) {
+    const exportResult = await SuperAdminRepository.exportAuditLogs(filters, format);
+
+    // Record audit entry for the export itself
+    await SuperAdminRepository.recordAuditLog({
+      adminId,
+      action: 'audit.export',
+      resourceType: 'audit_log',
+      resourceId: `export_${format}_${Date.now()}`,
+      reason: `Exported ${exportResult.count} audit records in ${format.toUpperCase()} format`,
+      ipAddress
+    });
+
+    return exportResult;
+  }
+
+  /**
+   * Scrubs sensitive secrets and connection strings from diagnostic health messages.
+   */
+  static sanitizeHealthErrorMessage(msg) {
+    if (!msg) return 'Service communication failure';
+    return String(msg)
+      .replace(/(postgres|postgresql|redis|mongodb|https?):\/\/[^@\s]+@/gi, '$1://[REDACTED]@')
+      .replace(/(bearer\s+|key=|password=|secret=)[^\s&]+/gi, '$1[REDACTED]');
+  }
+
+  /**
+   * Performs deep diagnostic probes on infrastructure services with timeout and fault isolation.
+   */
+  static async getDeepHealth() {
+    const results = {
+      status: 'HEALTHY',
+      timestamp: new Date().toISOString(),
+      uptimeSeconds: Math.floor(process.uptime()),
+      environment: process.env.NODE_ENV || 'development',
+      services: {
+        database: { status: 'ONLINE', latencyMs: 0 },
+        cache: { status: 'ONLINE', latencyMs: 0 },
+        memory: {
+          heapUsedMb: Math.round(process.memoryUsage().heapUsed / 1024 / 1024),
+          heapTotalMb: Math.round(process.memoryUsage().heapTotal / 1024 / 1024),
+          rssMb: Math.round(process.memoryUsage().rss / 1024 / 1024)
+        }
+      }
+    };
+
+    // Probe Database with 2000ms timeout
+    const dbStart = Date.now();
+    try {
+      const db = SuperAdminRepository.db;
+      if (db) {
+        const dbPromise = db.from('system_settings').select('key').limit(1);
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Database probe timed out after 2000ms')), 2000)
+        );
+        const { error } = await Promise.race([dbPromise, timeoutPromise]);
+        if (error) throw error;
+        results.services.database.latencyMs = Date.now() - dbStart;
+      } else {
+        results.services.database.status = 'IN_MEMORY_FALLBACK';
+      }
+    } catch (err) {
+      results.services.database.status = 'DEGRADED';
+      results.services.database.error = this.sanitizeHealthErrorMessage(err.message);
+      results.status = 'DEGRADED';
+    }
+
+    // Probe Redis Cache with 2000ms timeout
+    const cacheStart = Date.now();
+    try {
+      if (CacheService && typeof CacheService.get === 'function') {
+        const cachePromise = CacheService.get('health_probe_ping', 'admin');
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Cache probe timed out after 2000ms')), 2000)
+        );
+        await Promise.race([cachePromise, timeoutPromise]);
+        results.services.cache.latencyMs = Date.now() - cacheStart;
+      }
+    } catch (err) {
+      results.services.cache.status = 'DEGRADED';
+      results.services.cache.error = this.sanitizeHealthErrorMessage(err.message);
+      results.status = 'DEGRADED';
+    }
+
+    return results;
   }
 
   /**

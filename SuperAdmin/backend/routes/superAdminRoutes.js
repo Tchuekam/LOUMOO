@@ -18,8 +18,12 @@ const SuperAdminOrdersController = require('../controllers/SuperAdminOrdersContr
 // All admin endpoints strictly enforce RBAC
 router.use(requireSuperAdminRole);
 
-// System Overview & Real-time Metrics
+// System Overview, Deep Health & Real-time Metrics
 router.get('/overview', SuperAdminOverviewController.getOverview);
+router.get('/health/deep', SuperAdminOverviewController.getDeepHealth);
+
+// Emergency Platform Maintenance Toggle
+router.post('/maintenance', SuperAdminSettingsController.setMaintenance);
 
 // Stores & Merchant KYC Moderation (Phase 2)
 router.get('/stores', SuperAdminStoresController.listStores);
@@ -52,13 +56,18 @@ router.post('/orders/:id/escrow', SuperAdminOrdersController.resolveEscrow);
 
 // Dynamic System Settings & Configuration (Zero-Code Platform Control)
 router.get('/config', SuperAdminSettingsController.getAll);
+router.get('/settings/categories', SuperAdminSettingsController.getCategories);
+router.get('/settings/category/:category', SuperAdminSettingsController.getByCategory);
+router.post('/settings/reset/:key', SuperAdminSettingsController.resetByKey);
 router.get('/settings', SuperAdminSettingsController.getAll);
 router.put('/settings', SuperAdminSettingsController.updateSettings);
 router.patch('/settings', SuperAdminSettingsController.updateSettings);
 router.get('/settings/:key', SuperAdminSettingsController.getByKey);
 router.put('/settings/:key', SuperAdminSettingsController.updateByKey);
 
-// Immutable Administrative Audit Logs
+// Immutable Administrative Audit Logs & Export
+router.get('/audit-logs/actions', SuperAdminOverviewController.getAuditActions);
+router.get('/audit-logs/export', SuperAdminOverviewController.exportAuditLogs);
 router.get('/audit-logs', SuperAdminOverviewController.getAuditLogs);
 
 module.exports = router;

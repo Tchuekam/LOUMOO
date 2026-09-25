@@ -7,6 +7,7 @@
 
 const { SupabaseDatabase } = require('../../../server/infrastructure/database/SupabaseClient.js');
 const logger = require('../../../server/shared/logging/logger');
+const { NotFoundError } = require('../../../server/shared/errors/AppError');
 
 // Default in-memory seed settings for fallback / local testing
 const DEFAULT_SETTINGS = {
@@ -375,7 +376,10 @@ class SuperAdminRepository {
     const db = this.db;
     if (db) {
       try {
-        await db.from('audit_logs').insert([logEntry]);
+        const { error } = await db.from('audit_logs').insert([logEntry]);
+        if (error) {
+          logger.warn('[SuperAdminRepository] Failed to insert audit log to DB:', error.message);
+        }
       } catch (err) {
         logger.warn('[SuperAdminRepository] Failed to insert audit log to DB:', err.message);
       }
@@ -389,28 +393,112 @@ class SuperAdminRepository {
   }
 
   /**
-   * Retrieves recent audit logs.
+   * Retrieves list of platform setting categories.
    */
-  static async getAuditLogs({ limit = 50, offset = 0, resourceType = null } = {}) {
+  static getSettingCategories() {
+    return [
+      { id: 'financial', label: 'Financier & Commissions', icon: '💰', description: 'Taux de commission, séquestre et frais de virement' },
+      { id: 'commercial', label: 'Commercial & Vendeurs', icon: '📞', description: 'Ligne WhatsApp officielle et hotlines vendeurs' },
+      { id: 'operational', label: 'Opérationnel & Livraison', icon: '🚚', description: 'Tarifs de livraison régionaux et maintenance' },
+      { id: 'general', label: 'Général & Marketing', icon: '📢', description: 'Bannière de diffusion et annonces marketplace' },
+      { id: 'feature_flags', label: 'Fonctionnalités & Modules', icon: '⚡', description: 'Interrupteurs temps réel des fonctionnalités' }
+    ];
+  }
+
+  /**
+   * Fetches settings belonging to a specific category.
+   */
+  static async getSettingsByCategory(category) {
+    const all = await this.getAllSettings();
+    const categoryMap = {
+      financial: ['platform_commission_rate'],
+      commercial: ['seller_whatsapp_default'],
+      operational: ['shipping_rates_by_city', 'maintenance_mode'],
+      general: ['announcement_banner'],
+      feature_flags: ['feature_flags']
+    };
+    const keys = categoryMap[category] || [];
+    const result = {};
+    for (const k of keys) {
+      if (all[k] !== undefined) {
+        result[k] = all[k];
+      }
+    }
+    return result;
+  }
+
+  /**
+   * Resets a setting back to its factory seed configuration.
+   */
+  static async resetSetting(key, adminId = 'super_admin') {
+    if (!DEFAULT_SETTINGS[key]) {
+      throw new NotFoundError(`No default baseline setting found for key [${key}]`);
+    }
+    const defaultValue = JSON.parse(JSON.stringify(DEFAULT_SETTINGS[key]));
+    return await this.updateSetting(key, defaultValue, adminId);
+  }
+
+  /**
+   * Retrieves audit logs with multi-criteria filtering, pagination, and count metadata.
+   */
+  static async getAuditLogs({
+    limit = 50,
+    offset = 0,
+    resourceType = null,
+    action = null,
+    adminId = null,
+    resourceId = null,
+    startDate = null,
+    endDate = null,
+    search = null
+  } = {}) {
+    limit = Math.min(Math.max(parseInt(limit, 10) || 50, 1), 200);
+    offset = Math.max(parseInt(offset, 10) || 0, 0);
+
     const db = this.db;
     if (db) {
       try {
         let query = db
           .from('audit_logs')
-          .select('*')
-          .order('created_at', { ascending: false })
-          .range(offset, offset + limit - 1);
+          .select('*', { count: 'exact' })
+          .order('created_at', { ascending: false });
 
-        if (resourceType) {
-          query = query.eq('resource_type', resourceType);
+        if (resourceType) query = query.eq('resource_type', resourceType);
+        if (action) query = query.eq('action', action);
+        if (adminId) query = query.eq('admin_id', adminId);
+        if (resourceId) query = query.eq('resource_id', resourceId);
+        if (startDate) {
+          const d = new Date(startDate);
+          if (!isNaN(d.getTime())) {
+            query = query.gte('created_at', d.toISOString());
+          }
+        }
+        if (endDate) {
+          const d = new Date(endDate);
+          if (!isNaN(d.getTime())) {
+            query = query.lte('created_at', d.toISOString());
+          }
+        }
+        if (search) {
+          const sanitized = String(search).replace(/[%_,()"\\]/g, ' ').trim();
+          if (sanitized) {
+            query = query.or(`reason.ilike.%${sanitized}%,resource_id.ilike.%${sanitized}%,action.ilike.%${sanitized}%,admin_id.ilike.%${sanitized}%`);
+          }
         }
 
-        const { data, error } = await query;
+        query = query.range(offset, offset + limit - 1);
+        const { data, count, error } = await query;
         if (!error && Array.isArray(data)) {
+          const totalCount = (count !== null && count !== undefined) ? count : data.length;
+          data.totalCount = totalCount;
+          data.totalPages = Math.ceil(totalCount / limit) || 1;
+          data.limit = limit;
+          data.offset = offset;
+          data.filters = { resourceType, action, adminId, resourceId, startDate, endDate, search };
           return data;
         }
       } catch (err) {
-        logger.warn('[SuperAdminRepository] Audit logs query error:', err.message);
+        logger.warn('[SuperAdminRepository] Audit logs query error, falling back to memory:', err.message);
       }
     }
 
@@ -418,7 +506,164 @@ class SuperAdminRepository {
     if (resourceType) {
       filtered = filtered.filter(l => l.resource_type === resourceType);
     }
-    return filtered.slice(offset, offset + limit);
+    if (action) {
+      filtered = filtered.filter(l => l.action === action);
+    }
+    if (adminId) {
+      filtered = filtered.filter(l => l.admin_id === adminId);
+    }
+    if (resourceId) {
+      filtered = filtered.filter(l => l.resource_id === resourceId);
+    }
+    if (startDate) {
+      const startTs = new Date(startDate).getTime();
+      if (!isNaN(startTs)) {
+        filtered = filtered.filter(l => new Date(l.created_at).getTime() >= startTs);
+      }
+    }
+    if (endDate) {
+      const endTs = new Date(endDate).getTime();
+      if (!isNaN(endTs)) {
+        filtered = filtered.filter(l => new Date(l.created_at).getTime() <= endTs);
+      }
+    }
+    if (search) {
+      const q = String(search).toLowerCase().trim();
+      filtered = filtered.filter(l => {
+        return (
+          (l.reason && String(l.reason).toLowerCase().includes(q)) ||
+          (l.resource_id && String(l.resource_id).toLowerCase().includes(q)) ||
+          (l.resource_type && String(l.resource_type).toLowerCase().includes(q)) ||
+          (l.action && String(l.action).toLowerCase().includes(q)) ||
+          (l.admin_id && String(l.admin_id).toLowerCase().includes(q)) ||
+          (l.ip_address && String(l.ip_address).toLowerCase().includes(q))
+        );
+      });
+    }
+
+    const totalCount = filtered.length;
+    const totalPages = Math.ceil(totalCount / limit) || 1;
+    const sliced = filtered.slice(offset, offset + limit);
+    sliced.totalCount = totalCount;
+    sliced.totalPages = totalPages;
+    sliced.limit = limit;
+    sliced.offset = offset;
+    sliced.filters = { resourceType, action, adminId, resourceId, startDate, endDate, search };
+    return sliced;
+  }
+
+  /**
+   * Sanitizes sensitive fields (passwords, tokens, keys) from exported payloads.
+   */
+  static sanitizeAuditValues(val) {
+    if (val === null || val === undefined) return val;
+    if (typeof val !== 'object') return val;
+    if (Array.isArray(val)) {
+      return val.map(item => this.sanitizeAuditValues(item));
+    }
+    const sanitized = {};
+    const SENSITIVE_REGEX = /^(password|token|secret|api_?key|credential|private_?key|auth_?token|jwt)/i;
+    for (const [k, v] of Object.entries(val)) {
+      if (SENSITIVE_REGEX.test(k)) {
+        sanitized[k] = '[REDACTED]';
+      } else if (typeof v === 'object' && v !== null) {
+        sanitized[k] = this.sanitizeAuditValues(v);
+      } else {
+        sanitized[k] = v;
+      }
+    }
+    return sanitized;
+  }
+
+  /**
+   * Retrieves unique distinct action types recorded in the audit trail.
+   */
+  static async getAuditActions() {
+    const db = this.db;
+    if (db) {
+      try {
+        const { data, error } = await db.from('audit_logs').select('action');
+        if (!error && Array.isArray(data) && data.length > 0) {
+          return Array.from(new Set(data.map(d => d.action).filter(Boolean))).sort();
+        }
+      } catch (_) {}
+    }
+    const defaultActions = [
+      'setting.update',
+      'setting.reset',
+      'store.verify',
+      'store.suspend',
+      'store.reactivate',
+      'store.moderate',
+      'listing.approve',
+      'listing.suspend',
+      'user.role_change',
+      'user.kyc_update',
+      'order.escrow',
+      'maintenance.toggle',
+      'audit.export'
+    ];
+    const memoryActions = inMemoryAuditLogs.map(l => l.action).filter(Boolean);
+    return Array.from(new Set([...defaultActions, ...memoryActions])).sort();
+  }
+
+  /**
+   * Exports filtered audit logs formatted for compliance in CSV or JSON.
+   */
+  static async exportAuditLogs(filters = {}, format = 'csv') {
+    const exportLimit = Math.min(Math.max(parseInt(filters.limit, 10) || 5000, 1), 5000);
+    const exportOffset = Math.max(parseInt(filters.offset, 10) || 0, 0);
+    const logs = await this.getAuditLogs({ ...filters, limit: exportLimit, offset: exportOffset });
+    const count = logs.length;
+
+    // Sanitize records prior to export
+    const sanitizedLogs = logs.map(l => ({
+      ...l,
+      old_values: this.sanitizeAuditValues(l.old_values),
+      new_values: this.sanitizeAuditValues(l.new_values)
+    }));
+
+    if (format === 'json') {
+      return {
+        content: JSON.stringify(sanitizedLogs, null, 2),
+        contentType: 'application/json; charset=utf-8',
+        extension: 'json',
+        count
+      };
+    }
+
+    // Standard RFC 4180 CSV generation with formula injection mitigation
+    const escapeCsv = (val) => {
+      if (val === null || val === undefined) return '""';
+      let str = typeof val === 'object' ? JSON.stringify(val) : String(val);
+      // OWASP Formula Injection defense: prefix dangerous leading characters with a single quote
+      if (/^[=+\-@\t\r]/.test(str)) {
+        str = `'${str}`;
+      }
+      return `"${str.replace(/"/g, '""')}"`;
+    };
+
+    const headers = ['ID', 'Date', 'Action', 'ResourceType', 'ResourceId', 'AdminId', 'IPAddress', 'Reason', 'OldValues', 'NewValues'].map(h => `"${h}"`);
+    const rows = sanitizedLogs.map(l => [
+      escapeCsv(l.id),
+      escapeCsv(l.created_at),
+      escapeCsv(l.action),
+      escapeCsv(l.resource_type),
+      escapeCsv(l.resource_id),
+      escapeCsv(l.admin_id),
+      escapeCsv(l.ip_address),
+      escapeCsv(l.reason),
+      escapeCsv(l.old_values),
+      escapeCsv(l.new_values)
+    ].join(','));
+
+    const csvContent = [headers.join(','), ...rows].join('\r\n');
+    return {
+      content: csvContent,
+      contentType: 'text/csv; charset=utf-8',
+      extension: 'csv',
+      count
+    };
   }
 
   /**

@@ -2,22 +2,44 @@
 # ─────────────────────────────────────────────────────────────────────────────
 # LOUMOO Universal Commerce — production image (multi-stage)
 #
-# Stage 1 (deps)  : installs production dependencies only — no devDependencies,
-#                   no nodemon. Full dependency cache reuse on code-only edits.
-# Stage 2 (runtime): slim node:22-alpine carrying exactly what the process
-#                   needs: node_modules, server/, src/ and the static frontend.
+# Stage 1 (deps)   : production dependencies only (no devDependencies).
+# Stage 2 (assets) : runs scripts/assemble_public.js to build the static
+#                    frontend (public/): the app shell as index.html, the
+#                    route-level *Screens chunks, and the Assets / src / _ds /
+#                    data directories the shell loads by absolute path.
+# Stage 3 (runtime): slim node:22-alpine carrying node_modules, the server, the
+#                    SuperAdmin module, src/ (server reads src/data at runtime),
+#                    and the assembled public/ frontend.
+#
+# Self-contained: this one image serves BOTH the API and the full frontend, so
+# a single Railway service is the whole app. gzip/brotli compression and static
+# cache headers are configured in server/index.js.
 # ─────────────────────────────────────────────────────────────────────────────
 
 # ---------- Stage 1: dependency install ----------
 FROM node:22-alpine AS deps
 WORKDIR /app
-
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev
 
-# ---------- Stage 2: runtime ----------
+# ---------- Stage 2: assemble static frontend (public/) ----------
+FROM node:22-alpine AS assets
+WORKDIR /app
+COPY scripts/assemble_public.js ./scripts/assemble_public.js
+COPY ["Commerce App.dc.html", "./"]
+COPY ["support.js", "./support.js"]
+# Route-level frontend chunks (SearchScreens.dc.html, TravelScreens.dc.html, …).
+COPY *Screens.dc.html ./
+COPY Assets ./Assets
+COPY src ./src
+COPY _ds ./_ds
+COPY data ./data
+RUN node scripts/assemble_public.js
+
+# ---------- Stage 3: runtime ----------
 FROM node:22-alpine
 WORKDIR /app
+ENV NODE_ENV=production
 
 # Run as a non-root user (defense in depth; nothing writes to disk at runtime).
 RUN addgroup -S loumoo && adduser -S loumoo -G loumoo
@@ -26,10 +48,11 @@ RUN addgroup -S loumoo && adduser -S loumoo -G loumoo
 COPY --from=deps --chown=loumoo:loumoo /app/node_modules ./node_modules
 COPY --chown=loumoo:loumoo server ./server
 COPY --chown=loumoo:loumoo src ./src
-COPY --chown=loumoo:loumoo support.js ./support.js
-COPY --chown=loumoo:loumoo ["Commerce App.dc.html", "./"]
-COPY --chown=loumoo:loumoo *Screens.dc.html ./
-COPY --chown=loumoo:loumoo index.html ./
+# SuperAdmin is required by server/index.js (admin routes + maintenance guard)
+# and its control-center frontend is served from SuperAdmin/frontend.
+COPY --chown=loumoo:loumoo SuperAdmin ./SuperAdmin
+# The assembled static frontend (app shell + Assets + src + _ds + data).
+COPY --from=assets --chown=loumoo:loumoo /app/public ./public
 RUN chown loumoo:loumoo /app
 
 USER loumoo

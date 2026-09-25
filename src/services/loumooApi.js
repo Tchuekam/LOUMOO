@@ -1535,6 +1535,85 @@
     return this.request('/api/v1/admin/audit-logs' + qs(filter));
   };
 
+  /**
+   * GET /api/v1/admin/audit-logs/actions
+   * Distinct action types recorded in audit logs.
+   */
+  LoumooApiClient.prototype.getAdminAuditActions = function () {
+    return this.request('/api/v1/admin/audit-logs/actions');
+  };
+
+  /**
+   * GET /api/v1/admin/audit-logs/export
+   * Exports audit log records formatted as CSV or JSON.
+   */
+  LoumooApiClient.prototype.exportAdminAuditLogs = function (filter, format) {
+    var query = filter ? Object.assign({}, filter) : {};
+    if (format) query.format = format;
+    return this.request('/api/v1/admin/audit-logs/export' + qs(query));
+  };
+
+  /**
+   * GET /api/v1/admin/settings/categories
+   */
+  LoumooApiClient.prototype.getSettingsCategories = function () {
+    return this.request('/api/v1/admin/settings/categories');
+  };
+
+  /**
+   * GET /api/v1/admin/settings/category/:category
+   */
+  LoumooApiClient.prototype.getSettingsByCategory = function (category) {
+    return this.request('/api/v1/admin/settings/category/' + encodeURIComponent(category));
+  };
+
+  /**
+   * POST /api/v1/admin/settings/reset/:key
+   */
+  LoumooApiClient.prototype.resetSystemSetting = function (key, reason) {
+    return this.request('/api/v1/admin/settings/reset/' + encodeURIComponent(key), {
+      method: 'POST',
+      body: { reason: reason }
+    });
+  };
+
+  /**
+   * POST /api/v1/admin/maintenance
+   */
+  LoumooApiClient.prototype.setMaintenanceMode = function (enabled, bannerText, allowAdminBypass) {
+    return this.request('/api/v1/admin/maintenance', {
+      method: 'POST',
+      body: {
+        enabled: !!enabled,
+        banner_text: bannerText || '',
+        allow_admin_bypass: allowAdminBypass !== undefined ? allowAdminBypass : true
+      }
+    });
+  };
+
+  /**
+   * GET /api/v1/admin/health/deep
+   */
+  LoumooApiClient.prototype.getDeepHealth = function () {
+    return this.request('/api/v1/admin/health/deep');
+  };
+
+  LoumooApiClient.prototype.getAuditLogs = function (filter) {
+    return this.getAdminAuditLogs(filter);
+  };
+
+  LoumooApiClient.prototype.getAuditActions = function () {
+    return this.getAdminAuditActions();
+  };
+
+  LoumooApiClient.prototype.exportAuditLogs = function (filter, format) {
+    return this.exportAdminAuditLogs(filter, format);
+  };
+
+  LoumooApiClient.prototype.resetSetting = function (key, reason) {
+    return this.resetSystemSetting(key, reason);
+  };
+
   var instance = new LoumooApiClient();
   instance.LoumooApiClient = LoumooApiClient;
   instance.TOKEN_KEY = TOKEN_KEY;

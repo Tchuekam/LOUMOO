@@ -5,6 +5,7 @@
  */
 
 const SuperAdminService = require('../services/SuperAdminService');
+const { ValidationError } = require('../../../server/shared/errors/AppError');
 
 class SuperAdminSettingsController {
   static async getAll(req, res, next) {
@@ -79,6 +80,93 @@ class SuperAdminSettingsController {
       res.json({
         success: true,
         message: 'System settings successfully updated.',
+        data: result
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async getCategories(req, res, next) {
+    try {
+      const categories = SuperAdminService.getSettingCategories();
+      res.json({
+        success: true,
+        data: {
+          categories,
+          count: categories.length
+        }
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async getByCategory(req, res, next) {
+    try {
+      const { category } = req.params;
+      const settings = await SuperAdminService.getSettingsByCategory(category);
+      res.json({
+        success: true,
+        data: {
+          category,
+          settings
+        }
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async resetByKey(req, res, next) {
+    try {
+      const { key } = req.params;
+      if (!key || typeof key !== 'string' || !key.trim()) {
+        throw new ValidationError('A valid setting key parameter is required.');
+      }
+      const adminId = (req.principal && req.principal.id) || 'super_admin';
+      const ipAddress = req.ip || req.connection.remoteAddress;
+      const reason = req.body && req.body.reason ? String(req.body.reason).trim() : null;
+      if (reason && reason.length > 500) {
+        throw new ValidationError('Reset reason must be a string up to 500 characters.');
+      }
+
+      const result = await SuperAdminService.resetSystemSetting(key, {
+        adminId,
+        reason,
+        ipAddress
+      });
+
+      res.json({
+        success: true,
+        message: `System setting [${key}] successfully reset to factory defaults.`,
+        data: result
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async setMaintenance(req, res, next) {
+    try {
+      if (!req.body || typeof req.body !== 'object') {
+        throw new ValidationError('Request body must be a JSON object.');
+      }
+      if (typeof req.body.enabled !== 'boolean') {
+        throw new ValidationError('Maintenance status must be specified as a boolean (enabled: true/false).');
+      }
+
+      const adminId = (req.principal && req.principal.id) || 'super_admin';
+      const ipAddress = req.ip || req.connection.remoteAddress;
+
+      const result = await SuperAdminService.setMaintenanceMode(req.body, {
+        adminId,
+        ipAddress
+      });
+
+      res.json({
+        success: true,
+        message: `Maintenance mode successfully ${req.body.enabled ? 'activated' : 'deactivated'}.`,
         data: result
       });
     } catch (err) {

@@ -3,310 +3,266 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LOUMOO — SuperAdmin Executive Control Center</title>
+  <title>LOUMOO — Enterprise Control</title>
   <base href="/superadmin/">
   <link rel="stylesheet" href="/superadmin/css/super_admin.css">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%228%22 fill=%22%230b1220%22/><path d=%22M11 9v14h10%22 fill=%22none%22 stroke=%22%23fff%22 stroke-width=%222.4%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/></svg>">
 </head>
 <body>
 
-  <!-- Top Executive Navigation Bar -->
-  <header class="admin-navbar">
-    <div class="nav-brand">
-      <div class="brand-badge">SUPERADMIN</div>
-      <div class="brand-title">LOUMOO <span>ENTERPRISE CONTROL</span></div>
+  <!-- ============================ ICON SPRITE ============================ -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <defs>
+      <symbol id="i-overview" viewBox="0 0 24 24"><path d="M4 13h6V4H4zM14 20h6V4h-6zM4 20h6v-4H4z"/></symbol>
+      <symbol id="i-store" viewBox="0 0 24 24"><path d="M4 9l1-5h14l1 5M4 9v10a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9M4 9h16M9 20v-6h6v6"/></symbol>
+      <symbol id="i-kyc" viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></symbol>
+      <symbol id="i-settings" viewBox="0 0 24 24"><path d="M4 6h9M17 6h3M4 12h3M11 12h9M4 18h11M19 18h1"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="18" r="2"/></symbol>
+      <symbol id="i-audit" viewBox="0 0 24 24"><path d="M6 3h9l5 5v13H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v5h5M9 13h6M9 17h6M9 9h2"/></symbol>
+      <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></symbol>
+      <symbol id="i-filter" viewBox="0 0 24 24"><path d="M4 5h16l-6.4 8v5l-3.2 2v-7z"/></symbol>
+      <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12l5 5L20 6"/></symbol>
+      <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+      <symbol id="i-pause" viewBox="0 0 24 24"><path d="M9 5v14M15 5v14"/></symbol>
+      <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 5l12 7-12 7z"/></symbol>
+      <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a1 1 0 0 1-1 1A15 15 0 0 1 4 5a1 1 0 0 1 1-1z"/></symbol>
+      <symbol id="i-chev-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+      <symbol id="i-chev-right" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+      <symbol id="i-chev-left" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></symbol>
+      <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></symbol>
+      <symbol id="i-arrow-up" viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></symbol>
+      <symbol id="i-arrow-down" viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></symbol>
+      <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+      <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12M7 11l5 5 5-5M5 21h14"/></symbol>
+      <symbol id="i-external" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M17 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1h5"/></symbol>
+      <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></symbol>
+      <symbol id="i-inbox" viewBox="0 0 24 24"><path d="M4 13l2.5-8h11L20 13M4 13v6a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-6M4 13h5l1.5 2.5h3L15 13h5"/></symbol>
+    </defs>
+  </svg>
+
+  <!-- ============================ APP SHELL ============================ -->
+  <div class="app" id="app">
+    <div class="scrim" id="navScrim" hidden></div>
+
+    <!-- ---------------------------- SIDEBAR ---------------------------- -->
+    <aside class="sidebar" id="sidebar" aria-label="Navigation principale">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">L</div>
+        <div class="brand-text">
+          <span class="brand-name">LOUMOO</span>
+          <span class="brand-sub">Enterprise</span>
+        </div>
+      </div>
+
+      <nav class="nav" id="primaryNav">
+        <div class="nav-group">
+          <div class="nav-group-label">Vue d'ensemble</div>
+          <a href="#overview" class="nav-item is-active" data-section="overview">
+            <svg class="ic"><use href="#i-overview"/></svg><span>Tableau de bord</span>
+          </a>
+        </div>
+        <div class="nav-group">
+          <div class="nav-group-label">Marketplace</div>
+          <a href="#stores" class="nav-item" data-section="stores">
+            <svg class="ic"><use href="#i-store"/></svg><span>Boutiques</span>
+          </a>
+          <a href="#kyc" class="nav-item" data-section="kyc">
+            <svg class="ic"><use href="#i-kyc"/></svg><span>Vérification KYC</span>
+            <span class="nav-count" id="navKycCount" hidden>0</span>
+          </a>
+        </div>
+        <div class="nav-group">
+          <div class="nav-group-label">Plateforme</div>
+          <a href="#settings" class="nav-item" data-section="settings">
+            <svg class="ic"><use href="#i-settings"/></svg><span>Paramètres</span>
+          </a>
+          <a href="#audit" class="nav-item" data-section="audit">
+            <svg class="ic"><use href="#i-audit"/></svg><span>Journal d'audit</span>
+          </a>
+        </div>
+      </nav>
+
+      <div class="sidebar-foot">
+        <button class="sys-status" id="sysStatus" title="Diagnostic d'infrastructure" aria-live="polite">
+          <span class="dot" id="sysDot"></span>
+          <span class="sys-label" id="sysLabel">Vérification…</span>
+        </button>
+        <a href="/" class="back-link"><svg class="ic"><use href="#i-external"/></svg><span>Retour à l'application</span></a>
+      </div>
+    </aside>
+
+    <!-- ---------------------------- MAIN ---------------------------- -->
+    <div class="main">
+      <header class="topbar">
+        <button class="icon-btn only-mobile" id="navToggle" aria-label="Ouvrir la navigation">
+          <svg class="ic"><use href="#i-menu"/></svg>
+        </button>
+        <nav class="crumbs" aria-label="Fil d'ariane">
+          <span class="crumb-root">Control</span>
+          <svg class="ic crumb-sep"><use href="#i-chev-right"/></svg>
+          <span class="crumb-current" id="crumbCurrent">Tableau de bord</span>
+        </nav>
+        <div class="topbar-spacer"></div>
+        <div class="admin-chip" tabindex="0">
+          <span class="avatar" id="adminAvatar">A</span>
+          <span class="admin-mail" id="adminMail">admin@loumoo.cm</span>
+        </div>
+      </header>
+
+      <main class="content" id="content" tabindex="-1">
+
+        <!-- OVERVIEW -->
+        <section class="view is-active" id="view-overview" aria-labelledby="ov-title">
+          <div class="page-head">
+            <h1 class="page-title" id="ov-title">Tableau de bord</h1>
+            <p class="page-desc">État en temps réel de la marketplace et des opérations.</p>
+          </div>
+          <div class="metrics" id="metrics" role="group" aria-label="Indicateurs clés"></div>
+          <div class="ov-grid">
+            <section class="panel" aria-labelledby="ov-kyc-h">
+              <div class="panel-head">
+                <h2 class="panel-title" id="ov-kyc-h">File d'attente KYC</h2>
+                <a href="#kyc" class="link-btn" data-section="kyc">Tout voir <svg class="ic"><use href="#i-chev-right"/></svg></a>
+              </div>
+              <div class="panel-body" id="ovKycQueue"></div>
+            </section>
+            <section class="panel" aria-labelledby="ov-act-h">
+              <div class="panel-head">
+                <h2 class="panel-title" id="ov-act-h">Activité récente</h2>
+                <a href="#audit" class="link-btn" data-section="audit">Journal <svg class="ic"><use href="#i-chev-right"/></svg></a>
+              </div>
+              <div class="panel-body" id="ovActivity"></div>
+            </section>
+          </div>
+        </section>
+
+        <!-- STORES -->
+        <section class="view" id="view-stores" aria-labelledby="st-title" hidden>
+          <div class="page-head">
+            <h1 class="page-title" id="st-title">Boutiques</h1>
+            <p class="page-desc">Vérifiez les vendeurs et gérez leur statut.</p>
+          </div>
+          <div class="toolbar">
+            <div class="segmented" id="storeSeg" role="tablist" aria-label="Filtrer par statut">
+              <button class="seg is-active" role="tab" aria-selected="true" data-status="ALL">Toutes</button>
+              <button class="seg" role="tab" aria-selected="false" data-status="PENDING_VERIFICATION">En attente</button>
+              <button class="seg" role="tab" aria-selected="false" data-status="ACTIVE">Actives</button>
+              <button class="seg" role="tab" aria-selected="false" data-status="SUSPENDED">Suspendues</button>
+            </div>
+            <div class="toolbar-right">
+              <div class="field-search">
+                <svg class="ic"><use href="#i-search"/></svg>
+                <input type="search" id="storeSearch" placeholder="Rechercher une boutique, un vendeur…" aria-label="Rechercher">
+              </div>
+              <div class="filter-wrap">
+                <button class="btn btn-ghost" id="filterBtn" aria-haspopup="true" aria-expanded="false">
+                  <svg class="ic"><use href="#i-filter"/></svg><span>Filtres</span>
+                  <span class="filter-dot" id="filterDot" hidden></span>
+                </button>
+                <div class="popover" id="filterPop" hidden role="dialog" aria-label="Filtres avancés">
+                  <label class="pop-field">
+                    <span>Ville</span>
+                    <input type="text" id="fCity" placeholder="Douala, Yaoundé…">
+                  </label>
+                  <label class="pop-field">
+                    <span>Tier de vérification</span>
+                    <select id="fTier">
+                      <option value="">Tous</option>
+                      <option value="unverified">Non vérifié</option>
+                      <option value="individual_verified">Individuel</option>
+                      <option value="pro_merchant">Pro Merchant</option>
+                      <option value="official_brand">Official Brand</option>
+                    </select>
+                  </label>
+                  <div class="pop-actions">
+                    <button class="btn btn-text" id="fClear">Réinitialiser</button>
+                    <button class="btn btn-primary btn-sm" id="fApply">Appliquer</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="table-wrap" id="storesTableWrap"></div>
+        </section>
+
+        <!-- KYC -->
+        <section class="view" id="view-kyc" aria-labelledby="ky-title" hidden>
+          <div class="page-head">
+            <h1 class="page-title" id="ky-title">Vérification KYC</h1>
+            <p class="page-desc">Dossiers vendeurs en attente de validation.</p>
+          </div>
+          <div class="table-wrap" id="kycTableWrap"></div>
+        </section>
+
+        <!-- SETTINGS -->
+        <section class="view" id="view-settings" aria-labelledby="se-title" hidden>
+          <div class="page-head">
+            <h1 class="page-title" id="se-title">Paramètres</h1>
+            <p class="page-desc">Configuration de la plateforme, appliquée en temps réel.</p>
+          </div>
+          <div class="settings-layout">
+            <nav class="settings-nav" id="settingsNav" aria-label="Sections de paramètres">
+              <button class="set-nav-item is-active" data-pane="general">Général</button>
+              <button class="set-nav-item" data-pane="commissions">Commissions</button>
+              <button class="set-nav-item" data-pane="whatsapp">WhatsApp</button>
+              <button class="set-nav-item" data-pane="shipping">Livraison</button>
+              <button class="set-nav-item" data-pane="maintenance">Maintenance</button>
+              <button class="set-nav-item" data-pane="features">Modules</button>
+            </nav>
+            <div class="settings-main" id="settingsMain"></div>
+          </div>
+        </section>
+
+        <!-- AUDIT -->
+        <section class="view" id="view-audit" aria-labelledby="au-title" hidden>
+          <div class="page-head">
+            <h1 class="page-title" id="au-title">Journal d'audit</h1>
+            <p class="page-desc">Historique traçable des actions administratives.</p>
+          </div>
+          <div id="auditMount"></div>
+        </section>
+
+      </main>
     </div>
-    <div class="nav-right">
-      <div class="env-pill">
-        <span class="pulse-dot"></span>
-        <span>PRODUCTION CORE</span>
+  </div>
+
+  <!-- ============================ OVERLAYS ============================ -->
+  <div class="menu" id="rowMenu" hidden role="menu"></div>
+
+  <div class="drawer-root" id="drawerRoot" hidden>
+    <div class="drawer-scrim" id="drawerScrim"></div>
+    <aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
+      <header class="drawer-head">
+        <div>
+          <div class="drawer-eyebrow" id="drawerEyebrow">Dossier KYC</div>
+          <h2 class="drawer-title" id="drawerTitle">—</h2>
+        </div>
+        <button class="icon-btn" id="drawerClose" aria-label="Fermer"><svg class="ic"><use href="#i-x"/></svg></button>
+      </header>
+      <div class="drawer-body" id="drawerBody"></div>
+      <footer class="drawer-foot" id="drawerFoot"></footer>
+    </aside>
+  </div>
+
+  <div class="modal-root" id="modalRoot" hidden>
+    <div class="modal-scrim" id="modalScrim"></div>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <h2 class="modal-title" id="modalTitle">—</h2>
+      <p class="modal-body" id="modalBody"></p>
+      <label class="modal-reason" id="modalReasonWrap" hidden>
+        <span id="modalReasonLabel">Motif</span>
+        <textarea id="modalReason" rows="3"></textarea>
+      </label>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" id="modalCancel">Annuler</button>
+        <button class="btn btn-primary" id="modalConfirm">Confirmer</button>
       </div>
-      <div class="admin-user-pill">
-        <span>👑</span>
-        <span>admin@loumoo.cm</span>
-      </div>
-      <a href="/" class="btn-back-app">← Retour à l'application</a>
     </div>
-  </header>
+  </div>
 
-  <!-- Main Container -->
-  <main class="admin-container">
-
-    <!-- Header Title -->
-    <section class="admin-header">
-      <div>
-        <h1>Centre de Contrôle & Paramètres Dynamiques</h1>
-        <p>Gérez en temps réel l'ensemble des règles commerciales, commissions, hotlines WhatsApp et statuts sans modifier de code.</p>
-      </div>
-    </section>
-
-    <!-- Executive KPI Grid -->
-    <section class="kpi-grid">
-      <div class="kpi-card">
-        <div class="kpi-header">
-          <span class="kpi-label">Volume d'Affaires (GMV)</span>
-          <div class="kpi-icon icon-blue">💰</div>
-        </div>
-        <div class="kpi-value" id="gmvValue">14,850,000 XAF</div>
-        <div class="kpi-subtext"><span>↑ +18.4%</span> ce mois</div>
-      </div>
-
-      <div class="kpi-card">
-        <div class="kpi-header">
-          <span class="kpi-label">Commandes Réalisées</span>
-          <div class="kpi-icon icon-emerald">📦</div>
-        </div>
-        <div class="kpi-value" id="ordersValue">86</div>
-        <div class="kpi-subtext"><span>100%</span> sécurisées en séquestre</div>
-      </div>
-
-      <div class="kpi-card">
-        <div class="kpi-header">
-          <span class="kpi-label">Boutiques Actives</span>
-          <div class="kpi-icon icon-yellow">🏬</div>
-        </div>
-        <div class="kpi-value" id="storesValue">18</div>
-        <div class="kpi-subtext">Douala, Yaoundé, Kribi</div>
-      </div>
-
-      <div class="kpi-card">
-        <div class="kpi-header">
-          <span class="kpi-label">Dossiers KYC en Attente</span>
-          <div class="kpi-icon icon-coral">📑</div>
-        </div>
-        <div class="kpi-value" id="pendingKycValue">3</div>
-        <div class="kpi-subtext" style="color: #ff3b30;">Vérifications requises</div>
-      </div>
-    </section>
-
-    <!-- Tab Navigation Bar -->
-    <nav class="nav-tabs">
-      <button class="tab-btn active" data-tab="stores" onclick="switchTab('stores')">
-        🏬 Boutiques & Modération KYC <span class="tab-badge" id="tabBadgePendingKyc">3</span>
-      </button>
-      <button class="tab-btn" data-tab="settings" onclick="switchTab('settings')">
-        ⚙️ Paramètres Plateforme (Zéro-Code)
-      </button>
-      <button class="tab-btn" data-tab="audit" onclick="switchTab('audit')">
-        🛡️ Journal d'Audit Immuable
-      </button>
-    </nav>
-
-    <!-- Tab 1: Stores & KYC Moderation Hub -->
-    <section class="tab-content active" id="tabContent_stores">
-      <div class="panel-card">
-        <div class="panel-header">
-          <div class="panel-header-title">
-            <h2>Gestion des Boutiques & Modération KYC Vendeurs</h2>
-            <span class="panel-tag">LIVE MARKETPLACE</span>
-          </div>
-          <span style="font-size: 12px; color: var(--color-text-muted);">Inspectez, approuvez en 1 clic les dossiers KYC, suspendez ou mettez à jour les contacts.</span>
-        </div>
-
-        <!-- Filter and Search Bar -->
-        <div class="filter-bar">
-          <div class="filter-group" id="storeFilters">
-            <button class="filter-pill active" onclick="setStoreStatusFilter('ALL', this)">Toutes</button>
-            <button class="filter-pill" onclick="setStoreStatusFilter('PENDING_VERIFICATION', this)">⏱ En Attente KYC</button>
-            <button class="filter-pill" onclick="setStoreStatusFilter('ACTIVE', this)">● Actives</button>
-            <button class="filter-pill" onclick="setStoreStatusFilter('SUSPENDED', this)">✕ Suspendues</button>
-          </div>
-          <div class="search-box">
-            <span class="search-icon">🔍</span>
-            <input type="text" class="search-input" placeholder="Rechercher par nom, slug, téléphone ou vendeur..." oninput="onStoreSearchInput(this)">
-          </div>
-        </div>
-
-        <!-- Stores Table -->
-        <div class="audit-table-wrapper">
-          <table class="audit-table">
-            <thead>
-              <tr>
-                <th>Boutique</th>
-                <th>Vendeur / KYC</th>
-                <th>Ville</th>
-                <th>Statut</th>
-                <th>Tier Vérification</th>
-                <th>Actions de Modération</th>
-              </tr>
-            </thead>
-            <tbody id="storesTableBody">
-              <tr>
-                <td colspan="6" style="text-align:center; color:#868c98; padding:32px;">Chargement des boutiques...</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <!-- Tab 2: Zero-Code Dynamic System Settings Panel -->
-    <section class="tab-content" id="tabContent_settings">
-      <div class="panel-card">
-        <div class="panel-header">
-          <div class="panel-header-title">
-            <h2>Paramètres Plateforme Dynamiques (Zéro-Code)</h2>
-            <span class="panel-tag">TEMPS RÉEL</span>
-          </div>
-          <span style="font-size: 12px; color: var(--color-text-muted);">Toute modification est instantanément appliquée en base et auditée.</span>
-        </div>
-
-        <div class="settings-grid">
-
-          <!-- Setting 1: Commission Rate -->
-          <div class="setting-item">
-            <div class="setting-meta">
-              <div>
-                <div class="setting-title">Taux de Commission Standard (%)</div>
-                <div class="setting-desc">Pourcentage prélevé automatiquement sur chaque vente finalisée.</div>
-              </div>
-              <span class="code-snippet">financial</span>
-            </div>
-            <div class="setting-input-group">
-              <label class="input-label" for="commissionRateInput">Pourcentage (%)</label>
-              <input type="number" id="commissionRateInput" class="text-input" step="0.1" min="0" max="50" value="5.0">
-            </div>
-            <button class="btn-save-setting" onclick="saveCommissionSetting()">Enregistrer le Taux</button>
-          </div>
-
-          <!-- Setting 2: Default Seller WhatsApp Hotline -->
-          <div class="setting-item">
-            <div class="setting-meta">
-              <div>
-                <div class="setting-title">Ligne WhatsApp Support / Vendeur Centrale</div>
-                <div class="setting-desc">Numéro de redirection utilisé pour l'assistance ou les boutiques sans numéro dédié.</div>
-              </div>
-              <span class="code-snippet">commercial</span>
-            </div>
-            <div class="setting-input-group">
-              <label class="input-label" for="waPhoneInput">Numéro (Format International)</label>
-              <input type="text" id="waPhoneInput" class="text-input" value="237690123456">
-              <label class="input-label" for="waLabelInput" style="margin-top: 4px;">Libellé Affiché</label>
-              <input type="text" id="waLabelInput" class="text-input" value="LOUMOO Central Merchant Care">
-            </div>
-            <button class="btn-save-setting" onclick="saveWhatsAppSetting()">Enregistrer le Numéro</button>
-          </div>
-
-          <!-- Setting 3: Emergency Maintenance Mode -->
-          <div class="setting-item">
-            <div class="setting-meta">
-              <div>
-                <div class="setting-title">Mode Maintenance & Coup-de-Poing</div>
-                <div class="setting-desc">Active une alerte globale et suspend temporairement les mutations non-administrateur.</div>
-              </div>
-              <span class="code-snippet">operational</span>
-            </div>
-            <div class="switch-wrapper">
-              <span style="font-size: 13px; font-weight: 600;">Activer le mode maintenance</span>
-              <label class="switch">
-                <input type="checkbox" id="maintenanceToggle">
-                <span class="slider"></span>
-              </label>
-            </div>
-            <div class="setting-input-group">
-              <label class="input-label" for="maintenanceBannerInput">Message de la bannière utilisateur</label>
-              <input type="text" id="maintenanceBannerInput" class="text-input" value="Mise à niveau planifiée de LOUMOO en cours.">
-            </div>
-            <button class="btn-save-setting" onclick="saveMaintenanceSetting()">Mettre à Jour le Statut</button>
-          </div>
-
-          <!-- Setting 4: Marketplace Announcement Banner -->
-          <div class="setting-item">
-            <div class="setting-meta">
-              <div>
-                <div class="setting-title">Bannière d'Annonce Commerciale</div>
-                <div class="setting-desc">Bandeau défilant ou fixé au sommet des écrans acheteurs pour promotions ou alertes.</div>
-              </div>
-              <span class="code-snippet">marketing</span>
-            </div>
-            <div class="switch-wrapper">
-              <span style="font-size: 13px; font-weight: 600;">Bannière visible</span>
-              <label class="switch">
-                <input type="checkbox" id="announcementToggle" checked>
-                <span class="slider"></span>
-              </label>
-            </div>
-            <div class="setting-input-group">
-              <label class="input-label" for="announcementMsgInput">Texte de l'annonce</label>
-              <input type="text" id="announcementMsgInput" class="text-input" value="Bienvenue sur LOUMOO! Expédition express sécurisée à Douala et Yaoundé.">
-              <label class="input-label" for="announcementCtaInput" style="margin-top: 4px;">Bouton d'action (CTA)</label>
-              <input type="text" id="announcementCtaInput" class="text-input" value="Découvrir les boutiques">
-            </div>
-            <button class="btn-save-setting" onclick="saveAnnouncementSetting()">Publier l'Annonce</button>
-          </div>
-
-          <!-- Setting 5: Runtime Feature Flags -->
-          <div class="setting-item" style="grid-column: 1 / -1;">
-            <div class="setting-meta">
-              <div>
-                <div class="setting-title">Feature Flags & Modules Actifs</div>
-                <div class="setting-desc">Activez ou désactivez les fonctionnalités principales de la plateforme en temps réel.</div>
-              </div>
-              <span class="code-snippet">features</span>
-            </div>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin: 8px 0 12px 0;">
-              <div class="switch-wrapper" style="background:#fff; padding:10px 14px; border-radius:8px; border:1px solid #e5e8ed;">
-                <span style="font-size: 12px; font-weight: 600;">Module Voyage & Bus</span>
-                <label class="switch"><input type="checkbox" id="flagTravel" checked><span class="slider"></span></label>
-              </div>
-              <div class="switch-wrapper" style="background:#fff; padding:10px 14px; border-radius:8px; border:1px solid #e5e8ed;">
-                <span style="font-size: 12px; font-weight: 600;">Recherche Visuelle</span>
-                <label class="switch"><input type="checkbox" id="flagVisual" checked><span class="slider"></span></label>
-              </div>
-              <div class="switch-wrapper" style="background:#fff; padding:10px 14px; border-radius:8px; border:1px solid #e5e8ed;">
-                <span style="font-size: 12px; font-weight: 600;">Paiement Séquestre</span>
-                <label class="switch"><input type="checkbox" id="flagEscrow" checked><span class="slider"></span></label>
-              </div>
-              <div class="switch-wrapper" style="background:#fff; padding:10px 14px; border-radius:8px; border:1px solid #e5e8ed;">
-                <span style="font-size: 12px; font-weight: 600;">Assistant IA Shopping</span>
-                <label class="switch"><input type="checkbox" id="flagAi" checked><span class="slider"></span></label>
-              </div>
-            </div>
-            <button class="btn-save-setting" onclick="saveFeatureFlags()">Enregistrer les Feature Flags</button>
-          </div>
-
-        </div>
-      </div>
-    </section>
-
-    <!-- Tab 3: Immutable Audit Trail Section -->
-    <section class="tab-content" id="tabContent_audit">
-      <div class="panel-card">
-        <div class="panel-header">
-          <div class="panel-header-title">
-            <h2>Journal d'Audit Administratif Immuable</h2>
-            <span class="panel-tag">SÉCURITÉ</span>
-          </div>
-          <span style="font-size: 12px; color: var(--color-text-muted);">Historique cryptographiquement traçable de toutes les actions superadmin.</span>
-        </div>
-
-        <div class="audit-table-wrapper">
-          <table class="audit-table">
-            <thead>
-              <tr>
-                <th>Date & Heure</th>
-                <th>Action</th>
-                <th>Cible</th>
-                <th>Opérateur</th>
-                <th>Détails de la Modification</th>
-              </tr>
-            </thead>
-            <tbody id="auditTableBody">
-              <tr>
-                <td colspan="5" style="text-align:center; color:#868c98; padding:24px;">Chargement des journaux d'audit...</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-  </main>
-
-  <!-- Toast Notification Feedback -->
-  <div class="toast-notice" id="toastNotice">
-    <span class="toast-icon" id="toastIcon">✓</span>
-    <span id="toastText">Paramètre enregistré avec succès!</span>
+  <div class="toast" id="toast" hidden role="status" aria-live="polite">
+    <svg class="ic" id="toastIcon"><use href="#i-check"/></svg>
+    <span id="toastText"></span>
   </div>
 
   <script src="/superadmin/js/superAdminApi.js"></script>

@@ -13,6 +13,7 @@ if (typeof dns.setDefaultResultOrder === 'function') {
 const { Sentry } = require('./clients/sentry');
 const express = require('express');
 const cors = require('cors');
+const compression = require('compression');
 const fs = require('fs');
 const path = require('path');
 const config = require('./config/env');
@@ -38,6 +39,7 @@ const announcementRoutes = require('./modules/announcement/presentation/routes/a
 const travelRoutes = require('./modules/travel/presentation/routes/travelRoutes');
 const orderRoutes = require('./modules/commerce/presentation/routes/orderRoutes');
 const superAdminRoutes = require('../SuperAdmin/backend/routes/superAdminRoutes');
+const { maintenanceGuard } = require('../SuperAdmin/backend/middleware/maintenanceGuard');
 
 // Fail fast rather than boot a production server that cannot enforce its own
 // security model. In development the same problems are logged as warnings.
@@ -59,7 +61,21 @@ app.set('trust proxy', config.proxy.trust);
 logger.info(`[Ingress] Express proxy trust policy configured: ${JSON.stringify(config.proxy.trust)}`);
 app.disable('x-powered-by');
 
-// 0. Security headers (before anything can write a response).
+// 0. Response compression (gzip/brotli). Placed first so every downstream
+// response — the ~1MB single-file app shell, JSON API envelopes, JS/CSS — is
+// negotiated and compressed. This is the single largest win for users on slow
+// or high-latency connections. compression.filter already skips content types
+// that are already compressed (JPEG/PNG/WebP/video), so the media-heavy
+// /Assets catalogue is served as-is without wasting CPU.
+app.use(compression({
+  threshold: 1024,
+  filter: (req, res) => {
+    if (req.headers['x-no-compression']) return false;
+    return compression.filter(req, res);
+  }
+}));
+
+// 0b. Security headers (before anything can write a response body).
 app.use(securityHeaders);
 
 // 1. Request context & tracing
@@ -150,6 +166,9 @@ app.use(skipRawBodyRoutes(express.urlencoded({
 
 // 5. Idempotency support for mutating requests
 app.use(IdempotencyService.middleware());
+
+// 5b. Emergency platform maintenance enforcement
+app.use(maintenanceGuard);
 
 // 6. Versioned API routes
 const v1Router = express.Router();
