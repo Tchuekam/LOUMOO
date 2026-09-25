@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-LOUMOO HOSPITALITY & LODGING VIEWS (APPLE-GRADE, DATA-DRIVEN)
+LOUMOO HOSPITALITY & LODGING VIEWS — PREMIUM HOTEL MARKETPLACE
 
 Vertical #2 — Hotels, beach resorts & boutique lodges across Cameroon.
 
@@ -8,149 +8,178 @@ Every screen below reads from the Travel API (GET /travel/hotels, /hotels/:id,
 /hotels/:id/rooms); the catalog, room inventory and stay price are the server's,
 never the bundle's. Screens therefore render loading, error and empty states.
 
-  is.hotelSearch   Destination/date/guest search over the live catalog
-  is.hotelDetail   Gallery, amenities, selectable rooms with real availability
+  is.hotelSearch   Destination/date/guest discovery over the live catalog
+  is.hotelDetail   Editorial hero, amenities, immersive experiences, selectable
+                   rooms with real availability, and a booking panel
   is.hotelBooking  Reservation summary priced by the server's stayQuote
   is.hotelVoucher  The reservation voucher, labelled with its true status
                    (a booking is HELD until payment is attested, not CONFIRMED)
+
+Design references: Motiff (boutique restraint & editorial spacing), ANANTARA
+(cinematic hero & resort storytelling), Serenity (practical room comparison and
+stay clarity). Desktop (>=1024px) and mobile (<768px) are two intentional
+layouts, not one scaled to the other. Styling lives in src/styles/hotel.css.
+
+Virtual tours are treated strictly as EXTERNAL experiences: the frontend reads
+an optional http(s) URL from the hotel / room / space object and, only when one
+is present, exposes an "Explore" call-to-action that opens it in a new,
+isolated tab (window.open '_blank','noopener,noreferrer'). When no URL exists
+the CTA is cleanly hidden — there is no faux-360 viewer, no dead pan controls.
 """
 
 def get_hotel_vertical_view():
     return """
 <!-- ══════════════════════════════════════════════════════════════════════════
-     HOTEL SEARCH (is.hotelSearch)
+     HOTEL SEARCH / DISCOVERY (is.hotelSearch)
      ══════════════════════════════════════════════════════════════════════ -->
 <sc-if value="{{ is.hotelSearch }}">
-<div style="padding-bottom:calc(96px + env(safe-area-inset-bottom, 16px))">
+<div class="hotel-search-shell">
 
-  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface-glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:30">
-    <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;box-shadow:var(--shadow-xs);flex-shrink:0">
+  <div class="hotel-search-topbar" style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface-glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:30">
+    <button onClick="{{ back }}" aria-label="Go back" class="hotel-icon-btn">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m15 18-6-6 6-6"/></svg>
     </button>
     <div style="flex:1;min-width:0">
-      <h4 style="margin:0;font-size:15px;font-weight:800;letter-spacing:-.01em;color:var(--color-text)">Hotels &amp; Stays</h4>
-      <div style="font:500 11.5px/1.2 var(--font-body);color:var(--color-text-secondary);margin-top:1px">Kribi, Douala, Yaoundé, Limbé &amp; beyond</div>
+      <h4 style="margin:0;font:800 16px/1.15 var(--font-heading);letter-spacing:-.02em;color:var(--color-text)">Hotels &amp; Stays</h4>
+      <div style="font:500 11.5px/1.2 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Kribi · Douala · Yaoundé · Limbé &amp; beyond</div>
     </div>
   </div>
 
-  <div style="padding:14px 16px;max-width:960px;margin:0 auto;display:flex;flex-direction:column;gap:18px">
+  <div class="hotel-search-inner">
 
     <!-- Search capsule: destination · dates · guests -->
-    <div style="background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-lg);padding:14px;box-shadow:var(--shadow-xs);display:flex;flex-direction:column;gap:12px">
-      <div>
-        <label style="font:700 10px/1 var(--font-heading);color:var(--color-text-muted);letter-spacing:.06em;margin-bottom:6px;display:block">DESTINATION</label>
-        <!-- "All destinations" is first because it is the real initial state.
-             Without it the control sat on "Kribi" while the unfiltered list
-             below showed every city, so the screen contradicted itself. -->
-        <select class="input" style="cursor:pointer;height:44px;font-weight:700;font-size:13.5px;border-radius:var(--radius-sm)" value="{{ hotelCity }}" onChange="{{ updateHotelCity }}">
-          <option value="">All destinations</option>
-          <option value="kribi">Kribi Beach &amp; Oceanfront</option>
-          <option value="douala">Douala (Bonanjo &amp; Akwa)</option>
-          <option value="yaounde">Yaoundé (Bastos &amp; Fébé)</option>
-          <option value="limbe">Limbé (Atlantic Coast)</option>
-          <option value="maroua">Maroua (Far North)</option>
-        </select>
-      </div>
-
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-        <div style="background:var(--color-surface-subtle);border:1px solid var(--color-divider);border-radius:var(--radius-sm);padding:8px 12px">
-          <label style="font:700 9.5px/1 var(--font-heading);color:var(--color-text-muted);letter-spacing:.05em;margin-bottom:5px;display:block">CHECK-IN</label>
-          <input type="date" class="input" value="{{ hotelCheckIn }}" min="{{ todayIso }}" onChange="{{ updateHotelCheckIn }}" style="border:none;background:transparent;padding:0;font-weight:700;font-size:13px;color:var(--color-text);height:24px;width:100%">
+    <div class="hotel-search-capsule">
+      <div class="hotel-search-fields">
+        <div class="hotel-field hotel-field--destination">
+          <label class="hotel-field-label">DESTINATION</label>
+          <!-- "All destinations" is first because it is the real initial state. -->
+          <select class="input hotel-field-input" value="{{ hotelCity }}" onChange="{{ updateHotelCity }}">
+            <option value="">All destinations</option>
+            <option value="kribi">Kribi Beach &amp; Oceanfront</option>
+            <option value="douala">Douala (Bonanjo &amp; Akwa)</option>
+            <option value="yaounde">Yaoundé (Bastos &amp; Fébé)</option>
+            <option value="limbe">Limbé (Atlantic Coast)</option>
+            <option value="maroua">Maroua (Far North)</option>
+          </select>
         </div>
-        <div style="background:var(--color-surface-subtle);border:1px solid var(--color-divider);border-radius:var(--radius-sm);padding:8px 12px">
-          <label style="font:700 9.5px/1 var(--font-heading);color:var(--color-text-muted);letter-spacing:.05em;margin-bottom:5px;display:block">CHECK-OUT</label>
-          <input type="date" class="input" value="{{ hotelCheckOut }}" min="{{ hotelCheckIn || todayIso }}" onChange="{{ updateHotelCheckOut }}" style="border:none;background:transparent;padding:0;font-weight:700;font-size:13px;color:var(--color-text);height:24px;width:100%">
+        <div class="hotel-field">
+          <label class="hotel-field-label">CHECK-IN</label>
+          <input type="date" class="input hotel-field-input" value="{{ hotelCheckIn }}" min="{{ todayIso }}" onChange="{{ updateHotelCheckIn }}">
         </div>
-      </div>
-
-      <div style="display:flex;align-items:center;justify-content:space-between;background:var(--color-surface-subtle);border:1px solid var(--color-divider);border-radius:var(--radius-sm);padding:10px 12px">
-        <div>
-          <div style="font:700 9.5px/1 var(--font-heading);color:var(--color-text-muted);letter-spacing:.05em;margin-bottom:3px">GUESTS</div>
-          <div style="font:700 13px/1 var(--font-heading);color:var(--color-text)">{{ hotelGuests }} guest(s)</div>
+        <div class="hotel-field">
+          <label class="hotel-field-label">CHECK-OUT</label>
+          <input type="date" class="input hotel-field-input" value="{{ hotelCheckOut }}" min="{{ hotelCheckIn || todayIso }}" onChange="{{ updateHotelCheckOut }}">
         </div>
-        <div style="display:flex;align-items:center;gap:12px">
-          <button onClick="{{ decHotelGuests }}" aria-label="Fewer guests" style="width:32px;height:32px;border-radius:50%;border:1px solid var(--color-divider);background:var(--color-surface);color:var(--color-text);font-weight:800;font-size:16px;cursor:pointer;line-height:1">−</button>
-          <span style="min-width:20px;text-align:center;font:800 15px/1 var(--font-heading);color:var(--color-text)">{{ hotelGuests }}</span>
-          <button onClick="{{ incHotelGuests }}" aria-label="More guests" style="width:32px;height:32px;border-radius:50%;border:1px solid var(--color-divider);background:var(--color-surface);color:var(--color-text);font-weight:800;font-size:16px;cursor:pointer;line-height:1">+</button>
+        <div class="hotel-field hotel-field--guests">
+          <label class="hotel-field-label">GUESTS</label>
+          <div class="hotel-guest-stepper">
+            <button onClick="{{ decHotelGuests }}" aria-label="Fewer guests" class="hotel-stepper-btn">−</button>
+            <span class="hotel-guest-count">{{ hotelGuests }}</span>
+            <button onClick="{{ incHotelGuests }}" aria-label="More guests" class="hotel-stepper-btn">+</button>
+          </div>
         </div>
+        <button onClick="{{ retryHotelList }}" class="btn btn-primary hotel-search-submit">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          <span>Search stays</span>
+        </button>
       </div>
     </div>
 
-    <!-- Catalog state: the list comes from the server, so the screen has to be
-         honest about loading, failure and genuinely-empty results. -->
+    <!-- Catalog state: the list comes from the server, so the screen is honest
+         about loading (skeletons preserve layout), failure and empty results. -->
     <sc-if value="{{ hotelListLoading }}">
-      <div style="display:flex;align-items:center;gap:10px;padding:18px;background:var(--color-surface-subtle);border:1px solid var(--color-divider);border-radius:var(--radius-md)">
-        <span class="spinner-dark"></span>
-        <span style="font:600 12.5px/1 var(--font-body);color:var(--color-text-secondary)">Loading verified stays…</span>
+      <div class="hotel-result-grid" aria-hidden="true">
+        <div class="hotel-skeleton-card"><div class="hotel-skel hotel-skel-media"></div><div class="hotel-skel-body"><div class="hotel-skel hotel-skel-line lg"></div><div class="hotel-skel hotel-skel-line"></div><div class="hotel-skel hotel-skel-line sm"></div></div></div>
+        <div class="hotel-skeleton-card"><div class="hotel-skel hotel-skel-media"></div><div class="hotel-skel-body"><div class="hotel-skel hotel-skel-line lg"></div><div class="hotel-skel hotel-skel-line"></div><div class="hotel-skel hotel-skel-line sm"></div></div></div>
+        <div class="hotel-skeleton-card"><div class="hotel-skel hotel-skel-media"></div><div class="hotel-skel-body"><div class="hotel-skel hotel-skel-line lg"></div><div class="hotel-skel hotel-skel-line"></div><div class="hotel-skel hotel-skel-line sm"></div></div></div>
+        <div class="hotel-skeleton-card"><div class="hotel-skel hotel-skel-media"></div><div class="hotel-skel-body"><div class="hotel-skel hotel-skel-line lg"></div><div class="hotel-skel hotel-skel-line"></div><div class="hotel-skel hotel-skel-line sm"></div></div></div>
       </div>
     </sc-if>
 
     <sc-if value="{{ hotelListError }}">
-      <div style="padding:16px;background:var(--color-danger-100);border:1px solid var(--color-danger);border-radius:var(--radius-md)">
-        <div style="font:800 13px/1.3 var(--font-heading);color:var(--color-danger)">Could not load stays</div>
-        <div style="font:500 12px/1.5 var(--font-body);color:var(--color-text-secondary);margin-top:4px">{{ hotelListError }}</div>
-        <button onClick="{{ retryHotelList }}" class="btn btn-secondary" style="margin-top:10px;padding:8px 16px;font:700 12px/1 var(--font-heading);cursor:pointer">Try again</button>
+      <div class="hotel-state-card hotel-state-card--error" role="alert">
+        <div style="font:800 14px/1.3 var(--font-heading);color:var(--color-danger)">Unable to load stays</div>
+        <div style="font:500 12.5px/1.5 var(--font-body);color:var(--color-text-secondary);margin-top:5px">{{ hotelListError }}</div>
+        <button onClick="{{ retryHotelList }}" class="btn btn-secondary" style="margin-top:12px;padding:9px 18px;font:700 12.5px/1 var(--font-heading);cursor:pointer">Try again</button>
       </div>
     </sc-if>
 
     <sc-if value="{{ hotelListEmpty }}">
-      <div style="padding:22px 16px;text-align:center;background:var(--color-surface-subtle);border:1px solid var(--color-divider);border-radius:var(--radius-md)">
-        <div style="font:800 13.5px/1.3 var(--font-heading);color:var(--color-text)">No stays found</div>
-        <div style="font:500 12px/1.5 var(--font-body);color:var(--color-text-secondary);margin-top:4px">We have no verified stays in that destination yet. Try another city.</div>
+      <div class="hotel-state-card">
+        <div style="font:800 15px/1.3 var(--font-heading);color:var(--color-text)">No stays found</div>
+        <div style="font:500 12.5px/1.6 var(--font-body);color:var(--color-text-secondary);margin-top:6px;max-width:340px">Try another destination or adjust your dates to discover verified stays.</div>
+        <button onClick="{{ () => updateHotelCity('') }}" class="btn btn-secondary" style="margin-top:14px;padding:9px 18px;font:700 12.5px/1 var(--font-heading);cursor:pointer">Change search</button>
       </div>
     </sc-if>
 
-    <!-- Popular stays rail (top rated) -->
-    <div>
-      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px">
-        <div>
-          <h3 style="margin:0;font-size:15px;font-weight:800;letter-spacing:-.01em;color:var(--color-text)">Popular stays</h3>
-          <div style="font:500 11.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Top-rated lodges &amp; oceanfront resorts</div>
-        </div>
-        <span style="font:700 11px/1 var(--font-body);color:var(--color-accent)">Swipe →</span>
+    <!-- Popular stays rail (top rated) — a curated, swipeable discovery strip -->
+    <div class="hotel-section-head">
+      <div>
+        <h3 class="hotel-section-title">Popular stays</h3>
+        <div class="hotel-section-sub">Top-rated lodges &amp; oceanfront resorts</div>
       </div>
+      <span class="hotel-section-hint">Swipe →</span>
+    </div>
 
-      <div class="travel-rail" style="display:flex;flex-direction:row;flex-wrap:nowrap;gap:12px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:4px 2px 10px;margin:0 -16px;padding-left:16px;padding-right:16px">
-        <sc-for list="{{ hotelPopularCards }}" as="hotel">
-          <div onClick="{{ () => openHotelDetail(hotel.id) }}" class="hotel-card-compact" style="flex:0 0 200px;width:200px;scroll-snap-align:start;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-lg);overflow:hidden;display:flex;flex-direction:column;cursor:pointer;box-shadow:var(--shadow-xs);box-sizing:border-box">
-            <div style="height:118px;width:100%;position:relative;overflow:hidden;background:var(--color-surface-subtle)">
-              <img src="{{ hotel.image }}" alt="{{ hotel.name }}" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block">
-              <span style="position:absolute;top:8px;left:8px;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);color:#fff;padding:2px 8px;border-radius:var(--radius-pill);font:800 9px/1.4 var(--font-heading);text-transform:uppercase;letter-spacing:.03em">{{ hotel.star }}</span>
-              <span style="position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.65);color:#fff;padding:2px 7px;border-radius:var(--radius-pill);font:700 9.5px/1 var(--font-heading)">{{ hotel.ratingLabel }}</span>
-            </div>
-            <div style="padding:10px 12px 12px">
-              <div class="lc-1" style="font:700 13.5px/1.2 var(--font-heading);color:var(--color-text)">{{ hotel.name }}</div>
-              <div class="lc-1" style="font:500 11px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">{{ hotel.area }}</div>
-              <div style="font:800 13px/1 var(--font-heading);color:var(--color-accent);margin-top:6px">From {{ hotel.priceLabel }} <span style="font-size:10px;font-weight:500;color:var(--color-text-muted)">/ night</span></div>
-            </div>
+    <div class="travel-rail">
+      <sc-for list="{{ hotelPopularCards }}" as="hotel">
+        <div onClick="{{ () => openHotelDetail(hotel.id) }}" class="hotel-card-compact">
+          <div class="card-img-wrap">
+            <img src="{{ hotel.image }}" alt="{{ hotel.name }}" loading="lazy">
+            <span class="hotel-card-star">{{ hotel.star }}</span>
+            <sc-if value="{{ hotel.ratingLabel }}"><span class="hotel-card-rating">{{ hotel.ratingLabel }}</span></sc-if>
           </div>
-        </sc-for>
+          <div class="card-info">
+            <div class="lc-1" style="font:700 13.5px/1.2 var(--font-heading);color:var(--color-text)">{{ hotel.name }}</div>
+            <div class="lc-1" style="font:500 11px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">{{ hotel.area }}</div>
+            <div style="font:800 13px/1 var(--font-heading);color:var(--color-accent);margin-top:7px">From {{ hotel.priceLabel }} <span style="font-size:10px;font-weight:500;color:var(--color-text-muted)">/ night</span></div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+
+    <!-- All verified stays — premium result cards -->
+    <div class="hotel-section-head">
+      <div>
+        <h3 class="hotel-section-title">All verified stays</h3>
+        <div class="hotel-section-sub">Instant booking, protected by LOUMOO MoMo Escrow</div>
       </div>
     </div>
 
-    <!-- All verified stays (filtered to destination when available) -->
-    <div>
-      <div style="margin-bottom:10px">
-        <h3 style="margin:0;font-size:15px;font-weight:800;letter-spacing:-.01em;color:var(--color-text)">All verified stays</h3>
-        <div style="font:500 11.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Instant booking, protected by LOUMOO MoMo Escrow</div>
-      </div>
-
-      <div style="display:flex;flex-direction:column;gap:10px">
-        <sc-for list="{{ hotelAllCards }}" as="hotel">
-          <div onClick="{{ () => openHotelDetail(hotel.id) }}" class="hotel-row-compact" style="cursor:pointer">
-            <img src="{{ hotel.image }}" alt="{{ hotel.name }}" loading="lazy" class="row-img">
-            <div class="row-info">
-              <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
-                <span style="font:800 9.5px/1 var(--font-heading);color:var(--color-accent);letter-spacing:.04em;text-transform:uppercase">{{ hotel.star }}</span>
-                <span style="font:700 10.5px/1 var(--font-heading);color:var(--color-text-secondary)">{{ hotel.ratingLabel }}</span>
+    <div class="hotel-result-grid">
+      <sc-for list="{{ hotelAllCards }}" as="hotel">
+        <div onClick="{{ () => openHotelDetail(hotel.id) }}" class="hotel-result-card" role="button" aria-label="View hotel">
+          <div class="hotel-result-media">
+            <img src="{{ hotel.image }}" alt="{{ hotel.name }}" loading="lazy">
+            <span class="hotel-result-star">{{ hotel.star }}</span>
+            <sc-if value="{{ hotel.verified }}"><span class="hotel-result-verified"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg> Verified</span></sc-if>
+          </div>
+          <div class="hotel-result-body">
+            <div class="hotel-result-toprow">
+              <div class="lc-1 hotel-result-name">{{ hotel.name }}</div>
+              <sc-if value="{{ hotel.ratingLabel }}"><span class="hotel-result-score">{{ hotel.ratingLabel }}</span></sc-if>
+            </div>
+            <div class="lc-1 hotel-result-area">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;opacity:.7"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+              <span class="lc-1">{{ hotel.area }}</span>
+            </div>
+            <sc-if value="{{ hotel.descriptor }}"><div class="lc-2 hotel-result-desc">{{ hotel.descriptor }}</div></sc-if>
+            <div class="hotel-chip-row">
+              <sc-for list="{{ hotel.amenityChips }}" as="am">
+                <span class="hotel-chip">{{ am }}</span>
+              </sc-for>
+            </div>
+            <div class="hotel-result-foot">
+              <div>
+                <span class="hotel-result-from">From</span>
+                <span class="hotel-result-price">{{ hotel.priceLabel }}</span>
+                <span class="hotel-result-per">/ night</span>
               </div>
-              <div class="lc-1" style="font:700 13.5px/1.2 var(--font-heading);color:var(--color-text);margin-top:2px">{{ hotel.name }}</div>
-              <div class="lc-1" style="font:500 11px/1 var(--font-body);color:var(--color-text-secondary)">{{ hotel.area }}</div>
-              <div style="font:800 13px/1 var(--font-heading);color:var(--color-accent);margin-top:3px">From {{ hotel.priceLabel }} <span style="font-size:10.5px;font-weight:500;color:var(--color-text-muted)">/ night</span></div>
+              <span class="hotel-result-cta">View hotel <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m9 18 6-6-6-6"/></svg></span>
             </div>
           </div>
-        </sc-for>
-      </div>
+        </div>
+      </sc-for>
     </div>
 
   </div>
@@ -158,158 +187,344 @@ def get_hotel_vertical_view():
 </sc-if>
 
 <!-- ══════════════════════════════════════════════════════════════════════════
-     HOTEL DETAIL (is.hotelDetail)
+     HOTEL DETAIL (is.hotelDetail) — editorial, immersive, two intentional layouts
      ══════════════════════════════════════════════════════════════════════ -->
 <sc-if value="{{ is.hotelDetail }}">
-<div style="padding-bottom:120px">
+<div class="hotel-detail-shell">
 
-  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface-glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:30">
-    <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;box-shadow:var(--shadow-xs);flex-shrink:0">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m15 18-6-6 6-6"/></svg>
-    </button>
-    <div style="flex:1;min-width:0">
-      <h4 style="margin:0;font-size:15px;font-weight:800;color:var(--color-text)" class="lc-1">{{ hotelDetailCard.name }}</h4>
-      <div style="font:500 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:1px">{{ hotelDetailCard.area }}</div>
+  <!-- MOBILE HERO: a dedicated edge-to-edge composition (not the desktop hero
+       scaled down). Floating controls + identity overlaid on the imagery. -->
+  <div class="hotel-hero hotel-hero--mobile">
+    <img class="hotel-hero-img" src="{{ hotelDetailCard.image }}" alt="{{ hotelDetailCard.name }}">
+    <div class="hotel-hero-scrim"></div>
+    <div class="hotel-hero-controls">
+      <button onClick="{{ back }}" aria-label="Go back" class="hotel-hero-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+      <div class="hotel-hero-controls-right">
+        <button onClick="{{ toggleHotelFavorite }}" aria-label="Save to favourites" class="hotel-hero-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ hotelDetailCard.favorited ? 'currentColor' : 'none' }}" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8Z"/></svg>
+        </button>
+        <button onClick="{{ shareHotelDetail }}" aria-label="Share this stay" class="hotel-hero-btn">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="hotel-hero-identity">
+      <sc-if value="{{ hotelDetailCard.star }}"><span class="hotel-hero-cat">{{ hotelDetailCard.star }}</span></sc-if>
+      <h1 class="hotel-hero-name">{{ hotelDetailCard.name }}</h1>
+      <div class="hotel-hero-meta">
+        <sc-if value="{{ hotelDetailCard.ratingLabel }}"><span class="hotel-hero-rating">{{ hotelDetailCard.ratingLabel }}</span></sc-if>
+        <sc-if value="{{ hotelDetailCard.verified }}"><span class="hotel-hero-verified">· Verified</span></sc-if>
+        <span class="hotel-hero-loc lc-1">· {{ hotelDetailCard.area }}</span>
+      </div>
+      <sc-if value="{{ hotelDetailCard.hasVirtualTour }}">
+        <button onClick="{{ () => openHotelVirtualTour(hotelDetailCard.virtualTourUrl) }}" class="hotel-tour-btn hotel-tour-btn--hero">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M2.5 12h19M12 2.5c2.5 2.6 4 6 4 9.5s-1.5 6.9-4 9.5c-2.5-2.6-4-6-4-9.5s1.5-6.9 4-9.5Z"/></svg>
+          <span>Explore in 360°</span>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M7 17 17 7M8 7h9v9"/></svg>
+        </button>
+      </sc-if>
     </div>
   </div>
 
-  <div style="padding:14px 16px;max-width:960px;margin:0 auto;display:flex;flex-direction:column;gap:14px">
+  <div class="hotel-detail-inner">
 
-    <!-- Hero -->
-    <div style="height:210px;border-radius:var(--radius-lg);overflow:hidden;position:relative;box-shadow:var(--shadow-sm)">
-      <img src="{{ hotelDetailCard.image }}" alt="{{ hotelDetailCard.name }}" style="width:100%;height:100%;object-fit:cover">
-      <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.05) 40%, rgba(0,0,0,0.78) 100%)"></div>
-      <div style="position:absolute;bottom:14px;left:16px;right:16px;color:#fff;z-index:2;display:flex;justify-content:space-between;align-items:flex-end;gap:10px">
-        <div>
-          <span style="background:var(--color-accent);color:#fff;padding:3px 9px;border-radius:var(--radius-pill);font:800 9.5px/1 var(--font-heading);display:inline-block;margin-bottom:6px;text-transform:uppercase;letter-spacing:.03em">{{ hotelDetailCard.star }}</span>
-          <div style="font:800 20px/1.2 var(--font-heading);text-shadow:0 1px 4px rgba(0,0,0,0.6)">{{ hotelDetailCard.name }}</div>
-          <div style="font:500 12px/1.3 var(--font-body);opacity:.9;margin-top:2px">{{ hotelDetailCard.area }}</div>
+    <!-- DESKTOP TOPBAR: sticky, minimal — back + name + actions -->
+    <div class="hotel-desktop-topbar">
+      <button onClick="{{ back }}" aria-label="Go back" class="hotel-icon-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+      <div style="flex:1;min-width:0">
+        <h4 class="lc-1" style="margin:0;font:800 15px/1.2 var(--font-heading);color:var(--color-text)">{{ hotelDetailCard.name }}</h4>
+        <div class="lc-1" style="font:500 11px/1 var(--font-body);color:var(--color-text-secondary);margin-top:1px">{{ hotelDetailCard.area }}</div>
+      </div>
+      <button onClick="{{ toggleHotelFavorite }}" aria-label="Save to favourites" class="hotel-icon-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ hotelDetailCard.favorited ? 'currentColor' : 'none' }}" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8Z"/></svg>
+      </button>
+      <button onClick="{{ shareHotelDetail }}" aria-label="Share this stay" class="hotel-icon-btn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg>
+      </button>
+    </div>
+
+    <!-- DESKTOP HERO: a cinematic image mosaic built from real property photos -->
+    <div class="hotel-hero hotel-hero--desktop">
+      <div class="hotel-hero-mosaic">
+        <div class="hotel-hero-mosaic-main">
+          <img src="{{ hotelDetailCard.image }}" alt="{{ hotelDetailCard.name }}">
+          <div class="hotel-hero-scrim"></div>
+          <div class="hotel-hero-identity">
+            <sc-if value="{{ hotelDetailCard.star }}"><span class="hotel-hero-cat">{{ hotelDetailCard.star }}</span></sc-if>
+            <h1 class="hotel-hero-name">{{ hotelDetailCard.name }}</h1>
+            <div class="hotel-hero-meta">
+              <sc-if value="{{ hotelDetailCard.ratingLabel }}"><span class="hotel-hero-rating">{{ hotelDetailCard.ratingLabel }}</span></sc-if>
+              <sc-if value="{{ hotelDetailCard.verified }}"><span class="hotel-hero-verified">· Verified property</span></sc-if>
+              <span class="hotel-hero-loc">· {{ hotelDetailCard.area }}</span>
+            </div>
+            <sc-if value="{{ hotelDetailCard.hasVirtualTour }}">
+              <button onClick="{{ () => openHotelVirtualTour(hotelDetailCard.virtualTourUrl) }}" class="hotel-tour-btn hotel-tour-btn--hero">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M2.5 12h19M12 2.5c2.5 2.6 4 6 4 9.5s-1.5 6.9-4 9.5c-2.5-2.6-4-6-4-9.5s1.5-6.9 4-9.5Z"/></svg>
+                <span>Explore virtual tour</span>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M7 17 17 7M8 7h9v9"/></svg>
+              </button>
+            </sc-if>
+          </div>
         </div>
-        <span style="background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);padding:4px 9px;border-radius:var(--radius-pill);font:700 11px/1 var(--font-heading);white-space:nowrap">{{ hotelDetailCard.ratingLabel }}</span>
+        <sc-if value="{{ hotelDetailCard.hasGallery }}">
+          <div class="hotel-hero-mosaic-side">
+            <sc-for list="{{ hotelDetailCard.gallery }}" as="g">
+              <div class="hotel-hero-mosaic-cell"><img src="{{ g }}" alt="{{ hotelDetailCard.name }}" loading="lazy"></div>
+            </sc-for>
+          </div>
+        </sc-if>
       </div>
     </div>
 
-    <!-- About + amenities -->
-    <div style="background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:16px;box-shadow:var(--shadow-xs);display:flex;flex-direction:column;gap:12px">
-      <div style="font:600 13.5px/1.5 var(--font-body);color:var(--color-text-secondary)">{{ hotelDetailCard.tagline }}</div>
-      <div style="display:flex;gap:7px;flex-wrap:wrap">
-        <sc-for list="{{ hotelDetailCard.amenities }}" as="amenity">
-          <span style="background:var(--color-surface-subtle);border:1px solid var(--color-divider);color:var(--color-text-secondary);padding:5px 10px;border-radius:var(--radius-pill);font-size:11px;font-weight:600">{{ amenity.label }}</span>
-        </sc-for>
-      </div>
-    </div>
+    <!-- BODY: two-column on desktop (content + sticky booking), single on mobile -->
+    <div class="hotel-detail-grid">
 
-    <!-- Virtual Tour 360° Showcase -->
-    <div style="background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:16px;box-shadow:var(--shadow-xs);display:flex;flex-direction:column;gap:12px">
-      <div style="display:flex;align-items:center;justify-content:space-between">
-        <div style="display:flex;align-items:center;gap:8px">
-          <span style="font:800 11px/1 var(--font-heading);letter-spacing:.08em;color:var(--color-accent);text-transform:uppercase">VISITE VIRTUELLE 360°</span>
-          <span class="tag tag-accent" style="font-size:9.5px;font-weight:800;padding:2px 7px">VR IMMERSIVE</span>
-        </div>
-        <span style="font:600 11px/1 var(--font-body);color:var(--color-text-secondary)">Vue panoramique</span>
-      </div>
+      <div class="hotel-detail-main">
 
-      <!-- 360 Panoramic Frame -->
-      <div style="height:190px;border-radius:var(--radius-sm);overflow:hidden;position:relative;background:#0d1117">
-        <img src="{{ hotelVirtualTourImage || hotelDetailCard.image }}" alt="Virtual Tour 360" style="width:100%;height:100%;object-fit:cover;filter:brightness(0.95)">
-        <div style="position:absolute;inset:0;background:radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.55) 100%)"></div>
-        
-        <!-- 360 Compass & Badge -->
-        <div style="position:absolute;top:12px;left:12px;background:rgba(0,0,0,0.65);backdrop-filter:blur(8px);color:#fff;padding:4px 10px;border-radius:var(--radius-pill);font:700 11px/1 var(--font-heading);display:flex;align-items:center;gap:6px">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
-          <span>{{ hotelVirtualTourSceneTitle || 'Suite Deluxe Panoramique' }}</span>
+        <!-- Stay summary (check-in · check-out · nights/guests) -->
+        <div class="hotel-stay-grid">
+          <div style="background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-sm);padding:12px;text-align:center">
+            <div style="font:700 9.5px/1 var(--font-heading);color:var(--color-text-muted);letter-spacing:.05em;text-transform:uppercase">Check-in</div>
+            <div style="font:800 13px/1.2 var(--font-heading);color:var(--color-text);margin-top:5px">{{ hotelDetailCard.checkInLabel }}</div>
+          </div>
+          <div style="background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-sm);padding:12px;text-align:center">
+            <div style="font:700 9.5px/1 var(--font-heading);color:var(--color-text-muted);letter-spacing:.05em;text-transform:uppercase">Check-out</div>
+            <div style="font:800 13px/1.2 var(--font-heading);color:var(--color-text);margin-top:5px">{{ hotelDetailCard.checkOutLabel }}</div>
+          </div>
+          <div style="background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-sm);padding:12px;text-align:center">
+            <div style="font:700 9.5px/1 var(--font-heading);color:var(--color-text-muted);letter-spacing:.05em;text-transform:uppercase">Stay</div>
+            <div style="font:800 13px/1.2 var(--font-heading);color:var(--color-text);margin-top:5px">{{ hotelDetailCard.nightsLabel }} · {{ hotelDetailCard.guests }}p</div>
+          </div>
         </div>
 
-        <!-- Hotspot Indicator -->
-        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(255,255,255,0.25);border:2px solid #fff;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;animation:pulse 2s infinite">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21.5 12H19M5 12H2.5M12 21.5V19M12 5V2.5"/><circle cx="12" cy="12" r="3"/></svg>
-        </div>
+        <!-- About the property -->
+        <sc-if value="{{ hotelDetailCard.tagline }}">
+        <section class="hotel-section">
+          <h2 class="hotel-block-title">About this property</h2>
+          <p class="hotel-about">{{ hotelDetailCard.tagline }}</p>
+        </section>
+        </sc-if>
 
-        <!-- Pan Controls Overlay -->
-        <div style="position:absolute;bottom:10px;right:10px;display:flex;gap:6px">
-          <button onClick="{{ prevVirtualScene }}" aria-label="Pan Left" style="background:rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.3);color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center">‹</button>
-          <button onClick="{{ nextVirtualScene }}" aria-label="Pan Right" style="background:rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.3);color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center">›</button>
-        </div>
-      </div>
+        <!-- Amenities & highlights -->
+        <section class="hotel-section">
+          <h2 class="hotel-block-title">Amenities &amp; highlights</h2>
+          <div class="hotel-amenity-grid">
+            <sc-for list="{{ hotelDetailCard.amenities }}" as="amenity">
+              <span class="hotel-amenity">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="2.4" style="flex-shrink:0"><path d="M20 6 9 17l-5-5"/></svg>
+                <span>{{ amenity }}</span>
+              </span>
+            </sc-for>
+          </div>
+        </section>
 
-      <!-- Scene Switcher Chips -->
-      <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:2px">
-        <button onClick="{{ () => setVirtualScene('suite') }}" class="tag {{ (hotelVirtualScene || 'suite') === 'suite' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer;font-weight:700">🛏️ Suite Deluxe</button>
-        <button onClick="{{ () => setVirtualScene('lobby') }}" class="tag {{ hotelVirtualScene === 'lobby' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer;font-weight:700">🏛️ Grand Lobby</button>
-        <button onClick="{{ () => setVirtualScene('rooftop') }}" class="tag {{ hotelVirtualScene === 'rooftop' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer;font-weight:700">🍸 Rooftop &amp; Piscine</button>
-        <button onClick="{{ () => setVirtualScene('dining') }}" class="tag {{ hotelVirtualScene === 'dining' ? 'tag-accent' : 'tag-neutral' }}" style="cursor:pointer;font-weight:700">🍽️ Restaurant</button>
-      </div>
-    </div>
+        <!-- Immersive experience (only when a real external tour URL exists) -->
+        <sc-if value="{{ hotelDetailCard.hasVirtualTour }}">
+        <section class="hotel-section hotel-immersive">
+          <div class="hotel-immersive-media">
+            <img src="{{ hotelDetailCard.image }}" alt="Immersive view of {{ hotelDetailCard.name }}" loading="lazy">
+            <div class="hotel-immersive-scrim"></div>
+            <span class="hotel-immersive-badge">360° VIRTUAL TOUR</span>
+          </div>
+          <div class="hotel-immersive-body">
+            <div>
+              <div class="hotel-eyebrow">Immersive experience</div>
+              <h2 class="hotel-block-title" style="margin-top:4px">A closer look at the property</h2>
+              <p class="hotel-about" style="margin-top:6px">Step inside and explore the spaces in a full 360° walkthrough before you book.</p>
+            </div>
+            <button onClick="{{ () => openHotelVirtualTour(hotelDetailCard.virtualTourUrl) }}" class="hotel-tour-btn hotel-tour-btn--solid">
+              <span>Explore virtual tour</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M7 17 17 7M8 7h9v9"/></svg>
+            </button>
+          </div>
+        </section>
+        </sc-if>
 
-    <!-- Stay summary -->
-    <div class="hotel-stay-grid">
-      <div style="background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-sm);padding:12px;text-align:center">
-        <div style="font:700 9.5px/1 var(--font-heading);color:var(--color-text-muted);letter-spacing:.05em;text-transform:uppercase">Check-in</div>
-        <div style="font:800 13px/1.2 var(--font-heading);color:var(--color-text);margin-top:5px">{{ hotelDetailCard.checkInLabel }}</div>
-      </div>
-      <div style="background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-sm);padding:12px;text-align:center">
-        <div style="font:700 9.5px/1 var(--font-heading);color:var(--color-text-muted);letter-spacing:.05em;text-transform:uppercase">Check-out</div>
-        <div style="font:800 13px/1.2 var(--font-heading);color:var(--color-text);margin-top:5px">{{ hotelDetailCard.checkOutLabel }}</div>
-      </div>
-      <div style="background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-sm);padding:12px;text-align:center">
-        <div style="font:700 9.5px/1 var(--font-heading);color:var(--color-text-muted);letter-spacing:.05em;text-transform:uppercase">Stay</div>
-        <div style="font:800 13px/1.2 var(--font-heading);color:var(--color-text);margin-top:5px">{{ hotelDetailCard.nightsLabel }} · {{ hotelDetailCard.guests }}p</div>
-      </div>
-    </div>
+        <!-- Explore the property — editorial gallery from real imagery -->
+        <sc-if value="{{ hotelDetailCard.hasGallery }}">
+        <section class="hotel-section">
+          <h2 class="hotel-block-title">Explore the property</h2>
+          <div class="hotel-gallery-grid">
+            <sc-for list="{{ hotelDetailCard.gallery }}" as="g">
+              <div class="hotel-gallery-cell"><img src="{{ g }}" alt="{{ hotelDetailCard.name }}" loading="lazy"></div>
+            </sc-for>
+          </div>
+        </section>
+        </sc-if>
 
-    <!-- Room tiers (selectable) -->
-    <div style="background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:16px;box-shadow:var(--shadow-xs);display:flex;flex-direction:column;gap:12px">
-      <div style="font:700 10.5px/1 var(--font-heading);letter-spacing:.06em;color:var(--color-text-muted);text-transform:uppercase">Choose your room</div>
-
-      <sc-if value="{{ hotelDetailLoading }}">
-        <div style="display:flex;align-items:center;gap:10px;padding:14px">
-          <span class="spinner-dark"></span>
-          <span style="font:600 12.5px/1 var(--font-body);color:var(--color-text-secondary)">Checking availability for your dates…</span>
-        </div>
-      </sc-if>
-
-      <sc-if value="{{ hotelDetailError }}">
-        <div style="padding:14px;background:var(--color-danger-100);border:1px solid var(--color-danger);border-radius:var(--radius-sm)">
-          <div style="font:600 12px/1.5 var(--font-body);color:var(--color-danger)">{{ hotelDetailError }}</div>
-          <button onClick="{{ retryHotelDetail }}" class="btn btn-secondary" style="margin-top:8px;padding:7px 14px;font:700 11.5px/1 var(--font-heading);cursor:pointer">Try again</button>
-        </div>
-      </sc-if>
-
-      <sc-if value="{{ !hotelDetailLoading && !hotelDetailError && !hotelDetailCard.hasRooms }}">
-        <div style="padding:14px;font:500 12px/1.5 var(--font-body);color:var(--color-text-secondary)">
-          No rooms at this property fit {{ hotelDetailCard.guests }} guest(s) on these dates. Try different dates or fewer guests.
-        </div>
-      </sc-if>
-
-      <sc-for list="{{ hotelDetailCard.rooms }}" as="room">
-        <div onClick="{{ () => selectHotelRoomId(room.id) }}" style="display:flex;align-items:center;justify-content:space-between;padding:14px;border-radius:var(--radius-sm);cursor:{{ room.soldOut ? 'not-allowed' : 'pointer' }};opacity:{{ room.soldOut ? '0.5' : '1' }};flex-wrap:wrap;gap:8px;border:{{ room.selected ? '2px solid var(--color-accent)' : '1px solid var(--color-divider)' }};background:{{ room.selected ? 'var(--color-accent-100)' : 'var(--color-surface)' }}">
-          <div style="display:flex;align-items:center;gap:12px;min-width:0">
-            <div style="width:20px;height:20px;border-radius:50%;flex-shrink:0;border:{{ room.selected ? '6px solid var(--color-accent)' : '2px solid var(--color-divider)' }};background:var(--color-surface)"></div>
-            <div style="min-width:0">
-              <div style="font:800 14px/1.2 var(--font-heading);color:var(--color-text)">{{ room.name }}</div>
-              <div style="font:400 11.5px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">{{ room.features }}</div>
-              <div style="display:flex;gap:8px;align-items:center;margin-top:4px">
-                <span style="font:700 10px/1 var(--font-heading);color:{{ room.soldOut ? 'var(--color-danger)' : 'var(--color-success)' }}">{{ room.availabilityLabel }}</span>
-                <span style="font:500 10px/1 var(--font-body);color:var(--color-text-muted)">{{ room.capacityLabel }}</span>
+        <!-- Named spaces (restaurant, pool, spa…) — only when the property
+             actually publishes them; each may carry its own external tour. -->
+        <sc-if value="{{ hotelDetailCard.hasSpaces }}">
+        <section class="hotel-section">
+          <h2 class="hotel-block-title">Hotel spaces</h2>
+          <div class="hotel-space-grid">
+            <sc-for list="{{ hotelDetailCard.spaces }}" as="space">
+              <div class="hotel-space-card">
+                <sc-if value="{{ space.image }}"><div class="hotel-space-media"><img src="{{ space.image }}" alt="{{ space.name }}" loading="lazy"></div></sc-if>
+                <div class="hotel-space-body">
+                  <div class="hotel-space-name">{{ space.name }}</div>
+                  <sc-if value="{{ space.description }}"><div class="hotel-space-desc lc-2">{{ space.description }}</div></sc-if>
+                  <sc-if value="{{ space.features }}"><div class="hotel-space-feat">{{ space.features }}</div></sc-if>
+                  <sc-if value="{{ space.hasVirtualTour }}">
+                    <button onClick="{{ () => openHotelVirtualTour(space.virtualTourUrl) }}" class="hotel-tour-btn hotel-tour-btn--ghost">
+                      <span>Explore in 360°</span>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M7 17 17 7M8 7h9v9"/></svg>
+                    </button>
+                  </sc-if>
+                </div>
               </div>
+            </sc-for>
+          </div>
+        </section>
+        </sc-if>
+
+        <!-- Rooms & suites -->
+        <section class="hotel-section" style="border:none;background:transparent;padding:0;box-shadow:none">
+          <h2 class="hotel-block-title" style="padding:0 2px">Rooms &amp; suites</h2>
+
+          <sc-if value="{{ hotelDetailLoading }}">
+            <div class="hotel-room-grid" aria-hidden="true">
+              <div class="hotel-skeleton-room"><div class="hotel-skel hotel-skel-roommedia"></div><div class="hotel-skel-body"><div class="hotel-skel hotel-skel-line lg"></div><div class="hotel-skel hotel-skel-line"></div><div class="hotel-skel hotel-skel-line sm"></div></div></div>
+              <div class="hotel-skeleton-room"><div class="hotel-skel hotel-skel-roommedia"></div><div class="hotel-skel-body"><div class="hotel-skel hotel-skel-line lg"></div><div class="hotel-skel hotel-skel-line"></div><div class="hotel-skel hotel-skel-line sm"></div></div></div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ hotelDetailError }}">
+            <div class="hotel-state-card hotel-state-card--error" role="alert">
+              <div style="font:700 12.5px/1.5 var(--font-body);color:var(--color-danger)">{{ hotelDetailError }}</div>
+              <button onClick="{{ retryHotelDetail }}" class="btn btn-secondary" style="margin-top:10px;padding:8px 16px;font:700 12px/1 var(--font-heading);cursor:pointer">Try again</button>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ !hotelDetailLoading && !hotelDetailError && !hotelDetailCard.hasRooms }}">
+            <div class="hotel-state-card">
+              <div style="font:700 13px/1.5 var(--font-body);color:var(--color-text-secondary)">No rooms at this property fit {{ hotelDetailCard.guests }} guest(s) on these dates. Try different dates or fewer guests.</div>
+            </div>
+          </sc-if>
+
+          <div class="hotel-room-grid">
+            <sc-for list="{{ hotelDetailCard.rooms }}" as="room">
+              <div class="hotel-room-card {{ room.selected ? 'is-selected' : '' }} {{ room.soldOut ? 'is-soldout' : '' }}" onClick="{{ () => { if (!room.soldOut) selectHotelRoomId(room.id); } }}">
+                <div class="hotel-room-media">
+                  <img src="{{ room.image }}" alt="{{ room.name }}" loading="lazy">
+                  <sc-if value="{{ room.soldOut }}"><span class="hotel-room-soldout">Sold out</span></sc-if>
+                </div>
+                <div class="hotel-room-body">
+                  <div class="hotel-room-head">
+                    <div style="min-width:0">
+                      <div class="hotel-room-name">{{ room.name }}</div>
+                      <sc-if value="{{ room.metaLabel }}"><div class="hotel-room-meta">{{ room.metaLabel }}</div></sc-if>
+                    </div>
+                    <span class="hotel-room-radio" aria-hidden="true"></span>
+                  </div>
+                  <div class="hotel-chip-row">
+                    <sc-for list="{{ room.amenityChips }}" as="am">
+                      <span class="hotel-chip hotel-chip--room">{{ am }}</span>
+                    </sc-for>
+                  </div>
+                  <div class="hotel-room-avail">
+                    <span class="{{ room.soldOut ? 'hotel-avail-out' : 'hotel-avail-ok' }}">{{ room.availabilityLabel }}</span>
+                    <sc-if value="{{ room.cancellationLabel }}"><span class="hotel-room-cancel">· {{ room.cancellationLabel }}</span></sc-if>
+                  </div>
+                  <div class="hotel-room-foot">
+                    <div class="hotel-room-price"><span>{{ room.priceLabel }}</span><span class="hotel-room-per">/ night</span></div>
+                    <div class="hotel-room-actions">
+                      <sc-if value="{{ room.hasVirtualTour }}">
+                        <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); openHotelVirtualTour(room.virtualTourUrl); } }}" class="hotel-tour-btn hotel-tour-btn--ghost" aria-label="Explore this room in 360 degrees">
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M2.5 12h19M12 2.5c2.5 2.6 4 6 4 9.5s-1.5 6.9-4 9.5c-2.5-2.6-4-6-4-9.5s1.5-6.9 4-9.5Z"/></svg>
+                          <span>360°</span>
+                        </button>
+                      </sc-if>
+                      <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); if (!room.soldOut) selectHotelRoomId(room.id); } }}" disabled="{{ room.soldOut }}" class="hotel-room-select {{ room.selected ? 'is-selected' : '' }}">
+                        {{ room.selected ? 'Selected' : 'Select room' }}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+
+        <!-- Good to know (real, non-fabricated stay policy) -->
+        <sc-if value="{{ hotelDetailCard.hasRooms }}">
+        <section class="hotel-section">
+          <h2 class="hotel-block-title">Good to know</h2>
+          <div class="hotel-policy-grid">
+            <div class="hotel-policy">
+              <div class="hotel-policy-label">Check-in</div>
+              <div class="hotel-policy-value">From 2:00 PM</div>
+            </div>
+            <div class="hotel-policy">
+              <div class="hotel-policy-label">Check-out</div>
+              <div class="hotel-policy-value">Until 11:00 AM</div>
+            </div>
+            <div class="hotel-policy">
+              <div class="hotel-policy-label">Payment</div>
+              <div class="hotel-policy-value">MoMo Escrow — released after check-in</div>
             </div>
           </div>
-          <div style="text-align:right">
-            <div style="font:800 15px/1 var(--font-heading);color:var(--color-accent);margin-top:2px">{{ room.priceLabel }} <span style="font-size:10.5px;font-weight:500;color:var(--color-text-muted)">/ night</span></div>
+        </section>
+        </sc-if>
+
+      </div>
+
+      <!-- DESKTOP BOOKING PANEL: sticky reservation card -->
+      <aside class="hotel-booking-panel">
+        <div class="hotel-booking-card">
+          <div class="hotel-booking-price">
+            <sc-if value="{{ hotelDetailCard.hasQuote }}">
+              <div class="hotel-booking-total">{{ hotelDetailCard.totalLabel }}</div>
+              <div class="hotel-booking-total-sub">total · {{ hotelDetailCard.nightsLabel }} · {{ hotelDetailCard.guestsLabel }}</div>
+            </sc-if>
+            <sc-if value="{{ !hotelDetailCard.hasQuote }}">
+              <div class="hotel-booking-total-sub">Select a room to see your total</div>
+            </sc-if>
+          </div>
+          <div class="hotel-booking-stay">
+            <div class="hotel-booking-stayitem">
+              <span class="hotel-booking-staylabel">Check-in</span>
+              <span class="hotel-booking-stayvalue">{{ hotelDetailCard.checkInLabel }}</span>
+            </div>
+            <div class="hotel-booking-stayitem">
+              <span class="hotel-booking-staylabel">Check-out</span>
+              <span class="hotel-booking-stayvalue">{{ hotelDetailCard.checkOutLabel }}</span>
+            </div>
+            <div class="hotel-booking-stayitem">
+              <span class="hotel-booking-staylabel">Guests</span>
+              <span class="hotel-booking-stayvalue">{{ hotelDetailCard.guestsLabel }}</span>
+            </div>
+          </div>
+          <button onClick="{{ openHotelBooking }}" disabled="{{ !hotelDetailCard.hasRooms }}" class="btn btn-primary hotel-booking-cta">
+            Reserve now <span>→</span>
+          </button>
+          <div class="hotel-booking-trust">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-success)" stroke-width="2" style="flex-shrink:0"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>Deposit held in escrow, released after check-in.</span>
           </div>
         </div>
-      </sc-for>
-    </div>
+      </aside>
 
+    </div>
   </div>
 
-  <!-- Sticky reserve bar: High z-index (9999) + mobile safe area padding ensures 100% visibility -->
-  <div class="hotel-sticky-reserve-bar" style="position:fixed;bottom:0;left:0;right:0;z-index:9999;background:var(--color-surface-glass);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid var(--color-divider);padding:14px 16px;padding-bottom:max(14px, env(safe-area-inset-bottom, 14px));display:flex;align-items:center;justify-content:space-between;gap:14px;box-shadow:0 -8px 25px rgba(0,0,0,0.15)">
-    <div>
-      <div style="font:500 11px/1 var(--font-body);color:var(--color-text-secondary)">{{ hotelDetailCard.nightsLabel }} total</div>
-      <div style="font:800 18px/1.1 var(--font-heading);color:var(--color-text);margin-top:3px">{{ hotelDetailCard.totalLabel }}</div>
+  <!-- MOBILE STICKY RESERVE BAR (hidden on desktop; respects safe-area) -->
+  <div class="hotel-mobile-reserve">
+    <div class="hotel-mobile-reserve-price">
+      <sc-if value="{{ hotelDetailCard.hasQuote }}">
+        <div class="hotel-mobile-reserve-sub">{{ hotelDetailCard.nightsLabel }} total</div>
+        <div class="hotel-mobile-reserve-total">{{ hotelDetailCard.totalLabel }}</div>
+      </sc-if>
+      <sc-if value="{{ !hotelDetailCard.hasQuote }}">
+        <div class="hotel-mobile-reserve-sub">Select a room</div>
+        <div class="hotel-mobile-reserve-total">Best rates</div>
+      </sc-if>
     </div>
-    <button onClick="{{ openHotelBooking }}" class="btn btn-primary" style="height:48px;padding:0 28px;font-size:14px;font-weight:800;border-radius:var(--radius-pill);box-shadow:var(--shadow-glow-blue);cursor:pointer">
+    <button onClick="{{ openHotelBooking }}" disabled="{{ !hotelDetailCard.hasRooms }}" class="btn btn-primary hotel-mobile-reserve-cta">
       Reserve now <span>→</span>
     </button>
   </div>
@@ -323,7 +538,7 @@ def get_hotel_vertical_view():
 <div style="padding-bottom:60px">
 
   <div style="display:flex;align-items:center;gap:14px;padding:14px 20px;background:var(--color-surface-glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:30">
-    <button onClick="{{ back }}" aria-label="Go back" style="border:1px solid var(--color-divider);background:var(--color-surface);width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;box-shadow:var(--shadow-xs);flex-shrink:0">
+    <button onClick="{{ back }}" aria-label="Go back" class="hotel-icon-btn" style="width:40px;height:40px">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m15 18-6-6 6-6"/></svg>
     </button>
     <h4 style="margin:0;font-size:16.5px;font-weight:800">Review &amp; reserve</h4>
@@ -371,8 +586,7 @@ def get_hotel_vertical_view():
     </div>
 
     <!-- A refused reservation (room just sold out, dates rejected, room too
-         small) has to be visible. Without this the button appeared to do
-         nothing and the traveller retried, or assumed it had worked. -->
+         small) has to be visible. -->
     <sc-if value="{{ hotelSubmitError }}">
       <div role="alert" style="padding:12px 14px;background:var(--color-danger-100);border:1px solid var(--color-danger);border-radius:var(--radius-sm);font:600 12px/1.5 var(--font-body);color:var(--color-danger)">
         {{ hotelSubmitError }}
@@ -394,13 +608,12 @@ def get_hotel_vertical_view():
 <div style="padding-bottom:60px">
 
   <div style="display:flex;align-items:center;gap:14px;padding:14px 20px;background:var(--color-surface-glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:30">
-    <button onClick="{{ on.home }}" aria-label="Done" style="border:1px solid var(--color-divider);background:var(--color-surface);width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;box-shadow:var(--shadow-xs);flex-shrink:0">
+    <button onClick="{{ on.home }}" aria-label="Done" class="hotel-icon-btn" style="width:40px;height:40px">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m15 18-6-6 6-6"/></svg>
     </button>
     <div style="flex:1">
-      <!-- Status comes from the server. A held, unpaid booking said
-           "Reservation confirmed · Paid" here, which would send a traveller to
-           a hotel that has received no money and is holding no room for them. -->
+      <!-- Status comes from the server. A held, unpaid booking must not claim
+           to be confirmed & paid. -->
       <h4 style="margin:0;font-size:16px;font-weight:800">{{ hotelVoucher.isConfirmed ? 'Reservation confirmed' : 'Reservation held' }}</h4>
       <div style="font:500 11px/1 var(--font-body);color:{{ hotelVoucher.isConfirmed ? 'var(--color-success)' : 'var(--color-text-secondary)' }};margin-top:2px">{{ hotelVoucher.statusLabel }}</div>
     </div>

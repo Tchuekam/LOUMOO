@@ -52,6 +52,8 @@ header_and_styles = """<!DOCTYPE html>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600;1,700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- Hotel-scoped experience stylesheet (external so the shell stays in budget). -->
+<link rel="stylesheet" href="./src/styles/hotel.css">
 <style>
   /* Anti-flash / unmounted protection: hide raw uncompiled template elements until React mounts */
   x-dc { display: none !important; }
@@ -849,7 +851,6 @@ html, body {
     padding: 0 0 64px 0 !important;
   }
   .home-grid, .home-grid-3 { grid-template-columns: repeat(4, 1fr) !important; gap: 18px !important; }
-  .hotel-sticky-reserve-bar { left: 260px !important; }
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -5817,88 +5818,9 @@ html, body {
   flex: 1 !important;
 }
 
-/* ── Compact Hotel Rail Card ── */
-.hotel-card-compact {
-  flex: 0 0 195px !important;
-  width: 195px !important;
-  max-width: 230px !important;
-  scroll-snap-align: start !important;
-  background: var(--color-surface) !important;
-  border: 1px solid var(--color-divider) !important;
-  border-radius: var(--radius-lg) !important;
-  overflow: hidden !important;
-  display: flex !important;
-  flex-direction: column !important;
-  cursor: pointer !important;
-  box-shadow: var(--shadow-xs) !important;
-  transition: transform 0.2s var(--ease-spring), box-shadow 0.2s ease !important;
-  user-select: none !important;
-}
-.hotel-card-compact:hover {
-  transform: translateY(-2px) !important;
-  box-shadow: var(--shadow-sm) !important;
-  border-color: var(--color-accent-200) !important;
-}
-.hotel-card-compact .card-img-wrap {
-  height: 112px !important;
-  max-height: 112px !important;
-  width: 100% !important;
-  position: relative !important;
-  overflow: hidden !important;
-  background: var(--color-surface-subtle) !important;
-}
-.hotel-card-compact .card-img-wrap img {
-  width: 100% !important;
-  height: 100% !important;
-  max-height: 112px !important;
-  object-fit: cover !important;
-  display: block !important;
-  transition: transform 0.3s ease !important;
-}
-.hotel-card-compact:hover .card-img-wrap img {
-  transform: scale(1.04) !important;
-}
-.hotel-card-compact .card-info {
-  padding: 10px 12px 12px !important;
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 3px !important;
-  flex: 1 !important;
-}
-
-/* ── Compact Hotel List Row ── */
-.hotel-row-compact {
-  display: flex !important;
-  background: var(--color-surface) !important;
-  border: 1px solid var(--color-divider) !important;
-  border-radius: var(--radius-md) !important;
-  overflow: hidden !important;
-  cursor: pointer !important;
-  box-shadow: var(--shadow-xs) !important;
-  transition: transform 0.2s var(--ease-spring), border-color 0.2s ease !important;
-}
-.hotel-row-compact:hover {
-  transform: translateY(-1px) !important;
-  border-color: var(--color-accent-200) !important;
-}
-.hotel-row-compact .row-img {
-  width: 100px !important;
-  height: 90px !important;
-  max-width: 100px !important;
-  max-height: 90px !important;
-  object-fit: cover !important;
-  flex-shrink: 0 !important;
-  display: block !important;
-}
-.hotel-row-compact .row-info {
-  padding: 8px 12px !important;
-  display: flex !important;
-  flex-direction: column !important;
-  justify-content: center !important;
-  gap: 2px !important;
-  min-width: 0 !important;
-  flex: 1 !important;
-}
+/* The compact hotel rail card (.hotel-card-compact) now lives in the hotel
+   stylesheet (src/styles/hotel.css) to keep the shell under its byte budget;
+   it is still applied globally, so the Travel hub rail is unaffected. */
 
 /* ── Compact Corridor Route Pill / Card ── */
 .travel-corridor-card {
@@ -7207,6 +7129,8 @@ class Component extends DCLogic {
     hotelSelectedRoomId: '',
     hotelSubmitting: false,
     hotelSubmitError: '',
+    // Client-only favourite marks (hero heart); never persisted server-side.
+    hotelFavIds: {},
 
     // ── Travel & Mobility Ecosystem State ──
     travelServiceTab: 'bus',
@@ -12437,6 +12361,28 @@ class Component extends DCLogic {
     // Encode them defensively (already-encoded %20 is left untouched).
     const encImg = (u) => u ? String(u).replace(/ /g, '%20').replace(/&/g, '%26') : '';
 
+    // Virtual-tour link: external product data, never invented. Read whichever
+    // field the object uses; accept only a real http(s) URL, else '' (CTA hidden).
+    const readTourUrl = (o) => {
+      if (!o || typeof o !== 'object') return '';
+      const raw = o.virtualTourUrl || o.virtual_tour_url || o.virtualTour ||
+        o.tourUrl || o.tour_url ||
+        (o.virtualTour && typeof o.virtualTour === 'object' ? o.virtualTour.url : '') || '';
+      const s = typeof raw === 'string' ? raw.trim() : '';
+      return /^https:\/\/[^\s]+\.[^\s]+/i.test(s) ? s : '';
+    };
+    // Surface metadata that already exists in the room prose/amenities (never
+    // fabricated): size from the description ("38m² …"), bed from the amenities.
+    const roomSizeLabel = (r) => {
+      const src = (r && (r.description || '')) + ' ' + ((r && r.amenities) || []).join(' ');
+      const m = src.match(/(\d{2,4})\s*(?:m²|m2|sqm|sq\s?m)/i);
+      return m ? (m[1] + ' m²') : '';
+    };
+    const roomBedLabel = (r) => {
+      const bed = ((r && r.amenities) || []).find((x) => /bed|king|queen|twin|sofa/i.test(String(x)));
+      return bed ? String(bed) : '';
+    };
+
     // Maps a hotel as the API returns it onto the card the template renders.
     // Only fields the server actually sends are shown — there is no review
     // corpus behind a "312 reviews" label, so no such label is produced.
@@ -12446,6 +12392,9 @@ class Component extends DCLogic {
       area: h.location || h.city || '',
       star: h.starLabel || '',
       ratingLabel: h.rating ? ('★ ' + h.rating) : '',
+      descriptor: h.description || '',
+      amenityChips: (h.amenities || []).slice(0, 3),
+      verified: (h.status || 'ACTIVE') === 'ACTIVE',
       image: encImg((h.images && h.images[0]) || ''),
       priceLabel: 'XAF ' + fmt(h.priceFrom || 0)
     });
@@ -14348,7 +14297,6 @@ class Component extends DCLogic {
         this.go('hotelDetail');
         this.loadHotelDetail(hid);
       },
-      selectHotelRoom: (idx) => this.setState({ hotelRoomIndex: Number(idx) || 0 }),
       hotelCheckIn: this.state.hotelCheckIn,
       hotelCheckOut: this.state.hotelCheckOut,
       // Changing the stay changes both the price and what is still available,
@@ -14394,16 +14342,54 @@ class Component extends DCLogic {
       retryHotelDetail: () => this.loadHotelDetail(this.state.hotelSelectedId),
       selectHotelRoomId: (roomId) => this.setState({ hotelSelectedRoomId: roomId, hotelSubmitError: '' }),
 
+      // Opens an external immersive experience in a new, isolated tab. readTourUrl
+      // already validated https+host; this guards again before navigating.
+      openHotelVirtualTour: (url) => {
+        const u = typeof url === 'string' ? url.trim() : '';
+        if (!/^https:\/\/[^\s]+\.[^\s]+/i.test(u)) return;
+        try {
+          if (typeof window !== 'undefined' && window.open) window.open(u, '_blank', 'noopener,noreferrer');
+        } catch (e) {}
+      },
+      // Client-only favourite mark for the hero heart (not persisted).
+      toggleHotelFavorite: () => {
+        const id = this.state.hotelSelectedId;
+        if (!id) return;
+        const next = Object.assign({}, this.state.hotelFavIds);
+        if (next[id]) { delete next[id]; } else { next[id] = true; }
+        this.setState({ hotelFavIds: next });
+      },
+      shareHotelDetail: () => {
+        const h = this.state.hotelDetailData || {};
+        const title = h.name ? (h.name + ' · LOUMOO Stays') : 'LOUMOO Stays';
+        let url = '';
+        try { if (typeof window !== 'undefined' && window.location) url = window.location.href; } catch (e) {}
+        try {
+          if (typeof navigator !== 'undefined' && navigator.share) {
+            navigator.share({ title: title, text: title, url: url }).catch(() => {});
+            return;
+          }
+          if (url && typeof navigator !== 'undefined' && navigator.clipboard) {
+            navigator.clipboard.writeText(url).then(() => this.toast('Link copied')).catch(() => this.toast(title));
+            return;
+          }
+        } catch (e) {}
+        this.toast(title);
+      },
+
       hotelDetailCard: (() => {
         const h = this.state.hotelDetailData;
         // The template dereferences this object every render, including the
         // first one before the fetch resolves — so it is never null.
         if (!h) {
           return {
-            id: '', name: '', area: '', star: '', ratingLabel: '', image: '', tagline: '',
+            id: '', name: '', area: '', star: '', ratingLabel: '',
+            image: '', gallery: [], hasGallery: false, tagline: '',
+            verified: false, favorited: false,
+            virtualTourUrl: '', hasVirtualTour: false, spaces: [], hasSpaces: false,
             amenities: [], rooms: [], hasRooms: false,
-            nights: 0, nightsLabel: '', checkInLabel: '', checkOutLabel: '',
-            guests: this.state.hotelGuests || 2, totalLabel: ''
+            nightsLabel: '', checkInLabel: '', checkOutLabel: '',
+            guests: this.state.hotelGuests || 2, guestsLabel: '', totalLabel: '', hasQuote: false
           };
         }
         const rooms = this.state.hotelRooms || [];
@@ -14412,36 +14398,71 @@ class Component extends DCLogic {
         // `stayQuote` is the server's own arithmetic for this stay. The client
         // shows what the server will charge, and never recomputes it.
         const quote = sel && sel.stayQuote ? sel.stayQuote : null;
+        // Real property imagery only (hero mosaic + "Explore the property").
+        const imgs = (h.images || []).filter(Boolean).map(encImg);
+        // Optional named spaces — read from the object if present, else empty;
+        // nothing is fabricated (the backend does not expose these today).
+        const spaces = (Array.isArray(h.spaces) ? h.spaces : []).map((sp) => {
+          const url = readTourUrl(sp);
+          return {
+            name: sp.name || sp.title || '',
+            description: sp.description || sp.summary || '',
+            image: encImg((sp.images && sp.images[0]) || sp.image || ''),
+            features: (sp.amenities || sp.features || []).slice(0, 3).join(' · '),
+            virtualTourUrl: url,
+            hasVirtualTour: !!url
+          };
+        }).filter((s) => s.name);
+        const hotelTour = readTourUrl(h);
+        const guestsN = this.state.hotelGuests || 2;
         return {
           id: h.id,
           name: h.name || '',
           area: h.location || h.city || '',
           star: h.starLabel || '',
           ratingLabel: h.rating ? ('★ ' + h.rating) : '',
-          image: encImg((h.images && h.images[0]) || ''),
+          verified: (h.status || 'ACTIVE') === 'ACTIVE',
+          favorited: !!(this.state.hotelFavIds && this.state.hotelFavIds[h.id]),
+          image: imgs[0] || '',
+          gallery: imgs.slice(1),
+          hasGallery: imgs.length > 1,
           tagline: h.description || '',
-          amenities: (h.amenities || []).map((a) => ({ label: a })),
-          rooms: rooms.map((r, i) => ({
-            index: i,
-            id: r.id,
-            name: r.name,
-            features: (r.amenities || []).slice(0, 3).join(' · ') || r.description || '',
-            priceLabel: 'XAF ' + fmt(r.price),
-            strikeLabel: '',
-            soldOut: !(r.availableInventory > 0),
-            availabilityLabel: r.availableInventory > 0
-              ? (r.availableInventory <= 3 ? ('Only ' + r.availableInventory + ' left') : 'Available')
-              : 'Sold out',
-            capacityLabel: r.capacity ? ('Sleeps ' + r.capacity) : '',
-            selected: sel ? r.id === sel.id : false
-          })),
+          virtualTourUrl: hotelTour,
+          hasVirtualTour: !!hotelTour,
+          spaces: spaces,
+          hasSpaces: spaces.length > 0,
+          amenities: h.amenities || [],
+          rooms: rooms.map((r) => {
+            const size = roomSizeLabel(r);
+            const meta = [size, r.capacity ? (r.capacity + ' guest' + (r.capacity === 1 ? '' : 's')) : '', roomBedLabel(r)].filter(Boolean).join(' · ');
+            const url = readTourUrl(r);
+            return {
+              id: r.id,
+              name: r.name,
+              image: encImg((r.images && r.images[0]) || (h.images && h.images[0]) || ''),
+              metaLabel: meta,
+              amenityChips: (r.amenities || []).slice(0, 4),
+              priceLabel: 'XAF ' + fmt(r.price),
+              soldOut: !(r.availableInventory > 0),
+              availabilityLabel: r.availableInventory > 0
+                ? (r.availableInventory <= 3 ? ('Only ' + r.availableInventory + ' left') : 'Available')
+                : 'Sold out',
+              cancellationLabel: r.cancellationPolicy === 'NON_REFUNDABLE'
+                ? 'Non-refundable'
+                : (r.cancellationPolicy === 'MODERATE_48H' ? 'Free cancellation up to 48h' : 'Free cancellation up to 24h'),
+              virtualTourUrl: url,
+              hasVirtualTour: !!url,
+              selected: sel ? r.id === sel.id : false
+            };
+          }),
           hasRooms: rooms.length > 0,
-          nights: nights,
           nightsLabel: nights + (nights === 1 ? ' night' : ' nights'),
           checkInLabel: this._hotelDateLabel(this.state.hotelCheckIn),
           checkOutLabel: this._hotelDateLabel(this.state.hotelCheckOut),
-          guests: this.state.hotelGuests || 2,
-          totalLabel: quote ? ('XAF ' + fmt(quote.totalAmount)) : ''
+          guests: guestsN,
+          guestsLabel: guestsN + ' guest' + (guestsN === 1 ? '' : 's'),
+          totalLabel: quote ? ('XAF ' + fmt(quote.totalAmount)) : '',
+          hasQuote: !!quote
         };
       })(),
 
