@@ -29,26 +29,43 @@ const popularStaysMatch = html.match(/Popular stays[\s\S]*?<\/div>\s*<\/div>\s*<
 assert(popularStaysMatch, 'Popular stays section must be present in Travel hub');
 assert(popularStaysMatch[0].includes('hotel-card-compact'), 'Popular stays must use compact hotel cards');
 
-// 4. Hotel Search (is.hotelSearch) Redesign
+// 4. Hotel Search (is.hotelSearch) — premium discovery redesign
 const hotelSearchMatch = html.match(/<sc-if value="\{\{ is\.hotelSearch \}\}">([\s\S]*?)(?=<sc-if value="\{\{ is\.hotelDetail \}\}">)/);
 assert(hotelSearchMatch, 'is.hotelSearch conditional must be present');
 const hotelSearchContent = hotelSearchMatch[1];
 
 assert(!hotelSearchContent.includes('height:240px'), 'Hotel search must NOT contain oversized 240px stacked cards');
-assert(hotelSearchContent.includes('travel-rail'), 'Hotel search must contain horizontal discovery rails');
-assert(hotelSearchContent.includes('hotel-card-compact'), 'Hotel search must use compact hotel cards');
-assert(hotelSearchContent.includes('hotel-row-compact'), 'Hotel search must use compact scan rows for verified stays');
+assert(hotelSearchContent.includes('travel-rail'), 'Hotel search must contain a horizontal Popular Stays discovery rail');
+assert(hotelSearchContent.includes('hotel-card-compact'), 'Hotel search Popular Stays rail must use compact hotel cards');
+// The old compact "scan rows" were replaced by premium, spacious result cards
+// in a responsive grid (1-col mobile → multi-col desktop).
+assert(!hotelSearchContent.includes('hotel-row-compact'), 'Obsolete compact scan rows must be gone');
+assert(hotelSearchContent.includes('hotel-result-grid'), 'Verified stays must use the premium result grid');
+assert(hotelSearchContent.includes('hotel-result-card'), 'Verified stays must use premium result cards');
+// A polished, recoverable empty state (not a blank page).
+assert(hotelSearchContent.includes('hotelListEmpty'), 'Hotel search must keep a polished empty state');
 
 // 5. Visual Fatigue Prevention - Text-Led Section
 assert(html.includes('Weekend Escapes'), 'Weekend Escapes text-led section must be present for visual rhythm');
 assert(html.includes('CONSULAR DESK'), 'Consular desk advisory card must be present');
 
-// 6. Hotel Detail Restrained Hero
+// 6. Hotel Detail — editorial hero + dedicated mobile/desktop layouts
 const hotelDetailMatch = html.match(/<sc-if value="\{\{ is\.hotelDetail \}\}">([\s\S]*?)(?=<sc-if value="\{\{ is\.hotelBooking \}\}">)/);
 assert(hotelDetailMatch, 'is.hotelDetail conditional must be present');
 const hotelDetailContent = hotelDetailMatch[1];
-assert(!hotelDetailContent.includes('height:320px'), 'Hotel detail gallery hero must NOT be oversized 320px');
-assert(hotelDetailContent.includes('height:210px'), 'Hotel detail gallery hero must be restrained (210px)');
+// Desktop and mobile are two intentional compositions, not one scaled hero.
+assert(hotelDetailContent.includes('hotel-hero--mobile'), 'Hotel detail must have a dedicated mobile hero');
+assert(hotelDetailContent.includes('hotel-hero--desktop'), 'Hotel detail must have a dedicated desktop hero');
+assert(hotelDetailContent.includes('hotel-detail-grid'), 'Hotel detail must use the two-column (content + booking) desktop grid');
+// Sticky mobile reserve bar with safe-area handling.
+assert(hotelDetailContent.includes('hotel-mobile-reserve'), 'Hotel detail must keep a sticky mobile reserve bar');
+assert(hotelDetailContent.includes('hotel-booking-panel'), 'Hotel detail must expose a desktop booking panel');
+// The fake 360° viewer (image + pan controls + scene chips) must be gone; real
+// external virtual tours are opened via a validated handler instead.
+['hotelVirtualTourImage', 'hotelVirtualScene', 'prevVirtualScene', 'nextVirtualScene', 'setVirtualScene'].forEach(dead => {
+  assert(!hotelDetailContent.includes(dead), `Fake 360 control "${dead}" must be removed`);
+});
+assert(hotelDetailContent.includes('openHotelVirtualTour'), 'Real external virtual-tour handler must be wired');
 
 // 7. Line Clamping & Typography utilities
 assert(html.includes('class="lc-1"'), 'Line clamping utility lc-1 must be used');
@@ -62,10 +79,10 @@ assert(html.includes('.travel-corridor-card {') && html.includes('flex: 0 0 155p
 
 console.log('✓ TEST 1 PASSED: Curated excursions horizontal rail with 4+ compact cards verified');
 console.log('✓ TEST 2 PASSED: Absence of paragraphs and oversized CTAs inside cards verified');
-console.log('✓ TEST 3 PASSED: Hotel search 240px stacked cards eliminated; replaced with rails & compact rows');
-console.log('✓ TEST 4 PASSED: Hotel detail hero restrained to 210px to eliminate visual fatigue');
+console.log('✓ TEST 3 PASSED: Popular Stays rail present with compact hotel cards');
+console.log('✓ TEST 4 PASSED: Hotel search upgraded to premium result grid; obsolete scan rows removed');
 console.log('✓ TEST 5 PASSED: Text-led sections present for visual rhythm');
-console.log('✓ TEST 6 PASSED: Line clamping and compact typography scale verified');
+console.log('✓ TEST 6 PASSED: Editorial hero with dedicated mobile/desktop layouts; fake 360 removed');
 console.log('✓ TEST 7 PASSED: Master stylesheet contains .travel-rail, .travel-card-compact, .card-img-wrap rules');
 console.log('\n======================================================================');
 console.log('  ALL MOBILE-FIRST TRAVEL REDESIGN INTEGRITY TESTS PASSED 100%!');
