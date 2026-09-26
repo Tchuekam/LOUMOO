@@ -37,16 +37,27 @@ async function maintenanceGuard(req, res, next) {
     return next();
   }
 
-  // 3. Inspect maintenance mode status (cached with 30s TTL)
+  // 3. Inspect maintenance mode status (cached with 30s TTL).
+  //
+  // This runs on every non-bypassed /api request. The underlying setting read
+  // goes through the Supabase admin client, whose resilient fetch can retry a
+  // slow GET for tens of seconds. We must NEVER let that block request
+  // admission: bound the lookup with a short deadline and fail OPEN (serve
+  // traffic) if it is not answered in time. The lookup keeps running in the
+  // background and populates the 30s cache for subsequent requests.
   let maintenance = null;
   try {
-    if (CacheService && typeof CacheService.remember === 'function') {
-      maintenance = await CacheService.remember('system_setting:maintenance_mode', 30, () => {
-        return SuperAdminRepository.getSetting('maintenance_mode');
-      }, 'admin');
-    } else {
-      maintenance = await SuperAdminRepository.getSetting('maintenance_mode');
-    }
+    const lookup = (CacheService && typeof CacheService.remember === 'function')
+      ? CacheService.remember('system_setting:maintenance_mode', 30,
+          () => SuperAdminRepository.getSetting('maintenance_mode'), 'admin')
+      : SuperAdminRepository.getSetting('maintenance_mode');
+    // A background rejection (after we stop awaiting) must not become an
+    // unhandledRejection.
+    if (lookup && typeof lookup.catch === 'function') lookup.catch(() => {});
+    maintenance = await Promise.race([
+      lookup,
+      new Promise(resolve => setTimeout(() => resolve(null), 500))
+    ]);
   } catch (_) {
     // Fail open on unexpected store lookup error to prevent unintended system lockouts
     return next();

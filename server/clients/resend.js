@@ -54,6 +54,10 @@ async function sendEmail({ to, subject, html, from }) {
   // 2. Fallback: Resend API
   if (config.resend && config.resend.apiKey) {
     try {
+      // Bound the outbound call the same way the SMTP transport is bounded
+      // (10s socket). Without a signal, undici's ~300s header/body timeout is
+      // the only limit, so a slow Resend would hang the awaited OTP/auth
+      // request for minutes instead of failing over to "not sent".
       const res = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: {
@@ -65,7 +69,8 @@ async function sendEmail({ to, subject, html, from }) {
           to: Array.isArray(to) ? to : [to],
           subject: subject,
           html: html
-        })
+        }),
+        signal: AbortSignal.timeout(8000)
       });
       const data = await res.json();
       return { id: data.id, sent: res.ok };

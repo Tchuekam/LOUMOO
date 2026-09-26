@@ -27,15 +27,21 @@ router.get(['/readyz', '/ready'], async (req, res) => {
     redis: 'checking'
   };
 
+  // Redis is optional by design (the cache/rate-limiter fall back to in-memory).
+  // Only treat it as a readiness dependency when a REDIS_URL is actually
+  // configured; an intentionally Redis-less deployment must still report ready.
+  const redisConfigured = Boolean(config.redis && config.redis.url);
   const redis = RedisConnection.getInstance();
   try {
     if (redis && redis.status === 'ready') {
       checks.redis = 'connected';
+    } else if (!redisConfigured) {
+      checks.redis = 'not_configured';
     } else {
       checks.redis = config.isProduction ? 'unavailable' : 'degraded_or_fallback';
     }
   } catch (e) {
-    checks.redis = 'unavailable';
+    checks.redis = redisConfigured ? 'unavailable' : 'not_configured';
   }
 
   try {
@@ -47,7 +53,7 @@ router.get(['/readyz', '/ready'], async (req, res) => {
 
   const isReady = checks.server === 'healthy' &&
     checks.database === 'connected' &&
-    (!config.isProduction || checks.redis === 'connected');
+    (!config.isProduction || !redisConfigured || checks.redis === 'connected');
   res.status(isReady ? 200 : 503).json({
     status: isReady ? 'ready' : 'degraded',
     checks,

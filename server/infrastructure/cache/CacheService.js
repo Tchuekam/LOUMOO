@@ -16,6 +16,7 @@ class CacheService {
     this.redis = RedisConnection.getInstance();
     this.memoryFallback = new Map(); // key -> { value, expiresAt }
     this.lastMemorySweepAt = 0;
+    this._inflight = new Map(); // fullKey -> Promise (single-flight for remember)
   }
 
   /**
@@ -175,11 +176,28 @@ class CacheService {
     if (cached !== null && cached !== undefined) {
       return cached;
     }
-    const freshValue = await fetchFn();
-    if (freshValue !== null && freshValue !== undefined) {
-      await this.set(key, freshValue, ttlSeconds, namespace);
+
+    // Single-flight: coalesce concurrent misses for the same key so a slow
+    // fetchFn (e.g. a Supabase read on a hot-path guard) runs once, not once
+    // per concurrent request. Without this, a cold cache + slow source lets
+    // every in-flight request spawn its own upstream call (a stampede).
+    const fullKey = this._getKey(key, namespace);
+    const existing = this._inflight.get(fullKey);
+    if (existing) return existing;
+
+    const promise = (async () => {
+      const freshValue = await fetchFn();
+      if (freshValue !== null && freshValue !== undefined) {
+        await this.set(key, freshValue, ttlSeconds, namespace);
+      }
+      return freshValue;
+    })();
+    this._inflight.set(fullKey, promise);
+    try {
+      return await promise;
+    } finally {
+      this._inflight.delete(fullKey);
     }
-    return freshValue;
   }
 }
 

@@ -97,10 +97,30 @@ app.use(cors({
   exposedHeaders: ['X-Request-Id', 'X-RateLimit-Limit', 'X-RateLimit-Remaining', 'X-RateLimit-Reset', 'Retry-After']
 }));
 
-// API responses may contain account, order, travel or other user-scoped data;
-// leave caching decisions to explicit downstream public-CDN routes.
+// API responses may contain account, order, travel or other user-scoped data,
+// so the default is no-store. A tightly-scoped allowlist of GET endpoints that
+// return ONLY public, non-authenticated reference data (taxonomy + static
+// travel reference lists) may instead be cached briefly by the browser and CDN
+// — a real win for returning/low-bandwidth clients, who otherwise re-download
+// these bodies on every page load. Exact-path match only (anchored to end or a
+// query string, never a subpath), so no user-scoped :id route can slip in.
+const PUBLIC_CACHEABLE = [
+  /^\/api\/v1\/categories(?:$|\?)/,
+  /^\/api\/v1\/listings\/taxonomy(?:$|\?)/,
+  /^\/api\/(?:v1\/)?travel\/destinations(?:$|\?)/,
+  /^\/api\/(?:v1\/)?travel\/hotels(?:$|\?)/,
+  /^\/api\/(?:v1\/)?travel\/packages(?:$|\?)/,
+  /^\/api\/(?:v1\/)?travel\/visa\/destinations(?:$|\?)/,
+  /^\/api\/(?:v1\/)?travel\/bus\/operators(?:$|\?)/,
+  /^\/api\/(?:v1\/)?travel\/bus\/schedules(?:$|\?)/
+];
 app.use('/api', (req, res, next) => {
-  res.setHeader('Cache-Control', 'no-store');
+  const cacheablePublic = req.method === 'GET' &&
+    PUBLIC_CACHEABLE.some(re => re.test(req.originalUrl || req.path));
+  res.setHeader(
+    'Cache-Control',
+    cacheablePublic ? 'public, max-age=120, stale-while-revalidate=600' : 'no-store'
+  );
   next();
 });
 

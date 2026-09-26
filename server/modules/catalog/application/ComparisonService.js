@@ -123,8 +123,17 @@ const CURATED_STORES = [
   }
 ];
 
-// Flatten all products across seed categories, curated catalog, and stores
+// Flatten all products across seed categories, curated catalog, and stores.
+//
+// rawProducts, catalogProducts (the ~1.8MB curated dataset) and CURATED_STORES
+// are all static after boot, so the flattened list is built ONCE and cached at
+// module scope — mirroring CatalogRepository.__curatedCache. Rebuilding ~1000
+// objects on every /compare and /compare/candidates request was pure CPU/GC on
+// the single event loop. Callers treat the returned array read-only (they spread
+// or filter into new structures), so sharing the cached array is safe.
+let _allEntitiesCache = null;
 function getAllEntities() {
+  if (_allEntitiesCache) return _allEntitiesCache;
   const seedList = [
     ...(rawProducts.electronics || []).map(p => ({ ...p, vertical: 'electronics', inStock: true, stockUnits: Math.max(1000, Number(p.stockUnits || 1000)) })),
     ...(rawProducts.hotels || []).map(p => ({ ...p, vertical: 'hotels', inStock: true, stockUnits: Math.max(1000, Number(p.stockUnits || 1000)) })),
@@ -170,7 +179,8 @@ function getAllEntities() {
     };
   });
 
-  return [...seedList, ...curatedList, ...CURATED_STORES];
+  _allEntitiesCache = [...seedList, ...curatedList, ...CURATED_STORES];
+  return _allEntitiesCache;
 }
 
 class ComparisonService {
