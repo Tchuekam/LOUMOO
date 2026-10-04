@@ -9497,12 +9497,19 @@ function resolveCityDeliveryFee(city) {
   const dynamicRates = (typeof window !== 'undefined' && window.LOUMOO_SYSTEM_SETTINGS && window.LOUMOO_SYSTEM_SETTINGS.shipping_rates_by_city)
     ? window.LOUMOO_SYSTEM_SETTINGS.shipping_rates_by_city
     : defaultRates;
-  if (!city) return dynamicRates['Douala'] || 1000;
-  const c = String(city).trim().toLowerCase();
+  // The SAME rule the server prices the order with (PricingEngine.resolveCityRate),
+  // so the fee shown at checkout is the fee on the order: accents and punctuation
+  // are ignored ("Yaoundé" is the table's "Yaounde"), a rate of 0 is a real rate,
+  // and a city that is not in the table costs the server's default of XAF 3 000.
+  // With no address yet (the bag, before checkout) the Douala rate is only a preview.
+  const fold = (s) => String(s == null ? '' : s).normalize('NFD').toLowerCase().replace(/[^a-z0-9 ]/g, '').replace(/ +/g, ' ').trim();
+  if (!fold(city)) return Number.isInteger(Number(dynamicRates['Douala'])) ? Number(dynamicRates['Douala']) : 1000;
+  const wanted = fold(city);
   for (const k in dynamicRates) {
-    if (k.toLowerCase() === c) return Number(dynamicRates[k]) || 1000;
+    const rate = Number(dynamicRates[k]);
+    if (fold(k) === wanted && Number.isInteger(rate) && rate >= 0) return rate;
   }
-  return dynamicRates['Douala'] || 1000;
+  return 3000;
 }
 const GROUPS = {
   searchTab: ['all','products','stores','services','travel'],

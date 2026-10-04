@@ -8,7 +8,7 @@
 
 const crypto = require('crypto');
 const { Order, OrderItem, FULFILLMENT_STATUS, PAYMENT_STATUS, DELIVERY_METHOD } = require('../domain/Order');
-const { PricingEngine } = require('../domain/PricingEngine');
+const { PricingEngine, resolveCityRate } = require('../domain/PricingEngine');
 const { CreateOrderInputSchema } = require('../presentation/validators/orderSchemas');
 const { OrderRepository } = require('../infrastructure/OrderRepository');
 const IdempotencyService = require('../../../infrastructure/cache/IdempotencyService');
@@ -196,15 +196,9 @@ class OrderCreationService {
           const SuperAdminRepository = require('../../../../SuperAdmin/backend/repositories/SuperAdminRepository');
           const cityRates = await SuperAdminRepository.getSetting('shipping_rates_by_city');
           const city = data.shippingAddress?.city || data.city;
-          if (cityRates && typeof cityRates === 'object' && city) {
-            const normalizedCity = String(city).trim().toLowerCase();
-            for (const [cityName, rate] of Object.entries(cityRates)) {
-              if (cityName.toLowerCase() === normalizedCity && Number.isInteger(Number(rate))) {
-                standardShippingFeeXaf = Number(rate);
-                break;
-              }
-            }
-          }
+          // Accent- and punctuation-insensitive ("Yaoundé" is the table's "Yaounde"),
+          // the same rule the checkout uses to show the fee.
+          standardShippingFeeXaf = resolveCityRate(cityRates, city);
         } catch (_) {}
       }
 
