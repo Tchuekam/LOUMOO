@@ -33,8 +33,8 @@ async function run() {
   assert.strictEqual(pricing.subtotalXaf, 125000, 'Subtotal must be 125,000 XAF');
   assert.strictEqual(pricing.shippingFeeXaf, DEFAULT_STANDARD_SHIPPING_XAF, 'Standard shipping must apply');
   assert.strictEqual(pricing.totalAmountXaf, 128000, 'Total must be 128,000 XAF');
-  assert.strictEqual(pricing.lineItems[0].totalLineXaf, 100000);
-  assert.strictEqual(pricing.lineItems[1].totalLineXaf, 25000);
+  assert.strictEqual(pricing.lineItems[0].lineTotalXaf, 100000);
+  assert.strictEqual(pricing.lineItems[1].lineTotalXaf, 25000);
 
   // 1.2 Store Pickup has 0 shipping fee
   const pickupPricing = PricingEngine.calculateOrderPricing(items, {
@@ -107,19 +107,63 @@ async function run() {
   // 1.8 Quantity and arithmetic boundaries
   assert.throws(() => {
     PricingEngine.calculateOrderPricing([{ listingId: 'x', quantity: 0, unitPriceXaf: 1000 }]);
-  }, /Must be a positive integer/, 'Zero quantity must throw');
+  }, /must be a positive integer/, 'Zero quantity must throw');
 
   assert.throws(() => {
     PricingEngine.calculateOrderPricing([{ listingId: 'x', quantity: -1, unitPriceXaf: 1000 }]);
-  }, /Must be a positive integer/, 'Negative quantity must throw');
+  }, /must be a positive integer/, 'Negative quantity must throw');
 
   assert.throws(() => {
     PricingEngine.calculateOrderPricing([{ listingId: 'x', quantity: 1.5, unitPriceXaf: 1000 }]);
-  }, /Must be a positive integer/, 'Fractional quantity must throw');
+  }, /must be a positive integer/, 'Fractional quantity must throw');
 
   assert.throws(() => {
     PricingEngine.calculateOrderPricing([{ listingId: 'x', quantity: 1, unitPriceXaf: -500 }]);
-  }, /Must be a non-negative integer/, 'Negative price must throw');
+  }, /must be a non-negative integer/, 'Negative price must throw');
+
+  // 1.9 Safe-integer guards: past Number.MAX_SAFE_INTEGER integer arithmetic silently
+  // rounds, so the engine must refuse the order rather than price it wrongly.
+  const MAX_SAFE = Number.MAX_SAFE_INTEGER;
+  const pickup = { deliveryMethod: DELIVERY_METHOD.STORE_PICKUP };
+  const throwsValidation = (re) => (err) => err instanceof ValidationError && re.test(err.message);
+
+  // 1.9a A single line whose qty*price exceeds the safe range (3 * MAX_SAFE rounds).
+  assert.throws(
+    () => PricingEngine.calculateOrderPricing([{ listingId: 'x', quantity: 3, unitPriceXaf: MAX_SAFE }], pickup),
+    throwsValidation(/line total/i),
+    'A line total beyond MAX_SAFE_INTEGER must throw ValidationError'
+  );
+
+  // 1.9b The first unsafe product is 2^53, which a double CAN represent exactly -
+  // the guard must still reject it because 2^53 + 1 would round to it.
+  assert.throws(
+    () => PricingEngine.calculateOrderPricing([{ listingId: 'x', quantity: 2, unitPriceXaf: Math.floor(MAX_SAFE / 2) + 1 }], pickup),
+    throwsValidation(/line total/i),
+    'A line total of exactly MAX_SAFE_INTEGER + 1 must throw'
+  );
+
+  // 1.9c Several lines that are each safe but whose running subtotal is not.
+  const halfSafe = Math.floor(MAX_SAFE / 2);
+  const overflowingLines = [1, 2, 3].map((n) => ({ listingId: `lst_${n}`, quantity: 1, unitPriceXaf: halfSafe }));
+  overflowingLines.forEach((line) => assert.ok(Number.isSafeInteger(line.quantity * line.unitPriceXaf), 'each line is safe on its own'));
+  assert.throws(
+    () => PricingEngine.calculateOrderPricing(overflowingLines, pickup),
+    (err) => throwsValidation(/subtotal/i)(err) && !/line total/i.test(err.message),
+    'A subtotal beyond MAX_SAFE_INTEGER across safe lines must throw ValidationError from the subtotal guard'
+  );
+
+  // 1.9d The guards must not over-reject: exactly MAX_SAFE_INTEGER is still exact.
+  const atLimit = PricingEngine.calculateOrderPricing([{ listingId: 'x', quantity: 1, unitPriceXaf: MAX_SAFE }], pickup);
+  assert.strictEqual(atLimit.subtotalXaf, MAX_SAFE, 'A subtotal of exactly MAX_SAFE_INTEGER must be accepted');
+
+  // 1.9e A large but ordinary order (1,000 units - the per-line cap - at 5,000,000 XAF) is unchanged.
+  const bulk = PricingEngine.calculateOrderPricing(
+    [{ listingId: 'x', quantity: 1000, unitPriceXaf: 5000000 }, { listingId: 'y', quantity: 2, unitPriceXaf: 750 }],
+    pickup
+  );
+  assert.strictEqual(bulk.lineItems[0].lineTotalXaf, 5000000000);
+  assert.strictEqual(bulk.subtotalXaf, 5000001500);
+  assert.strictEqual(bulk.totalAmountXaf, 5000001500);
 
   console.log('    ✓ Authoritative pricing engine passed all arithmetic and defense checks.');
 
