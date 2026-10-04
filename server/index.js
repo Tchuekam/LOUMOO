@@ -38,6 +38,7 @@ const adaptiveRoutes = require('./modules/adaptive/presentation/routes/adaptiveR
 const announcementRoutes = require('./modules/announcement/presentation/routes/announcementRoutes');
 const travelRoutes = require('./modules/travel/presentation/routes/travelRoutes');
 const orderRoutes = require('./modules/commerce/presentation/routes/orderRoutes');
+const recommendationRoutes = require('./modules/recommendation/presentation/routes/recommendationRoutes');
 const superAdminRoutes = require('../SuperAdmin/backend/routes/superAdminRoutes');
 const { maintenanceGuard } = require('../SuperAdmin/backend/middleware/maintenanceGuard');
 
@@ -202,6 +203,7 @@ v1Router.use('/uploads', uploadRoutes);
 v1Router.use('/announcements', announcementRoutes);
 v1Router.use('/travel', travelRoutes);
 v1Router.use('/orders', orderRoutes);
+v1Router.use('/recommendations', recommendationRoutes);
 v1Router.use('/admin', superAdminRoutes);
 
 app.use('/api/v1', v1Router);
