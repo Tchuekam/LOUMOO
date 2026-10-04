@@ -749,6 +749,12 @@
     return this.request('/api/v1/stores/discovery' + qs(params));
   };
 
+  /* Public storefront read model: profile, published listings, reputation,
+     reviews, location, and opening hours. This never uses owner-only routes. */
+  LoumooApiClient.prototype.getPublicStorefront = function (identifier) {
+    return this.request('/api/v1/stores/s/' + encodeURIComponent(identifier));
+  };
+
   /* --- 05.03 Store management --- */
   LoumooApiClient.prototype.getStore = function (storeId) {
     return this.request('/api/v1/stores/' + encodeURIComponent(storeId));

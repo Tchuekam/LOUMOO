@@ -525,13 +525,38 @@ def get_store_business_view():
       </div>
 
       <div>
+        <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">STORE NAME</label>
+        <input type="text" class="input" value="{{ storeName }}" onChange="{{ updateStoreName }}">
+      </div>
+
+      <div>
+        <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">STORE DESCRIPTION</label>
+        <textarea class="input" rows="3" value="{{ storeDescription }}" onChange="{{ updateStoreDescription }}"></textarea>
+      </div>
+
+      <div>
+        <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">ABOUT YOUR STORE</label>
+        <textarea class="input" rows="4" value="{{ storeBio }}" onChange="{{ updateStoreBio }}"></textarea>
+      </div>
+
+      <div>
         <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">STORE TAGLINE</label>
         <input type="text" class="input" value="{{ storeTagline }}" onChange="{{ updateStoreTagline }}">
       </div>
 
       <div>
+        <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">RETURN POLICY</label>
+        <textarea class="input" rows="2" value="{{ storeReturnPolicy }}" onChange="{{ updateStoreReturnPolicy }}"></textarea>
+      </div>
+
+      <div>
         <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">WARRANTY POLICY</label>
         <input type="text" class="input" value="{{ storeWarrantyPolicy }}" onChange="{{ updateStoreWarrantyPolicy }}">
+      </div>
+
+      <div>
+        <label style="font:700 11px/1 var(--font-heading);color:var(--color-text-secondary);margin-bottom:6px;display:block">DELIVERY POLICY</label>
+        <textarea class="input" rows="2" value="{{ storeShippingPolicy }}" onChange="{{ updateStoreShippingPolicy }}"></textarea>
       </div>
 
       <div>
