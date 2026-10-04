@@ -200,12 +200,18 @@ class RecommendationRepository {
     if (!userId) return errors;
     try {
       const db = this._db();
+      // supabase-js returns query errors (including table-missing PGRST205/42P01)
+      // in `.error` WITHOUT throwing, so we must throw them ourselves to reach the
+      // catch and degrade — matching the rest of this module. Pushing them onto
+      // `errors` instead would make account deletion falsely log "PII purge
+      // incomplete" on every deletion whenever migration 015 is unapplied.
       const r1 = await db.from(PROFILES_TABLE).delete().eq('user_id', userId);
-      if (r1.error) errors.push(`reco_profiles: ${r1.error.message}`);
+      if (r1.error) throw r1.error;
       const r2 = await db.from(EVENTS_TABLE).delete().eq('user_id', userId);
-      if (r2.error) errors.push(`reco_events: ${r2.error.message}`);
+      if (r2.error) throw r2.error;
     } catch (err) {
-      // Table not migrated yet, or DB down: nothing durable to purge.
+      // Table not migrated yet, or DB down: nothing durable to purge. Treat as a
+      // successful no-op (the in-memory purge below still runs).
       logger.warn(`[Reco] deleteForUser skipped (no durable store): ${err.message}`);
     }
     // Always clear anything held in memory for this user.
