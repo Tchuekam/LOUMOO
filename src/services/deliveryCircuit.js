@@ -192,6 +192,7 @@
    * move is theirs.
    */
   function renderStrip(delivery, role, opts) {
+    injectStyles(); // harmless in Node; makes the strip look right wherever it is dropped in
     var m = model(delivery, role);
     var steps = m.stages.map(function (s, i) {
       var mark = s.state === 'done' ? '✓' : (s.state === 'problem' ? '!' : String(i + 1));
@@ -208,7 +209,8 @@
       '<div class="lcx-top"><span class="lcx-role">' + esc(m.youAre) + '</span>' +
       '<span class="lcx-count">' + (m.done ? 'Complete' : 'Step ' + m.step + ' of ' + m.total) + '</span></div>' +
       '<ol class="lcx-steps">' + steps + '</ol>' +
-      '<div class="lcx-move ' + banner + '" role="status"><b>' + esc(m.headline) + '</b><span>' + esc(m.detail) + '</span></div>' +
+      // A screen whose own hero already says this (the seller's board) can hide it.
+      (opts && opts.banner === false ? '' : '<div class="lcx-move ' + banner + '" role="status"><b>' + esc(m.headline) + '</b><span>' + esc(m.detail) + '</span></div>') +
       (opts && opts.note ? '<p class="lcx-note">' + esc(opts.note) + '</p>' : '') +
       '</section>';
   }
@@ -226,7 +228,7 @@
     '.lcx-step.done::before,.lcx-step.current::before,.lcx-step.problem::before{background:var(--color-success,#1a9d4b)}',
     '.lcx-dot{position:relative;z-index:1;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:700 12px/1 var(--font-heading,inherit);background:var(--color-surface,#fff);border:2px solid var(--color-divider,#cfcfcf);color:var(--color-text-secondary,#555)}',
     '.lcx-step.done .lcx-dot{background:var(--color-success,#1a9d4b);border-color:var(--color-success,#1a9d4b);color:#fff}',
-    '.lcx-step.current .lcx-dot{background:var(--color-accent,#0a63e8);border-color:var(--color-accent,#0a63e8);color:#fff;box-shadow:0 0 0 4px var(--color-accent-100,#e4efff)}',
+    '.lcx-step.current .lcx-dot{background:var(--color-accent,#0a63e8);border-color:var(--color-accent,#0a63e8);color:#fff;box-shadow:0 0 0 4px rgba(0,122,255,.22)}',
     '.lcx-step.problem .lcx-dot{background:var(--color-danger,#c62828);border-color:var(--color-danger,#c62828);color:#fff}',
     '.lcx-lbl{font:600 11px/1.25 var(--font-body,inherit);color:var(--color-text,#111);overflow-wrap:anywhere}',
     '.lcx-who{font:500 10px/1.25 var(--font-body,inherit);color:var(--color-text-secondary,#555);overflow-wrap:anywhere}',
@@ -235,9 +237,11 @@
     '.lcx-move{display:flex;flex-direction:column;gap:2px;padding:11px 14px;border-radius:var(--radius-md,12px);border-left:4px solid var(--color-divider,#cfcfcf);background:var(--color-surface-subtle,#f4f5f7)}',
     '.lcx-move b{font:700 14px/1.3 var(--font-heading,inherit);color:var(--color-text,#111)}',
     '.lcx-move span{font:400 12.5px/1.4 var(--font-body,inherit);color:var(--color-text-secondary,#4a4a4a)}',
-    '.lcx-move.mine{border-left-color:var(--color-accent,#0a63e8);background:var(--color-accent-100,#e4efff)}',
-    '.lcx-move.done{border-left-color:var(--color-success,#1a9d4b);background:var(--color-success-100,#e6f7ec)}',
-    '.lcx-move.problem{border-left-color:var(--color-danger,#c62828);background:var(--color-danger-100,#fde8e8)}',
+    // Tints are translucent colour laid over the themed surface, not the pale
+    // "-100" tokens: those stay light in dark mode and would put light text on them.
+    '.lcx-move.mine{border-left-color:var(--color-accent,#0a63e8);background-image:linear-gradient(rgba(0,122,255,.13),rgba(0,122,255,.13))}',
+    '.lcx-move.done{border-left-color:var(--color-success,#1a9d4b);background-image:linear-gradient(rgba(0,200,83,.15),rgba(0,200,83,.15))}',
+    '.lcx-move.problem{border-left-color:var(--color-danger,#c62828);background-image:linear-gradient(rgba(217,45,32,.14),rgba(217,45,32,.14))}',
     '.lcx-note{margin:0;font:400 11.5px/1.4 var(--font-body,inherit);color:var(--color-text-secondary,#555)}',
     '@media (prefers-reduced-motion:no-preference){.lcx-dot{transition:background .2s,border-color .2s}}'
   ].join('\n');
@@ -313,18 +317,29 @@
     }
   }
 
+  // A short timer, not requestAnimationFrame: a frame callback never fires in a
+  // hidden or throttled tab, and a strip that waits for one would stay empty.
   var syncScheduled = false;
   function scheduleSync() {
     if (syncScheduled) return;
     syncScheduled = true;
-    var run = function () { syncScheduled = false; try { sync(); } catch (e) { /* never break the page */ } };
-    if (typeof requestAnimationFrame === 'function') requestAnimationFrame(run); else setTimeout(run, 16);
+    setTimeout(function () {
+      syncScheduled = false;
+      try { sync(); } catch (e) { /* never break the page */ }
+    }, 50);
   }
 
   function init() {
     if (typeof document === 'undefined' || typeof MutationObserver === 'undefined') return;
     var start = function () {
-      new MutationObserver(scheduleSync).observe(document.body, { childList: true, subtree: true });
+      // Attributes too: a DC template renders the element first and fills in the
+      // order id a moment later, so the id arrives as an attribute change.
+      new MutationObserver(scheduleSync).observe(document.body, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ['data-order-id', 'data-role']
+      });
       scheduleSync();
     };
     if (document.body) start(); else document.addEventListener('DOMContentLoaded', start);
@@ -535,12 +550,23 @@
     return { kind: 'server', message: 'LOUMOO is temporarily unavailable. Your bag is saved: try again in a moment.', itemIds: [] };
   }
 
+  /** A ready-made card holding the strip, for the vanilla-DOM delivery screens. */
+  function stripCard(delivery, role, opts) {
+    if (typeof document === 'undefined') return null;
+    var el = document.createElement('div');
+    el.className = 'ldx-card';
+    el.style.padding = '14px 16px';
+    el.innerHTML = renderStrip(delivery, role, opts);
+    return el;
+  }
+
   var api = {
     ROLES: ROLES,
     ROLE_NAME: ROLE_NAME,
     STAGES: STAGES,
     model: model,
     renderStrip: renderStrip,
+    stripCard: stripCard,
     openFromNotification: openFromNotification,
     sync: sync,
     money: money,
