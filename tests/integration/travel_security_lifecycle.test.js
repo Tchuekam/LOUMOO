@@ -12,6 +12,11 @@
 
 require('../setup');
 const assert = require('assert');
+const { stayFromToday } = require('../helpers/dates');
+
+// A stay must start today or later, so these move with the calendar.
+const { checkIn: CHECK_IN, checkOut: CHECK_OUT } = stayFromToday(30, 3); // 3 nights
+
 const { TravelRepository } = require('../../server/modules/travel/infrastructure/TravelRepository');
 const { BookingEngine } = require('../../server/modules/travel/application/BookingEngine');
 const { SeatInventoryService } = require('../../server/modules/travel/application/SeatInventoryService');
@@ -276,8 +281,8 @@ async function run() {
     hotelId: 'htl-krystal-douala',
     roomId: 'rm-krystal-deluxe',
     hotelRoomId: 'rm-krystal-deluxe',
-    checkIn: '2026-10-01',
-    checkOut: '2026-10-04', // 3 nights
+    checkIn: CHECK_IN,
+    checkOut: CHECK_OUT, // 3 nights
     roomsCount: 2,
     passengers: [{ name: userAlice.fullName }],
     pricing: { totalAmount: 100 } // Tampered price
