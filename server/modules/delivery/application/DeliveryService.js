@@ -76,6 +76,16 @@ const MAX_RIDERS_CONSIDERED = 500;
 const RELEASE_BATCH = 50;
 const MAX_RELEASE_ROUNDS = 4;
 const ORDER_PATH = [FULFILLMENT_STATUS.PROCESSING, FULFILLMENT_STATUS.IN_TRANSIT, FULFILLMENT_STATUS.DELIVERED];
+// What the client opens when a delivery notification is tapped, by the part the
+// recipient plays. Mirrored in docs/DELIVERY_API.md ("Who is told what").
+const NOTIFICATION_ACTIONS = Object.freeze({
+  buyer: 'track_order',
+  seller: 'open_dispatch',
+  rider: 'open_rider_hub',
+  admin: 'open_dispatch'
+});
+// An alert goes to this many administrators at most, however many exist.
+const MAX_ADMIN_ALERTS = 20;
 
 function cleanText(value, field, max = 255) {
   if (value === undefined || value === null) return null;
@@ -252,15 +262,40 @@ class DeliveryService {
     });
   }
 
-  _notify(userId, { title, body, tone = 'accent', delivery }) {
+  /**
+   * Tells one user something happened. `audience` is the part that user plays on
+   * THIS delivery (buyer, seller, rider, admin), stated by the caller rather than
+   * guessed from ids: a seller who buys from their own store is both. The client
+   * reads `audience` and `action` from the notification metadata to open the right
+   * screen when the notification is tapped (see NOTIFICATION_ACTIONS).
+   */
+  _notify(userId, { audience, title, body, tone = 'accent', delivery = null }) {
     if (!userId || !NotificationService || typeof NotificationService.create !== 'function') return;
-    NotificationService.create(userId, {
-      type: 'delivery',
-      tone,
-      title,
-      body,
-      metadata: { deliveryId: delivery.id, orderId: delivery.orderId }
-    }).catch((e) => logger.warn(`[Delivery] Notification error: ${e.message}`));
+    const metadata = { audience, action: NOTIFICATION_ACTIONS[audience] || null };
+    if (delivery) {
+      metadata.deliveryId = delivery.id;
+      metadata.orderId = delivery.orderId;
+    }
+    NotificationService.create(userId, { type: 'delivery', tone, title, body, metadata })
+      .catch((e) => logger.warn(`[Delivery] Notification error: ${e.message}`));
+  }
+
+  /**
+   * Alerts the administrators. The service says "an administrator must resolve
+   * this" in several places (a locked handover, a rider suspended mid-delivery);
+   * without this nobody with the power to act is ever told. Best effort: a failed
+   * lookup is logged and never fails the request that raised the alert.
+   */
+  async _notifyAdmins({ title, body, tone = 'neutral', delivery }) {
+    let adminIds = [];
+    try {
+      adminIds = await this.repo.listAdminIds({ limit: MAX_ADMIN_ALERTS });
+    } catch (err) {
+      logger.warn(`[Delivery] Could not look up administrators to alert about ${delivery && delivery.id}: ${err.message}`);
+      return;
+    }
+    if (!adminIds.length) logger.warn(`[Delivery] No administrator to alert: "${title}" (delivery ${delivery && delivery.id}).`);
+    for (const adminId of adminIds) this._notify(adminId, { audience: 'admin', title, body, tone, delivery });
   }
 
   async _invalidateBuyerCache(buyerId) {
@@ -358,12 +393,14 @@ class DeliveryService {
     // answer all read this row, and a lost one would silently void them.
     await this._record(updated, S.ASSIGNED, riderId, OFFER_EXPIRED_NOTE, { retries: 1 });
     this._notify(updated.sellerId, {
+      audience: 'seller',
       title: 'A rider did not respond',
       body: 'The offer expired. Assign another rider to keep the order moving.',
       tone: 'neutral',
       delivery: updated
     });
     this._notify(riderId, {
+      audience: 'rider',
       title: 'A delivery offer expired',
       body: 'It was not accepted in time and went back to the seller.',
       tone: 'neutral',
@@ -497,6 +534,7 @@ class DeliveryService {
     const created = await this.repo.insertDelivery(record);
     await this._record(created, null, caller.userId, 'Delivery created');
     this._notify(order.buyerId, {
+      audience: 'buyer',
       title: `Delivery being arranged for order ${order.orderNumber}`,
       body: 'We are finding a rider for your order.',
       delivery: created
@@ -624,10 +662,22 @@ class DeliveryService {
     );
 
     this._notify(driver.id, {
+      audience: 'rider',
       title: 'New delivery assigned',
       body: this._offerPrompt(),
       delivery: updated
     });
+    // Handing the job to someone else takes it away from whoever held it: say so,
+    // rather than let them find out when the job vanishes from their list.
+    if (delivery.driverId && delivery.driverId !== driver.id) {
+      this._notify(delivery.driverId, {
+        audience: 'rider',
+        title: 'A delivery was given to another rider',
+        body: 'You do not need to do this one any more.',
+        tone: 'neutral',
+        delivery: updated
+      });
+    }
     return this._present(updated, role);
   }
 
@@ -689,8 +739,16 @@ class DeliveryService {
       { actorId: caller.userId, note: 'Rider accepted' }
     );
     this._notify(updated.buyerId, {
+      audience: 'buyer',
       title: 'A rider accepted your delivery',
       body: `${driver.name} will pick up your order.`,
+      tone: 'success',
+      delivery: updated
+    });
+    this._notify(updated.sellerId, {
+      audience: 'seller',
+      title: 'A rider accepted the delivery',
+      body: `${driver.name} is on the way to collect the parcel. Have it ready.`,
       tone: 'success',
       delivery: updated
     });
@@ -708,6 +766,7 @@ class DeliveryService {
       { actorId: caller.userId, note: delivery.status === S.ACCEPTED ? 'Rider released the delivery' : 'Rider declined' }
     );
     this._notify(updated.sellerId, {
+      audience: 'seller',
       title: 'A rider declined a delivery',
       body: 'Assign another rider to keep the order moving.',
       delivery: updated
@@ -765,9 +824,17 @@ class DeliveryService {
       [S.ARRIVED]: { title: 'Your rider has arrived', body: 'Share your handover code with the rider.', tone: 'success' },
       [S.FAILED]: { title: 'Delivery could not be completed', body: 'We will arrange another attempt.', tone: 'neutral' }
     }[nextStatus];
-    this._notify(updated.buyerId, { ...buyerMessage, delivery: updated });
+    this._notify(updated.buyerId, { audience: 'buyer', ...buyerMessage, delivery: updated });
+    // The seller follows the parcel too: they handed it over and own the customer
+    // relationship, so they hear about pickup and arrival, not just failure.
+    const sellerMessage = {
+      [S.PICKED_UP]: { title: 'The rider collected the parcel', body: 'It is on its way to the customer.', tone: 'accent' },
+      [S.ARRIVED]: { title: 'The rider is at the customer', body: 'The customer gives the rider a 4-digit code to complete the handover.', tone: 'accent' }
+    }[nextStatus];
+    if (sellerMessage) this._notify(updated.sellerId, { audience: 'seller', ...sellerMessage, delivery: updated });
     if (nextStatus === S.FAILED) {
       this._notify(updated.sellerId, {
+        audience: 'seller',
         title: 'A delivery failed',
         body: cleanNote,
         tone: 'neutral',
@@ -877,9 +944,15 @@ class DeliveryService {
             note: 'Handover locked after too many incorrect codes', at: this._nowIso()
           });
           this._notify(delivery.sellerId, {
+            audience: 'seller',
             title: 'A delivery is locked',
             body: 'The rider entered too many wrong handover codes. An administrator must resolve it.',
             tone: 'neutral',
+            delivery: bumped
+          });
+          await this._notifyAdmins({
+            title: 'A delivery is locked and needs you',
+            body: 'The rider entered too many wrong handover codes. Unlock it for a new code, or mark it failed.',
             delivery: bumped
           });
           throw new DeliveryLockedError();
@@ -898,12 +971,14 @@ class DeliveryService {
       await this._record(updated, S.ARRIVED, caller.userId, 'Handover code verified');
       await this._syncOrder(updated, caller.userId);
       this._notify(updated.buyerId, {
+        audience: 'buyer',
         title: 'Order delivered',
         body: 'Your order has been handed over. Enjoy!',
         tone: 'success',
         delivery: updated
       });
       this._notify(updated.sellerId, {
+        audience: 'seller',
         title: 'Order delivered',
         body: 'The rider completed the handover.',
         tone: 'success',
@@ -941,6 +1016,7 @@ class DeliveryService {
 
     if (delivery.driverId) {
       this._notify(delivery.driverId, {
+        audience: 'rider',
         title: 'Delivery cancelled',
         body: 'This delivery was cancelled. You do not need to pick it up.',
         tone: 'neutral',
@@ -949,6 +1025,7 @@ class DeliveryService {
     }
     if (role !== 'buyer') {
       this._notify(updated.buyerId, {
+        audience: 'buyer',
         title: 'Delivery cancelled',
         body: 'The delivery was cancelled. The seller will arrange another.',
         tone: 'neutral',
@@ -980,6 +1057,7 @@ class DeliveryService {
       );
       if (open.driverId) {
         this._notify(open.driverId, {
+          audience: 'rider',
           title: 'Delivery cancelled',
           body: 'The order was cancelled. You do not need to pick it up.',
           tone: 'neutral',
@@ -1023,11 +1101,21 @@ class DeliveryService {
         { actorId: caller.userId, note: note || 'Handover unlocked by an administrator' }
       );
       this._notify(updated.buyerId, {
+        audience: 'buyer',
         title: 'Your handover code changed',
         body: 'Open the delivery to see your new code.',
         tone: 'neutral',
         delivery: updated
       });
+      if (updated.driverId) {
+        this._notify(updated.driverId, {
+          audience: 'rider',
+          title: 'The handover was unlocked',
+          body: 'Ask the customer for their new 4-digit code and try again.',
+          tone: 'neutral',
+          delivery: updated
+        });
+      }
       return this._present(updated, 'admin');
     }
 
@@ -1044,13 +1132,23 @@ class DeliveryService {
         { status: S.FAILED, failureReason: note },
         { actorId: caller.userId, note }
       );
-      this._notify(updated.sellerId, { title: 'A delivery was marked failed', body: note, tone: 'neutral', delivery: updated });
+      this._notify(updated.sellerId, { audience: 'seller', title: 'A delivery was marked failed', body: note, tone: 'neutral', delivery: updated });
       this._notify(updated.buyerId, {
+        audience: 'buyer',
         title: 'Delivery could not be completed',
         body: 'We will arrange another attempt.',
         tone: 'neutral',
         delivery: updated
       });
+      if (updated.driverId) {
+        this._notify(updated.driverId, {
+          audience: 'rider',
+          title: 'An administrator closed your delivery',
+          body: note,
+          tone: 'neutral',
+          delivery: updated
+        });
+      }
       return this._present(updated, 'admin');
     }
 
@@ -1153,6 +1251,19 @@ class DeliveryService {
       profileId, name, phone, status, createdBy: existing ? existing.createdBy : caller.userId
     });
     if (status === DRIVER_STATUS.SUSPENDED) await this._releaseDriverWork(profileId, caller.userId, 'Rider suspended');
+    // The rider hears about it from us: being registered (or suspended) changes
+    // what they can do in the app, and nothing else would tell them.
+    if (!existing || existing.status !== status) {
+      const active = status === DRIVER_STATUS.ACTIVE;
+      this._notify(profileId, {
+        audience: 'rider',
+        title: active ? 'You are now a LOUMOO rider' : 'Your rider access was paused',
+        body: active
+          ? 'Open Deliver with LOUMOO in your account to see delivery offers.'
+          : 'You will not be offered deliveries for now. Contact LOUMOO support if you think this is a mistake.',
+        tone: active ? 'success' : 'neutral'
+      });
+    }
     return { id: driver.id, name: driver.name, phone: driver.phone, status: driver.status };
   }
 
@@ -1180,6 +1291,7 @@ class DeliveryService {
             { actorId, note }
           );
           this._notify(released.sellerId, {
+            audience: 'seller',
             title: 'A rider is no longer available',
             body: 'Assign another rider to keep the order moving.',
             tone: 'neutral',
@@ -1188,9 +1300,15 @@ class DeliveryService {
         } else {
           logger.warn(`[Delivery] Rider ${driverId} is unavailable but delivery ${d.id} is "${d.status}"; needs administrator resolution.`);
           this._notify(d.sellerId, {
+            audience: 'seller',
             title: 'A rider in the middle of a delivery was suspended',
             body: 'An administrator needs to resolve this delivery.',
             tone: 'neutral',
+            delivery: d
+          });
+          await this._notifyAdmins({
+            title: 'A suspended rider still has a parcel',
+            body: 'The rider was suspended while carrying a delivery. Mark it failed so the seller can send another rider.',
             delivery: d
           });
         }
