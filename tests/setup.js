@@ -22,6 +22,19 @@ if (!process.env.NODE_ENV || process.env.NODE_ENV === 'production') {
   process.env.NODE_ENV = 'test';
 }
 
+// Hermetic unless real services were explicitly opted into (LOUMOO_RUN_INTEGRATION=1).
+// Done here, not only in tests/run_all.js, so it holds for every entry point —
+// `node tests/unit/x.test.js`, `npm run test:security`, tests/runner.js — and runs
+// before server/config/env.js reads credentials or .env. Several "unit" suites write
+// to Supabase whenever credentials are present.
+const requirements = require('./helpers/requirements');
+if (requirements.realServicesEnabled()) {
+  requirements.loadProjectEnv();
+  requirements.refuseUnacknowledgedProduction();
+} else {
+  requirements.scrubServiceEnv(process.env);
+}
+
 if (!process.env.LOUMOO_TEST_AUTH_SECRET) {
   process.env.LOUMOO_TEST_AUTH_SECRET = crypto.randomBytes(24).toString('hex');
 }
