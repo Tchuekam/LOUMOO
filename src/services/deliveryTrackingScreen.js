@@ -362,17 +362,6 @@
     }
   }
 
-  function waitForSeller(orderId) {
-    setWaiting(true);
-    setSubtitle('Waiting for the seller');
-    setPill('WAITING');
-    renderCircuit(null);
-    clearTimeout(state._waitTimer);
-    state._waitTimer = setTimeout(function () {
-      if (state.mounted && !state.deliveryId) load(orderId, null);
-    }, 8000);
-  }
-
   async function loadCode(d) {
     if (!window.deliveryApi.getCode) return hideCode();
     if (['accepted', 'picked_up', 'arrived'].indexOf(d.status) === -1) return hideCode();
