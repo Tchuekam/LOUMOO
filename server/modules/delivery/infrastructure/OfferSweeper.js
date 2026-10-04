@@ -44,8 +44,21 @@ function startOfferSweeper({
     if (running) return { expired: 0, skipped: true };
     running = true;
     try {
-      const result = await service.expireStaleOffers({ limit });
-      if (result.expired > 0) logger.info(`[OfferSweeper] returned ${result.expired} lapsed offer(s) to their sellers`);
+      const result = { expired: 0 };
+      if (service.offerTtlMs > 0) {
+        Object.assign(result, await service.expireStaleOffers({ limit }));
+        if (result.expired > 0) logger.info(`[OfferSweeper] returned ${result.expired} lapsed offer(s) to their sellers`);
+      }
+      // Chasing an order nobody is arranging is a separate job: its failure must
+      // not hide the expiry above, and the expiry's must not hide this.
+      if (service.nudgeEnabled && typeof service.nudgeUndispatched === 'function') {
+        try {
+          result.nudged = await service.nudgeUndispatched();
+        } catch (err) {
+          logger.error(`[OfferSweeper] reminders failed: ${err.message}`);
+          result.nudgeFailed = true;
+        }
+      }
       return result;
     } catch (err) {
       // Never let a failed sweep become an unhandled rejection on a timer.
@@ -56,10 +69,10 @@ function startOfferSweeper({
     }
   }
 
-  // Expiry switched off (DELIVERY_OFFER_TTL_MINUTES=0): nothing to sweep, so do
-  // not hold a timer that wakes every minute to do nothing.
-  if (!(service.offerTtlMs > 0)) {
-    logger.info('[OfferSweeper] offer expiry is off; not scheduling a sweep');
+  // Nothing to do (offer expiry off AND no reminders): do not hold a timer that
+  // wakes every minute to do nothing.
+  if (!(service.offerTtlMs > 0) && !service.nudgeEnabled) {
+    logger.info('[OfferSweeper] offer expiry and reminders are off; not scheduling a sweep');
     return { tick, stop: () => {}, timer: null };
   }
 

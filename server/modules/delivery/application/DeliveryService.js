@@ -87,6 +87,17 @@ const NOTIFICATION_ACTIONS = Object.freeze({
 });
 // An alert goes to this many administrators at most, however many exist.
 const MAX_ADMIN_ALERTS = 20;
+// An order that has waited longer than this for a rider is not chased: it is a
+// different problem, and a restart must not re-announce every old order.
+const UNDISPATCHED_MAX_AGE_MS = 24 * 60 * 60 * 1000;
+
+/** Minutes from the environment as milliseconds. Unset or unusable: the default; 0: off. */
+function minutesToMs(value, defaultMinutes) {
+  if (value === undefined || value === null || String(value).trim() === '') return defaultMinutes * 60 * 1000;
+  const n = Number(value);
+  if (!Number.isFinite(n) || n < 0) return defaultMinutes * 60 * 1000;
+  return Math.round(n * 60 * 1000);
+}
 
 function cleanText(value, field, max = 255) {
   if (value === undefined || value === null) return null;
@@ -112,7 +123,7 @@ class DeliveryService {
    * supply them (see Geocoder.js). Unset, the process-wide default is used, which is
    * off under test.
    */
-  constructor({ repository, orderRepository, events, now, offerTtlMs, geocoder } = {}) {
+  constructor({ repository, orderRepository, events, now, offerTtlMs, geocoder, undispatchedSellerMs, undispatchedAdminMs } = {}) {
     this.repo = repository || new DeliveryRepository();
     this.orders = orderRepository || new OrderRepository();
     this.events = events || deliveryEvents;
@@ -122,6 +133,20 @@ class DeliveryService {
     this.offerTtlMs = typeof offerTtlMs === 'number'
       ? offerTtlMsFrom(offerTtlMs / 60000)
       : offerTtlMsFrom(process.env.DELIVERY_OFFER_TTL_MINUTES);
+    // How long an order may wait for a rider before the seller, then the
+    // administrators, are chased (see nudgeUndispatched). 0 switches a tier off.
+    this.undispatchedSellerMs = typeof undispatchedSellerMs === 'number'
+      ? Math.max(0, undispatchedSellerMs)
+      : minutesToMs(process.env.DELIVERY_UNDISPATCHED_SELLER_MINUTES, 15);
+    this.undispatchedAdminMs = typeof undispatchedAdminMs === 'number'
+      ? Math.max(0, undispatchedAdminMs)
+      : minutesToMs(process.env.DELIVERY_UNDISPATCHED_ADMIN_MINUTES, 45);
+    this._chased = new Map(); // "seller:<orderId>" / "admin:<orderId>" -> when it was said
+  }
+
+  /** True when the offer sweeper has something to do for this service. */
+  get nudgeEnabled() {
+    return this.undispatchedSellerMs > 0 || this.undispatchedAdminMs > 0;
   }
 
   // ----------------------------------------------------------------- identity
@@ -275,12 +300,14 @@ class DeliveryService {
    * reads `audience` and `action` from the notification metadata to open the right
    * screen when the notification is tapped (see NOTIFICATION_ACTIONS).
    */
-  _notify(userId, { audience, title, body, tone = 'accent', delivery = null }) {
+  _notify(userId, { audience, title, body, tone = 'accent', delivery = null, orderId = null }) {
     if (!userId || !NotificationService || typeof NotificationService.create !== 'function') return;
     const metadata = { audience, action: NOTIFICATION_ACTIONS[audience] || null };
     if (delivery) {
       metadata.deliveryId = delivery.id;
       metadata.orderId = delivery.orderId;
+    } else if (orderId) {
+      metadata.orderId = orderId; // an order that has no delivery yet
     }
     NotificationService.create(userId, { type: 'delivery', tone, title, body, metadata })
       .catch((e) => logger.warn(`[Delivery] Notification error: ${e.message}`));
@@ -292,16 +319,98 @@ class DeliveryService {
    * without this nobody with the power to act is ever told. Best effort: a failed
    * lookup is logged and never fails the request that raised the alert.
    */
-  async _notifyAdmins({ title, body, tone = 'neutral', delivery }) {
+  async _notifyAdmins({ title, body, tone = 'neutral', delivery = null }) {
     let adminIds = [];
     try {
       adminIds = await this.repo.listAdminIds({ limit: MAX_ADMIN_ALERTS });
     } catch (err) {
-      logger.warn(`[Delivery] Could not look up administrators to alert about ${delivery && delivery.id}: ${err.message}`);
-      return;
+      logger.warn(`[Delivery] Could not look up administrators to alert about ${delivery ? delivery.id : 'an order'}: ${err.message}`);
+      return 0;
     }
-    if (!adminIds.length) logger.warn(`[Delivery] No administrator to alert: "${title}" (delivery ${delivery && delivery.id}).`);
+    if (!adminIds.length) logger.warn(`[Delivery] No administrator to alert: "${title}"${delivery ? ` (delivery ${delivery.id})` : ''}.`);
     for (const adminId of adminIds) this._notify(adminId, { audience: 'admin', title, body, tone, delivery });
+    return adminIds.length;
+  }
+
+  /**
+   * Orders that are waiting for somebody to arrange a rider, and for how long.
+   * "Waiting" is: no delivery yet, a delivery the seller cancelled and did not
+   * replace, or one that is `pending_assignment` (created, or handed back by a rider
+   * who declined, lapsed or was suspended). An order with a rider on it, or whose
+   * delivery failed (the seller was already told), is not waiting. Orders older than
+   * UNDISPATCHED_MAX_AGE_MS are left alone: a stale order is a different problem and
+   * must not be re-announced every time a process restarts.
+   */
+  async _undispatchedOrders(limit) {
+    const orders = await this.orders.findOrdersBySeller(null, {
+      statuses: [FULFILLMENT_STATUS.PROCESSING], limit, excludePaymentStatuses: [PAYMENT_STATUS.REFUNDED]
+    });
+    const latest = await this.repo.findLatestByOrders(orders.map((o) => o.id));
+    const now = this.now();
+    const waiting = [];
+    for (const order of orders) {
+      const d = latest.get(order.id) || null;
+      let since = Date.parse(order.createdAt);
+      if (d && d.status === S.PENDING_ASSIGNMENT) since = Date.parse(d.updatedAt);
+      else if (d && d.status === S.CANCELLED) since = Math.max(since, Date.parse(d.updatedAt) || 0);
+      else if (d) continue; // somebody is on it, or it is over
+      if (!Number.isFinite(since)) continue;
+      const age = now - since;
+      if (age >= 0 && age <= UNDISPATCHED_MAX_AGE_MS) waiting.push({ order, age, hasDelivery: Boolean(d) });
+    }
+    return waiting;
+  }
+
+  /**
+   * Chases an order nobody is arranging. Seller first, after `undispatchedSellerMs`: the
+   * order is theirs and they were told when it arrived, so this is a reminder. The
+   * administrators later, after `undispatchedAdminMs`, in ONE alert for everything that
+   * newly crossed the line (not one per order). Each fires once per order for the life
+   * of the process: the memory of what was already said is not stored, so a restart can
+   * repeat a reminder once (an order older than a day is never chased, which bounds it),
+   * and in return this needs no migration. Run by the offer sweeper, so on a serverless
+   * runtime (no sweeper) nobody is chased.
+   */
+  async nudgeUndispatched({ limit = 100 } = {}) {
+    const sellerOn = this.undispatchedSellerMs > 0;
+    const adminOn = this.undispatchedAdminMs > 0;
+    if (!sellerOn && !adminOn) return { sellers: 0, admins: 0 };
+
+    const waiting = await this._undispatchedOrders(limit);
+    const told = this._chased;
+    const nowMs = this.now();
+    for (const [key, at] of told) if (nowMs - at > UNDISPATCHED_MAX_AGE_MS + 60 * 60 * 1000) told.delete(key);
+
+    let sellers = 0;
+    for (const { order, age, hasDelivery } of waiting) {
+      const key = `seller:${order.id}`;
+      if (!sellerOn || age < this.undispatchedSellerMs || told.has(key) || !order.sellerId) continue;
+      told.set(key, nowMs);
+      const minutes = Math.floor(age / 60000);
+      this._notify(order.sellerId, {
+        audience: 'seller',
+        title: `Order ${order.orderNumber} still needs a rider`,
+        body: `It has been waiting ${minutes} minute${minutes === 1 ? '' : 's'}. ${hasDelivery ? 'Choose a rider' : 'Arrange the delivery'} so the customer is not left waiting.`,
+        tone: 'sale',
+        orderId: order.id
+      });
+      sellers += 1;
+    }
+
+    let admins = 0;
+    const overdue = waiting.filter(({ order, age }) => adminOn && age >= this.undispatchedAdminMs && !told.has(`admin:${order.id}`));
+    if (overdue.length) {
+      for (const { order } of overdue) told.set(`admin:${order.id}`, nowMs);
+      const numbers = overdue.slice(0, 3).map(({ order }) => order.orderNumber).join(', ');
+      const more = overdue.length > 3 ? ` and ${overdue.length - 3} more` : '';
+      const minutes = Math.floor(this.undispatchedAdminMs / 60000);
+      admins = await this._notifyAdmins({
+        title: overdue.length === 1 ? 'An order has no rider' : `${overdue.length} orders have no rider`,
+        body: `${numbers}${more} ${overdue.length === 1 ? 'has' : 'have'} waited over ${minutes} minutes with no delivery arranged. Check with the seller${overdue.length === 1 ? '' : 's'}.`
+      });
+    }
+    if (sellers || overdue.length) logger.info(`[Delivery] Chased ${sellers} seller(s) and alerted administrators about ${overdue.length} order(s) with no rider.`);
+    return { sellers, admins, overdue: overdue.length };
   }
 
   async _invalidateBuyerCache(buyerId) {
