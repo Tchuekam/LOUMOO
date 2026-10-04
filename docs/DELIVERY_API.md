@@ -113,6 +113,55 @@ with a deadline in the past; accept still refuses it.
 Clients should show the countdown from `offerExpiresAt` (see the Delivery object)
 but never decide expiry themselves: the server's clock is the only one that counts.
 
+## Who is told what
+
+The circuit has four parties, and each hears about the moments that concern them.
+Every notification carries `metadata.audience` (`buyer`, `seller`, `rider`, `admin`: the
+part the recipient plays *on that delivery*, stated by the server, never guessed from ids)
+and `metadata.action` (which screen the client opens when it is tapped), plus
+`deliveryId` and `orderId` when there are any.
+
+| `audience` | `action` | Screen |
+|---|---|---|
+| `buyer` | `track_order` | the live tracker |
+| `seller` | `open_dispatch` | the dispatch board (at `orderId` when given) |
+| `rider` | `open_rider_hub` | the rider's jobs |
+| `admin` | `open_dispatch` | the dispatch board (an admin sees every seller's) |
+
+| Moment | Buyer | Seller | Rider | Admin |
+|---|---|---|---|---|
+| Order placed (`POST /api/v1/orders`) | confirmation | **new order to deliver** (starts the circuit) | | |
+| Delivery created | a rider is being found | | | |
+| Rider offered the job | | | **new offer** (with the time they have) | |
+| Job given to another rider | | | **no longer yours** | |
+| Offer accepted | rider is coming | **have the parcel ready** | | |
+| Offer declined / lapsed | | rider declined / did not respond | (lapse) offer expired | |
+| Picked up | on its way | **parcel collected** | | |
+| Arrived | rider has arrived (read your code) | **rider is at the customer** | | |
+| Delivered | delivered | delivered | | |
+| Failed (rider, or admin `fail`) | could not be completed | failed | (admin `fail`) job closed | |
+| Cancelled | cancelled | | cancelled (if they held it) | |
+| Handover locked (5 wrong codes) | | locked | | **needs you** |
+| Admin `unlock` | your code changed | | **unlocked: ask for the new code** | |
+| Rider registered / suspended | | | **you are now a rider / access paused** | |
+| Rider suspended mid-delivery | | suspended | access paused | **still holds a parcel** |
+
+Bold entries are new. Notifications are written by the server on the event, so the
+client has to read the feed: `GET /api/v1/users/me/notifications` (the app re-reads it
+every 45 s while a tab is visible and signed in, and when the tab returns to the
+foreground). Notification text never contains the customer's name, phone or street.
+Alerts go to every live administrator (profile `primary_role` `admin` / `super_admin`,
+not suspended or deleted), at most 20.
+
+### Placing the order
+
+A delivery needs an order the **server** created: the seller is taken from the listing,
+the price from the server (a `totalAmountXaf` that disagrees is refused), and the order
+number is the server's. `POST /api/v1/orders` therefore refuses an order whose items come
+from more than one seller (`400`, `details[0].code = "MULTI_SELLER_ORDER"`); the
+checkout places one order per store. Items that are not real listings (showcase
+products) answer `404`. The order can only be placed by a signed-in account.
+
 ## Response shapes (`data`)
 | Endpoint | HTTP | `data` |
 |---|---|---|
@@ -298,7 +347,29 @@ was replaced or declined) · `409` illegal transition / already exists / changed
 someone else · `409 OFFER_EXPIRED` accepting an offer whose window lapsed ·
 `409 NO_RIDER_AVAILABLE` auto-assign found no eligible rider · `423` handover locked ·
 `429` too many open streams (or the global rate limit, see decision 7) · `501` live
-streaming unsupported on this deployment.
+streaming unsupported on this deployment · `503 DELIVERY_NOT_READY` (production only)
+the delivery tables do not exist in this database: migrations 013 and 014 have not been
+applied. Every delivery endpoint answers it, reads included, rather than looking like an
+empty system; the server logs the cause and says so once at boot.
+
+## Deploying delivery
+
+1. **Migrations**, in this order, on the production database:
+   `010_notifications.sql` (without it notifications live only in one process's memory,
+   which is lost between serverless invocations), `013_delivery_tracking.sql`,
+   `014_delivery_offer_indexes.sql`. `node scripts/apply_migration.js --all` applies them in
+   name order. Two migrations are numbered 014 (the other is universal search); they are
+   independent.
+2. **Environment**: `SUPABASE_JWT_SECRET` (handover codes are derived from it; the
+   server will not issue one without it), optionally `DELIVERY_OFFER_TTL_MINUTES`.
+3. **Runtime**: Railway (a long-lived process) gives the live stream and the offer
+   sweeper. Netlify/Vercel work through polling and release-on-read, as described above,
+   but a seller there hears about a lapsed offer only when something touches it.
+4. **First rider**: an administrator opens *Riders* in the admin screen, finds the
+   person's account and registers them. They are told, and *Deliver with LOUMOO* in their
+   account then shows their offers.
+5. **Check**: the boot log has no `[Delivery] NOT READY` line; place an order as a
+   customer, and the seller's account gets *New order … to deliver*.
 
 ## Decisions taken (change here first if you disagree)
 1. **Who assigns riders?** The order's seller or an admin.
@@ -357,3 +428,16 @@ streaming unsupported on this deployment.
     visibility is unwanted, show only a coarse free/busy flag, or only the caller's
     own count, and keep the global count for ranking. **Needs the owner's
     confirmation.**
+12. **One order, one seller.** The seller receives the order, arranges its delivery and
+    is paid for it, so an order with items from two stores is refused and the checkout
+    places one order per store. (Before, the second store's goods were filed under the
+    first store's seller and that store never heard of them.)
+13. **Administrators are told, not just the seller.** The service says "an administrator
+    must resolve this" for a locked handover and for a suspended rider who still holds a
+    parcel; those now alert every live administrator. A delivery that goes right never
+    does. There is no alert yet for a delivery nobody is arranging (an order that sits with
+    no delivery): that needs a timer and a "nudged" marker, and is left for later.
+14. **Delivery fee on the checkout equals the order's.** The checkout shows items plus the
+    delivery fee for the address's city (the same setting the server prices from) and
+    sends no total. The old "escrow protection fee" was added to the shown total but the
+    server never charged it, and no payment is taken yet, so it is gone.
