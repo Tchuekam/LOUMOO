@@ -120,6 +120,15 @@ class DeleteAccountUseCase {
       piiErrors.push(`followed_stores: ${fsErr.message}`);
     }
 
+    // Purge the Discovery Engine's behavioural log and learned taste profile.
+    try {
+      const RecommendationRepository = require('../../recommendation/infrastructure/RecommendationRepository');
+      const recoErrors = await RecommendationRepository.deleteForUser(userId);
+      if (recoErrors && recoErrors.length) piiErrors.push.apply(piiErrors, recoErrors);
+    } catch (recoErr) {
+      piiErrors.push(`recommendation_data: ${recoErr.message}`);
+    }
+
     // Deactivate any owned stores and purge their store and catalog listing caches
     try {
       const { data: ownedStores } = await db
@@ -208,7 +217,8 @@ class DeleteAccountUseCase {
       CacheService.delPattern(`saved_check:${userId}:*`),
       CacheService.delPattern(`followed_stores:${userId}:*`),
       CacheService.delPattern(`follow_check:${userId}:*`),
-      CacheService.delPattern(`purchases:${userId}:*`)
+      CacheService.delPattern(`purchases:${userId}:*`),
+      CacheService.del(`profile:${userId}`, 'reco')
     ]);
 
     // 4. Log Immutable Security Event

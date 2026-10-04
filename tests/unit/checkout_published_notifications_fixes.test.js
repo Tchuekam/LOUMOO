@@ -76,6 +76,7 @@ async function run() {
         requestPermission: () => Promise.resolve('granted')
       },
       LoumooAPI: loumooApi,
+      LoumooCircuit: require('../../src/services/deliveryCircuit'),
       LoumooPublishing: require('../../src/services/publishingEngine')
     },
     localStorage: {
@@ -184,18 +185,44 @@ async function run() {
   vals = comp.renderVals();
   assert.strictEqual(vals.notifHasUnread, false);
 
+  // The SERVER creates the order and queues the notification (the old checkout built
+  // both in the browser, so the seller never heard of the order). A fake server stands
+  // in for the API: it numbers the order itself and writes the buyer's notification.
+  let placedPayload = null;
+  const serverNotifications = [];
+  sandbox.window.LoumooAPI = Object.assign(Object.create(loumooApi), {
+    createOrder: async (payload) => {
+      placedPayload = payload;
+      const order = {
+        id: 'ord_1', orderNumber: 'KM-PHONE-1', buyerId: 'b', sellerId: 's', sellerPhone: '699334455',
+        subtotalXaf: 850000, shippingFeeXaf: 1500, totalAmountXaf: 851500,
+        items: [{ listingId: 'phone_1', title: payload.items[0].title, unitPriceXaf: 850000, quantity: 1, storeName: 'Orca Electronics', imageUrl: null }],
+        shippingAddress: payload.shippingAddress, deliveryMethod: 'HOME_DELIVERY', paymentStatus: 'pending', fulfillmentStatus: 'processing', createdAt: new Date().toISOString()
+      };
+      serverNotifications.push({ id: 'n1', title: `Order ${order.orderNumber} placed`, body: 'Your order is confirmed — pay on delivery. Total XAF 851500.', tone: 'accent', read: false, createdAt: order.createdAt, metadata: { audience: 'buyer', action: 'track_order', orderId: order.id } });
+      return order;
+    },
+    getOrders: async () => ({ orders: [], total: 0 }),
+    getNotifications: async () => serverNotifications
+  });
+
   // Place order with phone in bag
   vals.placeOrder();
+  for (let i = 0; i < 200 && comp.state.screen !== 'success'; i += 1) await new Promise((r) => setTimeout(r, 5));
 
   assert.strictEqual(comp.state.screen, 'success', 'Screen must navigate to success screen');
   assert.ok(comp.state.lastOrder, 'lastOrder must be created');
-  assert.ok(comp.state.lastOrder.orderNumber.startsWith('LM-'), 'Order number format verified');
+  assert.ok(comp.state.lastOrder.orderNumber.startsWith('KM-'), 'The order number is the server\'s');
+  assert.strictEqual(comp.state.lastOrder.id, 'ord_1', 'and so is its id');
+  assert.ok(!('totalAmountXaf' in placedPayload), 'the client sends no total: the server prices the order');
+  assert.strictEqual(placedPayload.shippingAddress.street, 'Boulevard de la Liberté, Akwa', 'the selected delivery address is the one sent');
 
-  // Check notifications state
-  assert.ok(comp.state.notifications.length > 0, 'Notifications array must receive realtime order notification');
+  // The buyer's notification comes from the server's feed.
+  await comp.loadServerNotifications();
+  for (let i = 0; i < 200 && !comp.state.notifications.length; i += 1) await new Promise((r) => setTimeout(r, 5));
+  assert.ok(comp.state.notifications.length > 0, 'Notifications array must receive the order notification from the server');
   const notif = comp.state.notifications[0];
-  assert.ok(notif.title.includes('confirmed'), 'Notification title should state confirmed');
-  assert.ok(notif.body.includes('Samsung Galaxy S25 Ultra'), 'Notification body should mention the purchased phone');
+  assert.ok(notif.title.includes('placed') && notif.title.includes('KM-PHONE-1'), 'Notification title should state the order was placed');
   assert.strictEqual(notif.read, false, 'New notification must be unread');
 
   vals = comp.renderVals();

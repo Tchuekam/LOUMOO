@@ -21,6 +21,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Delivery circuit tests
+        run: npm run test:delivery
+
       - name: Run required validation gate
         run: npm test
 

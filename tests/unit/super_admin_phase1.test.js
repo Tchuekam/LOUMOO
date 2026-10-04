@@ -132,7 +132,7 @@ async function run() {
   const pageRes = await harness.request('GET', '/superadmin');
   assert.strictEqual(pageRes.status, 200, '/superadmin dedicated page must return 200');
   const htmlContent = typeof pageRes.body === 'string' ? pageRes.body : JSON.stringify(pageRes.body);
-  assert.ok(htmlContent.includes('LOUMOO — SuperAdmin Executive Control Center'), 'Page must contain SuperAdmin title');
+  assert.ok(htmlContent.includes('<title>LOUMOO — Enterprise Control</title>'), 'Page must be the SuperAdmin control center (SuperAdmin/frontend/index.html)');
 
   const settingsRes = await harness.request('GET', '/api/v1/admin/settings', { token: 'admin_token' });
   assert.strictEqual(settingsRes.status, 200, 'GET /api/v1/admin/settings must return 200');

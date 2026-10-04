@@ -131,7 +131,7 @@ async function run() {
     async () => {
       await SuperAdminService.updateSystemSetting('shipping_rates_by_city', { Douala: -500 });
     },
-    /Delivery fee for Douala must be a number between 0 and 100,000 XAF/
+    /Delivery fee for Douala must be an integer between 0 and 100,000 XAF/
   );
 
   // Invalid rate (> 100,000 XAF)
@@ -139,7 +139,15 @@ async function run() {
     async () => {
       await SuperAdminService.updateSystemSetting('shipping_rates_by_city', { Douala: 150000 });
     },
-    /Delivery fee for Douala must be a number between 0 and 100,000 XAF/
+    /Delivery fee for Douala must be an integer between 0 and 100,000 XAF/
+  );
+
+  // Invalid rate (fractional): fees are whole XAF
+  await assert.rejects(
+    async () => {
+      await SuperAdminService.updateSystemSetting('shipping_rates_by_city', { Douala: 1500.5 });
+    },
+    /Delivery fee for Douala must be an integer between 0 and 100,000 XAF/
   );
 
   // Valid update
@@ -210,7 +218,9 @@ async function run() {
   });
   app.use('/api/v1/admin', superAdminRoutes);
 
-  const server = app.listen(0);
+  // Loopback only (the SuperAdmin routes accept dev tokens outside production). With an
+  // explicit host listen() binds asynchronously, so wait for it before reading the port.
+  const server = await new Promise(resolve => { const s = app.listen(0, '127.0.0.1', () => resolve(s)); });
   const port = server.address().port;
   const httpUrl = `http://127.0.0.1:${port}/api/v1/admin`;
 

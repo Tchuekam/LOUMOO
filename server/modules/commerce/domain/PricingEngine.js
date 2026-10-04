@@ -11,6 +11,33 @@ const { DELIVERY_METHOD } = require('./Order');
 
 const DEFAULT_STANDARD_SHIPPING_XAF = 3000;
 
+/**
+ * A city name reduced to what matters for matching: no accents, no punctuation, one
+ * space between words, lower case. "Yaoundé" and "Yaounde" are the same city (the
+ * seeded rate table says "Yaounde"; people type "Yaoundé"). The browser applies the
+ * SAME rule (build_redesign.py, resolveCityDeliveryFee), so the delivery fee shown at
+ * checkout is the fee the order is priced at.
+ */
+function foldCity(name) {
+  return String(name == null ? '' : name)
+    .normalize('NFD')
+    .toLowerCase()
+    .replace(/[^a-z0-9 ]/g, '')
+    .replace(/ +/g, ' ')
+    .trim();
+}
+
+/** The configured delivery fee (integer XAF) for a city, or null when it is not in the table. */
+function resolveCityRate(cityRates, city) {
+  if (!cityRates || typeof cityRates !== 'object' || !city) return null;
+  const wanted = foldCity(city);
+  if (!wanted) return null;
+  for (const [cityName, rate] of Object.entries(cityRates)) {
+    if (foldCity(cityName) === wanted && Number.isInteger(Number(rate)) && Number(rate) >= 0) return Number(rate);
+  }
+  return null;
+}
+
 class PricingEngine {
   /**
    * Authoritatively calculates line totals, subtotal, shipping fee, and grand total.
@@ -47,8 +74,19 @@ class PricingEngine {
         throw new ValidationError(`Price must be a non-negative integer, got ${item.unitPriceXaf}.`);
       }
 
+      // Integer arithmetic is only exact up to Number.MAX_SAFE_INTEGER; past that a
+      // product or sum silently rounds, so refuse the order instead of mispricing it.
       const lineTotalXaf = qty * price;
+      if (!Number.isSafeInteger(lineTotalXaf)) {
+        throw new ValidationError(
+          `Line total for ${qty} x XAF ${price} exceeds the maximum safe integer calculation limit.`
+        );
+      }
+
       subtotalXaf += lineTotalXaf;
+      if (!Number.isSafeInteger(subtotalXaf)) {
+        throw new ValidationError('Order subtotal exceeds the maximum safe integer calculation limit.');
+      }
 
       lineItems.push({
         listingId: item.listing?.id || item.listingId || null,
@@ -140,5 +178,7 @@ class PricingEngine {
 
 module.exports = {
   PricingEngine,
-  DEFAULT_STANDARD_SHIPPING_XAF
+  DEFAULT_STANDARD_SHIPPING_XAF,
+  foldCity,
+  resolveCityRate
 };

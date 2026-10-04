@@ -23,6 +23,7 @@ const requestContext = require('./shared/middleware/requestContext');
 const errorHandler = require('./shared/middleware/errorHandler');
 const { securityHeaders } = require('./shared/middleware/securityHeaders');
 const RateLimitService = require('./infrastructure/cache/RateLimitService');
+const { createSearchRouter } = require('./modules/search/presentation/searchRoutes');
 const IdempotencyService = require('./infrastructure/cache/IdempotencyService');
 const OutboxService = require('./infrastructure/events/OutboxService');
 const { MediaStorageService } = require('./infrastructure/storage/MediaStorageService');
@@ -38,6 +39,7 @@ const adaptiveRoutes = require('./modules/adaptive/presentation/routes/adaptiveR
 const announcementRoutes = require('./modules/announcement/presentation/routes/announcementRoutes');
 const travelRoutes = require('./modules/travel/presentation/routes/travelRoutes');
 const orderRoutes = require('./modules/commerce/presentation/routes/orderRoutes');
+const recommendationRoutes = require('./modules/recommendation/presentation/routes/recommendationRoutes');
 const deliveryRoutes = require('./modules/delivery/presentation/routes/deliveryRoutes');
 const { getSharedDeliveryService } = require('./modules/delivery/application/DeliveryService');
 const { startOfferSweeper } = require('./modules/delivery/infrastructure/OfferSweeper');
@@ -154,7 +156,9 @@ app.use('/api', (req, res, next) => {
 // assets. In production Netlify's CDN serves those static files and only
 // routes /api/* to this app, so limiting /api mirrors production exactly while
 // keeping local dev (which also serves the frontend here) usable.
-app.use('/api', RateLimitService.middleware({ maxRequests: 120, windowSeconds: 60 }));
+const commerceLimit = RateLimitService.middleware({ maxRequests: 120, windowSeconds: 60 });
+const discoveryLimit = RateLimitService.middleware({ maxRequests: 180, peerMaxRequests: 3000, windowSeconds: 60, keyPrefix: 'discovery' });
+app.use('/api', (req, res, next) => /^\/v1\/search(?:\/|$)/.test(req.path) ? discoveryLimit(req,res,next) : commerceLimit(req,res,next));
 
 /**
  * 4. Body parsing.
@@ -195,6 +199,7 @@ app.use(maintenanceGuard);
 
 // 6. Versioned API routes
 const v1Router = express.Router();
+v1Router.use('/search', createSearchRouter());
 v1Router.use('/', healthRoutes);
 v1Router.use('/', identityRoutes);
 v1Router.use('/', catalogRoutes);
@@ -205,6 +210,7 @@ v1Router.use('/uploads', uploadRoutes);
 v1Router.use('/announcements', announcementRoutes);
 v1Router.use('/travel', travelRoutes);
 v1Router.use('/orders', orderRoutes);
+v1Router.use('/recommendations', recommendationRoutes);
 v1Router.use('/deliveries', deliveryRoutes);
 v1Router.use('/admin', superAdminRoutes);
 
@@ -402,6 +408,14 @@ if (require.main === module) {
   // Starts no timer at all when DELIVERY_OFFER_TTL_MINUTES is 0.
   const offerSweeper = startOfferSweeper({ service: getSharedDeliveryService() });
   if (offerSweeper.timer) workers.push(offerSweeper.timer);
+
+  // A deployment whose delivery migration was never applied would otherwise show
+  // it only when the first seller or rider opens a screen. Say it at boot, once.
+  getSharedDeliveryService().repo.probe()
+    .then((p) => {
+      if (!p.ready) logger.error(`[Delivery] NOT READY: ${p.reason}. Delivery endpoints answer 503 until it is applied.`);
+    })
+    .catch(() => { /* a failed check must never stop the server booting */ });
 
   // Graceful shutdown — Railway / Kubernetes / Docker send SIGTERM before
   // killing the process. Drained in-flight requests, stopped workers, closed

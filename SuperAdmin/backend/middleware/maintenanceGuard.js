@@ -5,12 +5,23 @@
  * Rejects non-administrative operations with HTTP 503 Service Unavailable,
  * while ensuring health checks, public config, and admin management endpoints
  * remain responsive.
+ *
+ * Administrative bypass: this guard is mounted at app level, before any auth
+ * runs, so it can only honour a `req.principal` an upstream layer has already
+ * resolved to an administrator. It never inspects a bearer token or header
+ * itself. Admin routes (BYPASS_PREFIXES) stay reachable regardless, so an
+ * administrator can always turn maintenance off.
+ *
+ * Earlier revisions also let a request through when NODE_ENV was anything but
+ * 'production' and it carried the bearer token 'admin_token' / 'user_admin', any
+ * token merely CONTAINING 'super_admin', or the header
+ * `x-admin-key: loumoo_dev_admin` — i.e. on staging, on development, and on any
+ * deployment where NODE_ENV was unset or misspelled.
  */
 
 const SuperAdminRepository = require('../repositories/SuperAdminRepository');
 const CacheService = require('../../../server/infrastructure/cache/CacheService');
 const { Role, ROLES } = require('../../../server/modules/identity/value-objects/Role');
-const { extractBearerToken } = require('../../../server/modules/identity/presentation/guards/authGuard');
 
 // Endpoints that MUST bypass maintenance to allow diagnostics and administration
 const BYPASS_PREFIXES = [
@@ -67,21 +78,15 @@ async function maintenanceGuard(req, res, next) {
     return next();
   }
 
-  // 4. Verify administrative bypass if permitted by policy
+  // 4. Verify administrative bypass if permitted by policy.
+  //
+  // Only a principal that an upstream layer has already authenticated counts.
+  // Nothing in the request itself (a bearer string, an x-admin-key header) is
+  // trusted here, in any NODE_ENV.
   if (maintenance.allow_admin_bypass !== false) {
     if (req.principal) {
       const role = req.principal.primaryRole || req.principal.role || 'customer';
       if (Role.hasRole(role, ROLES.ADMIN)) {
-        return next();
-      }
-    }
-
-    if (process.env.NODE_ENV !== 'production') {
-      const token = extractBearerToken(req);
-      if (token && (token === 'admin_token' || token === 'user_admin' || token.includes('super_admin'))) {
-        return next();
-      }
-      if (req.headers['x-admin-key'] === 'loumoo_dev_admin') {
         return next();
       }
     }
