@@ -29,6 +29,10 @@ if (declaredEnv === 'production') {
   process.exit(2);
 }
 
+// This script exists to talk to a real database, so it opts into real services
+// (tests/setup is otherwise hermetic and would strip the credentials). setup also
+// refuses the production project unless LOUMOO_TEST_ALLOW_PRODUCTION_DB acknowledges it.
+process.env.LOUMOO_RUN_INTEGRATION = process.env.LOUMOO_RUN_INTEGRATION || '1';
 require('../tests/setup');
 
 const { SupabaseDatabase } = require('../server/infrastructure/database/SupabaseClient');
