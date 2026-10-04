@@ -28,10 +28,17 @@ const SUITES = [
   'delivery_contact',
   'delivery_circuit',
   'delivery_circuit_e2e',
+  'delivery_geocoder',
   // The order path in the compiled app: what a buyer does before a delivery can exist.
   'checkout_server_orders',
   'checkout_published_notifications_fixes',
   'store_whatsapp_redirect'
+];
+
+// Suites that live beside this runner (not in tests/unit, which `npm test` also loads).
+const OWN_SUITES = [
+  'readiness',   // the operator's read-only readiness check, against a fake database
+  'migrations'   // the real migration files on a real Postgres engine (PGlite)
 ];
 
 (async () => {
@@ -41,9 +48,15 @@ const SUITES = [
     await suite.run();
     console.log(`PASS ${name}`);
   }
+  for (const name of OWN_SUITES) {
+    const suite = require(`./${name}.test`);
+    if (!suite || typeof suite.run !== 'function') throw new Error(`${name}.test.js does not export run()`);
+    await suite.run();
+    console.log(`PASS ${name}`);
+  }
   // The API client's own checks are a script, not a suite: run it as one.
   execFileSync(process.execPath, [path.join(__dirname, '../../src/services/deliveryApi.test.js')], { stdio: 'inherit' });
-  console.log(`PASS delivery: ${SUITES.length} suites and the API client checks`);
+  console.log(`PASS delivery: ${SUITES.length + OWN_SUITES.length} suites and the API client checks`);
 })().then(
   () => process.exit(0),
   (e) => {
