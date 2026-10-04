@@ -33,6 +33,11 @@ const IMPRESSION_DEDUP_TTL = 900;
 const RECENT_WINDOW_MS = 7 * 24 * 3600 * 1000;
 const POSITIVE_TYPES = ['click', 'view', 'save', 'add_to_cart', 'purchase'];
 const MAX_EVENTS_PER_BATCH = 50;
+// Rank the personalized feed ONCE per subject per learning-epoch and serve stable
+// slices from the frozen order, so "load more" never re-ranks (which would show
+// duplicate / skipped products). Bounded depth keeps the one-time rank cheap.
+const RANKED_FEED_TTL = 180; // seconds the frozen order stays valid
+const MAX_RANKED_FEED = 96; // deepest page we materialise (4 pages of 24)
 
 const VALID_EVENTS = new Set(Object.keys(core.EVENT_WEIGHTS).concat(['pdp_dwell', 'remove_from_cart']));
 
@@ -152,28 +157,55 @@ class RecommendationService {
     const now = Date.now();
 
     if (!personalized || !subjectId) {
-      const ranked = await this._trendingFeed(pool, { limit: limit + offset, city: params && params.city });
+      // Trending is deterministic (exploreRatio 0), so ranking once at the needed
+      // depth and slicing is already stable across pages.
+      const ranked = await this._trendingFeed(pool, { limit: Math.min(MAX_RANKED_FEED, limit + offset), city: params && params.city });
       return this._page(ranked, offset, limit, { personalized: false });
     }
 
     let profile = await this._loadProfile(subjectId);
     profile = this._seedColdStart(profile, ctx, now);
 
-    const trending = await this._trendingMap();
-    const recentIds = (profile.recent || []).slice(0, 6).map((r) => r.id);
-    const covisMap = await this._covisMap(recentIds);
-    const seenMap = (params && params.seen) || {};
+    // Rank the WHOLE feed once per (subject, learning-epoch) and cache the order,
+    // then serve pages as stable slices. The epoch is the subject's event count:
+    // stable between ingests, advancing as they learn. A seeded rng makes a
+    // cache-miss rebuild reproducible, so pagination never duplicates or skips.
+    const epoch = profile.eventCount || 0;
+    const cacheKey = `feed:${subjectId}:${epoch}`;
+    let order = null;
+    try { order = await CacheService.get(cacheKey, NS); } catch (e) { /* ignore */ }
 
-    const ranked = core.rankFeed(pool, {
-      profile: profile,
-      trendingMap: trending.map,
-      trendingMax: trending.max,
-      covisMap: covisMap,
-      seenMap: seenMap,
-      nowMs: now
-    }, { limit: limit + offset });
+    if (!Array.isArray(order)) {
+      const trending = await this._trendingMap();
+      const recentIds = (profile.recent || []).slice(0, 6).map((r) => r.id);
+      const covisMap = await this._covisMap(recentIds);
+      const ranked = core.rankFeed(pool, {
+        profile: profile,
+        trendingMap: trending.map,
+        trendingMax: trending.max,
+        covisMap: covisMap,
+        seenMap: {},
+        nowMs: now,
+        rng: core.makeRng(`${subjectId}:${epoch}`)
+      }, { limit: MAX_RANKED_FEED });
+      order = ranked.map((it) => ({ id: it.id, reason: it._recoReason || null, explore: !!it._recoExplore }));
+      try { await CacheService.set(cacheKey, order, RANKED_FEED_TTL, NS); } catch (e) { /* ignore */ }
+    }
 
-    return this._page(ranked, offset, limit, { personalized: true });
+    // Map the frozen id order back to full pool items for the requested page.
+    const byId = {};
+    for (let i = 0; i < pool.length; i++) byId[pool[i].id] = pool[i];
+    const items = [];
+    for (let i = 0; i < order.length; i++) {
+      const it = byId[order[i].id];
+      if (!it) continue; // dropped from the catalogue since the order was cached
+      const out = Object.assign({}, it);
+      out._recoReason = order[i].reason;
+      out._recoExplore = order[i].explore;
+      items.push(out);
+    }
+
+    return this._page(items, offset, limit, { personalized: true });
   }
 
   _page(ranked, offset, limit, meta) {
