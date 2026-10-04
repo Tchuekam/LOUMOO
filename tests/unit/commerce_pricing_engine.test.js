@@ -33,8 +33,8 @@ async function run() {
   assert.strictEqual(pricing.subtotalXaf, 125000, 'Subtotal must be 125,000 XAF');
   assert.strictEqual(pricing.shippingFeeXaf, DEFAULT_STANDARD_SHIPPING_XAF, 'Standard shipping must apply');
   assert.strictEqual(pricing.totalAmountXaf, 128000, 'Total must be 128,000 XAF');
-  assert.strictEqual(pricing.lineItems[0].totalLineXaf, 100000);
-  assert.strictEqual(pricing.lineItems[1].totalLineXaf, 25000);
+  assert.strictEqual(pricing.lineItems[0].lineTotalXaf, 100000);
+  assert.strictEqual(pricing.lineItems[1].lineTotalXaf, 25000);
 
   // 1.2 Store Pickup has 0 shipping fee
   const pickupPricing = PricingEngine.calculateOrderPricing(items, {
@@ -107,19 +107,19 @@ async function run() {
   // 1.8 Quantity and arithmetic boundaries
   assert.throws(() => {
     PricingEngine.calculateOrderPricing([{ listingId: 'x', quantity: 0, unitPriceXaf: 1000 }]);
-  }, /Must be a positive integer/, 'Zero quantity must throw');
+  }, /must be a positive integer/, 'Zero quantity must throw');
 
   assert.throws(() => {
     PricingEngine.calculateOrderPricing([{ listingId: 'x', quantity: -1, unitPriceXaf: 1000 }]);
-  }, /Must be a positive integer/, 'Negative quantity must throw');
+  }, /must be a positive integer/, 'Negative quantity must throw');
 
   assert.throws(() => {
     PricingEngine.calculateOrderPricing([{ listingId: 'x', quantity: 1.5, unitPriceXaf: 1000 }]);
-  }, /Must be a positive integer/, 'Fractional quantity must throw');
+  }, /must be a positive integer/, 'Fractional quantity must throw');
 
   assert.throws(() => {
     PricingEngine.calculateOrderPricing([{ listingId: 'x', quantity: 1, unitPriceXaf: -500 }]);
-  }, /Must be a non-negative integer/, 'Negative price must throw');
+  }, /must be a non-negative integer/, 'Negative price must throw');
 
   console.log('    ✓ Authoritative pricing engine passed all arithmetic and defense checks.');
 
