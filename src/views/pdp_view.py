@@ -365,6 +365,27 @@ def get_product_view():
             </sc-if>
           </div>
 
+          <!-- ── MORE LIKE THIS (Discovery Engine) ── -->
+          <sc-if value="{{ hasPdpSimilar }}">
+            <div style="margin-top:20px">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px">
+                <h3 style="margin:0;font:800 17px/1.2 var(--font-heading);letter-spacing:-0.01em;color:var(--color-text)">More like this</h3>
+                <span style="font:600 11px/1 var(--font-body);color:var(--color-text-secondary)">People also viewed</span>
+              </div>
+              <div class="pdp-similar-rail">
+                <sc-for list="{{ pdpSimilarCards }}" as="sim">
+                  <div ref="{{ (el) => recoWatch(el, sim, 'pdp_similar') }}" onClick="{{ () => openProduct(sim.id) }}" class="pdp-similar-card" aria-label="{{ sim.title }}">
+                    <div class="pdp-similar-media"><img src="{{ sim.imageUrl }}" alt="{{ sim.title }}" loading="lazy"></div>
+                    <div class="pdp-similar-body">
+                      <div class="pdp-similar-title">{{ sim.title }}</div>
+                      <div class="pdp-similar-price">{{ sim.priceLabel }}</div>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
         </div>
 
       </div>

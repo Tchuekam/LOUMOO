@@ -39,6 +39,7 @@ const adaptiveRoutes = require('./modules/adaptive/presentation/routes/adaptiveR
 const announcementRoutes = require('./modules/announcement/presentation/routes/announcementRoutes');
 const travelRoutes = require('./modules/travel/presentation/routes/travelRoutes');
 const orderRoutes = require('./modules/commerce/presentation/routes/orderRoutes');
+const recommendationRoutes = require('./modules/recommendation/presentation/routes/recommendationRoutes');
 const deliveryRoutes = require('./modules/delivery/presentation/routes/deliveryRoutes');
 const { getSharedDeliveryService } = require('./modules/delivery/application/DeliveryService');
 const { startOfferSweeper } = require('./modules/delivery/infrastructure/OfferSweeper');
@@ -209,6 +210,7 @@ v1Router.use('/uploads', uploadRoutes);
 v1Router.use('/announcements', announcementRoutes);
 v1Router.use('/travel', travelRoutes);
 v1Router.use('/orders', orderRoutes);
+v1Router.use('/recommendations', recommendationRoutes);
 v1Router.use('/deliveries', deliveryRoutes);
 v1Router.use('/admin', superAdminRoutes);
 

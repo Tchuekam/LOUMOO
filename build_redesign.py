@@ -56,6 +56,10 @@ header_and_styles = """<!DOCTYPE html>
 <script defer src="./src/services/clerkSession.js"></script>
 <script defer src="./src/services/accountGuard.js"></script>
 <script defer src="./src/data/catalog_products_bundle.js"></script>
+<!-- Discovery Engine: shared scoring core, then the browser runtime. Loaded
+     after the catalogue bundle so local ranking can see PRODUCTS_DATA. -->
+<script defer src="./src/services/recommendationCore.js"></script>
+<script defer src="./src/services/recommendationEngine.js"></script>
 <script defer src="./src/services/imageGuardian.js"></script>
 <!-- Vercel Web Analytics -->
 <script defer src="./src/services/vercelAnalytics.js"></script>
@@ -2596,6 +2600,45 @@ html, body {
     min-width: 0;
   }
 }
+/* "More like this" rail on the product page (Discovery Engine). */
+.pdp-similar-rail {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 46%;
+  gap: 12px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-bottom: 4px;
+}
+.pdp-similar-rail::-webkit-scrollbar { display: none; }
+@media (min-width: 640px) { .pdp-similar-rail { grid-auto-columns: 30%; } }
+@media (min-width: 1024px) { .pdp-similar-rail { grid-auto-columns: 1fr; grid-auto-flow: row; grid-template-columns: repeat(4, 1fr); overflow: visible; } }
+.pdp-similar-card {
+  scroll-snap-align: start;
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider);
+  border-radius: 14px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+.pdp-similar-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  border-color: var(--color-accent);
+}
+.pdp-similar-media { aspect-ratio: 1 / 1; background: var(--color-surface-subtle); }
+.pdp-similar-media img { width: 100%; height: 100%; object-fit: cover; }
+.pdp-similar-body { padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 4px; }
+.pdp-similar-title {
+  font: 600 12.5px/1.3 var(--font-body);
+  color: var(--color-text);
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.pdp-similar-price { font: 800 13px/1 var(--font-heading); color: var(--color-text); }
+
 .pdp-media-viewport {
   position: relative;
   width: 100%;
@@ -2728,6 +2771,54 @@ html, body {
   border-color: rgba(255, 255, 255, 0.1);
   color: #ffffff;
 }
+
+/* "Not interested" affordance — mirrors the wishlist button, top-left, quiet
+   until the card is hovered/focused so it never competes with the imagery. */
+.loumoo-card-dismiss-btn {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 4;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 0.18s ease, transform 0.18s ease, color 0.18s ease;
+}
+.loumoo-media-card:hover .loumoo-card-dismiss-btn,
+.loumoo-media-card:focus-within .loumoo-card-dismiss-btn {
+  opacity: 1;
+  transform: scale(1);
+}
+.loumoo-card-dismiss-btn:hover { color: var(--color-text); background: #ffffff; }
+@media (hover: none) { .loumoo-card-dismiss-btn { opacity: 1; transform: scale(1); } }
+[data-theme="dark"] .loumoo-card-dismiss-btn {
+  background: rgba(20, 23, 33, 0.82);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.82);
+}
+
+/* Honest "why you're seeing this" line. Uses the brand's darker blue so the
+   coloured text clears 4.5:1 on the card surface. */
+.loumoo-card-reason {
+  font: 600 11px/1.3 var(--font-body);
+  color: var(--color-accent-600);
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+[data-theme="dark"] .loumoo-card-reason { color: #6ba8ff; }
 
 /* Card Body Area */
 .loumoo-card-body {
@@ -6648,6 +6739,20 @@ function getApi() {
 }
 
 /**
+ * The Discovery Engine runtime (src/services/recommendationEngine.js). It owns
+ * the visitor id, local preference profile and event capture, and ranks the
+ * home feed in the browser. Absent in the headless verify_runtime sandbox, so
+ * every caller must tolerate null and fall back to the catalogue's own order.
+ */
+function getReco() {
+  try {
+    if (typeof window !== 'undefined' && window && window.LoumooReco) return window.LoumooReco;
+    if (typeof globalThis !== 'undefined' && globalThis && globalThis.LoumooReco) return globalThis.LoumooReco;
+  } catch (e) { /* sandboxed */ }
+  return null;
+}
+
+/**
  * The client account guard (src/services/accountGuard.js). It caches the
  * server's answer from GET /api/v1/me/state; it never decides anything itself.
  */
@@ -7625,6 +7730,39 @@ class Component extends DCLogic {
     if (slug === 'all') return merged;
     const cats = MAP[slug] || [slug];
     return merged.filter((p) => cats.indexOf(String(p.category || '').toLowerCase()) !== -1);
+  };
+  // Minimal item shape the Discovery Engine needs to learn from a card/product.
+  _recoItem = (src) => {
+    if (!src) return { id: null };
+    return {
+      id: src.id,
+      title: src.title || src.name || '',
+      category: src.category || '',
+      subcategory: src.subcategory || '',
+      brand: src.brand || '',
+      storeName: src.storeName || src.merchant || src.store || '',
+      priceNumeric: (src.priceXaf != null ? src.priceXaf : (src.priceNumeric != null ? src.priceNumeric : src.price)),
+      storeCity: src.storeCity || src.merchantCity || ''
+    };
+  };
+  // Emit one engine event for a product interaction, tolerating a missing runtime.
+  _recoNote = (kind, src, extra) => {
+    try { const R = getReco(); if (R && R.note) R.note(kind, this._recoItem(src), extra || {}); } catch (e) { /* non-fatal */ }
+  };
+  // "More like this" neighbours for the open product, memoized per product so a
+  // PDP re-render (qty stepper, image select, a toast) doesn't re-scan the whole
+  // ~1k-item catalogue twice every render. Invalidated when the product or the
+  // loaded catalogue size changes.
+  _pdpSimilarList = () => {
+    const p = this.state.currentProduct;
+    const R = getReco();
+    if (!p || !R || !R.similarLocal) return [];
+    const pool = this._categoryProductPool('all');
+    const key = (p.id || this.state.currentProductId || '') + ':' + pool.length;
+    if (this._pdpSimCache && this._pdpSimCache.key === key) return this._pdpSimCache.list;
+    const list = R.similarLocal(p, pool, { limit: 8 }) || [];
+    this._pdpSimCache = { key: key, list: list };
+    return list;
   };
   _matchesSubcategory = (p, sub) => {
     if (!sub || sub === 'all') return true;
@@ -10712,6 +10850,8 @@ class Component extends DCLogic {
   contactSellerWhatsApp(opts) {
     opts = (opts && typeof opts === 'object' && !opts.nativeEvent && !opts.target) ? opts : {};
     const p = this.state.currentProduct || {};
+    // Reaching out to a seller is a strong intent signal when it is about a product.
+    if (!opts.orderNumber && p && p.id) this._recoNote('contact_seller', p, { surface: 'pdp' });
     const sellerName = opts.sellerName || p.storeName || 'LOUMOO Seller';
     const productTitle = opts.productTitle || p.title || '';
     const price = opts.price || p.salePrice || p.price || '';
@@ -11183,6 +11323,7 @@ class Component extends DCLogic {
     const resolved = this._resolveProductItem(cleanId);
     if (resolved) {
       const activeImg = resolved.coverImage || resolved.image || (resolved.images && resolved.images[0]) || (resolved.media && resolved.media[0] && resolved.media[0].url) || null;
+      this._recoNote('view', resolved, { surface: 'pdp' });
       this.setState({
         screen: 'product',
         currentProductId: resolved.id || cleanId,
@@ -11229,6 +11370,7 @@ class Component extends DCLogic {
           prod = this._synthesizeAvailableListing(cleanId);
         }
         const activeImg = prod.coverImage || prod.image || (prod.images && prod.images[0]) || (prod.media && prod.media[0] && prod.media[0].url) || null;
+        this._recoNote('view', prod, { surface: 'pdp' });
         this.setState({
           currentProduct: prod,
           productLoading: false,
@@ -11745,6 +11887,7 @@ class Component extends DCLogic {
       this.setState({ searchResults: null, searchBusy: false, searchError: '' });
       return;
     }
+    if (query.length >= 2) { try { const R = getReco(); if (R && R.search) R.search(query, this.state.filterCity ? null : null); } catch (e) { /* non-fatal */ } }
     const api = getApi();
     // In a real browser LoumooAPI is loaded in <head> before the app boots, so
     // this only bails in the headless test sandbox (no window). Genuine request
@@ -12558,6 +12701,20 @@ class Component extends DCLogic {
         if (!p || !p.attributes) return [];
         return Object.entries(p.attributes).map(([k, v]) => ({ key: k.replace(/_/g, ' '), val: String(v) }));
       })(),
+      // "More like this" — the Discovery Engine's neighbours of the open product
+      // (content similarity + co-visitation), ranked and de-duplicated locally.
+      pdpSimilarCards: (() => {
+        return this._pdpSimilarList().map((s) => ({
+          id: s.id,
+          title: s.title || s.name || 'Listing',
+          imageUrl: encImg(s.coverImage || s.imageUrl || s.image || (s.images && s.images[0]) || ''),
+          priceLabel: s.price || (s.priceNumeric ? ('XAF ' + fmt(s.priceNumeric)) : 'Ask price'),
+          category: s.category || '', subcategory: s.subcategory || '', brand: s.brand || '',
+          storeName: s.storeName || s.merchant || s.store || '', storeCity: s.storeCity || s.merchantCity || '',
+          priceXaf: (s.priceNumeric != null ? s.priceNumeric : s.price)
+        }));
+      })(),
+      hasPdpSimilar: this._pdpSimilarList().length > 0,
       productStoreName: this.state.currentProduct && (this.state.currentProduct.store ? this.state.currentProduct.store.name : this.state.currentProduct.merchant) ? (this.state.currentProduct.store ? this.state.currentProduct.store.name : this.state.currentProduct.merchant) : 'Orca Electronics',
       productStoreCity: this.state.currentProduct && (this.state.currentProduct.store ? this.state.currentProduct.store.city : this.state.currentProduct.merchantCity) ? (this.state.currentProduct.store ? this.state.currentProduct.store.city : this.state.currentProduct.merchantCity) : 'Akwa, Douala',
       productStoreVerified: Boolean(this.state.currentProduct ? (this.state.currentProduct.store ? this.state.currentProduct.store.isVerified : this.state.currentProduct.verified) : true),
@@ -12593,7 +12750,13 @@ class Component extends DCLogic {
           return isNaN(n) ? 0 : n;
         };
         const limit = this.state.homeFeedLimit || 24;
-        return pool.slice(0, limit).map((p) => {
+        // Personalized "For You" ordering runs in the browser via the Discovery
+        // Engine (instant, offline-safe). In the headless sandbox getReco() is
+        // null, so we fall back to the catalogue's own order unchanged.
+        const R = getReco();
+        const personalizeOff = this.state.privacyPersonalization === false;
+        const ranked = (R && R.rankHome && !personalizeOff) ? R.rankHome(pool, { limit: limit }) : pool.slice(0, limit);
+        return ranked.map((p) => {
           const rawP = p.price || (p.priceNumeric ? ('XAF ' + fmt(p.priceNumeric)) : (p.base_price_minor ? ('XAF ' + fmt(p.base_price_minor)) : ''));
           const rawSale = p.salePrice || '';
           let heroPrice = rawP || 'Ask price';
@@ -12620,10 +12783,42 @@ class Component extends DCLogic {
             ratingLabel: '★ ' + (p.rating != null ? p.rating : '4.9'),
             storeLabel: (p.storeName || p.merchant || p.store || 'LOUMOO verified seller') + (p.merchantCity || p.storeCity ? (' · ' + (p.merchantCity || p.storeCity)) : ''),
             badge: p.badge || (p.isSale ? 'PROMO' : (p.verified ? '✓ Verified' : '')),
-            verified: Boolean(p.verified)
+            verified: Boolean(p.verified),
+            // For You metadata: an honest reason, plus the facet fields the
+            // engine needs to log an impression/dwell and to learn from a tap.
+            recoReason: p._recoReason || '',
+            recoExplore: Boolean(p._recoExplore),
+            category: p.category || '',
+            subcategory: p.subcategory || '',
+            brand: p.brand || '',
+            storeName: p.storeName || p.merchant || p.store || '',
+            priceXaf: (p.priceNumeric != null ? p.priceNumeric : (p.price || '')),
+            storeCity: p.merchantCity || p.storeCity || ''
           };
         });
       })(),
+      // ── Discovery Engine wiring (For You) ──────────────────────────────
+      // Attach a card element to the impression/dwell observer. Fired from a
+      // DC ref, so it must be idempotent (the engine dedupes per element).
+      recoWatch: (el, card, surface) => {
+        const R = getReco();
+        if (R && R.watch && el && card) R.watch(el, this._recoItem(card), { surface: surface || 'home_feed' });
+      },
+      // "Not interested": learn the negative, re-rank immediately (rankHome is
+      // memoized on a version the engine bumps on feedback), and acknowledge.
+      recoNotInterested: (card) => {
+        const R = getReco();
+        if (R && R.feedback) R.feedback('not_interested', this._recoItem(card));
+        this.setState({ toast: 'Got it — fewer like this' });
+      },
+      recoHideStore: (card) => {
+        const R = getReco();
+        if (R && R.feedback) R.feedback('hide_store', this._recoItem(card), card && card.storeName);
+        this.setState({ toast: 'Hidden — we\\'ll stop showing this store' });
+      },
+      recoWhy: (card) => {
+        this.setState({ toast: (card && card.recoReason) || 'Picked for you based on what you browse' });
+      },
       ship: { home: shipStyle(sh.home), pickup: shipStyle(sh.pickup), nation: shipStyle(sh.nation) },
       toggleShip: {
         home: () => this.setState(s => ({ ship: { ...s.ship, home: !s.ship.home } })),
@@ -14057,7 +14252,12 @@ class Component extends DCLogic {
       privacyAnalytics: this.state.privacyAnalytics,
       privacyMarketing: this.state.privacyMarketing,
       privacySaving: this.state.privacySaving,
-      togglePrivacyPersonalization: () => this.setState(s => ({ privacyPersonalization: !s.privacyPersonalization })),
+      togglePrivacyPersonalization: () => this.setState(s => {
+        const next = !s.privacyPersonalization;
+        // Honour the opt-out in the browser engine immediately: stop profiling.
+        try { const R = getReco(); if (R && R.setConsent) R.setConsent(next); } catch (e) { /* non-fatal */ }
+        return { privacyPersonalization: next };
+      }),
       togglePrivacyAnalytics: () => this.setState(s => ({ privacyAnalytics: !s.privacyAnalytics })),
       togglePrivacyMarketing: () => this.setState(s => ({ privacyMarketing: !s.privacyMarketing })),
       openPrivacy: () => {
@@ -14066,11 +14266,16 @@ class Component extends DCLogic {
         if (api) {
           api.getPrivacy().then(p => {
             if (p && !this._unmounted) {
+              // The server speaks camelCase (personalizedRecommendations,
+              // analyticsConsent, marketingEmails); earlier keys were dropped.
+              const personalization = (p.personalizedRecommendations ?? p.personalization) ?? true;
               this.setState({
-                privacyPersonalization: p.personalization ?? true,
-                privacyAnalytics: p.analytics ?? true,
-                privacyMarketing: p.marketing ?? false
+                privacyPersonalization: personalization,
+                privacyAnalytics: (p.analyticsConsent ?? p.analytics) ?? true,
+                privacyMarketing: (p.marketingEmails ?? p.marketing) ?? false
               });
+              // Mirror the loaded preference into the engine so profiling honours it.
+              try { const R = getReco(); if (R && R.setConsent) R.setConsent(personalization); } catch (e) { /* non-fatal */ }
             }
           }).catch(() => {});
         }
@@ -14089,11 +14294,18 @@ class Component extends DCLogic {
           this.toast(msg);
         };
         if (!api) { fail('LOUMOO is unreachable. Your privacy settings were not saved.'); return; }
+        // Send the server's canonical camelCase keys so the opt-out actually sticks.
         api.updatePrivacy({
-          personalization: this.state.privacyPersonalization,
-          analytics: this.state.privacyAnalytics,
-          marketing: this.state.privacyMarketing
+          personalizedRecommendations: this.state.privacyPersonalization,
+          analyticsConsent: this.state.privacyAnalytics,
+          marketingEmails: this.state.privacyMarketing
         }).then(done).catch(err => fail((err && err.message) || 'Could not save your privacy settings.'));
+      },
+      // Clear the on-device taste profile and ask the server to forget it too.
+      resetRecommendations: () => {
+        const R = getReco();
+        if (R && R.reset) R.reset();
+        this.setState({ toast: 'Your recommendations have been reset' });
       },
 
       // B6. Security & Sessions
@@ -16918,6 +17130,7 @@ class Component extends DCLogic {
         }
         this.setState({ cartItems: list });
         this._persistCart(list);
+        this._recoNote('add_to_cart', this._resolveProductItem(id) || { id: id }, { surface: this.state.screen === 'product' ? 'pdp' : 'card' });
         this.toast('Added ' + name + ' to your bag');
       },
       // Buy now: add the open product to the bag and jump straight to checkout.
@@ -16931,6 +17144,7 @@ class Component extends DCLogic {
         else { const entry = this._cartEntry(id); entry.qty = qtyToAdd; list.push(entry); }
         this.setState({ cartItems: list });
         this._persistCart(list);
+        this._recoNote('add_to_cart', this._resolveProductItem(id) || { id: id }, { surface: 'pdp_buynow' });
         this.go('checkout');
       },
       incCartQty: (id) => {
@@ -17005,6 +17219,13 @@ class Component extends DCLogic {
         this.setState({ orders: list, lastOrder: order, cartItems: [] });
         this._persistOrders(list);
         this._persistCart([]);
+
+        // Purchase is the strongest taste signal: learn every line item.
+        try {
+          for (let i = 0; i < items.length; i++) {
+            this._recoNote('purchase', this._resolveProductItem(items[i].id) || { id: items[i].id, storeName: items[i].store }, { surface: 'checkout' });
+          }
+        } catch (e) { /* non-fatal */ }
 
         // Instant Realtime Notification: Push immediately to in-app notification center and update unread badge
         const firstItemName = (items[0] && items[0].name) || 'item';
@@ -17119,6 +17340,7 @@ class Component extends DCLogic {
         this.setState({ productWishlist: next });
         this._persistWishlist(next);
         this._syncWishlistToBackend(id, !isCurrentlySaved, entry);
+        this._recoNote(!isCurrentlySaved ? 'save' : 'unsave', this._resolveProductItem(id) || entry || { id: id }, { surface: 'wishlist' });
         this.toast(!isCurrentlySaved ? `Saved ${name || 'item'} to your wishlist` : `Removed ${name || 'item'} from wishlist`);
       },
       infiniteFeedBatch: this.state.infiniteFeedBatch || 1,

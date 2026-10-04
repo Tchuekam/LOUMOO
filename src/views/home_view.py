@@ -2607,18 +2607,21 @@ def get_home_view():
       <div style="margin-top:40px;padding-top:24px;border-top:1px solid var(--color-divider)">
         <div class="editorial-section-header" style="margin-bottom:18px">
           <div>
-            <div style="font:800 11px/1 var(--font-heading);letter-spacing:.12em;color:var(--color-accent);text-transform:uppercase">MARKETPLACE FEED</div>
-            <h2 class="editorial-section-title" style="margin-top:4px">Discover More Listings</h2>
+            <div style="font:800 11px/1 var(--font-heading);letter-spacing:.12em;color:var(--color-accent-600);text-transform:uppercase">FOR YOU</div>
+            <h2 class="editorial-section-title" style="margin-top:4px">Picked for you</h2>
           </div>
-          <div style="font:500 13px/1.3 var(--font-body);color:var(--color-text-secondary)">Explore verified products from trusted merchants across Cameroon</div>
+          <div style="font:500 13px/1.3 var(--font-body);color:var(--color-text-secondary)">Learns from what you browse. Tap ⋯ on any card to tune it.</div>
         </div>
 
         <div class="home-grid">
           <sc-for list="{{ homeFeedCards }}" as="card">
-            <div onClick="{{ () => openProduct(card.id) }}" class="loumoo-media-card" aria-label="{{ card.title }}">
+            <div ref="{{ (el) => recoWatch(el, card) }}" onClick="{{ () => openProduct(card.id) }}" class="loumoo-media-card" aria-label="{{ card.title }}">
               <div class="loumoo-card-media-cutout">
                 <sc-if value="{{ card.badge }}"><span class="loumoo-card-badge">{{ card.badge }}</span></sc-if>
                 <sc-if value="{{ !card.badge && card.verified }}"><span class="loumoo-card-badge">✓ Verified</span></sc-if>
+                <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); recoNotInterested(card); } }}" class="loumoo-card-dismiss-btn" aria-label="Not interested in {{ card.title }}" title="Not interested">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                </button>
                 <button onClick="{{ (e) => { e && e.stopPropagation && e.stopPropagation(); toggleProductWishlist(card.id, card.title); } }}" class="loumoo-card-wishlist-btn" aria-label="Save to wishlist">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ isWishlisted(card.id) ? 'var(--color-accent-sale)' : 'none' }}" stroke="{{ isWishlisted(card.id) ? 'var(--color-accent-sale)' : 'currentColor' }}" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
                 </button>
@@ -2627,6 +2630,7 @@ def get_home_view():
               <div class="loumoo-card-body">
                 <h4 class="loumoo-card-title">{{ card.title }}</h4>
                 <div class="loumoo-card-tagline">{{ card.storeLabel }}</div>
+                <sc-if value="{{ card.recoReason }}"><div class="loumoo-card-reason">{{ card.recoReason }}</div></sc-if>
                 <div class="loumoo-card-rating-row"><span>{{ card.ratingLabel }}</span></div>
                 <div class="loumoo-card-bottom-row">
                   <div class="loumoo-card-pricing-block">
