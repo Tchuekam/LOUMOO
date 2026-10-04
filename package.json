@@ -13,6 +13,7 @@
     "verify:runtime": "node verify_runtime.js",
     "build:frontend": "node scripts/build_combi.js && python build_redesign.py",
     "build:combi": "node scripts/build_combi.js",
+    "test:delivery": "node tests/delivery/run.js",
     "test:search": "node tests/search/run.js",
     "test:search:ui": "node tests/search/ui.test.js",
     "test:performance": "node tests/unit/frontend_performance.test.js",
