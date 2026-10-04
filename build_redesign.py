@@ -39,6 +39,11 @@ header_and_styles = """<!DOCTYPE html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>LOUMOO Universal Commerce Marketplace</title>
+<link rel="icon" href="./favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="./Assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="./Assets/brand/icon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="./Assets/brand/apple-touch-icon.png">
+<meta name="theme-color" content="#0025E5">
 <script src="./support.js"></script>
 <!-- Keep the critical API/auth bridges non-blocking; they execute before
      DOMContentLoaded, which is when the DC runtime mounts the app. The
@@ -47,6 +52,7 @@ header_and_styles = """<!DOCTYPE html>
 <script defer src="./src/services/searchExperience.js"></script>
 <link rel="stylesheet" href="./src/styles/search.css">
 <script defer src="./src/services/travelApi.js"></script>
+<script defer src="./src/services/deliveryCircuit.js"></script>
 <script defer src="./src/services/deliveryApi.js"></script>
 <script defer src="./src/services/deliveryTrackingScreen.js"></script>
 <script defer src="./src/services/dispatchUi.js"></script>
@@ -1051,6 +1057,8 @@ html, body {
 .sidebar-brand-group { display: flex; align-items: center; gap: 8px; }
 .sidebar-logo-icon { display: none; width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, var(--color-accent) 0%, #0056b3 100%); color: #fff; align-items: center; justify-content: center; font: 800 18px/1 var(--font-heading); cursor: pointer; box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3); transition: transform .15s ease; }
 .sidebar-logo-icon:hover { transform: scale(1.06); }
+.sidebar-logo-icon { background: #fff !important; border: 1px solid var(--color-divider); box-shadow: none !important; }
+[data-theme="dark"] .brand-wordmark, [data-theme="dark"] .brand-mark { filter: brightness(1.7) saturate(.9); }
 .sidebar-toggle-btn { width: 32px; height: 32px; border-radius: 8px; border: 1px solid transparent; background: transparent; color: var(--color-text-secondary); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.15s ease; flex-shrink: 0; }
 .sidebar-toggle-btn:hover { background: var(--color-surface-hover); color: var(--color-text); border-color: var(--color-divider); }
 .sidebar-section-title { font: 700 9.5px/1 var(--font-heading); letter-spacing: .12em; color: var(--color-text-muted); padding: 10px 10px 6px; text-transform: uppercase; }
@@ -6322,11 +6330,11 @@ html, body {
 <nav class="sidebar-nav {{ sidebarNavClass }}">
   <div class="sidebar-header">
     <div class="sidebar-brand-group">
-      <span style="font:800 20px/1 var(--font-heading);letter-spacing:-.03em;color:var(--color-accent)">LOUMOO</span>
+      <img class="brand-wordmark" src="./Assets/brand/loumoo-wordmark.png" alt="LOUMOO" height="22" style="height:22px;width:auto;display:block">
       <span style="font:800 9px/1 var(--font-heading);letter-spacing:.08em;background:var(--color-accent-100);color:var(--color-accent);padding:2px 6px;border-radius:var(--radius-pill)">UNIVERSAL</span>
     </div>
     <div class="sidebar-logo-icon" onClick="{{ toggleSidebar }}" title="Expand sidebar navigation">
-      <span>L</span>
+      <img class="brand-mark" src="./Assets/brand/loumoo-icon-mark.png" alt="LOUMOO" style="width:24px;height:auto;display:block">
     </div>
     <button onClick="{{ toggleSidebar }}" class="sidebar-toggle-btn" aria-label="Collapse sidebar" title="Collapse sidebar to icon rail">
       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 3v18"/></svg>
@@ -6682,12 +6690,19 @@ function resolveCityDeliveryFee(city) {
   const dynamicRates = (typeof window !== 'undefined' && window.LOUMOO_SYSTEM_SETTINGS && window.LOUMOO_SYSTEM_SETTINGS.shipping_rates_by_city)
     ? window.LOUMOO_SYSTEM_SETTINGS.shipping_rates_by_city
     : defaultRates;
-  if (!city) return dynamicRates['Douala'] || 1000;
-  const c = String(city).trim().toLowerCase();
+  // The SAME rule the server prices the order with (PricingEngine.resolveCityRate),
+  // so the fee shown at checkout is the fee on the order: accents and punctuation
+  // are ignored ("Yaoundé" is the table's "Yaounde"), a rate of 0 is a real rate,
+  // and a city that is not in the table costs the server's default of XAF 3 000.
+  // With no address yet (the bag, before checkout) the Douala rate is only a preview.
+  const fold = (s) => String(s == null ? '' : s).normalize('NFD').toLowerCase().replace(/[^a-z0-9 ]/g, '').replace(/ +/g, ' ').trim();
+  if (!fold(city)) return Number.isInteger(Number(dynamicRates['Douala'])) ? Number(dynamicRates['Douala']) : 1000;
+  const wanted = fold(city);
   for (const k in dynamicRates) {
-    if (k.toLowerCase() === c) return Number(dynamicRates[k]) || 1000;
+    const rate = Number(dynamicRates[k]);
+    if (fold(k) === wanted && Number.isInteger(rate) && rate >= 0) return rate;
   }
-  return dynamicRates['Douala'] || 1000;
+  return 3000;
 }
 const GROUPS = {
   searchTab: ['all','products','stores','services','travel'],
@@ -6941,7 +6956,7 @@ if (typeof window !== 'undefined') {
 
 class Component extends DCLogic {
   state = {
-    screen: 'home', stack: [], cart: 0, cartItems: [], orders: [], lastOrder: null, vs: 2, toast: '', following: false, saved: false,
+    screen: 'home', stack: [], cart: 0, cartItems: [], orders: [], lastOrder: null, lastOrders: [], placingOrder: false, orderError: '', orderErrorItemIds: [], vs: 2, toast: '', following: false, saved: false,
     sidebarCollapsed: true,
     vsFilterMode: 'all',
     vsPriority: 'perf',
@@ -7177,12 +7192,9 @@ class Component extends DCLogic {
     deleteAccountError: '',
 
     // ── Phase D: Order, Review & Vertical State ──
-    currentOrder: {
-      id: 'LM-94820',
-      placedAt: '28 Aug 2026',
-      statusLabel: 'IN TRANSIT',
-      totalFormatted: '748 000'
-    },
+    // The order whose detail is open; set from the list (openOrderById), never
+    // pre-filled, so the detail screen cannot show an order the user does not have.
+    currentOrder: null,
     refundReason: 'damaged',
     refundDetails: '',
     refundPhotoAttached: false,
@@ -8015,7 +8027,7 @@ class Component extends DCLogic {
   };
   // Pull the server-side notification feed (order events, etc.) and merge it
   // into the local activity feed, de-duplicated by server id.
-  loadServerNotifications() {
+  loadServerNotifications(opts) {
     try {
       if (this.state.authStatus !== 'authenticated') return;
       const api = getApi();
@@ -8029,14 +8041,122 @@ class Component extends DCLogic {
           .map((s) => ({
             id: 'srv_' + s.id, serverId: s.id, tone: s.tone || 'accent',
             title: s.title, body: s.body, read: Boolean(s.read),
+            // audience + action say which screen this opens (see docs/DELIVERY_API.md)
+            metadata: s.metadata || {},
             createdAt: new Date(s.createdAt).getTime() || Date.now()
           }));
         if (!mapped.length) return;
         const merged = local.concat(mapped).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)).slice(0, 40);
         this.setState({ notifications: merged });
         this._persistNotifs(merged);
+        // Polling: say what just arrived, so a seller or rider who is looking at
+        // something else still hears that an order or an offer is waiting.
+        const fresh = mapped.filter((n) => !n.read);
+        if (opts && opts.announce && fresh.length) {
+          this.toast(fresh[0].title + (fresh.length > 1 ? ' (+' + (fresh.length - 1) + ' more)' : ''));
+        }
+        // A delivery or order notification means the buyer's orders moved on.
+        if (fresh.some((n) => n.metadata && n.metadata.orderId)) this.loadServerOrders();
       }).catch(() => {});
     } catch (e) {}
+  }
+
+  // Opens the screen a notification is about, for the part the reader plays in it.
+  _openNotification(n) {
+    const circuit = typeof window !== 'undefined' ? window.LoumooCircuit : null;
+    if (!n || !circuit) return;
+    circuit.openFromNotification(n);
+  }
+
+  // ── The delivery circuit: orders and notifications that stay live ──────────
+  // The seller, the rider and the buyer each learn the next step from the
+  // notification feed, so the feed has to be live. It is re-read every 45 s while
+  // the tab is visible and the user is signed in, and as soon as the tab returns
+  // to the foreground; open order screens refresh with it.
+  _startCircuitPolling() {
+    if (typeof window === 'undefined' || typeof document === 'undefined' || this._circuitTimer) return;
+    const tick = () => {
+      if (this._unmounted || document.hidden) return;
+      if (this.state.authStatus !== 'authenticated') return;
+      this.loadServerNotifications({ announce: true });
+      if (this.state.screen === 'orders' || this.state.screen === 'orderDetail') this.loadServerOrders();
+    };
+    this._circuitTimer = setInterval(tick, 45000);
+    this._onCircuitVisible = () => { if (!document.hidden) tick(); };
+    document.addEventListener('visibilitychange', this._onCircuitVisible);
+  }
+  _stopCircuitPolling() {
+    clearInterval(this._circuitTimer);
+    this._circuitTimer = null;
+    if (typeof document !== 'undefined' && this._onCircuitVisible) {
+      document.removeEventListener('visibilitychange', this._onCircuitVisible);
+    }
+    this._onCircuitVisible = null;
+  }
+
+  // Reads the buyer's orders from the server and folds them into the list kept on
+  // the device: the server is the truth for status, the device keeps the pictures.
+  // One read at a time (screen entry fires from two places).
+  loadServerOrders() {
+    try {
+      if (this.state.authStatus !== 'authenticated' || this._ordersInFlight) return;
+      const api = getApi();
+      const circuit = typeof window !== 'undefined' ? window.LoumooCircuit : null;
+      if (!api || !api.getOrders || !circuit) return;
+      this._ordersInFlight = true;
+      api.getOrders({ limit: 50 }).then((page) => {
+        if (this._unmounted) return;
+        const serverOrders = ((page && page.orders) || []).map((o) => circuit.orderFromServer(o, {}));
+        const merged = circuit.mergeOrders(this.state.orders || [], serverOrders);
+        // Keep the open detail pointing at the fresh copy of the same order.
+        const open = this.state.currentOrder;
+        const fresh = open && open.id ? merged.find((o) => o.id === open.id) : null;
+        this.setState(fresh ? { orders: merged, currentOrder: fresh } : { orders: merged });
+        this._persistOrders(merged);
+      }).catch(() => {}).then(() => { this._ordersInFlight = false; });
+    } catch (e) { this._ordersInFlight = false; }
+  }
+
+  // Order detail for an order in the list (looked up by the id the server gave it).
+  _openOrderById(id) {
+    const order = (this.state.orders || []).find((o) => o && o.id === id);
+    if (!order) return;
+    this.setState({ currentOrder: order });
+    this.go('orderDetail');
+  }
+
+  // Sends one order per store to the server, one after another. After each order
+  // the placed items leave the bag, so if a later store fails the shopper is left
+  // with exactly what was not ordered and can try again. Resolves with the orders
+  // that were placed and, if one was refused, why.
+  _placeBagAsOrders(groups, address, method, images) {
+    const api = getApi();
+    const circuit = window.LoumooCircuit;
+    const placed = [];
+    let remaining = (this.state.cartItems || []).slice();
+    let list = (this.state.orders || []).slice();
+    const step = (i) => {
+      if (i >= groups.length) return Promise.resolve({ placed: placed, failure: null });
+      const group = groups[i];
+      return api.createOrder(circuit.toOrderPayload(group.items, address)).then((serverOrder) => {
+        if (!serverOrder || !serverOrder.id) {
+          // A reply without an order means the seller cannot have been told.
+          const unconfirmed = new Error('The order was not confirmed.');
+          unconfirmed.status = 502;
+          return { placed: placed, failure: { error: unconfirmed, group: group } };
+        }
+        const order = circuit.orderFromServer(serverOrder, { images: images, paymentMethod: method });
+        placed.push(order);
+        const gone = new Set(group.items.map((it) => it.id));
+        remaining = remaining.filter((it) => !gone.has(it.id));
+        list = [order].concat(list);
+        this.setState({ orders: list, cartItems: remaining });
+        this._persistOrders(list);
+        this._persistCart(remaining);
+        return step(i + 1);
+      }, (err) => ({ placed: placed, failure: { error: err, group: group } }));
+    };
+    return step(0);
   }
   // City → IATA-ish code + airport label for the boarding pass.
   _cityCode = (city) => {
@@ -8176,6 +8296,9 @@ class Component extends DCLogic {
     }
     // Once auth has had a moment to settle, pull the server notification feed.
     setTimeout(() => { if (!this._unmounted) this.loadServerNotifications(); }, 2000);
+    // Keep the feed (and an open order) live: sellers and riders learn of the next
+    // step from it. See _startCircuitPolling.
+    this._startCircuitPolling();
     if (typeof window !== 'undefined') {
       window._loumooHeroComponent = this;
       window.heroNextSlide = () => {
@@ -8285,6 +8408,7 @@ class Component extends DCLogic {
     clearTimeout(this._heroSlideTimer);
     clearInterval(this._resetTimer);
     clearInterval(this._emailTimer);
+    this._stopCircuitPolling();
     if (typeof window !== 'undefined' && this._handleKeyDown) {
       window.removeEventListener('keydown', this._handleKeyDown);
     }
@@ -8751,6 +8875,9 @@ class Component extends DCLogic {
       this.runCompare();
     } else if (screen === 'superAdmin') {
       this.loadAdminData();
+    } else if (screen === 'orders' || screen === 'orderDetail') {
+      // The server's orders carry the live status; refresh them on entry.
+      this.loadServerOrders();
     }
   }
 
@@ -12583,9 +12710,11 @@ class Component extends DCLogic {
     const cartList = this.state.cartItems || [];
     const cartSubtotal = cartList.reduce((a, it) => a + (Number(it.priceXaf) || 0) * (Number(it.qty) || 1), 0);
     const dynamicSettings = (typeof window !== 'undefined' && window.LOUMOO_SYSTEM_SETTINGS) || this.state.systemSettings || this.state.adminSettings || {};
-    const deliveryCity = this.state.regCity || (this.state.addressFormCity || 'Douala');
+    // The delivery fee follows the city the order will be delivered to (the same
+    // address placeOrder sends), because the server prices the order from that city.
+    const addrForFee = this.state.selectedDeliveryAddress || (this.state.addressesList && (this.state.addressesList.find(a => a.isDefault) || this.state.addressesList[0]));
+    const deliveryCity = (addrForFee && addrForFee.city) || this.state.regCity || (this.state.addressFormCity || 'Douala');
     const deliveryFee = cartSubtotal > 0 ? resolveCityDeliveryFee(deliveryCity) : 0;
-    const escrowFee = cartSubtotal > 0 ? (dynamicSettings.platform_commission_rate && Number.isFinite(Number(dynamicSettings.platform_commission_rate.payout_fee_fixed_xaf)) ? Number(dynamicSettings.platform_commission_rate.payout_fee_fixed_xaf) : 3000) : 0;
     const line = cartSubtotal;
     const items = cartSubtotal;
     const shipStyle = o => ({
@@ -12631,9 +12760,11 @@ class Component extends DCLogic {
       cartSubtotalLabel: 'XAF ' + fmt(items),
       cartDeliveryFee: deliveryFee,
       cartDeliveryFeeLabel: 'XAF ' + fmt(deliveryFee),
-      cartTotal: 'XAF ' + fmt(items + deliveryFee + escrowFee),
-      cartEscrowLabel: escrowFee > 0 ? ('XAF ' + fmt(escrowFee)) : 'XAF 0',
-      payLabel: 'PAY XAF ' + fmt(items + deliveryFee + escrowFee) + ' WITH MOMO',
+      // Items + delivery: exactly what the server will price the order at. (The
+      // 3 000 "escrow protection fee" that used to be added here was never part of
+      // the order, and no payment is taken yet, so it cannot be charged.)
+      cartTotal: 'XAF ' + fmt(items + deliveryFee),
+      payLabel: 'PAY XAF ' + fmt(items + deliveryFee) + ' WITH MOMO',
       hasAnnouncementBanner: Boolean(dynamicSettings.announcement_banner && (dynamicSettings.announcement_banner.enabled !== false && dynamicSettings.announcement_banner.active !== false)),
       announcementBannerText: (dynamicSettings.announcement_banner && (dynamicSettings.announcement_banner.text_fr || dynamicSettings.announcement_banner.message)) || '',
       isMaintenanceMode: Boolean(dynamicSettings.maintenance_mode && dynamicSettings.maintenance_mode.enabled),
@@ -16819,16 +16950,79 @@ class Component extends DCLogic {
         const n = (this.state.notifications || []).filter((x) => !x.read).length;
         return n > 9 ? '9+' : (n > 0 ? String(n) : '');
       })(),
-      notifList: (this.state.notifications || []).map((n) => ({
-        id: n.id,
-        title: n.title,
-        body: n.body,
-        read: Boolean(n.read),
-        toneColor: n.tone === 'success' ? 'var(--color-success)' : (n.tone === 'sale' ? 'var(--color-accent-sale)' : 'var(--color-accent)'),
-        dateLabel: this._orderDateLabel(n.createdAt)
-      })),
+      notifList: (this.state.notifications || []).map((n) => {
+        const action = (n.metadata && n.metadata.action) || '';
+        const openLabels = { track_order: 'Track order', open_dispatch: 'Open deliveries', open_rider_hub: 'Open rider jobs', open_riders_admin: 'Open riders' };
+        return {
+          id: n.id,
+          title: n.title,
+          body: n.body,
+          read: Boolean(n.read),
+          toneColor: n.tone === 'success' ? 'var(--color-success)' : (n.tone === 'sale' ? 'var(--color-accent-sale)' : 'var(--color-accent)'),
+          dateLabel: this._orderDateLabel(n.createdAt),
+          // A delivery or order notification opens the screen it is about.
+          canOpen: Boolean(openLabels[action]),
+          openLabel: openLabels[action] || '',
+          open: () => this._openNotification(n)
+        };
+      }),
       markNotifsRead: () => this._markNotifsRead(),
+      // ── Placing an order (checkout) ──
+      placingOrder: Boolean(this.state.placingOrder),
+      placeOrderLabel: this.state.placingOrder ? 'PLACING YOUR ORDER…' : 'PLACE ORDER · XAF ' + fmt(items + deliveryFee),
+      placeOrderArrow: this.state.placingOrder ? '' : '→',
+      orderError: this.state.orderError || '',
+      orderErrorHasItems: (this.state.orderErrorItemIds || []).length > 0,
+      // ── The order whose detail is open: only ever a real order the user has ──
+      orderView: (() => {
+        const o = this.state.currentOrder;
+        const money = (n) => 'XAF ' + fmt(n || 0);
+        if (!o) {
+          return { id: '', orderNumber: '', placedAt: '', statusLabel: '', totalLabel: '', payVia: '', items: [], subtotalLabel: '', shippingLabel: '', cityLabel: '', seller: '', sellerPhone: '', canTrack: false, noTrackNote: '' };
+        }
+        const circuit = typeof window !== 'undefined' ? window.LoumooCircuit : null;
+        const sent = Boolean(o.id) && o.serverSynced !== false;
+        const home = (o.deliveryMethod || 'HOME_DELIVERY') === 'HOME_DELIVERY';
+        const cancelled = o.status === 'cancelled';
+        const items = (o.items || []).map((it) => ({
+          name: it.name,
+          image: it.image || '',
+          qty: it.qty || 1,
+          store: it.store || o.seller || '',
+          priceLabel: money((Number(it.priceXaf) || 0) * (Number(it.qty) || 1))
+        }));
+        const subtotal = o.subtotalXaf != null
+          ? o.subtotalXaf
+          : (o.items || []).reduce((n, it) => n + (Number(it.priceXaf) || 0) * (Number(it.qty) || 1), 0);
+        let noTrackNote = '';
+        if (!sent) noTrackNote = 'This order was saved on this device only, so no seller or rider knows about it. Add the items to your bag again to place it.';
+        else if (cancelled) noTrackNote = 'This order was cancelled.';
+        else if (!home) noTrackNote = 'This order is for pickup, so there is no delivery to track.';
+        return {
+          id: o.id || '',
+          orderNumber: o.orderNumber || '',
+          placedAt: this._orderDateLabel(o.createdAt),
+          statusLabel: circuit ? circuit.orderStatusLabel(o) : this._orderStatusLabel(o.status),
+          totalLabel: money(o.totalXaf),
+          // " via MTN MoMo" only when a method was actually chosen on this device.
+          payVia: o.paymentMethod && o.paymentMethod !== 'Pay on delivery' ? ' via ' + o.paymentMethod : '',
+          items: items,
+          subtotalLabel: money(subtotal),
+          shippingLabel: o.shippingFeeXaf != null ? money(o.shippingFeeXaf) : '—',
+          cityLabel: o.address && o.address.city ? ' (' + o.address.city + ')' : '',
+          seller: o.seller || 'the seller',
+          sellerPhone: o.sellerPhone || o.sellerWhatsapp || '',
+          canTrack: sent && home && !cancelled,
+          noTrackNote: noTrackNote
+        };
+      })(),
       // ── Order confirmation (success screen) ──
+      lastOrderId: this.state.lastOrder ? (this.state.lastOrder.id || '') : '',
+      lastOrdersTitle: (this.state.lastOrders || []).length > 1 ? (this.state.lastOrders.length + ' orders placed!') : 'Order placed!',
+      lastOrdersHasMore: (this.state.lastOrders || []).length > 1,
+      lastOrdersMoreNote: (this.state.lastOrders || []).length > 1
+        ? 'Your bag had items from ' + this.state.lastOrders.length + ' stores, so each store has its own order and its own delivery: ' + this.state.lastOrders.map((o) => '#' + o.orderNumber).join(', ') + '.'
+        : '',
       lastOrderNumber: this.state.lastOrder ? this.state.lastOrder.orderNumber : '',
       lastOrderTotal: this.state.lastOrder ? ('XAF ' + fmt(this.state.lastOrder.totalXaf)) : '',
       lastOrderSeller: this.state.lastOrder ? this.state.lastOrder.seller : 'the seller',
@@ -16842,9 +17036,14 @@ class Component extends DCLogic {
       // ── Order history ──
       ordersHasItems: (this.state.orders || []).length > 0,
       ordersList: (this.state.orders || []).map((o) => ({
+        id: o.id || '',
+        // Only an order the server holds can be opened and tracked; an older,
+        // device-only order never reached a seller and says so.
+        canOpen: Boolean(o.id) && o.serverSynced !== false,
+        notSent: !o.id || o.serverSynced === false,
         orderNumber: o.orderNumber,
         dateLabel: 'Placed ' + this._orderDateLabel(o.createdAt),
-        statusLabel: this._orderStatusLabel(o.status),
+        statusLabel: (typeof window !== 'undefined' && window.LoumooCircuit) ? window.LoumooCircuit.orderStatusLabel(o) : this._orderStatusLabel(o.status),
         itemsSummary: (o.items || []).map((it) => (it.qty > 1 ? (it.qty + '× ') : '') + it.name).join(', '),
         firstImage: (o.items && o.items[0] && o.items[0].image) || '',
         itemCountLabel: o.itemCount + (o.itemCount === 1 ? ' item' : ' items'),
@@ -16852,7 +17051,7 @@ class Component extends DCLogic {
         seller: o.seller,
         sellerPhone: o.sellerPhone || o.sellerWhatsapp || (o.items && o.items[0] && o.items[0].storePhone) || '',
         sellerWhatsapp: o.sellerWhatsapp || o.sellerPhone || (o.items && o.items[0] && o.items[0].storePhone) || '',
-        payLabel: (o.paymentMethod || 'Pay on delivery') + ' · pay on delivery'
+        payLabel: (o.paymentMethod && o.paymentMethod !== 'Pay on delivery' ? o.paymentMethod + ' · ' : '') + 'pay on delivery'
       })),
       vsCount: this.state.vs,
       vsFilterAll: this.state.vsFilterMode === 'all',
@@ -17163,120 +17362,106 @@ class Component extends DCLogic {
         this._persistCart(list);
         this.toast('Removed from bag');
       },
-      // Place the order from the bag. Payment is deferred, so the order is
-      // created as "pending / pay on delivery" — no charge is taken.
+      // Place the order from the bag. The SERVER creates the order: the server's
+      // order is the one the seller is told about, the rider delivers and the buyer
+      // tracks, so an order that exists only in this browser reaches nobody. One
+      // order per store (an order has exactly one seller). Nothing is shown as
+      // placed until the server confirms it, and a refusal keeps the bag and says
+      // why. Payment is deferred, so the order is "pay on delivery": no charge.
       placeOrder: () => {
+        if (this.state.placingOrder || this._placingNow) return;
         const cart = this.state.cartItems || [];
         if (!cart.length) { this.toast('Your bag is empty'); return; }
-        const subtotal = cart.reduce((a, it) => a + (Number(it.priceXaf) || 0) * (Number(it.qty) || 1), 0);
-        const escrow = subtotal > 0 ? 3000 : 0;
-        const total = subtotal + escrow;
-        const orderNumber = 'LM-' + Date.now().toString(36).toUpperCase().slice(-6);
+        if (this.state.authStatus !== 'authenticated') {
+          // Orders belong to an account. The bag is kept on this device, and
+          // signing in brings the shopper straight back to checkout.
+          this.toast('Sign in to place your order');
+          this.setState({ postAuthRedirect: 'checkout' });
+          this.go('signIn');
+          return;
+        }
+        const api = getApi();
+        const circuit = typeof window !== 'undefined' ? window.LoumooCircuit : null;
+        if (!api || typeof api.createOrder !== 'function' || !circuit) {
+          this.setState({ orderError: 'Ordering is unavailable right now. Your bag is saved: please try again in a moment.', orderErrorItemIds: [] });
+          return;
+        }
+
+        // The rider needs a real place to go and a number to call. Do not invent
+        // either: without them the delivery would be sent to a made-up address.
+        const selAddr = this.state.selectedDeliveryAddress || (this.state.addressesList && (this.state.addressesList.find(a => a.isDefault) || this.state.addressesList[0]));
+        const address = {
+          fullName: (selAddr && selAddr.recipientName)
+            || [this.state.regFirstName, this.state.regLastName].filter(Boolean).join(' '),
+          phone: (selAddr && selAddr.phoneNumber) || this.state.regPhone || '',
+          street: (selAddr && selAddr.streetAddress) || '',
+          city: (selAddr && selAddr.city) || this.state.regCity || ''
+        };
+        if (!address.street.trim() || String(address.phone).replace(/[^0-9]/g, '').length < 6 || !address.city.trim() || address.fullName.trim().length < 2) {
+          this.setState({ orderError: 'Add a delivery address with your name, street, city and phone number, so the rider knows where to go and how to reach you.', orderErrorItemIds: [] });
+          return;
+        }
+
         const payMap = { mtn: 'MTN MoMo', om: 'Orange Money', card: 'Bank card' };
         const method = payMap[this.state.sel && this.state.sel.pay] || 'Pay on delivery';
+        const images = {};
+        cart.forEach((it) => { images[String(it.id)] = it.image || ''; });
+        const groups = circuit.groupByStore(cart);
 
-        const selAddr = this.state.selectedDeliveryAddress || (this.state.addressesList && (this.state.addressesList.find(a => a.isDefault) || this.state.addressesList[0]));
-        const recipientName = (selAddr && selAddr.recipientName)
-          || [this.state.regFirstName, this.state.regLastName].filter(Boolean).join(' ')
-          || 'LOUMOO customer';
-        const recipientPhone = (selAddr && selAddr.phoneNumber) || this.state.regPhone || '690 12 34 56';
-        const street = (selAddr && selAddr.streetAddress) || 'Rue Joss, Bonanjo Commercial District';
-        const city = (selAddr && selAddr.city) || this.state.regCity || 'Douala';
+        this._placingNow = true;
+        this.setState({ placingOrder: true, orderError: '', orderErrorItemIds: [] });
+        const finish = (patch) => { this._placingNow = false; if (!this._unmounted) this.setState(Object.assign({ placingOrder: false }, patch || {})); };
 
-        const address = {
-          name: recipientName,
-          phone: recipientPhone,
-          city: city,
-          street: street
-        };
-        const items = cart.map((it) => ({
-          id: it.id,
-          name: it.name || it.title || 'Product',
-          image: it.image || '',
-          priceXaf: it.priceXaf,
-          qty: it.qty,
-          store: it.store || 'LOUMOO seller',
-          storePhone: it.storePhone || it.sellerPhone || null
-        }));
-        const primarySellerPhone = (items[0] && (items[0].storePhone || items[0].sellerPhone)) || null;
-        const order = {
-          orderNumber: orderNumber,
-          status: 'pending',
-          paymentStatus: 'pending',
-          paymentMethod: method,
-          items: items,
-          itemCount: items.reduce((n, it) => n + (Number(it.qty) || 1), 0),
-          subtotalXaf: subtotal,
-          escrowXaf: escrow,
-          totalXaf: total,
-          seller: (items[0] && items[0].store) || 'LOUMOO seller',
-          sellerPhone: primarySellerPhone,
-          sellerWhatsapp: primarySellerPhone,
-          address: address,
-          createdAt: Date.now()
-        };
-        const list = [order].concat(this.state.orders || []);
-        this.setState({ orders: list, lastOrder: order, cartItems: [] });
-        this._persistOrders(list);
-        this._persistCart([]);
-
-        // Purchase is the strongest taste signal: learn every line item.
-        try {
-          for (let i = 0; i < items.length; i++) {
-            this._recoNote('purchase', this._resolveProductItem(items[i].id) || { id: items[i].id, storeName: items[i].store }, { surface: 'checkout' });
+        this._placeBagAsOrders(groups, address, method, images).then((res) => {
+          if (this._unmounted) { this._placingNow = false; return; }
+          const placed = res.placed;
+          if (placed.length) {
+            // Purchase is the strongest taste signal: learn every line item.
+            try {
+              placed.forEach((o) => (o.items || []).forEach((it) => {
+                this._recoNote('purchase', this._resolveProductItem(it.id) || { id: it.id, storeName: it.store }, { surface: 'checkout' });
+              }));
+            } catch (e) { /* non-fatal */ }
+            // The server has queued the buyer's and the seller's notifications;
+            // pull ours once it has had a moment to write them.
+            setTimeout(() => { if (!this._unmounted) this.loadServerNotifications(); }, 1500);
+            this.setState({ lastOrder: placed[0], lastOrders: placed });
           }
-        } catch (e) { /* non-fatal */ }
-
-        // Instant Realtime Notification: Push immediately to in-app notification center and update unread badge
-        const firstItemName = (items[0] && items[0].name) || 'item';
-        const notifBody = 'Order ' + orderNumber + ' confirmed (' + firstItemName + (items.length > 1 ? ' +' + (items.length - 1) + ' more' : '') + ') · Pay on delivery via ' + method + ' (XAF ' + fmt(total) + ').';
-        this._pushNotif({
-          tone: 'accent',
-          title: 'Order ' + orderNumber + ' confirmed',
-          body: notifBody
+          if (res.failure) {
+            const why = circuit.explainOrderError(res.failure.error, res.failure.group.items);
+            if (why.kind === 'auth') {
+              this.toast(why.message);
+              finish({ postAuthRedirect: 'checkout' });
+              this.go('signIn');
+              return;
+            }
+            const done = placed.length
+              ? (placed.length === 1 ? '1 order was placed (see My Orders). ' : placed.length + ' orders were placed (see My Orders). ')
+              : '';
+            finish({ orderError: done + why.message, orderErrorItemIds: why.itemIds });
+            return;
+          }
+          finish();
+          this.toast('Order ' + placed[0].orderNumber + ' placed');
+          this.go('success');
+        }).catch(() => {
+          finish({ orderError: 'Something went wrong while placing your order. Check My Orders before trying again.', orderErrorItemIds: [] });
         });
-
-        // Try Web Notification if supported and permitted
-        try {
-          if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
-            new Notification('LOUMOO — Order Confirmed', {
-              body: notifBody,
-              icon: '/favicon.ico'
-            });
-          }
-        } catch (_) {}
-
-        // Mirror to backend order service
-        const authed = this.state.authStatus === 'authenticated';
-        try {
-          const api = getApi();
-          if (api && typeof api.createOrder === 'function') {
-            const serverPayload = {
-              orderNumber: orderNumber,
-              items: cart.map(it => ({
-                id: String(it.id || it.listingId || it.productId || 'item_1'),
-                listingId: String(it.listingId || it.productId || it.id || 'item_1'),
-                quantity: Math.max(1, parseInt(it.qty, 10) || 1),
-                unitPriceXaf: Number(it.priceXaf) || 0,
-                title: it.name || it.title || 'Product'
-              })),
-              shippingAddress: {
-                fullName: recipientName,
-                phone: recipientPhone,
-                street: street,
-                city: city
-              },
-              deliveryMethod: 'HOME_DELIVERY',
-              totalAmountXaf: total
-            };
-            api.createOrder(serverPayload)
-              .then(() => { if (!this._unmounted) this.loadServerNotifications(); })
-              .catch(() => {});
-          }
-        } catch (e) {}
-
-        this.toast('🎉 Order ' + orderNumber + ' confirmed! Notification sent.');
-        this.go('success');
+      },
+      // The server refused items that cannot be ordered (showcase products): drop
+      // them so the rest of the bag can go through.
+      removeUnavailableItems: () => {
+        const gone = new Set(this.state.orderErrorItemIds || []);
+        const list = (this.state.cartItems || []).filter((it) => !gone.has(it.id));
+        this.setState({ cartItems: list, orderError: '', orderErrorItemIds: [] });
+        this._persistCart(list);
+        this.toast('Removed from your bag');
+        if (!list.length) this.go('cart');
+      },
+      openOrderById: (id) => this._openOrderById(id),
+      openLastOrder: () => {
+        const o = this.state.lastOrder;
+        if (o && o.id) this._openOrderById(o.id); else this.go('orders');
       },
       addToVs: () => { this.setState(st => ({ vs: st.vs + 1 })); this.go('vsCompare'); },
       claimGift: () => this.toast('Gift claimed. The seller will message you shortly.'),

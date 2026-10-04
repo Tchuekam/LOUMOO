@@ -409,6 +409,14 @@ if (require.main === module) {
   const offerSweeper = startOfferSweeper({ service: getSharedDeliveryService() });
   if (offerSweeper.timer) workers.push(offerSweeper.timer);
 
+  // A deployment whose delivery migration was never applied would otherwise show
+  // it only when the first seller or rider opens a screen. Say it at boot, once.
+  getSharedDeliveryService().repo.probe()
+    .then((p) => {
+      if (!p.ready) logger.error(`[Delivery] NOT READY: ${p.reason}. Delivery endpoints answer 503 until it is applied.`);
+    })
+    .catch(() => { /* a failed check must never stop the server booting */ });
+
   // Graceful shutdown — Railway / Kubernetes / Docker send SIGTERM before
   // killing the process. Drained in-flight requests, stopped workers, closed
   // Redis and exited cleanly so no event is half-written.

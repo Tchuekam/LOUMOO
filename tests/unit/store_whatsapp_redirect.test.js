@@ -178,6 +178,16 @@ async function run() {
   }
 
     const mockApi = {
+      // The server creates the order and takes the seller's phone from the listing's
+      // store; the fake does the same from the phone the test set on the cart item.
+      createOrder: async (payload) => ({
+        id: 'ord_wa_1', orderNumber: 'KM-WA-1', buyerId: 'b', sellerId: 's', sellerPhone: '699334455',
+        subtotalXaf: 950000, shippingFeeXaf: 1500, totalAmountXaf: 951500,
+        items: payload.items.map((it) => ({ listingId: it.listingId, title: it.title, unitPriceXaf: it.unitPriceXaf, quantity: it.quantity, storeName: 'Elite Computers Douala', storePhone: '699334455', imageUrl: null })),
+        shippingAddress: payload.shippingAddress, deliveryMethod: 'HOME_DELIVERY', paymentStatus: 'pending', fulfillmentStatus: 'processing', createdAt: new Date().toISOString()
+      }),
+      getOrders: async () => ({ orders: [], total: 0 }),
+      getNotifications: async () => [],
       updateStore: async (storeId, payload) => {
         lastUpdatedStorePayload = { storeId, payload };
         return { success: true };
@@ -209,7 +219,8 @@ async function run() {
         location: { href: '' },
         open: (url) => { lastOpenedUrl = url; return true; },
         navigator: { userAgent: 'NodeTest' },
-        LoumooAPI: mockApi
+        LoumooAPI: mockApi,
+        LoumooCircuit: require('../../src/services/deliveryCircuit')
       },
       localStorage: {
         _store: {},
@@ -295,13 +306,16 @@ async function run() {
     }
   });
 
-  // Call placeOrder
+  // Call placeOrder. Orders belong to an account and are created on the server, so
+  // the shopper is signed in and the placed order is the one the server returns.
+  comp.setState({ authStatus: 'authenticated' });
   const initialOrdersCount = (comp.state.orders || []).length;
   comp.renderVals().placeOrder();
+  for (let i = 0; i < 200 && comp.state.orders.length === initialOrdersCount; i += 1) await new Promise((r) => setTimeout(r, 5));
   assert.strictEqual(comp.state.orders.length, initialOrdersCount + 1, 'New order must be appended to orders list');
   const placed = comp.state.orders[0];
-  assert.strictEqual(placed.sellerPhone, '699334455', 'Placed order must snapshot sellerPhone from cart item');
-  assert.strictEqual(placed.sellerWhatsapp, '699334455', 'Placed order must snapshot sellerWhatsapp');
+  assert.strictEqual(placed.sellerPhone, '699334455', 'Placed order must carry the sellerPhone the server took from the store');
+  assert.strictEqual(placed.sellerWhatsapp, '699334455', 'Placed order must carry sellerWhatsapp');
   assert.strictEqual(placed.items[0].storePhone, '699334455', 'Placed order item must retain storePhone');
 
   // Verify ordersList projection in renderVals()

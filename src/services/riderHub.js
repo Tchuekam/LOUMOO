@@ -64,7 +64,7 @@
           return api.riderOverview().then(function (res) {
             if (!page.alive) return;
             data = res;
-            page.setTitle('Your deliveries', 'Hi ' + firstName(res.driver && res.driver.name) + ' — here’s your work.');
+            page.setTitle('Your deliveries', 'You are the rider · Hi ' + firstName(res.driver && res.driver.name));
             // Redraw only when the jobs changed: a background refresh must not
             // rebuild the cards under the rider's thumb (countdowns tick on their own).
             var next = JSON.stringify(res.deliveries || []);
@@ -461,13 +461,10 @@
 
           if (d.status === 'delivered') return drawDone();
 
-          // progress through the job (from acceptance on)
-          if (ph.step > 0) {
-            var steps = '<div class="ldx-steps" style="margin:0 4px 16px" aria-hidden="true">';
-            for (var i = 1; i <= 3; i++) steps += '<span class="ldx-step' + (i <= ph.step ? ' is-done' : '') + '"></span>';
-            steps += '</div>';
-            page.content.insertAdjacentHTML('beforeend', steps);
-          }
+          // Where the order is across all four parties, whose move it is, and that
+          // you are the rider: the same strip the buyer and seller see.
+          var strip = window.LoumooCircuit ? window.LoumooCircuit.stripCard(d, 'rider') : null;
+          if (strip) { strip.style.marginBottom = '16px'; page.content.appendChild(strip); }
 
           // map
           if (!map) map = jobMap(d); else map.update(d);

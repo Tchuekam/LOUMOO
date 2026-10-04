@@ -113,6 +113,57 @@ with a deadline in the past; accept still refuses it.
 Clients should show the countdown from `offerExpiresAt` (see the Delivery object)
 but never decide expiry themselves: the server's clock is the only one that counts.
 
+## Who is told what
+
+The circuit has four parties, and each hears about the moments that concern them.
+Every notification carries `metadata.audience` (`buyer`, `seller`, `rider`, `admin`: the
+part the recipient plays *on that delivery*, stated by the server, never guessed from ids)
+and `metadata.action` (which screen the client opens when it is tapped), plus
+`deliveryId` and `orderId` when there are any.
+
+| `audience` | `action` | Screen |
+|---|---|---|
+| `buyer` | `track_order` | the live tracker |
+| `seller` | `open_dispatch` | the dispatch board (at `orderId` when given) |
+| `rider` | `open_rider_hub` | the rider's jobs |
+| `admin` | `open_dispatch` | the dispatch board (an admin sees every seller's) |
+
+| Moment | Buyer | Seller | Rider | Admin |
+|---|---|---|---|---|
+| Order placed (`POST /api/v1/orders`) | confirmation | **new order to deliver** (starts the circuit) | | |
+| Delivery created | a rider is being found | | | |
+| No delivery / no rider after 15 min | | **reminder: the order still needs a rider** | | |
+| No delivery / no rider after 45 min | | | | **one alert for every order that crossed the line** |
+| Rider offered the job | | | **new offer** (with the time they have) | |
+| Job given to another rider | | | **no longer yours** | |
+| Offer accepted | rider is coming | **have the parcel ready** | | |
+| Offer declined / lapsed | | rider declined / did not respond | (lapse) offer expired | |
+| Picked up | on its way | **parcel collected** | | |
+| Arrived | rider has arrived (read your code) | **rider is at the customer** | | |
+| Delivered | delivered | delivered | | |
+| Failed (rider, or admin `fail`) | could not be completed | failed | (admin `fail`) job closed | |
+| Cancelled | cancelled | | cancelled (if they held it) | |
+| Handover locked (5 wrong codes) | | locked | | **needs you** |
+| Admin `unlock` | your code changed | | **unlocked: ask for the new code** | |
+| Rider registered / suspended | | | **you are now a rider / access paused** | |
+| Rider suspended mid-delivery | | suspended | access paused | **still holds a parcel** |
+
+Bold entries are new. Notifications are written by the server on the event, so the
+client has to read the feed: `GET /api/v1/users/me/notifications` (the app re-reads it
+every 45 s while a tab is visible and signed in, and when the tab returns to the
+foreground). Notification text never contains the customer's name, phone or street.
+Alerts go to every live administrator (profile `primary_role` `admin` / `super_admin`,
+not suspended or deleted), at most 20.
+
+### Placing the order
+
+A delivery needs an order the **server** created: the seller is taken from the listing,
+the price from the server (a `totalAmountXaf` that disagrees is refused), and the order
+number is the server's. `POST /api/v1/orders` therefore refuses an order whose items come
+from more than one seller (`400`, `details[0].code = "MULTI_SELLER_ORDER"`); the
+checkout places one order per store. Items that are not real listings (showcase
+products) answer `404`. The order can only be placed by a signed-in account.
+
 ## Response shapes (`data`)
 | Endpoint | HTTP | `data` |
 |---|---|---|
@@ -176,10 +227,27 @@ phone, notes or exact point; the UI must render a job card from `area` + rounded
 
 ### ETA and distance
 v0 method: straight-line distance × 1.3 (road factor) at an assumed 20 km/h.
-They are `null` unless the drop-off has coordinates. **The checkout address has no
-coordinates today**, so coordinates must be supplied by the seller when creating
-the delivery (`dropoffLocation`, below), or by a future address-picker. The
-frontend must handle `etaMinutes: null` and `lastLocation` without a destination.
+They are `null` unless the drop-off has coordinates, and the checkout address has none.
+So when a delivery is created without `dropoffLocation`, **the server geocodes the
+drop-off address itself** (`infrastructure/Geocoder.js`): once, at creation, bounded to
+about 2.5 s, cached, one request at a time at the rate Nominatim's policy asks for. It
+is best effort: if the geocoder is off, down, slow or finds nothing, the delivery is
+created exactly as before, without coordinates (a seller's own `dropoffLocation` is
+never overwritten). Settings:
+
+| Variable | Meaning |
+|---|---|
+| `DELIVERY_GEOCODER_URL` | search endpoint; default the public OpenStreetMap Nominatim; `off` disables it |
+| `DELIVERY_GEOCODER_COUNTRY` | restrict results to this ISO country code (default `cm`) |
+| `DELIVERY_GEOCODER_USER_AGENT` | Nominatim requires an identifying User-Agent (a default is sent) |
+
+**What leaves the server:** the customer's drop-off address (street, neighbourhood, city)
+goes to that service. The default is the same public service the buyer's tracker already
+asks from the browser. To keep addresses off a third party, run your own Nominatim and
+point the variable at it, or switch it off. The address is never logged. With
+coordinates, the rider sees only the area and a point rounded to about 1 km until they
+accept (the table below), and the buyer's map marker is exact. The frontend must still
+handle `etaMinutes: null` and `lastLocation` without a destination.
 
 ## Endpoints
 
@@ -298,7 +366,51 @@ was replaced or declined) · `409` illegal transition / already exists / changed
 someone else · `409 OFFER_EXPIRED` accepting an offer whose window lapsed ·
 `409 NO_RIDER_AVAILABLE` auto-assign found no eligible rider · `423` handover locked ·
 `429` too many open streams (or the global rate limit, see decision 7) · `501` live
-streaming unsupported on this deployment.
+streaming unsupported on this deployment · `503 DELIVERY_NOT_READY` (production only)
+the delivery tables do not exist in this database: migrations 013 and 014 have not been
+applied. Every delivery endpoint answers it, reads included, rather than looking like an
+empty system; the server logs the cause and says so once at boot.
+
+## Deploying delivery
+
+1. **Migrations**, in this order, on the production database:
+   `010_notifications.sql` (without it notifications live only in one process's memory,
+   which is lost between serverless invocations), `013_delivery_tracking.sql`,
+   `014_delivery_offer_indexes.sql`, and optionally `016_orders_open_status_index.sql` (an
+   index for the reminder job's and the admin board's "open orders, newest first" read:
+   nothing breaks without it, those reads are just slower on a large orders table). Apply
+   the files you are missing one at a time:
+   `node scripts/apply_migration.js 013_delivery_tracking.sql`. `--all` re-applies every
+   file and **stops at the first one that fails**; every migration is now re-runnable (a
+   test applies the whole set twice on a real Postgres engine), but if your database was
+   migrated by hand, prefer the single-file form. Two migrations are numbered 014 (the
+   other is universal search); they are independent.
+2. **Environment**: `SUPABASE_JWT_SECRET` (handover codes are derived from it; the
+   server will not issue one without it), optionally `DELIVERY_OFFER_TTL_MINUTES`, the
+   `DELIVERY_GEOCODER_*` settings above and `DELIVERY_UNDISPATCHED_SELLER_MINUTES` /
+   `DELIVERY_UNDISPATCHED_ADMIN_MINUTES` (decision 13).
+3. **Runtime**: Railway (a long-lived process) gives the live stream and the offer
+   sweeper. Netlify/Vercel work through polling and release-on-read, as described above,
+   but a seller there hears about a lapsed offer only when something touches it.
+4. **First rider**: an administrator opens *Riders* in the admin screen, finds the
+   person's account and registers them. They are told, and *Deliver with LOUMOO* in their
+   account then shows their offers.
+5. **Check**: run `npm run delivery:readiness` with the production credentials in
+   `.env.local`. It is read-only (it only SELECTs) and reports PASS / WARN / FAIL for: the
+   delivery tables and the columns the code uses, the notifications table, an active rider,
+   an administrator, a published listing, the JWT secret, offer expiry and the runtime. It
+   exits 1 if anything blocks. Add `-- --live` (`npm run delivery:readiness -- --live`) to
+   also geocode one landmark ("Bonanjo, Douala", never an address from your data), which
+   proves the geocoder is reachable from that network; without it the check sends nothing.
+   Then place an order as a customer: the seller's account gets
+   *New order … to deliver*, and the boot log has no `[Delivery] NOT READY` line.
+
+What is and is not verified without a deployment: `npm run test:delivery` runs the real
+migration files on an in-memory Postgres and checks the database rules the code relies on
+(one open delivery per order, status and range checks, what deleting an account does,
+row-level security, a notification row as the service writes it). It cannot know whether
+the migrations have been applied **to your project**: that is what the readiness check
+is for.
 
 ## Decisions taken (change here first if you disagree)
 1. **Who assigns riders?** The order's seller or an admin.
@@ -357,3 +469,31 @@ streaming unsupported on this deployment.
     visibility is unwanted, show only a coarse free/busy flag, or only the caller's
     own count, and keep the global count for ranking. **Needs the owner's
     confirmation.**
+12. **One order, one seller.** The seller receives the order, arranges its delivery and
+    is paid for it, so an order with items from two stores is refused and the checkout
+    places one order per store. (Before, the second store's goods were filed under the
+    first store's seller and that store never heard of them.)
+13. **Administrators are told, not just the seller.** The service says "an administrator
+    must resolve this" for a locked handover and for a suspended rider who still holds a
+    parcel; those now alert every live administrator. A delivery that goes right never
+    does.
+    **An order nobody is arranging is chased.** The offer sweeper (once a minute, on a
+    long-lived runtime) looks for orders that are `processing` with no delivery, a cancelled
+    one that was not replaced, or one still `pending_assignment`. After
+    `DELIVERY_UNDISPATCHED_SELLER_MINUTES` (default 15) the seller gets a reminder; after
+    `DELIVERY_UNDISPATCHED_ADMIN_MINUTES` (default 45) administrators get ONE alert for
+    everything that newly crossed the line. `0` switches a tier off. Each fires once per order
+    for the life of the process. What was already said is held in memory, not stored, so there
+    is no migration, and a restart can repeat a reminder once (an order older than a day is
+    never chased). An order with a rider on it, one whose delivery failed (the seller was told
+    then), and delivered, cancelled, refunded and pickup orders are left alone. A serverless
+    runtime has no sweeper, so nobody is chased there.
+14. **Delivery fee on the checkout equals the order's.** The checkout shows items plus the
+    delivery fee for the address's city (the same setting the server prices from) and
+    sends no total. The old "escrow protection fee" was added to the shown total but the
+    server never charged it, and no payment is taken yet, so it is gone. The city is matched
+    ignoring accents, case and punctuation on BOTH sides (the seeded table says "Yaounde";
+    buyers type "Yaoundé"), a rate of 0 is free delivery, and a city that is not in the
+    table costs XAF 3 000 on both sides. Before, a Yaoundé buyer was shown the Douala fee
+    (1 000) and charged the default (3 000); `tests/unit/shipping_city_rates.test.js` pins
+    that the browser and the server agree for every spelling.

@@ -94,12 +94,19 @@ SET value = EXCLUDED.value,
 ALTER TABLE iam.system_settings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE iam.audit_logs ENABLE ROW LEVEL SECURITY;
 
+-- The DROP POLICY IF EXISTS lines make this file safe to re-run: scripts/
+-- apply_migration.js --all re-applies every file and stops at the first failure,
+-- so a policy that "already exists" here would keep every later migration
+-- (delivery included) from being applied to an already-migrated database.
+
 -- Public read for non-secret system settings
+DROP POLICY IF EXISTS system_settings_read_public ON iam.system_settings;
 CREATE POLICY system_settings_read_public ON iam.system_settings
     FOR SELECT
     USING (is_secret = false);
 
 -- Admin full access on system settings
+DROP POLICY IF EXISTS system_settings_admin_all ON iam.system_settings;
 CREATE POLICY system_settings_admin_all ON iam.system_settings
     FOR ALL
     USING (
@@ -111,6 +118,7 @@ CREATE POLICY system_settings_admin_all ON iam.system_settings
     );
 
 -- Admin read on audit logs
+DROP POLICY IF EXISTS audit_logs_admin_select ON iam.audit_logs;
 CREATE POLICY audit_logs_admin_select ON iam.audit_logs
     FOR SELECT
     USING (

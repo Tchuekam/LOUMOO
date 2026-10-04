@@ -92,7 +92,41 @@ async function run() {
         assert.strictEqual(sweeper.timer, null);
         assert.doesNotThrow(() => sweeper.stop(), 'stop() is still safe');
       }
-      assert.ok(logs.info.some((m) => /offer expiry is off/.test(m)), 'it says so, rather than going quiet');
+      assert.ok(logs.info.some((m) => /offer expiry and reminders are off/.test(m)), 'it says so, rather than going quiet');
+    }
+
+    // ----------------------------------------------- reminders for orders nobody is arranging
+    {
+      // Expiry off but reminders on: the timer still runs, and only the reminders are done.
+      const timers = fakeTimers();
+      const calls = { expire: 0, nudge: 0 };
+      const service = {
+        offerTtlMs: 0, nudgeEnabled: true,
+        expireStaleOffers: async () => { calls.expire += 1; return { expired: 0 }; },
+        nudgeUndispatched: async () => { calls.nudge += 1; return { sellers: 2, admins: 1 }; }
+      };
+      const sweeper = startOfferSweeper({ service, ...timers });
+      assert.strictEqual(timers.scheduled.length, 1, 'reminders alone keep the sweep scheduled');
+      const result = await sweeper.tick();
+      assert.deepStrictEqual(calls, { expire: 0, nudge: 1 }, 'expiry is not run when it is off; reminders are');
+      assert.deepStrictEqual(result.nudged, { sellers: 2, admins: 1 });
+
+      // Both on: both run, in one tick.
+      const both = { offerTtlMs: 900000, nudgeEnabled: true, expireStaleOffers: async () => { calls.expire += 1; return { expired: 1 }; }, nudgeUndispatched: async () => { calls.nudge += 1; return {}; } };
+      const r2 = await startOfferSweeper({ service: both, ...fakeTimers() }).tick();
+      assert.strictEqual(r2.expired, 1);
+      assert.deepStrictEqual(calls, { expire: 1, nudge: 2 });
+
+      // A failing reminder job never hides the expiry result, and never escapes the timer.
+      const failing = { offerTtlMs: 900000, nudgeEnabled: true, expireStaleOffers: async () => ({ expired: 3 }), nudgeUndispatched: async () => { throw new Error('orders table down'); } };
+      const r3 = await startOfferSweeper({ service: failing, ...fakeTimers() }).tick();
+      assert.strictEqual(r3.expired, 3, 'the expiry still reports');
+      assert.strictEqual(r3.nudgeFailed, true);
+      assert.ok(logs.error.some((m) => /reminders failed: orders table down/.test(m)));
+
+      // Reminders switched off: a service without the job is simply not asked for it.
+      const plain = { offerTtlMs: 900000, nudgeEnabled: false, expireStaleOffers: async () => ({ expired: 0 }), nudgeUndispatched: async () => { throw new Error('must not be called'); } };
+      assert.strictEqual((await startOfferSweeper({ service: plain, ...fakeTimers() }).tick()).nudged, undefined);
     }
 
     // ---------------------------------------------------------------- no overlap
@@ -180,9 +214,10 @@ async function run() {
         assert.strictEqual((await repo.findById(created.id)).status, 'assigned', 'an open offer is left alone');
         now += 16 * 60 * 1000;
         const result = await sweeper.tick();
-        assert.deepStrictEqual(result, { expired: 1 });
+        // (A real service also reports its reminder run, so compare what this test is about.)
+        assert.strictEqual(result.expired, 1);
         assert.strictEqual((await repo.findById(created.id)).status, 'pending_assignment', 'a lapsed offer goes back to the seller');
-        assert.deepStrictEqual(await sweeper.tick(), { expired: 0 }, 'and the next sweep finds nothing');
+        assert.strictEqual((await sweeper.tick()).expired, 0, 'and the next sweep finds nothing');
       } finally {
         NotificationService.create = originalCreate;
       }
