@@ -61,6 +61,7 @@ function testStagesAndMoves() {
 
   // The role defaults from the delivery's own viewerRole, and falls back safely.
   assert.strictEqual(C.model(d('accepted', { viewerRole: 'seller' })).role, 'seller');
+  assert.strictEqual(C.model(d('accepted', { viewerRole: 'driver' })).role, 'rider', 'the API names the rider\'s view "driver"');
   assert.strictEqual(C.model(d('accepted'), 'nonsense').role, 'buyer');
   assert.strictEqual(C.model({ status: 'a_status_from_the_future' }, 'buyer').status, 'none', 'an unknown status never crashes');
   assert.doesNotThrow(() => C.model(undefined, undefined));
@@ -157,6 +158,7 @@ function testServerOrderMapping() {
   assert.strictEqual(C.orderStatusLabel(Object.assign({}, o, { status: 'delivered' })), 'DELIVERED');
   assert.strictEqual(C.orderStatusLabel(Object.assign({}, o, { status: 'cancelled' })), 'CANCELLED');
   assert.strictEqual(C.orderStatusLabel({ orderNumber: 'LM-OLD', serverSynced: false }), 'NOT SENT', 'a device-only order says it never reached the seller');
+  assert.strictEqual(C.orderStatusLabel({ orderNumber: 'LM-OLD', status: 'pending' }), 'NOT SENT', 'even before the first server refresh has flagged it');
   assert.doesNotThrow(() => C.orderFromServer({ id: 'x', items: [] }, undefined));
 }
 
@@ -252,7 +254,7 @@ async function run() {
   testOrderErrors();
   testNotificationRouting();
   testMoney();
-  console.log('    ✓ Stages, whose move it is, per-role lines, strip markup, checkout helpers and notification routing hold.');
+  console.log('    âœ“ Stages, whose move it is, per-role lines, strip markup, checkout helpers and notification routing hold.');
 }
 
 module.exports = { run };

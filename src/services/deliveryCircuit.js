@@ -135,8 +135,13 @@
     return Object.prototype.hasOwnProperty.call(STAGE_OF, s) ? s : 'none';
   }
 
+  // The delivery API names the rider's view `driver` (DELIVERY_API.md, `viewerRole`);
+  // everywhere in the app the person is "the rider".
+  var ROLE_ALIASES = { driver: 'rider' };
+
   function normaliseRole(role) {
-    return ROLES.indexOf(role) === -1 ? 'buyer' : role;
+    var r = ROLE_ALIASES[role] || role;
+    return ROLES.indexOf(r) === -1 ? 'buyer' : r;
   }
 
   /**
@@ -492,7 +497,8 @@
 
   function orderStatusLabel(order) {
     if (!order) return '';
-    if (order.serverSynced === false) return 'NOT SENT';
+    // No server id (or flagged as such) means it only ever existed on this device.
+    if (order.serverSynced === false || !order.id) return 'NOT SENT';
     return STATUS_LABEL[order.status] || 'PLACED';
   }
 
