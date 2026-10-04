@@ -17,8 +17,10 @@
  * status change, or two wrong-code guesses sharing one attempt slot.
  */
 
-const { SupabaseDatabase, handleDatabaseFailure } = require('../../../infrastructure/database/SupabaseClient');
-const { ConflictError, NotFoundError, ValidationError, InfrastructureError } = require('../../../shared/errors/AppError');
+const { SupabaseDatabase, handleDatabaseFailure: baseHandleDatabaseFailure } = require('../../../infrastructure/database/SupabaseClient');
+const {
+  ConflictError, NotFoundError, ValidationError, InfrastructureError, ServiceUnavailableError
+} = require('../../../shared/errors/AppError');
 const { config } = require('../../../config/env');
 const logger = require('../../../shared/logging/logger');
 const {
@@ -27,6 +29,40 @@ const {
 
 const PG_UNIQUE_VIOLATION = '23505';
 const PG_FOREIGN_KEY_VIOLATION = '23503';
+// PostgREST answers PGRST205 for a table that is not in its schema cache; a direct
+// Postgres connection says 42P01 ("undefined_table"). Either means migration 013
+// (or 014) has not been applied to this database.
+const MISSING_TABLE_CODES = Object.freeze(['PGRST205', '42P01']);
+const ADMIN_ROLES = Object.freeze(['admin', 'super_admin']);
+
+/** Delivery is deployed but its tables are not: an operator has to apply the migrations. */
+class DeliveryNotReadyError extends ServiceUnavailableError {
+  constructor() {
+    super('Delivery is not available yet. Please try again later.');
+    this.code = 'DELIVERY_NOT_READY';
+  }
+}
+
+function isMissingTable(err) {
+  return Boolean(err) && MISSING_TABLE_CODES.includes(err.code);
+}
+
+/**
+ * The repository's failure policy. In production a missing delivery table is
+ * answered with a clear 503 on every path, reads included: the base policy would
+ * let a read fall back to the empty in-memory store, which looks like "no
+ * deliveries" and hides a deployment that is simply missing its migration. The
+ * operator gets the full detail in the log; the client gets a plain message.
+ * Everything else keeps the base policy.
+ */
+function handleDatabaseFailure(err, context, options) {
+  if (err instanceof DeliveryNotReadyError) throw err;
+  if (config.isProduction && isMissingTable(err)) {
+    logger.error(`[Delivery] ${context}: the delivery tables are missing. Apply migrations 013 and 014 (node scripts/apply_migration.js --all).`);
+    throw new DeliveryNotReadyError();
+  }
+  return baseHandleDatabaseFailure(err, context, options);
+}
 const MAX_MEMORY_LOCATIONS_PER_DELIVERY = 500;
 // Rows read to count rider workload and recent lapses. Equal to Supabase's default
 // API row limit (db-max-rows = 1000): PostgREST silently truncates any larger
@@ -596,6 +632,53 @@ class DeliveryRepository {
       .map((d) => ({ ...d }));
   }
 
+  /**
+   * Profile ids of the administrators who should hear about a delivery that needs
+   * one. Suspended, deleted and anonymised accounts are skipped. Without a
+   * database (tests, a laptop) it reads `_adminIds`, which is empty by default.
+   */
+  async listAdminIds({ limit = 20 } = {}) {
+    const db = this.db;
+    if (db) {
+      try {
+        const { data, error } = await db
+          .from('profiles')
+          .select('*')
+          .in('primary_role', ADMIN_ROLES)
+          .limit(limit * 2);
+        if (error) handleDatabaseFailure(error, 'DeliveryRepository.listAdminIds');
+        else {
+          return (data || [])
+            .filter((p) => p.account_status !== 'anonymized' && p.account_status !== 'suspended'
+              && p.status !== 'deleted' && p.status !== 'suspended' && !p.deleted_at)
+            .map((p) => p.id)
+            .slice(0, limit);
+        }
+      } catch (err) {
+        handleDatabaseFailure(err, 'DeliveryRepository.listAdminIds');
+      }
+    }
+    return (this._adminIds || []).slice(0, limit);
+  }
+
+  /**
+   * Whether the delivery tables exist in this database: `{ ready: true }`, or
+   * `{ ready: false, reason }`. For the boot-time check; it never throws, and it
+   * says "not ready" only for a missing table, not for a flaky network.
+   */
+  async probe() {
+    const db = this.db;
+    if (!db) return { ready: true, reason: 'in-memory store (no database client)' };
+    try {
+      const { error } = await db.from('deliveries').select('id').limit(1);
+      if (!error) return { ready: true };
+      if (isMissingTable(error)) return { ready: false, reason: 'iam.deliveries does not exist: apply migrations 013 and 014' };
+      return { ready: true, reason: `could not check (${error.code || error.message})` };
+    } catch (err) {
+      return { ready: true, reason: `could not check (${err.message})` };
+    }
+  }
+
   /** Asserts a record exists; convenience for callers that already hold an id. */
   async requireById(id) {
     const d = await this.findById(id);
@@ -604,4 +687,4 @@ class DeliveryRepository {
   }
 }
 
-module.exports = { DeliveryRepository, toRow, fromRow };
+module.exports = { DeliveryRepository, DeliveryNotReadyError, toRow, fromRow };
