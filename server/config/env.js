@@ -25,7 +25,12 @@ const dotenv = require('dotenv');
 const envLocalPath = path.resolve(process.cwd(), '.env.local');
 const envPath = path.resolve(process.cwd(), '.env');
 
-if (fs.existsSync(envLocalPath)) {
+// LOUMOO_NO_DOTENV=1 loads neither file. tests/run_all.js sets it unless real
+// services were explicitly opted into, so a developer's real credentials in
+// .env can never reach a test run.
+if (process.env.LOUMOO_NO_DOTENV === '1') {
+  // intentionally nothing
+} else if (fs.existsSync(envLocalPath)) {
   dotenv.config({ path: envLocalPath });
 } else if (fs.existsSync(envPath)) {
   dotenv.config({ path: envPath });
