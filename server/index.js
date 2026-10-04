@@ -39,6 +39,9 @@ const announcementRoutes = require('./modules/announcement/presentation/routes/a
 const travelRoutes = require('./modules/travel/presentation/routes/travelRoutes');
 const orderRoutes = require('./modules/commerce/presentation/routes/orderRoutes');
 const recommendationRoutes = require('./modules/recommendation/presentation/routes/recommendationRoutes');
+const deliveryRoutes = require('./modules/delivery/presentation/routes/deliveryRoutes');
+const { getSharedDeliveryService } = require('./modules/delivery/application/DeliveryService');
+const { startOfferSweeper } = require('./modules/delivery/infrastructure/OfferSweeper');
 const superAdminRoutes = require('../SuperAdmin/backend/routes/superAdminRoutes');
 const { maintenanceGuard } = require('../SuperAdmin/backend/middleware/maintenanceGuard');
 
@@ -204,6 +207,7 @@ v1Router.use('/announcements', announcementRoutes);
 v1Router.use('/travel', travelRoutes);
 v1Router.use('/orders', orderRoutes);
 v1Router.use('/recommendations', recommendationRoutes);
+v1Router.use('/deliveries', deliveryRoutes);
 v1Router.use('/admin', superAdminRoutes);
 
 app.use('/api/v1', v1Router);
@@ -394,6 +398,13 @@ if (require.main === module) {
   sweepTimer.unref();
   workers.push(sweepTimer);
 
+  // Rider offers nobody answered go back to the seller (docs/DELIVERY_API.md,
+  // "Offer expiry"). Here, where the process owns the listen socket; a serverless
+  // deployment never reaches this block and relies on the release-on-read instead.
+  // Starts no timer at all when DELIVERY_OFFER_TTL_MINUTES is 0.
+  const offerSweeper = startOfferSweeper({ service: getSharedDeliveryService() });
+  if (offerSweeper.timer) workers.push(offerSweeper.timer);
+
   // Graceful shutdown — Railway / Kubernetes / Docker send SIGTERM before
   // killing the process. Drained in-flight requests, stopped workers, closed
   // Redis and exited cleanly so no event is half-written.
@@ -402,6 +413,9 @@ if (require.main === module) {
     if (shuttingDown) return;
     shuttingDown = true;
     logger.info(`[Shutdown] Received ${signal} — draining connections (max 10s).`);
+    // Open delivery streams never finish on their own: end them so clients
+    // reconnect, and so server.close() is not held open until the drain timeout.
+    try { deliveryRoutes.closeAllStreams('server_restart'); } catch (_) { /* best effort */ }
     const timer = setTimeout(() => {
       logger.error('[Shutdown] Drain timeout exceeded — forcing exit.');
       process.exit(1);

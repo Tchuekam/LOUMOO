@@ -342,6 +342,50 @@ class OrderRepository {
   }
 
   /**
+   * Like findOrderById, but never answers from the in-memory cache when a
+   * database is available. findOrderById returns whatever this instance cached
+   * first and never refreshes it, which is wrong for any decision about an
+   * order's CURRENT status made in a different request or by a different
+   * service instance (a cancelled or refunded order must not look live). The
+   * database row is read, the cache is refreshed with it, and the memory copy
+   * is only used when there is no database (tests, a laptop with no credentials)
+   * or, outside production, after a handled database failure.
+   * @param {string} idOrNumber
+   * @returns {Promise<Order|null>}
+   */
+  async findOrderByIdFresh(idOrNumber) {
+    if (!idOrNumber) return null;
+    if (!this.db) return this.findOrderById(idOrNumber);
+
+    try {
+      let query = this.db.from('orders').select('*');
+      if (idOrNumber.startsWith('KM-') || idOrNumber.startsWith('LM-')) {
+        query = query.eq('order_number', idOrNumber);
+      } else {
+        query = query.eq('id', idOrNumber);
+      }
+      const { data, error } = await query.maybeSingle();
+      if (error) {
+        handleDatabaseFailure(error, 'OrderRepository.findOrderByIdFresh');
+      } else if (data) {
+        const order = this._mapRowToOrder(data);
+        this._inMemoryOrders.set(order.id, order);
+        return order;
+      } else {
+        // Gone from the database: drop any stale cached copy as well.
+        for (const [id, ord] of this._inMemoryOrders.entries()) {
+          if (id === idOrNumber || ord.orderNumber === idOrNumber) this._inMemoryOrders.delete(id);
+        }
+        return null;
+      }
+    } catch (err) {
+      handleDatabaseFailure(err, 'OrderRepository.findOrderByIdFresh');
+    }
+    // Handled failure outside production: serve what we have.
+    return this.findOrderById(idOrNumber);
+  }
+
+  /**
    * Paged query of orders belonging to a buyer.
    * @param {string} buyerId
    * @param {object} options
@@ -393,6 +437,58 @@ class OrderRepository {
   }
 
   /**
+   * A seller's orders in the given fulfillment statuses, newest first, read fresh
+   * (never from this instance's cache). `sellerId` null means every seller's
+   * (administrators). Used by the delivery dispatch board.
+   *
+   * The delivery method is stored inside the shipping_address JSON, and a row
+   * WITHOUT it maps to HOME_DELIVERY (see _mapRowToOrder); an SQL filter on that
+   * JSON key would silently drop those rows. So rows are filtered after mapping,
+   * from an over-fetch of twice the limit; `homeDeliveryOnly` defaults to true.
+   * `excludePaymentStatuses` is applied the same way, BEFORE the limit, so that a
+   * limit of N never returns fewer than N rows just because some were excluded.
+   * @returns {Promise<Order[]>}
+   */
+  async findOrdersBySeller(sellerId, { statuses = [], limit = 50, homeDeliveryOnly = true, excludePaymentStatuses = [] } = {}) {
+    const wanted = Array.isArray(statuses) ? statuses.filter(Boolean) : [];
+    const excluded = Array.isArray(excludePaymentStatuses) ? excludePaymentStatuses : [];
+    const cap = Math.max(1, Math.min(Number(limit) || 50, 100));
+    const keep = (o) => (!homeDeliveryOnly || o.deliveryMethod === DELIVERY_METHOD.HOME_DELIVERY)
+      && (!wanted.length || wanted.includes(o.fulfillmentStatus))
+      && !excluded.includes(o.paymentStatus);
+
+    if (this.db) {
+      try {
+        let query = this.db.from('orders').select('*');
+        if (sellerId) query = query.eq('seller_id', sellerId);
+        if (wanted.length) query = query.in('fulfillment_status', wanted);
+        const { data, error } = await query.order('created_at', { ascending: false }).limit(cap * 2);
+        if (error) {
+          handleDatabaseFailure(error, 'OrderRepository.findOrdersBySeller');
+        } else {
+          // Mapped row by row: one malformed order must not blank the whole board.
+          const mapped = [];
+          for (const r of data || []) {
+            try {
+              mapped.push(this._mapRowToOrder(r));
+            } catch (err) {
+              logger.warn(`[OrderRepository] Skipping unreadable order ${r && r.id} on the dispatch board: ${err.message}`);
+            }
+          }
+          return mapped.filter(keep).slice(0, cap);
+        }
+      } catch (err) {
+        handleDatabaseFailure(err, 'OrderRepository.findOrdersBySeller');
+      }
+    }
+
+    return Array.from(this._inMemoryOrders.values())
+      .filter((o) => (!sellerId || o.sellerId === sellerId) && keep(o))
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      .slice(0, cap);
+  }
+
+  /**
    * Concurrency-safe atomic fulfillment state update.
    * Uses conditional WHERE on current status to prevent race conditions.
    *
@@ -403,7 +499,10 @@ class OrderRepository {
    * @returns {Promise<Order>}
    */
   async updateFulfillmentStatusAtomic(orderId, expectedCurrentStatus, nextStatus, { note = '', updatedBy = 'system' } = {}) {
-    const existing = await this.findOrderById(orderId);
+    // Compare against the database, not a cached copy: a stale cache would turn a
+    // legitimate transition into a spurious "concurrency conflict" (or let one
+    // through that the conditional UPDATE below would then reject).
+    const existing = await this.findOrderByIdFresh(orderId);
     if (!existing) {
       throw new NotFoundError('Order not found');
     }
