@@ -225,10 +225,27 @@ phone, notes or exact point; the UI must render a job card from `area` + rounded
 
 ### ETA and distance
 v0 method: straight-line distance × 1.3 (road factor) at an assumed 20 km/h.
-They are `null` unless the drop-off has coordinates. **The checkout address has no
-coordinates today**, so coordinates must be supplied by the seller when creating
-the delivery (`dropoffLocation`, below), or by a future address-picker. The
-frontend must handle `etaMinutes: null` and `lastLocation` without a destination.
+They are `null` unless the drop-off has coordinates, and the checkout address has none.
+So when a delivery is created without `dropoffLocation`, **the server geocodes the
+drop-off address itself** (`infrastructure/Geocoder.js`): once, at creation, bounded to
+about 2.5 s, cached, one request at a time at the rate Nominatim's policy asks for. It
+is best effort: if the geocoder is off, down, slow or finds nothing, the delivery is
+created exactly as before, without coordinates (a seller's own `dropoffLocation` is
+never overwritten). Settings:
+
+| Variable | Meaning |
+|---|---|
+| `DELIVERY_GEOCODER_URL` | search endpoint; default the public OpenStreetMap Nominatim; `off` disables it |
+| `DELIVERY_GEOCODER_COUNTRY` | restrict results to this ISO country code (default `cm`) |
+| `DELIVERY_GEOCODER_USER_AGENT` | Nominatim requires an identifying User-Agent (a default is sent) |
+
+**What leaves the server:** the customer's drop-off address (street, neighbourhood, city)
+goes to that service. The default is the same public service the buyer's tracker already
+asks from the browser. To keep addresses off a third party, run your own Nominatim and
+point the variable at it, or switch it off. The address is never logged. With
+coordinates, the rider sees only the area and a point rounded to about 1 km until they
+accept (the table below), and the buyer's map marker is exact. The frontend must still
+handle `etaMinutes: null` and `lastLocation` without a destination.
 
 ## Endpoints
 
@@ -357,19 +374,34 @@ empty system; the server logs the cause and says so once at boot.
 1. **Migrations**, in this order, on the production database:
    `010_notifications.sql` (without it notifications live only in one process's memory,
    which is lost between serverless invocations), `013_delivery_tracking.sql`,
-   `014_delivery_offer_indexes.sql`. `node scripts/apply_migration.js --all` applies them in
-   name order. Two migrations are numbered 014 (the other is universal search); they are
-   independent.
+   `014_delivery_offer_indexes.sql`. Apply the files you are missing one at a time:
+   `node scripts/apply_migration.js 013_delivery_tracking.sql`. `--all` re-applies every
+   file and **stops at the first one that fails**; every migration is now re-runnable (a
+   test applies the whole set twice on a real Postgres engine), but if your database was
+   migrated by hand, prefer the single-file form. Two migrations are numbered 014 (the
+   other is universal search); they are independent.
 2. **Environment**: `SUPABASE_JWT_SECRET` (handover codes are derived from it; the
-   server will not issue one without it), optionally `DELIVERY_OFFER_TTL_MINUTES`.
+   server will not issue one without it), optionally `DELIVERY_OFFER_TTL_MINUTES` and the
+   `DELIVERY_GEOCODER_*` settings above.
 3. **Runtime**: Railway (a long-lived process) gives the live stream and the offer
    sweeper. Netlify/Vercel work through polling and release-on-read, as described above,
    but a seller there hears about a lapsed offer only when something touches it.
 4. **First rider**: an administrator opens *Riders* in the admin screen, finds the
    person's account and registers them. They are told, and *Deliver with LOUMOO* in their
    account then shows their offers.
-5. **Check**: the boot log has no `[Delivery] NOT READY` line; place an order as a
-   customer, and the seller's account gets *New order … to deliver*.
+5. **Check**: run `npm run delivery:readiness` with the production credentials in
+   `.env.local`. It is read-only (it only SELECTs) and reports PASS / WARN / FAIL for: the
+   delivery tables and the columns the code uses, the notifications table, an active rider,
+   an administrator, a published listing, the JWT secret, offer expiry and the runtime. It
+   exits 1 if anything blocks. Then place an order as a customer: the seller's account gets
+   *New order … to deliver*, and the boot log has no `[Delivery] NOT READY` line.
+
+What is and is not verified without a deployment: `npm run test:delivery` runs the real
+migration files on an in-memory Postgres and checks the database rules the code relies on
+(one open delivery per order, status and range checks, what deleting an account does,
+row-level security, a notification row as the service writes it). It cannot know whether
+the migrations have been applied **to your project**: that is what the readiness check
+is for.
 
 ## Decisions taken (change here first if you disagree)
 1. **Who assigns riders?** The order's seller or an admin.
