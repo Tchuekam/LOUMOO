@@ -164,9 +164,15 @@ async function run() {
 
   // ------------------------------------------------ 9. the indexes the queries lean on
   const indexes = (await db.query(`SELECT indexname FROM pg_indexes WHERE schemaname = 'iam'`)).rows.map((r) => r.indexname);
-  for (const name of ['uq_deliveries_one_open_per_order', 'idx_deliveries_stale_offers', 'idx_delivery_events_offer_handbacks', 'idx_deliveries_driver_open', 'idx_notifications_user']) {
+  for (const name of ['uq_deliveries_one_open_per_order', 'idx_deliveries_stale_offers', 'idx_delivery_events_offer_handbacks', 'idx_deliveries_driver_open', 'idx_notifications_user', 'idx_orders_open_by_created']) {
     assert.ok(indexes.includes(name), `index ${name} exists`);
   }
+  // The reminder job's query is the one that index is for: the planner can use it
+  // (a tiny table prefers a scan, so the planner is told scans are expensive).
+  await db.exec('SET enable_seqscan = off');
+  const plan = (await db.query(`EXPLAIN SELECT * FROM iam.orders WHERE fulfillment_status IN ('processing') ORDER BY created_at DESC LIMIT 200`)).rows.map((r) => r['QUERY PLAN']).join('\n');
+  await db.exec('SET enable_seqscan = on');
+  assert.ok(/idx_orders_open_by_created/.test(plan), `the open-orders query uses the partial index:\n${plan}`);
 
   // --------------------------------- 10. a notification exactly as the service writes it
   const row = { user_id: 'seller_1', type: 'delivery', tone: 'neutral', title: 'A delivery is locked and needs you', body: 'Unlock it, or mark it failed.', read: false,

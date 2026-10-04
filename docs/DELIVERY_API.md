@@ -376,7 +376,10 @@ empty system; the server logs the cause and says so once at boot.
 1. **Migrations**, in this order, on the production database:
    `010_notifications.sql` (without it notifications live only in one process's memory,
    which is lost between serverless invocations), `013_delivery_tracking.sql`,
-   `014_delivery_offer_indexes.sql`. Apply the files you are missing one at a time:
+   `014_delivery_offer_indexes.sql`, and optionally `016_orders_open_status_index.sql` (an
+   index for the reminder job's and the admin board's "open orders, newest first" read:
+   nothing breaks without it, those reads are just slower on a large orders table). Apply
+   the files you are missing one at a time:
    `node scripts/apply_migration.js 013_delivery_tracking.sql`. `--all` re-applies every
    file and **stops at the first one that fails**; every migration is now re-runnable (a
    test applies the whole set twice on a real Postgres engine), but if your database was
@@ -488,4 +491,9 @@ is for.
 14. **Delivery fee on the checkout equals the order's.** The checkout shows items plus the
     delivery fee for the address's city (the same setting the server prices from) and
     sends no total. The old "escrow protection fee" was added to the shown total but the
-    server never charged it, and no payment is taken yet, so it is gone.
+    server never charged it, and no payment is taken yet, so it is gone. The city is matched
+    ignoring accents, case and punctuation on BOTH sides (the seeded table says "Yaounde";
+    buyers type "Yaoundé"), a rate of 0 is free delivery, and a city that is not in the
+    table costs XAF 3 000 on both sides. Before, a Yaoundé buyer was shown the Douala fee
+    (1 000) and charged the default (3 000); `tests/unit/shipping_city_rates.test.js` pins
+    that the browser and the server agree for every spelling.
