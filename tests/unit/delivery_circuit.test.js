@@ -254,7 +254,7 @@ async function run() {
   testOrderErrors();
   testNotificationRouting();
   testMoney();
-  console.log('    âœ“ Stages, whose move it is, per-role lines, strip markup, checkout helpers and notification routing hold.');
+  console.log('    ✓ Stages, whose move it is, per-role lines, strip markup, checkout helpers and notification routing hold.');
 }
 
 module.exports = { run };
