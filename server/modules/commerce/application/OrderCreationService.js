@@ -176,6 +176,19 @@ class OrderCreationService {
         });
       }
 
+      // An order belongs to exactly one seller: the seller is who receives it, who
+      // arranges its delivery and who is paid. A bag that mixes stores would be
+      // filed under the first item's seller and the others would never hear of
+      // their goods, so it is refused and the client places one order per store.
+      const sellerIds = new Set(evaluatedItems.map((it) => it.sellerId));
+      if (sellerIds.size > 1) {
+        const stores = [...new Set(evaluatedItems.map((it) => it.storeName || 'another store'))];
+        throw new ValidationError(
+          `Your bag has items from ${stores.length} different stores (${stores.join(', ')}). Each store delivers on its own, so place one order per store.`,
+          [{ field: 'items', message: 'Items must all come from one store.', code: 'MULTI_SELLER_ORDER', stores }]
+        );
+      }
+
       // 4. Server-Authoritative Pricing Calculation
       let standardShippingFeeXaf = null;
       if (data.deliveryMethod !== DELIVERY_METHOD.STORE_PICKUP) {
@@ -283,15 +296,7 @@ class OrderCreationService {
         }).catch(e => logger.warn(`[OrderCreation] Activity log error: ${e.message}`));
       }
 
-      if (NotificationService && typeof NotificationService.create === 'function') {
-        NotificationService.create(userId, {
-          type: 'order',
-          tone: 'accent',
-          title: `Order ${savedOrder.orderNumber} placed`,
-          body: `Your order is confirmed — pay on delivery. Total XAF ${savedOrder.totalAmountXaf}.`,
-          metadata: { orderId: savedOrder.id, orderNumber: savedOrder.orderNumber }
-        }).catch(e => logger.warn(`[OrderCreation] Notification error: ${e.message}`));
-      }
+      this._notifyParties(savedOrder);
 
       return savedOrder;
     } catch (err) {
@@ -302,6 +307,47 @@ class OrderCreationService {
     } finally {
       this._activeLocks.delete(userLockKey);
     }
+  }
+
+  /**
+   * Tells both sides of a new order. The buyer gets their confirmation; the seller
+   * gets the order itself, which is what starts the delivery circuit: for a home
+   * delivery it is their cue to arrange a rider. `audience` and `action` in the
+   * metadata tell the client which screen to open when the notification is tapped
+   * (the same vocabulary as DeliveryService; see docs/DELIVERY_API.md).
+   * Best effort: a notification that fails never fails an order that was saved.
+   */
+  _notifyParties(order) {
+    if (!NotificationService || typeof NotificationService.create !== 'function') return;
+    const warn = (who) => (e) => logger.warn(`[OrderCreation] ${who} notification error: ${e.message}`);
+    const home = order.deliveryMethod === DELIVERY_METHOD.HOME_DELIVERY;
+    const lines = order.items.reduce((n, it) => n + it.quantity, 0);
+    const what = `${lines} ${lines === 1 ? 'item' : 'items'}`;
+
+    NotificationService.create(order.buyerId, {
+      type: 'order',
+      tone: 'accent',
+      title: `Order ${order.orderNumber} placed`,
+      body: `Your order is confirmed — pay on delivery. Total XAF ${order.totalAmountXaf}.`,
+      metadata: { orderId: order.id, orderNumber: order.orderNumber, audience: 'buyer', action: 'track_order' }
+    }).catch(warn('Buyer'));
+
+    const ship = order.shippingAddress || {};
+    const area = [ship.neighbourhood, ship.city].filter(Boolean).join(', ');
+    NotificationService.create(order.sellerId, {
+      type: 'order',
+      tone: 'sale',
+      title: home ? `New order ${order.orderNumber} to deliver` : `New pickup order ${order.orderNumber}`,
+      body: home
+        ? `${what} · XAF ${order.totalAmountXaf}${area ? ` · to ${area}` : ''}. Arrange a rider from Deliveries.`
+        : `${what} · XAF ${order.totalAmountXaf}. Get it ready for the customer to collect.`,
+      metadata: {
+        orderId: order.id,
+        orderNumber: order.orderNumber,
+        audience: 'seller',
+        action: home ? 'open_dispatch' : null
+      }
+    }).catch(warn('Seller'));
   }
 }
 
