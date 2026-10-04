@@ -18,6 +18,7 @@
 
 const { DeliveryRepository } = require('../infrastructure/DeliveryRepository');
 const deliveryEvents = require('../infrastructure/DeliveryEvents');
+const { getDefaultGeocoder } = require('../infrastructure/Geocoder');
 const { OrderRepository } = require('../../commerce/infrastructure/OrderRepository');
 const { OrderStateMachine } = require('../../commerce/domain/OrderStateMachine');
 const { FULFILLMENT_STATUS, DELIVERY_METHOD, PAYMENT_STATUS } = require('../../commerce/domain/Order');
@@ -106,11 +107,16 @@ class DeliveryService {
    * expires). Unset, it comes from DELIVERY_OFFER_TTL_MINUTES, then the default.
    * An explicit value that is not a finite number >= 0 also falls back, so a bad
    * option cannot silently switch expiry off.
+   *
+   * `geocoder` turns a drop-off address into coordinates when the seller did not
+   * supply them (see Geocoder.js). Unset, the process-wide default is used, which is
+   * off under test.
    */
-  constructor({ repository, orderRepository, events, now, offerTtlMs } = {}) {
+  constructor({ repository, orderRepository, events, now, offerTtlMs, geocoder } = {}) {
     this.repo = repository || new DeliveryRepository();
     this.orders = orderRepository || new OrderRepository();
     this.events = events || deliveryEvents;
+    this.geocoder = geocoder || getDefaultGeocoder();
     this.now = typeof now === 'function' ? now : () => Date.now();
     this._serialQueue = Promise.resolve(); // see _serialised()
     this.offerTtlMs = typeof offerTtlMs === 'number'
@@ -510,6 +516,18 @@ class DeliveryService {
       notes: ship.notes || null,
       location: parseLocation(body.dropoffLocation, 'dropoffLocation')
     };
+
+    // Without coordinates there is no ETA and no distance for the whole delivery,
+    // and neither the checkout nor the seller's screen supplies any. So when the
+    // seller sent none, resolve the address here. Best effort and bounded: a
+    // geocoder that fails or is slow costs the delivery its ETA, never the delivery.
+    if (!dropoff.location && dropoff.address && this.geocoder && this.geocoder.enabled !== false) {
+      try {
+        dropoff.location = await this.geocoder.geocode(dropoff.address);
+      } catch (err) {
+        dropoff.location = null;
+      }
+    }
 
     const nowIso = this._nowIso();
     const record = {
