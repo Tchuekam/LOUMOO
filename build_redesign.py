@@ -16964,7 +16964,7 @@ class Component extends DCLogic {
         const o = this.state.currentOrder;
         const money = (n) => 'XAF ' + fmt(n || 0);
         if (!o) {
-          return { id: '', orderNumber: '', placedAt: '', statusLabel: '', totalLabel: '', payMethod: '', items: [], subtotalLabel: '', shippingLabel: '', cityLabel: '', seller: '', sellerPhone: '', canTrack: false, noTrackNote: '' };
+          return { id: '', orderNumber: '', placedAt: '', statusLabel: '', totalLabel: '', payVia: '', items: [], subtotalLabel: '', shippingLabel: '', cityLabel: '', seller: '', sellerPhone: '', canTrack: false, noTrackNote: '' };
         }
         const circuit = typeof window !== 'undefined' ? window.LoumooCircuit : null;
         const sent = Boolean(o.id) && o.serverSynced !== false;
@@ -16990,7 +16990,8 @@ class Component extends DCLogic {
           placedAt: this._orderDateLabel(o.createdAt),
           statusLabel: circuit ? circuit.orderStatusLabel(o) : this._orderStatusLabel(o.status),
           totalLabel: money(o.totalXaf),
-          payMethod: o.paymentMethod || 'Pay on delivery',
+          // " via MTN MoMo" only when a method was actually chosen on this device.
+          payVia: o.paymentMethod && o.paymentMethod !== 'Pay on delivery' ? ' via ' + o.paymentMethod : '',
           items: items,
           subtotalLabel: money(subtotal),
           shippingLabel: o.shippingFeeXaf != null ? money(o.shippingFeeXaf) : '—',
@@ -17036,7 +17037,7 @@ class Component extends DCLogic {
         seller: o.seller,
         sellerPhone: o.sellerPhone || o.sellerWhatsapp || (o.items && o.items[0] && o.items[0].storePhone) || '',
         sellerWhatsapp: o.sellerWhatsapp || o.sellerPhone || (o.items && o.items[0] && o.items[0].storePhone) || '',
-        payLabel: (o.paymentMethod || 'Pay on delivery') + ' · pay on delivery'
+        payLabel: (o.paymentMethod && o.paymentMethod !== 'Pay on delivery' ? o.paymentMethod + ' · ' : '') + 'pay on delivery'
       })),
       vsCount: this.state.vs,
       vsFilterAll: this.state.vsFilterMode === 'all',
