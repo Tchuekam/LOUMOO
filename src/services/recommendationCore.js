@@ -197,6 +197,25 @@
     return Math.min(1, t / cap); // 0..1, saturating
   }
 
+  /**
+   * A tiny deterministic PRNG (mulberry32) seeded from a number or string.
+   * Passing one as ctx.rng makes rankFeed's exploration reproducible for a given
+   * epoch, so a feed can be re-derived identically — the basis for a stable,
+   * append-only client feed and duplicate-free server pagination.
+   */
+  function makeRng(seed) {
+    let a;
+    if (typeof seed === 'number') { a = seed >>> 0; }
+    else { a = 0; const s = String(seed == null ? '' : seed); for (let i = 0; i < s.length; i++) a = (Math.imul(a ^ s.charCodeAt(i), 2654435761)) >>> 0; }
+    a = (a || 1) >>> 0;
+    return function () {
+      a |= 0; a = (a + 0x6D2B79F5) | 0;
+      let t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
   // ── Profile ──────────────────────────────────────────────────────────────
 
   function createProfile() {
@@ -306,6 +325,7 @@
 
     _pruneMap(profile.short, PROFILE_FACET_CAP);
     _pruneMap(profile.long, PROFILE_FACET_CAP);
+    profile.__rev = (profile.__rev || 0) + 1; // invalidate the cosine-norm cache
     profile.eventCount++;
     return profile;
   }
@@ -329,6 +349,7 @@
     t.eventCount = (t.eventCount || 0) + (source.eventCount || 0);
     _pruneMap(t.short, PROFILE_FACET_CAP);
     _pruneMap(t.long, PROFILE_FACET_CAP);
+    t.__rev = (t.__rev || 0) + 1; // invalidate the cosine-norm cache after merge
     return t;
   }
 
@@ -340,14 +361,17 @@
   }
 
   function _profileNorm(profile) {
-    // Cached cosine denominator for the blended vector.
-    if (profile.__norm != null && profile.__normAt === profile.decayedAt) return profile.__norm;
+    // Cached cosine denominator for the blended vector. Keyed on BOTH the decay
+    // timestamp AND a mutation counter (__rev): a same-millisecond applyEvent
+    // changes the weights without advancing decayedAt, so without __rev the cache
+    // would return a pre-mutation norm and distort every affinity in that pass.
+    if (profile.__norm != null && profile.__normAt === profile.decayedAt && profile.__normRev === profile.__rev) return profile.__norm;
     let sum = 0;
     const seen = {};
     const acc = (map) => { for (const k in map) { if (seen[k]) continue; seen[k] = 1; const w = _blendedWeight(profile, k); sum += w * w; } };
     acc(profile.short); acc(profile.long);
     const n = Math.sqrt(sum) || 1;
-    profile.__norm = n; profile.__normAt = profile.decayedAt;
+    profile.__norm = n; profile.__normAt = profile.decayedAt; profile.__normRev = profile.__rev;
     return n;
   }
 
@@ -584,7 +608,18 @@
     };
 
     // 3. MMR greedy selection over the exploit pool.
+    // Normalise the raw relevance score to 0..1 (min-max over the scored pool)
+    // so it is on the SAME scale as the 0..1 similarity penalty. Without this,
+    // `base` spans several units while `maxSim` maxes at 1, so the diversity
+    // term (<= 1-lambda) can never overcome a realistic relevance gap and the
+    // MMR re-rank is effectively inert (lambda stops mattering).
     const pool = scored.slice();
+    let bMax = -Infinity, bMin = Infinity;
+    for (let i = 0; i < scored.length; i++) {
+      if (scored[i].base > bMax) bMax = scored[i].base;
+      if (scored[i].base < bMin) bMin = scored[i].base;
+    }
+    const bRange = (bMax - bMin) || 1;
     const takeMmr = (targetCount) => {
       while (chosen.length < targetCount && pool.length) {
         let bestIdx = -1, bestVal = -Infinity;
@@ -597,7 +632,8 @@
             if (sim > maxSim) maxSim = sim;
             if (maxSim >= 1) break;
           }
-          const mmr = lambda * cand.base - (1 - lambda) * maxSim;
+          const rel = (cand.base - bMin) / bRange; // 0..1, comparable to maxSim
+          const mmr = lambda * rel - (1 - lambda) * maxSim;
           if (mmr > bestVal) { bestVal = mmr; bestIdx = i; }
         }
         if (bestIdx === -1) break; // nothing placeable under the caps
@@ -686,7 +722,7 @@
     RECENT_ITEMS_CAP, SEEN_HALF_LIFE_MS,
     // helpers
     toXaf, effectivePrice, priceBand, norm, baseTitle, tokenize, facets,
-    decayFactor, dwellBoost,
+    decayFactor, dwellBoost, makeRng,
     // profile
     createProfile, decayProfile, applyEvent, mergeProfiles,
     // scoring
