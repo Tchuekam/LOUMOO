@@ -966,6 +966,31 @@
     return this.request('/api/v1/categories');
   };
 
+  // ── Discovery Engine (For You / recommendations) ──────────────────────────
+  LoumooApiClient.prototype.recordRecoEvents = function (payload) {
+    return this.request('/api/v1/recommendations/events', { method: 'POST', body: payload });
+  };
+
+  LoumooApiClient.prototype.getRecoFeed = function (params) {
+    return this.request('/api/v1/recommendations/feed' + qs(params));
+  };
+
+  LoumooApiClient.prototype.getRecoSimilar = function (itemId, params) {
+    return this.request('/api/v1/recommendations/similar/' + encodeURIComponent(itemId) + qs(params));
+  };
+
+  LoumooApiClient.prototype.getRecoTrending = function (params) {
+    return this.request('/api/v1/recommendations/trending' + qs(params));
+  };
+
+  LoumooApiClient.prototype.getRecoProfile = function () {
+    return this.request('/api/v1/recommendations/profile');
+  };
+
+  LoumooApiClient.prototype.recoFeedback = function (payload) {
+    return this.request('/api/v1/recommendations/feedback', { method: 'POST', body: payload });
+  };
+
   // GET /api/v1/products?q=... — request() unwraps the envelope, so a successful
   // call resolves to the canonical { items, total, page, limit } payload. The
   // rejection is re-thrown so callers can distinguish a real failure (show the
