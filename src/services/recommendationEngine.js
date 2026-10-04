@@ -38,6 +38,12 @@
   var SEEN_CAP = 600;
   var SERVER_REFRESH_MS = 4 * 60 * 1000;
 
+  // Passive signals teach the profile but must NOT reshuffle the rendered feed.
+  var PASSIVE_EVENTS = { impression: 1, dwell: 1, pdp_dwell: 1 };
+  // Personalization/profiling consent. The app drives this from the user's
+  // privacy preference (setConsent); when off we capture and learn nothing.
+  var _consent = true;
+
   function nowMs() { return Date.now(); }
   function safeParse(s, fb) { try { return s ? JSON.parse(s) : fb; } catch (e) { return fb; } }
   function lsGet(k, fb) { if (!LS) return fb; try { return LS.getItem(k); } catch (e) { return fb; } }
@@ -159,6 +165,7 @@
   /** Record one event: update the local profile immediately, buffer for server. */
   function track(ev) {
     if (!ev || !ev.type) return;
+    if (!_consent) return; // personalization opt-out: capture nothing, learn nothing
     try {
       if (CORE) {
         CORE.applyEvent(_profile, {
@@ -172,7 +179,10 @@
           item: ev.item || null
         }, nowMs());
         _profileDirty = true;
-        _rankVersion++;
+        // Passive signals (impression/dwell) keep teaching the profile but must
+        // NOT bump the feed epoch, or the live feed would re-rank and the
+        // index-keyed <sc-for> would remount every card under the user's scroll.
+        if (!PASSIVE_EVENTS[ev.type]) _rankVersion++;
         persistProfile();
       }
     } catch (e) { /* ignore */ }
@@ -245,6 +255,7 @@
    * element (safe to call from a DC ref that fires on every render).
    */
   function watch(el, item, opts) {
+    if (!_consent) return; // no impression/dwell profiling when personalization is off
     if (!el || !item || !item.id) return;
     try {
       var io = ensureObserver();
@@ -256,8 +267,15 @@
     } catch (e) { /* ignore */ }
   }
 
-  // ── Ranking (local-first, memoized) ──────────────────────────────────────────
-  var _rankCache = { version: -1, poolLen: -1, limit: -1, out: null };
+  // ── Ranking (local-first, append-only) ────────────────────────────────────────
+  // The rendered feed must stay STABLE: the DC <sc-for> keys rows by index, so any
+  // reorder remounts every card (scroll jump, image flash). We keep a frozen order
+  // per "epoch" and only ever APPEND to it as the limit grows. A new epoch (full
+  // rebuild) happens only on an explicit ranking change — feedback/reset, a changed
+  // candidate pool, or a reload — never from passive scroll impressions.
+  var _homeOrder = [];   // the frozen, append-only feed (full item objects)
+  var _homeEpoch = -1;   // the _rankVersion this order was built at
+  var _homePoolLen = -1; // the pool size this order was built at
 
   function markSeen(items) {
     if (!items || !items.length) return;
@@ -267,38 +285,62 @@
   }
 
   /**
-   * Rank a pool of full item objects into a personalized order. Memoized on
-   * (rankVersion, poolLength, limit) so the DC render loop can call it freely.
+   * Rank a pool of full item objects into a personalized order and return the
+   * first `limit`. The order is frozen per epoch and grown append-only, so
+   * repeated renders and "load more" never reshuffle what the user already sees.
    */
   function rankHome(pool, opts) {
     opts = opts || {};
     var limit = opts.limit || 24;
     if (!CORE || !pool || !pool.length) return (pool || []).slice(0, limit);
-    if (_rankCache.out && _rankCache.version === _rankVersion && _rankCache.poolLen === pool.length && _rankCache.limit === limit) {
-      return _rankCache.out;
+
+    // Start a fresh epoch only on an explicit ranking change or a pool change.
+    if (_homeEpoch !== _rankVersion || _homePoolLen !== pool.length) {
+      _homeOrder = [];
+      _homeEpoch = _rankVersion;
+      _homePoolLen = pool.length;
     }
-    var out;
-    try {
-      out = CORE.rankFeed(pool, {
-        profile: _profile,
-        trendingMap: _serverSignals.trendingMap,
-        trendingMax: _serverSignals.trendingMax,
-        covisMap: _serverSignals.covisMap,
-        seenMap: _seen,
-        nowMs: nowMs()
-      }, { limit: limit });
-    } catch (e) {
-      out = pool.slice(0, limit);
+
+    // Grow the frozen order up to `limit`, preserving everything already shown.
+    if (_homeOrder.length < limit) {
+      var have = {};
+      for (var i = 0; i < _homeOrder.length; i++) have[_homeOrder[i].id] = 1;
+      var ranked;
+      try {
+        ranked = CORE.rankFeed(pool, {
+          profile: _profile,
+          trendingMap: _serverSignals.trendingMap,
+          trendingMax: _serverSignals.trendingMax,
+          covisMap: _serverSignals.covisMap,
+          seenMap: _seen,
+          nowMs: nowMs(),
+          // Deterministic per epoch so appends stay consistent across renders.
+          rng: CORE.makeRng ? CORE.makeRng(_rankVersion + 1) : undefined
+        }, { limit: limit });
+      } catch (e) {
+        ranked = pool.slice(0, limit);
+      }
+      for (var j = 0; j < ranked.length && _homeOrder.length < limit; j++) {
+        if (!have[ranked[j].id]) { _homeOrder.push(ranked[j]); have[ranked[j].id] = 1; }
+      }
+      // Pad from the raw pool if dedup/caps left us short, so a page is never short.
+      for (var k = 0; k < pool.length && _homeOrder.length < limit; k++) {
+        if (!have[pool[k].id]) { _homeOrder.push(pool[k]); have[pool[k].id] = 1; }
+      }
     }
-    _rankCache = { version: _rankVersion, poolLen: pool.length, limit: limit, out: out };
-    markSeen(out);
-    return out;
+
+    var page = _homeOrder.slice(0, limit);
+    markSeen(page); // only the shown slice is "seen" — never the whole pool
+    return page;
   }
 
   function similarLocal(seed, pool, opts) {
     if (!CORE || !seed || !pool) return [];
     try {
-      return CORE.moreLikeThis(seed, pool, { profile: _profile, covisMap: _serverSignals.covisMap }, { limit: (opts && opts.limit) || 12 });
+      // "More like this" is content-based, so it still works when personalization
+      // is off — we just rank it without the personal profile in that case.
+      var prof = _consent ? _profile : CORE.createProfile();
+      return CORE.moreLikeThis(seed, pool, { profile: prof, covisMap: _serverSignals.covisMap }, { limit: (opts && opts.limit) || 12 });
     } catch (e) { return []; }
   }
 
@@ -308,6 +350,7 @@
 
   // ── Controls ──────────────────────────────────────────────────────────────────
   function feedback(action, item, storeName) {
+    if (!_consent) return; // the feedback controls are hidden when off; ignore stray calls
     try {
       if (CORE) {
         if (action === 'not_interested' && item) CORE.applyEvent(_profile, { type: 'not_interested', itemId: item.id }, nowMs());
@@ -326,9 +369,20 @@
   function reset() {
     try { _profile = CORE ? CORE.createProfile() : { short: {}, long: {}, suppressedItems: {}, hiddenStores: {}, recent: [], eventCount: 0, decayedAt: nowMs() }; } catch (e) { /* ignore */ }
     _seen = {}; _rankVersion++;
+    _homeOrder = []; _homeEpoch = -1; // drop the frozen feed so it rebuilds clean
     persistProfile(); persistSeen();
     var api = getApi();
     if (api && api.recoFeedback) { try { api.recoFeedback({ action: 'reset', visitorId: _visitorId }).catch(function () {}); } catch (e) { /* ignore */ } }
+  }
+
+  /**
+   * Turn personalization/profiling on or off from the user's privacy preference.
+   * When off: no events are captured, the local profile stops growing, and the
+   * frozen feed is dropped. Content-based "More like this" still works.
+   */
+  function setConsent(on) {
+    _consent = !!on;
+    _homeOrder = []; _homeEpoch = -1;
   }
 
   function why(item) {
@@ -365,6 +419,7 @@
     refreshSignals: refreshServerSignals,
     feedback: feedback,
     reset: reset,
+    setConsent: setConsent,
     why: why,
     flush: function () { flush(false); },
     _profile: function () { return _profile; } // debug
