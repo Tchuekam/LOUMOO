@@ -108,6 +108,22 @@ async function run() {
     assert.strictEqual(by(await checkReadiness({ db, env: READY_ENV }), 'runtime').level, 'pass');
   }
 
+  // --live asks the geocoder one question, about a landmark; without it nothing is sent.
+  {
+    const db = fakeDb(FULL);
+    let asked = [];
+    const answering = { geocode: async (q) => { asked.push(q); return { lat: 4.05, lng: 9.69 }; } };
+    const silent = { geocode: async () => null };
+    const broken = { geocode: async () => { throw new Error('unreachable'); } };
+    assert.strictEqual(by(await checkReadiness({ db, env: READY_ENV }), 'geocoder-live'), undefined, 'no probe unless asked');
+    const ok = by(await checkReadiness({ db, env: READY_ENV, geocoder: answering }), 'geocoder-live');
+    assert.strictEqual(ok.level, 'pass');
+    assert.deepStrictEqual(asked, ['Bonanjo, Douala'], 'it asks about a landmark, never an address from your data');
+    assert.strictEqual(by(await checkReadiness({ db, env: READY_ENV, geocoder: silent }), 'geocoder-live').level, 'warn', 'no answer is a warning: deliveries just have no ETA');
+    assert.strictEqual(by(await checkReadiness({ db, env: READY_ENV, geocoder: broken }), 'geocoder-live').level, 'warn', 'and a throwing geocoder is too');
+    assert.ok(!(await checkReadiness({ db, env: READY_ENV, geocoder: silent })).some((r) => r.level === 'fail'), 'it never blocks readiness');
+  }
+
   // A database that cannot be read is a failure, not a silent pass.
   {
     const results = await checkReadiness({ db: fakeDb({ ...FULL, deliveries: { fails: true } }), env: READY_ENV });

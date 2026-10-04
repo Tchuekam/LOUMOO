@@ -9,8 +9,11 @@
  * (.env.local, like scripts/apply_migration.js):
  *
  *   npm run delivery:readiness
+ *   npm run delivery:readiness -- --live     (also asks the geocoder one question)
  *
- * It only SELECTs: it writes nothing, creates nothing and sends nothing. Exit code 1
+ * It only SELECTs: it writes nothing and creates nothing. It sends nothing either,
+ * except with --live, which geocodes a landmark ("Bonanjo, Douala"), never an address
+ * from your data, to prove the geocoder is reachable from this network. Exit code 1
  * means something that must be fixed before deliveries can work; warnings are
  * things that make the circuit quietly less useful (nobody to alert, no riders).
  */
@@ -30,7 +33,7 @@ const DELIVERY_COLUMNS = [
  * Runs every check and returns `[{ id, level: 'pass' | 'warn' | 'fail', title, detail }]`.
  * `db` is a Supabase client scoped to the `iam` schema; `env` is the environment.
  */
-async function checkReadiness({ db, env = process.env }) {
+async function checkReadiness({ db, env = process.env, geocoder = null }) {
   const results = [];
   const add = (id, level, title, detail = '') => results.push({ id, level, title, detail });
 
@@ -90,14 +93,23 @@ async function checkReadiness({ db, env = process.env }) {
   else if (!Number.isFinite(Number(ttl)) || Number(ttl) < 0) add('ttl', 'warn', `DELIVERY_OFFER_TTL_MINUTES="${ttl}" is not a usable number`, 'The default (15 minutes) applies.');
   else add('ttl', 'pass', `Offer expiry is ${Number(ttl)} minute(s)`);
 
-  const geocoder = env.DELIVERY_GEOCODER_URL;
-  if (['off', 'false', '0', 'none', 'disabled'].includes(String(geocoder || '').trim().toLowerCase())) {
+  const geocoderUrl = env.DELIVERY_GEOCODER_URL;
+  if (['off', 'false', '0', 'none', 'disabled'].includes(String(geocoderUrl || '').trim().toLowerCase())) {
     add('geocoder', 'warn', 'Drop-off geocoding is switched off (DELIVERY_GEOCODER_URL)', 'Deliveries will have no ETA or distance unless the seller supplies coordinates.');
-  } else if (geocoder) {
+  } else if (geocoderUrl) {
     add('geocoder', 'pass', 'Drop-off addresses are geocoded by your own service (DELIVERY_GEOCODER_URL)');
   } else {
     add('geocoder', 'pass', 'Drop-off addresses are geocoded by the public OpenStreetMap Nominatim service (the default)',
       'The customer\'s drop-off address is sent to it so deliveries get an ETA. Set DELIVERY_GEOCODER_URL to your own Nominatim, or to "off", if that is not acceptable.');
+  }
+
+  // Opt-in (--live): actually ask the geocoder one question from THIS network, using a
+  // landmark rather than anyone's address. Off by default so the check sends nothing.
+  if (geocoder) {
+    let point = null;
+    try { point = await geocoder.geocode('Bonanjo, Douala'); } catch (e) { point = null; }
+    if (point) add('geocoder-live', 'pass', `The geocoder answered from here (Bonanjo, Douala is at ${point.lat}, ${point.lng})`);
+    else add('geocoder-live', 'warn', 'The geocoder gave no answer from here', 'Deliveries will have no ETA until it does. Check that this network can reach DELIVERY_GEOCODER_URL (or the public Nominatim service), or point it at your own instance.');
   }
 
   const serverless = Boolean(env.NETLIFY || env.VERCEL || env.AWS_LAMBDA_FUNCTION_NAME);
@@ -132,7 +144,9 @@ async function main() {
     console.error(`Cannot reach the database: ${e.message}\nSet SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY (.env.local), then run again.`);
     process.exit(2);
   }
-  const results = await checkReadiness({ db });
+  const live = process.argv.includes('--live');
+  const geocoder = live ? require('../server/modules/delivery/infrastructure/Geocoder').createGeocoder() : null;
+  const results = await checkReadiness({ db, geocoder });
   console.log(formatReport(results));
   process.exit(results.some((r) => r.level === 'fail') ? 1 : 0);
 }
