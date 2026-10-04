@@ -27,7 +27,11 @@ const SUITES = [
   'delivery_dispatch',
   'delivery_contact',
   'delivery_circuit',
-  'delivery_circuit_e2e'
+  'delivery_circuit_e2e',
+  // The order path in the compiled app: what a buyer does before a delivery can exist.
+  'checkout_server_orders',
+  'checkout_published_notifications_fixes',
+  'store_whatsapp_redirect'
 ];
 
 (async () => {
