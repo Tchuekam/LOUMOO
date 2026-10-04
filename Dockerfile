@@ -28,6 +28,7 @@ WORKDIR /app
 COPY scripts/assemble_public.js ./scripts/assemble_public.js
 COPY ["Commerce App.dc.html", "./"]
 COPY ["support.js", "./support.js"]
+COPY favicon.ico ./favicon.ico
 # Route-level frontend chunks (SearchScreens.dc.html, TravelScreens.dc.html, …).
 COPY *Screens.dc.html ./
 COPY Assets ./Assets

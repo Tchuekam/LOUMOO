@@ -4,6 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>LOUMOO Universal Commerce Marketplace</title>
+<link rel="icon" href="./favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="./Assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="./Assets/brand/icon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="./Assets/brand/apple-touch-icon.png">
+<meta name="theme-color" content="#0025E5">
 <script src="./support.js"></script>
 <!-- Keep the critical API/auth bridges non-blocking; they execute before
      DOMContentLoaded, which is when the DC runtime mounts the app. The
@@ -1010,6 +1015,8 @@ html, body {
 .nav-item {
   display: flex; align-items: center; gap: 12px; width: 100%; padding: 9px 12px;
   border: none; border-radius: var(--radius-sm); background: transparent;
+.sidebar-logo-icon { background: #fff !important; border: 1px solid var(--color-divider); box-shadow: none !important; }
+[data-theme="dark"] .brand-wordmark, [data-theme="dark"] .brand-mark { filter: brightness(1.7) saturate(.9); }
   color: var(--color-text-secondary); font: 600 13px/1.2 var(--font-body);
   text-align: left; cursor: pointer; transition: all 0.15s ease; white-space: nowrap; position: relative;
 }
@@ -6188,11 +6195,11 @@ html, body {
 <nav class="sidebar-nav {{ sidebarNavClass }}">
   <div class="sidebar-header">
     <div class="sidebar-brand-group">
-      <span style="font:800 20px/1 var(--font-heading);letter-spacing:-.03em;color:var(--color-accent)">LOUMOO</span>
+      <img class="brand-wordmark" src="./Assets/brand/loumoo-wordmark.png" alt="LOUMOO" height="22" style="height:22px;width:auto;display:block">
       <span style="font:800 9px/1 var(--font-heading);letter-spacing:.08em;background:var(--color-accent-100);color:var(--color-accent);padding:2px 6px;border-radius:var(--radius-pill)">UNIVERSAL</span>
     </div>
     <div class="sidebar-logo-icon" onClick="{{ toggleSidebar }}" title="Expand sidebar navigation">
-      <span>L</span>
+      <img class="brand-mark" src="./Assets/brand/loumoo-icon-mark.png" alt="LOUMOO" style="width:24px;height:auto;display:block">
     </div>
     <button onClick="{{ toggleSidebar }}" class="sidebar-toggle-btn" aria-label="Collapse sidebar" title="Collapse sidebar to icon rail">
       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 3v18"/></svg>
@@ -6293,7 +6300,7 @@ html, body {
       </sc-if>
       <sc-if value="{{ !isLoggedIn }}">
         <div class="home-user-context-left">
-          <div style="width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,var(--color-accent),#003d8a);color:#fff;display:flex;align-items:center;justify-content:center;font:800 14px/1 var(--font-heading);letter-spacing:-.02em;flex-shrink:0">LM</div>
+          <div style="width:38px;height:38px;border-radius:11px;background:#fff;border:1px solid var(--color-divider);display:flex;align-items:center;justify-content:center;flex-shrink:0"><img class="brand-mark" src="./Assets/brand/loumoo-icon-mark.png" alt="LOUMOO" style="width:26px;height:auto;display:block"></div>
           <div class="home-user-context-greeting">
             <div style="font:700 8.5px/1 var(--font-heading);letter-spacing:.14em;color:var(--color-accent);text-transform:uppercase">LOUMOO</div>
             <div class="home-user-context-name" style="font-size:16px">Marketplace Hub</div>

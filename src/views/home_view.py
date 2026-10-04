@@ -27,7 +27,7 @@ def get_home_view():
       </sc-if>
       <sc-if value="{{ !isLoggedIn }}">
         <div class="home-user-context-left">
-          <div style="width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,var(--color-accent),#003d8a);color:#fff;display:flex;align-items:center;justify-content:center;font:800 14px/1 var(--font-heading);letter-spacing:-.02em;flex-shrink:0">LM</div>
+          <div style="width:38px;height:38px;border-radius:11px;background:#fff;border:1px solid var(--color-divider);display:flex;align-items:center;justify-content:center;flex-shrink:0"><img class="brand-mark" src="./Assets/brand/loumoo-icon-mark.png" alt="LOUMOO" style="width:26px;height:auto;display:block"></div>
           <div class="home-user-context-greeting">
             <div style="font:700 8.5px/1 var(--font-heading);letter-spacing:.14em;color:var(--color-accent);text-transform:uppercase">LOUMOO</div>
             <div class="home-user-context-name" style="font-size:16px">Marketplace Hub</div>
