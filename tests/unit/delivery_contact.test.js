@@ -1,0 +1,395 @@
+/**
+ * LOUMOO Unit Tests - Who the delivery circuit contacts
+ * ---------------------------------------------------------------------------
+ * The circuit has four parties: the buyer, the seller, the rider and an admin.
+ * Each one must hear about the moments that concern them, in their own role, and
+ * every notification must say which screen it opens (`audience`, `action`).
+ * Nothing here touches a database: orders and deliveries are in memory, and the
+ * notification service is replaced by a recorder.
+ *
+ *   1. Placing an order contacts the buyer AND the seller; a bag that mixes
+ *      stores is refused rather than filed under the wrong seller.
+ *   2. Walking one delivery from creation to handover tells each party the right
+ *      thing, and never tells a party about someone else's business.
+ *   3. The exceptions reach an administrator (a locked handover, a suspended
+ *      rider who still holds a parcel), because the seller is told "an
+ *      administrator must resolve this" and nobody was telling the administrator.
+ *   4. Riders hear about being registered, replaced and unlocked.
+ *   5. A deployment whose delivery migration was never applied answers a plain
+ *      503 instead of looking like an empty system.
+ */
+
+require('../setup');
+const assert = require('assert');
+const config = require('../../server/config/env');
+
+const { DeliveryService } = require('../../server/modules/delivery/application/DeliveryService');
+const { DeliveryRepository, DeliveryNotReadyError } = require('../../server/modules/delivery/infrastructure/DeliveryRepository');
+const { DeliveryEvents } = require('../../server/modules/delivery/infrastructure/DeliveryEvents');
+const { OrderRepository } = require('../../server/modules/commerce/infrastructure/OrderRepository');
+const { OrderCreationService } = require('../../server/modules/commerce/application/OrderCreationService');
+const { Order, FULFILLMENT_STATUS, DELIVERY_METHOD, PAYMENT_STATUS } = require('../../server/modules/commerce/domain/Order');
+const { codeFor } = require('../../server/modules/delivery/domain/HandoverCode');
+const { MAX_HANDOVER_ATTEMPTS } = require('../../server/modules/delivery/domain/Delivery');
+
+const BUYER = { userId: 'buyer_1', userRole: 'customer' };
+const SELLER = { userId: 'seller_1', userRole: 'seller' };
+const ADMIN = { userId: 'admin_1', userRole: 'admin' };
+const RIDER = { userId: 'rider_1', userRole: 'customer' };
+const NEAR = { lat: 4.0511, lng: 9.7679 };
+
+async function code(promise) {
+  try { await promise; return 'OK'; } catch (e) { return e.code || e.name || 'ERROR'; }
+}
+
+/** Replaces the notification service with a recorder; returns it and a restore(). */
+function recordNotifications() {
+  const NotificationService = require('../../server/modules/identity/application/NotificationService');
+  const original = NotificationService.create;
+  const sent = [];
+  NotificationService.create = async (userId, payload) => { sent.push({ userId, ...payload }); return null; };
+  return {
+    sent,
+    restore: () => { NotificationService.create = original; },
+    to: (userId) => sent.filter((n) => n.userId === userId),
+    clear: () => { sent.length = 0; }
+  };
+}
+
+// --------------------------------------------------------------- 1. placing an order
+
+function listing(id, sellerId, storeName) {
+  return {
+    id, title: `Item ${id}`, status: 'PUBLISHED', visibility: 'PUBLIC', deletedAt: null, storeStatus: 'ACTIVE',
+    basePriceMinor: 10000, salePriceMinor: null, sku: null, sellerId, storeId: `store_${sellerId}`, storeName, storePhone: '+237611111111'
+  };
+}
+
+function makeCreationService() {
+  const listings = { l1: listing('l1', 'seller_1', 'Tech Shop'), l2: listing('l2', 'seller_1', 'Tech Shop'), l3: listing('l3', 'seller_2', 'Books Corner') };
+  const saved = [];
+  const repository = {
+    findListingById: async (id) => listings[id] || null,
+    findVariantById: async () => null,
+    checkInventory: async () => ({ isAvailable: true, availableQuantity: 99 }),
+    saveOrder: async (order) => { order.id = `ord_${saved.length + 1}`; saved.push(order); return order; }
+  };
+  return { service: new OrderCreationService(repository), saved };
+}
+
+async function testOrderPlacement() {
+  const rec = recordNotifications();
+  try {
+    // A home-delivery order tells the buyer it is placed and the seller to arrange a rider.
+    {
+      const { service, saved } = makeCreationService();
+      const order = await service.createOrder('buyer_1', {
+        items: [{ listingId: 'l1', quantity: 2 }, { listingId: 'l2', quantity: 1 }],
+        shippingAddress: { fullName: 'Awa Njoya', phone: '+237622222222', street: 'Rue 1', city: 'Douala', neighbourhood: 'Bonanjo' },
+        deliveryMethod: 'HOME_DELIVERY'
+      });
+      assert.strictEqual(saved.length, 1);
+
+      const buyerNote = rec.to('buyer_1')[0];
+      assert.ok(buyerNote, 'the buyer is told');
+      assert.strictEqual(buyerNote.metadata.audience, 'buyer');
+      assert.strictEqual(buyerNote.metadata.action, 'track_order');
+      assert.strictEqual(buyerNote.metadata.orderId, order.id);
+
+      const sellerNote = rec.to('seller_1')[0];
+      assert.ok(sellerNote, 'the seller is told: this is what starts the circuit');
+      assert.strictEqual(sellerNote.metadata.audience, 'seller');
+      assert.strictEqual(sellerNote.metadata.action, 'open_dispatch', 'it opens the dispatch board');
+      assert.strictEqual(sellerNote.metadata.orderId, order.id);
+      assert.ok(/to deliver/i.test(sellerNote.title), 'it says there is something to deliver');
+      assert.ok(/3 items/.test(sellerNote.body), 'it says what was ordered');
+      assert.ok(/Bonanjo, Douala/.test(sellerNote.body), 'it says where to');
+      assert.ok(/Arrange a rider/i.test(sellerNote.body), 'it says what to do next');
+      assert.ok(!/Awa|622222222|Rue 1/.test(sellerNote.body + sellerNote.title), 'no customer phone or street in a notification');
+    }
+
+    // A pickup order does not tell the seller to find a rider.
+    {
+      rec.clear();
+      const { service } = makeCreationService();
+      await service.createOrder('buyer_1', { items: [{ listingId: 'l1', quantity: 1 }], deliveryMethod: 'STORE_PICKUP' });
+      const sellerNote = rec.to('seller_1')[0];
+      assert.ok(sellerNote && /pickup/i.test(sellerNote.title));
+      assert.strictEqual(sellerNote.metadata.action, null, 'nothing to dispatch for a pickup');
+    }
+
+    // A bag from two stores is refused: it would be filed under one seller only.
+    {
+      rec.clear();
+      const { service, saved } = makeCreationService();
+      let error = null;
+      try {
+        await service.createOrder('buyer_1', { items: [{ listingId: 'l1', quantity: 1 }, { listingId: 'l3', quantity: 1 }], deliveryMethod: 'HOME_DELIVERY' });
+      } catch (e) { error = e; }
+      assert.ok(error, 'a mixed-store bag is refused');
+      assert.strictEqual(error.code, 'VALIDATION_ERROR');
+      assert.ok(/Tech Shop/.test(error.message) && /Books Corner/.test(error.message), 'it names the stores');
+      assert.strictEqual(error.details[0].code, 'MULTI_SELLER_ORDER');
+      assert.strictEqual(saved.length, 0, 'nothing was saved');
+      assert.strictEqual(rec.sent.length, 0, 'nobody was told about an order that does not exist');
+    }
+
+    // A listing that does not exist (a showcase product) is a clean 404, not a crash.
+    {
+      const { service } = makeCreationService();
+      assert.strictEqual(await code(service.createOrder('buyer_1', { items: [{ listingId: 'elec-1', quantity: 1 }] })), 'NOT_FOUND');
+    }
+  } finally {
+    rec.restore();
+  }
+}
+
+// ------------------------------------------------------------ 2-4. the circuit itself
+
+function makeWorld() {
+  let t = Date.parse('2026-10-03T10:00:00.000Z');
+  const clock = { now: () => t, advance: (ms) => { t += ms; } };
+  const orders = new OrderRepository({ db: null });
+  const repo = new DeliveryRepository({ db: null });
+  repo._adminIds = ['admin_1', 'admin_2'];
+  const service = new DeliveryService({ repository: repo, orderRepository: orders, events: new DeliveryEvents(), now: clock.now });
+  return { clock, orders, repo, service };
+}
+
+async function placeOrder(world) {
+  return world.orders.saveOrder(new Order({
+    buyerId: 'buyer_1',
+    sellerId: 'seller_1',
+    items: [{ listingId: 'lst_1', title: 'Phone', unitPriceXaf: 50000, quantity: 1, sellerId: 'seller_1', storeName: 'Tech Shop' }],
+    shippingAddress: { fullName: 'Awa Njoya', phone: '+237622222222', street: 'Rue 1', city: 'Douala' },
+    deliveryMethod: DELIVERY_METHOD.HOME_DELIVERY,
+    paymentStatus: PAYMENT_STATUS.PAID,
+    fulfillmentStatus: FULFILLMENT_STATUS.PROCESSING
+  }));
+}
+
+const titles = (list) => list.map((n) => n.title);
+const has = (list, re) => list.some((n) => re.test(n.title));
+
+async function testTheCircuit() {
+  const rec = recordNotifications();
+  try {
+    // ---- the happy path, party by party
+    {
+      const w = makeWorld();
+      await w.service.registerDriver('rider_1', { name: 'Alain', phone: '+237600000001' }, ADMIN);
+      assert.ok(has(rec.to('rider_1'), /now a LOUMOO rider/), 'a newly registered rider is told, and what to open');
+      assert.strictEqual(rec.to('rider_1')[0].metadata.action, 'open_rider_hub');
+      rec.clear();
+
+      const order = await placeOrder(w);
+      const created = await w.service.createDelivery(order.id, SELLER, { dropoffLocation: { lat: 4.0601, lng: 9.7679 } });
+      assert.ok(has(rec.to('buyer_1'), /Delivery being arranged/), 'the buyer hears a rider is being found');
+      assert.strictEqual(rec.to('buyer_1')[0].metadata.audience, 'buyer');
+      assert.strictEqual(rec.to('buyer_1')[0].metadata.deliveryId, created.id);
+      assert.strictEqual(rec.to('seller_1').length, 0, 'the seller did this themselves: no echo');
+      rec.clear();
+
+      await w.service.assignDriver(created.id, 'rider_1', SELLER);
+      assert.ok(has(rec.to('rider_1'), /New delivery assigned/));
+      assert.strictEqual(rec.to('rider_1')[0].metadata.audience, 'rider');
+      assert.strictEqual(rec.to('rider_1')[0].metadata.action, 'open_rider_hub');
+      assert.strictEqual(rec.to('buyer_1').length, 0, 'the buyer is not bothered by an offer nobody has accepted');
+      rec.clear();
+
+      await w.service.acceptDelivery(created.id, RIDER);
+      assert.ok(has(rec.to('buyer_1'), /rider accepted/i), 'the buyer is told someone is coming');
+      assert.ok(has(rec.to('seller_1'), /rider accepted/i), 'the seller is told to have the parcel ready');
+      assert.strictEqual(rec.to('seller_1')[0].metadata.audience, 'seller');
+      assert.strictEqual(rec.to('seller_1')[0].metadata.action, 'open_dispatch');
+      rec.clear();
+
+      await w.service.recordLocation(created.id, { ...NEAR }, RIDER);
+      w.clock.advance(5000);
+      await w.service.updateStatus(created.id, 'picked_up', null, RIDER);
+      assert.ok(has(rec.to('buyer_1'), /on its way/i));
+      assert.ok(has(rec.to('seller_1'), /collected the parcel/i), 'the seller is told the parcel left');
+      rec.clear();
+
+      await w.service.updateStatus(created.id, 'arrived', null, RIDER);
+      assert.ok(has(rec.to('buyer_1'), /rider has arrived/i));
+      assert.ok(has(rec.to('seller_1'), /at the customer/i));
+      assert.strictEqual(rec.to('admin_1').length, 0, 'nothing is wrong, so the admin is left alone');
+      rec.clear();
+
+      await w.service.completeDelivery(created.id, codeFor(created.id, 1), RIDER);
+      assert.ok(has(rec.to('buyer_1'), /Order delivered/));
+      assert.ok(has(rec.to('seller_1'), /Order delivered/));
+      assert.strictEqual(rec.to('admin_1').length, 0);
+
+      // Every delivery notification says whose it is and where it opens.
+      for (const n of rec.sent) {
+        assert.ok(['buyer', 'seller', 'rider', 'admin'].includes(n.metadata.audience), `"${n.title}" names its audience`);
+        assert.ok(n.metadata.action, `"${n.title}" says which screen it opens`);
+      }
+    }
+
+    // ---- a replaced rider is told the job went elsewhere
+    {
+      rec.clear();
+      const w = makeWorld();
+      await w.service.registerDriver('rider_1', { name: 'Alain', phone: '+237600000001' }, ADMIN);
+      await w.service.registerDriver('rider_2', { name: 'Bruno', phone: '+237600000002' }, ADMIN);
+      const order = await placeOrder(w);
+      const created = await w.service.createDelivery(order.id, SELLER, {});
+      await w.service.assignDriver(created.id, 'rider_1', SELLER);
+      rec.clear();
+      await w.service.assignDriver(created.id, 'rider_2', SELLER);
+      assert.ok(has(rec.to('rider_2'), /New delivery assigned/));
+      assert.ok(has(rec.to('rider_1'), /given to another rider/), 'the rider who lost the job is told');
+      assert.strictEqual(rec.to('rider_1')[0].metadata.audience, 'rider');
+    }
+
+    // ---- exceptions reach an administrator
+    {
+      rec.clear();
+      const w = makeWorld();
+      await w.service.registerDriver('rider_1', { name: 'Alain', phone: '+237600000001' }, ADMIN);
+      const order = await placeOrder(w);
+      const created = await w.service.createDelivery(order.id, SELLER, { dropoffLocation: { lat: 4.0601, lng: 9.7679 } });
+      await w.service.assignDriver(created.id, 'rider_1', SELLER);
+      await w.service.acceptDelivery(created.id, RIDER);
+      await w.service.recordLocation(created.id, { ...NEAR }, RIDER);
+      w.clock.advance(5000);
+      await w.service.updateStatus(created.id, 'picked_up', null, RIDER);
+      await w.service.updateStatus(created.id, 'arrived', null, RIDER);
+      rec.clear();
+
+      const wrong = codeFor(created.id, 1) === '0000' ? '1111' : '0000';
+      for (let i = 0; i < MAX_HANDOVER_ATTEMPTS; i += 1) await code(w.service.completeDelivery(created.id, wrong, RIDER));
+      assert.ok(has(rec.to('seller_1'), /locked/i), 'the seller is told');
+      for (const adminId of ['admin_1', 'admin_2']) {
+        const alert = rec.to(adminId).find((n) => /locked/i.test(n.title));
+        assert.ok(alert, `administrator ${adminId} is told: they are the ones who can unlock it`);
+        assert.strictEqual(alert.metadata.audience, 'admin');
+        assert.strictEqual(alert.metadata.deliveryId, created.id);
+      }
+      rec.clear();
+
+      await w.service.resolveDelivery(created.id, { action: 'unlock' }, ADMIN);
+      assert.ok(has(rec.to('buyer_1'), /code changed/i), 'the buyer is told to read the new code');
+      assert.ok(has(rec.to('rider_1'), /unlocked/i), 'the rider is told to ask for it');
+      rec.clear();
+
+      // A rider suspended while carrying a parcel: the seller AND an administrator are told.
+      await w.service.registerDriver('rider_1', { name: 'Alain', phone: '+237600000001', status: 'suspended' }, ADMIN);
+      assert.ok(has(rec.to('seller_1'), /suspended/i));
+      assert.ok(has(rec.to('admin_1'), /suspended rider still has a parcel/i), 'someone who can act is told');
+      assert.ok(has(rec.to('rider_1'), /access was paused/i), 'the rider is told their access changed');
+      rec.clear();
+
+      await w.service.resolveDelivery(created.id, { action: 'fail', note: 'Rider suspended, parcel recovered' }, ADMIN);
+      assert.ok(has(rec.to('seller_1'), /marked failed/i));
+      assert.ok(has(rec.to('buyer_1'), /could not be completed/i));
+      assert.ok(has(rec.to('rider_1'), /administrator closed your delivery/i), 'the rider learns the job is over');
+    }
+
+    // ---- no administrator on record: the alert is skipped, not fatal
+    {
+      rec.clear();
+      const w = makeWorld();
+      w.repo._adminIds = [];
+      await w.service.registerDriver('rider_1', { name: 'Alain', phone: '+237600000001' }, ADMIN);
+      const order = await placeOrder(w);
+      const created = await w.service.createDelivery(order.id, SELLER, { dropoffLocation: { lat: 4.0601, lng: 9.7679 } });
+      await w.service.assignDriver(created.id, 'rider_1', SELLER);
+      await w.service.acceptDelivery(created.id, RIDER);
+      await w.service.recordLocation(created.id, { ...NEAR }, RIDER);
+      w.clock.advance(5000);
+      await w.service.updateStatus(created.id, 'picked_up', null, RIDER);
+      await w.service.updateStatus(created.id, 'arrived', null, RIDER);
+      const wrong = codeFor(created.id, 1) === '0000' ? '1111' : '0000';
+      const outcomes = [];
+      for (let i = 0; i < MAX_HANDOVER_ATTEMPTS; i += 1) outcomes.push(await code(w.service.completeDelivery(created.id, wrong, RIDER)));
+      assert.strictEqual(outcomes[outcomes.length - 1], 'DELIVERY_LOCKED', 'the rider still gets the lock answer');
+    }
+  } finally {
+    rec.restore();
+  }
+}
+
+// ------------------------------------------------- 5. a missing migration is a clear 503
+
+function brokenDb(errorCode) {
+  const failing = { data: null, error: { code: errorCode, message: 'relation does not exist' } };
+  const q = () => {
+    const chain = {};
+    for (const m of ['select', 'eq', 'in', 'not', 'order', 'limit', 'update', 'insert', 'upsert', 'gte', 'lte', 'or']) chain[m] = () => chain;
+    chain.maybeSingle = async () => failing;
+    chain.single = async () => failing;
+    chain.then = (resolve) => resolve(failing);
+    return chain;
+  };
+  return { from: () => q() };
+}
+
+async function testMissingMigration() {
+  const wasProduction = config.isProduction;
+  try {
+    config.isProduction = true;
+    const repo = new DeliveryRepository({ db: brokenDb('PGRST205') });
+    for (const call of [() => repo.findById('dlv_1'), () => repo.listDrivers(), () => repo.findDriver('rider_1'), () => repo.findByOrder('ord_1')]) {
+      let error = null;
+      try { await call(); } catch (e) { error = e; }
+      assert.ok(error instanceof DeliveryNotReadyError, 'a missing table is a typed error, not an empty answer');
+      assert.strictEqual(error.statusCode, 503);
+      assert.strictEqual(error.code, 'DELIVERY_NOT_READY');
+      assert.ok(!/relation|PGRST|iam\./.test(error.message), 'no database detail reaches the client');
+    }
+    assert.deepStrictEqual(await new DeliveryRepository({ db: brokenDb('42P01') }).probe().then((p) => p.ready), false, 'a direct Postgres error means the same');
+
+    // A different failure is NOT mistaken for a missing migration.
+    const flaky = await new DeliveryRepository({ db: brokenDb('XX000') }).probe();
+    assert.strictEqual(flaky.ready, true, 'an unknown error is not reported as "migration missing"');
+
+    // Outside production the development fallback is unchanged: no throw.
+    config.isProduction = false;
+    assert.strictEqual(await new DeliveryRepository({ db: brokenDb('PGRST205') }).findById('dlv_1'), null);
+  } finally {
+    config.isProduction = wasProduction;
+  }
+}
+
+async function testAdminLookup() {
+  const rows = [
+    { id: 'admin_ok', primary_role: 'admin' },
+    { id: 'admin_suspended', primary_role: 'admin', account_status: 'suspended' },
+    { id: 'admin_deleted', primary_role: 'super_admin', deleted_at: '2026-01-01T00:00:00Z' },
+    { id: 'admin_anon', primary_role: 'admin', account_status: 'anonymized' },
+    { id: 'super_ok', primary_role: 'super_admin' }
+  ];
+  const db = {
+    from(table) {
+      assert.strictEqual(table, 'profiles');
+      const chain = {};
+      chain.select = () => chain;
+      chain.in = (column, values) => { assert.strictEqual(column, 'primary_role'); assert.deepStrictEqual(values, ['admin', 'super_admin']); return chain; };
+      chain.limit = async () => ({ data: rows, error: null });
+      return chain;
+    }
+  };
+  const ids = await new DeliveryRepository({ db }).listAdminIds({ limit: 10 });
+  assert.deepStrictEqual(ids, ['admin_ok', 'super_ok'], 'only live administrators are alerted');
+}
+
+async function run() {
+  console.log('  Testing who the delivery circuit contacts...');
+  const hadSecret = config.supabase.jwtSecret;
+  if (!hadSecret) config.supabase.jwtSecret = 'unit-test-delivery-secret-0123456789abcdef';
+  try {
+    await testOrderPlacement();
+    await testTheCircuit();
+    await testMissingMigration();
+    await testAdminLookup();
+    console.log('    ✓ Every party is contacted in their own role; exceptions reach an admin; a missing migration is a clear 503.');
+  } finally {
+    if (!hadSecret) config.supabase.jwtSecret = hadSecret;
+  }
+}
+
+module.exports = { run };
