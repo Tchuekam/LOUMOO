@@ -2592,6 +2592,45 @@ html, body {
     min-width: 0;
   }
 }
+/* "More like this" rail on the product page (Discovery Engine). */
+.pdp-similar-rail {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 46%;
+  gap: 12px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-bottom: 4px;
+}
+.pdp-similar-rail::-webkit-scrollbar { display: none; }
+@media (min-width: 640px) { .pdp-similar-rail { grid-auto-columns: 30%; } }
+@media (min-width: 1024px) { .pdp-similar-rail { grid-auto-columns: 1fr; grid-auto-flow: row; grid-template-columns: repeat(4, 1fr); overflow: visible; } }
+.pdp-similar-card {
+  scroll-snap-align: start;
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider);
+  border-radius: 14px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+.pdp-similar-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  border-color: var(--color-accent);
+}
+.pdp-similar-media { aspect-ratio: 1 / 1; background: var(--color-surface-subtle); }
+.pdp-similar-media img { width: 100%; height: 100%; object-fit: cover; }
+.pdp-similar-body { padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 4px; }
+.pdp-similar-title {
+  font: 600 12.5px/1.3 var(--font-body);
+  color: var(--color-text);
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.pdp-similar-price { font: 800 13px/1 var(--font-heading); color: var(--color-text); }
+
 .pdp-media-viewport {
   position: relative;
   width: 100%;
@@ -7700,6 +7739,21 @@ class Component extends DCLogic {
   _recoNote = (kind, src, extra) => {
     try { const R = getReco(); if (R && R.note) R.note(kind, this._recoItem(src), extra || {}); } catch (e) { /* non-fatal */ }
   };
+  // "More like this" neighbours for the open product, memoized per product so a
+  // PDP re-render (qty stepper, image select, a toast) doesn't re-scan the whole
+  // ~1k-item catalogue twice every render. Invalidated when the product or the
+  // loaded catalogue size changes.
+  _pdpSimilarList = () => {
+    const p = this.state.currentProduct;
+    const R = getReco();
+    if (!p || !R || !R.similarLocal) return [];
+    const pool = this._categoryProductPool('all');
+    const key = (p.id || this.state.currentProductId || '') + ':' + pool.length;
+    if (this._pdpSimCache && this._pdpSimCache.key === key) return this._pdpSimCache.list;
+    const list = R.similarLocal(p, pool, { limit: 8 }) || [];
+    this._pdpSimCache = { key: key, list: list };
+    return list;
+  };
   _matchesSubcategory = (p, sub) => {
     if (!sub || sub === 'all') return true;
     if (p.subcategory) return String(p.subcategory).toLowerCase() === sub;
@@ -12613,6 +12667,20 @@ class Component extends DCLogic {
         if (!p || !p.attributes) return [];
         return Object.entries(p.attributes).map(([k, v]) => ({ key: k.replace(/_/g, ' '), val: String(v) }));
       })(),
+      // "More like this" — the Discovery Engine's neighbours of the open product
+      // (content similarity + co-visitation), ranked and de-duplicated locally.
+      pdpSimilarCards: (() => {
+        return this._pdpSimilarList().map((s) => ({
+          id: s.id,
+          title: s.title || s.name || 'Listing',
+          imageUrl: encImg(s.coverImage || s.imageUrl || s.image || (s.images && s.images[0]) || ''),
+          priceLabel: s.price || (s.priceNumeric ? ('XAF ' + fmt(s.priceNumeric)) : 'Ask price'),
+          category: s.category || '', subcategory: s.subcategory || '', brand: s.brand || '',
+          storeName: s.storeName || s.merchant || s.store || '', storeCity: s.storeCity || s.merchantCity || '',
+          priceXaf: (s.priceNumeric != null ? s.priceNumeric : s.price)
+        }));
+      })(),
+      hasPdpSimilar: this._pdpSimilarList().length > 0,
       productStoreName: this.state.currentProduct && (this.state.currentProduct.store ? this.state.currentProduct.store.name : this.state.currentProduct.merchant) ? (this.state.currentProduct.store ? this.state.currentProduct.store.name : this.state.currentProduct.merchant) : 'Orca Electronics',
       productStoreCity: this.state.currentProduct && (this.state.currentProduct.store ? this.state.currentProduct.store.city : this.state.currentProduct.merchantCity) ? (this.state.currentProduct.store ? this.state.currentProduct.store.city : this.state.currentProduct.merchantCity) : 'Akwa, Douala',
       productStoreVerified: Boolean(this.state.currentProduct ? (this.state.currentProduct.store ? this.state.currentProduct.store.isVerified : this.state.currentProduct.verified) : true),
@@ -12652,7 +12720,8 @@ class Component extends DCLogic {
         // Engine (instant, offline-safe). In the headless sandbox getReco() is
         // null, so we fall back to the catalogue's own order unchanged.
         const R = getReco();
-        const ranked = (R && R.rankHome) ? R.rankHome(pool, { limit: limit }) : pool.slice(0, limit);
+        const personalizeOff = this.state.privacyPersonalization === false;
+        const ranked = (R && R.rankHome && !personalizeOff) ? R.rankHome(pool, { limit: limit }) : pool.slice(0, limit);
         return ranked.map((p) => {
           const rawP = p.price || (p.priceNumeric ? ('XAF ' + fmt(p.priceNumeric)) : (p.base_price_minor ? ('XAF ' + fmt(p.base_price_minor)) : ''));
           const rawSale = p.salePrice || '';
@@ -12697,9 +12766,9 @@ class Component extends DCLogic {
       // ── Discovery Engine wiring (For You) ──────────────────────────────
       // Attach a card element to the impression/dwell observer. Fired from a
       // DC ref, so it must be idempotent (the engine dedupes per element).
-      recoWatch: (el, card) => {
+      recoWatch: (el, card, surface) => {
         const R = getReco();
-        if (R && R.watch && el && card) R.watch(el, this._recoItem(card), { surface: 'home_feed' });
+        if (R && R.watch && el && card) R.watch(el, this._recoItem(card), { surface: surface || 'home_feed' });
       },
       // "Not interested": learn the negative, re-rank immediately (rankHome is
       // memoized on a version the engine bumps on feedback), and acknowledge.
@@ -14149,7 +14218,12 @@ class Component extends DCLogic {
       privacyAnalytics: this.state.privacyAnalytics,
       privacyMarketing: this.state.privacyMarketing,
       privacySaving: this.state.privacySaving,
-      togglePrivacyPersonalization: () => this.setState(s => ({ privacyPersonalization: !s.privacyPersonalization })),
+      togglePrivacyPersonalization: () => this.setState(s => {
+        const next = !s.privacyPersonalization;
+        // Honour the opt-out in the browser engine immediately: stop profiling.
+        try { const R = getReco(); if (R && R.setConsent) R.setConsent(next); } catch (e) { /* non-fatal */ }
+        return { privacyPersonalization: next };
+      }),
       togglePrivacyAnalytics: () => this.setState(s => ({ privacyAnalytics: !s.privacyAnalytics })),
       togglePrivacyMarketing: () => this.setState(s => ({ privacyMarketing: !s.privacyMarketing })),
       openPrivacy: () => {
@@ -14158,11 +14232,16 @@ class Component extends DCLogic {
         if (api) {
           api.getPrivacy().then(p => {
             if (p && !this._unmounted) {
+              // The server speaks camelCase (personalizedRecommendations,
+              // analyticsConsent, marketingEmails); earlier keys were dropped.
+              const personalization = (p.personalizedRecommendations ?? p.personalization) ?? true;
               this.setState({
-                privacyPersonalization: p.personalization ?? true,
-                privacyAnalytics: p.analytics ?? true,
-                privacyMarketing: p.marketing ?? false
+                privacyPersonalization: personalization,
+                privacyAnalytics: (p.analyticsConsent ?? p.analytics) ?? true,
+                privacyMarketing: (p.marketingEmails ?? p.marketing) ?? false
               });
+              // Mirror the loaded preference into the engine so profiling honours it.
+              try { const R = getReco(); if (R && R.setConsent) R.setConsent(personalization); } catch (e) { /* non-fatal */ }
             }
           }).catch(() => {});
         }
@@ -14181,11 +14260,18 @@ class Component extends DCLogic {
           this.toast(msg);
         };
         if (!api) { fail('LOUMOO is unreachable. Your privacy settings were not saved.'); return; }
+        // Send the server's canonical camelCase keys so the opt-out actually sticks.
         api.updatePrivacy({
-          personalization: this.state.privacyPersonalization,
-          analytics: this.state.privacyAnalytics,
-          marketing: this.state.privacyMarketing
+          personalizedRecommendations: this.state.privacyPersonalization,
+          analyticsConsent: this.state.privacyAnalytics,
+          marketingEmails: this.state.privacyMarketing
         }).then(done).catch(err => fail((err && err.message) || 'Could not save your privacy settings.'));
+      },
+      // Clear the on-device taste profile and ask the server to forget it too.
+      resetRecommendations: () => {
+        const R = getReco();
+        if (R && R.reset) R.reset();
+        this.setState({ toast: 'Your recommendations have been reset' });
       },
 
       // B6. Security & Sessions
