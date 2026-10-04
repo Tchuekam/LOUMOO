@@ -18,6 +18,7 @@
 
 const { DeliveryRepository } = require('../infrastructure/DeliveryRepository');
 const deliveryEvents = require('../infrastructure/DeliveryEvents');
+const { getDefaultGeocoder } = require('../infrastructure/Geocoder');
 const { OrderRepository } = require('../../commerce/infrastructure/OrderRepository');
 const { OrderStateMachine } = require('../../commerce/domain/OrderStateMachine');
 const { FULFILLMENT_STATUS, DELIVERY_METHOD, PAYMENT_STATUS } = require('../../commerce/domain/Order');
@@ -76,6 +77,27 @@ const MAX_RIDERS_CONSIDERED = 500;
 const RELEASE_BATCH = 50;
 const MAX_RELEASE_ROUNDS = 4;
 const ORDER_PATH = [FULFILLMENT_STATUS.PROCESSING, FULFILLMENT_STATUS.IN_TRANSIT, FULFILLMENT_STATUS.DELIVERED];
+// What the client opens when a delivery notification is tapped, by the part the
+// recipient plays. Mirrored in docs/DELIVERY_API.md ("Who is told what").
+const NOTIFICATION_ACTIONS = Object.freeze({
+  buyer: 'track_order',
+  seller: 'open_dispatch',
+  rider: 'open_rider_hub',
+  admin: 'open_dispatch'
+});
+// An alert goes to this many administrators at most, however many exist.
+const MAX_ADMIN_ALERTS = 20;
+// An order that has waited longer than this for a rider is not chased: it is a
+// different problem, and a restart must not re-announce every old order.
+const UNDISPATCHED_MAX_AGE_MS = 24 * 60 * 60 * 1000;
+
+/** Minutes from the environment as milliseconds. Unset or unusable: the default; 0: off. */
+function minutesToMs(value, defaultMinutes) {
+  if (value === undefined || value === null || String(value).trim() === '') return defaultMinutes * 60 * 1000;
+  const n = Number(value);
+  if (!Number.isFinite(n) || n < 0) return defaultMinutes * 60 * 1000;
+  return Math.round(n * 60 * 1000);
+}
 
 function cleanText(value, field, max = 255) {
   if (value === undefined || value === null) return null;
@@ -96,16 +118,35 @@ class DeliveryService {
    * expires). Unset, it comes from DELIVERY_OFFER_TTL_MINUTES, then the default.
    * An explicit value that is not a finite number >= 0 also falls back, so a bad
    * option cannot silently switch expiry off.
+   *
+   * `geocoder` turns a drop-off address into coordinates when the seller did not
+   * supply them (see Geocoder.js). Unset, the process-wide default is used, which is
+   * off under test.
    */
-  constructor({ repository, orderRepository, events, now, offerTtlMs } = {}) {
+  constructor({ repository, orderRepository, events, now, offerTtlMs, geocoder, undispatchedSellerMs, undispatchedAdminMs } = {}) {
     this.repo = repository || new DeliveryRepository();
     this.orders = orderRepository || new OrderRepository();
     this.events = events || deliveryEvents;
+    this.geocoder = geocoder || getDefaultGeocoder();
     this.now = typeof now === 'function' ? now : () => Date.now();
     this._serialQueue = Promise.resolve(); // see _serialised()
     this.offerTtlMs = typeof offerTtlMs === 'number'
       ? offerTtlMsFrom(offerTtlMs / 60000)
       : offerTtlMsFrom(process.env.DELIVERY_OFFER_TTL_MINUTES);
+    // How long an order may wait for a rider before the seller, then the
+    // administrators, are chased (see nudgeUndispatched). 0 switches a tier off.
+    this.undispatchedSellerMs = typeof undispatchedSellerMs === 'number'
+      ? Math.max(0, undispatchedSellerMs)
+      : minutesToMs(process.env.DELIVERY_UNDISPATCHED_SELLER_MINUTES, 15);
+    this.undispatchedAdminMs = typeof undispatchedAdminMs === 'number'
+      ? Math.max(0, undispatchedAdminMs)
+      : minutesToMs(process.env.DELIVERY_UNDISPATCHED_ADMIN_MINUTES, 45);
+    this._chased = new Map(); // "seller:<orderId>" / "admin:<orderId>" -> when it was said
+  }
+
+  /** True when the offer sweeper has something to do for this service. */
+  get nudgeEnabled() {
+    return this.undispatchedSellerMs > 0 || this.undispatchedAdminMs > 0;
   }
 
   // ----------------------------------------------------------------- identity
@@ -252,15 +293,124 @@ class DeliveryService {
     });
   }
 
-  _notify(userId, { title, body, tone = 'accent', delivery }) {
+  /**
+   * Tells one user something happened. `audience` is the part that user plays on
+   * THIS delivery (buyer, seller, rider, admin), stated by the caller rather than
+   * guessed from ids: a seller who buys from their own store is both. The client
+   * reads `audience` and `action` from the notification metadata to open the right
+   * screen when the notification is tapped (see NOTIFICATION_ACTIONS).
+   */
+  _notify(userId, { audience, title, body, tone = 'accent', delivery = null, orderId = null }) {
     if (!userId || !NotificationService || typeof NotificationService.create !== 'function') return;
-    NotificationService.create(userId, {
-      type: 'delivery',
-      tone,
-      title,
-      body,
-      metadata: { deliveryId: delivery.id, orderId: delivery.orderId }
-    }).catch((e) => logger.warn(`[Delivery] Notification error: ${e.message}`));
+    const metadata = { audience, action: NOTIFICATION_ACTIONS[audience] || null };
+    if (delivery) {
+      metadata.deliveryId = delivery.id;
+      metadata.orderId = delivery.orderId;
+    } else if (orderId) {
+      metadata.orderId = orderId; // an order that has no delivery yet
+    }
+    NotificationService.create(userId, { type: 'delivery', tone, title, body, metadata })
+      .catch((e) => logger.warn(`[Delivery] Notification error: ${e.message}`));
+  }
+
+  /**
+   * Alerts the administrators. The service says "an administrator must resolve
+   * this" in several places (a locked handover, a rider suspended mid-delivery);
+   * without this nobody with the power to act is ever told. Best effort: a failed
+   * lookup is logged and never fails the request that raised the alert.
+   */
+  async _notifyAdmins({ title, body, tone = 'neutral', delivery = null }) {
+    let adminIds = [];
+    try {
+      adminIds = await this.repo.listAdminIds({ limit: MAX_ADMIN_ALERTS });
+    } catch (err) {
+      logger.warn(`[Delivery] Could not look up administrators to alert about ${delivery ? delivery.id : 'an order'}: ${err.message}`);
+      return 0;
+    }
+    if (!adminIds.length) logger.warn(`[Delivery] No administrator to alert: "${title}"${delivery ? ` (delivery ${delivery.id})` : ''}.`);
+    for (const adminId of adminIds) this._notify(adminId, { audience: 'admin', title, body, tone, delivery });
+    return adminIds.length;
+  }
+
+  /**
+   * Orders that are waiting for somebody to arrange a rider, and for how long.
+   * "Waiting" is: no delivery yet, a delivery the seller cancelled and did not
+   * replace, or one that is `pending_assignment` (created, or handed back by a rider
+   * who declined, lapsed or was suspended). An order with a rider on it, or whose
+   * delivery failed (the seller was already told), is not waiting. Orders older than
+   * UNDISPATCHED_MAX_AGE_MS are left alone: a stale order is a different problem and
+   * must not be re-announced every time a process restarts.
+   */
+  async _undispatchedOrders(limit) {
+    const orders = await this.orders.findOrdersBySeller(null, {
+      statuses: [FULFILLMENT_STATUS.PROCESSING], limit, excludePaymentStatuses: [PAYMENT_STATUS.REFUNDED]
+    });
+    const latest = await this.repo.findLatestByOrders(orders.map((o) => o.id));
+    const now = this.now();
+    const waiting = [];
+    for (const order of orders) {
+      const d = latest.get(order.id) || null;
+      let since = Date.parse(order.createdAt);
+      if (d && d.status === S.PENDING_ASSIGNMENT) since = Date.parse(d.updatedAt);
+      else if (d && d.status === S.CANCELLED) since = Math.max(since, Date.parse(d.updatedAt) || 0);
+      else if (d) continue; // somebody is on it, or it is over
+      if (!Number.isFinite(since)) continue;
+      const age = now - since;
+      if (age >= 0 && age <= UNDISPATCHED_MAX_AGE_MS) waiting.push({ order, age, hasDelivery: Boolean(d) });
+    }
+    return waiting;
+  }
+
+  /**
+   * Chases an order nobody is arranging. Seller first, after `undispatchedSellerMs`: the
+   * order is theirs and they were told when it arrived, so this is a reminder. The
+   * administrators later, after `undispatchedAdminMs`, in ONE alert for everything that
+   * newly crossed the line (not one per order). Each fires once per order for the life
+   * of the process: the memory of what was already said is not stored, so a restart can
+   * repeat a reminder once (an order older than a day is never chased, which bounds it),
+   * and in return this needs no migration. Run by the offer sweeper, so on a serverless
+   * runtime (no sweeper) nobody is chased.
+   */
+  async nudgeUndispatched({ limit = 100 } = {}) {
+    const sellerOn = this.undispatchedSellerMs > 0;
+    const adminOn = this.undispatchedAdminMs > 0;
+    if (!sellerOn && !adminOn) return { sellers: 0, admins: 0 };
+
+    const waiting = await this._undispatchedOrders(limit);
+    const told = this._chased;
+    const nowMs = this.now();
+    for (const [key, at] of told) if (nowMs - at > UNDISPATCHED_MAX_AGE_MS + 60 * 60 * 1000) told.delete(key);
+
+    let sellers = 0;
+    for (const { order, age, hasDelivery } of waiting) {
+      const key = `seller:${order.id}`;
+      if (!sellerOn || age < this.undispatchedSellerMs || told.has(key) || !order.sellerId) continue;
+      told.set(key, nowMs);
+      const minutes = Math.floor(age / 60000);
+      this._notify(order.sellerId, {
+        audience: 'seller',
+        title: `Order ${order.orderNumber} still needs a rider`,
+        body: `It has been waiting ${minutes} minute${minutes === 1 ? '' : 's'}. ${hasDelivery ? 'Choose a rider' : 'Arrange the delivery'} so the customer is not left waiting.`,
+        tone: 'sale',
+        orderId: order.id
+      });
+      sellers += 1;
+    }
+
+    let admins = 0;
+    const overdue = waiting.filter(({ order, age }) => adminOn && age >= this.undispatchedAdminMs && !told.has(`admin:${order.id}`));
+    if (overdue.length) {
+      for (const { order } of overdue) told.set(`admin:${order.id}`, nowMs);
+      const numbers = overdue.slice(0, 3).map(({ order }) => order.orderNumber).join(', ');
+      const more = overdue.length > 3 ? ` and ${overdue.length - 3} more` : '';
+      const minutes = Math.floor(this.undispatchedAdminMs / 60000);
+      admins = await this._notifyAdmins({
+        title: overdue.length === 1 ? 'An order has no rider' : `${overdue.length} orders have no rider`,
+        body: `${numbers}${more} ${overdue.length === 1 ? 'has' : 'have'} waited over ${minutes} minutes with no delivery arranged. Check with the seller${overdue.length === 1 ? '' : 's'}.`
+      });
+    }
+    if (sellers || overdue.length) logger.info(`[Delivery] Chased ${sellers} seller(s) and alerted administrators about ${overdue.length} order(s) with no rider.`);
+    return { sellers, admins, overdue: overdue.length };
   }
 
   async _invalidateBuyerCache(buyerId) {
@@ -358,12 +508,14 @@ class DeliveryService {
     // answer all read this row, and a lost one would silently void them.
     await this._record(updated, S.ASSIGNED, riderId, OFFER_EXPIRED_NOTE, { retries: 1 });
     this._notify(updated.sellerId, {
+      audience: 'seller',
       title: 'A rider did not respond',
       body: 'The offer expired. Assign another rider to keep the order moving.',
       tone: 'neutral',
       delivery: updated
     });
     this._notify(riderId, {
+      audience: 'rider',
       title: 'A delivery offer expired',
       body: 'It was not accepted in time and went back to the seller.',
       tone: 'neutral',
@@ -474,6 +626,18 @@ class DeliveryService {
       location: parseLocation(body.dropoffLocation, 'dropoffLocation')
     };
 
+    // Without coordinates there is no ETA and no distance for the whole delivery,
+    // and neither the checkout nor the seller's screen supplies any. So when the
+    // seller sent none, resolve the address here. Best effort and bounded: a
+    // geocoder that fails or is slow costs the delivery its ETA, never the delivery.
+    if (!dropoff.location && dropoff.address && this.geocoder && this.geocoder.enabled !== false) {
+      try {
+        dropoff.location = await this.geocoder.geocode(dropoff.address);
+      } catch (err) {
+        dropoff.location = null;
+      }
+    }
+
     const nowIso = this._nowIso();
     const record = {
       id: newDeliveryId(),
@@ -497,6 +661,7 @@ class DeliveryService {
     const created = await this.repo.insertDelivery(record);
     await this._record(created, null, caller.userId, 'Delivery created');
     this._notify(order.buyerId, {
+      audience: 'buyer',
       title: `Delivery being arranged for order ${order.orderNumber}`,
       body: 'We are finding a rider for your order.',
       delivery: created
@@ -624,10 +789,22 @@ class DeliveryService {
     );
 
     this._notify(driver.id, {
+      audience: 'rider',
       title: 'New delivery assigned',
       body: this._offerPrompt(),
       delivery: updated
     });
+    // Handing the job to someone else takes it away from whoever held it: say so,
+    // rather than let them find out when the job vanishes from their list.
+    if (delivery.driverId && delivery.driverId !== driver.id) {
+      this._notify(delivery.driverId, {
+        audience: 'rider',
+        title: 'A delivery was given to another rider',
+        body: 'You do not need to do this one any more.',
+        tone: 'neutral',
+        delivery: updated
+      });
+    }
     return this._present(updated, role);
   }
 
@@ -689,8 +866,16 @@ class DeliveryService {
       { actorId: caller.userId, note: 'Rider accepted' }
     );
     this._notify(updated.buyerId, {
+      audience: 'buyer',
       title: 'A rider accepted your delivery',
       body: `${driver.name} will pick up your order.`,
+      tone: 'success',
+      delivery: updated
+    });
+    this._notify(updated.sellerId, {
+      audience: 'seller',
+      title: 'A rider accepted the delivery',
+      body: `${driver.name} is on the way to collect the parcel. Have it ready.`,
       tone: 'success',
       delivery: updated
     });
@@ -708,6 +893,7 @@ class DeliveryService {
       { actorId: caller.userId, note: delivery.status === S.ACCEPTED ? 'Rider released the delivery' : 'Rider declined' }
     );
     this._notify(updated.sellerId, {
+      audience: 'seller',
       title: 'A rider declined a delivery',
       body: 'Assign another rider to keep the order moving.',
       delivery: updated
@@ -765,9 +951,17 @@ class DeliveryService {
       [S.ARRIVED]: { title: 'Your rider has arrived', body: 'Share your handover code with the rider.', tone: 'success' },
       [S.FAILED]: { title: 'Delivery could not be completed', body: 'We will arrange another attempt.', tone: 'neutral' }
     }[nextStatus];
-    this._notify(updated.buyerId, { ...buyerMessage, delivery: updated });
+    this._notify(updated.buyerId, { audience: 'buyer', ...buyerMessage, delivery: updated });
+    // The seller follows the parcel too: they handed it over and own the customer
+    // relationship, so they hear about pickup and arrival, not just failure.
+    const sellerMessage = {
+      [S.PICKED_UP]: { title: 'The rider collected the parcel', body: 'It is on its way to the customer.', tone: 'accent' },
+      [S.ARRIVED]: { title: 'The rider is at the customer', body: 'The customer gives the rider a 4-digit code to complete the handover.', tone: 'accent' }
+    }[nextStatus];
+    if (sellerMessage) this._notify(updated.sellerId, { audience: 'seller', ...sellerMessage, delivery: updated });
     if (nextStatus === S.FAILED) {
       this._notify(updated.sellerId, {
+        audience: 'seller',
         title: 'A delivery failed',
         body: cleanNote,
         tone: 'neutral',
@@ -877,9 +1071,15 @@ class DeliveryService {
             note: 'Handover locked after too many incorrect codes', at: this._nowIso()
           });
           this._notify(delivery.sellerId, {
+            audience: 'seller',
             title: 'A delivery is locked',
             body: 'The rider entered too many wrong handover codes. An administrator must resolve it.',
             tone: 'neutral',
+            delivery: bumped
+          });
+          await this._notifyAdmins({
+            title: 'A delivery is locked and needs you',
+            body: 'The rider entered too many wrong handover codes. Unlock it for a new code, or mark it failed.',
             delivery: bumped
           });
           throw new DeliveryLockedError();
@@ -898,12 +1098,14 @@ class DeliveryService {
       await this._record(updated, S.ARRIVED, caller.userId, 'Handover code verified');
       await this._syncOrder(updated, caller.userId);
       this._notify(updated.buyerId, {
+        audience: 'buyer',
         title: 'Order delivered',
         body: 'Your order has been handed over. Enjoy!',
         tone: 'success',
         delivery: updated
       });
       this._notify(updated.sellerId, {
+        audience: 'seller',
         title: 'Order delivered',
         body: 'The rider completed the handover.',
         tone: 'success',
@@ -941,6 +1143,7 @@ class DeliveryService {
 
     if (delivery.driverId) {
       this._notify(delivery.driverId, {
+        audience: 'rider',
         title: 'Delivery cancelled',
         body: 'This delivery was cancelled. You do not need to pick it up.',
         tone: 'neutral',
@@ -949,6 +1152,7 @@ class DeliveryService {
     }
     if (role !== 'buyer') {
       this._notify(updated.buyerId, {
+        audience: 'buyer',
         title: 'Delivery cancelled',
         body: 'The delivery was cancelled. The seller will arrange another.',
         tone: 'neutral',
@@ -980,6 +1184,7 @@ class DeliveryService {
       );
       if (open.driverId) {
         this._notify(open.driverId, {
+          audience: 'rider',
           title: 'Delivery cancelled',
           body: 'The order was cancelled. You do not need to pick it up.',
           tone: 'neutral',
@@ -1023,11 +1228,21 @@ class DeliveryService {
         { actorId: caller.userId, note: note || 'Handover unlocked by an administrator' }
       );
       this._notify(updated.buyerId, {
+        audience: 'buyer',
         title: 'Your handover code changed',
         body: 'Open the delivery to see your new code.',
         tone: 'neutral',
         delivery: updated
       });
+      if (updated.driverId) {
+        this._notify(updated.driverId, {
+          audience: 'rider',
+          title: 'The handover was unlocked',
+          body: 'Ask the customer for their new 4-digit code and try again.',
+          tone: 'neutral',
+          delivery: updated
+        });
+      }
       return this._present(updated, 'admin');
     }
 
@@ -1044,13 +1259,23 @@ class DeliveryService {
         { status: S.FAILED, failureReason: note },
         { actorId: caller.userId, note }
       );
-      this._notify(updated.sellerId, { title: 'A delivery was marked failed', body: note, tone: 'neutral', delivery: updated });
+      this._notify(updated.sellerId, { audience: 'seller', title: 'A delivery was marked failed', body: note, tone: 'neutral', delivery: updated });
       this._notify(updated.buyerId, {
+        audience: 'buyer',
         title: 'Delivery could not be completed',
         body: 'We will arrange another attempt.',
         tone: 'neutral',
         delivery: updated
       });
+      if (updated.driverId) {
+        this._notify(updated.driverId, {
+          audience: 'rider',
+          title: 'An administrator closed your delivery',
+          body: note,
+          tone: 'neutral',
+          delivery: updated
+        });
+      }
       return this._present(updated, 'admin');
     }
 
@@ -1153,6 +1378,19 @@ class DeliveryService {
       profileId, name, phone, status, createdBy: existing ? existing.createdBy : caller.userId
     });
     if (status === DRIVER_STATUS.SUSPENDED) await this._releaseDriverWork(profileId, caller.userId, 'Rider suspended');
+    // The rider hears about it from us: being registered (or suspended) changes
+    // what they can do in the app, and nothing else would tell them.
+    if (!existing || existing.status !== status) {
+      const active = status === DRIVER_STATUS.ACTIVE;
+      this._notify(profileId, {
+        audience: 'rider',
+        title: active ? 'You are now a LOUMOO rider' : 'Your rider access was paused',
+        body: active
+          ? 'Open Deliver with LOUMOO in your account to see delivery offers.'
+          : 'You will not be offered deliveries for now. Contact LOUMOO support if you think this is a mistake.',
+        tone: active ? 'success' : 'neutral'
+      });
+    }
     return { id: driver.id, name: driver.name, phone: driver.phone, status: driver.status };
   }
 
@@ -1180,6 +1418,7 @@ class DeliveryService {
             { actorId, note }
           );
           this._notify(released.sellerId, {
+            audience: 'seller',
             title: 'A rider is no longer available',
             body: 'Assign another rider to keep the order moving.',
             tone: 'neutral',
@@ -1188,9 +1427,15 @@ class DeliveryService {
         } else {
           logger.warn(`[Delivery] Rider ${driverId} is unavailable but delivery ${d.id} is "${d.status}"; needs administrator resolution.`);
           this._notify(d.sellerId, {
+            audience: 'seller',
             title: 'A rider in the middle of a delivery was suspended',
             body: 'An administrator needs to resolve this delivery.',
             tone: 'neutral',
+            delivery: d
+          });
+          await this._notifyAdmins({
+            title: 'A suspended rider still has a parcel',
+            body: 'The rider was suspended while carrying a delivery. Mark it failed so the seller can send another rider.',
             delivery: d
           });
         }

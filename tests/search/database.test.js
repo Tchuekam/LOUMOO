@@ -17,7 +17,10 @@ module.exports = async () => {
       __dirname,
       '../../server/infrastructure/database/migrations',
     );
-    for (const prefix of ['004_', '005_', '009_', '011_', '014_', '014_'])
+    // Applied by name, not by number: two migrations are numbered 014 (delivery
+    // indexes and universal search), and `find` would return the first of them.
+    // The search migration runs twice on purpose: it must be idempotent.
+    for (const prefix of ['004_', '005_', '009_', '011_', '014_universal_search', '014_universal_search'])
       await db.exec(
         fs.readFileSync(
           path.join(

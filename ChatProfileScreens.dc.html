@@ -223,6 +223,11 @@
         <div style="font:700 13px/1.2 var(--font-heading);color:{{ ntf.read ? 'var(--color-text)' : ntf.toneColor }}">{{ ntf.title }}</div>
         <div style="font:400 12px/1.35 var(--font-body);color:var(--color-text-secondary);margin-top:4px">{{ ntf.body }}</div>
         <div style="font:500 10px/1 var(--font-body);color:var(--color-text-muted);margin-top:6px">{{ ntf.dateLabel }}</div>
+        <!-- A delivery or order notification opens the screen it is about, for
+             whichever part you play in it: buyer, seller, rider or administrator. -->
+        <sc-if value="{{ ntf.canOpen }}">
+          <button onClick="{{ ntf.open }}" class="btn btn-secondary btn-sm" style="margin-top:10px;height:40px;padding:0 16px;font-size:12px;font-weight:700">{{ ntf.openLabel }}</button>
+        </sc-if>
       </div>
     </div>
     </sc-for>
