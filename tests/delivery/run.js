@@ -29,6 +29,7 @@ const SUITES = [
   'delivery_circuit',
   'delivery_circuit_e2e',
   'delivery_geocoder',
+  'delivery_nudge',
   // The order path in the compiled app: what a buyer does before a delivery can exist.
   'checkout_server_orders',
   'checkout_published_notifications_fixes',

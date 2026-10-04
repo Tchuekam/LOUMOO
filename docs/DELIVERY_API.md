@@ -132,6 +132,8 @@ and `metadata.action` (which screen the client opens when it is tapped), plus
 |---|---|---|---|---|
 | Order placed (`POST /api/v1/orders`) | confirmation | **new order to deliver** (starts the circuit) | | |
 | Delivery created | a rider is being found | | | |
+| No delivery / no rider after 15 min | | **reminder: the order still needs a rider** | | |
+| No delivery / no rider after 45 min | | | | **one alert for every order that crossed the line** |
 | Rider offered the job | | | **new offer** (with the time they have) | |
 | Job given to another rider | | | **no longer yours** | |
 | Offer accepted | rider is coming | **have the parcel ready** | | |
@@ -381,8 +383,9 @@ empty system; the server logs the cause and says so once at boot.
    migrated by hand, prefer the single-file form. Two migrations are numbered 014 (the
    other is universal search); they are independent.
 2. **Environment**: `SUPABASE_JWT_SECRET` (handover codes are derived from it; the
-   server will not issue one without it), optionally `DELIVERY_OFFER_TTL_MINUTES` and the
-   `DELIVERY_GEOCODER_*` settings above.
+   server will not issue one without it), optionally `DELIVERY_OFFER_TTL_MINUTES`, the
+   `DELIVERY_GEOCODER_*` settings above and `DELIVERY_UNDISPATCHED_SELLER_MINUTES` /
+   `DELIVERY_UNDISPATCHED_ADMIN_MINUTES` (decision 13).
 3. **Runtime**: Railway (a long-lived process) gives the live stream and the offer
    sweeper. Netlify/Vercel work through polling and release-on-read, as described above,
    but a seller there hears about a lapsed offer only when something touches it.
@@ -393,7 +396,10 @@ empty system; the server logs the cause and says so once at boot.
    `.env.local`. It is read-only (it only SELECTs) and reports PASS / WARN / FAIL for: the
    delivery tables and the columns the code uses, the notifications table, an active rider,
    an administrator, a published listing, the JWT secret, offer expiry and the runtime. It
-   exits 1 if anything blocks. Then place an order as a customer: the seller's account gets
+   exits 1 if anything blocks. Add `-- --live` (`npm run delivery:readiness -- --live`) to
+   also geocode one landmark ("Bonanjo, Douala", never an address from your data), which
+   proves the geocoder is reachable from that network; without it the check sends nothing.
+   Then place an order as a customer: the seller's account gets
    *New order … to deliver*, and the boot log has no `[Delivery] NOT READY` line.
 
 What is and is not verified without a deployment: `npm run test:delivery` runs the real
@@ -467,8 +473,18 @@ is for.
 13. **Administrators are told, not just the seller.** The service says "an administrator
     must resolve this" for a locked handover and for a suspended rider who still holds a
     parcel; those now alert every live administrator. A delivery that goes right never
-    does. There is no alert yet for a delivery nobody is arranging (an order that sits with
-    no delivery): that needs a timer and a "nudged" marker, and is left for later.
+    does.
+    **An order nobody is arranging is chased.** The offer sweeper (once a minute, on a
+    long-lived runtime) looks for orders that are `processing` with no delivery, a cancelled
+    one that was not replaced, or one still `pending_assignment`. After
+    `DELIVERY_UNDISPATCHED_SELLER_MINUTES` (default 15) the seller gets a reminder; after
+    `DELIVERY_UNDISPATCHED_ADMIN_MINUTES` (default 45) administrators get ONE alert for
+    everything that newly crossed the line. `0` switches a tier off. Each fires once per order
+    for the life of the process. What was already said is held in memory, not stored, so there
+    is no migration, and a restart can repeat a reminder once (an order older than a day is
+    never chased). An order with a rider on it, one whose delivery failed (the seller was told
+    then), and delivered, cancelled, refunded and pickup orders are left alone. A serverless
+    runtime has no sweeper, so nobody is chased there.
 14. **Delivery fee on the checkout equals the order's.** The checkout shows items plus the
     delivery fee for the address's city (the same setting the server prices from) and
     sends no total. The old "escrow protection fee" was added to the shown total but the
