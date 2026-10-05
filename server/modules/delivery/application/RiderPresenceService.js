@@ -119,17 +119,31 @@ class RiderPresenceService {
    * "I am here and available." From offline, paused, or already online (idempotent).
    * A rider who still holds a delivery they accepted comes back as busy, not online:
    * going online does not make a busy rider offerable.
+   *
+   * It never overwrites a row stored `busy` with `online`: a claim made a moment ago
+   * has not written its delivery yet, and overwriting it would let a second accept
+   * through. A busy row nothing backs up is put right here only once it is older than
+   * the claim grace (the same rule as the janitor); until then the rider is busy.
    */
   async goOnline(riderId, location = null) {
     const driver = await this._requireActiveRider(riderId);
     const at = this._nowIso();
     await this.repo.ensurePresence(riderId, at);
-    const busy = (await this._busyCount(riderId)) > 0;
-    await this.repo.transitionPresence(
-      riderId,
-      STORED_PRESENCE_STATUSES,
-      { status: busy ? P.BUSY : P.ONLINE, ...this._alive(at, location) }
+    const carrying = (await this._busyCount(riderId)) > 0;
+    if (carrying) {
+      await this.repo.transitionPresence(riderId, STORED_PRESENCE_STATUSES, { status: P.BUSY, ...this._alive(at, location) });
+      return this._own(riderId, driver);
+    }
+    const moved = await this.repo.transitionPresence(
+      riderId, [P.OFFLINE, P.PAUSED, P.ONLINE], { status: P.ONLINE, ...this._alive(at, location) }
     );
+    if (!moved) {
+      // Stored busy with nothing carried: in flight, or leaked. Heal only the leaked kind.
+      const cutoff = new Date(this.now() - PRESENCE_CLAIM_GRACE_MS).toISOString();
+      await this.repo.transitionPresence(
+        riderId, [P.BUSY], { status: P.ONLINE, ...this._alive(at, location) }, { updatedBefore: cutoff }
+      );
+    }
     return this._own(riderId, driver);
   }
 
@@ -137,38 +151,53 @@ class RiderPresenceService {
    * "I am done." Refused while the rider carries a delivery they accepted: that
    * parcel is theirs until it is delivered or they release it. Their un-accepted
    * offers are not: the caller takes those back afterwards.
+   *
+   * The write itself excludes a row stored `busy`, so an accept that lands between
+   * the check and the write cannot be overwritten into "offline while carrying": the
+   * write simply does not apply and the rider is told they are busy.
    */
   async goOffline(riderId) {
     const driver = await this._requireActiveRider(riderId);
-    if ((await this._busyCount(riderId)) > 0) {
-      throw new RiderUnavailableError('busy', {
-        self: true, message: 'Finish or release your current delivery before going offline.'
-      });
-    }
-    const at = this._nowIso();
+    const busy = () => new RiderUnavailableError('busy', {
+      self: true, message: 'Finish or release your current delivery before going offline.'
+    });
+    if ((await this._busyCount(riderId)) > 0) throw busy();
+    const row = await this.repo.findPresence(riderId);
     // No row means they were never online: nothing to write.
-    await this.repo.transitionPresence(riderId, STORED_PRESENCE_STATUSES, { status: P.OFFLINE, updatedAt: at, ...NO_POSITION });
+    if (row) {
+      const moved = await this.repo.transitionPresence(
+        riderId, [P.ONLINE, P.PAUSED, P.OFFLINE], { status: P.OFFLINE, updatedAt: this._nowIso(), ...NO_POSITION }
+      );
+      if (!moved) {
+        const after = await this.repo.findPresence(riderId);
+        if (after && after.status === P.BUSY) throw busy();
+      }
+    }
     return this._own(riderId, driver);
   }
 
   /**
    * "Not taking new deliveries for a while." Only from online. Refused while carrying
-   * a delivery (finish or release it first); idempotent when already paused.
+   * a delivery (finish or release it first); idempotent when already paused. Like
+   * going offline, the write applies only to a row stored `online`, so a claim that
+   * lands after the check is not overwritten.
    */
   async pause(riderId) {
     const driver = await this._requireActiveRider(riderId);
-    if ((await this._busyCount(riderId)) > 0) {
-      throw new RiderUnavailableError('busy', {
-        self: true, message: 'Finish or release your current delivery before pausing.'
-      });
-    }
+    const busy = () => new RiderUnavailableError('busy', {
+      self: true, message: 'Finish or release your current delivery before pausing.'
+    });
+    if ((await this._busyCount(riderId)) > 0) throw busy();
     const current = await this.resolve(riderId, driver);
     if (current.status === P.PAUSED) return presentOwnPresence(current, { ttlMs: this.ttlMs });
+    if (current.status === P.BUSY) throw busy();
     if (current.status !== P.ONLINE) {
       throw new RiderUnavailableError(current.reason, { self: true, message: 'Go online before pausing.' });
     }
-    const at = this._nowIso();
-    await this.repo.transitionPresence(riderId, [P.ONLINE, P.BUSY], { status: P.PAUSED, updatedAt: at, ...NO_POSITION });
+    const moved = await this.repo.transitionPresence(
+      riderId, [P.ONLINE], { status: P.PAUSED, updatedAt: this._nowIso(), ...NO_POSITION }
+    );
+    if (!moved && (await this.resolve(riderId, driver)).status === P.BUSY) throw busy();
     return this._own(riderId, driver);
   }
 
@@ -203,6 +232,12 @@ class RiderPresenceService {
     const nowMs = this.now();
     const live = row && (row.status === P.ONLINE || row.status === P.BUSY);
     if (!live) return { presence: await this._own(riderId, driver), expired: false };
+    // A beat is the hot path (every rider, every 30 s): answered from the row it just
+    // read or wrote, not from a fresh set of reads. A row stored busy reads as busy by
+    // itself, and a free rider has nothing to count.
+    const from = (stored) => presentOwnPresence(
+      resolvePresence({ driver, row: stored, busyCount: 0, ttlMs: this.ttlMs, nowMs: this.now() }), { ttlMs: this.ttlMs }
+    );
 
     // Only a free (online) rider goes stale. One carrying a parcel is busy whatever
     // their beats say: their silence is a delivery problem for an administrator, not
@@ -233,13 +268,9 @@ class RiderPresenceService {
    * only applies while the rider is stored online AND their last beat is fresh, so
    * two deliveries accepted at the same instant cannot both win, and a rider who
    * went offline, paused or silent cannot accept at all (409, with the reason).
+   * A rider who is not active is refused here as well (the caller has usually just
+   * checked, and passes the record it loaded; suspension must not depend on that).
    * Throws RiderUnavailableError; the caller must give the claim back with
-    // A beat is the hot path (every rider, every 30 s): answered from the row it just
-    // read or wrote, not from a fresh set of reads. A row stored busy reads as busy by
-    // itself, and a free rider has nothing to count.
-    const from = (stored) => presentOwnPresence(
-      resolvePresence({ driver, row: stored, busyCount: 0, ttlMs: this.ttlMs, nowMs: this.now() }), { ttlMs: this.ttlMs }
-    );
    * reconcile() if the delivery change that follows fails.
    */
   async claim(riderId, driver) {
@@ -265,6 +296,13 @@ class RiderPresenceService {
    * (busy -> online). Called after a delivery change that started or ended a rider's
    * work, and to give back a claim whose delivery change failed. Idempotent. It never
    * raises an offline or paused rider and never touches a suspended one.
+   *
+   * `alive` says the change was the RIDER's own act (they completed, failed or released
+   * the delivery): an authenticated request from them is proof they are here, so the
+   * busy -> online move also refreshes their last-seen time. Without it a rider who
+   * carried a parcel for longer than the heartbeat window with their app asleep, then
+   * handed it over, would come back already expired. An administrator's or seller's
+   * act proves nothing about the rider, and leaves the clock alone.
    */
   async reconcile(riderId, { alive = false } = {}) {
     const row = await this.repo.findPresence(riderId);
@@ -299,13 +337,6 @@ class RiderPresenceService {
   async assertAvailable(riderId, driver) {
     const now = await this.resolve(riderId, driver);
     if (!now.available) throw new RiderUnavailableError(now.reason);
-   *
-   * `alive` says the change was the RIDER's own act (they completed, failed or released
-   * the delivery): an authenticated request from them is proof they are here, so the
-   * busy -> online move also refreshes their last-seen time. Without it a rider who
-   * carried a parcel for longer than the heartbeat window with their app asleep, then
-   * handed it over, would come back already expired. An administrator's or seller's
-   * act proves nothing about the rider, and leaves the clock alone.
     return now;
   }
 
@@ -319,10 +350,16 @@ class RiderPresenceService {
     // rider is never available" must not depend on it being filtered upstream.
     const active = new Set(activeDrivers.filter((d) => d.status === DRIVER_STATUS.ACTIVE).map((d) => d.id));
     if (!active.size) return new Set();
+    const limit = MAX_RIDERS_CONSIDERED * 2;
     const [online, busy] = await Promise.all([
       this.repo.listFreshOnlinePresence(freshnessCutoffIso(this.ttlMs, this.now()), { limit }),
       this.repo.countOpenByDriver({ statuses: BUSY_DELIVERY_STATUSES })
     ]);
+    if (online.length >= limit) {
+      // The riders and the presence rows are read separately, each capped: past the cap
+      // some online riders could fall between the two lists and not be offered work.
+      logger.warn(`[Presence] ${limit} online riders read (the cap); riders beyond it may not be offered deliveries.`);
+    }
     return new Set(online.filter((r) => active.has(r.riderId) && !busy.has(r.riderId)).map((r) => r.riderId));
   }
 
@@ -350,16 +387,10 @@ class RiderPresenceService {
    * caller can take back their offers. Bounded per call; a backlog is worked off
    * over several sweeps. This is housekeeping: every read already treats a stale
    * rider as offline, so a deployment that cannot run the sweep (serverless) is
-    const limit = MAX_RIDERS_CONSIDERED * 2;
    * never wrong, only untidy.
    */
   async expireStale({ limit = 50 } = {}) {
     const nowMs = this.now();
-    if (online.length >= limit) {
-      // The riders and the presence rows are read separately, each capped: past the cap
-      // some online riders could fall between the two lists and not be offered work.
-      logger.warn(`[Presence] ${limit} online riders read (the cap); riders beyond it may not be offered deliveries.`);
-    }
     const cutoff = freshnessCutoffIso(this.ttlMs, nowMs);
     const stale = await this.repo.findStalePresence(cutoff, { limit });
     const expired = [];
