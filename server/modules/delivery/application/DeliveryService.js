@@ -1488,7 +1488,10 @@ class DeliveryService {
     const driver = await this.repo.upsertDriver({
       profileId, name, phone, status, createdBy: existing ? existing.createdBy : caller.userId
     });
-    if (status === DRIVER_STATUS.SUSPENDED) await this._releaseDriverWork(profileId, caller.userId, 'Rider suspended');
+    if (status === DRIVER_STATUS.SUSPENDED) {
+      await this._forceOffline(profileId);
+      await this._releaseDriverWork(profileId, caller.userId, 'Rider suspended');
+    }
     // The rider hears about it from us: being registered (or suspended) changes
     // what they can do in the app, and nothing else would tell them.
     if (!existing || existing.status !== status) {
@@ -1650,9 +1653,23 @@ class DeliveryService {
     });
     await this._releaseDriverWork(userId, userId, 'Rider account deleted');
   }
+    await this._forceOffline(userId);
 
   /**
    * Riders who already handed this delivery back: declined it, released it after
+  /**
+   * Suspension and account deletion take a rider out of availability at once. They
+   * are already unavailable by the derived `suspended` status, so a failing write here
+   * is logged and never blocks the administrator's action.
+   */
+  async _forceOffline(riderId) {
+    try {
+      await this.presence.forceOffline(riderId);
+    } catch (err) {
+      logger.warn(`[Delivery] Could not set rider ${riderId} offline: ${err.message}`);
+    }
+  }
+
    * accepting, or let the offer lapse. Read from the timeline: each of those is a
    * move back to `pending_assignment` whose actor is the rider. The timeline write
    * is best-effort, so a lost row only means a rider might be offered it again.
