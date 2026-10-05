@@ -24,6 +24,7 @@ const { OrderStateMachine } = require('../../commerce/domain/OrderStateMachine')
 const { FULFILLMENT_STATUS, DELIVERY_METHOD, PAYMENT_STATUS } = require('../../commerce/domain/Order');
 const { DeliveryStateMachine } = require('../domain/DeliveryStateMachine');
 const { codeFor, verifyCode, HANDOVER_CODE_DIGITS } = require('../domain/HandoverCode');
+const { RiderPresenceService } = require('./RiderPresenceService');
 const {
   DELIVERY_STATUS: S,
   DRIVER_STATUS,
@@ -49,6 +50,11 @@ const {
   describeArea,
   presentDelivery
 } = require('../domain/Delivery');
+const {
+  BUSY_DELIVERY_STATUSES,
+  PRESENCE_NOTES,
+  PRESENCE_ACTOR
+} = require('../domain/RiderPresence');
 const {
   NotFoundError,
   ValidationError,
@@ -122,8 +128,12 @@ class DeliveryService {
    * `geocoder` turns a drop-off address into coordinates when the seller did not
    * supply them (see Geocoder.js). Unset, the process-wide default is used, which is
    * off under test.
+   *
+   * `presenceTtlMs` is how long a rider may go without a heartbeat before they stop
+   * counting as online (unset: RIDER_PRESENCE_TTL_SECONDS, then 2 minutes); `presence`
+   * replaces the whole RiderPresenceService (tests).
    */
-  constructor({ repository, orderRepository, events, now, offerTtlMs, geocoder, undispatchedSellerMs, undispatchedAdminMs } = {}) {
+  constructor({ repository, orderRepository, events, now, offerTtlMs, geocoder, undispatchedSellerMs, undispatchedAdminMs, presenceTtlMs, presence } = {}) {
     this.repo = repository || new DeliveryRepository();
     this.orders = orderRepository || new OrderRepository();
     this.events = events || deliveryEvents;
@@ -142,6 +152,13 @@ class DeliveryService {
       ? Math.max(0, undispatchedAdminMs)
       : minutesToMs(process.env.DELIVERY_UNDISPATCHED_ADMIN_MINUTES, 45);
     this._chased = new Map(); // "seller:<orderId>" / "admin:<orderId>" -> when it was said
+    // Reads the clock through `this.now` at call time, so a test that swaps the clock
+    // after construction moves presence with it.
+    this.presence = presence || new RiderPresenceService({
+      repository: this.repo,
+      now: () => this.now(),
+      ttlMs: presenceTtlMs
+    });
   }
 
   /** True when the offer sweeper has something to do for this service. */
