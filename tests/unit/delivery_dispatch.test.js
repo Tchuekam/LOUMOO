@@ -5,6 +5,16 @@
  * window and its expiry (lazy and swept), the rider list with workload, and
  * auto-assign. Runs over the in-memory backends with a fake clock: no database,
  * no HTTP. See docs/DELIVERY_API.md ("Offer expiry", "auto-assign").
+ *
+ * Only riders who are HERE are offered work (docs/DELIVERY_API.md, "Rider
+ * presence"): online, heard from within the presence window, and not carrying an
+ * accepted delivery. Every rider in this suite is therefore registered AND put
+ * online (registerRider), and the world's presence window is the longest the
+ * service allows so that it never lapses under the offer-window tests, which move
+ * the clock by the 15-minute offer TTL again and again. The few tests that run the
+ * clock past that keep their riders' apps alive with elapse(). What presence itself
+ * does (heartbeat, pause, expiry) belongs to the presence suites; here it only has
+ * to decide WHO dispatch may choose from.
  */
 
 require('../setup');
@@ -21,6 +31,9 @@ const { Order, FULFILLMENT_STATUS, DELIVERY_METHOD, PAYMENT_STATUS } = require('
 
 const MIN = 60 * 1000;
 const OFFER_TTL_MS = 15 * MIN;
+// How long a rider may stay silent and still count as online. The service clamps it to an
+// hour at most, so this is as long as presence can be made to last.
+const PRESENCE_TTL_MS = 60 * MIN;
 
 async function code(promise) {
   try {
@@ -31,14 +44,25 @@ async function code(promise) {
   }
 }
 
-function makeWorld({ offerTtlMs = OFFER_TTL_MS } = {}) {
+/** `code:reason` of a refusal (RIDER_UNAVAILABLE:offline), or 'OK': says WHY a rider was turned down. */
+async function refusal(promise) {
+  try {
+    await promise;
+    return 'OK';
+  } catch (e) {
+    return `${e.code || e.name || 'ERROR'}${e.details && e.details.reason ? `:${e.details.reason}` : ''}`;
+  }
+}
+
+function makeWorld({ offerTtlMs = OFFER_TTL_MS, presenceTtlMs = PRESENCE_TTL_MS } = {}) {
   let t = Date.parse('2026-10-03T10:00:00.000Z');
   const clock = { now: () => t, advance: (ms) => { t += ms; } };
   const orders = new OrderRepository({ db: null });
   const repo = new DeliveryRepository({ db: null });
   const events = new DeliveryEvents();
-  const service = new DeliveryService({ repository: repo, orderRepository: orders, events, now: clock.now, offerTtlMs });
-  return { clock, orders, repo, events, service };
+  const service = new DeliveryService({ repository: repo, orderRepository: orders, events, now: clock.now, offerTtlMs, presenceTtlMs });
+  // `riders`: every rider registered here, as the caller they act as (see elapse()).
+  return { clock, orders, repo, events, service, riders: new Map() };
 }
 
 let orderSeq = 0;
@@ -64,12 +88,56 @@ const ADMIN = { userId: 'admin_1', userRole: 'admin' };
 const RIDER = { userId: 'rider_1', userRole: 'customer' };
 const RIDER2 = { userId: 'rider_2', userRole: 'customer' };
 
+/**
+ * An administrator registers a rider, who then opens the app and goes online: the only state
+ * in which they can be offered work. Registering alone leaves them offline. Returns the caller
+ * the rider acts as (`role` is their account role: a seller or an admin can also ride).
+ */
+async function registerRider(world, id, name, phone, role = 'customer') {
+  await world.service.registerDriver(id, { name, phone }, ADMIN);
+  const caller = { userId: id, userRole: role };
+  world.riders.set(id, caller);
+  await world.service.riderGoOnline(caller);
+  return caller;
+}
+
 async function registerRiders(world, riders = [['rider_1', 'Alain'], ['rider_2', 'Bruno']]) {
   let n = 0;
   for (const [id, name] of riders) {
     n += 1;
-    await world.service.registerDriver(id, { name, phone: `+23760000${String(n).padStart(4, '0')}` }, ADMIN);
+    await registerRider(world, id, name, `+23760000${String(n).padStart(4, '0')}`);
   }
+}
+
+/**
+ * Moves the clock forward by `ms` as time really passes for riders whose app is open: in steps
+ * shorter than the presence window, each followed by a heartbeat from every rider registered in
+ * this world, so that presence itself never lapses. Only for tests that run the clock past the
+ * presence window (an hour) and are about something else; a rider who stops beating is the
+ * subject of delivery_presence, not of this suite. A beat from a rider who is offline or paused
+ * changes nothing (it never brings them back), and one from a suspended rider is refused: both
+ * are fine here.
+ */
+async function elapse(world, ms) {
+  const step = PRESENCE_TTL_MS / 2;
+  for (let left = ms; left > 0; left -= step) {
+    world.clock.advance(Math.min(step, left));
+    for (const caller of world.riders.values()) {
+      try {
+        await world.service.riderHeartbeat(caller);
+      } catch (e) {
+        if (e.code !== 'PERMISSION_DENIED') throw e;
+      }
+    }
+  }
+}
+
+/** Takes an ACCEPTED delivery the whole way: picked up, arrived, handed over with the buyer's code. */
+async function finishDelivery(world, deliveryId, rider) {
+  await world.service.updateStatus(deliveryId, 'picked_up', null, rider);
+  await world.service.updateStatus(deliveryId, 'arrived', null, rider);
+  const handover = await world.service.getHandoverCode(deliveryId, BUYER);
+  return world.service.completeDelivery(deliveryId, handover.code, rider);
 }
 
 /** A delivery created for a fresh order, optionally already offered to a rider. */
@@ -148,6 +216,38 @@ async function run() {
       assert.deepStrictEqual((await w.service.getRiderOverview(RIDER)).deliveries, [], 'it is gone from their job list');
       assert.strictEqual(sentTo('seller_1', 'A rider did not respond').length - sellerBefore, 1, 'nothing fires twice');
     }
+    {
+      // An open offer is not enough: to accept, the rider must also be HERE. The presence window
+      // (5 minutes) lapses while the offer window (15) is still open: the accept is refused, with the
+      // reason, and the offer stays put for when the rider is back.
+      const w = makeWorld({ presenceTtlMs: 5 * MIN });
+      await registerRiders(w);
+      const { id } = await newDelivery(w, { assignTo: 'rider_1' });
+      w.clock.advance(6 * MIN);
+      assert.strictEqual(await refusal(w.service.acceptDelivery(id, RIDER)), 'RIDER_UNAVAILABLE:expired', 'silent for longer than the presence window: refused');
+      const held = await w.repo.findById(id);
+      assert.strictEqual(held.status, 'assigned', 'the refused accept did not move the delivery');
+      assert.strictEqual(held.driverId, 'rider_1', 'and the offer is still theirs');
+      assert.strictEqual((await w.repo.findPresence('rider_1')).status, 'online', 'a refused claim did not make them busy');
+      await w.service.riderGoOnline(RIDER); // back in the app
+      assert.strictEqual(await code(w.service.acceptDelivery(id, RIDER)), 'OK', 'once they are back, the same offer can be accepted');
+      assert.strictEqual((await w.service.getRiderPresence(RIDER)).status, 'busy');
+    }
+    {
+      // Two offers, accepted at the same instant (two taps, two devices): one rider cannot carry both.
+      // Exactly one wins; the other is refused as busy, and goes back to its seller with the rider's
+      // other unanswered offers rather than sitting on a rider who is no longer free.
+      const w = makeWorld();
+      await registerRiders(w);
+      const a = await newDelivery(w, { assignTo: 'rider_1' });
+      const b = await newDelivery(w, { assignTo: 'rider_1' });
+      const results = await Promise.all([refusal(w.service.acceptDelivery(a.id, RIDER)), refusal(w.service.acceptDelivery(b.id, RIDER))]);
+      assert.deepStrictEqual(results.slice().sort(), ['OK', 'RIDER_BUSY:busy'], `one winner, one clean refusal, got ${results.join(',')}`);
+      const stored = [await w.repo.findById(a.id), await w.repo.findById(b.id)];
+      assert.deepStrictEqual(stored.map((d) => d.status).sort(), ['accepted', 'pending_assignment'], 'one accepted, the other handed back to its seller');
+      assert.strictEqual(stored.filter((d) => d.driverId === 'rider_1').length, 1, 'the rider holds exactly one');
+      assert.strictEqual((await w.service.getRiderPresence(RIDER)).status, 'busy');
+    }
 
     // --------------------------------------------- lazy release on every read path
     for (const [label, read] of [
@@ -215,6 +315,13 @@ async function run() {
       assert.strictEqual((await w.service.getDelivery(id, SELLER)).status, 'accepted', 'ten hours later it is still the rider\'s');
       assert.deepStrictEqual(await w.service.expireStaleOffers(), { expired: 0 }, 'the sweep leaves an accepted job alone');
       assert.strictEqual((await w.service.getRiderOverview(RIDER)).deliveries.length, 1);
+      // The rider is carrying the parcel, so ten silent hours do not time them out either: presence
+      // expiry sets IDLE riders offline (rider_2, who never beat in ten hours, is), never one with a job in hand.
+      assert.strictEqual((await w.service.getRiderPresence(RIDER)).status, 'busy', 'still busy, not offline');
+      assert.deepStrictEqual(await w.service.expireStalePresence(), { expired: 1, healed: 0 }, 'the presence sweep sets only the idle rider offline');
+      assert.strictEqual((await w.service.getRiderPresence(RIDER)).status, 'busy', 'the one carrying the parcel is left alone');
+      assert.strictEqual((await w.service.getRiderPresence(RIDER2)).status, 'offline', 'the idle one is not');
+      assert.strictEqual((await w.repo.findById(id)).driverId, 'rider_1', 'and the job is still theirs');
     }
 
     // --------------------------------------------- re-assigning starts a new window
@@ -245,7 +352,7 @@ async function run() {
       await registerRiders(w);
       const { id } = await newDelivery(w, { assignTo: 'rider_1' });
       assert.strictEqual((await w.service.getDelivery(id, SELLER)).offerExpiresAt, null, 'no deadline is shown');
-      w.clock.advance(24 * 60 * MIN);
+      await elapse(w, 24 * 60 * MIN); // the rider's app stays open all day: only the OFFER is under test
       assert.deepStrictEqual(await w.service.expireStaleOffers(), { expired: 0 }, 'the sweep does nothing');
       assert.strictEqual(await code(w.service.acceptDelivery(id, RIDER)), 'OK', 'a day later the rider can still accept');
     }
@@ -349,16 +456,16 @@ async function run() {
       assert.deepStrictEqual(await ids(SELLER), ['rider_1', 'rider_2', 'rider_3'], 'with nobody busy the order is by name');
       assert.ok((await w.service.listDrivers(SELLER)).every((d) => d.openDeliveries === 0));
 
-      // rider_1 carries two jobs (one offered, one accepted), rider_3 one that is on the road.
+      // rider_1 is offered two jobs, rider_3 one. An offer is work, but not yet a commitment: a
+      // rider who has only been OFFERED jobs is still available, so offers stack.
       const a = await newDelivery(w, { assignTo: 'rider_1' });
       const b = await newDelivery(w, { assignTo: 'rider_1' });
-      await w.service.acceptDelivery(b.id, RIDER);
       const c = await newDelivery(w, { assignTo: 'rider_3' });
-      await w.repo.updateWhere(c.id, {}, { status: 'picked_up' });
       const list = await w.service.listDrivers(SELLER);
       assert.deepStrictEqual(list.map((d) => [d.id, d.openDeliveries]), [['rider_2', 0], ['rider_3', 1], ['rider_1', 2]],
         'least busy first, and an offer counts as work from the moment it is made');
-      assert.deepStrictEqual(Object.keys(list[0]).sort(), ['id', 'name', 'openDeliveries', 'phone'], 'no declined flag without a delivery id');
+      // Exactly these fields: no declined flag without a delivery id, and never a rider's presence or position.
+      assert.deepStrictEqual(Object.keys(list[0]).sort(), ['id', 'name', 'openDeliveries', 'phone']);
 
       // Only jobs that occupy a rider count.
       const d = await newDelivery(w, { assignTo: 'rider_2' });
@@ -374,10 +481,26 @@ async function run() {
       await w.service.declineDelivery(a.id, RIDER);
       assert.strictEqual((await w.service.listDrivers(SELLER)).find((r) => r.id === 'rider_1').openDeliveries, 1);
 
+      // A rider who ACCEPTS is carrying a parcel: busy, and not on the list until it is done.
+      await w.service.acceptDelivery(b.id, RIDER);
+      assert.strictEqual((await w.service.getRiderPresence(RIDER)).status, 'busy');
+      assert.deepStrictEqual(await ids(SELLER), ['rider_2', 'rider_3'], 'a rider carrying an accepted delivery is not offered another');
+      // Busy is read from the deliveries a rider holds, whatever got them there: one picked up counts too.
+      await w.repo.updateWhere(c.id, {}, { status: 'picked_up' });
+      assert.deepStrictEqual(await ids(SELLER), ['rider_2'], 'and so is one on the road');
+      assert.deepStrictEqual((await w.service.listDrivers(SELLER, { withSummary: true })).summary, { registered: 3, available: 1 },
+        'the summary tells "three riders, one free" from "no riders"');
+      assert.deepStrictEqual((await w.service.listDrivers(SELLER, { withSummary: true })).drivers.map((d) => d.id), ['rider_2']);
+
+      // Letting go of the parcel frees the rider at once: busy -> online is not left to a heartbeat.
+      await w.service.declineDelivery(b.id, RIDER); // "released": an accepted job handed back
+      assert.strictEqual((await w.service.getRiderPresence(RIDER)).status, 'online');
+      assert.deepStrictEqual(await ids(SELLER), ['rider_1', 'rider_2'], 'a rider who gave the parcel back is offered work again');
+
       // Who may ask.
       assert.strictEqual(await code(w.service.listDrivers(BUYER)), 'PERMISSION_DENIED', 'a customer cannot list riders');
       assert.strictEqual(await code(w.service.listDrivers(RIDER)), 'PERMISSION_DENIED', 'nor can a rider');
-      assert.deepStrictEqual((await ids(ADMIN)).length, 3, 'an admin can');
+      assert.deepStrictEqual(await ids(ADMIN), ['rider_1', 'rider_2'], 'an admin can, and sees the same riders');
     }
     {
       // Tie-breaks are by name, then id, whatever order the riders were registered in. The
@@ -400,6 +523,101 @@ async function run() {
       await registerRiders(w);
       await w.service.registerDriver('rider_2', { name: 'Bruno', phone: '+237600000002', status: 'suspended' }, ADMIN);
       assert.deepStrictEqual((await w.service.listDrivers(SELLER)).map((d) => d.id), ['rider_1'], 'a suspended rider is not offered');
+
+      // Reactivating is the administrator's act, not the rider's: it does not put them back online.
+      await w.service.registerDriver('rider_2', { name: 'Bruno', phone: '+237600000002', status: 'active' }, ADMIN);
+      assert.deepStrictEqual((await w.service.listDrivers(SELLER)).map((d) => d.id), ['rider_1'], 'reactivated, but still offline until they go online');
+      await w.service.riderGoOnline(RIDER2);
+      assert.deepStrictEqual((await w.service.listDrivers(SELLER)).map((d) => d.id), ['rider_1', 'rider_2'], 'they come back by going online themselves');
+    }
+    {
+      // A suspension written straight to the table leaves the presence row saying "online". Account
+      // standing is read at the moment of asking and wins, so the rider is still never offered work
+      // and can never make themselves available.
+      const w = makeWorld();
+      await registerRiders(w);
+      await w.repo.upsertDriver({ profileId: 'rider_2', name: 'Bruno', phone: '+237600000002', status: 'suspended' });
+      assert.strictEqual((await w.repo.findPresence('rider_2')).status, 'online', 'precondition: the stored row was not touched');
+      assert.deepStrictEqual((await w.service.listDrivers(SELLER)).map((d) => d.id), ['rider_1'], 'not listed');
+      const d = await newDelivery(w);
+      assert.strictEqual(await code(w.service.assignDriver(d.id, 'rider_2', SELLER)), 'VALIDATION_ERROR', 'not assignable by hand either');
+      assert.strictEqual((await w.service.autoAssignDriver(d.id, SELLER)).driver.id, 'rider_1', 'and never picked');
+      assert.strictEqual(await code(w.service.riderGoOnline(RIDER2)), 'PERMISSION_DENIED', 'they cannot go online');
+      assert.strictEqual(await code(w.service.riderHeartbeat(RIDER2)), 'PERMISSION_DENIED', 'a heartbeat does not revive them');
+      assert.deepStrictEqual((await w.service.listDrivers(SELLER, { withSummary: true })).summary, { registered: 1, available: 1 },
+        'a suspended rider is not even counted as registered');
+    }
+
+    // ------------------------------- only riders who are here are offered work (presence)
+    {
+      // Registered is not available. Every rider below is registered and active; only rider_ok
+      // is online, heard from lately and free. Zed sorts LAST by name, so being the only pick
+      // proves the others were filtered out rather than outranked.
+      const w = makeWorld({ presenceTtlMs: 5 * MIN });
+      await registerRiders(w, [['rider_ok', 'Zed'], ['rider_off', 'Alain'], ['rider_paused', 'Bruno'], ['rider_busy', 'Chantal'], ['rider_silent', 'Dora']]);
+      await w.service.registerDriver('rider_never', { name: 'Elise', phone: '+237600000077' }, ADMIN); // never opened the app
+      const as = (id) => ({ userId: id, userRole: 'customer' });
+
+      await w.service.riderGoOffline(as('rider_off'));
+      await w.service.riderPause(as('rider_paused'));
+      const carried = await newDelivery(w, { assignTo: 'rider_busy' });
+      await w.service.acceptDelivery(carried.id, as('rider_busy'));
+      w.clock.advance(4 * MIN);
+      await w.service.riderHeartbeat(as('rider_ok'));   // these two are still beating...
+      await w.service.riderHeartbeat(as('rider_busy'));
+      w.clock.advance(2 * MIN);                         // ...rider_silent last spoke 6 minutes ago, past the 5 minute window
+
+      const ids = async () => (await w.service.listDrivers(SELLER)).map((r) => r.id);
+      assert.deepStrictEqual(await ids(), ['rider_ok'], 'offline, paused, busy, silent and never-online riders are not listed');
+      assert.deepStrictEqual((await w.service.listDrivers(SELLER, { withSummary: true })).summary, { registered: 6, available: 1 },
+        'six riders exist, one is available');
+      assert.deepStrictEqual((await w.service.listDrivers(ADMIN)).map((r) => r.id), ['rider_ok'], 'an administrator is shown the same list');
+
+      // Auto-assign picks from the same pool, however many offers the one rider already holds.
+      const d1 = await newDelivery(w);
+      assert.strictEqual((await w.service.autoAssignDriver(d1.id, SELLER)).driver.id, 'rider_ok');
+      const d2 = await newDelivery(w);
+      assert.strictEqual((await w.service.autoAssignDriver(d2.id, SELLER)).driver.id, 'rider_ok', 'offers stack: the only available rider is offered both');
+
+      // Naming an unavailable rider by hand is refused with the reason, and changes nothing.
+      const d3 = await newDelivery(w);
+      for (const [rider, expected] of [
+        ['rider_off', 'RIDER_UNAVAILABLE:offline'],
+        ['rider_paused', 'RIDER_UNAVAILABLE:paused'],
+        ['rider_busy', 'RIDER_BUSY:busy'],
+        ['rider_silent', 'RIDER_UNAVAILABLE:expired'],
+        ['rider_never', 'RIDER_UNAVAILABLE:offline']
+      ]) {
+        assert.strictEqual(await refusal(w.service.assignDriver(d3.id, rider, SELLER)), expected, `${rider} cannot be offered a delivery`);
+        const stored = await w.repo.findById(d3.id);
+        assert.strictEqual(stored.status, 'pending_assignment', `${rider}: the delivery is left unassigned`);
+        assert.strictEqual(stored.driverId, null);
+      }
+      assert.strictEqual(await refusal(w.service.assignDriver(d3.id, 'rider_ok', SELLER)), 'OK', 'while the available rider is accepted');
+
+      // Nobody is here: auto-assign says so rather than offering the job to someone who is not. Going
+      // offline takes the unanswered offers back to their sellers, so no one is left waiting on a dead offer.
+      await w.service.riderGoOffline(as('rider_ok'));
+      for (const id of [d1.id, d2.id, d3.id]) {
+        assert.strictEqual((await w.repo.findById(id)).status, 'pending_assignment', 'an offer to a rider who went offline is taken back');
+      }
+      assert.deepStrictEqual(await ids(), [], 'nobody is listed');
+      assert.deepStrictEqual((await w.service.listDrivers(SELLER, { withSummary: true })).summary, { registered: 6, available: 0 },
+        '"nobody is online" is told apart from "nobody is registered"');
+      assert.strictEqual(await code(w.service.autoAssignDriver(d1.id, SELLER)), 'NO_RIDER_AVAILABLE');
+      assert.strictEqual((await w.repo.findById(d1.id)).status, 'pending_assignment', 'and the delivery waits for the seller');
+
+      // Each comes back by a deliberate act, and only then: a heartbeat never revives anyone.
+      await w.service.riderHeartbeat(as('rider_silent'));
+      await w.service.riderHeartbeat(as('rider_off'));
+      assert.deepStrictEqual(await ids(), [], 'a heartbeat does not put an offline rider back');
+      await w.service.riderGoOnline(as('rider_off'));
+      await w.service.riderResume(as('rider_paused'));
+      await w.service.riderGoOnline(as('rider_silent'));
+      await w.service.riderGoOnline(as('rider_never'));
+      assert.deepStrictEqual(await ids(), ['rider_off', 'rider_paused', 'rider_silent', 'rider_never'],
+        'online, resumed, back online and online for the first time: ranked by name; the busy rider is still carrying their parcel');
+      assert.strictEqual((await w.service.autoAssignDriver(d1.id, SELLER)).driver.id, 'rider_off', 'and the first by name is picked');
     }
 
     // ---------------------------------------- "who already handed this one back"
@@ -479,8 +697,10 @@ async function run() {
     {
       const w = makeWorld();
       await registerRiders(w, [['rider_1', 'Alain'], ['rider_2', 'Bruno']]);
-      // The buyer is also a registered rider (and the idlest): never their own parcel.
-      await w.service.registerDriver('buyer_1', { name: 'Aaron', phone: '+237600000099' }, ADMIN);
+      // The buyer is also a registered rider, ONLINE and the idlest: never their own parcel.
+      await registerRider(w, 'buyer_1', 'Aaron', '+237600000099');
+      assert.deepStrictEqual((await w.service.listDrivers(SELLER)).map((d) => d.id), ['buyer_1', 'rider_1', 'rider_2'],
+        'precondition: the buyer really is available, so skipping them is the buyer rule and not absence');
       const own = await newDelivery(w);
       const picked = await w.service.autoAssignDriver(own.id, SELLER);
       assert.notStrictEqual(picked.driver.id, 'buyer_1', 'a rider who is the buyer is skipped');
@@ -603,12 +823,15 @@ async function run() {
         assert.strictEqual(await code(w.service.autoAssignDriver(d.id, SELLER)), 'CONFLICT', `cannot auto-assign a delivery that is ${status}`);
         assert.strictEqual((await w.repo.findById(d.id)).status, status, `and ${status} is left alone`);
       }
-      // A failed delivery is retried through the same path as assign: new code, fresh rider.
-      const failed = await newDelivery(w, { assignTo: 'rider_1' });
+      // A failed delivery is retried through the same path as assign: new code, fresh rider. rider_1
+      // now holds three live deliveries from the loop above (accepted, picked up, arrived), which makes
+      // them busy: the failed one belongs to rider_2, and the retry cannot go to rider_1.
+      const failed = await newDelivery(w, { assignTo: 'rider_2' });
       await w.repo.updateWhere(failed.id, {}, { status: 'failed' });
       const nonceBefore = (await w.repo.findById(failed.id)).handoverNonce;
       const retried = await w.service.autoAssignDriver(failed.id, SELLER);
       assert.strictEqual(retried.status, 'assigned');
+      assert.strictEqual(retried.driver.id, 'rider_2', 'the busy rider_1 is not considered');
       assert.strictEqual((await w.repo.findById(failed.id)).handoverNonce, nonceBefore + 1, 'a retry issues a new handover code');
 
       // An order cancelled meanwhile stops it.
@@ -728,8 +951,8 @@ async function run() {
       // is no longer the holder after the release: still "too late", not a bare 403.
       const w = makeWorld();
       await registerRiders(w);
-      await w.service.registerDriver('seller_1', { name: 'Shop Owner', phone: '+237600000050' }, ADMIN);
-      await w.service.registerDriver('admin_1', { name: 'Admin Rider', phone: '+237600000051' }, ADMIN);
+      await registerRider(w, 'seller_1', 'Shop Owner', '+237600000050', 'seller');
+      await registerRider(w, 'admin_1', 'Admin Rider', '+237600000051', 'admin');
 
       const own = await newDelivery(w, { assignTo: 'seller_1' });
       const adminJob = await newDelivery(w, { assignTo: 'admin_1' });
@@ -773,18 +996,27 @@ async function run() {
       const second = await newDelivery(w);
       assert.strictEqual((await w.service.autoAssignDriver(second.id, SELLER)).driver.id, 'rider_2',
         'the next delivery skips the rider who just let one lapse, even though their load is back to 0');
+      // Bruno answers it: he accepts, and is then BUSY (not offered anything else) until he has handed
+      // the parcel over. A rider who finishes is free again, and still the one who answers.
       await w.service.acceptDelivery(second.id, RIDER2);
+      assert.deepStrictEqual((await w.service.listDrivers(SELLER)).map((r) => r.id), ['rider_1'], 'carrying a parcel, Bruno is not offered another');
+      await finishDelivery(w, second.id, RIDER2);
+      assert.strictEqual((await w.repo.findById(second.id)).status, 'delivered');
       const third = await newDelivery(w);
       assert.strictEqual((await w.service.autoAssignDriver(third.id, SELLER)).driver.id, 'rider_2', 'and so does the one after, while they are the only responder');
       await w.service.acceptDelivery(third.id, RIDER2); // Bruno answers this one too, so he never lapses below
-      assert.deepStrictEqual((await w.service.listDrivers(SELLER)).map((r) => [r.id, r.openDeliveries]), [['rider_2', 2], ['rider_1', 0]],
-        'the list puts them last, but still shows the true count and still shows them');
+      await finishDelivery(w, third.id, RIDER2);
 
       // It fades: still counted at exactly an hour after the lapse, gone one millisecond later.
-      w.clock.advance(60 * MIN);
-      assert.deepStrictEqual((await w.service.listDrivers(SELLER)).map((r) => r.id), ['rider_2', 'rider_1'], 'exactly an hour on, still last');
+      await elapse(w, 60 * MIN);
+      // Bruno is handed a fresh offer, so his load (1) is heavier than Alain's (0): the penalty outranks
+      // load, and the list still shows Alain's true load and still shows him.
+      await newDelivery(w, { assignTo: 'rider_2' });
+      assert.deepStrictEqual((await w.service.listDrivers(SELLER)).map((r) => [r.id, r.openDeliveries]), [['rider_2', 1], ['rider_1', 0]],
+        'exactly an hour on, still last, though his load is lower');
       w.clock.advance(1);
-      assert.deepStrictEqual((await w.service.listDrivers(SELLER)).map((r) => r.id), ['rider_1', 'rider_2'], 'a millisecond later they rank by load again');
+      assert.deepStrictEqual((await w.service.listDrivers(SELLER)).map((r) => [r.id, r.openDeliveries]), [['rider_1', 0], ['rider_2', 1]],
+        'a millisecond later they rank by load again');
 
       // A seller can still pick them by hand: the rule steers, it does not ban.
       const fourth = await newDelivery(w);
@@ -805,9 +1037,10 @@ async function run() {
       const w = makeWorld();
       await registerRiders(w, [['rider_z', 'Zed'], ['rider_b', 'Bruno']]);
       const dead = await newDelivery(w, { assignTo: 'rider_z' });
-      const live = await newDelivery(w, { assignTo: 'rider_b' });
-      await w.service.acceptDelivery(live.id, { userId: 'rider_b', userRole: 'customer' });
       w.clock.advance(20 * MIN); // nobody has read `dead`, and there is no sweeper
+      // A live offer, made now. (It used to be a delivery rider_b had ACCEPTED, but an accepted
+      // delivery makes the rider busy and takes them off the list, which is its own rule above.)
+      await newDelivery(w, { assignTo: 'rider_b' });
       assert.strictEqual((await w.repo.findById(dead.id)).status, 'assigned', 'still assigned in storage');
       const told = sentTo('seller_1', 'A rider did not respond').length;
 
@@ -1012,8 +1245,9 @@ async function run() {
     {
       // The rider cap is applied, and says so.
       const w = makeWorld();
+      // All 510 are online: only available riders are listed, so a rider who is not would hide the cap.
       for (let i = 0; i < 510; i += 1) {
-        await w.service.registerDriver(`rider_${String(i).padStart(4, '0')}`, { name: `Rider ${String(i).padStart(4, '0')}`, phone: '+237600000000' }, ADMIN);
+        await registerRider(w, `rider_${String(i).padStart(4, '0')}`, `Rider ${String(i).padStart(4, '0')}`, '+237600000000');
       }
       const originalWarn = logger.warn;
       const warned = [];

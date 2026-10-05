@@ -24,6 +24,7 @@ const { OrderStateMachine } = require('../../commerce/domain/OrderStateMachine')
 const { FULFILLMENT_STATUS, DELIVERY_METHOD, PAYMENT_STATUS } = require('../../commerce/domain/Order');
 const { DeliveryStateMachine } = require('../domain/DeliveryStateMachine');
 const { codeFor, verifyCode, HANDOVER_CODE_DIGITS } = require('../domain/HandoverCode');
+const { RiderPresenceService } = require('./RiderPresenceService');
 const {
   DELIVERY_STATUS: S,
   DRIVER_STATUS,
@@ -50,6 +51,12 @@ const {
   presentDelivery
 } = require('../domain/Delivery');
 const {
+  BUSY_DELIVERY_STATUSES,
+  PRESENCE_NOTES,
+  PRESENCE_ACTOR,
+  RiderUnavailableError
+} = require('../domain/RiderPresence');
+const {
   NotFoundError,
   ValidationError,
   AuthorizationError,
@@ -75,6 +82,9 @@ const MAX_RIDERS_CONSIDERED = 500;
 // many rounds (so at most 200 per call), then stop. Bounded so one listing cannot
 // become a long write storm; the sweeper and later calls take the rest.
 const RELEASE_BATCH = 50;
+// How many ranked riders auto-assign will try before it gives up: it moves on only when a
+// rider stopped being available in the instant between being ranked and being offered.
+const MAX_AUTO_ASSIGN_ATTEMPTS = 5;
 const MAX_RELEASE_ROUNDS = 4;
 const ORDER_PATH = [FULFILLMENT_STATUS.PROCESSING, FULFILLMENT_STATUS.IN_TRANSIT, FULFILLMENT_STATUS.DELIVERED];
 // What the client opens when a delivery notification is tapped, by the part the
@@ -122,8 +132,12 @@ class DeliveryService {
    * `geocoder` turns a drop-off address into coordinates when the seller did not
    * supply them (see Geocoder.js). Unset, the process-wide default is used, which is
    * off under test.
+   *
+   * `presenceTtlMs` is how long a rider may go without a heartbeat before they stop
+   * counting as online (unset: RIDER_PRESENCE_TTL_SECONDS, then 2 minutes); `presence`
+   * replaces the whole RiderPresenceService (tests).
    */
-  constructor({ repository, orderRepository, events, now, offerTtlMs, geocoder, undispatchedSellerMs, undispatchedAdminMs } = {}) {
+  constructor({ repository, orderRepository, events, now, offerTtlMs, geocoder, undispatchedSellerMs, undispatchedAdminMs, presenceTtlMs, presence } = {}) {
     this.repo = repository || new DeliveryRepository();
     this.orders = orderRepository || new OrderRepository();
     this.events = events || deliveryEvents;
@@ -142,6 +156,13 @@ class DeliveryService {
       ? Math.max(0, undispatchedAdminMs)
       : minutesToMs(process.env.DELIVERY_UNDISPATCHED_ADMIN_MINUTES, 45);
     this._chased = new Map(); // "seller:<orderId>" / "admin:<orderId>" -> when it was said
+    // Reads the clock through `this.now` at call time, so a test that swaps the clock
+    // after construction moves presence with it.
+    this.presence = presence || new RiderPresenceService({
+      repository: this.repo,
+      now: () => this.now(),
+      ttlMs: presenceTtlMs
+    });
   }
 
   /** True when the offer sweeper has something to do for this service. */
@@ -476,7 +497,77 @@ class DeliveryService {
       throw new ConflictError(`${label || 'Delivery'} was changed by someone else. Reload and try again.`);
     }
     await this._record(updated, delivery.status, actorId, note);
+    await this._syncPresence(delivery, updated, actorId);
     return updated;
+  }
+
+  /**
+   * A delivery change that started or ended a rider's ACCEPTED work (it moved into or
+   * out of accepted / picked up / arrived, or between riders) moves them busy <->
+   * online. Idempotent and best-effort: the delivery change has already happened, so a
+   * failing presence write is logged, never allowed to fail it (the janitor in
+   * expireStalePresence puts a leaked busy row right).
+   */
+  async _syncPresence(before, after, actorId = null) {
+    if (!BUSY_DELIVERY_STATUSES.includes(before.status) && !BUSY_DELIVERY_STATUSES.includes(after.status)) return;
+    await this._reconcileRiders([before.driverId, after.driverId], { aliveId: actorId });
+  }
+
+  /**
+   * Reconciles each rider's presence with their deliveries. `aliveId` is the rider, if
+   * any, whose OWN act caused the change: a request from them proves they are here, so
+   * their last-seen time is refreshed too (see RiderPresenceService.reconcile).
+   */
+  async _reconcileRiders(riderIds, { aliveId = null } = {}) {
+    for (const riderId of new Set(riderIds.filter(Boolean))) {
+      try {
+        await this.presence.reconcile(riderId, { alive: Boolean(aliveId) && riderId === aliveId });
+      } catch (err) {
+        logger.warn(`[Delivery] Could not bring rider ${riderId}'s presence in step with their deliveries: ${err.message}`);
+      }
+    }
+  }
+
+  /**
+   * Takes back the offers (`assigned`, not yet accepted) a rider holds, because they
+   * stopped being available: went offline, paused, went silent, or accepted something
+   * else. Each goes back to its seller exactly like a decline, with a timeline note
+   * that says why. The actor is the system, not the rider: a rider on a break has not
+   * "declined" anything, and must stay offerable for the same delivery afterwards.
+   * Best-effort per offer (one that moved meanwhile is simply skipped).
+   */
+  async _withdrawOffers(riderId, { note, exceptId = null, onlyId = null } = {}) {
+    let open;
+    try {
+      open = await this.repo.findOpenByDriver(riderId, { limit: 100 });
+    } catch (err) {
+      logger.error(`[Delivery] Could not list the offers held by rider ${riderId}: ${err.message}`);
+      return 0;
+    }
+    let withdrawn = 0;
+    for (const d of open) {
+      if (d.status !== S.ASSIGNED || d.id === exceptId || (onlyId && d.id !== onlyId)) continue;
+      try {
+        const released = await this._transition(
+          d,
+          { status: S.ASSIGNED, driverId: riderId },
+          { status: S.PENDING_ASSIGNMENT, driverId: null, assignedAt: null, acceptedAt: null },
+          { actorId: PRESENCE_ACTOR, note }
+        );
+        withdrawn += 1;
+        this._notify(released.sellerId, {
+          audience: 'seller',
+          title: 'A rider is no longer available',
+          body: 'Assign another rider to keep the order moving.',
+          tone: 'neutral',
+          delivery: released
+        });
+      } catch (err) {
+        // Answered, re-assigned or cancelled while we looked: nothing left to take back.
+        if (!(err instanceof ConflictError)) logger.error(`[Delivery] Could not take offer ${d.id} back from rider ${riderId}: ${err.message}`);
+      }
+    }
+    return withdrawn;
   }
 
   // ------------------------------------------------------------- offer expiry
@@ -688,17 +779,24 @@ class DeliveryService {
       // A rider who is also the buyer could read the handover code to themselves.
       throw new ValidationError('A rider cannot deliver their own order', [{ field: 'driverId', message: 'Choose a different rider.' }]);
     }
+    // Being registered and active is not being here: only a rider who is online (heard
+    // from lately) and not already carrying a delivery can be offered one. 409 with the
+    // reason (RIDER_UNAVAILABLE / RIDER_BUSY), not a validation error: the seller chose
+    // a real rider, and the situation is what blocks it.
+    await this.presence.assertAvailable(driver.id, driver);
 
     return this._applyAssignment(delivery, driver, caller, role, `Assigned to ${driver.name}`);
   }
 
   /**
-   * Picks the rider for the seller: the least busy active rider who is not the
-   * buyer, has not already handed this delivery back, and is not the rider who
-   * already holds the offer (re-offering to them would change nothing). Ties
-   * break by name, then id, so the choice is deterministic. There is no
-   * "nearest" rider: positions are only recorded during a delivery (see
-   * decision 10 in docs/DELIVERY_API.md).
+   * Picks the rider for the seller: the least busy AVAILABLE rider (online with a
+   * fresh heartbeat and not carrying a delivery; offline, paused, suspended and
+   * busy riders are never considered) who is not the buyer, has not already handed
+   * this delivery back, and is not the rider who already holds the offer
+   * (re-offering to them would change nothing). Ties break by name, then id, so
+   * the choice is deterministic. There is no "nearest" rider yet: a rider's
+   * availability position is stored but not used to rank (see decision 10 in
+   * docs/DELIVERY_API.md).
    */
   async autoAssignDriver(deliveryId, callerInput) {
     // Who is asking comes first. Releasing lapsed offers is platform-wide work —
@@ -724,13 +822,24 @@ class DeliveryService {
     // delivery to the same rider. Serialised, each sees the previous one's offer.
     // Best effort across several API instances, which do not share this queue.
     return this._serialised(async () => {
-      const [ranked, passed] = await Promise.all([this._rankedActiveRiders({ release: false }), this._ridersWhoPassed(delivery.id)]);
-      const pick = ranked.find(({ driver }) => driver.id !== delivery.buyerId
+      const [{ ranked }, passed] = await Promise.all([this._rankedAvailableRiders({ release: false }), this._ridersWhoPassed(delivery.id)]);
+      const picks = ranked.filter(({ driver }) => driver.id !== delivery.buyerId
         && !passed.has(driver.id)
         && !(delivery.status === S.ASSIGNED && driver.id === delivery.driverId));
-      if (!pick) throw new NoRiderAvailableError();
+      if (!picks.length) throw new NoRiderAvailableError();
 
-      return this._applyAssignment(delivery, pick.driver, caller, role, `Auto-assigned to ${pick.driver.name}`);
+      // A rider can stop being available between being ranked and being offered the job
+      // (the offer is re-checked once written, see _applyAssignment). That is not the
+      // seller's problem: offer it to the next one, and only say nobody is free when
+      // every candidate (up to a handful) turned out to be gone.
+      for (const pick of picks.slice(0, MAX_AUTO_ASSIGN_ATTEMPTS)) {
+        try {
+          return await this._applyAssignment(delivery, pick.driver, caller, role, `Auto-assigned to ${pick.driver.name}`);
+        } catch (err) {
+          if (!(err instanceof RiderUnavailableError)) throw err;
+        }
+      }
+      throw new NoRiderAvailableError();
     });
   }
 
@@ -787,6 +896,26 @@ class DeliveryService {
       patch,
       { actorId: caller.userId, note, label: 'Delivery' }
     );
+
+    // Availability was checked BEFORE the write, and a rider can go offline, pause or
+    // accept something else in between. A rider who does that afterwards has the offer
+    // taken back with the rest; one who did it in the gap would be left holding an offer
+    // nothing ever withdraws. So check again now that the offer exists: whichever of the
+    // two happens second sees the other, and a rider found unavailable has this one offer
+    // taken back and the seller is told why (409), exactly as if the first check had failed.
+    try {
+      await this.presence.assertAvailable(driver.id, driver);
+    } catch (err) {
+      if (err instanceof RiderUnavailableError) {
+        const why = err.details && err.details.reason;
+        await this._withdrawOffers(driver.id, { note: PRESENCE_NOTES[why] || PRESENCE_NOTES.offline, onlyId: updated.id });
+        throw err;
+      }
+      // Could not look (the database): keep the offer. The rider's own accept is checked
+      // atomically, so nothing unsafe follows from it, and a failed read is not a reason to
+      // undo what the seller just did.
+      logger.warn(`[Delivery] Could not re-check rider ${driver.id} after offering ${updated.id}: ${err.message}`);
+    }
 
     this._notify(driver.id, {
       audience: 'rider',
@@ -859,12 +988,28 @@ class DeliveryService {
     }
     await this._assertOrderNotCancelled(delivery);
 
-    const updated = await this._transition(
-      delivery,
-      { status: S.ASSIGNED, driverId: caller.userId },
-      { status: S.ACCEPTED, acceptedAt: this._nowIso() },
-      { actorId: caller.userId, note: 'Rider accepted' }
-    );
+    // Accepting makes the rider busy, and that is claimed FIRST, atomically (online ->
+    // busy only while they are online with a fresh heartbeat), so two deliveries
+    // accepted at once cannot both win and a rider who is offline, paused, silent or
+    // already carrying a delivery is refused with the reason (409).
+    await this.presence.claim(caller.userId, driver);
+    let updated;
+    try {
+      updated = await this._transition(
+        delivery,
+        { status: S.ASSIGNED, driverId: caller.userId },
+        { status: S.ACCEPTED, acceptedAt: this._nowIso() },
+        { actorId: caller.userId, note: 'Rider accepted' }
+      );
+    } catch (err) {
+      // The delivery did not move (someone changed it first): give the claim back.
+      await this._reconcileRiders([caller.userId]);
+      throw err;
+    }
+    // A busy rider is not offered new work, and the other offers they still hold would
+    // sit until they lapse (and count against the rider as unanswered). Back to their
+    // sellers now.
+    await this._withdrawOffers(caller.userId, { note: PRESENCE_NOTES.busy, exceptId: updated.id });
     this._notify(updated.buyerId, {
       audience: 'buyer',
       title: 'A rider accepted your delivery',
@@ -972,6 +1117,9 @@ class DeliveryService {
     return this._present(updated, 'driver');
   }
 
+  // A delivery's GPS trail. It deliberately says nothing about presence: a ping is
+  // history for one delivery, not a claim to be available. The rider's own client
+  // keeps them online with the separate heartbeat (riderHeartbeat).
   async recordLocation(deliveryId, input, callerInput) {
     const { caller, delivery } = await this._requireAssignedRider(deliveryId, callerInput);
     if (!LOCATION_ACCEPTING_STATUSES.includes(delivery.status)) {
@@ -1096,6 +1244,7 @@ class DeliveryService {
       if (!updated) continue;
 
       await this._record(updated, S.ARRIVED, caller.userId, 'Handover code verified');
+      await this._syncPresence(delivery, updated, caller.userId);
       await this._syncOrder(updated, caller.userId);
       this._notify(updated.buyerId, {
         audience: 'buyer',
@@ -1346,7 +1495,21 @@ class DeliveryService {
       if (d.driverId !== caller.userId) continue;
       deliveries.push(await this._present(d, 'driver', { includeTimeline: false }));
     }
-    return { driver: { id: driver.id, name: driver.name, phone: driver.phone }, deliveries };
+    // Presence rides along so the hub learns "am I online" in the call it already makes, but
+    // it must never keep a rider from SEEING their jobs: one carrying a parcel has to be able
+    // to finish it even if presence cannot be read (the migration not applied yet, a database
+    // error). Unknown is `null`, and the client treats it as "do not show availability".
+    let presence = null;
+    try {
+      presence = await this.presence.getOwn(caller.userId);
+    } catch (err) {
+      logger.warn(`[Delivery] Could not read rider ${caller.userId}'s presence for their job list: ${err.message}`);
+    }
+    return {
+      driver: { id: driver.id, name: driver.name, phone: driver.phone },
+      deliveries,
+      presence
+    };
   }
 
   // ------------------------------------------------------------------- riders
@@ -1377,7 +1540,10 @@ class DeliveryService {
     const driver = await this.repo.upsertDriver({
       profileId, name, phone, status, createdBy: existing ? existing.createdBy : caller.userId
     });
-    if (status === DRIVER_STATUS.SUSPENDED) await this._releaseDriverWork(profileId, caller.userId, 'Rider suspended');
+    if (status === DRIVER_STATUS.SUSPENDED) {
+      await this._forceOffline(profileId);
+      await this._releaseDriverWork(profileId, caller.userId, 'Rider suspended');
+    }
     // The rider hears about it from us: being registered (or suspended) changes
     // what they can do in the app, and nothing else would tell them.
     if (!existing || existing.status !== status) {
@@ -1392,6 +1558,88 @@ class DeliveryService {
       });
     }
     return { id: driver.id, name: driver.name, phone: driver.phone, status: driver.status };
+  }
+
+  // ----------------------------------------------------------------- presence
+  //
+  // A rider's availability (docs/DELIVERY_API.md, "Rider presence"). Each of these
+  // acts on the AUTHENTICATED caller's own presence and nothing else: none takes a
+  // rider id or a status. Only a registered, active rider has presence (403 otherwise).
+
+  /** The optional `{ lat, lng, accuracyM }` a presence call may carry, validated; null when absent. */
+  _presenceLocation(input) {
+    const body = input && typeof input === 'object' ? input : {};
+    if ((body.lat === undefined || body.lat === null) && (body.lng === undefined || body.lng === null)) {
+      // An accuracy describes a position. With none there is nothing for it to describe, and a
+      // value that is refused alongside a position must not be quietly dropped without one.
+      if (body.accuracyM !== undefined && body.accuracyM !== null && body.accuracyM !== '') {
+        throw new ValidationError('accuracyM needs a position', [{ field: 'accuracyM', message: 'Send lat and lng with accuracyM.' }]);
+      }
+      return null;
+    }
+    const point = parseLocation({ lat: body.lat, lng: body.lng }, 'location');
+    const accuracyM = optionalNumber(body.accuracyM, 'accuracyM', { min: 0, max: 1e6 });
+    return { ...point, accuracyM };
+  }
+
+  /** The caller's own presence. */
+  async getRiderPresence(callerInput) {
+    return this.presence.getOwn(this._caller(callerInput).userId);
+  }
+
+  /** Go online (or come back from a pause). */
+  async riderGoOnline(callerInput, input = {}) {
+    const caller = this._caller(callerInput);
+    return this.presence.goOnline(caller.userId, this._presenceLocation(input));
+  }
+
+  /**
+   * Go offline. Refused (409 RIDER_BUSY) while the rider carries a delivery they
+   * accepted. Offers they have not answered go back to their sellers.
+   */
+  async riderGoOffline(callerInput) {
+    const caller = this._caller(callerInput);
+    const presence = await this.presence.goOffline(caller.userId);
+    await this._withdrawOffers(caller.userId, { note: PRESENCE_NOTES.offline });
+    return presence;
+  }
+
+  /** Pause: still here, not taking new deliveries. Same rules as going offline. */
+  async riderPause(callerInput) {
+    const caller = this._caller(callerInput);
+    const presence = await this.presence.pause(caller.userId);
+    await this._withdrawOffers(caller.userId, { note: PRESENCE_NOTES.paused });
+    return presence;
+  }
+
+  /** Resume after a pause. */
+  async riderResume(callerInput, input = {}) {
+    const caller = this._caller(callerInput);
+    return this.presence.resume(caller.userId, this._presenceLocation(input));
+  }
+
+  /**
+   * "Still here." Keeps an already-online (or busy) rider alive; never raises anyone.
+   * A rider found silent past the window is set offline here and their offers go back.
+   */
+  async riderHeartbeat(callerInput, input = {}) {
+    const caller = this._caller(callerInput);
+    const { presence, expired } = await this.presence.heartbeat(caller.userId, this._presenceLocation(input));
+    if (expired) await this._withdrawOffers(caller.userId, { note: PRESENCE_NOTES.expired });
+    return presence;
+  }
+
+  /**
+   * Presence housekeeping, for the sweeper: sets online riders who went silent offline
+   * and takes their offers back, and puts right any busy row nothing backs up. Every
+   * read already treats a silent rider as offline, so this is tidiness and the offers,
+   * not correctness: a deployment that cannot run it (serverless) is never wrong.
+   */
+  async expireStalePresence({ limit = 50 } = {}) {
+    const expired = await this.presence.expireStale({ limit });
+    for (const riderId of expired) await this._withdrawOffers(riderId, { note: PRESENCE_NOTES.expired });
+    const healed = await this.presence.healStaleBusy({ limit });
+    return { expired: expired.length, healed };
   }
 
   /**
@@ -1462,7 +1710,21 @@ class DeliveryService {
       status: DRIVER_STATUS.SUSPENDED,
       createdBy: driver.createdBy
     });
+    await this._forceOffline(userId);
     await this._releaseDriverWork(userId, userId, 'Rider account deleted');
+  }
+
+  /**
+   * Suspension and account deletion take a rider out of availability at once. They
+   * are already unavailable by the derived `suspended` status, so a failing write here
+   * is logged and never blocks the administrator's action.
+   */
+  async _forceOffline(riderId) {
+    try {
+      await this.presence.forceOffline(riderId);
+    } catch (err) {
+      logger.warn(`[Delivery] Could not set rider ${riderId} offline: ${err.message}`);
+    }
   }
 
   /**
@@ -1499,13 +1761,17 @@ class DeliveryService {
   }
 
   /**
-   * Active riders with how many deliveries each is carrying. Order: riders who did
-   * NOT let an offer lapse in the last hour (RECENT_LAPSE_WINDOW_MS) first, then
-   * the least busy, then by name, then by id (so ties break the same way every
-   * time). The lapse rule keeps a rider who never answers from taking the first
-   * offer of every delivery just because their lapsed jobs left them at zero.
+   * The riders who can be offered a delivery RIGHT NOW, with how many deliveries each
+   * is carrying: active, online with a fresh heartbeat, and not busy. A rider who is
+   * offline, paused, suspended, silent or carrying an accepted delivery is not in the
+   * result at all. Order: riders who did NOT let an offer lapse in the last hour
+   * (RECENT_LAPSE_WINDOW_MS) first, then the least busy, then by name, then by id (so
+   * ties break the same way every time). The lapse rule keeps a rider who never
+   * answers from taking the first offer of every delivery just because their lapsed
+   * jobs left them at zero. `registered` is how many active riders exist, however many
+   * are available (it tells "nobody is online" from "nobody is registered").
    */
-  async _rankedActiveRiders({ release = true } = {}) {
+  async _rankedAvailableRiders({ release = true } = {}) {
     if (release) await this._releaseLapsedOffers();
     const since = new Date(this.now() - RECENT_LAPSE_WINDOW_MS).toISOString();
     const [drivers, load, lapses] = await Promise.all([
@@ -1516,21 +1782,27 @@ class DeliveryService {
     if (drivers.length >= MAX_RIDERS_CONSIDERED) {
       logger.warn(`[Delivery] Rider list hit its ${MAX_RIDERS_CONSIDERED}-row cap; riders beyond it are not offered.`);
     }
+    const here = await this.presence.availableRiderIds(drivers);
     const byText = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
-    return drivers
+    const ranked = drivers
+      .filter((driver) => here.has(driver.id))
       .map((driver) => ({ driver, openDeliveries: load.get(driver.id) || 0, recentlyLapsed: (lapses.get(driver.id) || 0) > 0 }))
       .sort((a, b) => Number(a.recentlyLapsed) - Number(b.recentlyLapsed)
         || a.openDeliveries - b.openDeliveries
         || String(a.driver.name || '').localeCompare(String(b.driver.name || ''), 'en')
         || byText(a.driver.id, b.driver.id));
+    return { ranked, registered: drivers.length };
   }
 
   /**
-   * The riders a seller or admin can pick from, least busy first. With a
-   * `deliveryId` (the caller must be that delivery's seller or an admin, else
-   * 404) each rider also says whether they already handed THAT delivery back.
+   * The riders a seller or admin can pick from, least busy first: only riders who are
+   * available now (see _rankedAvailableRiders), because anyone else would be refused.
+   * With a `deliveryId` (the caller must be that delivery's seller or an admin, else
+   * 404) each rider also says whether they already handed THAT delivery back. With
+   * `withSummary` the answer is `{ drivers, summary: { registered, available } }`, so a
+   * screen can say "nobody is online" instead of "no riders yet".
    */
-  async listDrivers(callerInput, { deliveryId } = {}) {
+  async listDrivers(callerInput, { deliveryId, withSummary = false } = {}) {
     const caller = this._caller(callerInput);
     if (!SELLER_ROLES.includes(caller.userRole)) {
       throw new AuthorizationError('Only sellers and administrators can list riders.');
@@ -1540,21 +1812,23 @@ class DeliveryService {
       const { delivery } = await this._requireStaff(deliveryId, callerInput);
       passed = await this._ridersWhoPassed(delivery.id);
     }
-    const ranked = await this._rankedActiveRiders();
-    return ranked.map(({ driver, openDeliveries }) => ({
+    const { ranked, registered } = await this._rankedAvailableRiders();
+    const drivers = ranked.map(({ driver, openDeliveries }) => ({
       id: driver.id,
       name: driver.name,
       phone: driver.phone,
       openDeliveries,
       ...(passed ? { declined: passed.has(driver.id) } : {})
     }));
+    return withSummary ? { drivers, summary: { registered, available: drivers.length } } : drivers;
   }
 
   /**
    * The admin rider roster (GET /drivers?status=): every rider, or only the active
-   * or suspended ones, each with its status and current workload. Active riders
-   * first, then by name. Administrators only: a seller only ever picks from the
-   * ranked list of active riders above.
+   * or suspended ones, each with its status, current workload and presence (online,
+   * offline, busy, paused or suspended, and when the rider was last heard from; never
+   * their position). Active riders first, then by name. Administrators only: a seller
+   * only ever picks from the ranked list of available riders above.
    */
   async listRiderRoster(callerInput, { status = 'all' } = {}) {
     const caller = this._caller(callerInput);
@@ -1568,10 +1842,27 @@ class DeliveryService {
       this.repo.listDrivers({ status: status === 'all' ? null : status, limit: MAX_RIDERS_CONSIDERED }),
       this.repo.countOpenByDriver()
     ]);
+    // Presence is information on this screen, not a gate, and this is how an administrator
+    // reaches the riders to manage them: if it cannot be read (the migration is not applied
+    // yet, a database error) the roster still loads, with presence unknown.
+    let presence = new Map();
+    try {
+      presence = await this.presence.resolveMany(drivers);
+    } catch (err) {
+      logger.warn(`[Delivery] Could not read rider presence for the roster: ${err.message}`);
+    }
     const rank = (d) => (d.status === DRIVER_STATUS.ACTIVE ? 0 : 1);
     const byText = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
     return drivers
-      .map((d) => ({ id: d.id, name: d.name, phone: d.phone, status: d.status, openDeliveries: load.get(d.id) || 0 }))
+      .map((d) => ({
+        id: d.id,
+        name: d.name,
+        phone: d.phone,
+        status: d.status,
+        openDeliveries: load.get(d.id) || 0,
+        presence: presence.has(d.id) ? presence.get(d.id).status : null,
+        lastSeenAt: presence.has(d.id) ? presence.get(d.id).lastSeenAt : null
+      }))
       .sort((a, b) => rank(a) - rank(b)
         || String(a.name || '').localeCompare(String(b.name || ''), 'en')
         || byText(a.id, b.id));

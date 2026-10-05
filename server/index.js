@@ -413,7 +413,7 @@ if (require.main === module) {
   // it only when the first seller or rider opens a screen. Say it at boot, once.
   getSharedDeliveryService().repo.probe()
     .then((p) => {
-      if (!p.ready) logger.error(`[Delivery] NOT READY: ${p.reason}. Delivery endpoints answer 503 until it is applied.`);
+      if (!p.ready) logger.error(`[Delivery] NOT READY: ${p.reason}. The delivery endpoints that need it answer 503 until it is applied.`);
     })
     .catch(() => { /* a failed check must never stop the server booting */ });
 

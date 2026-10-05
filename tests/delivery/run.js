@@ -30,6 +30,16 @@ const SUITES = [
   'delivery_circuit_e2e',
   'delivery_geocoder',
   'delivery_nudge',
+  // Rider presence (docs/DELIVERY_API.md v1.3): who can be offered a delivery right now.
+  // The pure rules, the service, dispatch (assign / auto-assign / accept), the races
+  // between them, the HTTP routes, the repository, and the client's heartbeat controller.
+  'rider_presence_domain',
+  'rider_presence_service',
+  'rider_presence_dispatch',
+  'rider_presence_races',
+  'rider_presence_routes',
+  'rider_presence_repository',
+  'rider_presence_client',
   'shipping_city_rates',
   // The order path in the compiled app: what a buyer does before a delivery can exist.
   'checkout_server_orders',

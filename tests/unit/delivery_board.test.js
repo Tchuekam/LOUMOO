@@ -2,8 +2,10 @@
  * LOUMOO — Delivery dispatch board and admin rider roster (contract v1.2)
  * ---------------------------------------------------------------------------
  * GET /dispatch: a seller's home-delivery orders that need or have a delivery.
- * GET /drivers?status=: the admin roster, suspended riders included.
- * Service level over the in-memory backends, the two new repository reads over a
+ * GET /drivers?status=: the admin roster, suspended riders included, each rider with
+ * their presence (offline / online / busy / paused / suspended) and last heartbeat,
+ * and never a position; the seller's list of riders, which now holds only riders who
+ * are online. Service level over the in-memory backends, the two new repository reads over a
  * query-builder stand-in, and the routes over real HTTP with a header-driven
  * stand-in for authentication. No database.
  */
@@ -26,19 +28,30 @@ const { Order, FULFILLMENT_STATUS, DELIVERY_METHOD, PAYMENT_STATUS } = require('
 
 const MIN = 60 * 1000;
 const OFFER_TTL_MS = 15 * MIN;
+// How long a rider may go without a heartbeat before they stop counting as online. These
+// cases are about the board and the roster, not about heartbeats, and some move the clock
+// by the whole offer window (15 minutes): under the 2-minute default a rider put online at
+// the start would look silent by then. An hour keeps that out of the way; the roster case
+// that IS about silence asks for a short window explicitly.
+const PRESENCE_TTL_MS = 60 * MIN;
 
 async function code(promise) {
   try { await promise; return 'OK'; } catch (e) { return e.code || e.name || 'ERROR'; }
 }
 
-function makeWorld() {
+function makeWorld({ presenceTtlMs = PRESENCE_TTL_MS } = {}) {
   let t = Date.parse('2026-10-04T10:00:00.000Z');
   const clock = { now: () => t, advance: (ms) => { t += ms; } };
   const orders = new OrderRepository({ db: null });
   const repo = new DeliveryRepository({ db: null });
   const events = new DeliveryEvents();
-  const service = new DeliveryService({ repository: repo, orderRepository: orders, events, now: clock.now, offerTtlMs: OFFER_TTL_MS });
+  const service = new DeliveryService({ repository: repo, orderRepository: orders, events, now: clock.now, offerTtlMs: OFFER_TTL_MS, presenceTtlMs });
   return { clock, orders, repo, events, service };
+}
+
+/** The rider opens the app and goes online. Registering someone only makes them a rider. */
+async function goOnline(w, riderId) {
+  return w.service.riderGoOnline({ userId: riderId, userRole: 'customer' });
 }
 
 let seq = 0;
@@ -111,6 +124,7 @@ async function run() {
     {
       const w = makeWorld();
       await w.service.registerDriver('rider_1', { name: 'Alain', phone: '+237600000001' }, ADMIN);
+      await goOnline(w, 'rider_1'); // an offer can only go to a rider who is online
       const needsRider = await placeOrder(w);
       const offered = await placeOrder(w);
       const pickup = await placeOrder(w, { deliveryMethod: DELIVERY_METHOD.STORE_PICKUP });
@@ -173,6 +187,7 @@ async function run() {
     {
       const w = makeWorld();
       await w.service.registerDriver('rider_1', { name: 'Alain', phone: '+237600000001' }, ADMIN);
+      await goOnline(w, 'rider_1');
       const order = await placeOrder(w);
       const d = await w.service.createDelivery(order.id, SELLER, {});
       await w.service.assignDriver(d.id, 'rider_1', SELLER);
@@ -188,10 +203,13 @@ async function run() {
 
     // ------------------------------------------------------------ the roster
     {
-      const w = makeWorld();
+      // A two-minute window, so the same world can show a rider going silent.
+      const w = makeWorld({ presenceTtlMs: 2 * MIN });
+      const T0 = new Date(w.clock.now()).toISOString();
       await w.service.registerDriver('rider_b', { name: 'Bruno', phone: '+237600000002' }, ADMIN);
       await w.service.registerDriver('rider_a', { name: 'Alain', phone: '+237600000001' }, ADMIN);
       await w.service.registerDriver('rider_z', { name: 'Aaron', phone: '+237600000003', status: 'suspended' }, ADMIN);
+      await goOnline(w, 'rider_b'); // Bruno is online and holds an offer; Alain has never opened the app
       const order = await placeOrder(w);
       const d = await w.service.createDelivery(order.id, SELLER, {});
       await w.service.assignDriver(d.id, 'rider_b', SELLER);
@@ -204,9 +222,78 @@ async function run() {
       assert.deepStrictEqual(all.map((r) => [r.id, r.status, r.openDeliveries]),
         [['rider_a', 'active', 0], ['rider_b', 'active', 1], ['rider_z', 'suspended', 0]],
         'active riders first, by name, each with status and workload; suspended last');
-      assert.deepStrictEqual(Object.keys(all[0]).sort(), ['id', 'name', 'openDeliveries', 'phone', 'status']);
+      // Each row now also says whether the rider is here (presence) and when they were last
+      // heard from, and never WHERE they are: the whole row is pinned, not just a few fields.
+      assert.deepStrictEqual(Object.keys(all[0]).sort(), ['id', 'lastSeenAt', 'name', 'openDeliveries', 'phone', 'presence', 'status']);
+      assert.deepStrictEqual(all, [
+        { id: 'rider_a', name: 'Alain', phone: '+237600000001', status: 'active', openDeliveries: 0, presence: 'offline', lastSeenAt: null },
+        { id: 'rider_b', name: 'Bruno', phone: '+237600000002', status: 'active', openDeliveries: 1, presence: 'online', lastSeenAt: T0 },
+        { id: 'rider_z', name: 'Aaron', phone: '+237600000003', status: 'suspended', openDeliveries: 0, presence: 'suspended', lastSeenAt: null }
+      ], 'registered is not online: Alain never went online, Bruno did, Aaron is suspended; an offer does not make Bruno busy');
       assert.deepStrictEqual((await w.service.listRiderRoster(ADMIN, { status: 'suspended' })).map((r) => r.id), ['rider_z']);
       assert.deepStrictEqual((await w.service.listRiderRoster(ADMIN, { status: 'active' })).map((r) => r.id), ['rider_a', 'rider_b']);
+
+      const presenceOf = async (id) => {
+        const row = (await w.service.listRiderRoster(ADMIN)).find((r) => r.id === id);
+        return [row.presence, row.lastSeenAt];
+      };
+      const A = { userId: 'rider_a', userRole: 'customer' };
+      const B = { userId: 'rider_b', userRole: 'customer' };
+
+      // Accepting the offer makes Bruno busy (the claim also counts as being heard from).
+      await w.service.acceptDelivery(d.id, B);
+      assert.deepStrictEqual(await presenceOf('rider_b'), ['busy', T0], 'a rider carrying a parcel is busy, not online');
+
+      // Alain goes online a minute later, takes a break, and comes back.
+      w.clock.advance(MIN);
+      const T1 = new Date(w.clock.now()).toISOString();
+      await goOnline(w, 'rider_a');
+      assert.deepStrictEqual(await presenceOf('rider_a'), ['online', T1]);
+      await w.service.riderPause(A);
+      assert.strictEqual((await presenceOf('rider_a'))[0], 'paused', 'on a break');
+      await w.service.riderResume(A);
+      assert.deepStrictEqual(await presenceOf('rider_a'), ['online', T1], 'and back');
+
+      // Three more minutes without a heartbeat: Alain (silent for 3 of 2 allowed) reads offline, but the
+      // roster still says when he was last heard from; Bruno is carrying a parcel, so silence does not expire him.
+      w.clock.advance(3 * MIN);
+      assert.deepStrictEqual(await presenceOf('rider_a'), ['offline', T1], 'a silent rider is offline, with their last beat shown');
+      assert.strictEqual((await presenceOf('rider_b'))[0], 'busy', 'a busy rider does not expire');
+      // The seller's list tells "nobody is online" apart from "nobody is registered".
+      assert.deepStrictEqual(await w.service.listDrivers(SELLER, { withSummary: true }),
+        { drivers: [], summary: { registered: 2, available: 0 } }, 'two active riders, neither available now');
+
+      // A suspension applied straight to the rider record (not through registerDriver) still wins over
+      // whatever the presence row says: Bruno's row says busy, the roster says suspended.
+      await w.repo.upsertDriver({ profileId: 'rider_b', name: 'Bruno', phone: '+237600000002', status: 'suspended' });
+      assert.strictEqual((await presenceOf('rider_b'))[0], 'suspended', 'suspended beats busy');
+      assert.deepStrictEqual((await w.service.listRiderRoster(ADMIN, { status: 'suspended' })).map((r) => r.id).sort(), ['rider_b', 'rider_z']);
+    }
+
+    // ------------------- busy is read from the deliveries, not only from the presence row
+    {
+      const w = makeWorld();
+      await w.service.registerDriver('rider_1', { name: 'Alain', phone: '+237600000001' }, ADMIN);
+      await goOnline(w, 'rider_1');
+      const first = await w.service.createDelivery((await placeOrder(w)).id, SELLER, {});
+      const second = await w.service.createDelivery((await placeOrder(w)).id, SELLER, {});
+      await w.service.assignDriver(first.id, 'rider_1', SELLER);
+      // The delivery moves to accepted without the presence row following (what a crash between the two
+      // writes leaves behind): the row still says online.
+      await w.repo.updateWhere(first.id, { status: 'assigned' }, { status: 'accepted', acceptedAt: new Date(w.clock.now()).toISOString() });
+      assert.strictEqual((await w.repo.findPresence('rider_1')).status, 'online', 'setup: the stored row says online');
+
+      const row = (await w.service.listRiderRoster(ADMIN)).find((r) => r.id === 'rider_1');
+      assert.strictEqual(row.presence, 'busy', 'the roster reads busy from the accepted delivery');
+      assert.deepStrictEqual(await w.service.listDrivers(SELLER, { withSummary: true }),
+        { drivers: [], summary: { registered: 1, available: 0 } }, 'and the seller is not offered a rider who is carrying a parcel');
+      let refused = null;
+      try { await w.service.assignDriver(second.id, 'rider_1', SELLER); } catch (e) { refused = e; }
+      assert.ok(refused, 'choosing them by hand is refused too');
+      assert.strictEqual(refused.statusCode, 409);
+      assert.strictEqual(refused.code, 'RIDER_BUSY');
+      assert.strictEqual(refused.details.reason, 'busy');
+      assert.strictEqual((await w.repo.findById(second.id)).status, 'pending_assignment', 'and the second delivery is still waiting');
     }
 
     // ------------------------------------------------- the two repository reads
@@ -268,7 +355,9 @@ async function run() {
     {
       const w = makeWorld();
       await w.service.registerDriver('rider_1', { name: 'Alain', phone: '+237600000001' }, ADMIN);
+      await w.service.registerDriver('rider_2', { name: 'Bruno', phone: '+237600000002' }, ADMIN); // registered, never online
       await w.service.registerDriver('rider_9', { name: 'Zed', phone: '+237600000009', status: 'suspended' }, ADMIN);
+      await goOnline(w, 'rider_1');
       await placeOrder(w);
       const fakeAuth = (req, res, next) => {
         const header = req.headers['x-test-user'];
@@ -306,11 +395,20 @@ async function run() {
         assert.strictEqual((await get('/drivers?status=all', 'seller_1|seller')).status, 403, 'a seller cannot read the roster');
         const roster = await get('/drivers?status=all', 'admin_1|admin');
         assert.strictEqual(roster.status, 200);
-        assert.deepStrictEqual(roster.body.data.drivers.map((r) => [r.id, r.status]), [['rider_1', 'active'], ['rider_9', 'suspended']]);
+        assert.deepStrictEqual(roster.body.data.drivers.map((r) => [r.id, r.status, r.presence]),
+          [['rider_1', 'active', 'online'], ['rider_2', 'active', 'offline'], ['rider_9', 'suspended', 'suspended']],
+          'the roster carries every rider with their presence: registered is not online');
+        assert.strictEqual(roster.body.data.drivers[0].lastSeenAt, new Date(w.clock.now()).toISOString(), 'and when the online rider was last heard from');
+        assert.strictEqual(roster.body.data.drivers[1].lastSeenAt, null, 'a rider who never went online has never been heard from');
+        assert.ok(roster.body.data.drivers.every((r) => !('location' in r) && !('latitude' in r) && !('lat' in r)), 'never a position');
         assert.strictEqual((await get('/drivers?status=banned', 'admin_1|admin')).status, 400);
         const plain = await get('/drivers', 'seller_1|seller');
-        assert.deepStrictEqual(plain.body.data.drivers.map((r) => r.id), ['rider_1'], 'without status: the seller list, unchanged');
+        assert.deepStrictEqual(plain.body.data.drivers.map((r) => r.id), ['rider_1'],
+          'without status: the seller list, which now holds only the rider who is online (rider_2 is offline, rider_9 suspended)');
         assert.ok(!('status' in plain.body.data.drivers[0]), 'which does not carry a status');
+        assert.deepStrictEqual(Object.keys(plain.body.data.drivers[0]).sort(), ['id', 'name', 'openDeliveries', 'phone'],
+          'a seller is never given presence, last-seen or a position');
+        assert.deepStrictEqual(plain.body.data.summary, { registered: 2, available: 1 }, 'with how many riders are registered and how many are available');
       } finally {
         if (server.closeAllConnections) server.closeAllConnections();
         await new Promise((r) => server.close(r));

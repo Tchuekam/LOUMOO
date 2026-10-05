@@ -29,13 +29,21 @@ async function code(promise) {
   }
 }
 
+// How long a rider may go without a heartbeat before they stop counting as online.
+// Nothing here sends heartbeats, and the clock moves by minutes in places (GPS gaps,
+// retries after a failure), so under the production default (2 minutes) a rider put
+// online at the start could look silent by the time a later step assigns or accepts.
+// An hour keeps the heartbeat out of the way of tests that are about something else;
+// expiry itself is covered by the presence suites.
+const PRESENCE_TTL_MS = 60 * 60 * 1000;
+
 function makeWorld() {
   let t = Date.parse('2026-10-03T10:00:00.000Z');
   const clock = { now: () => t, advance: (ms) => { t += ms; } };
   const orders = new OrderRepository({ db: null });
   const repo = new DeliveryRepository({ db: null });
   const events = new DeliveryEvents();
-  const service = new DeliveryService({ repository: repo, orderRepository: orders, events, now: clock.now });
+  const service = new DeliveryService({ repository: repo, orderRepository: orders, events, now: clock.now, presenceTtlMs: PRESENCE_TTL_MS });
   return { clock, orders, repo, events, service };
 }
 
@@ -86,9 +94,20 @@ const RIDER2 = { userId: 'rider_2', userRole: 'customer' };
 const STRANGER = { userId: 'stranger_1', userRole: 'customer' };
 const NEAR = { lat: 4.0511, lng: 9.7679 };
 
+/**
+ * Registers a rider AND puts them online. Registering only makes someone a rider; a
+ * rider is offered work (assigned, listed, auto-picked) only once they have gone online,
+ * so a test that is about something else than availability does both, as a rider who
+ * opened the app would.
+ */
+async function registerRider(world, id, profile) {
+  await world.service.registerDriver(id, profile, ADMIN);
+  await world.service.riderGoOnline({ userId: id, userRole: 'customer' });
+}
+
 async function setupDelivery(world, { accept = false, pickup = false, arrive = false, dropoff = true } = {}) {
-  await world.service.registerDriver('rider_1', { name: 'Alain', phone: '+237600000001' }, ADMIN);
-  await world.service.registerDriver('rider_2', { name: 'Bruno', phone: '+237600000002' }, ADMIN);
+  await registerRider(world, 'rider_1', { name: 'Alain', phone: '+237600000001' });
+  await registerRider(world, 'rider_2', { name: 'Bruno', phone: '+237600000002' });
   const order = await placeOrder(world);
   const created = await world.service.createDelivery(order.id, SELLER, dropoff ? { dropoffLocation: { lat: 4.0601, lng: 9.7679 } } : {});
   await world.service.assignDriver(created.id, 'rider_1', SELLER);
@@ -119,7 +138,7 @@ async function run() {
       assert.strictEqual(await code(w.service.registerDriver('', { name: 'A', phone: '+237600000001' }, ADMIN)), 'VALIDATION_ERROR');
       assert.strictEqual(await code(w.service.registerDriver('rider_1', { name: '', phone: '+237600000001' }, ADMIN)), 'VALIDATION_ERROR');
       assert.strictEqual(await code(w.service.registerDriver('rider_1', { name: 'A', phone: '12' }, ADMIN)), 'VALIDATION_ERROR');
-      await w.service.registerDriver('rider_1', { name: 'Alain', phone: '+237600000001' }, ADMIN);
+      await registerRider(w, 'rider_1', { name: 'Alain', phone: '+237600000001' });
       assert.deepStrictEqual((await w.service.listDrivers(SELLER)).map((d) => d.id), ['rider_1']);
       assert.strictEqual(await code(w.service.listDrivers(BUYER)), 'PERMISSION_DENIED', 'customers cannot list riders');
       assert.strictEqual(await code(w.service.getRiderOverview(STRANGER)), 'PERMISSION_DENIED', 'non-riders have no rider overview');
@@ -216,9 +235,10 @@ async function run() {
     // ------------------------------------------------------------------ assign
     {
       const w = makeWorld();
-      await w.service.registerDriver('rider_1', { name: 'Alain', phone: '+237600000001' }, ADMIN);
-      await w.service.registerDriver('rider_2', { name: 'Bruno', phone: '+237600000002' }, ADMIN);
-      await w.service.registerDriver('buyer_1', { name: 'Awa', phone: '+237600000003' }, ADMIN);
+      await registerRider(w, 'rider_1', { name: 'Alain', phone: '+237600000001' });
+      await registerRider(w, 'rider_2', { name: 'Bruno', phone: '+237600000002' });
+      // Online like any rider, so that the refusal below is the buyer rule and nothing else.
+      await registerRider(w, 'buyer_1', { name: 'Awa', phone: '+237600000003' });
       await w.service.registerDriver('sus', { name: 'Sus', phone: '+237600000004', status: 'suspended' }, ADMIN);
       const order = await placeOrder(w);
       const { id } = await w.service.createDelivery(order.id, SELLER);
@@ -245,8 +265,8 @@ async function run() {
     // Two sellers' tabs assigning different riders at once: one wins.
     {
       const w = makeWorld();
-      await w.service.registerDriver('rider_1', { name: 'Alain', phone: '+237600000001' }, ADMIN);
-      await w.service.registerDriver('rider_2', { name: 'Bruno', phone: '+237600000002' }, ADMIN);
+      await registerRider(w, 'rider_1', { name: 'Alain', phone: '+237600000001' });
+      await registerRider(w, 'rider_2', { name: 'Bruno', phone: '+237600000002' });
       const order = await placeOrder(w);
       const { id } = await w.service.createDelivery(order.id, SELLER);
       const results = await Promise.allSettled([w.service.assignDriver(id, 'rider_1', SELLER), w.service.assignDriver(id, 'rider_2', ADMIN)]);
@@ -549,7 +569,7 @@ async function run() {
     // A seller who delivers their own parcel can use the rider endpoints.
     {
       const w = makeWorld();
-      await w.service.registerDriver('seller_1', { name: 'Shop owner', phone: '+237600000009' }, ADMIN);
+      await registerRider(w, 'seller_1', { name: 'Shop owner', phone: '+237600000009' });
       const order = await placeOrder(w);
       const { id } = await w.service.createDelivery(order.id, SELLER, { dropoffLocation: { lat: 4.0601, lng: 9.7679 } });
       await w.service.assignDriver(id, 'seller_1', SELLER);
@@ -679,7 +699,7 @@ async function run() {
     {
       const w = makeWorld();
       const received = [];
-      await w.service.registerDriver('rider_1', { name: 'Alain', phone: '+237600000001' }, ADMIN);
+      await registerRider(w, 'rider_1', { name: 'Alain', phone: '+237600000001' });
       const order = await placeOrder(w);
       const { id } = await w.service.createDelivery(order.id, SELLER, { dropoffLocation: { lat: 4.0601, lng: 9.7679 } });
       const unsubscribe = w.events.subscribe(id, (e) => received.push(e));
@@ -707,7 +727,7 @@ async function run() {
       await w.orders.updateFulfillmentStatusAtomic(order.id, FULFILLMENT_STATUS.IN_TRANSIT, FULFILLMENT_STATUS.DELIVERED, { note: 'manual' }).catch(() => {});
       const fresh = makeWorld();
       const o = await placeOrder(fresh);
-      await fresh.service.registerDriver('rider_1', { name: 'A', phone: '+237600000001' }, ADMIN);
+      await registerRider(fresh, 'rider_1', { name: 'A', phone: '+237600000001' });
       const d = await fresh.service.createDelivery(o.id, SELLER);
       await fresh.service.assignDriver(d.id, 'rider_1', SELLER);
       await fresh.service.acceptDelivery(d.id, RIDER);

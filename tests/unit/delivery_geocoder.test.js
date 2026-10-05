@@ -166,8 +166,10 @@ async function world(geocoder) {
   const clock = { now: () => t, advance: (ms) => { t += ms; } };
   const orders = new OrderRepository({ db: null });
   const repo = new DeliveryRepository({ db: null });
-  const service = new DeliveryService({ repository: repo, orderRepository: orders, events: new DeliveryEvents(), now: clock.now, geocoder });
+  // Nothing here is about heartbeats: an hour keeps the rider "here" however the clock moves.
+  const service = new DeliveryService({ repository: repo, orderRepository: orders, events: new DeliveryEvents(), now: clock.now, geocoder, presenceTtlMs: 60 * 60 * 1000 });
   await service.registerDriver('rider_1', { name: 'Alain', phone: '+237600000001' }, ADMIN);
+  await service.riderGoOnline(RIDER); // a rider can only be offered a delivery once they are online
   return { clock, orders, repo, service, order: await orders.saveOrder(listing()) };
 }
 

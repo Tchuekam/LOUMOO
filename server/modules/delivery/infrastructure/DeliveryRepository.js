@@ -3,7 +3,8 @@
  * ---------------------------------------------------------------------------
  * Persistence for riders, deliveries, the status timeline and GPS history on
  * `iam.delivery_drivers`, `iam.deliveries`, `iam.delivery_events` and
- * `iam.driver_locations` (migration 013).
+ * `iam.driver_locations` (migration 013), and the riders' live availability on
+ * `iam.rider_presence` (migration 017: one overwritten row per rider, never a trail).
  *
  * Backend selection: when a Supabase admin client is available the database is
  * the ONLY source of truth. The in-memory maps are used when no client exists
@@ -26,6 +27,7 @@ const logger = require('../../../shared/logging/logger');
 const {
   DELIVERY_STATUS, TERMINAL_STATUSES, WORKLOAD_STATUSES, DRIVER_STATUS, OFFER_EXPIRED_NOTE
 } = require('../domain/Delivery');
+const { PRESENCE_STATUS } = require('../domain/RiderPresence');
 
 const PG_UNIQUE_VIOLATION = '23505';
 const PG_FOREIGN_KEY_VIOLATION = '23503';
@@ -58,7 +60,7 @@ function isMissingTable(err) {
 function handleDatabaseFailure(err, context, options) {
   if (err instanceof DeliveryNotReadyError) throw err;
   if (config.isProduction && isMissingTable(err)) {
-    logger.error(`[Delivery] ${context}: the delivery tables are missing. Apply migrations 013 and 014 (node scripts/apply_migration.js --all).`);
+    logger.error(`[Delivery] ${context}: a delivery table is missing. Apply migrations 013, 014 and 017 (node scripts/apply_migration.js --all).`);
     throw new DeliveryNotReadyError();
   }
   return baseHandleDatabaseFailure(err, context, options);
@@ -134,6 +136,38 @@ function driverFromRow(row) {
   };
 }
 
+// Presence record key -> iam.rider_presence column (migration 017).
+const PRESENCE_COLUMNS = Object.freeze({
+  riderId: 'rider_id',
+  status: 'status',
+  latitude: 'latitude',
+  longitude: 'longitude',
+  accuracy: 'accuracy',
+  lastSeenAt: 'last_seen_at',
+  updatedAt: 'updated_at'
+});
+
+function presenceFromRow(row) {
+  if (!row) return null;
+  const record = {};
+  for (const [key, column] of Object.entries(PRESENCE_COLUMNS)) {
+    record[key] = row[column] === undefined ? null : row[column];
+  }
+  for (const key of ['latitude', 'longitude', 'accuracy']) {
+    record[key] = record[key] == null ? null : Number(record[key]);
+  }
+  return record;
+}
+
+function toPresenceRow(patch) {
+  const row = {};
+  for (const [key, value] of Object.entries(patch)) {
+    const column = PRESENCE_COLUMNS[key];
+    if (column && value !== undefined) row[column] = value;
+  }
+  return row;
+}
+
 function isOpen(status) {
   return !TERMINAL_STATUSES.includes(status);
 }
@@ -166,6 +200,7 @@ class DeliveryRepository {
     this._drivers = new Map();
     this._events = new Map();     // deliveryId -> [event]
     this._locations = new Map();  // deliveryId -> [point]
+    this._presence = new Map();   // riderId -> presence record
     this._eventSeq = 0;
   }
 
@@ -360,15 +395,18 @@ class DeliveryRepository {
   }
 
   /**
-   * How many deliveries each rider is carrying right now (assigned, accepted,
-   * picked up or arrived), as `Map<driverId, count>`. Riders with none are absent.
+   * How many deliveries each rider is carrying right now, as `Map<driverId, count>`.
+   * Riders with none are absent. By default that is every WORKLOAD_STATUSES delivery
+   * (assigned, accepted, picked up or arrived); pass `statuses` to count a subset,
+   * e.g. only the ones that make a rider busy (accepted onward).
    */
-  async countOpenByDriver() {
+  async countOpenByDriver({ statuses = WORKLOAD_STATUSES } = {}) {
+    const counted = [...statuses];
     const db = this.db;
     if (db) {
       try {
         const { data, error } = await db.from('deliveries').select('driver_id')
-          .in('status', [...WORKLOAD_STATUSES])
+          .in('status', counted)
           .not('driver_id', 'is', null)
           .limit(MAX_WORKLOAD_ROWS);
         if (error) failRankingInput(error, 'DeliveryRepository.countOpenByDriver');
@@ -384,7 +422,7 @@ class DeliveryRepository {
       }
     }
     return tally([...this._deliveries.values()]
-      .filter((d) => d.driverId && WORKLOAD_STATUSES.includes(d.status))
+      .filter((d) => d.driverId && counted.includes(d.status))
       .map((d) => d.driverId));
   }
 
@@ -632,6 +670,211 @@ class DeliveryRepository {
       .map((d) => ({ ...d }));
   }
 
+  // ------------------------------------------------------------------ presence
+
+  /** The stored presence of one rider, or null when they have never had a row. */
+  async findPresence(riderId) {
+    if (!riderId) return null;
+    const db = this.db;
+    if (db) {
+      try {
+        const { data, error } = await db.from('rider_presence').select('*').eq('rider_id', riderId).maybeSingle();
+        if (error) handleDatabaseFailure(error, 'DeliveryRepository.findPresence');
+        else return presenceFromRow(data);
+      } catch (err) {
+        handleDatabaseFailure(err, 'DeliveryRepository.findPresence');
+      }
+    }
+    const row = this._presence.get(riderId);
+    return row ? { ...row } : null;
+  }
+
+  /**
+   * Makes sure the rider has a presence row, an `offline` one if it has to create
+   * it, and leaves an existing row untouched. Idempotent and race-safe (two first
+   * calls create one row): every transition below is an UPDATE, so the row has to
+   * exist before it can be moved.
+   */
+  async ensurePresence(riderId, atIso = new Date().toISOString()) {
+    const db = this.db;
+    if (db) {
+      try {
+        const { error } = await db.from('rider_presence').upsert(
+          { rider_id: riderId, status: PRESENCE_STATUS.OFFLINE, updated_at: atIso },
+          { onConflict: 'rider_id', ignoreDuplicates: true }
+        );
+        if (error) {
+          if (error.code === PG_FOREIGN_KEY_VIOLATION) throw new ValidationError('That account is not a rider', [{ field: 'riderId', message: 'Register the rider first.' }]);
+          handleDatabaseFailure(error, 'DeliveryRepository.ensurePresence');
+        } else {
+          return;
+        }
+      } catch (err) {
+        if (err instanceof ValidationError) throw err;
+        handleDatabaseFailure(err, 'DeliveryRepository.ensurePresence');
+      }
+    }
+    if (!this._presence.has(riderId)) {
+      this._presence.set(riderId, {
+        riderId, status: PRESENCE_STATUS.OFFLINE, latitude: null, longitude: null, accuracy: null,
+        lastSeenAt: null, updatedAt: atIso
+      });
+    }
+  }
+
+  /**
+   * Compare-and-swap on a rider's presence, the same contract as `updateWhere`: the
+   * patch applies only while the stored status is one of `expectedStatuses`, and,
+   * with `seenSince`, only while the last heartbeat is NEWER than that instant (so
+   * "online and fresh" is decided in the same atomic step that claims the rider,
+   * not in a read that can go stale before the write). `staleAt` is the mirror
+   * image, for the sweeper: only while the last heartbeat is at or BEFORE that
+   * instant, so a rider who beat between the sweeper's read and its write is not
+   * set offline. `updatedBefore` guards the row's own age the same way, for the
+   * janitor that puts a leaked `busy` row right: only while nothing has written to it
+   * since that instant, so a claim made after the janitor's read is never undone.
+   * Returns the updated record, or `null` when the row no longer matches.
+   */
+  async transitionPresence(riderId, expectedStatuses, patch, { seenSince = null, staleAt = null, updatedBefore = null } = {}) {
+    const expected = [...expectedStatuses];
+    const fullPatch = { ...patch, updatedAt: patch.updatedAt || new Date().toISOString() };
+    const db = this.db;
+    if (db) {
+      try {
+        let query = db.from('rider_presence').update(toPresenceRow(fullPatch))
+          .eq('rider_id', riderId).in('status', expected);
+        if (seenSince) query = query.gt('last_seen_at', seenSince);
+        if (staleAt) query = query.lte('last_seen_at', staleAt);
+        if (updatedBefore) query = query.lte('updated_at', updatedBefore);
+        const { data, error } = await query.select().maybeSingle();
+        if (error) handleDatabaseFailure(error, 'DeliveryRepository.transitionPresence');
+        else return presenceFromRow(data);
+      } catch (err) {
+        handleDatabaseFailure(err, 'DeliveryRepository.transitionPresence');
+      }
+    }
+    const current = this._presence.get(riderId);
+    if (!current || !expected.includes(current.status)) return null;
+    if (seenSince) {
+      const seen = Date.parse(current.lastSeenAt);
+      if (!Number.isFinite(seen) || !(seen > Date.parse(seenSince))) return null;
+    }
+    if (staleAt) {
+      const seen = Date.parse(current.lastSeenAt);
+      if (!Number.isFinite(seen) || !(seen <= Date.parse(staleAt))) return null;
+    }
+    if (updatedBefore) {
+      const written = Date.parse(current.updatedAt);
+      if (!Number.isFinite(written) || !(written <= Date.parse(updatedBefore))) return null;
+    }
+    const next = { ...current, ...fullPatch };
+    this._presence.set(riderId, next);
+    return { ...next };
+  }
+
+  /** Every presence row (the admin roster), by rider id. Capped like the other rider reads. */
+  async listPresence({ limit = MAX_WORKLOAD_ROWS } = {}) {
+    const db = this.db;
+    if (db) {
+      try {
+        const { data, error } = await db.from('rider_presence').select('*').limit(limit);
+        if (error) failRankingInput(error, 'DeliveryRepository.listPresence');
+        else return (data || []).map(presenceFromRow);
+      } catch (err) {
+        if (err instanceof InfrastructureError) throw err;
+        failRankingInput(err, 'DeliveryRepository.listPresence');
+      }
+    }
+    return [...this._presence.values()].slice(0, limit).map((r) => ({ ...r }));
+  }
+
+  /**
+   * Riders stored `online` whose last heartbeat is NEWER than `seenSinceIso`: the
+   * pool an offer is chosen from. Offline, paused and busy riders are not read at
+   * all. A database error is thrown in production rather than answered with an
+   * empty pool (see failRankingInput).
+   */
+  async listFreshOnlinePresence(seenSinceIso, { limit = MAX_WORKLOAD_ROWS } = {}) {
+    const since = Date.parse(seenSinceIso);
+    if (!Number.isFinite(since)) return [];
+    const db = this.db;
+    if (db) {
+      try {
+        const { data, error } = await db.from('rider_presence').select('*')
+          .eq('status', PRESENCE_STATUS.ONLINE)
+          .gt('last_seen_at', new Date(since).toISOString())
+          .limit(limit);
+        if (error) failRankingInput(error, 'DeliveryRepository.listFreshOnlinePresence');
+        else return (data || []).map(presenceFromRow);
+      } catch (err) {
+        if (err instanceof InfrastructureError) throw err;
+        failRankingInput(err, 'DeliveryRepository.listFreshOnlinePresence');
+      }
+    }
+    return [...this._presence.values()]
+      .filter((r) => r.status === PRESENCE_STATUS.ONLINE && Date.parse(r.lastSeenAt) > since)
+      .slice(0, limit)
+      .map((r) => ({ ...r }));
+  }
+
+  /**
+   * Riders stored `online` whose last heartbeat is at or before `cutoffIso`: the ones
+   * the sweeper sets offline. Oldest first and bounded, so a backlog is worked off
+   * over several sweeps.
+   */
+  async findStalePresence(cutoffIso, { limit = 50 } = {}) {
+    const cutoff = Date.parse(cutoffIso);
+    if (!Number.isFinite(cutoff)) return [];
+    const db = this.db;
+    if (db) {
+      try {
+        const { data, error } = await db.from('rider_presence').select('*')
+          .eq('status', PRESENCE_STATUS.ONLINE)
+          .lte('last_seen_at', new Date(cutoff).toISOString())
+          .order('last_seen_at', { ascending: true })
+          .limit(limit);
+        if (error) handleDatabaseFailure(error, 'DeliveryRepository.findStalePresence');
+        else return (data || []).map(presenceFromRow);
+      } catch (err) {
+        handleDatabaseFailure(err, 'DeliveryRepository.findStalePresence');
+      }
+    }
+    return [...this._presence.values()]
+      .filter((r) => r.status === PRESENCE_STATUS.ONLINE && Date.parse(r.lastSeenAt) <= cutoff)
+      .sort((a, b) => Date.parse(a.lastSeenAt) - Date.parse(b.lastSeenAt))
+      .slice(0, limit)
+      .map((r) => ({ ...r }));
+  }
+
+  /**
+   * Riders stored `busy` that nothing has written to since `cutoffIso`: candidates
+   * for the janitor that puts a leaked busy row right once it knows the rider holds
+   * no accepted delivery. Oldest first and bounded.
+   */
+  async findStaleBusyPresence(cutoffIso, { limit = 50 } = {}) {
+    const cutoff = Date.parse(cutoffIso);
+    if (!Number.isFinite(cutoff)) return [];
+    const db = this.db;
+    if (db) {
+      try {
+        const { data, error } = await db.from('rider_presence').select('*')
+          .eq('status', PRESENCE_STATUS.BUSY)
+          .lte('updated_at', new Date(cutoff).toISOString())
+          .order('updated_at', { ascending: true })
+          .limit(limit);
+        if (error) handleDatabaseFailure(error, 'DeliveryRepository.findStaleBusyPresence');
+        else return (data || []).map(presenceFromRow);
+      } catch (err) {
+        handleDatabaseFailure(err, 'DeliveryRepository.findStaleBusyPresence');
+      }
+    }
+    return [...this._presence.values()]
+      .filter((r) => r.status === PRESENCE_STATUS.BUSY && Date.parse(r.updatedAt) <= cutoff)
+      .sort((a, b) => Date.parse(a.updatedAt) - Date.parse(b.updatedAt))
+      .slice(0, limit)
+      .map((r) => ({ ...r }));
+  }
+
   /**
    * Profile ids of the administrators who should hear about a delivery that needs
    * one. Suspended, deleted and anonymised accounts are skipped. Without a
@@ -671,7 +914,15 @@ class DeliveryRepository {
     if (!db) return { ready: true, reason: 'in-memory store (no database client)' };
     try {
       const { error } = await db.from('deliveries').select('id').limit(1);
-      if (!error) return { ready: true };
+      if (!error) {
+        // Dispatch offers work only to riders who are online, which it reads from the
+        // presence table: without it nobody can be offered anything.
+        const presence = await db.from('rider_presence').select('rider_id').limit(1);
+        if (presence.error && isMissingTable(presence.error)) {
+          return { ready: false, reason: 'iam.rider_presence does not exist: apply migration 017_rider_presence.sql' };
+        }
+        return { ready: true };
+      }
       if (isMissingTable(error)) return { ready: false, reason: 'iam.deliveries does not exist: apply migrations 013 and 014' };
       return { ready: true, reason: `could not check (${error.code || error.message})` };
     } catch (err) {
