@@ -8129,7 +8129,7 @@ class Component extends DCLogic {
   // the placed items leave the bag, so if a later store fails the shopper is left
   // with exactly what was not ordered and can try again. Resolves with the orders
   // that were placed and, if one was refused, why.
-  _placeBagAsOrders(groups, address, method, images) {
+  _placeBagAsOrders(groups, address, method, images, deliveryMethod) {
     const api = getApi();
     const circuit = window.LoumooCircuit;
     const placed = [];
@@ -8138,7 +8138,7 @@ class Component extends DCLogic {
     const step = (i) => {
       if (i >= groups.length) return Promise.resolve({ placed: placed, failure: null });
       const group = groups[i];
-      return api.createOrder(circuit.toOrderPayload(group.items, address)).then((serverOrder) => {
+      return api.createOrder(circuit.toOrderPayload(group.items, address, deliveryMethod)).then((serverOrder) => {
         if (!serverOrder || !serverOrder.id) {
           // A reply without an order means the seller cannot have been told.
           const unconfirmed = new Error('The order was not confirmed.');
@@ -12712,9 +12712,12 @@ class Component extends DCLogic {
     const dynamicSettings = (typeof window !== 'undefined' && window.LOUMOO_SYSTEM_SETTINGS) || this.state.systemSettings || this.state.adminSettings || {};
     // The delivery fee follows the city the order will be delivered to (the same
     // address placeOrder sends), because the server prices the order from that city.
+    // Store pickup has no rider leg, so the server charges no delivery fee and the
+    // checkout must show the same, or the shown total would not match the order.
+    const isPickup = this.state.sel && this.state.sel.deliv === 'pickup';
     const addrForFee = this.state.selectedDeliveryAddress || (this.state.addressesList && (this.state.addressesList.find(a => a.isDefault) || this.state.addressesList[0]));
     const deliveryCity = (addrForFee && addrForFee.city) || this.state.regCity || (this.state.addressFormCity || 'Douala');
-    const deliveryFee = cartSubtotal > 0 ? resolveCityDeliveryFee(deliveryCity) : 0;
+    const deliveryFee = (cartSubtotal > 0 && !isPickup) ? resolveCityDeliveryFee(deliveryCity) : 0;
     const line = cartSubtotal;
     const items = cartSubtotal;
     const shipStyle = o => ({
@@ -17387,8 +17390,12 @@ class Component extends DCLogic {
           return;
         }
 
-        // The rider needs a real place to go and a number to call. Do not invent
-        // either: without them the delivery would be sent to a made-up address.
+        // How the buyer chose to receive this order decides what we must collect.
+        // Home delivery needs a real place for the rider to go and a number to
+        // call; store pickup needs neither — only a name and phone so the store
+        // can reach the buyer when the order is ready. The server prices and
+        // treats the order by this same method, so the two must agree.
+        const deliveryMethod = (this.state.sel && this.state.sel.deliv === 'pickup') ? 'STORE_PICKUP' : 'HOME_DELIVERY';
         const selAddr = this.state.selectedDeliveryAddress || (this.state.addressesList && (this.state.addressesList.find(a => a.isDefault) || this.state.addressesList[0]));
         const address = {
           fullName: (selAddr && selAddr.recipientName)
@@ -17397,9 +17404,22 @@ class Component extends DCLogic {
           street: (selAddr && selAddr.streetAddress) || '',
           city: (selAddr && selAddr.city) || this.state.regCity || ''
         };
-        if (!address.street.trim() || String(address.phone).replace(/[^0-9]/g, '').length < 6 || !address.city.trim() || address.fullName.trim().length < 2) {
-          this.setState({ orderError: 'Add a delivery address with your name, street, city and phone number, so the rider knows where to go and how to reach you.', orderErrorItemIds: [] });
-          return;
+        const phoneOk = String(address.phone).replace(/[^0-9]/g, '').length >= 6;
+        const nameOk = address.fullName.trim().length >= 2;
+        if (deliveryMethod === 'HOME_DELIVERY') {
+          // Do not invent an address: without a real one the delivery would be
+          // sent to a made-up place.
+          if (!address.street.trim() || !phoneOk || !address.city.trim() || !nameOk) {
+            this.setState({ orderError: 'Add a delivery address with your name, street, city and phone number, so the rider knows where to go and how to reach you.', orderErrorItemIds: [] });
+            return;
+          }
+        } else {
+          // Store pickup: no street or city, but the store still needs to reach
+          // the buyer when the order is ready.
+          if (!nameOk || !phoneOk) {
+            this.setState({ orderError: 'Add your name and a phone number so the store can reach you when your order is ready for pickup.', orderErrorItemIds: [] });
+            return;
+          }
         }
 
         const payMap = { mtn: 'MTN MoMo', om: 'Orange Money', card: 'Bank card' };
@@ -17412,7 +17432,7 @@ class Component extends DCLogic {
         this.setState({ placingOrder: true, orderError: '', orderErrorItemIds: [] });
         const finish = (patch) => { this._placingNow = false; if (!this._unmounted) this.setState(Object.assign({ placingOrder: false }, patch || {})); };
 
-        this._placeBagAsOrders(groups, address, method, images).then((res) => {
+        this._placeBagAsOrders(groups, address, method, images, deliveryMethod).then((res) => {
           if (this._unmounted) { this._placingNow = false; return; }
           const placed = res.placed;
           if (placed.length) {

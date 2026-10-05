@@ -406,9 +406,16 @@
    * (items, then the city's delivery fee) and a client total that disagrees is
    * refused as a "pricing mismatch". The unit price IS sent, so a price that
    * changed since the bag was filled is caught instead of charged.
+   *
+   * `deliveryMethod` is how the buyer chose to receive the order — 'HOME_DELIVERY'
+   * (a rider brings it; needs a full address) or 'STORE_PICKUP' (they collect it;
+   * no address, and the server charges no delivery fee). Anything else, or
+   * nothing, is treated as a home delivery, which is both the common case and the
+   * safe default (it is the one that asks for an address).
    */
-  function toOrderPayload(items, address) {
+  function toOrderPayload(items, address, deliveryMethod) {
     var a = address || {};
+    var method = deliveryMethod === 'STORE_PICKUP' ? 'STORE_PICKUP' : 'HOME_DELIVERY';
     return {
       items: (items || []).map(function (it) {
         var id = String(it.listingId || it.productId || it.id || '');
@@ -427,7 +434,7 @@
         city: a.city || undefined,
         neighbourhood: a.neighbourhood || undefined
       },
-      deliveryMethod: 'HOME_DELIVERY'
+      deliveryMethod: method
     };
   }
 
