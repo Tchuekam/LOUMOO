@@ -232,12 +232,21 @@ class RiderPresenceService {
     const nowMs = this.now();
     const live = row && (row.status === P.ONLINE || row.status === P.BUSY);
     if (!live) return { presence: await this._own(riderId, driver), expired: false };
-    // A beat is the hot path (every rider, every 30 s): answered from the row it just
-    // read or wrote, not from a fresh set of reads. A row stored busy reads as busy by
-    // itself, and a free rider has nothing to count.
-    const from = (stored) => presentOwnPresence(
-      resolvePresence({ driver, row: stored, busyCount: 0, ttlMs: this.ttlMs, nowMs: this.now() }), { ttlMs: this.ttlMs }
-    );
+    // A beat is the hot path (every rider, every 30 s), so it is answered from the row it just
+    // read or wrote rather than from a fresh set of reads. A row stored busy reads as busy by
+    // itself. A row stored online is checked against the rider's deliveries (one indexed read):
+    // an accept whose presence write was lost would otherwise be reported "online" here while
+    // GET /driver/presence says "busy", and nothing would ever put the row right.
+    const answer = async (stored) => {
+      let busyCount = 0;
+      if (stored.status === P.ONLINE) {
+        busyCount = await this._busyCount(riderId);
+        if (busyCount > 0) await this.reconcile(riderId);
+      }
+      return presentOwnPresence(
+        resolvePresence({ driver, row: stored, busyCount, ttlMs: this.ttlMs, nowMs: this.now() }), { ttlMs: this.ttlMs }
+      );
+    };
 
     // Only a free (online) rider goes stale. One carrying a parcel is busy whatever
     // their beats say: their silence is a delivery problem for an administrator, not
@@ -254,11 +263,11 @@ class RiderPresenceService {
 
     const sinceWrite = nowMs - Date.parse(row.updatedAt);
     if (Number.isFinite(sinceWrite) && sinceWrite >= 0 && sinceWrite < PRESENCE_MIN_WRITE_INTERVAL_MS) {
-      return { presence: from(row), expired: false };
+      return { presence: await answer(row), expired: false };
     }
     const written = await this.repo.transitionPresence(riderId, [P.ONLINE, P.BUSY], this._alive(this._nowIso(), location));
     // Null: the row changed under us (they went offline): whatever is stored is the truth.
-    return { presence: written ? from(written) : await this._own(riderId, driver), expired: false };
+    return { presence: written ? await answer(written) : await this._own(riderId, driver), expired: false };
   }
 
   // ------------------------------------------------------- delivery-driven moves
