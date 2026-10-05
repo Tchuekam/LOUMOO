@@ -941,12 +941,28 @@ class DeliveryService {
     }
     await this._assertOrderNotCancelled(delivery);
 
-    const updated = await this._transition(
-      delivery,
-      { status: S.ASSIGNED, driverId: caller.userId },
-      { status: S.ACCEPTED, acceptedAt: this._nowIso() },
-      { actorId: caller.userId, note: 'Rider accepted' }
-    );
+    // Accepting makes the rider busy, and that is claimed FIRST, atomically (online ->
+    // busy only while they are online with a fresh heartbeat), so two deliveries
+    // accepted at once cannot both win and a rider who is offline, paused, silent or
+    // already carrying a delivery is refused with the reason (409).
+    await this.presence.claim(caller.userId);
+    let updated;
+    try {
+      updated = await this._transition(
+        delivery,
+        { status: S.ASSIGNED, driverId: caller.userId },
+        { status: S.ACCEPTED, acceptedAt: this._nowIso() },
+        { actorId: caller.userId, note: 'Rider accepted' }
+      );
+    } catch (err) {
+      // The delivery did not move (someone changed it first): give the claim back.
+      await this._reconcileRiders([caller.userId]);
+      throw err;
+    }
+    // A busy rider is not offered new work, and the other offers they still hold would
+    // sit until they lapse (and count against the rider as unanswered). Back to their
+    // sellers now.
+    await this._withdrawOffers(caller.userId, { note: PRESENCE_NOTES.busy, exceptId: updated.id });
     this._notify(updated.buyerId, {
       audience: 'buyer',
       title: 'A rider accepted your delivery',
