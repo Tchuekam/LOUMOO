@@ -265,7 +265,7 @@ class RiderPresenceService {
    * work, and to give back a claim whose delivery change failed. Idempotent. It never
    * raises an offline or paused rider and never touches a suspended one.
    */
-  async reconcile(riderId) {
+  async reconcile(riderId, { alive = false } = {}) {
     const row = await this.repo.findPresence(riderId);
     if (!row) return null;
     const busy = (await this._busyCount(riderId)) > 0;
@@ -274,7 +274,9 @@ class RiderPresenceService {
       return this.repo.transitionPresence(riderId, [P.ONLINE], { status: P.BUSY, updatedAt: at });
     }
     if (!busy && row.status === P.BUSY) {
-      return this.repo.transitionPresence(riderId, [P.BUSY], { status: P.ONLINE, updatedAt: at });
+      return this.repo.transitionPresence(
+        riderId, [P.BUSY], { status: P.ONLINE, updatedAt: at, ...(alive ? { lastSeenAt: at } : {}) }
+      );
     }
     return row;
   }
@@ -296,6 +298,13 @@ class RiderPresenceService {
   async assertAvailable(riderId, driver) {
     const now = await this.resolve(riderId, driver);
     if (!now.available) throw new RiderUnavailableError(now.reason);
+   *
+   * `alive` says the change was the RIDER's own act (they completed, failed or released
+   * the delivery): an authenticated request from them is proof they are here, so the
+   * busy -> online move also refreshes their last-seen time. Without it a rider who
+   * carried a parcel for longer than the heartbeat window with their app asleep, then
+   * handed it over, would come back already expired. An administrator's or seller's
+   * act proves nothing about the rider, and leaves the clock alone.
     return now;
   }
 
