@@ -727,10 +727,15 @@ class DeliveryRepository {
    * patch applies only while the stored status is one of `expectedStatuses`, and,
    * with `seenSince`, only while the last heartbeat is NEWER than that instant (so
    * "online and fresh" is decided in the same atomic step that claims the rider,
-   * not in a read that can go stale before the write). Returns the updated record,
-   * or `null` when the row no longer matches.
+   * not in a read that can go stale before the write). `staleAt` is the mirror
+   * image, for the sweeper: only while the last heartbeat is at or BEFORE that
+   * instant, so a rider who beat between the sweeper's read and its write is not
+   * set offline. `updatedBefore` guards the row's own age the same way, for the
+   * janitor that puts a leaked `busy` row right: only while nothing has written to it
+   * since that instant, so a claim made after the janitor's read is never undone.
+   * Returns the updated record, or `null` when the row no longer matches.
    */
-  async transitionPresence(riderId, expectedStatuses, patch, { seenSince = null } = {}) {
+  async transitionPresence(riderId, expectedStatuses, patch, { seenSince = null, staleAt = null, updatedBefore = null } = {}) {
     const expected = [...expectedStatuses];
     const fullPatch = { ...patch, updatedAt: patch.updatedAt || new Date().toISOString() };
     const db = this.db;
@@ -739,6 +744,8 @@ class DeliveryRepository {
         let query = db.from('rider_presence').update(toPresenceRow(fullPatch))
           .eq('rider_id', riderId).in('status', expected);
         if (seenSince) query = query.gt('last_seen_at', seenSince);
+        if (staleAt) query = query.lte('last_seen_at', staleAt);
+        if (updatedBefore) query = query.lte('updated_at', updatedBefore);
         const { data, error } = await query.select().maybeSingle();
         if (error) handleDatabaseFailure(error, 'DeliveryRepository.transitionPresence');
         else return presenceFromRow(data);
@@ -751,6 +758,14 @@ class DeliveryRepository {
     if (seenSince) {
       const seen = Date.parse(current.lastSeenAt);
       if (!Number.isFinite(seen) || !(seen > Date.parse(seenSince))) return null;
+    }
+    if (staleAt) {
+      const seen = Date.parse(current.lastSeenAt);
+      if (!Number.isFinite(seen) || !(seen <= Date.parse(staleAt))) return null;
+    }
+    if (updatedBefore) {
+      const written = Date.parse(current.updatedAt);
+      if (!Number.isFinite(written) || !(written <= Date.parse(updatedBefore))) return null;
     }
     const next = { ...current, ...fullPatch };
     this._presence.set(riderId, next);
@@ -827,6 +842,35 @@ class DeliveryRepository {
     return [...this._presence.values()]
       .filter((r) => r.status === PRESENCE_STATUS.ONLINE && Date.parse(r.lastSeenAt) <= cutoff)
       .sort((a, b) => Date.parse(a.lastSeenAt) - Date.parse(b.lastSeenAt))
+      .slice(0, limit)
+      .map((r) => ({ ...r }));
+  }
+
+  /**
+   * Riders stored `busy` that nothing has written to since `cutoffIso`: candidates
+   * for the janitor that puts a leaked busy row right once it knows the rider holds
+   * no accepted delivery. Oldest first and bounded.
+   */
+  async findStaleBusyPresence(cutoffIso, { limit = 50 } = {}) {
+    const cutoff = Date.parse(cutoffIso);
+    if (!Number.isFinite(cutoff)) return [];
+    const db = this.db;
+    if (db) {
+      try {
+        const { data, error } = await db.from('rider_presence').select('*')
+          .eq('status', PRESENCE_STATUS.BUSY)
+          .lte('updated_at', new Date(cutoff).toISOString())
+          .order('updated_at', { ascending: true })
+          .limit(limit);
+        if (error) handleDatabaseFailure(error, 'DeliveryRepository.findStaleBusyPresence');
+        else return (data || []).map(presenceFromRow);
+      } catch (err) {
+        handleDatabaseFailure(err, 'DeliveryRepository.findStaleBusyPresence');
+      }
+    }
+    return [...this._presence.values()]
+      .filter((r) => r.status === PRESENCE_STATUS.BUSY && Date.parse(r.updatedAt) <= cutoff)
+      .sort((a, b) => Date.parse(a.updatedAt) - Date.parse(b.updatedAt))
       .slice(0, limit)
       .map((r) => ({ ...r }));
   }
