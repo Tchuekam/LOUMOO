@@ -54,8 +54,16 @@ function startOfferSweeper({
     try {
       const result = { expired: 0 };
       if (service.offerTtlMs > 0) {
-        Object.assign(result, await service.expireStaleOffers({ limit }));
-        if (result.expired > 0) logger.info(`[OfferSweeper] returned ${result.expired} lapsed offer(s) to their sellers`);
+        // Its own try, like the jobs below: a failing deliveries query must not stop the
+        // reminders or the presence sweep from running this tick.
+        try {
+          Object.assign(result, await service.expireStaleOffers({ limit }));
+          if (result.expired > 0) logger.info(`[OfferSweeper] returned ${result.expired} lapsed offer(s) to their sellers`);
+        } catch (err) {
+          logger.error(`[OfferSweeper] sweep failed: ${err.message}`);
+          result.expired = 0;
+          result.failed = true;
+        }
       }
       // Chasing an order nobody is arranging is a separate job: its failure must
       // not hide the expiry above, and the expiry's must not hide this.
