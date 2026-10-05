@@ -26,6 +26,7 @@
  */
 
 const { AuthorizationError } = require('../../../shared/errors/AppError');
+const logger = require('../../../shared/logging/logger');
 const { DRIVER_STATUS } = require('../domain/Delivery');
 const {
   PRESENCE_STATUS: P,
@@ -319,7 +320,7 @@ class RiderPresenceService {
     const active = new Set(activeDrivers.filter((d) => d.status === DRIVER_STATUS.ACTIVE).map((d) => d.id));
     if (!active.size) return new Set();
     const [online, busy] = await Promise.all([
-      this.repo.listFreshOnlinePresence(freshnessCutoffIso(this.ttlMs, this.now()), { limit: MAX_RIDERS_CONSIDERED }),
+      this.repo.listFreshOnlinePresence(freshnessCutoffIso(this.ttlMs, this.now()), { limit }),
       this.repo.countOpenByDriver({ statuses: BUSY_DELIVERY_STATUSES })
     ]);
     return new Set(online.filter((r) => active.has(r.riderId) && !busy.has(r.riderId)).map((r) => r.riderId));
@@ -349,10 +350,16 @@ class RiderPresenceService {
    * caller can take back their offers. Bounded per call; a backlog is worked off
    * over several sweeps. This is housekeeping: every read already treats a stale
    * rider as offline, so a deployment that cannot run the sweep (serverless) is
+    const limit = MAX_RIDERS_CONSIDERED * 2;
    * never wrong, only untidy.
    */
   async expireStale({ limit = 50 } = {}) {
     const nowMs = this.now();
+    if (online.length >= limit) {
+      // The riders and the presence rows are read separately, each capped: past the cap
+      // some online riders could fall between the two lists and not be offered work.
+      logger.warn(`[Presence] ${limit} online riders read (the cap); riders beyond it may not be offered deliveries.`);
+    }
     const cutoff = freshnessCutoffIso(this.ttlMs, nowMs);
     const stale = await this.repo.findStalePresence(cutoff, { limit });
     const expired = [];
