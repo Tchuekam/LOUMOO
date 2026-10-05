@@ -53,7 +53,8 @@ const {
 const {
   BUSY_DELIVERY_STATUSES,
   PRESENCE_NOTES,
-  PRESENCE_ACTOR
+  PRESENCE_ACTOR,
+  RiderUnavailableError
 } = require('../domain/RiderPresence');
 const {
   NotFoundError,
@@ -81,6 +82,9 @@ const MAX_RIDERS_CONSIDERED = 500;
 // many rounds (so at most 200 per call), then stop. Bounded so one listing cannot
 // become a long write storm; the sweeper and later calls take the rest.
 const RELEASE_BATCH = 50;
+// How many ranked riders auto-assign will try before it gives up: it moves on only when a
+// rider stopped being available in the instant between being ranked and being offered.
+const MAX_AUTO_ASSIGN_ATTEMPTS = 5;
 const MAX_RELEASE_ROUNDS = 4;
 const ORDER_PATH = [FULFILLMENT_STATUS.PROCESSING, FULFILLMENT_STATUS.IN_TRANSIT, FULFILLMENT_STATUS.DELIVERED];
 // What the client opens when a delivery notification is tapped, by the part the
@@ -532,7 +536,7 @@ class DeliveryService {
    * "declined" anything, and must stay offerable for the same delivery afterwards.
    * Best-effort per offer (one that moved meanwhile is simply skipped).
    */
-  async _withdrawOffers(riderId, { note, exceptId = null } = {}) {
+  async _withdrawOffers(riderId, { note, exceptId = null, onlyId = null } = {}) {
     let open;
     try {
       open = await this.repo.findOpenByDriver(riderId, { limit: 100 });
@@ -542,7 +546,7 @@ class DeliveryService {
     }
     let withdrawn = 0;
     for (const d of open) {
-      if (d.status !== S.ASSIGNED || d.id === exceptId) continue;
+      if (d.status !== S.ASSIGNED || d.id === exceptId || (onlyId && d.id !== onlyId)) continue;
       try {
         const released = await this._transition(
           d,
@@ -819,12 +823,23 @@ class DeliveryService {
     // Best effort across several API instances, which do not share this queue.
     return this._serialised(async () => {
       const [{ ranked }, passed] = await Promise.all([this._rankedAvailableRiders({ release: false }), this._ridersWhoPassed(delivery.id)]);
-      const pick = ranked.find(({ driver }) => driver.id !== delivery.buyerId
+      const picks = ranked.filter(({ driver }) => driver.id !== delivery.buyerId
         && !passed.has(driver.id)
         && !(delivery.status === S.ASSIGNED && driver.id === delivery.driverId));
-      if (!pick) throw new NoRiderAvailableError();
+      if (!picks.length) throw new NoRiderAvailableError();
 
-      return this._applyAssignment(delivery, pick.driver, caller, role, `Auto-assigned to ${pick.driver.name}`);
+      // A rider can stop being available between being ranked and being offered the job
+      // (the offer is re-checked once written, see _applyAssignment). That is not the
+      // seller's problem: offer it to the next one, and only say nobody is free when
+      // every candidate (up to a handful) turned out to be gone.
+      for (const pick of picks.slice(0, MAX_AUTO_ASSIGN_ATTEMPTS)) {
+        try {
+          return await this._applyAssignment(delivery, pick.driver, caller, role, `Auto-assigned to ${pick.driver.name}`);
+        } catch (err) {
+          if (!(err instanceof RiderUnavailableError)) throw err;
+        }
+      }
+      throw new NoRiderAvailableError();
     });
   }
 
@@ -881,6 +896,26 @@ class DeliveryService {
       patch,
       { actorId: caller.userId, note, label: 'Delivery' }
     );
+
+    // Availability was checked BEFORE the write, and a rider can go offline, pause or
+    // accept something else in between. A rider who does that afterwards has the offer
+    // taken back with the rest; one who did it in the gap would be left holding an offer
+    // nothing ever withdraws. So check again now that the offer exists: whichever of the
+    // two happens second sees the other, and a rider found unavailable has this one offer
+    // taken back and the seller is told why (409), exactly as if the first check had failed.
+    try {
+      await this.presence.assertAvailable(driver.id, driver);
+    } catch (err) {
+      if (err instanceof RiderUnavailableError) {
+        const why = err.details && err.details.reason;
+        await this._withdrawOffers(driver.id, { note: PRESENCE_NOTES[why] || PRESENCE_NOTES.offline, onlyId: updated.id });
+        throw err;
+      }
+      // Could not look (the database): keep the offer. The rider's own accept is checked
+      // atomically, so nothing unsafe follows from it, and a failed read is not a reason to
+      // undo what the seller just did.
+      logger.warn(`[Delivery] Could not re-check rider ${driver.id} after offering ${updated.id}: ${err.message}`);
+    }
 
     this._notify(driver.id, {
       audience: 'rider',
