@@ -255,34 +255,6 @@ def get_checkout_view():
 </sc-if>
 """
 
-def get_paying_view():
-    return """
-<!-- ══════════════════════════════════════════════════════════════════════════
-     ANIMATED RADAR TELECOM PAYMENT PULSE (is.paying)
-     ══════════════════════════════════════════════════════════════════════ -->
-<sc-if value="{{ is.paying }}">
-<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:540px;padding:32px 16px;text-align:center">
-  
-  <div class="paying-radar-wrap">
-    <div class="radar-pulse" style="animation-delay: 0s"></div>
-    <div class="radar-pulse" style="animation-delay: 0.8s"></div>
-    <div class="radar-center-icon">
-      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-    </div>
-  </div>
-
-  <h2 style="font-size:22px;margin:24px 0 8px">Authorizing MoMo Payment...</h2>
-  <p style="font-size:13.5px;color:var(--color-text-secondary);max-width:360px;line-height:1.5;margin:0 auto 24px">
-    A payment request of <strong>XAF 878 000</strong> has been sent to your phone. Please confirm with your PIN.
-  </p>
-
-  <div style="font:700 12px/1 var(--font-mono);color:var(--color-accent);background:var(--color-accent-100);padding:8px 16px;border-radius:var(--radius-pill)">
-    SECURE ESCROW CONNECTION ACTIVE
-  </div>
-</div>
-</sc-if>
-"""
-
 def get_success_view():
     return """
 <!-- ══════════════════════════════════════════════════════════════════════════
@@ -319,28 +291,6 @@ def get_success_view():
     <button onClick="{{ on.home }}" style="border:none;background:transparent;padding:8px;font:700 12.5px/1 var(--font-heading);color:var(--color-text-secondary);cursor:pointer">Back to Marketplace</button>
   </div>
 
-</div>
-</sc-if>
-"""
-
-def get_payfailed_view():
-    return """
-<!-- ══════════════════════════════════════════════════════════════════════════
-     PAYMENT FAILED RECOVERY (is.payFailed)
-     ══════════════════════════════════════════════════════════════════════ -->
-<sc-if value="{{ is.payFailed }}">
-<div style="padding:48px 16px;max-width:540px;margin:0 auto;text-align:center">
-  <div style="width:64px;height:64px;border-radius:50%;background:var(--color-accent-sale-100);color:var(--color-accent-sale);display:flex;align-items:center;justify-content:center;margin:0 auto 16px">
-    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-  </div>
-  <h3 style="margin:0 0 8px;font-size:22px">Transaction Unsuccessful</h3>
-  <p style="font-size:13.5px;color:var(--color-text-secondary);margin:0 auto 20px">
-    The telecom provider timed out or reported insufficient balance. No funds were debited from your account.
-  </p>
-  <div style="display:flex;flex-direction:column;gap:10px">
-    <button onClick="{{ on.checkout }}" class="btn btn-primary btn-block" style="height:46px">RETRY WITH ANOTHER PAYMENT METHOD</button>
-    <button onClick="{{ on.cart }}" class="btn btn-secondary btn-block" style="height:44px">RETURN TO BAG</button>
-  </div>
 </div>
 </sc-if>
 """

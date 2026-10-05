@@ -13,8 +13,8 @@ sys.path.append(os.path.abspath('.'))
 from src.views.home_view import get_home_view
 from src.views.pdp_view import get_product_view
 from src.views.cart_checkout_view import (
-    get_cart_view, get_checkout_view, get_paying_view,
-    get_success_view, get_payfailed_view, get_orders_and_transactions_view
+    get_cart_view, get_checkout_view,
+    get_success_view, get_orders_and_transactions_view
 )
 from src.views.search_ai_view import get_search_and_ai_view
 from src.views.collections_view import get_collections_view
@@ -1210,11 +1210,7 @@ html, body {
 .pay-radio-dot { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--color-divider); background: #fff; transition: all 0.15s ease; }
 .pay-radio-dot.selected { border-color: var(--color-accent); background: var(--color-accent); box-shadow: inset 0 0 0 3px #fff; }
 
-/* ── Paying Animation & Success Check ── */
-.paying-radar-wrap { position: relative; width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; margin-bottom: 24px; }
-.radar-pulse { position: absolute; width: 100%; height: 100%; border-radius: 50%; background: rgba(0, 122, 255, 0.2); animation: radarPing 2s cubic-bezier(0, 0, 0.2, 1) infinite; }
-@keyframes radarPing { 0% { transform: scale(0.6); opacity: 1; } 100% { transform: scale(1.8); opacity: 0; } }
-.radar-center-icon { width: 64px; height: 64px; border-radius: 50%; background: var(--color-accent); color: #fff; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-glow-blue); position: relative; z-index: 2; }
+/* ── Success Check ── */
 .success-check-badge { width: 72px; height: 72px; border-radius: 50%; background: var(--color-success); color: #fff; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; box-shadow: var(--shadow-glow-green); }
 
 /* ── Travel Concierge Styles (Apple-Grade Spatial Commerce) ── */
@@ -17957,7 +17953,7 @@ _screen_chunks = [
     ('OrderScreens', 'is.orderDetail || is.refundRequest || is.writeReview || is.sellerOrderDetail || is.sellerPayouts', get_order_product_flow_view()),
     ('HotelScreens', 'is.hotelSearch || is.hotelDetail || is.hotelBooking || is.hotelVoucher', get_hotel_vertical_view()),
     ('ProductScreens', 'is.product', get_product_view()),
-    ('CheckoutScreens', 'is.cart || is.checkout || is.paying || is.success || is.payFailed || is.orders || is.transactions', get_cart_view() + get_checkout_view() + get_paying_view() + get_success_view() + get_payfailed_view() + get_orders_and_transactions_view()),
+    ('CheckoutScreens', 'is.cart || is.checkout || is.success || is.orders || is.transactions', get_cart_view() + get_checkout_view() + get_success_view() + get_orders_and_transactions_view()),
     ('CollectionsScreens', 'is.category || is.bestpicks || is.freeday', get_collections_view()),
     ('MerchantScreens', 'is.store || is.business || is.brand || is.seller || is.myListings', get_merchant_view()),
     ('CommunityScreens', 'is.announce || is.announceCampaigns || is.announceDetail || is.vs || is.vsCompare', get_community_view()),
