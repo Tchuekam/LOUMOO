@@ -219,6 +219,10 @@ requests racing each other cannot both win (see *Atomicity*).
 * **Server write throttle: 5 s.** A beat that arrives less than 5 s after the last write to
   the row is acknowledged (`200`, the stored presence) without a write, and any position it
   carried is ignored. A client that loops, or two open tabs, costs a read, not a write, per beat.
+* **It tells the truth about busy.** A beat from a rider who is stored `online` also checks their
+  deliveries (one indexed read). One who holds an accepted delivery whose row never got updated (the
+  presence write after an accept is best-effort) is answered `busy`, agreeing with `GET /driver/presence`,
+  and the row is corrected on the way past.
 * **Expiry.** A rider whose last heartbeat is **at least the window old** (at exactly the window
   they are stale; a millisecond earlier they are fresh) is not online. A beat that arrives after
   that does *not* keep them alive: it sets them offline and takes back their unanswered offers,
@@ -261,7 +265,7 @@ id (a query string is ignored), and no body carries a status.
 
 * `online`, `resume` and `heartbeat` accept only an optional position: `lat` and `lng` together
   (both or neither; one alone is `400`), numbers or numeric strings, `lat` in -90…90 and `lng` in
-  -180…180, and `accuracyM` (metres, `0` or more). `accuracyM` without a position is ignored.
+  -180…180, and `accuracyM` (metres, `0` or more). `accuracyM` without a position is refused (`400`): an accuracy describes a position, so one sent alone is a mistake, not something to drop quietly.
   No body at all means no position.
 * `offline` and `pause` take no body: `{}` or nothing.
 * **Any other key is `400 VALIDATION_ERROR` and writes nothing**: `{ "status": "online" }`,
@@ -305,7 +309,7 @@ A registered rider who never opened the app reads `status: "offline"`, `reason: 
 |---|---|---|
 | `401` | | No session |
 | `403` | `PERMISSION_DENIED` | `You are not a registered rider.` (the caller has no rider record: a customer, a seller, an administrator who is not also a rider), or `Your rider account is not active.` (suspended). Nothing is written, no row is created |
-| `400` | `VALIDATION_ERROR` | An unknown key (the strict body), a position out of range, `lat` without `lng`, a negative `accuracyM` |
+| `400` | `VALIDATION_ERROR` | An unknown key (the strict body), a position out of range, `lat` without `lng`, a negative or oversized `accuracyM`, or an `accuracyM` sent without a position |
 | `409` | `RIDER_BUSY` | `offline` or `pause` while carrying an accepted delivery ("Finish or release your current delivery before going offline." / "...before pausing."); `details.reason` is `busy` |
 | `409` | `RIDER_UNAVAILABLE` | `pause` from offline or silent; `resume` from offline or silent. `details.reason` is `offline` or `expired` |
 | `429` | `RATE_LIMITED` | The global limiter (decision 7). Skip this beat |
