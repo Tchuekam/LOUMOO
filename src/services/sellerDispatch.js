@@ -450,10 +450,10 @@
   function pickerView(nav, delivery, order) {
     return {
       title: 'Choose a rider',
-      subtitle: 'Free riders come first. Riders who passed on this order are marked.',
+      subtitle: 'Online riders only. Free riders come first. Riders who passed on this order are marked.',
       render: function (page) {
         var ui = UI(), api = API();
-        var riders = null, query = '';
+        var riders = null, summary = null, query = '';
         var search = ui.searchField({ placeholder: 'Search riders', onInput: function (q) { query = q.toLowerCase(); draw(); } });
         page.content.appendChild(search);
         var autoSec = ui.section(null);
@@ -481,7 +481,9 @@
         function load() {
           api.listDrivers({ deliveryId: delivery.id }).then(function (res) {
             if (!page.alive) return;
-            riders = res.drivers || [];
+            // { drivers, summary: { registered, available } }; an older server sends no summary.
+            riders = Array.isArray(res) ? res : (res && res.drivers) || [];
+            summary = res && !Array.isArray(res) && res.summary ? res.summary : null;
             draw();
           }).catch(function (err) {
             if (!page.alive) return;
@@ -495,7 +497,11 @@
           listWrap.innerHTML = '';
           if (!riders.length) {
             autoSec.hidden = true;
-            listWrap.appendChild(ui.emptyState({ icon: 'users', title: 'No riders yet', body: 'Riders are added by the LOUMOO team. Contact support to add riders in your area.' }));
+            // Riders exist but none is online right now: say so, and that they show up here the moment they are.
+            var noneOnline = summary && summary.registered > 0 && summary.available === 0;
+            listWrap.appendChild(ui.emptyState(noneOnline
+              ? { icon: 'users', title: 'No rider is online right now', body: 'Riders appear here as soon as they go online. Check again in a moment.', actionLabel: 'Check again', actionKind: 'tinted', onAction: function () { listWrap.innerHTML = ''; listWrap.appendChild(ui.skeletonList(5)); load(); } }
+              : { icon: 'users', title: 'No riders yet', body: 'Riders are added by the LOUMOO team. Contact support to add riders in your area.' }));
             return;
           }
           autoSec.hidden = false;
