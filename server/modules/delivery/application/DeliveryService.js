@@ -957,7 +957,7 @@ class DeliveryService {
     // busy only while they are online with a fresh heartbeat), so two deliveries
     // accepted at once cannot both win and a rider who is offline, paused, silent or
     // already carrying a delivery is refused with the reason (409).
-    await this.presence.claim(caller.userId);
+    await this.presence.claim(caller.userId, driver);
     let updated;
     try {
       updated = await this._transition(
