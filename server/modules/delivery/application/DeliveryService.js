@@ -1204,6 +1204,7 @@ class DeliveryService {
       });
       this._notify(updated.sellerId, {
         audience: 'seller',
+      await this._syncPresence(delivery, updated);
         title: 'Order delivered',
         body: 'The rider completed the handover.',
         tone: 'success',
