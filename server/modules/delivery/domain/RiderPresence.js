@@ -156,7 +156,9 @@ function resolvePresence({ driver, row = null, busyCount = 0, ttlMs, nowMs }) {
  * sellers and administrators are never given it (see listDrivers / listRiderRoster).
  */
 function presentOwnPresence(resolved, { ttlMs }) {
-  const live = resolved.status === PRESENCE_STATUS.ONLINE || resolved.status === PRESENCE_STATUS.BUSY;
+  // Only a free (online) rider expires. A busy one is carrying a parcel and never does,
+  // so showing them a deadline would tell a client to treat a busy rider as expired.
+  const live = resolved.status === PRESENCE_STATUS.ONLINE;
   const seen = Date.parse(resolved.lastSeenAt);
   return {
     status: resolved.status,
