@@ -1453,7 +1453,11 @@ class DeliveryService {
       if (d.driverId !== caller.userId) continue;
       deliveries.push(await this._present(d, 'driver', { includeTimeline: false }));
     }
-    return { driver: { id: driver.id, name: driver.name, phone: driver.phone }, deliveries };
+    return {
+      driver: { id: driver.id, name: driver.name, phone: driver.phone },
+      deliveries,
+      presence: await this.presence.getOwn(caller.userId)
+    };
   }
 
   // ------------------------------------------------------------------- riders
