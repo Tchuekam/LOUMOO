@@ -128,7 +128,7 @@ def get_checkout_view():
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
       </button>
       <div>
-        <h4 style="margin:0;font-size:16px">Escrow Protected Checkout</h4>
+        <h4 style="margin:0;font-size:16px">Buyer-Protected Checkout</h4>
         <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary)">Step 2 of 3 · Payment &amp; Delivery</div>
       </div>
     </div>
@@ -215,14 +215,16 @@ def get_checkout_view():
       </div>
     </div>
 
-    <!-- Escrow Protection Guarantee Callout -->
+    <!-- Buyer-protection callout. The honest promise for pay-on-delivery: no money
+         is held up front, so the protection is that the buyer pays only once the
+         order is in their hands and confirmed with the delivery code. -->
     <div style="display:flex;gap:12px;background:var(--color-surface-subtle);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:14px 18px;align-items:center">
       <div style="width:36px;height:36px;border-radius:50%;background:var(--color-success-100);color:var(--color-success);display:flex;align-items:center;justify-content:center;flex-shrink:0">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
       </div>
       <div style="font:400 12px/1.4 var(--font-body);color:var(--color-text-secondary)">
-        <strong style="color:var(--color-text)">Your payment is 100% safeguarded by LOUMOO Escrow.</strong>
-        The seller will only receive funds once your package is delivered and confirmed.
+        <strong style="color:var(--color-text)">LOUMOO Buyer Protection.</strong>
+        You pay on delivery — nothing leaves your hands until the rider hands over your order and you confirm it with your delivery code. If it never arrives, you don't pay, and LOUMOO steps in.
       </div>
     </div>
 
