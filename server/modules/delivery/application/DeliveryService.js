@@ -770,6 +770,11 @@ class DeliveryService {
       // A rider who is also the buyer could read the handover code to themselves.
       throw new ValidationError('A rider cannot deliver their own order', [{ field: 'driverId', message: 'Choose a different rider.' }]);
     }
+    // Being registered and active is not being here: only a rider who is online (heard
+    // from lately) and not already carrying a delivery can be offered one. 409 with the
+    // reason (RIDER_UNAVAILABLE / RIDER_BUSY), not a validation error: the seller chose
+    // a real rider, and the situation is what blocks it.
+    await this.presence.assertAvailable(driver.id, driver);
 
     return this._applyAssignment(delivery, driver, caller, role, `Assigned to ${driver.name}`);
   }
