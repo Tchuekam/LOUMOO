@@ -13,10 +13,10 @@ const ALLOWED_TRANSITIONS = Object.freeze({
   [S.PENDING_ASSIGNMENT]: Object.freeze([S.ASSIGNED, S.CANCELLED]),
   // `assigned -> assigned` is a re-assignment to a different rider; the service
   // permits it explicitly via canAssign(), not as a generic transition.
-  [S.ASSIGNED]: Object.freeze([S.ACCEPTED, S.PENDING_ASSIGNMENT, S.CANCELLED]),
+  [S.ASSIGNED]: Object.freeze([S.ACCEPTED, S.FAILED, S.PENDING_ASSIGNMENT, S.CANCELLED]),
   // `accepted -> pending_assignment` is the rider releasing a job they can no
   // longer do, so the seller can hand it on without cancelling.
-  [S.ACCEPTED]: Object.freeze([S.PICKED_UP, S.PENDING_ASSIGNMENT, S.CANCELLED]),
+  [S.ACCEPTED]: Object.freeze([S.PICKED_UP, S.FAILED, S.PENDING_ASSIGNMENT, S.CANCELLED]),
   [S.PICKED_UP]: Object.freeze([S.ARRIVED, S.FAILED]),
   [S.ARRIVED]: Object.freeze([S.DELIVERED, S.FAILED]),
   [S.FAILED]: Object.freeze([S.ASSIGNED]),

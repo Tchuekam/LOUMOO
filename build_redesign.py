@@ -17539,6 +17539,45 @@ def _optimize_media_markup(markup):
     return re.sub(r'<video\b[^>]*>', video_tag, markup, flags=re.I)
 
 
+DELIVERY_MODULE_SOURCES = (
+    './src/services/deliveryApi.js',
+    './src/services/deliveryTrackingScreen.js',
+    './src/services/dispatchUi.js',
+    './src/services/sellerDispatch.js',
+    './src/services/riderHub.js',
+    './src/services/ridersAdmin.js',
+)
+
+
+def _script_srcs(markup):
+    return [
+        match.group(2)
+        for match in re.finditer(r'<script\b[^>]*\bsrc=(["\'])(.*?)\1', markup, flags=re.I)
+    ]
+
+
+def _assert_unique_script_tags(markup, filename):
+    srcs = _script_srcs(markup)
+    seen = set()
+    duplicates = []
+    for src in srcs:
+        if src in seen and src not in duplicates:
+            duplicates.append(src)
+        seen.add(src)
+    if duplicates:
+        raise RuntimeError(
+            filename + ' has duplicate external script tags: ' + ', '.join(duplicates)
+        )
+
+    missing_or_repeated = [
+        src for src in DELIVERY_MODULE_SOURCES
+        if srcs.count(src) != 1
+    ]
+    if missing_or_repeated:
+        details = ', '.join(src + ' (found ' + str(srcs.count(src)) + ')' for src in missing_or_repeated)
+        raise RuntimeError(filename + ' must load each delivery module exactly once: ' + details)
+
+
 def _write_screen_chunk(name, markup):
     # A child DC component intentionally has no logic of its own. The root
     # owns navigation/state and passes its already-derived view projection via
@@ -17575,6 +17614,8 @@ full_html = (
     + lazy_screen_markup
     + _optimize_media_markup(footer_and_scripts)
 )
+
+_assert_unique_script_tags(full_html, 'Commerce App.dc.html')
 
 with open('Commerce App.dc.html', 'w', encoding='utf-8') as f:
     f.write(full_html)

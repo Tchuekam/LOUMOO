@@ -55,9 +55,12 @@ async function run() {
     assert.ok(DeliveryStateMachine.canTransition(S.PENDING_ASSIGNMENT, S.ASSIGNED));
     assert.ok(DeliveryStateMachine.canTransition(S.ARRIVED, S.DELIVERED));
     assert.ok(DeliveryStateMachine.canTransition(S.FAILED, S.ASSIGNED), 'a failed delivery can be retried');
+    assert.ok(DeliveryStateMachine.canTransition(S.ASSIGNED, S.FAILED), 'an assigned delivery can explicitly fail');
+    assert.ok(DeliveryStateMachine.canTransition(S.ACCEPTED, S.FAILED), 'an accepted delivery can explicitly fail');
     assert.ok(!DeliveryStateMachine.canTransition(S.PENDING_ASSIGNMENT, S.PICKED_UP), 'cannot skip assignment');
     assert.ok(!DeliveryStateMachine.canTransition(S.ACCEPTED, S.DELIVERED), 'cannot deliver without picking up');
     assert.ok(!DeliveryStateMachine.canTransition(S.PICKED_UP, S.CANCELLED), 'cannot cancel once picked up');
+    assert.ok(!DeliveryStateMachine.canTransition(S.FAILED, S.CANCELLED), 'failed deliveries are retried, not cancelled');
     assert.ok(!DeliveryStateMachine.canTransition(S.ASSIGNED, S.ASSIGNED), 'same-state is not a transition');
     assert.ok(DeliveryStateMachine.canTransition(S.ACCEPTED, S.PENDING_ASSIGNMENT), 'a rider can release an accepted job');
     assert.ok(!DeliveryStateMachine.canTransition(S.PICKED_UP, S.PENDING_ASSIGNMENT), 'but not once the parcel is collected');
@@ -76,6 +79,16 @@ async function run() {
     assert.ok(throwsWithCode(() => DeliveryStateMachine.assertTransition('warp', S.ARRIVED), 'VALIDATION_ERROR'));
     assert.ok(throwsWithCode(() => DeliveryStateMachine.assertTransition(S.ACCEPTED, 'teleported'), 'VALIDATION_ERROR'));
 
+    assert.deepStrictEqual(Object.fromEntries(Object.entries(ALLOWED_TRANSITIONS).map(([from, tos]) => [from, [...tos]])), {
+      [S.PENDING_ASSIGNMENT]: [S.ASSIGNED, S.CANCELLED],
+      [S.ASSIGNED]: [S.ACCEPTED, S.FAILED, S.PENDING_ASSIGNMENT, S.CANCELLED],
+      [S.ACCEPTED]: [S.PICKED_UP, S.FAILED, S.PENDING_ASSIGNMENT, S.CANCELLED],
+      [S.PICKED_UP]: [S.ARRIVED, S.FAILED],
+      [S.ARRIVED]: [S.DELIVERED, S.FAILED],
+      [S.FAILED]: [S.ASSIGNED],
+      [S.DELIVERED]: [],
+      [S.CANCELLED]: []
+    }, 'the delivery lifecycle transition table is explicit and pinned');
     // Every status named in the table exists as a key, so nothing is unreachable by typo.
     const all = new Set(Object.values(S));
     for (const [from, tos] of Object.entries(ALLOWED_TRANSITIONS)) {

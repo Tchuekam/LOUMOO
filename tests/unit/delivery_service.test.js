@@ -279,6 +279,27 @@ async function run() {
       await w2.service.assignDriver(s2.deliveryId, 'rider_2', SELLER);
     }
 
+    // ------------------------------------------------------------ explicit failure edges
+    {
+      const w = makeWorld();
+      const { deliveryId } = await setupDelivery(w); // assigned
+      const assignedFailed = await w.service.updateStatus(deliveryId, 'failed', 'Rider unavailable', RIDER);
+      assert.strictEqual(assignedFailed.status, 'failed');
+      assert.strictEqual(assignedFailed.failureReason, 'Rider unavailable');
+      assert.strictEqual((await w.service.assignDriver(deliveryId, 'rider_2', SELLER)).driver.id, 'rider_2', 'failed assigned jobs follow the reassignment rule');
+
+      const w2 = makeWorld();
+      const s2 = await setupDelivery(w2, { accept: true });
+      const acceptedFailed = await w2.service.updateStatus(s2.deliveryId, 'failed', 'Bike broke down', RIDER);
+      assert.strictEqual(acceptedFailed.status, 'failed');
+      assert.strictEqual((await w2.service.assignDriver(s2.deliveryId, 'rider_2', SELLER)).driver.id, 'rider_2', 'failed accepted jobs follow the reassignment rule');
+
+      const w3 = makeWorld();
+      const s3 = await setupDelivery(w3);
+      const adminFailed = await w3.service.resolveDelivery(s3.deliveryId, { action: 'fail', note: 'Dispatch cancelled by support' }, ADMIN);
+      assert.strictEqual(adminFailed.status, 'failed');
+      assert.strictEqual(adminFailed.failureReason, 'Dispatch cancelled by support');
+    }
     // ------------------------------------------------------------ status flow
     {
       const w = makeWorld();
@@ -424,6 +445,23 @@ async function run() {
       assert.strictEqual(await code(w.service.cancelDelivery(deliveryId, 'x', SELLER)), 'CONFLICT');
       const timeline = (await w.service.getDelivery(deliveryId, SELLER)).timeline.map((e) => e.status);
       assert.deepStrictEqual(timeline, ['pending_assignment', 'assigned', 'accepted', 'picked_up', 'arrived', 'delivered'], 'the timeline records every step in order');
+      const events = await w.repo.listEvents(deliveryId);
+      assert.deepStrictEqual(events.map((e) => [e.status, e.previousStatus, e.actorId]), [
+        ['pending_assignment', null, 'seller_1'],
+        ['assigned', 'pending_assignment', 'seller_1'],
+        ['accepted', 'assigned', 'rider_1'],
+        ['picked_up', 'accepted', 'rider_1'],
+        ['arrived', 'picked_up', 'rider_1'],
+        ['delivered', 'arrived', 'rider_1']
+      ], 'every transition records the actor and previous status');
+      const byStatus = Object.fromEntries(events.map((e) => [e.status, e]));
+      const storedDelivery = await w.repo.findById(deliveryId);
+      assert.strictEqual(byStatus.assigned.at, storedDelivery.assignedAt);
+      assert.strictEqual(byStatus.accepted.at, storedDelivery.acceptedAt);
+      assert.strictEqual(byStatus.picked_up.at, storedDelivery.pickedUpAt);
+      assert.strictEqual(byStatus.arrived.at, storedDelivery.arrivedAt);
+      assert.strictEqual(byStatus.delivered.at, storedDelivery.deliveredAt);
+      assert.strictEqual(storedDelivery.updatedAt, storedDelivery.deliveredAt);
       assert.strictEqual(await code(w.service.getHandoverCode(deliveryId, BUYER)), 'CONFLICT', 'no code after delivery');
       // A new delivery is now allowed for the same order only if the order were still processing; it is not.
       assert.strictEqual(await code(w.service.createDelivery(order.id, SELLER)), 'CONFLICT');
@@ -600,17 +638,17 @@ async function run() {
       assert.strictEqual((await w.orders.findOrderById(order.id)).fulfillmentStatus, FULFILLMENT_STATUS.DELIVERED, 'reconcile repairs it');
     }
 
-    // A failing audit write after the state change must not fail the request or skip the order sync.
+    // A failed required timeline write rejects the transition and rolls the in-memory row back.
     {
       const w = makeWorld();
       const { order, deliveryId } = await setupDelivery(w, { accept: true });
       const realInsert = w.repo.insertEvent.bind(w.repo);
       w.repo.insertEvent = async () => { throw new Error('timeline store is down'); };
-      const picked = await w.service.updateStatus(deliveryId, 'picked_up', null, RIDER);
+      assert.strictEqual(await code(w.service.updateStatus(deliveryId, 'picked_up', null, RIDER)), 'Error');
       w.repo.insertEvent = realInsert;
-      assert.strictEqual(picked.status, 'picked_up', 'the rider gets success: the change did happen');
-      assert.strictEqual((await w.orders.findOrderById(order.id)).fulfillmentStatus, FULFILLMENT_STATUS.IN_TRANSIT, 'and the order still follows');
-      assert.strictEqual(await code(w.service.updateStatus(deliveryId, 'picked_up', null, RIDER)), 'CONFLICT', 'a retry is correctly refused, not double-applied');
+      assert.strictEqual((await w.service.getDelivery(deliveryId, SELLER)).status, 'accepted', 'the transition is rolled back when no event can be written');
+      assert.strictEqual((await w.orders.findOrderById(order.id)).fulfillmentStatus, FULFILLMENT_STATUS.PROCESSING, 'the order was not synced for a rejected transition');
+      assert.strictEqual((await w.service.updateStatus(deliveryId, 'picked_up', null, RIDER)).status, 'picked_up', 'retry succeeds once events are writable');
     }
 
     // Stale position writes cannot overwrite a newer one.

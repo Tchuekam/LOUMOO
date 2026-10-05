@@ -40,6 +40,43 @@ function testHtmlScreensAndTags() {
 
 // ── 2. CSS Design Tokens & Layering Hierarchy Tests ──
 
+function getScriptSrcs(content) {
+  return Array.from(content.matchAll(/<script\b[^>]*\bsrc=(["'])(.*?)\1/gi), match => match[2]);
+}
+
+function assertUniqueScriptTags(content, label) {
+  const srcs = getScriptSrcs(content);
+  const counts = new Map();
+  srcs.forEach(src => counts.set(src, (counts.get(src) || 0) + 1));
+  const duplicates = Array.from(counts.entries()).filter(([, count]) => count > 1);
+  assert.deepStrictEqual(
+    duplicates,
+    [],
+    `${label} must not load the same external script more than once`
+  );
+
+  [
+    './src/services/deliveryApi.js',
+    './src/services/deliveryTrackingScreen.js',
+    './src/services/dispatchUi.js',
+    './src/services/sellerDispatch.js',
+    './src/services/riderHub.js',
+    './src/services/ridersAdmin.js'
+  ].forEach(src => {
+    assert.strictEqual(
+      counts.get(src) || 0,
+      1,
+      `${label} must load ${src} exactly once`
+    );
+  });
+}
+
+function testExternalScriptDeduplication() {
+  assertUniqueScriptTags(fs.readFileSync('Commerce App.dc.html', 'utf8'), 'Commerce App.dc.html');
+  assertUniqueScriptTags(fs.readFileSync('build_redesign.py', 'utf8'), 'build_redesign.py');
+  console.log('  PASS Script Loading: delivery modules and external script tags are unique');
+}
+
 function testCssDesignTokens() {
   const html = fs.readFileSync('Commerce App.dc.html', 'utf8');
 
@@ -263,6 +300,7 @@ async function run() {
 
   const tests = [
     ['HTML Structure & Screen Balance', testHtmlScreensAndTags],
+    ['External Script De-duplication', testExternalScriptDeduplication],
     ['CSS Layering Tokens & Responsive Design', testCssDesignTokens],
     ['Session Lifecycle & Privacy Isolation', testSessionLifecycleAndPrivacyIsolation],
     ['Double Submission & Validation Guards', testDoubleSubmissionAndValidationGuards],

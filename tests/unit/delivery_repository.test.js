@@ -238,6 +238,107 @@ async function run() {
     }
   }
 
+  // ----------------------------------------------------------- atomic transition + event
+  {
+    const stamp = '2026-10-03T10:00:00.000Z';
+    const calls = [];
+    const db = {
+      rpc: async (name, params) => {
+        calls.push([name, params]);
+        return {
+          data: {
+            id: 'dlv_1',
+            order_id: 'ord_1',
+            buyer_id: 'buyer_1',
+            seller_id: 'seller_1',
+            driver_id: 'rider_1',
+            status: 'accepted',
+            pickup: {},
+            dropoff: {},
+            handover_nonce: 1,
+            code_attempts: 0,
+            accepted_at: stamp,
+            created_at: stamp,
+            updated_at: stamp
+          },
+          error: null
+        };
+      }
+    };
+    const repo = new DeliveryRepository({ db });
+    const updated = await repo.transitionWithEvent(
+      'dlv_1',
+      { status: 'assigned', driverId: 'rider_1', assignedAt: stamp },
+      { status: 'accepted', acceptedAt: stamp, updatedAt: stamp },
+      { status: 'accepted', previousStatus: 'assigned', actorId: 'rider_1', note: 'Rider accepted', at: stamp }
+    );
+
+    assert.strictEqual(updated.status, 'accepted');
+    assert.strictEqual(calls.length, 1);
+    assert.strictEqual(calls[0][0], 'delivery_transition_atomic');
+    assert.deepStrictEqual(calls[0][1].p_expected, { status: 'assigned', driver_id: 'rider_1', assigned_at: stamp });
+    assert.deepStrictEqual(calls[0][1].p_patch, { status: 'accepted', accepted_at: stamp, updated_at: stamp });
+    assert.strictEqual(calls[0][1].p_event_previous_status, 'assigned');
+    assert.strictEqual(calls[0][1].p_actor_id, 'rider_1');
+
+    const memory = new DeliveryRepository({ db: null });
+    await memory.insertDelivery({
+      id: 'dlv_mem',
+      orderId: 'ord_mem',
+      buyerId: 'buyer_1',
+      sellerId: 'seller_1',
+      driverId: 'rider_1',
+      status: 'assigned',
+      pickup: {},
+      dropoff: {},
+      assignedAt: stamp,
+      createdAt: stamp,
+      updatedAt: stamp
+    });
+    memory.insertEvent = async () => { throw new Error('timeline down'); };
+    await assert.rejects(
+      memory.transitionWithEvent(
+        'dlv_mem',
+        { status: 'assigned', driverId: 'rider_1' },
+        { status: 'accepted', acceptedAt: stamp, updatedAt: stamp },
+        { status: 'accepted', previousStatus: 'assigned', actorId: 'rider_1', note: 'Rider accepted', at: stamp }
+      ),
+      /timeline down/
+    );
+    assert.strictEqual((await memory.findById('dlv_mem')).status, 'assigned', 'the row rolls back when the required event cannot be written');
+    assert.deepStrictEqual(await memory.listEvents('dlv_mem'), []);
+
+    const retrying = new DeliveryRepository({ db: null });
+    await retrying.insertDelivery({
+      id: 'dlv_retry',
+      orderId: 'ord_retry',
+      buyerId: 'buyer_1',
+      sellerId: 'seller_1',
+      driverId: 'rider_1',
+      status: 'assigned',
+      pickup: {},
+      dropoff: {},
+      assignedAt: stamp,
+      createdAt: stamp,
+      updatedAt: stamp
+    });
+    const realInsert = retrying.insertEvent.bind(retrying);
+    let attempts = 0;
+    retrying.insertEvent = async (event) => {
+      attempts += 1;
+      if (attempts === 1) throw new Error('transient timeline blip');
+      return realInsert(event);
+    };
+    assert.strictEqual((await retrying.transitionWithEvent(
+      'dlv_retry',
+      { status: 'assigned', driverId: 'rider_1' },
+      { status: 'accepted', acceptedAt: stamp, updatedAt: stamp },
+      { status: 'accepted', previousStatus: 'assigned', actorId: 'rider_1', note: 'Rider accepted', at: stamp, retries: 1 }
+    )).status, 'accepted');
+    assert.strictEqual(attempts, 2, 'the required event write is retried when requested');
+    assert.strictEqual((await retrying.listEvents('dlv_retry')).length, 1);
+  }
+
   // ------------------- production: a failed ranking input is an error, not "nobody is busy"
   {
     const config = require('../../server/config/env');

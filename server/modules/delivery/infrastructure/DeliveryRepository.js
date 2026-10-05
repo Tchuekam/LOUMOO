@@ -11,10 +11,12 @@
  * handled database failure — the same policy as OrderRepository, via
  * handleDatabaseFailure, which throws in production.
  *
- * Concurrency: every state change goes through `updateWhere(id, expected, patch)`,
- * a compare-and-swap that applies only if the row still matches `expected`.
+ * Concurrency: ordinary row writes go through `updateWhere(id, expected, patch)`.
+ * Status transitions go through `transitionWithEvent(...)`, the same
+ * compare-and-swap plus the required timeline row in one database transaction.
  * That is what stops two riders accepting the same delivery, two pings racing a
- * status change, or two wrong-code guesses sharing one attempt slot.
+ * status change, two wrong-code guesses sharing one attempt slot, or a status
+ * change landing without its audit event.
  */
 
 const { SupabaseDatabase, handleDatabaseFailure } = require('../../../infrastructure/database/SupabaseClient');
@@ -358,6 +360,57 @@ class DeliveryRepository {
    * Returns the updated record, or `null` when the row no longer matches — the
    * caller turns that into a ConflictError with a message that fits the action.
    */
+  async transitionWithEvent(id, expected, patch, event = {}) {
+    const fullPatch = { ...patch, updatedAt: patch.updatedAt || event.at || new Date().toISOString() };
+    const eventAt = event.at || fullPatch.updatedAt;
+    const db = this.db;
+    if (db) {
+      try {
+        const { data, error } = await db.rpc('delivery_transition_atomic', {
+          p_delivery_id: id,
+          p_expected: toRow(expected || {}),
+          p_patch: toRow(fullPatch),
+          p_event_status: event.status,
+          p_event_previous_status: event.previousStatus ?? null,
+          p_actor_id: event.actorId ?? null,
+          p_note: event.note ?? null,
+          p_event_at: eventAt
+        });
+        if (error) handleDatabaseFailure(error, 'DeliveryRepository.transitionWithEvent');
+        else return fromRow(data);
+      } catch (err) {
+        handleDatabaseFailure(err, 'DeliveryRepository.transitionWithEvent');
+      }
+    }
+
+    const current = this._deliveries.get(id);
+    if (!current) return null;
+    for (const [key, value] of Object.entries(expected || {})) {
+      const have = current[key] === undefined ? null : current[key];
+      if (have !== value) return null;
+    }
+
+    const next = { ...current, ...fullPatch };
+    this._deliveries.set(id, next);
+    for (let attempt = 0; ; attempt += 1) {
+      try {
+        await this.insertEvent({
+          deliveryId: id,
+          status: event.status,
+          previousStatus: event.previousStatus ?? null,
+          actorId: event.actorId ?? null,
+          note: event.note ?? null,
+          at: eventAt
+        });
+        return { ...next };
+      } catch (err) {
+        if (attempt < (event.retries || 0)) continue;
+        this._deliveries.set(id, current);
+        throw err;
+      }
+    }
+  }
+
   async updateWhere(id, expected, patch) {
     const db = this.db;
     const fullPatch = { ...patch, updatedAt: patch.updatedAt || new Date().toISOString() };

@@ -217,11 +217,8 @@ class DeliveryService {
   }
 
   /**
-   * Timeline row + live event, AFTER the state change has already been applied.
-   * Best-effort by design: the compare-and-swap is the source of truth, and a
-   * failing audit write must not abort the request and skip the order sync,
-   * notifications and stream that follow (the rider would see an error for a
-   * change that did happen, and retrying would be refused as a conflict).
+   * Timeline row + live event. Status transitions call this through `_transition`;
+   * if the required audit row cannot be written, the transition is rejected.
    */
   async _record(delivery, previousStatus, actorId, note = null, { retries = 0 } = {}) {
     // `retries` is for rows other decisions depend on (the lapse row), which a single
@@ -240,9 +237,13 @@ class DeliveryService {
       } catch (err) {
         if (attempt < retries) continue;
         logger.error(`[Delivery] Timeline write failed for ${delivery.id} (${previousStatus} -> ${delivery.status}): ${err.message}`);
-        break;
+        throw err;
       }
     }
+    this._publishStatus(delivery);
+  }
+
+  _publishStatus(delivery) {
     this.events.publish(delivery.id, {
       type: 'status',
       status: delivery.status,
@@ -320,12 +321,30 @@ class DeliveryService {
     return { reconciled: true, deliveryStatus: delivery.status };
   }
 
-  async _transition(delivery, expected, patch, { actorId, note = null, label }) {
-    const updated = await this.repo.updateWhere(delivery.id, expected, patch);
+  async _transition(delivery, expected, patch, { actorId, note = null, label, retries = 0 } = {}) {
+    const nextStatus = patch && Object.prototype.hasOwnProperty.call(patch, 'status') ? patch.status : delivery.status;
+    if (nextStatus !== delivery.status) {
+      DeliveryStateMachine.assertTransition(delivery.status, nextStatus, label || 'Delivery');
+    }
+
+    const stamp = patch && patch.updatedAt ? patch.updatedAt : this._nowIso();
+    const updated = await this.repo.transitionWithEvent(
+      delivery.id,
+      expected,
+      { ...patch, updatedAt: stamp },
+      {
+        status: nextStatus,
+        previousStatus: delivery.status,
+        actorId,
+        note,
+        at: stamp,
+        retries
+      }
+    );
     if (!updated) {
       throw new ConflictError(`${label || 'Delivery'} was changed by someone else. Reload and try again.`);
     }
-    await this._record(updated, delivery.status, actorId, note);
+    this._publishStatus(updated);
     return updated;
   }
 
@@ -345,18 +364,18 @@ class DeliveryService {
    */
   async _expireOffer(delivery) {
     const riderId = delivery.driverId;
-    const updated = await this.repo.updateWhere(
-      delivery.id,
-      { status: S.ASSIGNED, driverId: riderId, assignedAt: delivery.assignedAt },
-      // updatedAt is the lapse's timestamp (it becomes the timeline row's time, which
-      // the recent-lapse ranking compares with this service's clock), so it is
-      // stamped here rather than left to the repository's own wall clock.
-      { status: S.PENDING_ASSIGNMENT, driverId: null, assignedAt: null, acceptedAt: null, updatedAt: this._nowIso() }
-    );
-    if (!updated) return null;
-    // Retried once: the recent-lapse ranking, the declined flag and the late-accept
-    // answer all read this row, and a lost one would silently void them.
-    await this._record(updated, S.ASSIGNED, riderId, OFFER_EXPIRED_NOTE, { retries: 1 });
+    let updated;
+    try {
+      updated = await this._transition(
+        delivery,
+        { status: S.ASSIGNED, driverId: riderId, assignedAt: delivery.assignedAt },
+        { status: S.PENDING_ASSIGNMENT, driverId: null, assignedAt: null, acceptedAt: null, updatedAt: this._nowIso() },
+        { actorId: riderId, note: OFFER_EXPIRED_NOTE, retries: 1 }
+      );
+    } catch (err) {
+      if (err instanceof ConflictError && /changed by someone else/i.test(err.message)) return null;
+      throw err;
+    }
     this._notify(updated.sellerId, {
       title: 'A rider did not respond',
       body: 'The offer expired. Assign another rider to keep the order moving.',
@@ -889,13 +908,20 @@ class DeliveryService {
         ]);
       }
 
+      DeliveryStateMachine.assertTransition(delivery.status, S.DELIVERED);
       const nowIso = this._nowIso();
-      const updated = await this.repo.updateWhere(delivery.id, expected, {
-        status: S.DELIVERED, deliveredAt: nowIso, etaMinutes: 0, distanceKm: 0
-      });
-      if (!updated) continue;
-
-      await this._record(updated, S.ARRIVED, caller.userId, 'Handover code verified');
+      let updated;
+      try {
+        updated = await this._transition(
+          delivery,
+          expected,
+          { status: S.DELIVERED, deliveredAt: nowIso, updatedAt: nowIso, etaMinutes: 0, distanceKm: 0 },
+          { actorId: caller.userId, note: 'Handover code verified' }
+        );
+      } catch (err) {
+        if (err instanceof ConflictError && /changed by someone else/i.test(err.message)) continue;
+        throw err;
+      }
       await this._syncOrder(updated, caller.userId);
       this._notify(updated.buyerId, {
         title: 'Order delivered',
@@ -997,7 +1023,7 @@ class DeliveryService {
    * Administrator-only resolution of a delivery the rider cannot move.
    *   action 'unlock' : a delivery locked by too many wrong handover codes gets a
    *                     fresh code and a fresh guess budget (the rider stays).
-   *   action 'fail'   : a picked-up/arrived delivery is marked failed with a
+   *   action 'fail'   : an assigned/accepted/picked-up/arrived delivery is marked failed with a
    *                     reason (suspended rider, locked, unreachable customer),
    *                     so the seller can assign another rider.
    */
@@ -1032,8 +1058,8 @@ class DeliveryService {
     }
 
     if (body.action === 'fail') {
-      if (![S.PICKED_UP, S.ARRIVED].includes(delivery.status)) {
-        throw new ConflictError(`Only a picked-up or arrived delivery can be failed by an administrator (it is "${delivery.status}").`);
+      if (![S.ASSIGNED, S.ACCEPTED, S.PICKED_UP, S.ARRIVED].includes(delivery.status)) {
+        throw new ConflictError(`Only an assigned, accepted, picked-up or arrived delivery can be failed by an administrator (it is "${delivery.status}").`);
       }
       if (!note) {
         throw new ValidationError('A reason is required', [{ field: 'note', message: 'Say why this delivery is being failed.' }]);

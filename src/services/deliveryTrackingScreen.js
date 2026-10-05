@@ -22,6 +22,8 @@
 (function () {
   'use strict';
   if (typeof window === 'undefined') return;
+  if (window.__loumooDeliveryTrackingBootstrapped) return;
+  window.__loumooDeliveryTrackingBootstrapped = true;
 
   var MAPLIBRE_JS = 'https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/4.7.1/maplibre-gl.min.js';
   var MAPLIBRE_CSS = 'https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/4.7.1/maplibre-gl.min.css';

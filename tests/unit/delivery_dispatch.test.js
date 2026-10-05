@@ -987,7 +987,7 @@ async function run() {
       assert.strictEqual((await w.service.listDrivers(SELLER, { deliveryId: id })).find((r) => r.id === 'rider_1').declined, true, 'and the history is intact');
     }
     {
-      // Two failures in a row: the swap still stands, the loss is logged, and the event is still published.
+      // Two failures in a row: without a required timeline row, the release is rejected and no event is published.
       const w = makeWorld();
       await registerRiders(w);
       const { id } = await newDelivery(w, { assignTo: 'rider_1' });
@@ -1000,14 +1000,14 @@ async function run() {
       const errors = [];
       logger.error = (m) => errors.push(String(m));
       try {
-        assert.deepStrictEqual(await w.service.expireStaleOffers(), { expired: 1 }, 'a lost timeline row does not undo the release');
+        assert.deepStrictEqual(await w.service.expireStaleOffers(), { expired: 0 }, 'a transition without an event is rejected');
       } finally {
         logger.error = originalError;
       }
       assert.strictEqual(calls, 2, 'one retry, not a loop');
-      assert.ok(errors.some((m) => /Timeline write failed/.test(m) && /still down/.test(m)), 'the loss is logged');
-      assert.strictEqual((await w.repo.findById(id)).status, 'pending_assignment');
-      assert.ok(heard.some((e) => e.type === 'status' && e.status === 'pending_assignment'), 'and the live event still went out');
+      assert.ok(errors.some((m) => /Could not expire offer/.test(m) && /still down/.test(m)), 'the loss is logged');
+      assert.strictEqual((await w.repo.findById(id)).status, 'assigned');
+      assert.ok(!heard.some((e) => e.type === 'status' && e.status === 'pending_assignment'), 'no live event is published for a rejected transition');
     }
     {
       // The rider cap is applied, and says so.
