@@ -1495,10 +1495,20 @@ class DeliveryService {
       if (d.driverId !== caller.userId) continue;
       deliveries.push(await this._present(d, 'driver', { includeTimeline: false }));
     }
+    // Presence rides along so the hub learns "am I online" in the call it already makes, but
+    // it must never keep a rider from SEEING their jobs: one carrying a parcel has to be able
+    // to finish it even if presence cannot be read (the migration not applied yet, a database
+    // error). Unknown is `null`, and the client treats it as "do not show availability".
+    let presence = null;
+    try {
+      presence = await this.presence.getOwn(caller.userId);
+    } catch (err) {
+      logger.warn(`[Delivery] Could not read rider ${caller.userId}'s presence for their job list: ${err.message}`);
+    }
     return {
       driver: { id: driver.id, name: driver.name, phone: driver.phone },
       deliveries,
-      presence: await this.presence.getOwn(caller.userId)
+      presence
     };
   }
 
