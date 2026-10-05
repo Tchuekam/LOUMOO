@@ -1825,7 +1825,15 @@ class DeliveryService {
       this.repo.listDrivers({ status: status === 'all' ? null : status, limit: MAX_RIDERS_CONSIDERED }),
       this.repo.countOpenByDriver()
     ]);
-    const presence = await this.presence.resolveMany(drivers);
+    // Presence is information on this screen, not a gate, and this is how an administrator
+    // reaches the riders to manage them: if it cannot be read (the migration is not applied
+    // yet, a database error) the roster still loads, with presence unknown.
+    let presence = new Map();
+    try {
+      presence = await this.presence.resolveMany(drivers);
+    } catch (err) {
+      logger.warn(`[Delivery] Could not read rider presence for the roster: ${err.message}`);
+    }
     const rank = (d) => (d.status === DRIVER_STATUS.ACTIVE ? 0 : 1);
     const byText = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
     return drivers
@@ -1835,8 +1843,8 @@ class DeliveryService {
         phone: d.phone,
         status: d.status,
         openDeliveries: load.get(d.id) || 0,
-        presence: presence.get(d.id).status,
-        lastSeenAt: presence.get(d.id).lastSeenAt
+        presence: presence.has(d.id) ? presence.get(d.id).status : null,
+        lastSeenAt: presence.has(d.id) ? presence.get(d.id).lastSeenAt : null
       }))
       .sort((a, b) => rank(a) - rank(b)
         || String(a.name || '').localeCompare(String(b.name || ''), 'en')
