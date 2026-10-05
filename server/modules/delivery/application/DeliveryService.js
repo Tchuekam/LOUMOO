@@ -493,7 +493,72 @@ class DeliveryService {
       throw new ConflictError(`${label || 'Delivery'} was changed by someone else. Reload and try again.`);
     }
     await this._record(updated, delivery.status, actorId, note);
+    await this._syncPresence(delivery, updated);
     return updated;
+  }
+
+  /**
+   * A delivery change that started or ended a rider's ACCEPTED work (it moved into or
+   * out of accepted / picked up / arrived, or between riders) moves them busy <->
+   * online. Idempotent and best-effort: the delivery change has already happened, so a
+   * failing presence write is logged, never allowed to fail it (the janitor in
+   * expireStalePresence puts a leaked busy row right).
+   */
+  async _syncPresence(before, after) {
+    if (!BUSY_DELIVERY_STATUSES.includes(before.status) && !BUSY_DELIVERY_STATUSES.includes(after.status)) return;
+    await this._reconcileRiders([before.driverId, after.driverId]);
+  }
+
+  async _reconcileRiders(riderIds) {
+    for (const riderId of new Set(riderIds.filter(Boolean))) {
+      try {
+        await this.presence.reconcile(riderId);
+      } catch (err) {
+        logger.warn(`[Delivery] Could not bring rider ${riderId}'s presence in step with their deliveries: ${err.message}`);
+      }
+    }
+  }
+
+  /**
+   * Takes back the offers (`assigned`, not yet accepted) a rider holds, because they
+   * stopped being available: went offline, paused, went silent, or accepted something
+   * else. Each goes back to its seller exactly like a decline, with a timeline note
+   * that says why. The actor is the system, not the rider: a rider on a break has not
+   * "declined" anything, and must stay offerable for the same delivery afterwards.
+   * Best-effort per offer (one that moved meanwhile is simply skipped).
+   */
+  async _withdrawOffers(riderId, { note, exceptId = null } = {}) {
+    let open;
+    try {
+      open = await this.repo.findOpenByDriver(riderId, { limit: 100 });
+    } catch (err) {
+      logger.error(`[Delivery] Could not list the offers held by rider ${riderId}: ${err.message}`);
+      return 0;
+    }
+    let withdrawn = 0;
+    for (const d of open) {
+      if (d.status !== S.ASSIGNED || d.id === exceptId) continue;
+      try {
+        const released = await this._transition(
+          d,
+          { status: S.ASSIGNED, driverId: riderId },
+          { status: S.PENDING_ASSIGNMENT, driverId: null, assignedAt: null, acceptedAt: null },
+          { actorId: PRESENCE_ACTOR, note }
+        );
+        withdrawn += 1;
+        this._notify(released.sellerId, {
+          audience: 'seller',
+          title: 'A rider is no longer available',
+          body: 'Assign another rider to keep the order moving.',
+          tone: 'neutral',
+          delivery: released
+        });
+      } catch (err) {
+        // Answered, re-assigned or cancelled while we looked: nothing left to take back.
+        if (!(err instanceof ConflictError)) logger.error(`[Delivery] Could not take offer ${d.id} back from rider ${riderId}: ${err.message}`);
+      }
+    }
+    return withdrawn;
   }
 
   // ------------------------------------------------------------- offer expiry
