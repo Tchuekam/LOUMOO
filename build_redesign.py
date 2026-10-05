@@ -8158,6 +8158,36 @@ class Component extends DCLogic {
     };
     return step(0);
   }
+  // The ONE place that resolves the delivery destination — both the one the
+  // checkout card shows and the one placeOrder sends. Because the display and the
+  // action read the same answer, the card can never show a destination the order
+  // then rejects (the old bug: the card invented "Rue Joss, Bonanjo…" while the
+  // order refused the empty address). It invents nothing: it reads the selected
+  // address, else the default/first saved one, else the sign-up name/phone/city,
+  // and reports whether what it found is enough for the chosen method.
+  _resolveDeliveryDestination = () => {
+    const addrs = this.state.addressesList || [];
+    const sel = this.state.selectedDeliveryAddress;
+    const base = (sel && (sel.streetAddress || sel.recipientName || sel.phoneNumber))
+      ? sel
+      : (addrs.find((a) => a.isDefault) || addrs[0] || null);
+    const address = {
+      fullName: (base && base.recipientName) || [this.state.regFirstName, this.state.regLastName].filter(Boolean).join(' '),
+      phone: (base && base.phoneNumber) || this.state.regPhone || '',
+      street: (base && base.streetAddress) || '',
+      city: (base && base.city) || this.state.regCity || '',
+      region: (base && base.region) || ''
+    };
+    const method = (this.state.sel && this.state.sel.deliv === 'pickup') ? 'STORE_PICKUP' : 'HOME_DELIVERY';
+    const phoneOk = String(address.phone).replace(/[^0-9]/g, '').length >= 6;
+    const nameOk = address.fullName.trim().length >= 2;
+    // Home delivery needs a real place for the rider; pickup needs only a name and
+    // phone so the store can reach the buyer when the order is ready.
+    const hasDestination = method === 'STORE_PICKUP'
+      ? (nameOk && phoneOk)
+      : (Boolean(address.street.trim() && address.city.trim()) && phoneOk && nameOk);
+    return { address: address, method: method, hasDestination: hasDestination };
+  };
   // City → IATA-ish code + airport label for the boarding pass.
   _cityCode = (city) => {
     const map = {
@@ -12712,11 +12742,13 @@ class Component extends DCLogic {
     const dynamicSettings = (typeof window !== 'undefined' && window.LOUMOO_SYSTEM_SETTINGS) || this.state.systemSettings || this.state.adminSettings || {};
     // The delivery fee follows the city the order will be delivered to (the same
     // address placeOrder sends), because the server prices the order from that city.
+    // The destination the order will use — resolved ONCE here and shown by the
+    // checkout card below, so what the buyer sees is exactly what placeOrder sends.
+    const checkoutDest = this._resolveDeliveryDestination();
     // Store pickup has no rider leg, so the server charges no delivery fee and the
     // checkout must show the same, or the shown total would not match the order.
-    const isPickup = this.state.sel && this.state.sel.deliv === 'pickup';
-    const addrForFee = this.state.selectedDeliveryAddress || (this.state.addressesList && (this.state.addressesList.find(a => a.isDefault) || this.state.addressesList[0]));
-    const deliveryCity = (addrForFee && addrForFee.city) || this.state.regCity || (this.state.addressFormCity || 'Douala');
+    const isPickup = checkoutDest.method === 'STORE_PICKUP';
+    const deliveryCity = checkoutDest.address.city || this.state.regCity || (this.state.addressFormCity || 'Douala');
     const deliveryFee = (cartSubtotal > 0 && !isPickup) ? resolveCityDeliveryFee(deliveryCity) : 0;
     const line = cartSubtotal;
     const items = cartSubtotal;
@@ -16911,35 +16943,18 @@ class Component extends DCLogic {
       })(),
 
       // ── Checkout Delivery Destination ──
-      checkoutRecipientName: (() => {
-        const sel = this.state.selectedDeliveryAddress;
-        if (sel && sel.recipientName) return sel.recipientName;
-        const addrs = this.state.addressesList || [];
-        const def = addrs.find(a => a.isDefault) || addrs[0];
-        if (def && def.recipientName) return def.recipientName;
-        const name = [this.state.regFirstName, this.state.regLastName].filter(Boolean).join(' ');
-        return name || 'Rostand Tchuekam';
-      })(),
-      checkoutRecipientPhone: (() => {
-        const sel = this.state.selectedDeliveryAddress;
-        if (sel && sel.phoneNumber) return sel.phoneNumber;
-        const addrs = this.state.addressesList || [];
-        const def = addrs.find(a => a.isDefault) || addrs[0];
-        if (def && def.phoneNumber) return def.phoneNumber;
-        return this.state.regPhone || '690 12 34 56';
-      })(),
-      checkoutDeliveryAddress: (() => {
-        const sel = this.state.selectedDeliveryAddress;
-        if (sel && sel.streetAddress) {
-          return sel.streetAddress + (sel.city ? ', ' + (sel.city.charAt(0).toUpperCase() + sel.city.slice(1)) : '') + (sel.region ? ', ' + sel.region : ', Cameroon');
-        }
-        const addrs = this.state.addressesList || [];
-        const def = addrs.find(a => a.isDefault) || addrs[0];
-        if (def && def.streetAddress) {
-          return def.streetAddress + (def.city ? ', ' + (def.city.charAt(0).toUpperCase() + def.city.slice(1)) : '') + (def.region ? ', ' + def.region : ', Cameroon');
-        }
-        return 'Rue Joss, Bonanjo Commercial District (Near Standard Chartered Bank), Douala';
-      })(),
+      // Shown straight from the shared resolver — never invented. When nothing
+      // real is on file these are empty and checkoutHasDestination is false, so
+      // the card shows an "add" prompt instead of a made-up name and street.
+      checkoutIsPickup: isPickup,
+      checkoutHasDestination: checkoutDest.hasDestination,
+      checkoutRecipientName: checkoutDest.address.fullName,
+      checkoutRecipientPhone: checkoutDest.address.phone,
+      checkoutDeliveryAddress: checkoutDest.address.street
+        ? checkoutDest.address.street
+          + (checkoutDest.address.city ? ', ' + (checkoutDest.address.city.charAt(0).toUpperCase() + checkoutDest.address.city.slice(1)) : '')
+          + (checkoutDest.address.region ? ', ' + checkoutDest.address.region : ', Cameroon')
+        : '',
       changeDeliveryDestination: () => {
         this.setState({ checkoutReturn: true });
         this.openAddresses();
@@ -17390,36 +17405,21 @@ class Component extends DCLogic {
           return;
         }
 
-        // How the buyer chose to receive this order decides what we must collect.
-        // Home delivery needs a real place for the rider to go and a number to
-        // call; store pickup needs neither — only a name and phone so the store
-        // can reach the buyer when the order is ready. The server prices and
-        // treats the order by this same method, so the two must agree.
-        const deliveryMethod = (this.state.sel && this.state.sel.deliv === 'pickup') ? 'STORE_PICKUP' : 'HOME_DELIVERY';
-        const selAddr = this.state.selectedDeliveryAddress || (this.state.addressesList && (this.state.addressesList.find(a => a.isDefault) || this.state.addressesList[0]));
-        const address = {
-          fullName: (selAddr && selAddr.recipientName)
-            || [this.state.regFirstName, this.state.regLastName].filter(Boolean).join(' '),
-          phone: (selAddr && selAddr.phoneNumber) || this.state.regPhone || '',
-          street: (selAddr && selAddr.streetAddress) || '',
-          city: (selAddr && selAddr.city) || this.state.regCity || ''
-        };
-        const phoneOk = String(address.phone).replace(/[^0-9]/g, '').length >= 6;
-        const nameOk = address.fullName.trim().length >= 2;
-        if (deliveryMethod === 'HOME_DELIVERY') {
-          // Do not invent an address: without a real one the delivery would be
-          // sent to a made-up place.
-          if (!address.street.trim() || !phoneOk || !address.city.trim() || !nameOk) {
-            this.setState({ orderError: 'Add a delivery address with your name, street, city and phone number, so the rider knows where to go and how to reach you.', orderErrorItemIds: [] });
-            return;
-          }
-        } else {
-          // Store pickup: no street or city, but the store still needs to reach
-          // the buyer when the order is ready.
-          if (!nameOk || !phoneOk) {
-            this.setState({ orderError: 'Add your name and a phone number so the store can reach you when your order is ready for pickup.', orderErrorItemIds: [] });
-            return;
-          }
+        // How the buyer chose to receive this order decides what we must collect,
+        // and it comes from the SAME resolver the destination card shows, so the
+        // card and this guard can never disagree. The server prices and treats the
+        // order by this method too, so all three agree.
+        const dest = this._resolveDeliveryDestination();
+        const deliveryMethod = dest.method;
+        const address = dest.address;
+        if (!dest.hasDestination) {
+          this.setState({
+            orderError: deliveryMethod === 'HOME_DELIVERY'
+              ? 'Add a delivery address with your name, street, city and phone number, so the rider knows where to go and how to reach you.'
+              : 'Add your name and a phone number so the store can reach you when your order is ready for pickup.',
+            orderErrorItemIds: []
+          });
+          return;
         }
 
         const payMap = { mtn: 'MTN MoMo', om: 'Orange Money', card: 'Bank card' };

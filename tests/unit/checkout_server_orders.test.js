@@ -166,6 +166,16 @@ async function testGuestAndAddress() {
     assert.strictEqual(server.payloads.length, 0, 'and sends nothing');
     assert.strictEqual(comp.state.placingOrder, false);
   }
+
+  // The card must not invent a destination it does not have: with nothing on file
+  // it shows no name, no address, and flags that one must be added — the old bug
+  // was a fabricated "Rue Joss, Bonanjo…" shown while the order refused the empty
+  // address, so the screen and the action disagreed.
+  comp.setState({ authStatus: 'authenticated', screen: 'checkout', cartItems: bag(), addressesList: [], selectedDeliveryAddress: null, regPhone: '', regCity: '', regFirstName: '', regLastName: '' });
+  const empty = comp.renderVals();
+  assert.strictEqual(empty.checkoutHasDestination, false, 'with nothing on file, there is no destination');
+  assert.strictEqual(empty.checkoutRecipientName, '', 'and no invented recipient name');
+  assert.strictEqual(empty.checkoutDeliveryAddress, '', 'and no invented street');
 }
 
 // Store pickup is the other fulfilment path: the buyer collects the order, so no

@@ -139,16 +139,32 @@
 
   <div style="padding:16px;max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:16px">
     
-    <!-- Delivery Address Card -->
+    <!-- Delivery Address Card. Shows the REAL destination the order will use, or,
+         when none is on file yet, an honest "add it" prompt — never an invented
+         address the order would then reject. -->
     <div class="card-premium">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
         <div style="font:800 12px/1 var(--font-heading);letter-spacing:.06em;color:var(--color-text-secondary);text-transform:uppercase">1. DELIVERY DESTINATION</div>
-        <button class="btn btn-secondary btn-sm" onClick="{{ changeDeliveryDestination }}">CHANGE</button>
+        <sc-if value="{{ checkoutHasDestination }}">
+          <button class="btn btn-secondary btn-sm" onClick="{{ changeDeliveryDestination }}">CHANGE</button>
+        </sc-if>
       </div>
-      <div style="font:700 14px/1.2 var(--font-heading);color:var(--color-text)">{{ checkoutRecipientName }} · +237 {{ checkoutRecipientPhone }}</div>
-      <div style="font:400 12.5px/1.4 var(--font-body);color:var(--color-text-secondary);margin-top:4px">
-        {{ checkoutDeliveryAddress }}
-      </div>
+      <sc-if value="{{ checkoutHasDestination }}">
+        <div style="font:700 14px/1.2 var(--font-heading);color:var(--color-text)">{{ checkoutRecipientName }} · +237 {{ checkoutRecipientPhone }}</div>
+        <sc-if value="{{ checkoutIsPickup }}">
+          <div style="font:400 12.5px/1.4 var(--font-body);color:var(--color-text-secondary);margin-top:4px">Pick up at the store — you'll be told when your order is ready to collect.</div>
+        </sc-if>
+        <sc-if value="{{ !checkoutIsPickup }}">
+          <div style="font:400 12.5px/1.4 var(--font-body);color:var(--color-text-secondary);margin-top:4px">{{ checkoutDeliveryAddress }}</div>
+        </sc-if>
+      </sc-if>
+      <sc-if value="{{ !checkoutHasDestination }}">
+        <div style="font:400 12.5px/1.45 var(--font-body);color:var(--color-text-secondary);margin-bottom:12px">
+          <sc-if value="{{ checkoutIsPickup }}">Add your name and a phone number so the store can reach you when your order is ready to collect.</sc-if>
+          <sc-if value="{{ !checkoutIsPickup }}">No delivery address yet. Add where the rider should bring your order, so we know where to go and how to reach you.</sc-if>
+        </div>
+        <button onClick="{{ changeDeliveryDestination }}" class="btn btn-primary btn-sm" style="height:42px">ADD DELIVERY DETAILS</button>
+      </sc-if>
     </div>
 
     <!-- Telecom Payment Selection -->
