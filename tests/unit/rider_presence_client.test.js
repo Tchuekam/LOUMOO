@@ -1833,8 +1833,30 @@ async function testNoGlobalsLeak(before, fetchBefore) {
   assert.strictEqual(global.fetch, fetchBefore, 'fetch is restored');
 }
 
+/**
+ * What ships. Vercel (scripts/assemble_public.js) and Railway (the Dockerfile) both publish
+ * the COMMITTED `Commerce App.dc.html`: neither runs build_redesign.py. So the script tag has to
+ * be in the committed shell, not only in the Python source, or the controller never loads in
+ * production, no rider can ever go online and nothing can be offered to anyone. This pins both
+ * places, and that the controller loads BEFORE the hub that uses it.
+ */
+function testTheControllerShipsInTheShellBeforeTheHub() {
+  const root = path.resolve(__dirname, '../..');
+  const tag = (name) => `<script defer src="./src/services/${name}.js"></script>`;
+  for (const [label, file] of [['the build source', 'build_redesign.py'], ['the committed shell', 'Commerce App.dc.html']]) {
+    const text = fs.readFileSync(path.join(root, file), 'utf8');
+    const presence = text.indexOf(tag('riderPresence'));
+    const hub = text.indexOf(tag('riderHub'));
+    assert.ok(presence !== -1, `${label} loads riderPresence.js (the controller)`);
+    assert.strictEqual(text.split(tag('riderPresence')).length - 1, 1, `${label} loads it exactly once`);
+    assert.ok(hub !== -1 && presence < hub, `${label} loads the controller before the rider hub that uses it`);
+  }
+}
+
 async function run() {
   console.log('  Testing the rider presence client (heartbeat, actions, card)...');
+  testTheControllerShipsInTheShellBeforeTheHub();
+  console.log('    ✓ The committed shell (what Vercel and Railway publish) and the build source both load the controller, once, before the rider hub.');
   const globalsBefore = new Set(Object.getOwnPropertyNames(global));
   const fetchBefore = global.fetch;
   await testNoTimerWhileOfflineOrPaused();
