@@ -1077,6 +1077,9 @@ class DeliveryService {
 
   async recordLocation(deliveryId, input, callerInput) {
     const { caller, delivery } = await this._requireAssignedRider(deliveryId, callerInput);
+  // A delivery's GPS trail. It deliberately says nothing about presence: a ping is
+  // history for one delivery, not a claim to be available. The rider's own client
+  // keeps them online with the separate heartbeat (riderHeartbeat).
     if (!LOCATION_ACCEPTING_STATUSES.includes(delivery.status)) {
       throw new ConflictError(`Location is only accepted while a delivery is accepted, picked up or arrived (it is "${delivery.status}").`);
     }
@@ -1507,6 +1510,81 @@ class DeliveryService {
   async _releaseDriverWork(driverId, actorId, note) {
     let open = [];
     try {
+  // ----------------------------------------------------------------- presence
+  //
+  // A rider's availability (docs/DELIVERY_API.md, "Rider presence"). Each of these
+  // acts on the AUTHENTICATED caller's own presence and nothing else: none takes a
+  // rider id or a status. Only a registered, active rider has presence (403 otherwise).
+
+  /** The optional `{ lat, lng, accuracyM }` a presence call may carry, validated; null when absent. */
+  _presenceLocation(input) {
+    const body = input && typeof input === 'object' ? input : {};
+    if ((body.lat === undefined || body.lat === null) && (body.lng === undefined || body.lng === null)) return null;
+    const point = parseLocation({ lat: body.lat, lng: body.lng }, 'location');
+    const accuracyM = optionalNumber(body.accuracyM, 'accuracyM', { min: 0, max: 1e6 });
+    return { ...point, accuracyM };
+  }
+
+  /** The caller's own presence. */
+  async getRiderPresence(callerInput) {
+    return this.presence.getOwn(this._caller(callerInput).userId);
+  }
+
+  /** Go online (or come back from a pause). */
+  async riderGoOnline(callerInput, input = {}) {
+    const caller = this._caller(callerInput);
+    return this.presence.goOnline(caller.userId, this._presenceLocation(input));
+  }
+
+  /**
+   * Go offline. Refused (409 RIDER_BUSY) while the rider carries a delivery they
+   * accepted. Offers they have not answered go back to their sellers.
+   */
+  async riderGoOffline(callerInput) {
+    const caller = this._caller(callerInput);
+    const presence = await this.presence.goOffline(caller.userId);
+    await this._withdrawOffers(caller.userId, { note: PRESENCE_NOTES.offline });
+    return presence;
+  }
+
+  /** Pause: still here, not taking new deliveries. Same rules as going offline. */
+  async riderPause(callerInput) {
+    const caller = this._caller(callerInput);
+    const presence = await this.presence.pause(caller.userId);
+    await this._withdrawOffers(caller.userId, { note: PRESENCE_NOTES.paused });
+    return presence;
+  }
+
+  /** Resume after a pause. */
+  async riderResume(callerInput, input = {}) {
+    const caller = this._caller(callerInput);
+    return this.presence.resume(caller.userId, this._presenceLocation(input));
+  }
+
+  /**
+   * "Still here." Keeps an already-online (or busy) rider alive; never raises anyone.
+   * A rider found silent past the window is set offline here and their offers go back.
+   */
+  async riderHeartbeat(callerInput, input = {}) {
+    const caller = this._caller(callerInput);
+    const { presence, expired } = await this.presence.heartbeat(caller.userId, this._presenceLocation(input));
+    if (expired) await this._withdrawOffers(caller.userId, { note: PRESENCE_NOTES.expired });
+    return presence;
+  }
+
+  /**
+   * Presence housekeeping, for the sweeper: sets online riders who went silent offline
+   * and takes their offers back, and puts right any busy row nothing backs up. Every
+   * read already treats a silent rider as offline, so this is tidiness and the offers,
+   * not correctness: a deployment that cannot run it (serverless) is never wrong.
+   */
+  async expireStalePresence({ limit = 50 } = {}) {
+    const expired = await this.presence.expireStale({ limit });
+    for (const riderId of expired) await this._withdrawOffers(riderId, { note: PRESENCE_NOTES.expired });
+    const healed = await this.presence.healStaleBusy({ limit });
+    return { expired: expired.length, healed };
+  }
+
       open = await this.repo.findOpenByDriver(driverId, { limit: 100 });
     } catch (err) {
       logger.error(`[Delivery] Could not list open work for rider ${driverId}: ${err.message}`);
