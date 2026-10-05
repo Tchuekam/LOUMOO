@@ -218,10 +218,11 @@ class RiderPresenceService {
 
     const sinceWrite = nowMs - Date.parse(row.updatedAt);
     if (Number.isFinite(sinceWrite) && sinceWrite >= 0 && sinceWrite < PRESENCE_MIN_WRITE_INTERVAL_MS) {
-      return { presence: await this._own(riderId, driver), expired: false };
+      return { presence: from(row), expired: false };
     }
-    await this.repo.transitionPresence(riderId, [P.ONLINE, P.BUSY], this._alive(this._nowIso(), location));
-    return { presence: await this._own(riderId, driver), expired: false };
+    const written = await this.repo.transitionPresence(riderId, [P.ONLINE, P.BUSY], this._alive(this._nowIso(), location));
+    // Null: the row changed under us (they went offline): whatever is stored is the truth.
+    return { presence: written ? from(written) : await this._own(riderId, driver), expired: false };
   }
 
   // ------------------------------------------------------- delivery-driven moves
@@ -232,6 +233,12 @@ class RiderPresenceService {
    * two deliveries accepted at the same instant cannot both win, and a rider who
    * went offline, paused or silent cannot accept at all (409, with the reason).
    * Throws RiderUnavailableError; the caller must give the claim back with
+    // A beat is the hot path (every rider, every 30 s): answered from the row it just
+    // read or wrote, not from a fresh set of reads. A row stored busy reads as busy by
+    // itself, and a free rider has nothing to count.
+    const from = (stored) => presentOwnPresence(
+      resolvePresence({ driver, row: stored, busyCount: 0, ttlMs: this.ttlMs, nowMs: this.now() }), { ttlMs: this.ttlMs }
+    );
    * reconcile() if the delivery change that follows fails.
    */
   async claim(riderId) {
