@@ -64,6 +64,12 @@ const PRESENCE_MAX_TTL_SECONDS = 60 * 60;
 const PRESENCE_HEARTBEAT_INTERVAL_MS = 30 * 1000;
 const PRESENCE_MIN_WRITE_INTERVAL_MS = 5 * 1000;
 
+// A row stored `busy` with no accepted delivery behind it is a leak (a crash between
+// a delivery change and its presence update). The sweeper puts such a row right, but
+// only once it is this old: a claim is written a moment BEFORE the delivery it is for,
+// and a younger row may be exactly that, in flight.
+const PRESENCE_CLAIM_GRACE_MS = 30 * 1000;
+
 // Timeline notes for an offer taken back because the rider's availability changed.
 // Shown to staff (and the rider), never to the buyer.
 const PRESENCE_NOTES = Object.freeze({
@@ -108,8 +114,10 @@ function freshnessCutoffIso(ttlMs, nowMs) {
  * `row`        the stored presence record, or null (never been online)
  * `busyCount`  how many deliveries the rider holds in BUSY_DELIVERY_STATUSES
  *
- * Order of precedence, strongest first: not a rider, suspended, carrying a delivery,
- * paused, then offline / online by heartbeat. Returns
+ * Order of precedence, strongest first: not a rider, suspended, busy (holding an
+ * accepted delivery, or stored busy: the claim is written before the delivery it is
+ * for, so a row stored busy is busy until it is put right), paused, then offline /
+ * online by heartbeat. Returns
  * `{ status, available, reason, expired, lastSeenAt, updatedAt, location }`;
  * `available` is true for `online` and nothing else.
  */
@@ -132,11 +140,11 @@ function resolvePresence({ driver, row = null, busyCount = 0, ttlMs, nowMs }) {
     ? { location: { lat: row.latitude, lng: row.longitude, accuracyM: row.accuracy ?? null } }
     : { location: null };
 
-  if (busyCount > 0) return answer(PRESENCE_STATUS.BUSY, 'busy', here);
+  if (busyCount > 0 || stored === PRESENCE_STATUS.BUSY) return answer(PRESENCE_STATUS.BUSY, 'busy', here);
   if (stored === PRESENCE_STATUS.PAUSED) return answer(PRESENCE_STATUS.PAUSED, 'paused');
   if (stored === PRESENCE_STATUS.OFFLINE) return answer(PRESENCE_STATUS.OFFLINE, 'offline');
 
-  // Stored online (or busy with nothing left to be busy with): only as good as the last beat.
+  // Stored online: only as good as the last beat.
   if (!isHeartbeatFresh(base.lastSeenAt, ttlMs, nowMs)) {
     return answer(PRESENCE_STATUS.OFFLINE, 'expired', { expired: true });
   }
@@ -185,12 +193,14 @@ const UNAVAILABLE_MESSAGES = Object.freeze({
 /**
  * 409: the rider cannot take work right now. Code RIDER_BUSY when they are carrying
  * a delivery, RIDER_UNAVAILABLE for every other reason. `self` words the message for
- * the rider themselves ("you") rather than for a seller choosing them ("that rider").
+ * the rider themselves ("you") rather than for a seller choosing them ("that rider");
+ * `message` replaces the stock wording when the action needs its own (going offline
+ * while carrying a parcel is not "taking another delivery").
  */
 class RiderUnavailableError extends AppError {
-  constructor(reason = 'offline', { self = false } = {}) {
+  constructor(reason = 'offline', { self = false, message = null } = {}) {
     const table = UNAVAILABLE_MESSAGES[self ? 'self' : 'other'];
-    super(table[reason] || table.offline, {
+    super(message || table[reason] || table.offline, {
       code: reason === 'busy' ? 'RIDER_BUSY' : 'RIDER_UNAVAILABLE',
       statusCode: 409,
       details: { reason }
@@ -207,6 +217,7 @@ module.exports = {
   PRESENCE_MAX_TTL_SECONDS,
   PRESENCE_HEARTBEAT_INTERVAL_MS,
   PRESENCE_MIN_WRITE_INTERVAL_MS,
+  PRESENCE_CLAIM_GRACE_MS,
   PRESENCE_NOTES,
   PRESENCE_ACTOR,
   RiderUnavailableError,
