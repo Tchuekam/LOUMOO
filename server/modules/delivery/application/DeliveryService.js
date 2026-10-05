@@ -1569,7 +1569,14 @@ class DeliveryService {
   /** The optional `{ lat, lng, accuracyM }` a presence call may carry, validated; null when absent. */
   _presenceLocation(input) {
     const body = input && typeof input === 'object' ? input : {};
-    if ((body.lat === undefined || body.lat === null) && (body.lng === undefined || body.lng === null)) return null;
+    if ((body.lat === undefined || body.lat === null) && (body.lng === undefined || body.lng === null)) {
+      // An accuracy describes a position. With none there is nothing for it to describe, and a
+      // value that is refused alongside a position must not be quietly dropped without one.
+      if (body.accuracyM !== undefined && body.accuracyM !== null && body.accuracyM !== '') {
+        throw new ValidationError('accuracyM needs a position', [{ field: 'accuracyM', message: 'Send lat and lng with accuracyM.' }]);
+      }
+      return null;
+    }
     const point = parseLocation({ lat: body.lat, lng: body.lng }, 'location');
     const accuracyM = optionalNumber(body.accuracyM, 'accuracyM', { min: 0, max: 1e6 });
     return { ...point, accuracyM };
