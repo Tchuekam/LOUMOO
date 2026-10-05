@@ -493,7 +493,7 @@ class DeliveryService {
       throw new ConflictError(`${label || 'Delivery'} was changed by someone else. Reload and try again.`);
     }
     await this._record(updated, delivery.status, actorId, note);
-    await this._syncPresence(delivery, updated);
+    await this._syncPresence(delivery, updated, actorId);
     return updated;
   }
 
@@ -504,15 +504,20 @@ class DeliveryService {
    * failing presence write is logged, never allowed to fail it (the janitor in
    * expireStalePresence puts a leaked busy row right).
    */
-  async _syncPresence(before, after) {
+  async _syncPresence(before, after, actorId = null) {
     if (!BUSY_DELIVERY_STATUSES.includes(before.status) && !BUSY_DELIVERY_STATUSES.includes(after.status)) return;
-    await this._reconcileRiders([before.driverId, after.driverId]);
+    await this._reconcileRiders([before.driverId, after.driverId], { aliveId: actorId });
   }
 
-  async _reconcileRiders(riderIds) {
+  /**
+   * Reconciles each rider's presence with their deliveries. `aliveId` is the rider, if
+   * any, whose OWN act caused the change: a request from them proves they are here, so
+   * their last-seen time is refreshed too (see RiderPresenceService.reconcile).
+   */
+  async _reconcileRiders(riderIds, { aliveId = null } = {}) {
     for (const riderId of new Set(riderIds.filter(Boolean))) {
       try {
-        await this.presence.reconcile(riderId);
+        await this.presence.reconcile(riderId, { alive: Boolean(aliveId) && riderId === aliveId });
       } catch (err) {
         logger.warn(`[Delivery] Could not bring rider ${riderId}'s presence in step with their deliveries: ${err.message}`);
       }
@@ -1204,7 +1209,7 @@ class DeliveryService {
       if (!updated) continue;
 
       await this._record(updated, S.ARRIVED, caller.userId, 'Handover code verified');
-      await this._syncPresence(delivery, updated);
+      await this._syncPresence(delivery, updated, caller.userId);
       await this._syncOrder(updated, caller.userId);
       this._notify(updated.buyerId, {
         audience: 'buyer',
