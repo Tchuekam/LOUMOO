@@ -241,7 +241,10 @@ class RiderPresenceService {
     );
    * reconcile() if the delivery change that follows fails.
    */
-  async claim(riderId) {
+  async claim(riderId, driver) {
+    const rider = driver === undefined ? await this.repo.findDriver(riderId) : driver;
+    if (!rider) throw new RiderUnavailableError('not_a_rider', { self: true });
+    if (rider.status !== DRIVER_STATUS.ACTIVE) throw new RiderUnavailableError('suspended', { self: true });
     const at = this._nowIso();
     const claimed = await this.repo.transitionPresence(
       riderId,
@@ -251,7 +254,7 @@ class RiderPresenceService {
     );
     if (claimed) return claimed;
     // Say why. A concurrent claim that won shows up here as busy.
-    const now = await this.resolve(riderId);
+    const now = await this.resolve(riderId, rider);
     throw new RiderUnavailableError(now.available ? 'busy' : now.reason, { self: true });
   }
 
@@ -302,7 +305,9 @@ class RiderPresenceService {
    * only list dispatch is allowed to choose from.
    */
   async availableRiderIds(activeDrivers) {
-    const active = new Set(activeDrivers.map((d) => d.id));
+    // Account standing is checked here too: the list is the caller's, and "a suspended
+    // rider is never available" must not depend on it being filtered upstream.
+    const active = new Set(activeDrivers.filter((d) => d.status === DRIVER_STATUS.ACTIVE).map((d) => d.id));
     if (!active.size) return new Set();
     const [online, busy] = await Promise.all([
       this.repo.listFreshOnlinePresence(freshnessCutoffIso(this.ttlMs, this.now()), { limit: MAX_RIDERS_CONSIDERED }),
