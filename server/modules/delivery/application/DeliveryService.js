@@ -22,6 +22,7 @@ const { getDefaultGeocoder } = require('../infrastructure/Geocoder');
 const { OrderRepository } = require('../../commerce/infrastructure/OrderRepository');
 const { OrderStateMachine } = require('../../commerce/domain/OrderStateMachine');
 const { FULFILLMENT_STATUS, DELIVERY_METHOD, PAYMENT_STATUS } = require('../../commerce/domain/Order');
+const { foldCity, resolveCityRate } = require('../../commerce/domain/PricingEngine');
 const { DeliveryStateMachine } = require('../domain/DeliveryStateMachine');
 const { codeFor, verifyCode, HANDOVER_CODE_DIGITS } = require('../domain/HandoverCode');
 const {
@@ -110,6 +111,56 @@ function cleanText(value, field, max = 255) {
     throw new ValidationError(`${field} is too long`, [{ field, message: `Keep it under ${max} characters.` }]);
   }
   return trimmed;
+}
+
+// The vehicle kinds a rider can declare. Must match migration 018's CHECK.
+const VEHICLE_TYPES = Object.freeze(['motorbike', 'bicycle', 'car', 'van', 'tricycle', 'on_foot']);
+// How many providers a buyer's checkout quote returns at most.
+const MAX_PROVIDERS_QUOTED = 20;
+
+/**
+ * Validates and normalises the optional marketplace profile an admin may set on a
+ * rider (photo, vehicle, the cities they serve, their flat tariff). Returns only
+ * the keys that were supplied, so a partial edit never clears the others. Unknown
+ * or malformed values are refused, never silently dropped.
+ */
+function cleanRiderProfile(body) {
+  const out = {};
+  if (body.photoUrl !== undefined) out.photoUrl = cleanText(body.photoUrl, 'photoUrl', 500);
+  if (body.vehicleType !== undefined) {
+    const v = body.vehicleType === null ? null : cleanText(body.vehicleType, 'vehicleType', 24);
+    if (v !== null && !VEHICLE_TYPES.includes(v)) {
+      throw new ValidationError('Unknown vehicle type', [{ field: 'vehicleType', message: `Use one of: ${VEHICLE_TYPES.join(', ')}.` }]);
+    }
+    out.vehicleType = v;
+  }
+  if (body.serviceAreas !== undefined) {
+    if (body.serviceAreas === null) out.serviceAreas = [];
+    else if (!Array.isArray(body.serviceAreas)) {
+      throw new ValidationError('serviceAreas must be a list of city names', [{ field: 'serviceAreas', message: 'Send a list of cities.' }]);
+    } else {
+      // Store cities folded (lowercased, accent-stripped) so a buyer's "Yaoundé"
+      // matches a rider's "Yaounde", exactly as the city fee table is matched.
+      const areas = [];
+      for (const raw of body.serviceAreas) {
+        const folded = foldCity(String(raw || ''));
+        if (folded && !areas.includes(folded)) areas.push(folded);
+      }
+      if (areas.length > 50) throw new ValidationError('Too many service areas', [{ field: 'serviceAreas', message: 'List at most 50 cities.' }]);
+      out.serviceAreas = areas;
+    }
+  }
+  if (body.baseFeeXaf !== undefined) {
+    if (body.baseFeeXaf === null) out.baseFeeXaf = null;
+    else {
+      const n = Number(body.baseFeeXaf);
+      if (!Number.isInteger(n) || n < 0 || n > 1000000) {
+        throw new ValidationError('baseFeeXaf must be a whole amount in XAF', [{ field: 'baseFeeXaf', message: 'Use a non-negative whole number.' }]);
+      }
+      out.baseFeeXaf = n;
+    }
+  }
+  return out;
 }
 
 class DeliveryService {
@@ -1372,10 +1423,12 @@ class DeliveryService {
     // An omitted status means "leave it as it is" for an existing rider: editing a
     // name or phone must not quietly reactivate someone an admin suspended. A new
     // rider starts active.
+    const profile = cleanRiderProfile(body);
     const existing = await this.repo.findDriver(profileId);
     const status = body.status || (existing ? existing.status : DRIVER_STATUS.ACTIVE);
     const driver = await this.repo.upsertDriver({
-      profileId, name, phone, status, createdBy: existing ? existing.createdBy : caller.userId
+      profileId, name, phone, status, createdBy: existing ? existing.createdBy : caller.userId,
+      profile: Object.keys(profile).length ? profile : null
     });
     if (status === DRIVER_STATUS.SUSPENDED) await this._releaseDriverWork(profileId, caller.userId, 'Rider suspended');
     // The rider hears about it from us: being registered (or suspended) changes
@@ -1391,7 +1444,83 @@ class DeliveryService {
         tone: active ? 'success' : 'neutral'
       });
     }
-    return { id: driver.id, name: driver.name, phone: driver.phone, status: driver.status };
+    return {
+      id: driver.id, name: driver.name, phone: driver.phone, status: driver.status,
+      photoUrl: driver.photoUrl, vehicleType: driver.vehicleType,
+      serviceAreas: driver.serviceAreas, baseFeeXaf: driver.baseFeeXaf,
+      isAgency: driver.isAgency, organizationId: driver.organizationId
+    };
+  }
+
+  /**
+   * The standard platform delivery fee for a city (integer XAF), or null when the
+   * city is not in the admin's rate table or the setting cannot be read. Resolved
+   * the SAME way the order is priced (SuperAdmin `shipping_rates_by_city` +
+   * PricingEngine.resolveCityRate), so a rider with no tariff of their own quotes
+   * exactly what the order would charge. Lazy + best-effort: never throws.
+   */
+  async _standardCityFee(city) {
+    try {
+      const SuperAdminRepository = require('../../../../SuperAdmin/backend/repositories/SuperAdminRepository');
+      const cityRates = await SuperAdminRepository.getSetting('shipping_rates_by_city');
+      return resolveCityRate(cityRates, city);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /**
+   * The delivery providers a BUYER can see and prefer at checkout for a given city
+   * (GET /deliveries/providers?city=). Any signed-in user may ask. A provider is
+   * offered when it is an ACTIVE rider that serves the city — a rider serves a
+   * city when their service_areas list it, or when they have stated none (serves
+   * anywhere). Each is returned with the public, choosable facts only: no phone
+   * (that is shared once a delivery is theirs), but the photo, vehicle, areas,
+   * reputation (rating + deliveries completed, derived from real deliveries) and
+   * the fee they would quote (their own tariff, else the city's standard rate).
+   * Least busy and best rated first.
+   */
+  async listAvailableProviders(callerInput, { city } = {}) {
+    this._caller(callerInput); // any authenticated user; throws if unauthenticated
+    const wantedCity = typeof city === 'string' ? city.trim() : '';
+    const folded = wantedCity ? foldCity(wantedCity) : '';
+    const [drivers, load, completed, standardFee] = await Promise.all([
+      this.repo.listDrivers({ status: DRIVER_STATUS.ACTIVE, limit: MAX_RIDERS_CONSIDERED }),
+      this.repo.countOpenByDriver(),
+      this.repo.countCompletedByDriver(),
+      this._standardCityFee(wantedCity)
+    ]);
+    const serves = (d) => {
+      const areas = Array.isArray(d.serviceAreas) ? d.serviceAreas : [];
+      // No city asked, or the rider stated no areas: they are a candidate.
+      if (!folded || areas.length === 0) return true;
+      return areas.includes(folded);
+    };
+    const providers = drivers
+      .filter(serves)
+      .map((d) => ({
+        id: d.id,
+        name: d.name,
+        photoUrl: d.photoUrl || null,
+        vehicleType: d.vehicleType || null,
+        isAgency: Boolean(d.isAgency),
+        rating: (d.ratingAvg != null && d.ratingCount > 0)
+          ? { average: Number(d.ratingAvg), count: d.ratingCount }
+          : null,
+        completedDeliveries: completed.get(d.id) || 0,
+        openDeliveries: load.get(d.id) || 0,
+        serviceAreas: Array.isArray(d.serviceAreas) ? d.serviceAreas : [],
+        // The rider's own tariff, else the city's standard rate, else null when
+        // neither is known (the UI then shows "fee at checkout" rather than a lie).
+        feeXaf: d.baseFeeXaf != null ? d.baseFeeXaf : standardFee
+      }))
+      .sort((a, b) =>
+        a.openDeliveries - b.openDeliveries
+        || (b.rating ? b.rating.average : 0) - (a.rating ? a.rating.average : 0)
+        || b.completedDeliveries - a.completedDeliveries
+        || String(a.name || '').localeCompare(String(b.name || ''), 'en'))
+      .slice(0, MAX_PROVIDERS_QUOTED);
+    return { city: wantedCity || null, providers };
   }
 
   /**

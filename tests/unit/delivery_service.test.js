@@ -128,6 +128,55 @@ async function run() {
       assert.strictEqual(await code(w.service.listDrivers({ userRole: 'admin' })), 'PERMISSION_DENIED', 'a caller with no identity is refused');
     }
 
+    // --------------------------------------------- providers a buyer can prefer
+    {
+      const w = makeWorld();
+      // Riders with marketplace profiles. Cities are folded on save, so "Douala"
+      // and "Yaoundé" are stored as "douala"/"yaounde".
+      await w.service.registerDriver('rider_1', { name: 'Alain', phone: '+237600000001', vehicleType: 'motorbike', serviceAreas: ['Douala'], baseFeeXaf: 1500 }, ADMIN);
+      await w.service.registerDriver('rider_2', { name: 'Bruno', phone: '+237600000002', vehicleType: 'car', serviceAreas: ['Yaoundé'] }, ADMIN);
+      await w.service.registerDriver('rider_3', { name: 'Chidi', phone: '+237600000003', vehicleType: 'van' }, ADMIN); // no areas -> serves anywhere
+      await w.service.registerDriver('rider_sus', { name: 'Sus', phone: '+237600000004', status: 'suspended', serviceAreas: ['Douala'] }, ADMIN);
+
+      // A bad vehicle or fee is refused, not silently dropped.
+      assert.strictEqual(await code(w.service.registerDriver('rider_x', { name: 'X', phone: '+237600000009', vehicleType: 'rocket' }, ADMIN)), 'VALIDATION_ERROR', 'unknown vehicle type refused');
+      assert.strictEqual(await code(w.service.registerDriver('rider_x', { name: 'X', phone: '+237600000009', baseFeeXaf: -5 }, ADMIN)), 'VALIDATION_ERROR', 'negative tariff refused');
+
+      assert.strictEqual(await code(w.service.listAvailableProviders({ userRole: 'customer' }, { city: 'Douala' })), 'PERMISSION_DENIED', 'an unauthenticated caller is refused');
+
+      const { city, providers } = await w.service.listAvailableProviders(BUYER, { city: 'Douala' });
+      assert.strictEqual(city, 'Douala');
+      const ids = providers.map((p) => p.id);
+      assert.ok(ids.includes('rider_1') && ids.includes('rider_3'), 'a rider serving Douala and one serving anywhere are offered');
+      assert.ok(!ids.includes('rider_2'), 'a rider who serves only Yaoundé is not offered for Douala');
+      assert.ok(!ids.includes('rider_sus'), 'a suspended rider is never offered');
+
+      const alain = providers.find((p) => p.id === 'rider_1');
+      assert.strictEqual(alain.feeXaf, 1500, 'the rider\'s own tariff is quoted');
+      assert.strictEqual(alain.vehicleType, 'motorbike');
+      assert.strictEqual(alain.rating, null, 'a rider with no reviews has no rating, not a fake one');
+      assert.strictEqual(alain.completedDeliveries, 0, 'and no completed deliveries yet');
+      assert.ok(!('phone' in alain), 'the rider\'s phone is NOT exposed to a buyer at quote time');
+
+      const chidi = providers.find((p) => p.id === 'rider_3');
+      // No tariff of their own: they quote the platform's standard rate for the
+      // city, whatever it is — never another rider's private price.
+      assert.notStrictEqual(chidi.feeXaf, 1500, 'a no-tariff rider does not borrow another rider\'s price');
+
+      const y = await w.service.listAvailableProviders(BUYER, { city: 'Yaoundé' });
+      const yids = y.providers.map((p) => p.id);
+      assert.ok(yids.includes('rider_2'), 'city match is accent-insensitive (Yaoundé = yaounde)');
+      assert.ok(yids.includes('rider_3'), 'the anywhere rider also serves Yaoundé');
+      assert.ok(!yids.includes('rider_1'), 'the Douala-only rider is not offered for Yaoundé');
+
+      // A city with no configured rate: the anywhere rider is still offered, but
+      // no fee is invented — the UI then shows "fee at checkout".
+      const far = await w.service.listAvailableProviders(BUYER, { city: 'Zzxqcity' });
+      const chidiFar = far.providers.find((p) => p.id === 'rider_3');
+      assert.ok(chidiFar, 'the anywhere rider is offered even for an unknown city');
+      assert.strictEqual(chidiFar.feeXaf, null, 'with no configured rate for that city, no fee is invented');
+    }
+
     // ------------------------------------------------------------------ create
     {
       const w = makeWorld();

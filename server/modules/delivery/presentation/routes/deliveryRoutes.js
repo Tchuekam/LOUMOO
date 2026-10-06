@@ -133,6 +133,14 @@ function createDeliveryRouter({
     ok(res, await svc().getDispatchBoard(callerOf(req), { view, limit }));
   }));
 
+  // The delivery providers a buyer can prefer at checkout, for a city (literal
+  // path: registered before /:id). Any signed-in user may ask; no private rider
+  // contact is returned.
+  router.get('/providers', authenticate, route(async (req, res) => {
+    const { city } = parseBody(schemas.ProvidersQuerySchema, req.query, 'query');
+    ok(res, await svc().listAvailableProviders(callerOf(req), { city }));
+  }));
+
   router.post('/drivers/:profileId', authenticate, route(async (req, res) => {
     const body = parseBody(schemas.RegisterDriverSchema, req.body, 'rider');
     ok(res, { driver: await svc().registerDriver(req.params.profileId, body, callerOf(req)) });

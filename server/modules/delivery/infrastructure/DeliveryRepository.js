@@ -128,6 +128,16 @@ function driverFromRow(row) {
     name: row.display_name,
     phone: row.phone,
     status: row.status,
+    // Marketplace profile (migration 018). A row written before 018 has these as
+    // NULL/absent, so each falls back to a sensible empty value.
+    photoUrl: row.photo_url || null,
+    vehicleType: row.vehicle_type || null,
+    serviceAreas: Array.isArray(row.service_areas) ? row.service_areas : [],
+    baseFeeXaf: row.base_fee_xaf === null || row.base_fee_xaf === undefined ? null : Number(row.base_fee_xaf),
+    ratingAvg: row.rating_avg === null || row.rating_avg === undefined ? null : Number(row.rating_avg),
+    ratingCount: Number(row.rating_count) || 0,
+    isAgency: Boolean(row.is_agency),
+    organizationId: row.organization_id || null,
     createdBy: row.created_by || null,
     createdAt: row.created_at,
     updatedAt: row.updated_at
@@ -389,6 +399,37 @@ class DeliveryRepository {
   }
 
   /**
+   * How many deliveries each rider has COMPLETED (status 'delivered'), as
+   * `Map<driverId, count>`. This is the rider's public "N deliveries" reputation,
+   * derived from the truth rather than a counter that could drift. Riders with
+   * none are absent.
+   */
+  async countCompletedByDriver() {
+    const db = this.db;
+    if (db) {
+      try {
+        const { data, error } = await db.from('deliveries').select('driver_id')
+          .eq('status', 'delivered')
+          .not('driver_id', 'is', null)
+          .limit(MAX_WORKLOAD_ROWS);
+        if (error) failRankingInput(error, 'DeliveryRepository.countCompletedByDriver');
+        else {
+          if ((data || []).length >= MAX_WORKLOAD_ROWS) {
+            logger.warn(`[DeliveryRepository] Completed-count hit its ${MAX_WORKLOAD_ROWS}-row cap; rider totals may be low.`);
+          }
+          return tally((data || []).map((r) => r.driver_id));
+        }
+      } catch (err) {
+        if (err instanceof InfrastructureError) throw err;
+        failRankingInput(err, 'DeliveryRepository.countCompletedByDriver');
+      }
+    }
+    return tally([...this._deliveries.values()]
+      .filter((d) => d.driverId && d.status === 'delivered')
+      .map((d) => d.driverId));
+  }
+
+  /**
    * Compare-and-swap update. `expected` is a map of record keys that must still
    * hold (e.g. `{ status: 'assigned', driverId: 'drv_1' }`; null means IS NULL).
    * Returns the updated record, or `null` when the row no longer matches — the
@@ -579,8 +620,21 @@ class DeliveryRepository {
     return d ? { ...d } : null;
   }
 
-  async upsertDriver({ profileId, name, phone, status = DRIVER_STATUS.ACTIVE, createdBy = null }) {
+  async upsertDriver({ profileId, name, phone, status = DRIVER_STATUS.ACTIVE, createdBy = null, profile = null }) {
     const now = new Date().toISOString();
+    // Only the marketplace columns the caller actually provided are written, so
+    // editing a name or phone never wipes a rider's photo, areas or tariff. On a
+    // conflict Postgres updates just the columns present in the payload.
+    const COLS = {
+      photoUrl: 'photo_url', vehicleType: 'vehicle_type', serviceAreas: 'service_areas',
+      baseFeeXaf: 'base_fee_xaf', isAgency: 'is_agency', organizationId: 'organization_id'
+    };
+    const profileCols = {};
+    if (profile && typeof profile === 'object') {
+      for (const key of Object.keys(COLS)) {
+        if (profile[key] !== undefined) profileCols[COLS[key]] = profile[key];
+      }
+    }
     const db = this.db;
     if (db) {
       try {
@@ -590,7 +644,8 @@ class DeliveryRepository {
           phone,
           status,
           created_by: createdBy,
-          updated_at: now
+          updated_at: now,
+          ...profileCols
         }, { onConflict: 'profile_id' }).select().single();
         if (error) {
           if (error.code === PG_FOREIGN_KEY_VIOLATION) throw new ValidationError('No account exists with that id', [{ field: 'profileId', message: 'Check the rider\'s account id.' }]);
@@ -604,10 +659,21 @@ class DeliveryRepository {
       }
     }
     const existing = this._drivers.get(profileId);
+    const base = existing || {
+      id: profileId, serviceAreas: [], photoUrl: null, vehicleType: null,
+      baseFeeXaf: null, ratingAvg: null, ratingCount: 0, isAgency: false, organizationId: null
+    };
     const stored = {
+      ...base,
       id: profileId, name, phone, status, createdBy,
       createdAt: existing ? existing.createdAt : now, updatedAt: now
     };
+    // Mirror the "only what was provided" merge for the in-memory engine.
+    if (profile && typeof profile === 'object') {
+      for (const key of Object.keys(COLS)) {
+        if (profile[key] !== undefined) stored[key] = profile[key];
+      }
+    }
     this._drivers.set(profileId, stored);
     return { ...stored };
   }
