@@ -57,6 +57,7 @@ header_and_styles = """<!DOCTYPE html>
 <script defer src="./src/services/deliveryTrackingScreen.js"></script>
 <script defer src="./src/services/dispatchUi.js"></script>
 <script defer src="./src/services/sellerDispatch.js"></script>
+<script defer src="./src/services/providerProfile.js"></script>
 <script defer src="./src/services/riderHub.js"></script>
 <script defer src="./src/services/ridersAdmin.js"></script>
 <script defer src="./src/services/clerkSession.js"></script>
@@ -17011,6 +17012,7 @@ class Component extends DCLogic {
         const vehicleNames = { motorbike: 'Motorbike', bicycle: 'Bicycle', car: 'Car', van: 'Van', tricycle: 'Tricycle', on_foot: 'On foot' };
         return {
           id: p.id,
+          city: this.state.providersCity || '',
           name: p.name || 'Delivery provider',
           photo: p.photoUrl || '',
           hasPhoto: Boolean(p.photoUrl),

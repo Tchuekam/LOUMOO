@@ -196,20 +196,25 @@ def get_checkout_view():
 
       <div style="display:flex;flex-direction:column;gap:10px">
         <sc-for list="{{ checkoutProviders }}" as="prov">
-          <button onClick="{{ () => prov.select() }}" aria-label="Choose {{ prov.name }}" class="checkout-pay-method {{ prov.selected ? 'active' : '' }}">
-            <div style="display:flex;align-items:center;gap:12px">
-              <div style="width:40px;height:40px;border-radius:50%;background:var(--color-surface-subtle);border:1px solid var(--color-divider);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;font:800 15px/1 var(--font-heading);color:var(--color-text-secondary)">
-                <sc-if value="{{ prov.hasPhoto }}"><img src="{{ prov.photo }}" alt="" style="width:100%;height:100%;object-fit:cover" loading="lazy" decoding="async"></sc-if>
-                <sc-if value="{{ !prov.hasPhoto }}">{{ prov.initial }}</sc-if>
+          <div>
+            <button onClick="{{ () => prov.select() }}" aria-label="Choose {{ prov.name }}" class="checkout-pay-method {{ prov.selected ? 'active' : '' }}">
+              <div style="display:flex;align-items:center;gap:12px">
+                <div style="width:40px;height:40px;border-radius:50%;background:var(--color-surface-subtle);border:1px solid var(--color-divider);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;font:800 15px/1 var(--font-heading);color:var(--color-text-secondary)">
+                  <sc-if value="{{ prov.hasPhoto }}"><img src="{{ prov.photo }}" alt="" style="width:100%;height:100%;object-fit:cover" loading="lazy" decoding="async"></sc-if>
+                  <sc-if value="{{ !prov.hasPhoto }}">{{ prov.initial }}</sc-if>
+                </div>
+                <div style="text-align:left">
+                  <div style="font:700 14px/1.2 var(--font-heading);color:var(--color-text)">{{ prov.name }} · <span style="font:600 11px/1 var(--font-body);color:var(--color-text-secondary)">{{ prov.kindLabel }}</span></div>
+                  <div style="font:400 11.5px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">{{ prov.ratingLabel }} · {{ prov.completedLabel }}<sc-if value="{{ prov.vehicleLabel }}"> · {{ prov.vehicleLabel }}</sc-if></div>
+                  <div style="font:800 12.5px/1 var(--font-heading);color:var(--color-text);margin-top:3px">{{ prov.feeLabel }}</div>
+                </div>
               </div>
-              <div style="text-align:left">
-                <div style="font:700 14px/1.2 var(--font-heading);color:var(--color-text)">{{ prov.name }} · <span style="font:600 11px/1 var(--font-body);color:var(--color-text-secondary)">{{ prov.kindLabel }}</span></div>
-                <div style="font:400 11.5px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">{{ prov.ratingLabel }} · {{ prov.completedLabel }}<sc-if value="{{ prov.vehicleLabel }}"> · {{ prov.vehicleLabel }}</sc-if></div>
-                <div style="font:800 12.5px/1 var(--font-heading);color:var(--color-text);margin-top:3px">{{ prov.feeLabel }}</div>
-              </div>
-            </div>
-            <div class="pay-radio-dot {{ prov.selected ? 'selected' : '' }}"></div>
-          </button>
+              <div class="pay-radio-dot {{ prov.selected ? 'selected' : '' }}"></div>
+            </button>
+            <!-- Sibling of the select button (never nested in it), so viewing the
+                 profile cannot toggle the choice. Opens the provider overlay. -->
+            <button type="button" data-open-provider data-provider-id="{{ prov.id }}" data-city="{{ prov.city }}" style="margin:2px 0 0;border:none;background:transparent;padding:4px 6px;font:600 11.5px/1 var(--font-heading);color:var(--color-accent);cursor:pointer">View profile &amp; reviews →</button>
+          </div>
         </sc-for>
       </div>
     </div>
