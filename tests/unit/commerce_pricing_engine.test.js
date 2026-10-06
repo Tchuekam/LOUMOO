@@ -107,19 +107,19 @@ async function run() {
   // 1.8 Quantity and arithmetic boundaries
   assert.throws(() => {
     PricingEngine.calculateOrderPricing([{ listingId: 'x', quantity: 0, unitPriceXaf: 1000 }]);
-  }, /Must be a positive integer/, 'Zero quantity must throw');
+  }, /must be a positive integer/i, 'Zero quantity must throw');
 
   assert.throws(() => {
     PricingEngine.calculateOrderPricing([{ listingId: 'x', quantity: -1, unitPriceXaf: 1000 }]);
-  }, /Must be a positive integer/, 'Negative quantity must throw');
+  }, /must be a positive integer/i, 'Negative quantity must throw');
 
   assert.throws(() => {
     PricingEngine.calculateOrderPricing([{ listingId: 'x', quantity: 1.5, unitPriceXaf: 1000 }]);
-  }, /Must be a positive integer/, 'Fractional quantity must throw');
+  }, /must be a positive integer/i, 'Fractional quantity must throw');
 
   assert.throws(() => {
     PricingEngine.calculateOrderPricing([{ listingId: 'x', quantity: 1, unitPriceXaf: -500 }]);
-  }, /Must be a non-negative integer/, 'Negative price must throw');
+  }, /must be a non-negative integer/i, 'Negative price must throw');
 
   console.log('    ✓ Authoritative pricing engine passed all arithmetic and defense checks.');
 

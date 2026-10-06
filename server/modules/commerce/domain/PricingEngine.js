@@ -84,7 +84,10 @@ class PricingEngine {
         sku: item.sku || null,
         unitPriceXaf: price,
         quantity: qty,
-        lineTotalXaf,
+        // Canonical name: OrderItem (and its toJSON/subtotal) use `totalLineXaf`,
+        // so the priced line items must too — `lineTotalXaf` was inconsistent and
+        // read by nothing downstream.
+        totalLineXaf: lineTotalXaf,
         sellerId: item.sellerId || item.listing?.sellerId || null,
         storeId: item.storeId || item.listing?.storeId || null,
         storeName: item.storeName || item.listing?.storeName || null,
