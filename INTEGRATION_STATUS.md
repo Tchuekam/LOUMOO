@@ -233,20 +233,35 @@ reliable gate for the work done is `npm run test:delivery` (all suites green
 through `delivery_circuit`; the only failure is the known pre-existing
 `delivery_circuit_e2e` seeding issue).
 
-## 5b. What is LEFT to do (follow-ons)
+## 5b. Follow-ons B & C — DONE 2026-10-06
 
-### B. Follow riders & agencies (account layer)
-Reuse `iam.social_follows` — extend `target_type` to include riders/agencies (or map
-riders as `user` and agencies as `seller`/org). Add rider/agency **public profiles**
-(photo, rating, reviews, zones, vehicle, tariffs, follow button), and a
-discover/followed list in the account hub. Do NOT build a parallel follow system.
+### B — follow riders & agencies ✅ `f849925` (backend) + `5240ef9` (frontend)
+Reused the social graph with **no follow migration**: a provider (rider or agency)
+is followed/reviewed by its account id as `target_type: user`. Backend:
+`GET /providers/:id` (public profile + best-effort follow state & reviews, 404 for
+unknown/suspended, no phone) and `GET /providers/following`. Frontend:
+`src/services/providerProfile.js` — a profile overlay (facts, agency note, reviews,
+Follow/Following) and a "Riders & agencies you follow" list, opened from a checkout
+picker "View profile & reviews" link (a sibling of the select button, never nested)
+and an account-hub dashboard card. Follow/unfollow/review reuse `/api/v1/social/*`.
 
-### C. Agencies as first-class providers
-`delivery_drivers.organization_id` (FK) and `is_agency` already exist, and
-`organizations` has `org_type='AGENCY'` + `organization_members`. Build: agency
-profile, its riders (org members), agency-level tariffs/areas, and let an agency
-receive a delivery and assign it to one of its riders. The provider quote endpoint
-already returns `isAgency`.
+### C — agencies as first-class providers ✅ `f849925` (backend) + `e48f405` (frontend)
+Agencies are just provider records (reusing migration 018's `is_agency` /
+`organization_id` + `iam.organization_members`). `registerDriver` now accepts
+`isAgency` + `organizationId` (required together); an agency is quoted, preferred
+and assigned exactly like a rider, flagged `isAgency`. `GET /providers/:id/riders`
+lists an agency's active rider members; `POST /:id/delegate {riderId}` hands a
+held delivery to one of them (admin / seller / active org member; before pickup;
+becomes a fresh offer). Org membership is resolved through an injectable seam
+(default = `iam.organization_members`), best-effort and fail-safe. Frontend: the
+buyer sees the agency badge + "delivered by one of its riders" note; the seller's
+order screen offers "Delegate to a rider" for an agency-held delivery.
+Tested in `delivery_service` (registration + validation, roster, delegation happy
+path + refusals, provider profiles + 404s, graceful social degradation).
+
+**Still environment-limited (unchanged):** none of the B/C UI was exercised against
+a live authenticated session (the §4 / F caveat). `npm run test:delivery` stays
+green through `delivery_circuit`.
 
 ---
 
