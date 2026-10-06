@@ -564,6 +564,76 @@ class OrderRepository {
     return existing;
   }
 
+  /**
+   * Concurrency-safe atomic payment/escrow attestation update, mirroring the
+   * fulfillment updater. Guards on the expected current payment status so a
+   * racing write cannot be clobbered; the caller (the delivery escrow sync, an
+   * order cancellation) decides the legal transition. No real money moves — this
+   * is the buyer-protection status machine (pending -> escrow_held -> released,
+   * or -> refundable -> refunded).
+   */
+  async updatePaymentStatusAtomic(orderId, expectedCurrentStatus, nextStatus, { note = '', updatedBy = 'system' } = {}) {
+    const existing = await this.findOrderByIdFresh(orderId);
+    if (!existing) {
+      throw new NotFoundError('Order not found');
+    }
+
+    if (existing.paymentStatus !== expectedCurrentStatus) {
+      throw new ConflictError(
+        `Concurrency conflict: Order payment status is currently "${existing.paymentStatus}", ` +
+        `cannot transition from "${expectedCurrentStatus}" to "${nextStatus}".`
+      );
+    }
+
+    const newTimelineEntry = {
+      paymentStatus: nextStatus,
+      previousPaymentStatus: expectedCurrentStatus,
+      timestamp: new Date().toISOString(),
+      updatedBy,
+      note
+    };
+
+    const updatedTimeline = [...(existing.timeline || []), newTimelineEntry];
+
+    if (this.db) {
+      try {
+        const { data, error } = await this.db
+          .from('orders')
+          .update({
+            payment_status: nextStatus,
+            updated_at: new Date().toISOString(),
+            shipping_address: {
+              ...existing.shippingAddress,
+              _timeline: updatedTimeline
+            }
+          })
+          .eq('id', orderId)
+          .eq('payment_status', expectedCurrentStatus)
+          .select()
+          .single();
+
+        if (error) {
+          handleDatabaseFailure(error, 'OrderRepository.updatePaymentStatusAtomic');
+        }
+
+        if (data) {
+          const updated = this._mapRowToOrder(data);
+          this._inMemoryOrders.set(updated.id, updated);
+          return updated;
+        }
+      } catch (err) {
+        handleDatabaseFailure(err, 'OrderRepository.updatePaymentStatusAtomic');
+      }
+    }
+
+    // In-memory update (only after the durable write path has been attempted)
+    existing.paymentStatus = nextStatus;
+    existing.timeline = updatedTimeline;
+    existing.updatedAt = new Date().toISOString();
+    this._inMemoryOrders.set(existing.id, existing);
+    return existing;
+  }
+
 
   // --- Test Harness Seed Helpers ---
   seedListing(listing) {

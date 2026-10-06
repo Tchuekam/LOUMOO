@@ -14,10 +14,21 @@ const FULFILLMENT_STATUS = Object.freeze({
   CANCELLED: 'cancelled'
 });
 
+// The buyer-protection attestation lifecycle. NO real money moves (pay on
+// delivery): this is an honest status machine, driven by delivery events.
+//   pending      -> order placed, nothing in a rider's hands yet
+//   escrow_held  -> the parcel is in a rider's custody, protection active
+//   released     -> handover verified (delivered); settled, seller paid [terminal]
+//   refundable   -> the order was cancelled; nothing owed / refund due if paid
+//   refunded     -> an administrator completed the refund [terminal]
+// `paid` is kept for backward compatibility; the pay-on-delivery flow does not
+// set it.
 const PAYMENT_STATUS = Object.freeze({
   PENDING: 'pending',
   PAID: 'paid',
   ESCROW_HELD: 'escrow_held',
+  RELEASED: 'released',
+  REFUNDABLE: 'refundable',
   REFUNDED: 'refunded'
 });
 

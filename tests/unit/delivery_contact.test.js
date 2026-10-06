@@ -28,6 +28,7 @@ const { DeliveryRepository, DeliveryNotReadyError } = require('../../server/modu
 const { DeliveryEvents } = require('../../server/modules/delivery/infrastructure/DeliveryEvents');
 const { OrderRepository } = require('../../server/modules/commerce/infrastructure/OrderRepository');
 const { OrderCreationService } = require('../../server/modules/commerce/application/OrderCreationService');
+const { OrderLifecycleService } = require('../../server/modules/commerce/application/OrderLifecycleService');
 const { Order, FULFILLMENT_STATUS, DELIVERY_METHOD, PAYMENT_STATUS } = require('../../server/modules/commerce/domain/Order');
 const { codeFor } = require('../../server/modules/delivery/domain/HandoverCode');
 const { MAX_HANDOVER_ATTEMPTS } = require('../../server/modules/delivery/domain/Delivery');
@@ -398,6 +399,80 @@ async function testTheCircuit() {
   }
 }
 
+// --------------------------------- 4b. escrow attestation follows the delivery (item D)
+// No real money moves (pay on delivery): Order.paymentStatus is an honest status
+// machine driven by delivery events — held when the rider has the parcel, released
+// on a verified handover, refundable when the order is cancelled.
+
+/** Saves a fresh, pending (not-yet-held) home-delivery order for the escrow tests. */
+async function pendingOrder(world) {
+  return world.orders.saveOrder(new Order({
+    buyerId: 'buyer_1',
+    sellerId: 'seller_1',
+    items: [{ listingId: 'lst_1', title: 'Phone', unitPriceXaf: 50000, quantity: 1, sellerId: 'seller_1', storeName: 'Tech Shop' }],
+    shippingAddress: { fullName: 'Awa Njoya', phone: '+237622222222', street: 'Rue 1', city: 'Douala' },
+    deliveryMethod: DELIVERY_METHOD.HOME_DELIVERY,
+    paymentStatus: PAYMENT_STATUS.PENDING,
+    fulfillmentStatus: FULFILLMENT_STATUS.PROCESSING
+  }));
+}
+
+async function testEscrowAttestation() {
+  const rec = recordNotifications();
+  try {
+    const paymentOf = async (world, id) => (await world.orders.findOrderByIdFresh(id)).paymentStatus;
+
+    // Held on pickup, released on the verified handover.
+    {
+      const w = makeWorld();
+      await w.service.registerDriver('rider_1', { name: 'Alain', phone: '+237600000001' }, ADMIN);
+      const order = await pendingOrder(w);
+      const created = await w.service.createDelivery(order.id, SELLER, { dropoffLocation: { lat: 4.0601, lng: 9.7679 } });
+      await w.service.assignDriver(created.id, 'rider_1', SELLER);
+      await w.service.acceptDelivery(created.id, RIDER);
+      assert.strictEqual(await paymentOf(w, order.id), PAYMENT_STATUS.PENDING, 'nothing is held until the parcel is collected');
+
+      await w.service.recordLocation(created.id, { ...NEAR }, RIDER);
+      w.clock.advance(5000);
+      await w.service.updateStatus(created.id, 'picked_up', null, RIDER);
+      assert.strictEqual(await paymentOf(w, order.id), PAYMENT_STATUS.ESCROW_HELD, 'held once the rider has the parcel');
+
+      await w.service.updateStatus(created.id, 'arrived', null, RIDER);
+      assert.strictEqual(await paymentOf(w, order.id), PAYMENT_STATUS.ESCROW_HELD, 'still held on arrival');
+
+      await w.service.completeDelivery(created.id, codeFor(created.id, 1), RIDER);
+      assert.strictEqual(await paymentOf(w, order.id), PAYMENT_STATUS.RELEASED, 'released on the verified handover');
+    }
+
+    // A failed attempt is recoverable: it does NOT walk escrow back from held.
+    {
+      const w = makeWorld();
+      await w.service.registerDriver('rider_1', { name: 'Alain', phone: '+237600000001' }, ADMIN);
+      const order = await pendingOrder(w);
+      const created = await w.service.createDelivery(order.id, SELLER, { dropoffLocation: { lat: 4.0601, lng: 9.7679 } });
+      await w.service.assignDriver(created.id, 'rider_1', SELLER);
+      await w.service.acceptDelivery(created.id, RIDER);
+      await w.service.recordLocation(created.id, { ...NEAR }, RIDER);
+      w.clock.advance(5000);
+      await w.service.updateStatus(created.id, 'picked_up', null, RIDER);
+      await w.service.updateStatus(created.id, 'failed', 'Customer unreachable', RIDER);
+      assert.strictEqual(await paymentOf(w, order.id), PAYMENT_STATUS.ESCROW_HELD, 'a failed attempt stays held — it may be retried');
+    }
+
+    // Cancelling the order makes it refundable (no money moved).
+    {
+      const w = makeWorld();
+      const lifecycle = new OrderLifecycleService(w.orders);
+      const order = await pendingOrder(w);
+      const cancelled = await lifecycle.cancelOrder(order.id, 'buyer_1', 'Changed my mind');
+      assert.strictEqual(cancelled.fulfillmentStatus, FULFILLMENT_STATUS.CANCELLED);
+      assert.strictEqual(cancelled.paymentStatus, PAYMENT_STATUS.REFUNDABLE, 'a cancelled order is refundable');
+    }
+  } finally {
+    rec.restore();
+  }
+}
+
 // ------------------------------------------------- 5. a missing migration is a clear 503
 
 function brokenDb(errorCode) {
@@ -470,9 +545,10 @@ async function run() {
     await testOrderPlacement();
     await testPreferredProviderPricing();
     await testTheCircuit();
+    await testEscrowAttestation();
     await testMissingMigration();
     await testAdminLookup();
-    console.log('    ✓ Every party is contacted in their own role; exceptions reach an admin; a missing migration is a clear 503.');
+    console.log('    ✓ Every party is contacted in their own role; escrow follows the delivery; exceptions reach an admin; a missing migration is a clear 503.');
   } finally {
     if (!hadSecret) config.supabase.jwtSecret = hadSecret;
   }

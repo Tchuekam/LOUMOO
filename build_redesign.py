@@ -17063,7 +17063,7 @@ class Component extends DCLogic {
         const o = this.state.currentOrder;
         const money = (n) => 'XAF ' + fmt(n || 0);
         if (!o) {
-          return { id: '', orderNumber: '', placedAt: '', statusLabel: '', totalLabel: '', payVia: '', items: [], subtotalLabel: '', shippingLabel: '', cityLabel: '', seller: '', sellerPhone: '', canTrack: false, noTrackNote: '' };
+          return { id: '', orderNumber: '', placedAt: '', statusLabel: '', totalLabel: '', payVia: '', items: [], subtotalLabel: '', shippingLabel: '', cityLabel: '', seller: '', sellerPhone: '', canTrack: false, noTrackNote: '', escrowTitle: 'Pay on delivery', escrowNote: '', escrowOk: true };
         }
         const circuit = typeof window !== 'undefined' ? window.LoumooCircuit : null;
         const sent = Boolean(o.id) && o.serverSynced !== false;
@@ -17083,14 +17083,30 @@ class Component extends DCLogic {
         if (!sent) noTrackNote = 'This order was saved on this device only, so no seller or rider knows about it. Add the items to your bag again to place it.';
         else if (cancelled) noTrackNote = 'This order was cancelled.';
         else if (!home) noTrackNote = 'This order is for pickup, so there is no delivery to track.';
+        // The buyer-protection attestation, in the buyer's words. NO money moves
+        // (pay on delivery); each state is driven by the delivery (spec item D):
+        // pending -> held (rider has it) -> released (delivered), or refundable /
+        // refunded if the order was cancelled or an admin refunded it.
+        const totalLabel = money(o.totalXaf);
+        const via = o.paymentMethod && o.paymentMethod !== 'Pay on delivery' ? ' via ' + o.paymentMethod : '';
+        const escrow = (() => {
+          switch (o.paymentStatus) {
+            case 'escrow_held': return { title: 'Protected — on its way', note: 'Your order is under LOUMOO Buyer Protection while the rider has it. You pay ' + totalLabel + ' on delivery' + via + '.', tone: 'ok' };
+            case 'released': return { title: 'Delivered & settled', note: 'Your handover code was verified, so the seller has been paid. Nothing else is owed.', tone: 'ok' };
+            case 'refundable': return { title: 'Refund due', note: 'This order was cancelled. With pay-on-delivery no charge was taken; if you had already paid, a refund is due.', tone: 'muted' };
+            case 'refunded': return { title: 'Refunded', note: 'This order has been refunded.', tone: 'muted' };
+            case 'paid': return { title: 'Paid', note: 'Your payment is recorded.', tone: 'ok' };
+            default: return { title: 'Pay on delivery', note: 'No charge has been taken. You pay ' + totalLabel + ' when your order arrives' + via + '.', tone: 'ok' };
+          }
+        })();
         return {
           id: o.id || '',
           orderNumber: o.orderNumber || '',
           placedAt: this._orderDateLabel(o.createdAt),
           statusLabel: circuit ? circuit.orderStatusLabel(o) : this._orderStatusLabel(o.status),
-          totalLabel: money(o.totalXaf),
+          totalLabel: totalLabel,
           // " via MTN MoMo" only when a method was actually chosen on this device.
-          payVia: o.paymentMethod && o.paymentMethod !== 'Pay on delivery' ? ' via ' + o.paymentMethod : '',
+          payVia: via,
           items: items,
           subtotalLabel: money(subtotal),
           shippingLabel: o.shippingFeeXaf != null ? money(o.shippingFeeXaf) : '—',
@@ -17098,7 +17114,11 @@ class Component extends DCLogic {
           seller: o.seller || 'the seller',
           sellerPhone: o.sellerPhone || o.sellerWhatsapp || '',
           canTrack: sent && home && !cancelled,
-          noTrackNote: noTrackNote
+          noTrackNote: noTrackNote,
+          // Buyer-protection attestation (item D).
+          escrowTitle: escrow.title,
+          escrowNote: escrow.note,
+          escrowOk: escrow.tone === 'ok'
         };
       })(),
       // ── Order confirmation (success screen) ──

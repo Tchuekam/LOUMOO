@@ -511,13 +511,47 @@ class DeliveryService {
     }
   }
 
-  /** Repair path: re-applies the order status for a delivery. Admin/ops use. */
+  /**
+   * Moves the order's buyer-protection attestation (paymentStatus) in line with
+   * the delivery: picked_up -> escrow_held, delivered -> released. Idempotent and
+   * best-effort, exactly like _syncOrder — the delivery is the source of truth, so
+   * a failure here is logged and repairable (reconcileOrder), never a reason to
+   * fail a rider's request after the parcel has already moved. `released` and
+   * `refunded` are terminal and never walked back automatically. NO money moves:
+   * this is an honest status machine for pay-on-delivery (spec item D).
+   */
+  async _syncEscrow(delivery, actorId) {
+    const target = DeliveryStateMachine.paymentStatusFor(delivery.status);
+    if (!target) return;
+    try {
+      const order = await this._freshOrder(delivery.orderId);
+      if (!order) {
+        logger.error(`[Delivery] Order ${delivery.orderId} for delivery ${delivery.id} not found while syncing escrow.`);
+        return;
+      }
+      const current = order.paymentStatus;
+      // Settled states are final: a delivered (released) or administratively
+      // refunded order is not re-held by a late delivery event.
+      if (current === PAYMENT_STATUS.RELEASED || current === PAYMENT_STATUS.REFUNDED) return;
+      if (current === target) return;
+      await this.orders.updatePaymentStatusAtomic(order.id, current, target, {
+        note: `Escrow ${target}: delivery ${delivery.id} is ${delivery.status}`,
+        updatedBy: actorId || 'delivery'
+      });
+      await this._invalidateBuyerCache(order.buyerId);
+    } catch (err) {
+      logger.error(`[Delivery] Could not sync escrow for order ${delivery.orderId} to "${target}" for delivery ${delivery.id}: ${err.message}`);
+    }
+  }
+
+  /** Repair path: re-applies the order status AND escrow for a delivery. Admin/ops use. */
   async reconcileOrder(deliveryId, callerInput) {
     const caller = this._caller(callerInput);
     if (!this._isAdmin(caller.userRole)) throw new AuthorizationError('Only an administrator can reconcile an order.');
     const delivery = await this.repo.findById(deliveryId);
     if (!delivery) throw new NotFoundError('Delivery', deliveryId);
     await this._syncOrder(delivery, 'reconcile');
+    await this._syncEscrow(delivery, 'reconcile');
     return { reconciled: true, deliveryStatus: delivery.status };
   }
 
@@ -996,6 +1030,7 @@ class DeliveryService {
     );
 
     await this._syncOrder(updated, caller.userId);
+    await this._syncEscrow(updated, caller.userId);
 
     const buyerMessage = {
       [S.PICKED_UP]: { title: 'Your order is on its way', body: 'The rider has your parcel.', tone: 'accent' },
@@ -1148,6 +1183,7 @@ class DeliveryService {
 
       await this._record(updated, S.ARRIVED, caller.userId, 'Handover code verified');
       await this._syncOrder(updated, caller.userId);
+      await this._syncEscrow(updated, caller.userId);
       this._notify(updated.buyerId, {
         audience: 'buyer',
         title: 'Order delivered',

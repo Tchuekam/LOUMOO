@@ -6,7 +6,7 @@
  */
 
 const { DELIVERY_STATUS: S } = require('./Delivery');
-const { FULFILLMENT_STATUS } = require('../../commerce/domain/Order');
+const { FULFILLMENT_STATUS, PAYMENT_STATUS } = require('../../commerce/domain/Order');
 const { ConflictError, ValidationError } = require('../../../shared/errors/AppError');
 
 const ALLOWED_TRANSITIONS = Object.freeze({
@@ -30,6 +30,18 @@ const ALLOWED_TRANSITIONS = Object.freeze({
 const ORDER_STATUS_FOR_DELIVERY = Object.freeze({
   [S.PICKED_UP]: FULFILLMENT_STATUS.IN_TRANSIT,
   [S.DELIVERED]: FULFILLMENT_STATUS.DELIVERED
+});
+
+// How a delivery status moves the order's buyer-protection attestation
+// (Order.paymentStatus). NO real money — pay on delivery. The parcel entering a
+// rider's custody is when protection is honestly "held"; a verified handover
+// settles it. `failed` and `cancelled` deliveries are recoverable (the seller
+// re-dispatches), so they do NOT touch escrow — only an actual ORDER
+// cancellation makes it refundable, and that is driven from the order lifecycle,
+// not here. `released` and `refunded` are terminal (the sync guards them).
+const PAYMENT_STATUS_FOR_DELIVERY = Object.freeze({
+  [S.PICKED_UP]: PAYMENT_STATUS.ESCROW_HELD,
+  [S.DELIVERED]: PAYMENT_STATUS.RELEASED
 });
 
 class DeliveryStateMachine {
@@ -70,6 +82,11 @@ class DeliveryStateMachine {
   static orderStatusFor(deliveryStatus) {
     return ORDER_STATUS_FOR_DELIVERY[deliveryStatus] || null;
   }
+
+  /** The escrow (payment) attestation this delivery status implies, or null. */
+  static paymentStatusFor(deliveryStatus) {
+    return PAYMENT_STATUS_FOR_DELIVERY[deliveryStatus] || null;
+  }
 }
 
-module.exports = { DeliveryStateMachine, ALLOWED_TRANSITIONS, ORDER_STATUS_FOR_DELIVERY };
+module.exports = { DeliveryStateMachine, ALLOWED_TRANSITIONS, ORDER_STATUS_FOR_DELIVERY, PAYMENT_STATUS_FOR_DELIVERY };
