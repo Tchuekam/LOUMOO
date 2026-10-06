@@ -168,9 +168,56 @@ def get_checkout_view():
       </sc-if>
     </div>
 
+    <!-- Choose your delivery provider (home delivery only). Real providers from
+         the quote endpoint; picking one is optional and sets the fee shown, which
+         the server then charges. With none chosen the seller arranges a rider. -->
+    <sc-if value="{{ checkoutShowProviders }}">
+    <div class="card-premium">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+        <div style="font:800 12px/1 var(--font-heading);letter-spacing:.06em;color:var(--color-text-secondary);text-transform:uppercase">2. CHOOSE YOUR DELIVERY</div>
+        <span style="font:600 11px/1 var(--font-body);color:var(--color-text-secondary)">Optional</span>
+      </div>
+      <div style="font:400 12px/1.4 var(--font-body);color:var(--color-text-secondary);margin-bottom:14px">Pick a rider or agency to carry your order, or leave it and the store will arrange one.</div>
+
+      <sc-if value="{{ checkoutProvidersLoading }}">
+        <div style="font:500 12.5px/1.4 var(--font-body);color:var(--color-text-secondary);padding:8px 0">Finding delivery providers near you…</div>
+      </sc-if>
+
+      <sc-if value="{{ checkoutProvidersError }}">
+        <div style="display:flex;flex-direction:column;gap:10px;background:var(--color-surface-subtle);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:12px 14px">
+          <div style="font:500 12.5px/1.4 var(--font-body);color:var(--color-text)">{{ checkoutProvidersError }}</div>
+          <button onClick="{{ retryProviders }}" class="btn btn-secondary btn-sm" style="align-self:flex-start;height:36px">TRY AGAIN</button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ checkoutProvidersEmpty }}">
+        <div style="font:400 12.5px/1.4 var(--font-body);color:var(--color-text-secondary);padding:4px 0">No delivery providers list your area yet — place your order and the store will arrange a rider for you.</div>
+      </sc-if>
+
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <sc-for list="{{ checkoutProviders }}" as="prov">
+          <button onClick="{{ () => prov.select() }}" aria-label="Choose {{ prov.name }}" class="checkout-pay-method {{ prov.selected ? 'active' : '' }}">
+            <div style="display:flex;align-items:center;gap:12px">
+              <div style="width:40px;height:40px;border-radius:50%;background:var(--color-surface-subtle);border:1px solid var(--color-divider);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;font:800 15px/1 var(--font-heading);color:var(--color-text-secondary)">
+                <sc-if value="{{ prov.hasPhoto }}"><img src="{{ prov.photo }}" alt="" style="width:100%;height:100%;object-fit:cover" loading="lazy" decoding="async"></sc-if>
+                <sc-if value="{{ !prov.hasPhoto }}">{{ prov.initial }}</sc-if>
+              </div>
+              <div style="text-align:left">
+                <div style="font:700 14px/1.2 var(--font-heading);color:var(--color-text)">{{ prov.name }} · <span style="font:600 11px/1 var(--font-body);color:var(--color-text-secondary)">{{ prov.kindLabel }}</span></div>
+                <div style="font:400 11.5px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">{{ prov.ratingLabel }} · {{ prov.completedLabel }}<sc-if value="{{ prov.vehicleLabel }}"> · {{ prov.vehicleLabel }}</sc-if></div>
+                <div style="font:800 12.5px/1 var(--font-heading);color:var(--color-text);margin-top:3px">{{ prov.feeLabel }}</div>
+              </div>
+            </div>
+            <div class="pay-radio-dot {{ prov.selected ? 'selected' : '' }}"></div>
+          </button>
+        </sc-for>
+      </div>
+    </div>
+    </sc-if>
+
     <!-- Telecom Payment Selection -->
     <div class="card-premium">
-      <div style="font:800 12px/1 var(--font-heading);letter-spacing:.06em;color:var(--color-text-secondary);text-transform:uppercase;margin-bottom:14px">2. SELECT PAYMENT METHOD</div>
+      <div style="font:800 12px/1 var(--font-heading);letter-spacing:.06em;color:var(--color-text-secondary);text-transform:uppercase;margin-bottom:14px">3. SELECT PAYMENT METHOD</div>
 
       <div style="display:flex;flex-direction:column;gap:10px">
         

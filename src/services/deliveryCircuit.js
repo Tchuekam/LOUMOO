@@ -413,10 +413,10 @@
    * nothing, is treated as a home delivery, which is both the common case and the
    * safe default (it is the one that asks for an address).
    */
-  function toOrderPayload(items, address, deliveryMethod) {
+  function toOrderPayload(items, address, deliveryMethod, preferredDriverId) {
     var a = address || {};
     var method = deliveryMethod === 'STORE_PICKUP' ? 'STORE_PICKUP' : 'HOME_DELIVERY';
-    return {
+    var payload = {
       items: (items || []).map(function (it) {
         var id = String(it.listingId || it.productId || it.id || '');
         return {
@@ -436,6 +436,13 @@
       },
       deliveryMethod: method
     };
+    // The provider the buyer preferred, only for a home delivery. A hint for the
+    // seller's dispatch — the server re-checks it and prices by it — never sent
+    // for a pickup (no rider), and omitted entirely when there is no preference.
+    if (method === 'HOME_DELIVERY' && preferredDriverId) {
+      payload.preferredDriverId = String(preferredDriverId);
+    }
+    return payload;
   }
 
   /**

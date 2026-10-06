@@ -101,6 +101,17 @@ class DeliveryApiClient {
   }
 
   /**
+   * The delivery providers a buyer can prefer at checkout for a city. Any signed-in
+   * user may ask. No rider contact is returned — only the choosable facts (name,
+   * photo, vehicle, rating-or-null, deliveries completed, the fee they quote).
+   * @param {string} [city] the delivery city; omitted lists providers for anywhere.
+   * @returns {Promise<{city: string|null, providers: Array<{id, name, photoUrl, vehicleType, isAgency, rating, completedDeliveries, openDeliveries, serviceAreas, feeXaf}>}>}
+   */
+  async getProviders(city) {
+    return this._request(`/providers${this._qs({ city })}`);
+  }
+
+  /**
    * The 4-digit handover code — the order BUYER only, and only from `accepted`
    * to `arrived`. Seller, admin and rider get 403.
    * @returns {Promise<{code: string, digits: number, attemptsRemaining: number}>}

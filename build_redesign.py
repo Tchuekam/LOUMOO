@@ -7142,6 +7142,12 @@ class Component extends DCLogic {
     // any account with no addresses of its own displayed as its own.
     addressesList: [],
     addressesLoading: false,
+    // Delivery providers the buyer can prefer at checkout (home delivery only).
+    providers: [],
+    providersLoading: false,
+    providersError: '',
+    providersCity: null,
+    selectedProviderId: null,
     addressFormName: '',
     addressFormPhone: '',
     addressFormCity: 'douala',
@@ -8125,7 +8131,7 @@ class Component extends DCLogic {
   // the placed items leave the bag, so if a later store fails the shopper is left
   // with exactly what was not ordered and can try again. Resolves with the orders
   // that were placed and, if one was refused, why.
-  _placeBagAsOrders(groups, address, method, images, deliveryMethod) {
+  _placeBagAsOrders(groups, address, method, images, deliveryMethod, preferredDriverId) {
     const api = getApi();
     const circuit = window.LoumooCircuit;
     const placed = [];
@@ -8134,7 +8140,7 @@ class Component extends DCLogic {
     const step = (i) => {
       if (i >= groups.length) return Promise.resolve({ placed: placed, failure: null });
       const group = groups[i];
-      return api.createOrder(circuit.toOrderPayload(group.items, address, deliveryMethod)).then((serverOrder) => {
+      return api.createOrder(circuit.toOrderPayload(group.items, address, deliveryMethod, preferredDriverId)).then((serverOrder) => {
         if (!serverOrder || !serverOrder.id) {
           // A reply without an order means the seller cannot have been told.
           const unconfirmed = new Error('The order was not confirmed.');
@@ -8183,6 +8189,28 @@ class Component extends DCLogic {
       ? (nameOk && phoneOk)
       : (Boolean(address.street.trim() && address.city.trim()) && phoneOk && nameOk);
     return { address: address, method: method, hasDestination: hasDestination };
+  };
+  // Load the delivery providers a buyer can prefer for a city (home delivery). The
+  // list comes from the real quote endpoint, so every provider, fee and rating is
+  // real. Guarded so it fetches once per city, not on every render; a selection
+  // that is no longer offered is dropped.
+  _loadProviders = (city, force) => {
+    const api = (typeof window !== 'undefined') && window.deliveryApi;
+    if (!api || typeof api.getProviders !== 'function') return;
+    const normCity = String(city || '').trim();
+    if (this.state.providersLoading) return;
+    if (!force && this.state.providersCity === normCity && (this.state.providers.length || this.state.providersError)) return;
+    this.setState({ providersLoading: true, providersError: '', providersCity: normCity });
+    api.getProviders(normCity).then((res) => {
+      if (this._unmounted) return;
+      const list = (res && res.providers) || [];
+      const keep = this.state.selectedProviderId && list.some((p) => p.id === this.state.selectedProviderId)
+        ? this.state.selectedProviderId : null;
+      this.setState({ providers: list, providersLoading: false, selectedProviderId: keep });
+    }).catch((e) => {
+      if (this._unmounted) return;
+      this.setState({ providers: [], providersLoading: false, selectedProviderId: null, providersError: (e && e.message) || 'Could not load delivery options.' });
+    });
   };
   // City → IATA-ish code + airport label for the boarding pass.
   _cityCode = (city) => {
@@ -8904,6 +8932,11 @@ class Component extends DCLogic {
     } else if (screen === 'orders' || screen === 'orderDetail') {
       // The server's orders carry the live status; refresh them on entry.
       this.loadServerOrders();
+    } else if (screen === 'checkout') {
+      // The buyer can prefer a delivery provider: load the ones serving their
+      // city (or everywhere, before an address is chosen). Home delivery only.
+      const dest = this._resolveDeliveryDestination();
+      if (dest.method === 'HOME_DELIVERY') this._loadProviders(dest.address.city || '');
     }
   }
 
@@ -12745,7 +12778,15 @@ class Component extends DCLogic {
     // checkout must show the same, or the shown total would not match the order.
     const isPickup = checkoutDest.method === 'STORE_PICKUP';
     const deliveryCity = checkoutDest.address.city || this.state.regCity || (this.state.addressFormCity || 'Douala');
-    const deliveryFee = (cartSubtotal > 0 && !isPickup) ? resolveCityDeliveryFee(deliveryCity) : 0;
+    // When the buyer has chosen a provider, the fee is THAT provider's quote — the
+    // server prices the order the same way, so what is shown is what is charged.
+    // Otherwise it is the city's standard rate.
+    const selectedProvider = (this.state.providers || []).find(p => p.id === this.state.selectedProviderId) || null;
+    const deliveryFee = (isPickup || cartSubtotal <= 0)
+      ? 0
+      : (selectedProvider && Number.isFinite(Number(selectedProvider.feeXaf))
+          ? Number(selectedProvider.feeXaf)
+          : resolveCityDeliveryFee(deliveryCity));
     const line = cartSubtotal;
     const items = cartSubtotal;
     const shipStyle = o => ({
@@ -16956,6 +16997,36 @@ class Component extends DCLogic {
         this.openAddresses();
       },
 
+      // ── Choose your delivery provider (home delivery only) ──
+      // Real providers from the quote endpoint. The buyer may pick one; it is a
+      // preference (the seller confirms) and it sets the delivery fee shown, which
+      // the server then charges. Picking is optional: with none chosen the order
+      // still goes, priced at the city rate, and the seller arranges a rider.
+      checkoutShowProviders: !isPickup && checkoutDest.hasDestination,
+      checkoutProvidersLoading: Boolean(this.state.providersLoading),
+      checkoutProvidersError: this.state.providersError || '',
+      checkoutProvidersEmpty: !this.state.providersLoading && !this.state.providersError && (this.state.providers || []).length === 0,
+      checkoutSelectedProviderId: this.state.selectedProviderId || '',
+      checkoutProviders: (this.state.providers || []).map((p) => {
+        const vehicleNames = { motorbike: 'Motorbike', bicycle: 'Bicycle', car: 'Car', van: 'Van', tricycle: 'Tricycle', on_foot: 'On foot' };
+        return {
+          id: p.id,
+          name: p.name || 'Delivery provider',
+          photo: p.photoUrl || '',
+          hasPhoto: Boolean(p.photoUrl),
+          initial: String(p.name || '?').trim().charAt(0).toUpperCase() || '?',
+          kindLabel: p.isAgency ? 'Agency' : 'Rider',
+          vehicleLabel: vehicleNames[p.vehicleType] || '',
+          ratingLabel: (p.rating && p.rating.average != null) ? ('★ ' + Number(p.rating.average).toFixed(1)) : 'New',
+          ratingCountLabel: (p.rating && p.rating.count) ? (Number(p.rating.count) + ' ratings') : 'No ratings yet',
+          completedLabel: (Number(p.completedDeliveries) || 0) + ' deliveries',
+          feeLabel: Number.isFinite(Number(p.feeXaf)) ? ('XAF ' + fmt(Number(p.feeXaf))) : 'Fee at checkout',
+          selected: p.id === this.state.selectedProviderId,
+          select: () => this.setState((s) => ({ selectedProviderId: s.selectedProviderId === p.id ? null : p.id }))
+        };
+      }),
+      retryProviders: () => this._loadProviders(this.state.providersCity || '', true),
+
       // ── Notifications feed ──
       notifHasItems: (this.state.notifications || []).length > 0,
       notifUnreadCount: (this.state.notifications || []).filter((n) => !n.read).length,
@@ -17428,7 +17499,9 @@ class Component extends DCLogic {
         this.setState({ placingOrder: true, orderError: '', orderErrorItemIds: [] });
         const finish = (patch) => { this._placingNow = false; if (!this._unmounted) this.setState(Object.assign({ placingOrder: false }, patch || {})); };
 
-        this._placeBagAsOrders(groups, address, method, images, deliveryMethod).then((res) => {
+        // Only a home delivery carries a preferred provider; pickup never does.
+        const preferredDriverId = deliveryMethod === 'HOME_DELIVERY' ? (this.state.selectedProviderId || null) : null;
+        this._placeBagAsOrders(groups, address, method, images, deliveryMethod, preferredDriverId).then((res) => {
           if (this._unmounted) { this._placingNow = false; return; }
           const placed = res.placed;
           if (placed.length) {

@@ -211,6 +211,47 @@ async function testStorePickup() {
   for (const o of comp.state.orders) assert.strictEqual(o.shippingFeeXaf, 0, 'a pickup is charged no delivery fee');
 }
 
+// The buyer can prefer a delivery provider at checkout. The picker shows real,
+// selectable facts; the chosen provider's fee is the fee shown; and the choice is
+// sent with the order as preferredDriverId (home delivery only).
+async function testProviderPreference() {
+  const server = fakeServer();
+  const apiRef = { current: server.api };
+  const { comp } = buildApp(apiRef);
+  const oneStore = [{ id: 'l1', name: 'Phone', priceXaf: 50000, qty: 1, store: 'Tech Shop', image: 'p.jpg' }];
+  comp.setState({
+    authStatus: 'authenticated', screen: 'checkout', cartItems: oneStore, addressesList: [ADDRESS],
+    providers: [
+      { id: 'rider_a', name: 'Alain', vehicleType: 'motorbike', rating: { average: 4.5, count: 12 }, completedDeliveries: 42, openDeliveries: 0, feeXaf: 2500, serviceAreas: ['douala'], isAgency: false },
+      { id: 'agency_f', name: 'FastMove', vehicleType: null, rating: null, completedDeliveries: 0, openDeliveries: 1, feeXaf: 1800, serviceAreas: ['douala'], isAgency: true }
+    ],
+    providersCity: 'Douala', selectedProviderId: 'rider_a'
+  });
+
+  const vals = comp.renderVals();
+  assert.strictEqual(vals.checkoutShowProviders, true, 'the picker shows for a home delivery with an address');
+  // The chosen provider's fee is the fee shown (items 50 000 + rider 2 500).
+  assert.ok(/52 500/.test(vals.cartTotal), 'the chosen provider\'s fee is in the total: ' + vals.cartTotal);
+  const card = vals.checkoutProviders.find((p) => p.id === 'rider_a');
+  assert.strictEqual(card.selected, true, 'the chosen provider is marked selected');
+  assert.ok(/42 deliveries/.test(card.completedLabel), 'a real completed-delivery count is shown');
+  assert.ok(/2 500/.test(card.feeLabel), 'the provider\'s fee is shown');
+  assert.strictEqual(card.vehicleLabel, 'Motorbike');
+  const agency = vals.checkoutProviders.find((p) => p.id === 'agency_f');
+  assert.strictEqual(agency.kindLabel, 'Agency', 'an agency is labelled as one');
+  assert.strictEqual(agency.ratingLabel, 'New', 'no reviews shows "New", not a fabricated score');
+
+  vals.placeOrder();
+  await waitFor(() => comp.state.screen === 'success', 'the success screen');
+  assert.strictEqual(server.payloads.length, 1, 'one store, one order');
+  assert.strictEqual(server.payloads[0].preferredDriverId, 'rider_a', 'the buyer\'s chosen provider is sent with the order');
+
+  // Tapping the selected provider again clears the preference (it is optional).
+  comp.setState({ cartItems: oneStore, screen: 'checkout' });
+  comp.renderVals().checkoutProviders.find((p) => p.id === 'rider_a').select();
+  assert.strictEqual(comp.state.selectedProviderId, null, 'tapping the chosen provider clears it');
+}
+
 async function testHappyPath() {
   const server = fakeServer();
   const apiRef = { current: server.api };
@@ -412,6 +453,7 @@ async function run() {
   console.log('  Testing checkout and orders against the server\'s rules...');
   await testGuestAndAddress();
   await testStorePickup();
+  await testProviderPreference();
   await testHappyPath();
   await testRefusalKeepsTheBag();
   await testDoubleTap();
