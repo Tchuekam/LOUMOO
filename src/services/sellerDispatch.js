@@ -393,6 +393,28 @@
             if (window.LoumooDeliveryTracking) f.appendChild(ui.button({ label: 'Track live', icon: 'pin', block: true, onClick: function () { window.LoumooDeliveryTracking.open({ deliveryId: delivery.id }); } }));
             if (status === 'accepted') f.appendChild(cancelButton(true));
           }
+          maybeOfferDelegation(status);
+        }
+
+        // When the delivery is held by an AGENCY provider (item C), offer to hand
+        // it to one of the agency's riders. Whether the assigned provider is an
+        // agency is not on the board row, so it is looked up once per rider and
+        // remembered; a redraw then shows the button without fetching again.
+        function appendDelegateButton() {
+          var b = ui.button({ label: 'Delegate to a rider', icon: 'users', kind: 'tinted', size: 'medium', block: true });
+          b.addEventListener('click', function () { nav.push(agencyRiderPickerView(nav, delivery)); });
+          page.footer.appendChild(b);
+        }
+        function maybeOfferDelegation(status) {
+          if (!delivery || !delivery.driver || ['assigned', 'accepted'].indexOf(status) === -1) return;
+          var driverId = delivery.driver.id;
+          if (item._agencyCheckedFor === driverId) { if (item._driverIsAgency) appendDelegateButton(); return; }
+          api.getProvider(driverId).then(function (res) {
+            if (!page.alive) return;
+            item._agencyCheckedFor = driverId;
+            item._driverIsAgency = Boolean(res && res.provider && res.provider.isAgency);
+            if (item._driverIsAgency && delivery && delivery.driver && delivery.driver.id === driverId) draw();
+          }).catch(function () { item._agencyCheckedFor = driverId; item._driverIsAgency = false; });
         }
 
         function cancelButton(block) {
@@ -600,6 +622,62 @@
           });
         }
 
+        load();
+      }
+    };
+  }
+
+  // ------------------------------------------------ agency rider delegation
+  function agencyRiderPickerView(nav, delivery) {
+    return {
+      title: 'Delegate to a rider',
+      subtitle: 'Hand this delivery to one of the agency’s riders.',
+      render: function (page) {
+        var ui = UI(), api = API();
+        page.content.appendChild(ui.skeletonList(4));
+        function load() {
+          page.content.innerHTML = '';
+          page.content.appendChild(ui.skeletonList(4));
+          api.agencyRiders(delivery.driver.id).then(function (res) {
+            if (!page.alive) return;
+            var riders = (res && res.riders) || [];
+            page.content.innerHTML = '';
+            if (!riders.length) {
+              page.content.appendChild(ui.emptyState({ icon: 'users', title: 'No riders in this agency', body: 'The agency has no active riders to take this delivery yet.' }));
+              return;
+            }
+            var sec = ui.section('Riders', { count: riders.length });
+            riders.forEach(function (r) {
+              var busy = r.openDeliveries || 0;
+              var el = ui.h('<button class="ldx-row" style="--ldx-inset:68px">' + ui.avatar(r.name, 40) +
+                '<span class="ldx-row-main"><div class="ldx-row-title"></div><div class="ldx-row-sub"></div></span>' +
+                '<span class="ldx-row-end"></span></button>');
+              el.querySelector('.ldx-row-title').textContent = r.name;
+              el.querySelector('.ldx-row-sub').textContent = r.vehicleType ? r.vehicleType : 'Rider';
+              el.querySelector('.ldx-row-end').insertAdjacentHTML('beforeend', ui.badge(busy === 0 ? 'Free' : busy + ' active', busy === 0 ? 'ok' : 'warn'));
+              el.setAttribute('aria-label', r.name + ', ' + (busy === 0 ? 'free' : 'on ' + busy + (busy === 1 ? ' delivery' : ' deliveries')));
+              el.addEventListener('click', function () {
+                ui.confirm({
+                  title: 'Delegate to ' + r.name + '?',
+                  message: firstName(r.name) + ' will be offered this delivery and accepts it in their app.',
+                  confirmLabel: 'Delegate'
+                }).then(function (yes) {
+                  if (!yes) return;
+                  api.delegate(delivery.id, r.id).then(function () {
+                    ui.toast('Delegated to ' + firstName(r.name));
+                    nav.pop();
+                  }).catch(function (err) { ui.toast(ui.errorMessage(err), { tone: 'error' }); load(); });
+                });
+              });
+              sec.group.appendChild(el);
+            });
+            page.content.appendChild(sec);
+          }).catch(function (err) {
+            if (!page.alive) return;
+            page.content.innerHTML = '';
+            page.content.appendChild(ui.errorState(ui.errorMessage(err), load));
+          });
+        }
         load();
       }
     };
