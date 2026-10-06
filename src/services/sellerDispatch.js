@@ -268,6 +268,24 @@
           }).catch(function () { /* the feed keeps trying */ });
         }
 
+        // The provider the buyer preferred at checkout, resolved by the board:
+        // { id, name, status } when the rider still exists, else null. The seller
+        // confirms — this only defaults the choice to the customer's.
+        function buyerPick() {
+          if (!order || !order.preferredDriverId) return null;
+          return order.preferredDriver || { id: order.preferredDriverId, name: 'the chosen rider', status: 'gone' };
+        }
+        // One tap offers the buyer's preferred rider, the same assign call the
+        // picker makes. Toast + rethrow on error so the busy button settles.
+        function offerPreferred(pick) {
+          return api.assign(delivery.id, pick.id).then(function (res) {
+            ui.toast('Offer sent to ' + firstName(pick.name));
+            delivery = res.delivery || delivery;
+            item.delivery = delivery;
+            return delivery;
+          }).catch(function (err) { ui.toast(ui.errorMessage(err), { tone: 'error' }); refresh(); throw err; });
+        }
+
         function draw() {
           if (ring) { ring.stop(); ring = null; }
           page.content.innerHTML = '';
@@ -319,6 +337,10 @@
           var rows = [];
           if (order.title) rows.push(['package', order.title + (order.itemCount > 1 ? ' × ' + order.itemCount : ''), order.totalXaf != null ? ui.money(order.totalXaf) : null]);
           if (order.buyerName || order.area) rows.push(['home', order.buyerName || 'Customer', order.area || null]);
+          if (['none', 'pending_assignment', 'failed', 'assigned'].indexOf(status) !== -1 && order.preferredDriverId) {
+            var bp = order.preferredDriver;
+            rows.push(['user', bp ? bp.name : 'Chosen rider', 'Your customer’s pick' + (bp && bp.status === 'active' ? '' : ' · not available now')]);
+          }
           if (delivery && delivery.pickup && (delivery.pickup.label || delivery.pickup.address)) rows.push(['store', delivery.pickup.label || 'Pickup', delivery.pickup.address || null]);
           rows.push(['clock', 'Placed ' + ui.relTime(order.placedAt), null]);
           rows.forEach(function (x) {
@@ -338,13 +360,30 @@
           if (status === 'none' || status === 'cancelled') {
             f.appendChild(ui.button({ label: 'Arrange delivery', icon: 'scooter', block: true, onClick: function () { arrange(); } }));
           } else if (status === 'pending_assignment' || status === 'failed') {
-            f.appendChild(ui.button({ label: 'Choose a rider', block: true, onClick: function () { nav.push(pickerView(nav, delivery, order)); } }));
-            var row2 = ui.h('<div class="ldx-btn-row"></div>');
-            var auto = ui.button({ label: 'Auto-assign', icon: 'sparkle', kind: 'tinted', size: 'medium' });
-            auto.addEventListener('click', function () { ui.busy(auto, function () { return autoAssign(delivery).then(refresh); }); });
-            row2.appendChild(auto);
-            if (status === 'pending_assignment') row2.appendChild(cancelButton());
-            f.appendChild(row2);
+            var pick = buyerPick();
+            if (pick && pick.status === 'active') {
+              // The customer chose this rider at checkout: one tap confirms it.
+              var offerBtn = ui.button({ label: 'Offer to ' + firstName(pick.name), block: true });
+              offerBtn.addEventListener('click', function () { ui.busy(offerBtn, function () { return offerPreferred(pick).then(refresh); }); });
+              f.appendChild(offerBtn);
+              f.appendChild(ui.h('<div class="ldx-hint" style="text-align:center">' + ui.esc(firstName(pick.name)) + ' is the rider your customer chose at checkout.</div>'));
+              var row2b = ui.h('<div class="ldx-btn-row"></div>');
+              row2b.appendChild(ui.button({ label: 'Choose another', kind: 'tinted', size: 'medium', onClick: function () { nav.push(pickerView(nav, delivery, order)); } }));
+              var auto2 = ui.button({ label: 'Auto-assign', icon: 'sparkle', kind: 'gray', size: 'medium' });
+              auto2.addEventListener('click', function () { ui.busy(auto2, function () { return autoAssign(delivery).then(refresh); }); });
+              row2b.appendChild(auto2);
+              f.appendChild(row2b);
+              if (status === 'pending_assignment') f.appendChild(cancelButton());
+            } else {
+              if (pick) f.appendChild(ui.h('<div class="ldx-hint" style="text-align:center">Your customer chose ' + ui.esc(firstName(pick.name)) + ', who isn’t available now. Choose another rider.</div>'));
+              f.appendChild(ui.button({ label: 'Choose a rider', block: true, onClick: function () { nav.push(pickerView(nav, delivery, order)); } }));
+              var row2 = ui.h('<div class="ldx-btn-row"></div>');
+              var auto = ui.button({ label: 'Auto-assign', icon: 'sparkle', kind: 'tinted', size: 'medium' });
+              auto.addEventListener('click', function () { ui.busy(auto, function () { return autoAssign(delivery).then(refresh); }); });
+              row2.appendChild(auto);
+              if (status === 'pending_assignment') row2.appendChild(cancelButton());
+              f.appendChild(row2);
+            }
           } else if (status === 'assigned') {
             var row3 = ui.h('<div class="ldx-btn-row"></div>');
             row3.appendChild(ui.button({ label: 'Change rider', kind: 'gray', size: 'medium', onClick: function () { nav.push(pickerView(nav, delivery, order)); } }));
@@ -448,9 +487,10 @@
 
   // ------------------------------------------------------------- rider picker
   function pickerView(nav, delivery, order) {
+    var hasPick = !!(order && order.preferredDriverId);
     return {
       title: 'Choose a rider',
-      subtitle: 'Free riders come first. Riders who passed on this order are marked.',
+      subtitle: hasPick ? 'Your customer’s pick comes first. Riders who passed are marked.' : 'Free riders come first. Riders who passed on this order are marked.',
       render: function (page) {
         var ui = UI(), api = API();
         var riders = null, query = '';
@@ -503,6 +543,15 @@
             return !query || String(r.name || '').toLowerCase().indexOf(query) !== -1 || String(r.phone || '').replace(/\s/g, '').indexOf(query.replace(/\s/g, '')) !== -1;
           });
           var current = delivery.status === 'assigned' && delivery.driver ? delivery.driver.id : null;
+          var preferredId = order && order.preferredDriverId ? order.preferredDriverId : null;
+          if (preferredId) {
+            // The customer's pick leads the list so one tap confirms it.
+            shown = shown.slice().sort(function (a, b) { return (b.id === preferredId ? 1 : 0) - (a.id === preferredId ? 1 : 0); });
+            if (!riders.some(function (r) { return r.id === preferredId; })) {
+              var bpName = order.preferredDriver && order.preferredDriver.name ? order.preferredDriver.name : 'Your customer’s chosen rider';
+              listWrap.appendChild(ui.h('<div class="ldx-section-foot" style="padding:0 4px 12px">' + ui.esc(bpName) + ' — your customer’s pick — isn’t available right now. Choose another to keep the order moving.</div>'));
+            }
+          }
           var sec = ui.section('Riders', { count: shown.length });
           if (!shown.length) {
             sec.group.appendChild(ui.h('<div class="ldx-row is-static"><span class="ldx-row-main"><div class="ldx-row-sub">No rider matches “' + ui.esc(query) + '”.</div></span></div>'));
@@ -520,10 +569,14 @@
             el.querySelector('.ldx-row-title').textContent = r.name;
             el.querySelector('.ldx-row-sub').textContent = r.phone || '';
             var end = el.querySelector('.ldx-row-end');
+            var isPreferred = preferredId && r.id === preferredId;
             if (isCurrent) end.insertAdjacentHTML('beforeend', ui.badge('Offered', 'accent'));
             else if (r.declined) end.insertAdjacentHTML('beforeend', ui.badge('Passed', 'muted'));
-            else end.insertAdjacentHTML('beforeend', ui.badge(load, busy === 0 ? 'ok' : 'warn'));
-            el.setAttribute('aria-label', r.name + ', ' + (busy === 0 ? 'free' : 'on ' + busy + (busy === 1 ? ' delivery' : ' deliveries')) + (r.declined ? ', already passed on this order' : ''));
+            else {
+              if (isPreferred) end.insertAdjacentHTML('beforeend', ui.badge('Buyer’s pick', 'accent'));
+              end.insertAdjacentHTML('beforeend', ui.badge(load, busy === 0 ? 'ok' : 'warn'));
+            }
+            el.setAttribute('aria-label', r.name + ', ' + (busy === 0 ? 'free' : 'on ' + busy + (busy === 1 ? ' delivery' : ' deliveries')) + (isPreferred ? ', your customer’s pick' : '') + (r.declined ? ', already passed on this order' : ''));
             if (isCurrent) { el.classList.add('is-static'); el.disabled = true; }
             else el.addEventListener('click', function () { offer(r); });
             sec.group.appendChild(el);
