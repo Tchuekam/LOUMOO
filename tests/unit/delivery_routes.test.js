@@ -189,9 +189,10 @@ async function main() {
         .flatMap((l) => Object.keys(l.route.methods).map((m) => `${m.toUpperCase()} ${l.route.path}`))
         .sort();
       const expected = [
-        'GET /drivers', 'GET /dispatch', 'GET /providers', 'POST /drivers/:profileId', 'GET /driver/me', 'GET /by-order/:orderId', 'POST /',
+        'GET /drivers', 'GET /dispatch', 'GET /providers', 'GET /providers/following', 'GET /providers/:id', 'GET /providers/:id/riders',
+        'POST /drivers/:profileId', 'GET /driver/me', 'GET /by-order/:orderId', 'POST /',
         'GET /:id/stream', 'GET /:id/code', 'GET /:id',
-        'POST /:id/assign', 'POST /:id/auto-assign', 'POST /:id/cancel', 'POST /:id/resolve', 'POST /:id/reconcile',
+        'POST /:id/assign', 'POST /:id/auto-assign', 'POST /:id/delegate', 'POST /:id/cancel', 'POST /:id/resolve', 'POST /:id/reconcile',
         'POST /:id/accept', 'POST /:id/decline', 'POST /:id/status', 'POST /:id/location', 'POST /:id/complete'
       ].sort();
       assert.deepStrictEqual(table, expected, 'the route table matches docs/DELIVERY_API.md (update both together)');

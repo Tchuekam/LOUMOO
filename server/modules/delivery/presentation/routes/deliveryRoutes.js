@@ -141,6 +141,23 @@ function createDeliveryRouter({
     ok(res, await svc().listAvailableProviders(callerOf(req), { city }));
   }));
 
+  // The providers the caller follows — the account hub's "Riders & agencies you
+  // follow" list (literal path: before /providers/:id, or "following" reads as id).
+  router.get('/providers/following', authenticate, route(async (req, res) => {
+    ok(res, await svc().listFollowedProviders(callerOf(req)));
+  }));
+
+  // An agency's rider members (item C): /providers/:id/riders.
+  router.get('/providers/:id/riders', authenticate, route(async (req, res) => {
+    ok(res, await svc().listAgencyRiders(callerOf(req), req.params.id));
+  }));
+
+  // One provider's public marketplace profile (item B): /providers/:id[?city=].
+  router.get('/providers/:id', authenticate, route(async (req, res) => {
+    const { city } = parseBody(schemas.ProvidersQuerySchema, req.query, 'query');
+    ok(res, { provider: await svc().getProviderProfile(callerOf(req), req.params.id, { city }) });
+  }));
+
   router.post('/drivers/:profileId', authenticate, route(async (req, res) => {
     const body = parseBody(schemas.RegisterDriverSchema, req.body, 'rider');
     ok(res, { driver: await svc().registerDriver(req.params.profileId, body, callerOf(req)) });
@@ -332,6 +349,12 @@ function createDeliveryRouter({
   // No body: the server chooses the rider. A body, if sent, is ignored (as for accept/decline).
   router.post('/:id/auto-assign', authenticate, route(async (req, res) => {
     ok(res, { delivery: await svc().autoAssignDriver(req.params.id, callerOf(req)) });
+  }));
+
+  // An agency delegates a delivery it holds to one of its rider members (item C).
+  router.post('/:id/delegate', authenticate, route(async (req, res) => {
+    const { riderId } = parseBody(schemas.DelegateDeliverySchema, req.body, 'delegation');
+    ok(res, { delivery: await svc().delegateDelivery(req.params.id, riderId, callerOf(req)) });
   }));
 
   router.post('/:id/cancel', authenticate, route(async (req, res) => {

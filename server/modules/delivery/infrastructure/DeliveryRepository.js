@@ -699,6 +699,37 @@ class DeliveryRepository {
   }
 
   /**
+   * Active member user ids of an organization (iam.organization_members). Used to
+   * resolve an agency's rider roster and to authorise delegation. Best-effort: any
+   * failure (missing table, offline) returns [], so the caller fails safe
+   * (delegation denied rather than wrongly allowed). Without a database it reads
+   * the in-memory `_orgMembers` map (empty unless a test seeded it).
+   */
+  async listOrgMemberIds(orgId) {
+    if (!orgId) return [];
+    const db = this.db;
+    if (db) {
+      try {
+        const { data, error } = await db
+          .from('organization_members')
+          .select('user_id, status')
+          .eq('organization_id', orgId)
+          .eq('status', 'ACTIVE')
+          .limit(500);
+        if (!error) return (data || []).map((r) => r.user_id).filter(Boolean);
+      } catch (_) { /* fail safe below */ }
+      return [];
+    }
+    return [...((this._orgMembers && this._orgMembers.get(orgId)) || [])];
+  }
+
+  /** Test seam: seed an org's active member ids for the in-memory engine. */
+  seedOrgMembers(orgId, userIds) {
+    if (!this._orgMembers) this._orgMembers = new Map();
+    this._orgMembers.set(orgId, [...(userIds || [])]);
+  }
+
+  /**
    * Profile ids of the administrators who should hear about a delivery that needs
    * one. Suspended, deleted and anonymised accounts are skipped. Without a
    * database (tests, a laptop) it reads `_adminIds`, which is empty by default.
