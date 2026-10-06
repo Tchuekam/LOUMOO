@@ -484,7 +484,11 @@
       sellerPhone: o.sellerPhone || first.storePhone || null,
       sellerWhatsapp: o.sellerWhatsapp || o.sellerPhone || first.storePhone || null,
       address: { name: ship.fullName || '', phone: ship.phone || '', city: ship.city || '', street: ship.street || '' },
-      createdAt: isFinite(created) ? created : Date.now()
+      createdAt: isFinite(created) ? created : Date.now(),
+      // A one-time placement notice from the server (e.g. the chosen delivery
+      // provider was unavailable and the order fell back to the city rate). The
+      // checkout shows it once; it is not persisted on the order.
+      deliveryNotice: o.deliveryNotice || null
     };
   }
 

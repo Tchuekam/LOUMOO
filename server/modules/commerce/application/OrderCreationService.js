@@ -28,6 +28,25 @@ let NotificationService = null;
 try { UserActivityUseCase = require('../../identity/application/UserActivityUseCase'); } catch (e) {}
 try { NotificationService = require('../../identity/application/NotificationService'); } catch (e) {}
 
+/**
+ * A one-time, non-persisted notice for the buyer when the delivery provider they
+ * chose at checkout turned out unavailable by the time the order was placed. The
+ * order still succeeds at the standard city rate; this tells the buyer honestly
+ * rather than switching silently (integration spec item E). `reason` is one of
+ * 'gone' | 'suspended' | 'out_of_area'.
+ */
+function buildDroppedPreferenceNotice(reason, effectiveFeeXaf) {
+  const lead = reason === 'out_of_area'
+    ? 'The delivery provider you chose doesn’t cover this address'
+    : 'The delivery provider you chose is no longer available';
+  return {
+    code: 'preferred_provider_unavailable',
+    reason,
+    effectiveFeeXaf: Number.isFinite(Number(effectiveFeeXaf)) ? Number(effectiveFeeXaf) : null,
+    message: `${lead}, so your order was placed at the standard delivery rate. The seller will arrange another rider.`
+  };
+}
+
 class OrderCreationService {
   constructor(repository = null, deps = {}) {
     this.repository = repository || new OrderRepository();
@@ -220,6 +239,11 @@ class OrderCreationService {
       let effectivePreferredDriverId = data.deliveryMethod === DELIVERY_METHOD.STORE_PICKUP
         ? null
         : (data.preferredDriverId || null);
+      // When the buyer picked a provider that turns out unavailable between the
+      // quote and now, the preference is dropped and the order is priced at the
+      // city rate — but the buyer is TOLD (deliveryNotice below), not silently
+      // switched. Stays null while nothing was dropped. (Integration spec item E.)
+      let droppedPreferenceReason = null;
       if (effectivePreferredDriverId) {
         try {
           const provider = await this._resolveProvider(effectivePreferredDriverId);
@@ -233,6 +257,7 @@ class OrderCreationService {
           } else {
             // Gone, suspended, or cannot serve this city: do not keep a dead
             // preference on the order, and price at the city rate.
+            droppedPreferenceReason = !provider ? 'gone' : (!active ? 'suspended' : 'out_of_area');
             effectivePreferredDriverId = null;
           }
         } catch (_) { /* delivery module unavailable: keep the hint, price at city rate */ }
@@ -293,6 +318,15 @@ class OrderCreationService {
 
       // 6. Atomically persist to database
       const savedOrder = await this.repository.saveOrder(order);
+
+      // If the buyer's chosen provider was dropped above, tell them honestly: the
+      // order succeeded at the standard city rate, it was not silently switched.
+      // A transient on the returned order only — never persisted (toJSON ignores
+      // it); the route surfaces it in the create response and the checkout shows
+      // it once. A later idempotent replay reasonably omits it.
+      if (droppedPreferenceReason) {
+        savedOrder.deliveryNotice = buildDroppedPreferenceNotice(droppedPreferenceReason, savedOrder.shippingFeeXaf);
+      }
 
       // 7. Save Idempotency Cache Result
       if (scopedKey) {

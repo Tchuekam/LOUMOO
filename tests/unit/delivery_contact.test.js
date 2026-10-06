@@ -181,33 +181,49 @@ async function testPreferredProviderPricing() {
     const baseline = await order({});
     const cityFee = baseline.shippingFeeXaf;
     assert.strictEqual(baseline.preferredDriverId, null);
+    assert.ok(!baseline.deliveryNotice, 'no preference means nothing to warn about');
 
     // A provider with their own tariff prices the order at THAT tariff, and the
     // preference is kept — this is what makes the picker's fee the charged fee.
     const withFee = await order({ preferredDriverId: 'pp_fee' });
     assert.strictEqual(withFee.shippingFeeXaf, 2200, 'the order is priced at the chosen provider\'s tariff');
     assert.strictEqual(withFee.preferredDriverId, 'pp_fee', 'and the preference is kept');
+    assert.ok(!withFee.deliveryNotice, 'an honoured pick raises no notice');
 
     // No tariff of their own: the standard city fee, preference kept.
     const noFee = await order({ preferredDriverId: 'pp_nofee' });
     assert.strictEqual(noFee.shippingFeeXaf, cityFee, 'a provider with no tariff charges the standard fee');
     assert.strictEqual(noFee.preferredDriverId, 'pp_nofee');
+    assert.ok(!noFee.deliveryNotice, 'a kept pick raises no notice');
 
     // Suspended: not honoured — standard fee, and the dead pick is dropped so the
-    // order never carries a provider who cannot do it.
+    // order never carries a provider who cannot do it. The buyer is TOLD (item E):
+    // a one-time notice rides on the returned order, priced at the city fee.
     const susp = await order({ preferredDriverId: 'pp_susp' });
     assert.strictEqual(susp.shippingFeeXaf, cityFee, 'a suspended provider does not set the price');
     assert.strictEqual(susp.preferredDriverId, null, 'and the unavailable preference is dropped');
+    assert.ok(susp.deliveryNotice, 'the buyer is told the pick was dropped, not switched silently');
+    assert.strictEqual(susp.deliveryNotice.code, 'preferred_provider_unavailable');
+    assert.strictEqual(susp.deliveryNotice.reason, 'suspended');
+    assert.strictEqual(susp.deliveryNotice.effectiveFeeXaf, cityFee, 'the notice states the fee that was actually applied');
+    assert.ok(/standard delivery rate/i.test(susp.deliveryNotice.message), 'the message is honest about the fallback');
 
-    // Out of area: not honoured either.
+    // Out of area: not honoured either, and the reason is specific.
     const away = await order({ preferredDriverId: 'pp_away' });
     assert.strictEqual(away.shippingFeeXaf, cityFee, 'an out-of-area provider does not set the price');
     assert.strictEqual(away.preferredDriverId, null);
+    assert.ok(away.deliveryNotice && away.deliveryNotice.reason === 'out_of_area', 'the notice names the out-of-area reason');
 
-    // Store pickup never carries a provider or a delivery fee.
+    // A provider that no longer exists at all (resolve returns null) is 'gone'.
+    const gone = await order({ preferredDriverId: 'pp_gone' });
+    assert.strictEqual(gone.preferredDriverId, null, 'a vanished provider is dropped');
+    assert.ok(gone.deliveryNotice && gone.deliveryNotice.reason === 'gone', 'and the notice names it');
+
+    // Store pickup never carries a provider or a delivery fee — and never a notice.
     const pickup = await order({ deliveryMethod: 'STORE_PICKUP', preferredDriverId: 'pp_fee' });
     assert.strictEqual(pickup.preferredDriverId, null, 'pickup drops any provider');
     assert.strictEqual(pickup.shippingFeeXaf, 0, 'and has no delivery fee');
+    assert.ok(!pickup.deliveryNotice, 'a pickup never warns about a delivery provider');
   } finally {
     rec.restore();
   }

@@ -324,6 +324,16 @@ def get_success_view():
     <p style="font-size:12.5px;color:var(--color-text-secondary);line-height:1.5;max-width:480px;margin:-12px auto 24px">{{ lastOrdersMoreNote }}</p>
   </sc-if>
 
+  <!-- The chosen delivery provider became unavailable between the quote and
+       placing: the order went through at the standard city rate, said honestly
+       rather than switched silently (integration spec item E). -->
+  <sc-if value="{{ lastDeliveryNotice }}">
+    <div style="display:flex;gap:10px;text-align:left;background:var(--color-warning-100, var(--color-surface-subtle));border:1px solid var(--color-warning, var(--color-divider));border-radius:var(--radius-md);padding:12px 14px;max-width:480px;margin:0 auto 24px">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-warning, #b45309)" stroke-width="2" style="flex-shrink:0;margin-top:1px"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+      <div style="font:500 12.5px/1.45 var(--font-body);color:var(--color-text)">{{ lastDeliveryNoticeText }}</div>
+    </div>
+  </sc-if>
+
   <!-- Where the order is, whose move it is, and your part in it. Fills itself
        from the delivery API (src/services/deliveryCircuit.js). -->
   <div class="card-premium" style="text-align:left;margin-bottom:24px">

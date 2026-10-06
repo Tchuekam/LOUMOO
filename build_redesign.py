@@ -17110,6 +17110,13 @@ class Component extends DCLogic {
         : '',
       lastOrderNumber: this.state.lastOrder ? this.state.lastOrder.orderNumber : '',
       lastOrderTotal: this.state.lastOrder ? ('XAF ' + fmt(this.state.lastOrder.totalXaf)) : '',
+      // A placement notice (e.g. the chosen delivery provider was unavailable and
+      // the order fell back to the city rate), shown once on the success screen.
+      lastDeliveryNotice: Boolean((this.state.lastOrders || []).map((o) => o && o.deliveryNotice).filter(Boolean)[0]),
+      lastDeliveryNoticeText: (() => {
+        const dn = (this.state.lastOrders || []).map((o) => o && o.deliveryNotice).filter(Boolean)[0];
+        return dn && dn.message ? dn.message : '';
+      })(),
       lastOrderSeller: this.state.lastOrder ? this.state.lastOrder.seller : 'the seller',
       lastOrderSellerPhone: this.state.lastOrder ? (this.state.lastOrder.sellerPhone || this.state.lastOrder.sellerWhatsapp || '') : '',
       lastOrderPayMethod: this.state.lastOrder ? this.state.lastOrder.paymentMethod : '',
@@ -17531,7 +17538,11 @@ class Component extends DCLogic {
             return;
           }
           finish();
-          this.toast('Order ' + placed[0].orderNumber + ' placed');
+          // If the server dropped the buyer's chosen delivery provider (it became
+          // unavailable between the quote and now), say so instead of the plain
+          // "placed" toast — the success screen repeats it. Honest, not silent.
+          var dropped = placed.map(function (o) { return o && o.deliveryNotice; }).filter(Boolean)[0];
+          this.toast(dropped && dropped.message ? dropped.message : ('Order ' + placed[0].orderNumber + ' placed'));
           this.go('success');
         }).catch(() => {
           finish({ orderError: 'Something went wrong while placing your order. Check My Orders before trying again.', orderErrorItemIds: [] });
