@@ -266,6 +266,7 @@ class OrderRepository {
         shipping_address: {
           ...order.shippingAddress,
           _deliveryMethod: order.deliveryMethod,
+          _preferredDriverId: order.preferredDriverId || null,
           _subtotalXaf: order.subtotalXaf,
           _shippingFeeXaf: order.shippingFeeXaf,
           _idempotencyKey: order.idempotencyKey,
@@ -607,6 +608,7 @@ class OrderRepository {
       currency: 'XAF',
       shippingAddress: row.shipping_address || {},
       deliveryMethod: shippingMeta._deliveryMethod || DELIVERY_METHOD.HOME_DELIVERY,
+      preferredDriverId: shippingMeta._preferredDriverId || null,
       paymentStatus: row.payment_status || PAYMENT_STATUS.PENDING,
       fulfillmentStatus: row.fulfillment_status || FULFILLMENT_STATUS.PROCESSING,
       idempotencyKey: shippingMeta._idempotencyKey || null,

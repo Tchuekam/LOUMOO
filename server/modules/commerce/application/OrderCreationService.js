@@ -240,6 +240,9 @@ class OrderCreationService {
         currency: 'XAF',
         shippingAddress: data.shippingAddress || {},
         deliveryMethod: data.deliveryMethod,
+        // A store pickup has no rider, so a preferred provider only makes sense
+        // for a home delivery; it is dropped otherwise.
+        preferredDriverId: data.deliveryMethod === DELIVERY_METHOD.STORE_PICKUP ? null : (data.preferredDriverId || null),
         paymentStatus: PAYMENT_STATUS.PENDING,
         fulfillmentStatus: FULFILLMENT_STATUS.PROCESSING,
         idempotencyKey: effectiveIdempotencyKey,

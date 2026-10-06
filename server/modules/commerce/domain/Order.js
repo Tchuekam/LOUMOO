@@ -134,6 +134,7 @@ class Order {
     currency = 'XAF',
     shippingAddress = {},
     deliveryMethod = DELIVERY_METHOD.HOME_DELIVERY,
+    preferredDriverId = null,
     paymentStatus = PAYMENT_STATUS.PENDING,
     fulfillmentStatus = FULFILLMENT_STATUS.PROCESSING,
     idempotencyKey = null,
@@ -158,6 +159,10 @@ class Order {
     this.currency = currency || 'XAF';
     this.shippingAddress = typeof shippingAddress === 'object' && shippingAddress ? shippingAddress : {};
     this.deliveryMethod = deliveryMethod || DELIVERY_METHOD.HOME_DELIVERY;
+    // The delivery provider the buyer preferred at checkout, if any. It is a
+    // HINT for dispatch — the seller still confirms the rider — never a pricing
+    // or security input, so it is just carried, not trusted.
+    this.preferredDriverId = preferredDriverId ? String(preferredDriverId) : null;
     this.paymentStatus = paymentStatus || PAYMENT_STATUS.PENDING;
     this.fulfillmentStatus = fulfillmentStatus || FULFILLMENT_STATUS.PROCESSING;
     this.idempotencyKey = idempotencyKey || null;
@@ -191,6 +196,7 @@ class Order {
       items: this.items.map(i => i.toJSON()),
       shippingAddress: this.shippingAddress,
       deliveryMethod: this.deliveryMethod,
+      preferredDriverId: this.preferredDriverId,
       paymentStatus: this.paymentStatus,
       fulfillmentStatus: this.fulfillmentStatus,
       idempotencyKey: this.idempotencyKey,

@@ -130,12 +130,14 @@ async function run() {
       const bare = board.items.find((i) => i.order.id === needsRider.id);
       assert.strictEqual(bare.delivery, null, 'an order with no delivery yet says so');
       assert.deepStrictEqual(Object.keys(bare.order).sort(),
-        ['area', 'buyerName', 'fulfillmentStatus', 'id', 'itemCount', 'orderNumber', 'paymentStatus', 'placedAt', 'title', 'totalXaf'],
+        ['area', 'buyerName', 'fulfillmentStatus', 'id', 'itemCount', 'orderNumber', 'paymentStatus', 'placedAt', 'preferredDriver', 'preferredDriverId', 'title', 'totalXaf'],
         'the order summary carries exactly the documented fields');
       assert.strictEqual(bare.order.itemCount, 2, 'quantities are summed');
       assert.strictEqual(bare.order.area, 'Bonanjo, Douala');
       assert.strictEqual(bare.order.buyerName, 'Awa Njoya');
       assert.ok(bare.order.title && bare.order.title.startsWith('Phone'));
+      assert.strictEqual(bare.order.preferredDriverId, null, 'an order with no preference says so');
+      assert.strictEqual(bare.order.preferredDriver, null);
 
       const live = board.items.find((i) => i.order.id === offered.id).delivery;
       assert.strictEqual(live.status, 'assigned');
@@ -154,6 +156,28 @@ async function run() {
 
       // The newest live order here is the refunded one: excluding it must not eat the limit.
       assert.strictEqual((await w.service.getDispatchBoard(SELLER, { limit: 1 })).items.length, 1, 'the limit applies, after exclusions');
+    }
+
+    // ---------------------------- the buyer's preferred provider reaches the board
+    {
+      const w = makeWorld();
+      await w.service.registerDriver('rider_1', { name: 'Alain', phone: '+237600000001' }, ADMIN);
+      // The buyer preferred Alain at checkout; the order carries it as a hint.
+      const preferred = await placeOrder(w, { preferredDriverId: 'rider_1' });
+      // A preference pointing at a rider who no longer exists must not break the
+      // board: the id is still shown, but no rider is resolved.
+      const ghostPref = await placeOrder(w, { preferredDriverId: 'rider_gone' });
+
+      const board = await w.service.getDispatchBoard(SELLER);
+      const row = board.items.find((i) => i.order.id === preferred.id);
+      assert.strictEqual(row.order.preferredDriverId, 'rider_1', 'the buyer\'s choice reaches the seller');
+      assert.ok(row.order.preferredDriver, 'and the rider is resolved for the seller to confirm');
+      assert.strictEqual(row.order.preferredDriver.name, 'Alain');
+      assert.strictEqual(row.order.preferredDriver.status, 'active', 'with status, so an unavailable rider can be flagged');
+
+      const ghost = board.items.find((i) => i.order.id === ghostPref.id);
+      assert.strictEqual(ghost.order.preferredDriverId, 'rider_gone', 'an unknown preference keeps its id');
+      assert.strictEqual(ghost.order.preferredDriver, null, 'but resolves to no rider');
     }
 
     // ------------------------------------- the open delivery wins over an old one

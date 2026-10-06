@@ -44,6 +44,10 @@ const CreateOrderInputSchema = z.object({
   items: z.array(OrderItemInputSchema).min(1, 'Cannot place an order with an empty bag').max(50, 'Order cannot exceed 50 distinct items'),
   shippingAddress: ShippingAddressSchema,
   deliveryMethod: z.enum(['HOME_DELIVERY', 'STORE_PICKUP']).default('HOME_DELIVERY'),
+  // The delivery provider the buyer preferred at checkout (a rider's profile id).
+  // A HINT for the seller's dispatch, never trusted for pricing or assignment, so
+  // only its shape is checked here; an unknown id simply yields no preference.
+  preferredDriverId: z.string().trim().min(1).max(128).optional().nullable(),
   // Optional client total fields (checked for discrepancy by server, never trusted directly)
   totalAmountXaf: z.number().optional().nullable(),
   totalXaf: z.number().optional().nullable(),

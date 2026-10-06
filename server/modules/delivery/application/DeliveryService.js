@@ -1749,14 +1749,24 @@ class DeliveryService {
         }
         delivery = presentDelivery({ ...d, driver }, role, { timeline: [], order, offerTtlMs: this.offerTtlMs });
       }
-      items.push({ order: summarizeOrder(order), delivery });
+      // The provider the buyer preferred at checkout, resolved so the seller can
+      // default their assignment to it (and see at a glance whether that rider is
+      // still active). Uses the same per-rider cache as the assigned driver above.
+      let preferredDriver = null;
+      const preferredId = order.preferredDriverId || (order.shippingAddress && order.shippingAddress._preferredDriverId) || null;
+      if (preferredId) {
+        if (!riders.has(preferredId)) riders.set(preferredId, await this.repo.findDriver(preferredId));
+        const pr = riders.get(preferredId);
+        if (pr) preferredDriver = { id: pr.id, name: pr.name, status: pr.status };
+      }
+      items.push({ order: summarizeOrder(order, { preferredId, preferredDriver }), delivery });
     }
     return { items };
   }
 }
 
 /** What the dispatch board shows of an order: enough to recognise it, nothing more. */
-function summarizeOrder(order) {
+function summarizeOrder(order, { preferredId = null, preferredDriver = null } = {}) {
   const items = Array.isArray(order.items) ? order.items : [];
   const ship = order.shippingAddress || {};
   return {
@@ -1769,7 +1779,12 @@ function summarizeOrder(order) {
     itemCount: items.reduce((n, i) => n + (Number(i.quantity) || 1), 0),
     title: items[0] && items[0].title ? items[0].title : null,
     buyerName: typeof ship.fullName === 'string' && ship.fullName.trim() ? ship.fullName.trim() : null,
-    area: describeArea(ship) || null
+    area: describeArea(ship) || null,
+    // The buyer's preferred provider (a hint; the seller still confirms). The id
+    // is always there when one was set; preferredDriver is resolved when the
+    // rider still exists, with their status so an unavailable one can be flagged.
+    preferredDriverId: preferredId || null,
+    preferredDriver: preferredDriver || null
   };
 }
 
