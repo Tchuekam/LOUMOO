@@ -8,7 +8,7 @@
 
 const crypto = require('crypto');
 const { Order, OrderItem, FULFILLMENT_STATUS, PAYMENT_STATUS, DELIVERY_METHOD } = require('../domain/Order');
-const { PricingEngine, resolveCityRate } = require('../domain/PricingEngine');
+const { PricingEngine, resolveCityRate, foldCity } = require('../domain/PricingEngine');
 const { CreateOrderInputSchema } = require('../presentation/validators/orderSchemas');
 const { OrderRepository } = require('../infrastructure/OrderRepository');
 const IdempotencyService = require('../../../infrastructure/cache/IdempotencyService');
@@ -29,10 +29,18 @@ try { UserActivityUseCase = require('../../identity/application/UserActivityUseC
 try { NotificationService = require('../../identity/application/NotificationService'); } catch (e) {}
 
 class OrderCreationService {
-  constructor(repository = null) {
+  constructor(repository = null, deps = {}) {
     this.repository = repository || new OrderRepository();
     // Concurrency mutex for in-flight creations per user
     this._activeLocks = new Set();
+    // How a preferred provider is looked up when pricing the order. Injectable so
+    // a test can supply providers without the shared delivery singleton; in
+    // production it lazily reads the shared DeliveryService's repository, keeping
+    // the commerce→delivery dependency soft (lazy, best-effort).
+    this._resolveProvider = deps.resolveProvider || (async (profileId) => {
+      const { getSharedDeliveryService } = require('../../delivery/application/DeliveryService');
+      return getSharedDeliveryService().repo.findDriver(profileId);
+    });
   }
 
   /**
@@ -190,16 +198,44 @@ class OrderCreationService {
       }
 
       // 4. Server-Authoritative Pricing Calculation
+      const orderCity = data.shippingAddress?.city || data.city;
       let standardShippingFeeXaf = null;
       if (data.deliveryMethod !== DELIVERY_METHOD.STORE_PICKUP) {
         try {
           const SuperAdminRepository = require('../../../../SuperAdmin/backend/repositories/SuperAdminRepository');
           const cityRates = await SuperAdminRepository.getSetting('shipping_rates_by_city');
-          const city = data.shippingAddress?.city || data.city;
           // Accent- and punctuation-insensitive ("Yaoundé" is the table's "Yaounde"),
           // the same rule the checkout uses to show the fee.
-          standardShippingFeeXaf = resolveCityRate(cityRates, city);
+          standardShippingFeeXaf = resolveCityRate(cityRates, orderCity);
         } catch (_) {}
+      }
+
+      // If the buyer preferred a specific provider, the order is priced by THAT
+      // provider's own tariff when they set one — so the fee the picker showed is
+      // the fee the order gets — never the city rate, and never a client-sent
+      // price. Resolved server-side from the provider record. Best-effort and lazy
+      // to keep the module dependency soft (delivery already depends on commerce):
+      // an unknown, suspended, or out-of-area provider falls back to the city rate
+      // and the dead preference is dropped rather than stored on the order.
+      let effectivePreferredDriverId = data.deliveryMethod === DELIVERY_METHOD.STORE_PICKUP
+        ? null
+        : (data.preferredDriverId || null);
+      if (effectivePreferredDriverId) {
+        try {
+          const provider = await this._resolveProvider(effectivePreferredDriverId);
+          const folded = orderCity ? foldCity(orderCity) : '';
+          const areas = provider && Array.isArray(provider.serviceAreas) ? provider.serviceAreas : [];
+          const serves = provider && (areas.length === 0 || (folded && areas.includes(folded)));
+          const active = provider && provider.status === 'active';
+          if (active && serves) {
+            if (provider.baseFeeXaf != null) standardShippingFeeXaf = provider.baseFeeXaf;
+            // else the provider quotes the standard city rate: leave it as resolved.
+          } else {
+            // Gone, suspended, or cannot serve this city: do not keep a dead
+            // preference on the order, and price at the city rate.
+            effectivePreferredDriverId = null;
+          }
+        } catch (_) { /* delivery module unavailable: keep the hint, price at city rate */ }
       }
 
       const clientSuppliedTotal = data.totalAmountXaf ?? data.totalXaf ?? null;
@@ -240,9 +276,9 @@ class OrderCreationService {
         currency: 'XAF',
         shippingAddress: data.shippingAddress || {},
         deliveryMethod: data.deliveryMethod,
-        // A store pickup has no rider, so a preferred provider only makes sense
-        // for a home delivery; it is dropped otherwise.
-        preferredDriverId: data.deliveryMethod === DELIVERY_METHOD.STORE_PICKUP ? null : (data.preferredDriverId || null),
+        // The preference as RESOLVED above: null for pickup, or when the chosen
+        // provider turned out unavailable, so the order never carries a dead pick.
+        preferredDriverId: effectivePreferredDriverId,
         paymentStatus: PAYMENT_STATUS.PENDING,
         fulfillmentStatus: FULFILLMENT_STATUS.PROCESSING,
         idempotencyKey: effectiveIdempotencyKey,

@@ -144,6 +144,75 @@ async function testOrderPlacement() {
   }
 }
 
+// --------------------------------- 1b. the buyer's preferred provider prices the order
+// The picker shows a provider's fee; the order must be priced at THAT fee server-side,
+// so the fee shown is the fee charged. An unavailable pick is dropped, not honoured.
+async function testPreferredProviderPricing() {
+  const rec = recordNotifications();
+  try {
+    // Providers the order service resolves a preference against — injected, so the
+    // test depends on neither the shared delivery singleton nor a database. Their
+    // service areas are folded exactly as the real provider store keeps them.
+    const PROVIDERS = {
+      pp_fee: { id: 'pp_fee', status: 'active', serviceAreas: ['douala'], baseFeeXaf: 2200 },
+      pp_nofee: { id: 'pp_nofee', status: 'active', serviceAreas: ['douala'], baseFeeXaf: null },
+      pp_susp: { id: 'pp_susp', status: 'suspended', serviceAreas: ['douala'], baseFeeXaf: 2200 },
+      pp_away: { id: 'pp_away', status: 'active', serviceAreas: ['yaounde'], baseFeeXaf: 2200 }
+    };
+    const resolveProvider = async (id) => PROVIDERS[id] || null;
+
+    const order = (extra) => {
+      const listings = { l1: listing('l1', 'seller_1', 'Tech Shop') };
+      const repository = {
+        findListingById: async (id) => listings[id] || null,
+        findVariantById: async () => null,
+        checkInventory: async () => ({ isAvailable: true, availableQuantity: 99 }),
+        saveOrder: async (o) => { o.id = 'ord_pp'; return o; }
+      };
+      const service = new OrderCreationService(repository, { resolveProvider });
+      return service.createOrder('buyer_1', Object.assign({
+        items: [{ listingId: 'l1', quantity: 1 }],
+        shippingAddress: { fullName: 'Awa Njoya', phone: '+237622222222', street: 'Rue 1', city: 'Douala' },
+        deliveryMethod: 'HOME_DELIVERY'
+      }, extra));
+    };
+
+    // Baseline: no preference -> the standard city fee (whatever this env seeds).
+    const baseline = await order({});
+    const cityFee = baseline.shippingFeeXaf;
+    assert.strictEqual(baseline.preferredDriverId, null);
+
+    // A provider with their own tariff prices the order at THAT tariff, and the
+    // preference is kept — this is what makes the picker's fee the charged fee.
+    const withFee = await order({ preferredDriverId: 'pp_fee' });
+    assert.strictEqual(withFee.shippingFeeXaf, 2200, 'the order is priced at the chosen provider\'s tariff');
+    assert.strictEqual(withFee.preferredDriverId, 'pp_fee', 'and the preference is kept');
+
+    // No tariff of their own: the standard city fee, preference kept.
+    const noFee = await order({ preferredDriverId: 'pp_nofee' });
+    assert.strictEqual(noFee.shippingFeeXaf, cityFee, 'a provider with no tariff charges the standard fee');
+    assert.strictEqual(noFee.preferredDriverId, 'pp_nofee');
+
+    // Suspended: not honoured — standard fee, and the dead pick is dropped so the
+    // order never carries a provider who cannot do it.
+    const susp = await order({ preferredDriverId: 'pp_susp' });
+    assert.strictEqual(susp.shippingFeeXaf, cityFee, 'a suspended provider does not set the price');
+    assert.strictEqual(susp.preferredDriverId, null, 'and the unavailable preference is dropped');
+
+    // Out of area: not honoured either.
+    const away = await order({ preferredDriverId: 'pp_away' });
+    assert.strictEqual(away.shippingFeeXaf, cityFee, 'an out-of-area provider does not set the price');
+    assert.strictEqual(away.preferredDriverId, null);
+
+    // Store pickup never carries a provider or a delivery fee.
+    const pickup = await order({ deliveryMethod: 'STORE_PICKUP', preferredDriverId: 'pp_fee' });
+    assert.strictEqual(pickup.preferredDriverId, null, 'pickup drops any provider');
+    assert.strictEqual(pickup.shippingFeeXaf, 0, 'and has no delivery fee');
+  } finally {
+    rec.restore();
+  }
+}
+
 // ------------------------------------------------------------ 2-4. the circuit itself
 
 function makeWorld() {
@@ -383,6 +452,7 @@ async function run() {
   if (!hadSecret) config.supabase.jwtSecret = 'unit-test-delivery-secret-0123456789abcdef';
   try {
     await testOrderPlacement();
+    await testPreferredProviderPricing();
     await testTheCircuit();
     await testMissingMigration();
     await testAdminLookup();
