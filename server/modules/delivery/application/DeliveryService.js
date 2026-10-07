@@ -1128,6 +1128,10 @@ class DeliveryService {
     if (!rider || rider.status !== DRIVER_STATUS.ACTIVE || rider.isAgency) {
       throw new ValidationError('That rider is not available', [{ field: 'riderId', message: 'Unknown or suspended rider.' }]);
     }
+    // Same rule as assigning: only a rider who is online and not already carrying a
+    // delivery can be offered one. Checked BEFORE the write, so refusing an offline
+    // member leaves the delivery with the agency instead of withdrawing it.
+    await this.presence.assertAvailable(rider.id, rider);
 
     // Reassign from the agency to the member: _applyAssignment's compare-and-swap
     // expects the current (status, driverId) — the agency — and offers the member.
