@@ -9344,7 +9344,7 @@ html, body {
 </x-dc>
 
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:446,&quot;height&quot;:900},&quot;userName&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Tchuekam&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;showAds&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Home&quot;}}">
-// Global delegated video controller: seamless autoplay loop with sound toggle
+
 if (typeof window !== 'undefined' && typeof document !== 'undefined') {
   window.toggleVideoSound = function(e) {
     if (e) {
@@ -9358,7 +9358,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
     if (!vid) return;
 
     if (vid.muted) {
-      // Mute all other videos on the page so only one plays sound at a time
+      
       document.querySelectorAll('video').forEach(function(v) {
         if (v !== vid) {
           v.muted = true;
@@ -9384,7 +9384,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
     }
   };
 
-  // Capture phase listener so clicks on unmute button NEVER bubble to card click/modal
+  
   if (!window.__loumooVideoSoundAttached) {
     window.__loumooVideoSoundAttached = true;
     document.addEventListener('click', function(e) {
@@ -9397,7 +9397,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
     }, true);
   }
 
-  // Ensure autoplay videos play smoothly and continuously loop
+  
   window.initLoumooAutoplayVideos = function() {
     var vids = document.querySelectorAll('video[autoplay]');
     vids.forEach(function(vid) {
@@ -9419,37 +9419,37 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
 }
 
 const SCREENS = [
-  // NOTE: 'sellers' was declared here but has no template anywhere, so any
-  // control routed to it landed the user on a blank screen. The two "COMPARE
-  // SELLERS" buttons now point at 'vs' (the comparison hub, which exists).
+  
+  
+  
   'home','search','filters','voice','category','bestpicks','freeday','notifications','chat','threadAi','threadSeller',
   'product','cart','checkout','success','orders','store','business','brand','vs','vsCompare','visual',
   'visualScan','visualResults','myListings','travel','travelBus',
   'travelPackages','travelVisa','travelResults','travelDetail','travelPassenger','travelTicket','hotelVoucher','announce','announceCampaigns','announceDetail',
   'profile','seller','settings','networkError','saved','transactions','loading',
   'onboardWelcome','onboardType','onboardIdentity','onboardOtp','onboardAdaptive','onboardBuyer','onboardSeller','onboardBusiness','onboardVerify','onboardReview','onboardSuccess',
-  // Phase A — Account access (returning users)
+  
   'signIn','forgotPassword','resetPassword','verifyEmail',
-  // Phase B — User Account Hub
+  
   'accountDashboard','editProfile','addresses','addAddress','editAddress','notificationPreferences','privacySettings','securitySettings','followedStores','userActivity','deleteAccount',
-  // Phase D — Product & Vertical Completeness
+  
   'orderDetail','refundRequest','writeReview','sellerOrderDetail','sellerPayouts','hotelSearch','hotelDetail','hotelBooking',
-  // Phase E — Store & Business System (Prompt 05)
+  
   'createStore','storeOnboarding','storeSettings','storeVerification','storeAnalytics',
-  // Phase F — Universal Publishing Engine.
-  // `listingAttributes` and `listingPreview` were declared here but nothing
-  // ever navigated to them, and the preview they rendered was hardcoded. The
-  // studio below replaces the whole wizard.
+  
+  
+  
+  
   'publishIntent','publishStudio','publishReview','publishSuccess',
   'publicUserProfile','sellerPublicPage',
-  // Phase 4 — SuperAdmin Executive Console
+  
   'superAdmin'
 ];
-// ── Seller WhatsApp lines (Cameroon) ──
-// Real deep-link messaging: contacting a seller opens WhatsApp with a
-// pre-filled enquiry to that store's line. Numbers are per-store; new sellers
-// register theirs at onboarding. Format = full international MSISDN, digits
-// only, ready for a wa.me link. Unknown stores fall back to the LOUMOO line.
+
+
+
+
+
 const SELLER_WHATSAPP_DEFAULT = '237690123456';
 const SELLER_WHATSAPP = {
   'Orca Electronics': '237677101234',
@@ -9477,8 +9477,8 @@ function resolveSellerWhatsApp(name) {
     : SELLER_WHATSAPP_DEFAULT;
   if (!name) return dynamicDefault;
   if (SELLER_WHATSAPP[name]) return SELLER_WHATSAPP[name];
-  // Store names vary ("Orca Electronics" vs "Orca Electronics Douala"): match
-  // case-insensitively on a shared prefix so a variant still finds its line.
+  
+  
   const norm = String(name).toLowerCase().trim();
   for (const key in SELLER_WHATSAPP) {
     const k = key.toLowerCase();
@@ -9487,7 +9487,7 @@ function resolveSellerWhatsApp(name) {
   return dynamicDefault;
 }
 
-// ── Dynamic City Shipping Rates ──
+
 function resolveCityDeliveryFee(city) {
   const defaultRates = {
     Douala: 1000,
@@ -9501,11 +9501,11 @@ function resolveCityDeliveryFee(city) {
   const dynamicRates = (typeof window !== 'undefined' && window.LOUMOO_SYSTEM_SETTINGS && window.LOUMOO_SYSTEM_SETTINGS.shipping_rates_by_city)
     ? window.LOUMOO_SYSTEM_SETTINGS.shipping_rates_by_city
     : defaultRates;
-  // The SAME rule the server prices the order with (PricingEngine.resolveCityRate),
-  // so the fee shown at checkout is the fee on the order: accents and punctuation
-  // are ignored ("Yaoundé" is the table's "Yaounde"), a rate of 0 is a real rate,
-  // and a city that is not in the table costs the server's default of XAF 3 000.
-  // With no address yet (the bag, before checkout) the Douala rate is only a preview.
+  
+  
+  
+  
+  
   const fold = (s) => String(s == null ? '' : s).normalize('NFD').toLowerCase().replace(/[^a-z0-9 ]/g, '').replace(/ +/g, ' ').trim();
   if (!fold(city)) return Number.isInteger(Number(dynamicRates['Douala'])) ? Number(dynamicRates['Douala']) : 1000;
   const wanted = fold(city);
@@ -9550,66 +9550,44 @@ const NO_NAV = [
   'superAdmin'
 ];
 
-/**
- * Canonical browser API client (src/services/loumooApi.js, loaded in <head>).
- * Resolved lazily and defensively: the x-dc script is also executed inside a
- * bare Node `vm` sandbox by tests/unit/authenticated_ui.test.js where neither
- * `window` nor `fetch` exist. Every call site must tolerate `null`.
- */
+
 function getApi() {
   try {
     if (typeof window !== 'undefined' && window && window.LoumooAPI) return window.LoumooAPI;
     if (typeof globalThis !== 'undefined' && globalThis && globalThis.LoumooAPI) return globalThis.LoumooAPI;
-  } catch (e) { /* sandboxed */ }
+  } catch (e) {  }
   return null;
 }
 
-/**
- * The Discovery Engine runtime (src/services/recommendationEngine.js). It owns
- * the visitor id, local preference profile and event capture, and ranks the
- * home feed in the browser. Absent in the headless verify_runtime sandbox, so
- * every caller must tolerate null and fall back to the catalogue's own order.
- */
+
 function getReco() {
   try {
     if (typeof window !== 'undefined' && window && window.LoumooReco) return window.LoumooReco;
     if (typeof globalThis !== 'undefined' && globalThis && globalThis.LoumooReco) return globalThis.LoumooReco;
-  } catch (e) { /* sandboxed */ }
+  } catch (e) {  }
   return null;
 }
 
-/**
- * The client account guard (src/services/accountGuard.js). It caches the
- * server's answer from GET /api/v1/me/state; it never decides anything itself.
- */
+
 function getGuard() {
   try {
     if (typeof window !== 'undefined' && window && window.LoumooGuard) return window.LoumooGuard;
     if (typeof globalThis !== 'undefined' && globalThis && globalThis.LoumooGuard) return globalThis.LoumooGuard;
-  } catch (e) { /* sandboxed */ }
+  } catch (e) {  }
   return null;
 }
 
 
-/**
- * The publishing engine (src/services/publishingEngine.js), resolved the same
- * defensive way as the API client: the x-dc script is also executed inside a
- * bare Node `vm` sandbox by the frontend tests, where `window` does not exist.
- */
+
 function getPublishing() {
   try {
     if (typeof window !== 'undefined' && window && window.LoumooPublishing) return window.LoumooPublishing;
     if (typeof globalThis !== 'undefined' && globalThis && globalThis.LoumooPublishing) return globalThis.LoumooPublishing;
-  } catch (e) { /* sandboxed */ }
+  } catch (e) {  }
   return null;
 }
 
-/**
- * Turns an API rejection into something a seller can act on.
- *
- * The server's own message is always preferred — it knows what went wrong.
- * The fallbacks only cover the cases where there is no server to ask.
- */
+
 function friendlyError(err) {
   if (!err) return 'Something went wrong. Please try again.';
   if (err.code === 'OFFLINE' || err.status === 0) {
@@ -9625,39 +9603,28 @@ function friendlyError(err) {
   return err.message || 'Something went wrong. Please try again.';
 }
 
-/** Folds the server's per-field errors into the studio's error map. */
+
 function mergeFieldErrors(existing, fields) {
   const out = Object.assign({}, existing || {});
   (fields || []).forEach(f => {
     if (!f || !f.field) return;
-    // The server namespaces nested fields exactly as the engine paths do.
+    
     out[f.field] = f.message;
   });
   return out;
 }
 
-/**
- * Returns the studio to the top of the editor when the section changes.
- *
- * On desktop the scroll container is `.scr`; on mobile the page itself moves.
- * Wrapped because the x-dc script also runs without a DOM.
- */
+
 function scrollStudioToTop() {
   try {
     if (typeof document === 'undefined') return;
     const scroller = document.querySelector('.scr');
     if (scroller && scroller.scrollTo) scroller.scrollTo({ top: 0, behavior: 'smooth' });
     else if (typeof window !== 'undefined' && window.scrollTo) window.scrollTo({ top: 0, behavior: 'smooth' });
-  } catch (e) { /* no DOM */ }
+  } catch (e) {  }
 }
 
-/**
- * Scrolls to a field and puts the cursor in it.
- *
- * This is what turns "3 things need attention" into three clicks to fixed: the
- * seller lands on the offending input, not on the section that contains it.
- * Deferred one frame so the section has rendered before we look for the node.
- */
+
 function focusStudioField(path) {
   try {
     if (typeof document === 'undefined') return;
@@ -9670,24 +9637,20 @@ function focusStudioField(path) {
       const input = document.getElementById('pubinput-' + key);
       if (input && input.focus) input.focus({ preventScroll: true });
     }, 90);
-  } catch (e) { /* no DOM */ }
+  } catch (e) {  }
 }
 
-/** A local preview URL, or an empty string where the browser cannot make one. */
+
 function safeObjectUrl(file) {
   try {
     if (typeof URL !== 'undefined' && URL.createObjectURL) return URL.createObjectURL(file);
-  } catch (e) { /* no object URLs available */ }
+  } catch (e) {  }
   return '';
 }
 
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 
-/**
- * Password strength meter. Presentation only: it guides the user towards a
- * good password, it does not decide whether one is acceptable — Clerk does
- * that, including checking against known breach corpora.
- */
+
 function passwordStrength(pw) {
   if (!pw) return { pct: '0%', label: '', color: 'var(--color-text-muted)' };
   let score = 0;
@@ -9701,23 +9664,19 @@ function passwordStrength(pw) {
   return { pct: '100%', label: 'STRONG', color: 'var(--color-success)' };
 }
 
-/** The Clerk browser bridge (src/services/clerkSession.js). */
+
 function getClerk() {
   try {
     if (typeof window !== 'undefined' && window && window.LoumooClerk) return window.LoumooClerk;
     if (typeof globalThis !== 'undefined' && globalThis && globalThis.LoumooClerk) return globalThis.LoumooClerk;
-  } catch (e) { /* sandboxed */ }
+  } catch (e) {  }
   return null;
 }
 
-// Curated hospitality inventory — the single source of truth for the hotel
-// vertical (search → detail → booking → voucher). Each hotel carries its own
-// rooms so the selection is coherent end to end (no hardcoded mismatches).
-/**
- * ISO date (YYYY-MM-DD) N days from today, in the viewer's local calendar.
- * Default stay dates must be computed, never written as literals — a literal
- * date quietly turns into a past date and the server rejects the search.
- */
+
+
+
+
 function isoDaysFromToday(days) {
   const d = new Date();
   d.setDate(d.getDate() + (Number(days) || 0));
@@ -9725,21 +9684,21 @@ function isoDaysFromToday(days) {
   return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
 }
 
-// The hotel catalog is served by the API (GET /travel/hotels) and is
-// deliberately NOT bundled here: a local copy drifts from the server's real
-// inventory and prices, and lets the UI advertise rooms that cannot be booked.
 
-// Curated static catalog data is decoupled from the initial HTML shell to keep the
-// initial document payload fast (<800 KiB) and prevent mobile DOM parse freezes.
-// It is loaded asynchronously via src/data/catalog_products_bundle.js or /data/catalog.json.
+
+
+
+
+
+
 const PRODUCTS_DATA = (typeof window !== 'undefined' && window.PRODUCTS_DATA) ? window.PRODUCTS_DATA : {
-  // Externalized to public/data/catalog.json and src/data/catalog_products_bundle.js
+  
 };
 if (typeof window !== 'undefined' && !window.PRODUCTS_DATA) {
   window.PRODUCTS_DATA = PRODUCTS_DATA;
 }
 
-/* Video playback controllers for seamless hover-to-play media cards */
+
 if (typeof window !== 'undefined') {
   window.loumooPlayVideo = function(container) {
     if (!container) return;
@@ -9792,45 +9751,45 @@ class Component extends DCLogic {
     infiniteFeedBatch: 1,
     qty: 1, freeday: false, darkMode: false,
     isLoggedIn: false,
-    // Authoritative session state resolved from GET /api/v1/me/state.
-    // 'unknown' during boot so the Get Started CTA never flashes for a
-    // signed-in user; resolves to 'authenticated' | 'anonymous'.
+    
+    
+    
     authStatus: 'unknown',
     sessionUser: null,
 
-    // The server's account-state envelope. This is a PROJECTION of the
-    // server's decision — the UI renders it, and never writes to it to grant
-    // itself a permission.
-    accountState: null,        // 'ACCOUNT_READY', 'SELLER_READY', ...
-    capabilities: {},          // { canCreateListing: bool, ... }
-    serverOnboarding: null,    // { nextStep, steps, percentage, draft }
-    authProviderStatus: 'loading',  // loading | ready | unavailable
+    
+    
+    
+    accountState: null,        
+    capabilities: {},          
+    serverOnboarding: null,    
+    authProviderStatus: 'loading',  
     authProviderError: '',
     onboardingBusy: false,
     onboardingError: '',
     onboardingFieldErrors: {},
 
-    // Registration (real Clerk account creation)
+    
     regPassword: '',
     regShowPassword: false,
     regBusy: false,
     regError: '',
 
-    // Reported by the server: whether a phone verification provider exists.
+    
     phoneVerificationAvailable: false,
 
-    // ── Phase A: Sign In ──
+    
     signInIdentifier: '',
     signInPassword: '',
     signInShowPassword: false,
     signInBusy: false,
     signInError: '',
-    // Screen to land on after a successful sign in. Only ever set to a key
-    // that exists in SCREENS (validated in requireAuth) — never a raw string
-    // from user input or a URL, so it cannot be used as an open redirect.
+    
+    
+    
     postAuthRedirect: '',
 
-    // ── Phase A: Password reset ──
+    
     resetEmail: '',
     resetCode: '',
     resetNewPassword: '',
@@ -9842,13 +9801,13 @@ class Component extends DCLogic {
     resetServerMessage: '',
     resetCooldown: 0,
 
-    // ── Phase A: Email verification ──
+    
     emailVerifyState: 'pending',
     emailVerifyCode: '',
     emailVerifyError: '',
     emailVerifyCooldown: 0,
 
-    // ── Phase 4: SuperAdmin Dashboard State ──
+    
     adminActiveTab: 'overview',
     adminStats: {
       gmvXaf: 14850000,
@@ -9912,8 +9871,8 @@ class Component extends DCLogic {
     regEmail: '',
     regCity: 'douala',
     regAddress: '',
-    // Seeded with a demo merchant's name until now, which any seller
-    // without their own business name displayed as their storefront.
+    
+    
     regBusinessName: '',
     regRccm: 'RC/DLA/2023/B/1842',
     legalForm: 'sarl',
@@ -9941,7 +9900,7 @@ class Component extends DCLogic {
       pay: 'mtn', deliv: 'home', uqty: 'one'
     },
 
-    // ── Phase B: User Account Hub State ──
+    
     dashboard: null,
     dashboardLoading: false,
     dashboardError: '',
@@ -9953,11 +9912,11 @@ class Component extends DCLogic {
     profileFormDirty: false,
     profileSaving: false,
     profileFormError: '',
-    // Seeded with two of a real person's home/office addresses until now, which
-    // any account with no addresses of its own displayed as its own.
+    
+    
     addressesList: [],
     addressesLoading: false,
-    // Delivery providers the buyer can prefer at checkout (home delivery only).
+    
     providers: [],
     providersLoading: false,
     providersError: '',
@@ -9998,8 +9957,8 @@ class Component extends DCLogic {
       { id: 'act_3', title: 'Followed Store', description: 'Subscribed to Orca Electronics Douala flash stock notifications', createdAt: '22 Aug 2026, 18:40' }
     ],
     activityLoading: false,
-    // Seller identity, mirrored from GET /me/state. The store is the source of
-    // truth for every seller capability; nothing here is decided locally.
+    
+    
     sellerStatus: 'NONE',
     primaryStoreId: null,
     store: null,
@@ -10008,9 +9967,9 @@ class Component extends DCLogic {
     deleteAccountBusy: false,
     deleteAccountError: '',
 
-    // ── Phase D: Order, Review & Vertical State ──
-    // The order whose detail is open; set from the list (openOrderById), never
-    // pre-filled, so the detail screen cannot show an order the user does not have.
+    
+    
+    
     currentOrder: null,
     refundReason: 'damaged',
     refundDetails: '',
@@ -10047,8 +10006,8 @@ class Component extends DCLogic {
     hotelCity: '',
     hotelSelectedId: '',
     hotelRoomIndex: 0,
-    // Dates are derived from today, never hardcoded: a literal date silently
-    // becomes a PAST date as time passes, and the server rejects those.
+    
+    
     hotelCheckIn: isoDaysFromToday(1),
     hotelCheckOut: isoDaysFromToday(4),
     hotelGuests: 2,
@@ -10056,10 +10015,10 @@ class Component extends DCLogic {
     hotelGuestPhone: '+237 690 12 34 56',
     hotelReservation: null,
 
-    // ── Hotel catalog, served by the backend (GET /travel/hotels) ──
-    // The catalog is NOT held in the bundle: a local copy drifts from the
-    // server's real inventory and prices, and lets the UI advertise rooms
-    // that cannot actually be booked.
+    
+    
+    
+    
     hotelList: [],
     hotelListLoading: false,
     hotelListError: '',
@@ -10073,10 +10032,10 @@ class Component extends DCLogic {
     hotelSelectedRoomId: '',
     hotelSubmitting: false,
     hotelSubmitError: '',
-    // Client-only favourite marks (hero heart); never persisted server-side.
+    
     hotelFavIds: {},
 
-    // ── Travel & Mobility Ecosystem State ──
+    
     travelServiceTab: 'bus',
     travelMyTripsTab: 'upcoming',
     busOperatorFilter: 'all',
@@ -10192,7 +10151,7 @@ class Component extends DCLogic {
     visaApplicationStatus: 'IN REVIEW',
     visaCountryLabel: 'France / Schengen Short Stay (Type C)',
 
-    // ── Phase E: Store & Business System State ──
+    
     createStoreName: '',
     createStoreLogoUrl: '',
     storeLogoUrl: '',
@@ -10217,7 +10176,7 @@ class Component extends DCLogic {
     analyticsConversionRate: '0.0',
     analyticsTopProducts: [],
 
-    // ── LOUMOO Announce: Zero Telemetry for New Stores ──
+    
     announcePeriod: '7d',
     announceCampaigns: [],
     announceTotalReach: '0',
@@ -10247,7 +10206,7 @@ class Component extends DCLogic {
     storeLocationStreet: '',
     storeLocationLandmark: '',
 
-    // ── Stores & Brands Discovery / Storefront State ──
+    
     storeSearchQuery: '',
     storeCityFilter: 'all',
     storeCategoryFilter: 'all',
@@ -10256,7 +10215,7 @@ class Component extends DCLogic {
     selectedBrand: 'apple',
     brandFollowed: false,
 
-    // ── All Categories & Taxonomy Discovery State ──
+    
     categorySearchQuery: '',
     categorySelectedDomain: 'all',
     activeCategorySlug: 'all',
@@ -10265,24 +10224,24 @@ class Component extends DCLogic {
     categoryCityFilter: 'all',
     categoryVerifiedOnly: false,
 
-    // ── Search & Filter State ──
-    // searchResults: null  = no query executed yet (show default/popular state)
-    //                 []    = a search ran and returned zero matches (empty state)
-    //                 [...] = matches to render
+    
+    
+    
+    
     searchQuery: '',
     searchResults: null,
     searchBusy: false,
     searchError: '',
-    // Marketplace refinement filters (feed the same /products query as search).
-    filterCity: '',            // '' = all cities; else 'douala' | 'yaounde' | 'kribi'
-    filterVerifiedOnly: false, // true = only verified/official stores
+    
+    filterCity: '',            
+    filterVerifiedOnly: false, 
 
-    // ── Phase F: Universal Publishing Engine ──
-    // ONE draft object drives the whole studio (src/services/publishingEngine.js).
-    // The previous revision kept nineteen loose `newListing*` / `attr*` keys
-    // seeded with a demo MacBook, which is why an untouched wizard already had
-    // someone else's product in it — and why every publish attempt sent
-    // electronics attributes to whatever category was chosen.
+    
+    
+    
+    
+    
+    
     pubDraft: null,
     pubSectionKey: null,
     pubAdvancedOpen: false,
@@ -10290,14 +10249,14 @@ class Component extends DCLogic {
     pubPreviewDevice: 'mobile',
     pubChipDrafts: {},
 
-    // Server-resolved definitions. Fetched once, then cached per category.
+    
     pubTaxonomy: [],
     pubCategorySchema: null,
     pubCategorySchemaId: null,
     pubBroadcastSchema: null,
     pubAttachable: [],
 
-    // Lifecycle: '' | 'VALIDATING' | 'UPLOADING' | 'SAVING' | 'PUBLISHING'
+    
     pubLifecycle: '',
     pubBusyLabel: '',
     pubServerError: '',
@@ -10311,7 +10270,7 @@ class Component extends DCLogic {
     pubPublished: null,
     pubRevealErrors: false,
 
-    // ── Discovery surfaces fed by what the studio publishes ──
+    
     announcements: [],
     announceTotal: 0,
     announceLoading: false,
@@ -10331,7 +10290,7 @@ class Component extends DCLogic {
     storeDiscoveryLoading: false,
     storeDiscoveryError: '',
 
-    // ── Canonical Dynamic Product & Catalog State ──
+    
     currentProductId: null,
     currentProduct: null,
     productLoading: false,
@@ -10350,8 +10309,8 @@ class Component extends DCLogic {
   go = (s) => {
     if (this._searchExperience) this._searchExperience.enter(s);
     this.setState(st => ({ screen: s, stack: [...st.stack, st.screen], toast: '' }));
-    // The publishing studio is a feature chunk. Start loading it on intent,
-    // while the route transition remains immediate for all other screens.
+    
+    
     if (s === 'publishIntent' || s === 'publishStudio' || s === 'publishReview' || s === 'publishSuccess') {
       this._ensurePublishingEngine().then((pub) => {
         if (this._unmounted || !pub) return;
@@ -10393,9 +10352,9 @@ class Component extends DCLogic {
     }
   };
 
-  // ── Profile photo ────────────────────────────────────────────────────────
-  // Stored as a downscaled data URL so it survives reloads and reflects in
-  // every avatar across the app (sidebar, top bar, profile, account, edit).
+  
+  
+  
   _restoreUserAvatar = () => {
     try {
       const a = localStorage.getItem('loumoo_user_avatar');
@@ -10414,7 +10373,7 @@ class Component extends DCLogic {
         reader.onload = () => {
           const img = new Image();
           img.onload = () => {
-            // Center-crop to a 256px square and re-encode to keep it small.
+            
             const size = 256;
             const canvas = document.createElement('canvas');
             canvas.width = size; canvas.height = size;
@@ -10513,17 +10472,17 @@ class Component extends DCLogic {
     return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
   };
 
-  // ── Wishlist / Saved items ────────────────────────────────────────────────
-  // Persist to localStorage so saves survive reloads (works for guests too),
-  // and mirror writes to the backend saved-items API when the user is signed in.
+  
+  
+  
   _priceToXaf = (s) => {
     if (typeof s === 'number') return s;
     const digits = String(s || '').replace(/[^0-9]/g, '');
     return digits ? parseInt(digits, 10) : 0;
   };
-  // Resolve a product by id from the curated catalogue (PRODUCTS_DATA) first,
-  // then from the live API catalogue already loaded into state (real seller
-  // listings shown in the home rail / search). Returns {} if unknown.
+  
+  
+  
   _resolveProduct = (id) => {
     if (!id) return {};
     let p = this._resolveProductItem ? this._resolveProductItem(id) : null;
@@ -10533,9 +10492,9 @@ class Component extends DCLogic {
     }
     return p || (this._synthesizeAvailableListing ? this._synthesizeAvailableListing(id) : {});
   };
-  // The pool of real products (curated data + live catalogue) that belong to a
-  // top-level category slug. Powers the category drill-down grid so no category
-  // ever renders a blank screen. Returns raw product objects (no view formatting).
+  
+  
+  
   _categoryProductPool = (slug) => {
     if (!slug) return [];
     const MAP = {
@@ -10565,7 +10524,7 @@ class Component extends DCLogic {
     const cats = MAP[slug] || [slug];
     return merged.filter((p) => cats.indexOf(String(p.category || '').toLowerCase()) !== -1);
   };
-  // Minimal item shape the Discovery Engine needs to learn from a card/product.
+  
   _recoItem = (src) => {
     if (!src) return { id: null };
     return {
@@ -10579,14 +10538,14 @@ class Component extends DCLogic {
       storeCity: src.storeCity || src.merchantCity || ''
     };
   };
-  // Emit one engine event for a product interaction, tolerating a missing runtime.
+  
   _recoNote = (kind, src, extra) => {
-    try { const R = getReco(); if (R && R.note) R.note(kind, this._recoItem(src), extra || {}); } catch (e) { /* non-fatal */ }
+    try { const R = getReco(); if (R && R.note) R.note(kind, this._recoItem(src), extra || {}); } catch (e) {  }
   };
-  // "More like this" neighbours for the open product, memoized per product so a
-  // PDP re-render (qty stepper, image select, a toast) doesn't re-scan the whole
-  // ~1k-item catalogue twice every render. Invalidated when the product or the
-  // loaded catalogue size changes.
+  
+  
+  
+  
   _pdpSimilarList = () => {
     const p = this.state.currentProduct;
     const R = getReco();
@@ -10650,7 +10609,7 @@ class Component extends DCLogic {
 
     return sub === c || cl.includes(subClean) || t.includes(subClean);
   };
-  // Hotel date helpers: nights between two ISO dates, and a human label.
+  
   _hotelNights = (ci, co) => {
     try {
       const d = Math.round((new Date(co + 'T00:00:00') - new Date(ci + 'T00:00:00')) / 86400000);
@@ -10711,9 +10670,9 @@ class Component extends DCLogic {
     } catch (e) {}
   };
 
-  // ── Shopping bag / cart ───────────────────────────────────────────────────
-  // Real cart with line items + quantities, persisted to localStorage so it
-  // survives reloads (works for guests). Checkout/payment wiring comes later.
+  
+  
+  
   _cartEntry = (id, name) => {
     const p = this._resolveProduct(id);
     const priceStr = p.salePrice || p.price || '';
@@ -10740,10 +10699,10 @@ class Component extends DCLogic {
     } catch (e) {}
   };
 
-  // ── Orders ────────────────────────────────────────────────────────────────
-  // Placing an order snapshots the bag into a real order (payment deferred, so
-  // it is "pending / pay on delivery"). Persisted to localStorage so the order
-  // history works for everyone, and mirrored to the backend when signed in.
+  
+  
+  
+  
   _persistOrders = (list) => {
     try { localStorage.setItem('loumoo_orders', JSON.stringify(list || [])); } catch (e) {}
   };
@@ -10774,10 +10733,10 @@ class Component extends DCLogic {
     }
   };
 
-  // ── Reviews ───────────────────────────────────────────────────────────────
-  // Buyer reviews persist locally so a submitted review is immediately visible
-  // on the product; when signed in on a real DB listing it also posts to the
-  // reviews API (POST /reviews).
+  
+  
+  
+  
   _persistReviews = (list) => {
     try { localStorage.setItem('loumoo_reviews', JSON.stringify(list || [])); } catch (e) {}
   };
@@ -10790,7 +10749,7 @@ class Component extends DCLogic {
     } catch (e) {}
   };
 
-  // ── Travel trips ──────────────────────────────────────────────────────────
+  
   _persistTrips = (list) => {
     try { localStorage.setItem('loumoo_trips', JSON.stringify(list || [])); } catch (e) {}
   };
@@ -10803,9 +10762,9 @@ class Component extends DCLogic {
     } catch (e) {}
   };
 
-  // ── Notifications ─────────────────────────────────────────────────────────
-  // A real activity feed generated from the buyer's own actions (orders placed,
-  // reviews posted, trips booked, stores followed), persisted locally.
+  
+  
+  
   _persistNotifs = (list) => {
     try { localStorage.setItem('loumoo_notifs', JSON.stringify(list || [])); } catch (e) {}
   };
@@ -10816,7 +10775,7 @@ class Component extends DCLogic {
         const list = JSON.parse(raw);
         if (Array.isArray(list)) { this.setState({ notifications: list }); return; }
       }
-      // First run: seed a friendly welcome so the feed is never a dead end.
+      
       const seed = [{
         id: 'ntf_welcome', tone: 'accent', title: 'Welcome to LOUMOO',
         body: 'Your notifications about orders, deliveries and trips will appear here.',
@@ -10839,7 +10798,7 @@ class Component extends DCLogic {
     const list = (this.state.notifications || []).map((n) => n.read ? n : Object.assign({}, n, { read: true }));
     this.setState({ notifications: list });
     this._persistNotifs(list);
-    // Sync to the backend feed when signed in.
+    
     try {
       if (this.state.authStatus === 'authenticated') {
         const api = getApi();
@@ -10847,8 +10806,8 @@ class Component extends DCLogic {
       }
     } catch (e) {}
   };
-  // Pull the server-side notification feed (order events, etc.) and merge it
-  // into the local activity feed, de-duplicated by server id.
+  
+  
   loadServerNotifications(opts) {
     try {
       if (this.state.authStatus !== 'authenticated') return;
@@ -10863,7 +10822,7 @@ class Component extends DCLogic {
           .map((s) => ({
             id: 'srv_' + s.id, serverId: s.id, tone: s.tone || 'accent',
             title: s.title, body: s.body, read: Boolean(s.read),
-            // audience + action say which screen this opens (see docs/DELIVERY_API.md)
+            
             metadata: s.metadata || {},
             createdAt: new Date(s.createdAt).getTime() || Date.now()
           }));
@@ -10871,30 +10830,30 @@ class Component extends DCLogic {
         const merged = local.concat(mapped).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)).slice(0, 40);
         this.setState({ notifications: merged });
         this._persistNotifs(merged);
-        // Polling: say what just arrived, so a seller or rider who is looking at
-        // something else still hears that an order or an offer is waiting.
+        
+        
         const fresh = mapped.filter((n) => !n.read);
         if (opts && opts.announce && fresh.length) {
           this.toast(fresh[0].title + (fresh.length > 1 ? ' (+' + (fresh.length - 1) + ' more)' : ''));
         }
-        // A delivery or order notification means the buyer's orders moved on.
+        
         if (fresh.some((n) => n.metadata && n.metadata.orderId)) this.loadServerOrders();
       }).catch(() => {});
     } catch (e) {}
   }
 
-  // Opens the screen a notification is about, for the part the reader plays in it.
+  
   _openNotification(n) {
     const circuit = typeof window !== 'undefined' ? window.LoumooCircuit : null;
     if (!n || !circuit) return;
     circuit.openFromNotification(n);
   }
 
-  // ── The delivery circuit: orders and notifications that stay live ──────────
-  // The seller, the rider and the buyer each learn the next step from the
-  // notification feed, so the feed has to be live. It is re-read every 45 s while
-  // the tab is visible and the user is signed in, and as soon as the tab returns
-  // to the foreground; open order screens refresh with it.
+  
+  
+  
+  
+  
   _startCircuitPolling() {
     if (typeof window === 'undefined' || typeof document === 'undefined' || this._circuitTimer) return;
     const tick = () => {
@@ -10916,9 +10875,9 @@ class Component extends DCLogic {
     this._onCircuitVisible = null;
   }
 
-  // Reads the buyer's orders from the server and folds them into the list kept on
-  // the device: the server is the truth for status, the device keeps the pictures.
-  // One read at a time (screen entry fires from two places).
+  
+  
+  
   loadServerOrders() {
     try {
       if (this.state.authStatus !== 'authenticated' || this._ordersInFlight) return;
@@ -10930,7 +10889,7 @@ class Component extends DCLogic {
         if (this._unmounted) return;
         const serverOrders = ((page && page.orders) || []).map((o) => circuit.orderFromServer(o, {}));
         const merged = circuit.mergeOrders(this.state.orders || [], serverOrders);
-        // Keep the open detail pointing at the fresh copy of the same order.
+        
         const open = this.state.currentOrder;
         const fresh = open && open.id ? merged.find((o) => o.id === open.id) : null;
         this.setState(fresh ? { orders: merged, currentOrder: fresh } : { orders: merged });
@@ -10939,7 +10898,7 @@ class Component extends DCLogic {
     } catch (e) { this._ordersInFlight = false; }
   }
 
-  // Order detail for an order in the list (looked up by the id the server gave it).
+  
   _openOrderById(id) {
     const order = (this.state.orders || []).find((o) => o && o.id === id);
     if (!order) return;
@@ -10947,10 +10906,10 @@ class Component extends DCLogic {
     this.go('orderDetail');
   }
 
-  // Sends one order per store to the server, one after another. After each order
-  // the placed items leave the bag, so if a later store fails the shopper is left
-  // with exactly what was not ordered and can try again. Resolves with the orders
-  // that were placed and, if one was refused, why.
+  
+  
+  
+  
   _placeBagAsOrders(groups, address, method, images, deliveryMethod, preferredDriverId) {
     const api = getApi();
     const circuit = window.LoumooCircuit;
@@ -10962,7 +10921,7 @@ class Component extends DCLogic {
       const group = groups[i];
       return api.createOrder(circuit.toOrderPayload(group.items, address, deliveryMethod, preferredDriverId)).then((serverOrder) => {
         if (!serverOrder || !serverOrder.id) {
-          // A reply without an order means the seller cannot have been told.
+          
           const unconfirmed = new Error('The order was not confirmed.');
           unconfirmed.status = 502;
           return { placed: placed, failure: { error: unconfirmed, group: group } };
@@ -10980,13 +10939,13 @@ class Component extends DCLogic {
     };
     return step(0);
   }
-  // The ONE place that resolves the delivery destination — both the one the
-  // checkout card shows and the one placeOrder sends. Because the display and the
-  // action read the same answer, the card can never show a destination the order
-  // then rejects (the old bug: the card invented "Rue Joss, Bonanjo…" while the
-  // order refused the empty address). It invents nothing: it reads the selected
-  // address, else the default/first saved one, else the sign-up name/phone/city,
-  // and reports whether what it found is enough for the chosen method.
+  
+  
+  
+  
+  
+  
+  
   _resolveDeliveryDestination = () => {
     const addrs = this.state.addressesList || [];
     const sel = this.state.selectedDeliveryAddress;
@@ -11003,17 +10962,17 @@ class Component extends DCLogic {
     const method = (this.state.sel && this.state.sel.deliv === 'pickup') ? 'STORE_PICKUP' : 'HOME_DELIVERY';
     const phoneOk = String(address.phone).replace(/[^0-9]/g, '').length >= 6;
     const nameOk = address.fullName.trim().length >= 2;
-    // Home delivery needs a real place for the rider; pickup needs only a name and
-    // phone so the store can reach the buyer when the order is ready.
+    
+    
     const hasDestination = method === 'STORE_PICKUP'
       ? (nameOk && phoneOk)
       : (Boolean(address.street.trim() && address.city.trim()) && phoneOk && nameOk);
     return { address: address, method: method, hasDestination: hasDestination };
   };
-  // Load the delivery providers a buyer can prefer for a city (home delivery). The
-  // list comes from the real quote endpoint, so every provider, fee and rating is
-  // real. Guarded so it fetches once per city, not on every render; a selection
-  // that is no longer offered is dropped.
+  
+  
+  
+  
   _loadProviders = (city, force) => {
     const api = (typeof window !== 'undefined') && window.deliveryApi;
     if (!api || typeof api.getProviders !== 'function') return;
@@ -11032,7 +10991,7 @@ class Component extends DCLogic {
       this.setState({ providers: [], providersLoading: false, selectedProviderId: null, providersError: (e && e.message) || 'Could not load delivery options.' });
     });
   };
-  // City → IATA-ish code + airport label for the boarding pass.
+  
   _cityCode = (city) => {
     const map = {
       'douala': { code: 'DLA', airport: "Douala Int'l" },
@@ -11050,8 +11009,8 @@ class Component extends DCLogic {
     return map[key] || { code: (String(city || 'DLA').slice(0, 3).toUpperCase()), airport: city || 'Douala' };
   };
 
-  // Confirm a travel booking: build a trip, persist it, issue a boarding pass,
-  // and best-effort register it with the real travel API (which returns a PNR).
+  
+  
   _confirmTravelBooking() {
     const selected = this.state.selectedTravelResult || this.state.selectedBusSchedule || (this.state.busSchedules && this.state.busSchedules[0]) || {
       id: 'bus-sch-1',
@@ -11128,7 +11087,7 @@ class Component extends DCLogic {
           const ref = bookingData.reference || bookingData.bookingReference || pnrRef;
           const bookingId = bookingData.id;
 
-          // Record payment confirmation with provider
+          
           if (bookingId && api.payTravelBooking) {
             api.payTravelBooking(bookingId, {
               paymentMethod: this.state.travelPaymentMethod || 'mtn',
@@ -11155,23 +11114,23 @@ class Component extends DCLogic {
   }
 
   componentDidMount() {
-    // Restore all small, local-only UI caches in one state commit. The old
-    // sequence triggered up to eight root renders before the first useful
-    // interaction was available on a slow device.
+    
+    
+    
     this._restoreLocalState();
     this._loadSystemSettings();
     this._bootAuth();
-    // Load the live marketplace catalogue for the home rail on first paint
-    // (_onScreenEnter only fires on subsequent navigation, not initial mount).
+    
+    
     this._ensureCatalogData();
     this.loadCatalogProducts({ limit: 16 });
     if (this.state.screen === 'announce' || this.state.screen === 'announceDetail') {
       this.ensureAnnouncements();
     }
-    // Once auth has had a moment to settle, pull the server notification feed.
+    
     setTimeout(() => { if (!this._unmounted) this.loadServerNotifications(); }, 2000);
-    // Keep the feed (and an open order) live: sellers and riders learn of the next
-    // step from it. See _startCircuitPolling.
+    
+    
     this._startCircuitPolling();
     if (typeof window !== 'undefined') {
       window._loumooHeroComponent = this;
@@ -11180,7 +11139,7 @@ class Component extends DCLogic {
           window._loumooHeroComponent.heroNextSlide();
         }
       };
-      // Enforce zero volume and muted on any autoplay/ambient/hero video
+      
       this._onMediaPlay = (e) => {
         if (e.target && e.target.tagName === 'VIDEO') {
           if (!e.target.closest('.video-modal-player')) {
@@ -11199,12 +11158,12 @@ class Component extends DCLogic {
       };
       document.addEventListener('ended', this._onMediaEnded, true);
 
-      // Ambient background videos (e.g. the "Collections for you" rail) must
-      // loop silently with no play button. React does not reliably set the
-      // muted/loop DOM *properties* on first render, so an `autoplay` attribute
-      // alone leaves them un-muted (autoplay blocked) and non-looping. Enforce
-      // the properties here and drive playback from an IntersectionObserver, so
-      // each clip only loads and plays while it is actually on screen.
+      
+      
+      
+      
+      
+      
       try {
         const setupAmbient = (v) => {
           v.muted = true;
@@ -11228,12 +11187,12 @@ class Component extends DCLogic {
         this._scanAmbient = () => {
           document.querySelectorAll('video[data-ambient="true"]').forEach((v) => {
             setupAmbient(v);
-            this._ambientObserver.observe(v); // observing the same node twice is a no-op
+            this._ambientObserver.observe(v); 
           });
         };
         this._scanAmbient();
-        // Re-scan when React mounts new ambient videos (route changes, etc.),
-        // coalescing bursts of mutations into one scan per frame.
+        
+        
         let scanScheduled = false;
         this._ambientMutationObserver = new MutationObserver(() => {
           if (scanScheduled) return;
@@ -11244,10 +11203,10 @@ class Component extends DCLogic {
         this._ambientMutationObserver.observe(root, { childList: true, subtree: true });
       } catch (_) {}
 
-      // Announce feed: if a card's cover image fails to load, collapse the media
-      // well so a broken URL becomes a clean text-first card rather than a broken
-      // frame. Capture phase because 'error' does not bubble. CSP-safe (no inline
-      // handler). Scoped to .ann-card-media to avoid touching other imagery.
+      
+      
+      
+      
       this._onMediaError = (e) => {
         const img = e.target;
         if (img && img.tagName === 'IMG' && img.closest) {
@@ -11320,11 +11279,7 @@ class Component extends DCLogic {
     } catch (e) {}
   }
 
-  /**
-   * Restores the browser's small UI caches with one render. These values are
-   * convenience state only; server-backed identity and permissions still come
-   * from the existing auth/account flows.
-   */
+  
   _restoreLocalState() {
     if (typeof localStorage === 'undefined') return;
     const next = {};
@@ -11390,7 +11345,7 @@ class Component extends DCLogic {
     if (Object.keys(next).length) this.setState(next);
   }
 
-  /** Onboarding drafts are UI convenience only — never an auth signal. */
+  
   _restoreOnboardingDraft() {
     if (typeof localStorage === 'undefined') return;
     try {
@@ -11402,28 +11357,21 @@ class Component extends DCLogic {
     } catch (e) {}
   }
 
-  /**
-   * Boots authentication.
-   *
-   *   Clerk (browser)  ->  session token  ->  GET /api/v1/me/state  ->  UI
-   *
-   * The server's answer is the ONLY thing that decides what the user can do.
-   * localStorage holds nothing but half-typed form values.
-   */
+  
   _bootAuth() {
     const clerk = getClerk();
 
     if (!clerk) {
-      // Static prototype / test sandbox with no Clerk bundle: resolve whatever
-      // session the API client can prove, and present an honest anonymous
-      // state if it cannot prove one.
+      
+      
+      
       this.setState({ authProviderStatus: 'unavailable' });
       this._syncAccountState();
       return;
     }
 
-    // Verification completed on another device shows up when the tab regains
-    // focus, without the user having to reload.
+    
+    
     if (typeof window !== 'undefined') {
       this._onWindowFocus = () => {
         if (this.state.authStatus === 'authenticated') this._syncAccountState(true);
@@ -11431,7 +11379,7 @@ class Component extends DCLogic {
       window.addEventListener('focus', this._onWindowFocus);
     }
 
-    // Clerk broadcasts across tabs: signing in or out anywhere reaches here.
+    
     this._clerkUnsubscribe = clerk.subscribe(evt => {
       if (this._unmounted) return;
       if (evt.type === 'session') this._syncAccountState(true);
@@ -11462,11 +11410,7 @@ class Component extends DCLogic {
     });
   }
 
-  /**
-   * Pulls the authoritative account state and projects it onto the view.
-   * Called on boot, after every state-changing action, and whenever Clerk
-   * reports the session changed.
-   */
+  
   _syncAccountState(force) {
     const guard = getGuard();
     const api = getApi();
@@ -11486,17 +11430,14 @@ class Component extends DCLogic {
       return state;
     }).catch(() => {
       if (this._unmounted) return null;
-      // A network failure is NOT proof of sign-out. Stay in 'unknown' rather
-      // than falsely presenting the user as signed out and wiping their view.
+      
+      
       this.setState({ authStatus: 'unknown' });
       return null;
     });
   }
 
-  /**
-   * Establishes the LOUMOO session immediately after Clerk authenticates.
-   * Provisions the profile on first sign-in and returns the account state.
-   */
+  
   _establishSession() {
     const api = getApi();
     const guard = getGuard();
@@ -11545,18 +11486,13 @@ class Component extends DCLogic {
       ? 'seller'
       : 'buyer';
 
-    // The server already answers "does this account have a boutique, and is it
-    // live" in `state.seller`. Nothing was reading it, so the client invented
-    // `accountState.hasStore` (never sent) and fell back to a hardcoded store
-    // id. Project the real values once, here, and let every screen read them.
+    
+    
+    
+    
     const seller = state.seller || {};
 
-    /*
-     * Pull the real account counts once per session. The profile panel shows
-     * "active deliveries" and "saved products", but only openAccountDashboard()
-     * ever fetched them — which is why those figures had to be hardcoded to
-     * look populated. One guarded fetch on authentication makes them real.
-     */
+    
     if (!this._dashboardRequested) {
       this._dashboardRequested = true;
       const dashApi = getApi();
@@ -11564,19 +11500,14 @@ class Component extends DCLogic {
         dashApi.getDashboard().then(d => {
           if (!this._unmounted && d) this.setState({ dashboard: d });
         }).catch(() => {
-          // Counts stay at their honest zero; never block the session on this.
+          
           this._dashboardRequested = false;
     this._loadedStoreId = null;
         });
       }
     }
 
-    /* Load the seller's actual boutique.
-
-       Nothing ever assigned `this.state.store`, so every screen that shows the
-       store's name or vertical fell back to seeded demo values - the Sell
-       screen greeted sellers with another merchant's shop name and always
-       claimed the 'electronics' vertical. */
+    
     const ownStoreId = seller.storeId || user.primaryStoreId || null;
     if (ownStoreId && this._loadedStoreId !== ownStoreId) {
       this._loadedStoreId = ownStoreId;
@@ -11592,7 +11523,7 @@ class Component extends DCLogic {
             currentStoreSlug: store.slug || '',
             currentStoreCategory: store.categoryId || store.category_id || store.category || 'general'
           });
-          // Also fetch live store analytics so Seller Studio and Analytics cards are populated with real data!
+          
           if (typeof storeApi.getStoreAnalytics === 'function') {
             storeApi.getStoreAnalytics(ownStoreId, this.state.analyticsPeriod || '30d').then(an => {
               if (this._unmounted || !an) return;
@@ -11617,7 +11548,7 @@ class Component extends DCLogic {
             }).catch(() => {});
           }
         }).catch(() => {
-          // Screens fall back to a neutral label rather than a wrong one.
+          
           this._loadedStoreId = null;
         });
       }
@@ -11652,19 +11583,12 @@ class Component extends DCLogic {
     }
   }
 
-  /**
-   * Collapses to a signed-out session and drops every cached principal.
-   *
-   * The onboarding form draft is restored afterwards: it contains only
-   * half-typed answers, never an auth signal, so someone who abandoned the
-   * wizard and came back does not have to retype everything just because
-   * their session had not been established yet.
-   */
+  
   _applyAnonymous() {
     if (this._searchExperience && (this.state.isLoggedIn || this.state.sessionUser)) { this._searchExperience.destroy(true); this._searchExperience = null; }
     const guard = getGuard();
     if (guard) guard.invalidate();
-    // The next account must never inherit the previous one's counts.
+    
     this._dashboardRequested = false;
 
     this.setState({
@@ -11697,7 +11621,7 @@ class Component extends DCLogic {
       cart: 0,
       saved: false,
       following: false,
-      // Adaptive onboarding conversation state (server-driven).
+      
       adConversation: null,
       adBusy: false,
       adError: '',
@@ -11708,12 +11632,7 @@ class Component extends DCLogic {
     this._restoreOnboardingDraft();
   }
 
-  /**
-   * Loads what a screen needs, once, on arrival.
-   *
-   * Discovery surfaces read the API rather than a hardcoded fixture, so
-   * anything published through the studio turns up here without a reload.
-   */
+  
   _onScreenEnter(screen) {
     if (screen === 'store') {
       this.loadStoreDiscovery();
@@ -11740,8 +11659,8 @@ class Component extends DCLogic {
     } else if (screen === 'publishIntent') {
       this.checkResumableDraft();
     } else if (screen === 'home' || screen === 'category') {
-      // The marketplace rails show real published listings alongside the
-      // curated editorial ones.
+      
+      
       if (!this.state.catalogProducts.length && !this.state.catalogLoading) {
         this.loadCatalogProducts({ limit: 16 });
       }
@@ -11750,21 +11669,17 @@ class Component extends DCLogic {
     } else if (screen === 'superAdmin') {
       this.loadAdminData();
     } else if (screen === 'orders' || screen === 'orderDetail') {
-      // The server's orders carry the live status; refresh them on entry.
+      
       this.loadServerOrders();
     } else if (screen === 'checkout') {
-      // The buyer can prefer a delivery provider: load the ones serving their
-      // city (or everywhere, before an address is chosen). Home delivery only.
+      
+      
       const dest = this._resolveDeliveryDestination();
       if (dest.method === 'HOME_DELIVERY') this._loadProviders(dest.address.city || '');
     }
   }
 
-  /**
-   * Phase 5: Zero-Code Dynamic Hydration
-   * Asynchronously pulls systemSettings from /api/config or public SDK endpoint on startup
-   * and listens to real-time configuration broadcasts across the browser session.
-   */
+  
   _loadSystemSettings() {
     const api = getApi();
     const applySettings = (settings) => {
@@ -11780,7 +11695,7 @@ class Component extends DCLogic {
       }
     };
 
-    // 1. Try public API client first
+    
     if (api && typeof api.getPublicConfig === 'function') {
       api.getPublicConfig().then(res => {
         if (res && res.systemSettings) applySettings(res.systemSettings);
@@ -11794,7 +11709,7 @@ class Component extends DCLogic {
         .catch(() => {});
     }
 
-    // 2. Subscribe to cross-view / cross-tab settings update broadcast
+    
     if (typeof window !== 'undefined') {
       this._onSettingsUpdated = (evt) => {
         if (evt && evt.detail) {
@@ -11805,14 +11720,12 @@ class Component extends DCLogic {
     }
   }
 
-  /**
-   * Loads full operational datasets for the SuperAdmin Console.
-   */
+  
   loadAdminData() {
     const api = getApi();
     if (!api) return Promise.resolve();
 
-    // 1. Overview KPIs
+    
     if (typeof api.getAdminOverview === 'function') {
       api.getAdminOverview().then(res => {
         if (this._unmounted) return;
@@ -11835,7 +11748,7 @@ class Component extends DCLogic {
       }).catch(() => {});
     }
 
-    // 2. Stores list
+    
     if (typeof api.getAdminStores === 'function') {
       api.getAdminStores().then(res => {
         if (this._unmounted) return;
@@ -11846,7 +11759,7 @@ class Component extends DCLogic {
       }).catch(() => {});
     }
 
-    // 3. Listings
+    
     if (typeof api.getAdminListings === 'function') {
       api.getAdminListings().then(res => {
         if (this._unmounted) return;
@@ -11857,7 +11770,7 @@ class Component extends DCLogic {
       }).catch(() => {});
     }
 
-    // 4. Users
+    
     if (typeof api.getAdminUsers === 'function') {
       api.getAdminUsers().then(res => {
         if (this._unmounted) return;
@@ -11868,7 +11781,7 @@ class Component extends DCLogic {
       }).catch(() => {});
     }
 
-    // 5. Orders
+    
     if (typeof api.getAdminOrders === 'function') {
       api.getAdminOrders().then(res => {
         if (this._unmounted) return;
@@ -11879,7 +11792,7 @@ class Component extends DCLogic {
       }).catch(() => {});
     }
 
-    // 6. Settings
+    
     if (typeof api.getSystemSettings === 'function') {
       api.getSystemSettings().then(res => {
         if (this._unmounted) return;
@@ -11896,7 +11809,7 @@ class Component extends DCLogic {
       }).catch(() => {});
     }
 
-    // 7. Audit logs
+    
     if (typeof api.getAdminAuditLogs === 'function') {
       api.getAdminAuditLogs().then(res => {
         if (this._unmounted) return;
@@ -11943,10 +11856,10 @@ class Component extends DCLogic {
     const api = getApi();
     if (!storeId || !api) return Promise.resolve();
 
-    // The public storefront endpoint is the complete read model: it includes
-    // this seller's published listings, current rating/review data, follow
-    // state, policies, hours, and public location. Owner-only dashboard data
-    // must never be used to render a visitor's store page.
+    
+    
+    
+    
     const fetcher = api.getPublicStorefront
       ? api.getPublicStorefront(storeId)
       : api.getStoreProfile
@@ -11967,8 +11880,8 @@ class Component extends DCLogic {
     }).catch(err => {
       if (this._unmounted) return;
       const msg = (err && err.message) || '';
-      // Silently suppress permission/authorization/management errors on the public
-      // storefront — they are management-only concerns and confuse visitors.
+      
+      
       if (/permission|authorized|authorization|forbidden|manage/i.test(msg)) {
         this.setState({ storeProfileLoading: false, storeProfileError: '' });
         return;
@@ -12158,10 +12071,10 @@ class Component extends DCLogic {
     });
   }
 
-  // ── Hotels ────────────────────────────────────────────────────────────────
-  // Every hotel screen reads from the server. The server owns inventory and
-  // price; a bundled catalog would let the UI show rooms that are sold out or
-  // priced differently, and a booking built from it is refused on submit.
+  
+  
+  
+  
 
   loadHotels(city) {
     const api = getApi();
@@ -12210,11 +12123,7 @@ class Component extends DCLogic {
     });
   }
 
-  /**
-   * Rooms are re-fetched whenever the stay changes, because the server prices
-   * the stay (nights * rate + fees) and returns it as `stayQuote`. The client
-   * never computes the total it shows.
-   */
+  
   loadHotelRooms(hotelId) {
     const id = hotelId || this.state.hotelSelectedId;
     if (!id) return Promise.resolve();
@@ -12230,7 +12139,7 @@ class Component extends DCLogic {
       if (this._unmounted) return;
       const items = (res && res.items) || (res && res.data) || (Array.isArray(res) ? res : []);
       const rooms = Array.isArray(items) ? items : [];
-      // Keep the traveller's chosen room if the new dates still offer it.
+      
       const keep = rooms.some((r) => r.id === this.state.hotelSelectedRoomId);
       const firstFree = rooms.find((r) => r.availableInventory > 0);
       this.setState({
@@ -12307,11 +12216,11 @@ class Component extends DCLogic {
   selectTravelResult(result) {
     if (!result) return;
 
-    // A stay is not a journey. Unified search returns hotels alongside buses
-    // and flights, and sending one to the transit detail screen framed it with
-    // "Departure Hub", "Transit Duration" and a boarding pass — then tried to
-    // book it as a transport service, without the hotelId/roomId/dates the
-    // server requires, so it could only ever fail. Hotels go to the hotel flow.
+    
+    
+    
+    
+    
     if (result.type === 'hotel' && result.id) {
       this.setState({
         hotelSelectedId: result.id,
@@ -12568,11 +12477,9 @@ class Component extends DCLogic {
     }
   }
 
-  /* ══════════════════════════════════════════════════════════════════════
-     SERVER-BACKED ONBOARDING
-     ══════════════════════════════════════════════════════════════════════ */
+  
 
-  /** Tells the server the user has begun, and whether they intend to sell. */
+  
   _startServerOnboarding() {
     const api = getApi();
     const guard = getGuard();
@@ -12594,14 +12501,7 @@ class Component extends DCLogic {
     });
   }
 
-  /**
-   * Submits whichever onboarding steps are still outstanding, in the order the
-   * server requires, from the answers the wizard collected.
-   *
-   * Resumable by construction: it asks the server what is still missing rather
-   * than assuming the user started at the beginning, so someone returning on a
-   * different device submits only what they have not already done.
-   */
+  
   _submitRemainingOnboardingSteps() {
     const api = getApi();
     const guard = getGuard();
@@ -12647,8 +12547,8 @@ class Component extends DCLogic {
       COMPLETION: () => ({ acceptedTerms: true })
     };
 
-    // Walk the server's own "what is next" pointer. Each submission returns
-    // the new state, so the loop cannot desynchronise from the server.
+    
+    
     const step = (guardAgainstLoop) => {
       if (guardAgainstLoop > 12) return Promise.resolve(null);
 
@@ -12658,7 +12558,7 @@ class Component extends DCLogic {
 
         const build = answers[next];
         if (!build) {
-          // A derived step the client cannot submit; ask the server again.
+          
           return this._syncAccountState(true).then(() => onboarding);
         }
 
@@ -12675,14 +12575,9 @@ class Component extends DCLogic {
       .then(() => this._syncAccountState(true));
   }
 
-  /* ══════════════════════════════════════════════════════════════════════
-     ADAPTIVE CONVERSATIONAL ONBOARDING
-     The server owns the sequence: every interaction fetches the conversation
-     state and renders the `nextQuestion` spec it returns. The UI never
-     hard-codes question text or order.
-     ══════════════════════════════════════════════════════════════════════ */
+  
 
-  /** Loads (or reloads) the conversation and applies it to UI state. */
+  
   _adaptiveLoad() {
     const api = getApi();
     if (!api) {
@@ -12694,7 +12589,7 @@ class Component extends DCLogic {
       .then(c => {
         if (this._unmounted) return;
         this._adaptiveApply(c);
-        // Already understood — there is nothing left to ask.
+        
         if (!c || c.status === 'COMPLETED' || !c.nextQuestion) this._adaptiveFinish();
       })
       .catch(err => {
@@ -12706,7 +12601,7 @@ class Component extends DCLogic {
       });
   }
 
-  /** Applies a conversation snapshot from the server to render state. */
+  
   _adaptiveApply(c) {
     const q = (c && c.nextQuestion) || null;
     const preselect = (q && q.preselect) || [];
@@ -12719,7 +12614,7 @@ class Component extends DCLogic {
     });
   }
 
-  /** Submits one answer payload and applies the server's reply. */
+  
   _adaptiveSubmit(payload) {
     const api = getApi();
     if (!api) {
@@ -12742,14 +12637,14 @@ class Component extends DCLogic {
       });
   }
 
-  /** Routes past the adaptive phase directly into the application. */
+  
   _adaptiveFinish() {
     const isSeller = (this.state.userRole === 'seller' || this.state.userRole === 'both' ||
       (this.state.accountState && this.state.accountState.capabilities && this.state.accountState.capabilities.canStartSelling));
     const next = isSeller ? 'seller' : 'home';
 
-    // Server has atomically completed the entire onboarding lifecycle.
-    // Sync state in the background without blocking screen transition.
+    
+    
     this._syncAccountState(false).catch(() => {});
     if (!this._unmounted) {
       this.setState({ adBusy: false, adError: '' });
@@ -12757,26 +12652,18 @@ class Component extends DCLogic {
     }
   }
 
-  /* ══════════════════════════════════════════════════════════════════════
-     PUBLISHING STUDIO
-     ---------------------------------------------------------------------
-     The screens are dumb: they render the sections the engine produced and
-     call back into these methods. Everything about WHAT a publication needs
-     lives in src/services/publishingEngine.js; everything about whether it
-     may be published lives on the server. This layer only moves data between
-     the two and keeps the draft safe.
-     ══════════════════════════════════════════════════════════════════════ */
+  
 
-  /** The engine, resolved defensively — the x-dc script also runs under Node in tests. */
+  
   _pub() {
     try {
       if (typeof window !== 'undefined' && window && window.LoumooPublishing) return window.LoumooPublishing;
       if (typeof globalThis !== 'undefined' && globalThis && globalThis.LoumooPublishing) return globalThis.LoumooPublishing;
-    } catch (e) { /* sandboxed */ }
+    } catch (e) {  }
     return null;
   }
 
-  /** Loads the seller-only publishing engine at the first publishing intent. */
+  
   _ensurePublishingEngine() {
     const ready = this._pub();
     if (ready) return Promise.resolve(ready);
@@ -12805,7 +12692,7 @@ class Component extends DCLogic {
     return window.__loumooPublishingEnginePromise;
   }
 
-  /** The context the engine needs: who is publishing, and what the server said. */
+  
   _pubContext() {
     return {
       store: this.state.store || { name: this.state.regBusinessName, city: this.state.regCity },
@@ -12826,13 +12713,7 @@ class Component extends DCLogic {
     return (this.state.pubAttachable || []).find(l => l.id === draft.values.attachmentId) || null;
   }
 
-  /**
-   * Starts a publication.
-   *
-   * The definitions the studio renders from are fetched here, once, so the
-   * first section is never a spinner and the seller never sees a form built
-   * from stale local guesses.
-   */
+  
   startPublishing(intent) {
     const pub = this._pub();
     if (!pub) { this.toast('The publishing studio could not start. Reload and try again.'); return; }
@@ -12859,7 +12740,7 @@ class Component extends DCLogic {
     this.go('publishStudio');
   }
 
-  /** Taxonomy for listings, the type catalogue for broadcasts, both cached. */
+  
   _loadPublishingDefinitions(intent) {
     const api = getApi();
     if (!api) return;
@@ -12868,7 +12749,7 @@ class Component extends DCLogic {
       if (!this.state.pubBroadcastSchema) {
         api.getAnnouncementSchema()
           .then(schema => { if (!this._unmounted) this.setState({ pubBroadcastSchema: schema }); })
-          .catch(() => { /* the studio still works; type-specific fields simply wait */ });
+          .catch(() => {  });
       }
       this._loadAttachableListings();
       return;
@@ -12887,7 +12768,7 @@ class Component extends DCLogic {
     }
   }
 
-  /** Published listings a broadcast can attach, so the card carries a live price. */
+  
   _loadAttachableListings() {
     const api = getApi();
     if (!api || this.state.pubAttachable.length) return;
@@ -12896,16 +12777,10 @@ class Component extends DCLogic {
         if (this._unmounted) return;
         this.setState({ pubAttachable: (res && res.listings) || [] });
       })
-      .catch(() => { /* attaching is optional; the studio carries on without it */ });
+      .catch(() => {  });
   }
 
-  /**
-   * Loads the category's attribute schema.
-   *
-   * This is the request that makes a phone ask for storage and a car ask for
-   * mileage. It is the server's own definition — the same one it validates
-   * against — so the form and the rules cannot drift.
-   */
+  
   _loadCategorySchema(categoryId) {
     const api = getApi();
     if (!api || !categoryId) return;
@@ -12929,17 +12804,17 @@ class Component extends DCLogic {
       });
   }
 
-  /** Writes one field, revalidates inline, and schedules an autosave. */
+  
   setPublishingField(path, value) {
     const pub = this._pub();
     if (!pub || !this.state.pubDraft) return;
 
     const next = pub.setValue(this.state.pubDraft, path, value);
 
-    // Choosing a category changes which fields exist at all.
+    
     if (path === 'categoryId' && value) this._loadCategorySchema(value);
 
-    // Clear this field's error the moment it is touched; keep the others.
+    
     const errors = Object.assign({}, this.state.pubFieldErrors);
     delete errors[path];
 
@@ -12947,13 +12822,7 @@ class Component extends DCLogic {
     this._schedulePublishingAutosave(next);
   }
 
-  /**
-   * Autosave.
-   *
-   * Local first and synchronously — that is what survives a refresh, a closed
-   * tab or a dead connection. The server draft follows on a debounce, and only
-   * once there is enough to create one.
-   */
+  
   _schedulePublishingAutosave(draft) {
     const pub = this._pub();
     if (!pub) return;
@@ -12964,17 +12833,11 @@ class Component extends DCLogic {
     if (this._pubSaveTimer) clearTimeout(this._pubSaveTimer);
     this._pubSaveTimer = setTimeout(() => {
       if (this._unmounted) return;
-      this._syncPublishingDraft().catch(() => { /* reported through pubSaveState */ });
+      this._syncPublishingDraft().catch(() => {  });
     }, 1600);
   }
 
-  /**
-   * Pushes the draft to the server.
-   *
-   * Creates the remote draft the first time there is enough to create one (a
-   * category is all the server requires), and PATCHes it afterwards. A failure
-   * is never fatal: the local copy still holds the work.
-   */
+  
   _syncPublishingDraft() {
     const pub = this._pub();
     const api = getApi();
@@ -13038,8 +12901,8 @@ class Component extends DCLogic {
         return listing;
       })
       .catch(err => {
-        // A draft-time validation failure is information, not an emergency —
-        // the seller is mid-sentence. Surface it against the field and move on.
+        
+        
         const fields = (err && err.details && err.details.fields) || [];
         finish(
           fields.length ? 'Saved on this device' : 'Saved on this device — will retry',
@@ -13058,16 +12921,9 @@ class Component extends DCLogic {
     }
   }
 
-  /* ---------------------------------------------------------------- media */
+  
 
-  /**
-   * Uploads chosen images.
-   *
-   * Each file appears immediately as a local preview so the seller sees the
-   * photo they picked while it is still in flight, then flips to the server's
-   * signed URL. The server validates the actual BYTES; the checks here are a
-   * courtesy that saves a round trip, never the gate.
-   */
+  
   uploadPublishingImages(files) {
     const api = getApi();
     const pub = this._pub();
@@ -13102,7 +12958,7 @@ class Component extends DCLogic {
 
     this.setState({ pubMediaBusy: true, pubMediaError: rejected.join(' ') });
 
-    // Optimistic placeholders, so the grid never sits empty while uploading.
+    
     const pending = accepted.map((file, i) => ({
       uploadId: 'pending_' + Date.now() + '_' + i,
       url: safeObjectUrl(file),
@@ -13112,8 +12968,8 @@ class Component extends DCLogic {
     }));
     this._replacePublishingMedia(m => m.concat(pending));
 
-    // Sequential: a partial failure leaves an unambiguous state, and the
-    // server's per-seller upload throttle is respected.
+    
+    
     return accepted.reduce((chain, file, i) => chain.then(() => {
       const placeholder = pending[i];
       return this._ensurePublishingRemote()
@@ -13130,8 +12986,8 @@ class Component extends DCLogic {
         })
         .catch(err => {
           if (this._unmounted) return;
-          // Name the file that failed. A generic message leaves the seller
-          // guessing which of six photos was the problem.
+          
+          
           this._replacePublishingMedia(media => media.map(m => m.uploadId === placeholder.uploadId
             ? Object.assign({}, m, { status: 'error' })
             : m));
@@ -13148,12 +13004,7 @@ class Component extends DCLogic {
       });
   }
 
-  /**
-   * A listing must exist before an image can be uploaded against it, because
-   * the upload route authorizes on the boutique that owns the draft. This is
-   * also the cheapest possible moment to discover an ineligible account —
-   * before a single byte is transferred.
-   */
+  
   _ensurePublishingRemote() {
     const draft = this.state.pubDraft;
     if (!draft) return Promise.reject(new Error('No draft in progress.'));
@@ -13166,7 +13017,7 @@ class Component extends DCLogic {
     });
   }
 
-  /** Links staged uploads to the listing so they survive publication. */
+  
   _attachPublishingMedia() {
     const api = getApi();
     const draft = this.state.pubDraft;
@@ -13185,8 +13036,8 @@ class Component extends DCLogic {
           : m));
       })
       .catch(err => {
-        // Attaching is idempotent per upload: an id already attached from a
-        // previous attempt is not a failure, it is the desired state.
+        
+        
         if (err && err.status === 400 && /already attached/i.test(err.message || '')) {
           this._replacePublishingMedia(media => media.map(m => m.status === 'ready'
             ? Object.assign({}, m, { status: 'attached' })
@@ -13218,8 +13069,8 @@ class Component extends DCLogic {
 
     if (!api || !image) return;
 
-    // Release the storage rather than orphaning it. An attached image is
-    // detached from the listing; a merely staged one is discarded outright.
+    
+    
     if (image.status === 'attached' && draft.remoteId && draft.intent !== 'BROADCAST') {
       api.removeListingMedia(draft.remoteId, uploadId).catch(() => {});
     } else if (image.status === 'ready') {
@@ -13239,7 +13090,7 @@ class Component extends DCLogic {
     this.uploadPublishingImages([image.file]);
   }
 
-  /** Promotes an image to the cover, locally and on the server. */
+  
   setPublishingCover(uploadId) {
     const api = getApi();
     const draft = this.state.pubDraft;
@@ -13281,17 +13132,9 @@ class Component extends DCLogic {
     }
   }
 
-  /* ------------------------------------------------------------ publish */
+  
 
-  /**
-   * The publication lifecycle.
-   *
-   *     VALIDATING -> UPLOADING -> SAVING -> PUBLISHING -> PUBLISHED
-   *
-   * Guarded against a double click by `pubLifecycle`, and against a double
-   * creation by the server's own submission fingerprint. Every failure leaves
-   * the seller exactly where they were, with the server's own message.
-   */
+  
   publishNow() {
     if (this.state.pubLifecycle) return Promise.resolve();
 
@@ -13308,7 +13151,7 @@ class Component extends DCLogic {
 
     const ctx = this._pubContext();
 
-    // 1. VALIDATING — locally first, so an obvious gap costs no round trip.
+    
     this.setState({ pubLifecycle: 'Checking everything is there…', pubServerError: '', pubFieldErrors: {} });
     const check = pub.validate(draft, ctx, { forPublish: true });
     if (!check.valid) {
@@ -13320,7 +13163,7 @@ class Component extends DCLogic {
       return Promise.resolve();
     }
 
-    // 2. UPLOADING — nothing may still be in flight.
+    
     if (draft.media.some(m => m.status === 'uploading')) {
       this.setState({ pubLifecycle: '', pubServerError: 'Wait for your photos to finish uploading.' });
       return Promise.resolve();
@@ -13358,9 +13201,9 @@ class Component extends DCLogic {
 
         if (guard) guard.invalidate();
         pub.clearLocal();
-        // A newly published broadcast is the one legitimate reason to make
-        // the next Announce visit fetch again. Ordinary route changes keep
-        // using the warm feed above.
+        
+        
+        
         if (this.state.pubDraft && this.state.pubDraft.intent === 'BROADCAST') this._announceFeedLoadedKey = null;
 
         const finished = Object.assign({}, this.state.pubDraft, {
@@ -13394,8 +13237,8 @@ class Component extends DCLogic {
             : friendlyError(err)
         });
 
-        // The server may have decided this account is no longer eligible
-        // (session expired, boutique suspended). Send them where they can fix it.
+        
+        
         if (err && (err.status === 401 || err.status === 403)) {
           const resolveScreen = err.details && err.details.resolveScreen;
           this._syncAccountState(true).then(() => {
@@ -13406,9 +13249,9 @@ class Component extends DCLogic {
       });
   }
 
-  /* -------------------------------------------------- resume and editing */
+  
 
-  /** Reads the local draft so the intent screen can offer to continue it. */
+  
   checkResumableDraft() {
     const pub = this._pub();
     if (!pub) return;
@@ -13445,12 +13288,7 @@ class Component extends DCLogic {
     this.toast('Draft discarded');
   }
 
-  /**
-   * Opens an existing publication for editing.
-   *
-   * Deliberately the SAME studio: create and edit are one flow over one
-   * engine, so a rule fixed in one is fixed in both.
-   */
+  
   editPublication(id, kind) {
     const pub = this._pub();
     const api = getApi();
@@ -13491,13 +13329,7 @@ class Component extends DCLogic {
       });
   }
 
-  /**
-   * Shares a publication by its canonical URL.
-   *
-   * Every published object has one addressable route, so the link a seller
-   * sends opens the same thing a buyer would reach from the feed. Uses the
-   * platform share sheet where there is one, and falls back to the clipboard.
-   */
+  
   sharePublication(id, kind, title) {
     if (!id) { this.toast('That is not published yet'); return; }
 
@@ -13510,7 +13342,7 @@ class Component extends DCLogic {
       if (typeof window !== 'undefined' && window.location) {
         url = window.location.origin + path;
       }
-    } catch (e) { /* keep the relative path */ }
+    } catch (e) {  }
 
     try {
       if (typeof navigator !== 'undefined' && navigator.share) {
@@ -13523,18 +13355,11 @@ class Component extends DCLogic {
           .catch(() => this.toast(url));
         return;
       }
-    } catch (e) { /* fall through */ }
+    } catch (e) {  }
     this.toast(url);
   }
 
-  /* ══════════════════════════════════════════════════════════════════════
-     DISCOVERY SURFACES
-     ---------------------------------------------------------------------
-     What a seller publishes has to actually turn up somewhere. These loaders
-     are the other half of the publishing engine: the Announce feed and the
-     seller's own catalogue read the real API and render through the very same
-     `publication_card` the studio previewed.
-     ══════════════════════════════════════════════════════════════════════ */
+  
 
   _formatAnnouncementCard(ann) {
     if (!ann) return null;
@@ -13683,7 +13508,7 @@ class Component extends DCLogic {
     ];
   }
 
-  /** A query fingerprint lets the feed stay warm between route visits. */
+  
   _announcementFeedKey() {
     return JSON.stringify({
       type: this.state.announceFilter || 'all',
@@ -13691,14 +13516,14 @@ class Component extends DCLogic {
     });
   }
 
-  /** Load only when the visible query has changed or an explicit refresh asks for it. */
+  
   ensureAnnouncements() {
     const key = this._announcementFeedKey();
     if (this._announceFeedLoadedKey === key && (this.state.announcements || []).length > 0) return Promise.resolve();
     return this.loadAnnouncements({ force: true });
   }
 
-  /** The buyer-facing broadcast feed. */
+  
   loadAnnouncements(options) {
     const api = getApi();
     const opts = options || {};
@@ -13778,11 +13603,11 @@ class Component extends DCLogic {
     return request;
   }
 
-  /** Opens one broadcast and records the view, which is what feeds analytics. */
+  
   openAnnouncement(id) {
     if (!id) return;
 
-    // Immediately resolve active announcement from loaded feed or default broadcasts so UI renders with 0ms latency
+    
     const existing = (this.state.announcements || []).find(a => String(a.id) === String(id) || a.slug === id)
       || (this._getDefaultAnnouncements ? (this._getDefaultAnnouncements() || []).find(a => String(a.id) === String(id) || a.slug === id) : null);
 
@@ -13858,7 +13683,7 @@ class Component extends DCLogic {
   contactSellerWhatsApp(opts) {
     opts = (opts && typeof opts === 'object' && !opts.nativeEvent && !opts.target) ? opts : {};
     const p = this.state.currentProduct || {};
-    // Reaching out to a seller is a strong intent signal when it is about a product.
+    
     if (!opts.orderNumber && p && p.id) this._recoNote('contact_seller', p, { surface: 'pdp' });
     const sellerName = opts.sellerName || p.storeName || 'LOUMOO Seller';
     const productTitle = opts.productTitle || p.title || '';
@@ -13898,12 +13723,7 @@ class Component extends DCLogic {
     return api.recordAnnouncementEvent(id, eventType, {}).catch(() => {});
   }
 
-  /**
-   * LOUMOO Announce: Commercial Campaign Performance Telemetry.
-   * Loads real, verified store campaign metrics from the backend.
-   * For new stores or stores without active campaigns, cleanly defaults
-   * to verified Zero Telemetry with no fabricated marketing figures.
-   */
+  
   loadStoreAnnounceTelemetry(targetStoreId) {
     const storeId = targetStoreId || this.state.primaryStoreId || (this.state.currentStore && this.state.currentStore.id) || (this.state.store && this.state.store.id);
     if (!storeId) {
@@ -14018,7 +13838,7 @@ class Component extends DCLogic {
       });
   }
 
-  /** The seller's own catalogue, straight from their store. */
+  
   loadSellerListings() {
     const api = getApi();
     if (!api) return Promise.resolve();
@@ -14073,12 +13893,7 @@ class Component extends DCLogic {
       });
   }
 
-  /**
-   * Publication state transitions from the seller's catalogue.
-   *
-   * The server owns the state machine; this only asks for a transition and
-   * reloads what it was told.
-   */
+  
   transitionListing(id, action, confirmMessage) {
     const api = getApi();
     if (!api || !id) return;
@@ -14123,7 +13938,7 @@ class Component extends DCLogic {
       });
   }
 
-  /** Leaves the studio without losing anything. */
+  
   exitPublishing() {
     const pub = this._pub();
     const draft = this.state.pubDraft;
@@ -14175,9 +13990,9 @@ class Component extends DCLogic {
   _startHeroSlideAutoAdvance() {
     clearTimeout(this._heroSlideTimer);
     const curSlide = this.state.heroSlide || 0;
-    // Slides 0, 2, 4 are videos with onended callbacks; Slides 1, 3, 5, 6, 7, 8, 9 are static images
+    
     if (curSlide === 0 || curSlide === 2 || curSlide === 4) {
-      // Safety fallback timer for videos in case autoplay or onended is blocked
+      
       this._heroSlideTimer = setTimeout(() => {
         if (!this._unmounted && (!this.state.screen || this.state.screen === 'home')) {
           this.heroNextSlide();
@@ -14199,20 +14014,20 @@ class Component extends DCLogic {
       ? window.PRODUCTS_DATA
       : ((typeof PRODUCTS_DATA !== 'undefined' && Object.keys(PRODUCTS_DATA).length > 0) ? PRODUCTS_DATA : {});
 
-    // 1. Direct key match in pool
+    
     if (pool[cleanId]) return pool[cleanId];
 
-    // 2. Scan pool by id, slug, sku
+    
     const poolValues = Object.values(pool);
     let match = poolValues.find(p => p && (p.id === cleanId || p.slug === cleanId || p.sku === cleanId));
     if (match) return match;
 
-    // 3. Scan live catalog loaded in state
+    
     const liveCatalog = Array.isArray(this.state.catalogProducts) ? this.state.catalogProducts : [];
     match = liveCatalog.find(p => p && (p.id === cleanId || p.slug === cleanId || p.sku === cleanId));
     if (match) return match;
 
-    // 4. Normalized & Substring match
+    
     const norm = cleanId.toLowerCase().replace(/[^a-z0-9]+/g, '');
     match = poolValues.find(p => {
       if (!p) return false;
@@ -14223,7 +14038,7 @@ class Component extends DCLogic {
     });
     if (match) return match;
 
-    // 5. Search results pool in state
+    
     const searchRes = Array.isArray(this.state.searchResults) ? this.state.searchResults : [];
     match = searchRes.find(p => p && (p.id === cleanId || p.slug === cleanId));
     if (match) return match;
@@ -14235,7 +14050,7 @@ class Component extends DCLogic {
     const rawId = String(productId || 'loumoo_product').trim();
     const lower = rawId.toLowerCase();
 
-    // Humanize title
+    
     let titleParts = rawId.replace(/^(phone_|laptop_|elec_|fashion_|home_|groc_|beauty_|sport_|na_)/, '')
       .replace(/[_\-]+/g, ' ')
       .trim()
@@ -14244,7 +14059,7 @@ class Component extends DCLogic {
       .map(w => w.charAt(0).toUpperCase() + w.slice(1));
     let humanTitle = titleParts.join(' ') || 'LOUMOO Official Selection';
 
-    // Infer category, label, and brand
+    
     let cat = 'electronics', catLabel = 'Smartphones & Mobile', brand = 'LOUMOO Official';
     if (lower.includes('phone') || lower.includes('camon') || lower.includes('pixel') || lower.includes('galaxy') || lower.includes('iphone') || lower.includes('tecno') || lower.includes('samsung')) {
       cat = 'electronics'; catLabel = 'Smartphones & Mobile';
@@ -14313,9 +14128,7 @@ class Component extends DCLogic {
     };
   }
 
-  /**
-   * Opens and dynamically hydrates a real product listing from PostgreSQL or curated registry.
-   */
+  
   openProduct(productId) {
     this.loadProductDetails(productId);
   }
@@ -14327,7 +14140,7 @@ class Component extends DCLogic {
     }
     const cleanId = String(productId).trim();
 
-    // 1. Fast Synchronous Deep Lookup
+    
     const resolved = this._resolveProductItem(cleanId);
     if (resolved) {
       const activeImg = resolved.coverImage || resolved.image || (resolved.images && resolved.images[0]) || (resolved.media && resolved.media[0] && resolved.media[0].url) || null;
@@ -14345,7 +14158,7 @@ class Component extends DCLogic {
       return;
     }
 
-    // 2. Fetch from Live API with Guaranteed Fallback (Zero 404s Policy)
+    
     const api = getApi();
     this.setState({
       screen: 'product',
@@ -14389,7 +14202,7 @@ class Component extends DCLogic {
       })
       .catch(() => {
         if (this._unmounted) return;
-        // Never show 404 or "Listing Unavailable" — all listings remain available
+        
         const fallback = this._synthesizeAvailableListing(cleanId);
         this.setState({
           currentProduct: fallback,
@@ -14758,9 +14571,9 @@ class Component extends DCLogic {
     });
   }
 
-  // Call the real comparison engine (GET /catalog/compare) for the products
-  // in the VS workspace, weighting by the buyer's chosen priority. Drives the
-  // recommendation banner on the compare screen.
+  
+  
+  
   runCompare() {
     const ids = this.state.vsCompareIds || ['elec-1', 'elec-macbook-pro'];
     if (!ids.length) {
@@ -14834,9 +14647,9 @@ class Component extends DCLogic {
     api.getProducts(params || {})
       .then(res => {
         if (this._unmounted) return;
-        // LoumooAPI.request() already unwraps the `data` envelope, so the
-        // payload IS { items, total, page, limit }. Reading `res.data.items`
-        // could only ever yield undefined and fall through to [].
+        
+        
+        
         const items = (res && res.items) || (res && res.data && res.data.items) || (Array.isArray(res) ? res : []);
         const limit = (params && params.limit) ? params.limit : 16;
         const hasMore = items.length >= limit;
@@ -14858,9 +14671,9 @@ class Component extends DCLogic {
       });
   }
 
-  // Marketplace search against GET /api/v1/products (?q=...). Debounce is owned
-  // by the caller (handleSearchInput); this method owns the race guard so a
-  // slow response for an earlier query can never overwrite a newer one.
+  
+  
+  
   _searchView() {
     if (typeof globalThis === 'undefined' || !globalThis.LoumooSearch) return {};
     if (!this._searchExperience) this._searchExperience = new globalThis.LoumooSearch({
@@ -14882,30 +14695,30 @@ class Component extends DCLogic {
 
   _executeSearch(rawQuery) {
     const query = String(rawQuery == null ? '' : rawQuery).trim();
-    // Active refinement filters travel with the query on the same /products call.
+    
     const params = {};
     if (this.state.filterCity) params.city = this.state.filterCity;
     if (this.state.filterVerifiedOnly) params.verified = true;
     const hasFilter = Object.keys(params).length > 0;
     this._searchSeq = (this._searchSeq || 0) + 1;
     const seq = this._searchSeq;
-    // Need at least a 2-char query OR an active filter to have anything to run
-    // (a filter with no query is a valid "browse verified stores in Douala").
+    
+    
     if (query.length < 2 && !hasFilter) {
       this.setState({ searchResults: null, searchBusy: false, searchError: '' });
       return;
     }
-    if (query.length >= 2) { try { const R = getReco(); if (R && R.search) R.search(query, this.state.filterCity ? null : null); } catch (e) { /* non-fatal */ } }
+    if (query.length >= 2) { try { const R = getReco(); if (R && R.search) R.search(query, this.state.filterCity ? null : null); } catch (e) {  } }
     const api = getApi();
-    // In a real browser LoumooAPI is loaded in <head> before the app boots, so
-    // this only bails in the headless test sandbox (no window). Genuine request
-    // failures are surfaced by the .catch below, not here.
+    
+    
+    
     if (!api) return;
     this.setState({ searchBusy: true, searchError: '' });
     api.searchProducts(query, params)
       .then(res => {
         if (this._unmounted || seq !== this._searchSeq) return;
-        // request() unwraps the envelope, so the payload IS { items, total, ... }.
+        
         const items = (res && res.items) || (Array.isArray(res) ? res : []);
         this.setState({ searchResults: items, searchBusy: false, searchError: '' });
       })
@@ -14919,34 +14732,20 @@ class Component extends DCLogic {
     return keys.includes(this.state.screen) ? 'var(--color-accent)' : 'var(--color-neutral-700)';
   }
 
-  /**
-   * Guards a destination that merely needs a session.
-   * Equivalent to requireCapability(screen, null).
-   */
+  
   requireAuth(screen) {
     return this.requireCapability(screen, null);
   }
 
-  /**
-   * THE routing guard. Every protected navigation goes through here.
-   *
-   * It asks the server (via the account guard) whether this account holds the
-   * capability the destination needs. When it does not, the server also says
-   * WHERE the user must go to make progress — so the redirect is always
-   * forwards, never into a screen that would block them again.
-   *
-   * The requested destination is remembered, so finishing the requirement
-   * resumes the original intent: a user who tapped "Sell" and was sent through
-   * onboarding lands back on the listing wizard, not on the home screen.
-   */
+  
   requireCapability(screen, capability) {
     if (!SCREENS.includes(screen)) return;
 
     const guard = getGuard();
 
     if (!guard) {
-      // No guard available (static prototype). Let the navigation through —
-      // the server is the real gate and will refuse anything it should.
+      
+      
       this.go(screen);
       return;
     }
@@ -14972,11 +14771,7 @@ class Component extends DCLogic {
     });
   }
 
-  /**
-   * Sends the user to the destination they originally asked for.
-   * Validated against SCREENS so a tampered value can never become an open
-   * redirect to an arbitrary URL.
-   */
+  
   _afterAuthRedirect(fallback) {
     const guard = getGuard();
     const remembered = guard ? guard.takeIntent(SCREENS) : null;
@@ -14990,13 +14785,7 @@ class Component extends DCLogic {
     this.go(safe);
   }
 
-  /**
-   * Completes sign-in once Clerk has proven the identity.
-   *
-   * Nothing about the session is stored locally: the account state comes from
-   * the server, and the session token comes live from Clerk. A "logged in"
-   * marker in localStorage would be a claim the browser makes about itself.
-   */
+  
   _completeSignIn() {
     return this._establishSession().then(state => {
       if (this._unmounted) return;
@@ -15006,17 +14795,13 @@ class Component extends DCLogic {
       const firstName = (state && state.user && state.user.firstName) || '';
       this.toast('Welcome back to LOUMOO' + (firstName ? ', ' + firstName : ''));
 
-      // The server says where this account belongs right now. A half-onboarded
-      // user resumes onboarding; a finished one goes where they were heading.
+      
+      
       this._routeByAccountState(state);
     });
   }
 
-  /**
-   * Sends the user wherever their account state says they belong.
-   * Fully eligible users resume their original intent; everyone else is taken
-   * to the single screen that lets them progress.
-   */
+  
   _routeByAccountState(state) {
     if (!state) { this._afterAuthRedirect('home'); return; }
 
@@ -15099,7 +14884,7 @@ class Component extends DCLogic {
     SCREENS.forEach(k => { is[k] = s === k; });
     const on = {};
     SCREENS.forEach(k => { on[k] = () => this.go(k); });
-    // Opening the notifications feed pulls the server feed, then marks read.
+    
     on.notifications = () => { this.go('notifications'); this.loadServerNotifications(); this._markNotifsRead(); };
     on.announceCampaigns = () => { this.go('announceCampaigns'); this.loadStoreAnnounceTelemetry(); };
     on.toggleSidebar = () => this.toggleSidebar();
@@ -15134,31 +14919,19 @@ class Component extends DCLogic {
         this.go('signIn');
         return;
       }
-      /*
-       * Sell never asks what kind of seller you are. That question belongs to
-       * store creation and is answered once, by the store's category.
-       *
-       * The previous gate tested `accountState.hasStore` and the states
-       * 'STORE_ACTIVE' / 'STORE_PENDING'. None of those exist: `accountState`
-       * holds a STRING, and the server's states are ACCOUNT_READY /
-       * SELLER_VERIFICATION_REQUIRED / SELLER_READY. The expression therefore
-       * collapsed to `this.state.store`, which nothing ever assigned — so every
-       * Sell click, for every seller, was sent back to store creation.
-       *
-       * Three real cases, decided from the server's own answer:
-       */
+      
       const storeId = this.state.primaryStoreId;
 
       if (!storeId) {
-        // No boutique yet — this is the ONE moment seller type is asked.
+        
         this.toast('Create your Boutique to start publishing listings across Cameroon');
         this.go('createStore');
         return;
       }
 
       if (!this.state.capabilities.canCreateListing) {
-        // The boutique exists but is not activated yet. Resume its onboarding
-        // instead of asking them to create a second one.
+        
+        
         this.toast('Finish activating your boutique to publish listings');
         this.go('storeOnboarding');
         return;
@@ -15178,7 +14951,7 @@ class Component extends DCLogic {
     on.upload = handleSellClick;
     on.publishIntent = handleSellClick;
 
-    // ── Phase 4 & 5: SuperAdmin Interactive Cockpit Handlers ──
+    
     const getTargetId = (arg, fallback) => {
       if (typeof arg === 'string' && arg) return arg;
       if (arg && typeof arg.id === 'string') return arg.id;
@@ -15496,8 +15269,8 @@ class Component extends DCLogic {
       setTimeout(() => this.setState({ adminSettingsSaveSuccess: false }), 3500);
     };
 
-    // "Broadcast" is the same studio with the intent already chosen: one
-    // publishing engine, three intents, no second composer to keep in step.
+    
+    
     on.announceStudio = () => {
       if (this.state.authStatus !== 'authenticated' && !this.state.isLoggedIn) {
         this.toast('Sign in to publish a broadcast');
@@ -15543,13 +15316,13 @@ class Component extends DCLogic {
     });
 
     const fmt = n => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-    // Local asset paths in seed/curated data sometimes carry raw spaces and
-    // ampersands (e.g. "telephone&PC"), which break the URL and 404 the image.
-    // Encode them defensively (already-encoded %20 is left untouched).
+    
+    
+    
     const encImg = (u) => u ? String(u).replace(/ /g, '%20').replace(/&/g, '%26') : '';
 
-    // Virtual-tour link: external product data, never invented. Read whichever
-    // field the object uses; accept only a real http(s) URL, else '' (CTA hidden).
+    
+    
     const readTourUrl = (o) => {
       if (!o || typeof o !== 'object') return '';
       const raw = o.virtualTourUrl || o.virtual_tour_url || o.virtualTour ||
@@ -15558,8 +15331,8 @@ class Component extends DCLogic {
       const s = typeof raw === 'string' ? raw.trim() : '';
       return /^https:\/\/[^\s]+\.[^\s]+/i.test(s) ? s : '';
     };
-    // Surface metadata that already exists in the room prose/amenities (never
-    // fabricated): size from the description ("38m² …"), bed from the amenities.
+    
+    
     const roomSizeLabel = (r) => {
       const src = (r && (r.description || '')) + ' ' + ((r && r.amenities) || []).join(' ');
       const m = src.match(/(\d{2,4})\s*(?:m²|m2|sqm|sq\s?m)/i);
@@ -15570,9 +15343,9 @@ class Component extends DCLogic {
       return bed ? String(bed) : '';
     };
 
-    // Maps a hotel as the API returns it onto the card the template renders.
-    // Only fields the server actually sends are shown — there is no review
-    // corpus behind a "312 reviews" label, so no such label is produced.
+    
+    
+    
     const hotelCard = (h) => ({
       id: h.id,
       name: h.name || '',
@@ -15587,22 +15360,22 @@ class Component extends DCLogic {
     });
     const hotelCards = (list) => (Array.isArray(list) ? list : []).map(hotelCard);
 
-    // Real cart totals derived from the line items in the bag and dynamic platform settings.
+    
     const cartList = this.state.cartItems || [];
     const cartSubtotal = cartList.reduce((a, it) => a + (Number(it.priceXaf) || 0) * (Number(it.qty) || 1), 0);
     const dynamicSettings = (typeof window !== 'undefined' && window.LOUMOO_SYSTEM_SETTINGS) || this.state.systemSettings || this.state.adminSettings || {};
-    // The delivery fee follows the city the order will be delivered to (the same
-    // address placeOrder sends), because the server prices the order from that city.
-    // The destination the order will use — resolved ONCE here and shown by the
-    // checkout card below, so what the buyer sees is exactly what placeOrder sends.
+    
+    
+    
+    
     const checkoutDest = this._resolveDeliveryDestination();
-    // Store pickup has no rider leg, so the server charges no delivery fee and the
-    // checkout must show the same, or the shown total would not match the order.
+    
+    
     const isPickup = checkoutDest.method === 'STORE_PICKUP';
     const deliveryCity = checkoutDest.address.city || this.state.regCity || (this.state.addressFormCity || 'Douala');
-    // When the buyer has chosen a provider, the fee is THAT provider's quote — the
-    // server prices the order the same way, so what is shown is what is charged.
-    // Otherwise it is the city's standard rate.
+    
+    
+    
     const selectedProvider = (this.state.providers || []).find(p => p.id === this.state.selectedProviderId) || null;
     const deliveryFee = (isPickup || cartSubtotal <= 0)
       ? 0
@@ -15620,7 +15393,7 @@ class Component extends DCLogic {
     const sh = this.state.ship;
     const fdOn = this.state.freeday;
 
-    // Dynamic completion score
+    
     let score = 20;
     if (this.state.regFirstName && this.state.regLastName) score += 15;
     if (this.state.regPhone) score += 20;
@@ -15629,8 +15402,8 @@ class Component extends DCLogic {
     if (this.state.docUploaded || this.state.verificationChoice === 'later') score += 15;
     const completionScore = Math.min(100, score);
 
-    // Client-side password strength meter (UX affordance only — Clerk remains
-    // the authority on what it will accept, including breach checks).
+    
+    
     const strength = passwordStrength(this.state.resetNewPassword || '');
     const regStrength = passwordStrength(this.state.regPassword || '');
 
@@ -15654,9 +15427,9 @@ class Component extends DCLogic {
       cartSubtotalLabel: 'XAF ' + fmt(items),
       cartDeliveryFee: deliveryFee,
       cartDeliveryFeeLabel: 'XAF ' + fmt(deliveryFee),
-      // Items + delivery: exactly what the server will price the order at. (The
-      // 3 000 "escrow protection fee" that used to be added here was never part of
-      // the order, and no payment is taken yet, so it cannot be charged.)
+      
+      
+      
       cartTotal: 'XAF ' + fmt(items + deliveryFee),
       payLabel: 'PAY XAF ' + fmt(items + deliveryFee) + ' WITH MOMO',
       hasAnnouncementBanner: Boolean(dynamicSettings.announcement_banner && (dynamicSettings.announcement_banner.enabled !== false && dynamicSettings.announcement_banner.active !== false)),
@@ -15665,7 +15438,7 @@ class Component extends DCLogic {
       maintenanceModeBanner: (dynamicSettings.maintenance_mode && (dynamicSettings.maintenance_mode.banner_text || dynamicSettings.maintenance_mode.message)) || '',
       systemSettings: dynamicSettings,
 
-      // ── Canonical Dynamic Product Details Getters & Actions ──
+      
       productLoading: Boolean(this.state.productLoading),
       productNotFound: Boolean(this.state.productNotFound),
       productError: this.state.productError || '',
@@ -15726,8 +15499,8 @@ class Component extends DCLogic {
         if (!p || !p.attributes) return [];
         return Object.entries(p.attributes).map(([k, v]) => ({ key: k.replace(/_/g, ' '), val: String(v) }));
       })(),
-      // "More like this" — the Discovery Engine's neighbours of the open product
-      // (content similarity + co-visitation), ranked and de-duplicated locally.
+      
+      
       pdpSimilarCards: (() => {
         return this._pdpSimilarList().map((s) => ({
           id: s.id,
@@ -15750,7 +15523,7 @@ class Component extends DCLogic {
       catalogProducts: this.state.catalogProducts || [],
       catalogLoading: Boolean(this.state.catalogLoading),
       catalogError: this.state.catalogError || '',
-      // Display-ready cards for the home "Live catalogue" rail, from GET /products.
+      
       catalogHasCards: (this.state.catalogProducts || []).length > 0,
       catalogCards: (this.state.catalogProducts || []).map((p) => ({
         id: p.id,
@@ -15763,7 +15536,7 @@ class Component extends DCLogic {
         badge: p.badge || ''
       })),
 
-      // Continuous smart infinite marketplace feed cards on Home screen
+      
       hasHomeFeedCards: (() => {
         const pool = this._categoryProductPool('all');
         return pool.length > 0;
@@ -15775,9 +15548,9 @@ class Component extends DCLogic {
           return isNaN(n) ? 0 : n;
         };
         const limit = this.state.homeFeedLimit || 24;
-        // Personalized "For You" ordering runs in the browser via the Discovery
-        // Engine (instant, offline-safe). In the headless sandbox getReco() is
-        // null, so we fall back to the catalogue's own order unchanged.
+        
+        
+        
         const R = getReco();
         const personalizeOff = this.state.privacyPersonalization === false;
         const ranked = (R && R.rankHome && !personalizeOff) ? R.rankHome(pool, { limit: limit }) : pool.slice(0, limit);
@@ -15809,8 +15582,8 @@ class Component extends DCLogic {
             storeLabel: (p.storeName || p.merchant || p.store || 'LOUMOO verified seller') + (p.merchantCity || p.storeCity ? (' · ' + (p.merchantCity || p.storeCity)) : ''),
             badge: p.badge || (p.isSale ? 'PROMO' : (p.verified ? '✓ Verified' : '')),
             verified: Boolean(p.verified),
-            // For You metadata: an honest reason, plus the facet fields the
-            // engine needs to log an impression/dwell and to learn from a tap.
+            
+            
             recoReason: p._recoReason || '',
             recoExplore: Boolean(p._recoExplore),
             category: p.category || '',
@@ -15822,15 +15595,15 @@ class Component extends DCLogic {
           };
         });
       })(),
-      // ── Discovery Engine wiring (For You) ──────────────────────────────
-      // Attach a card element to the impression/dwell observer. Fired from a
-      // DC ref, so it must be idempotent (the engine dedupes per element).
+      
+      
+      
       recoWatch: (el, card, surface) => {
         const R = getReco();
         if (R && R.watch && el && card) R.watch(el, this._recoItem(card), { surface: surface || 'home_feed' });
       },
-      // "Not interested": learn the negative, re-rank immediately (rankHome is
-      // memoized on a version the engine bumps on feedback), and acknowledge.
+      
+      
       recoNotInterested: (card) => {
         const R = getReco();
         if (R && R.feedback) R.feedback('not_interested', this._recoItem(card));
@@ -15873,7 +15646,7 @@ class Component extends DCLogic {
         mainImg: () => this.toast('Application submitted with your LOUMOO profile'),
         addTag: () => this.toast('Tag added to the listing')
       },
-      // Onboarding & Registration State & Two-Way Handlers
+      
       userRole: this.state.userRole,
       regFirstName: this.state.regFirstName,
       regLastName: this.state.regLastName,
@@ -15900,9 +15673,9 @@ class Component extends DCLogic {
       verificationChoice: this.state.verificationChoice || 'now',
       docUploaded: this.state.docUploaded,
 
-      // ────────────────────────────────────────────────────────────────────
-      // Adaptive conversational onboarding (server-driven question spec)
-      // ────────────────────────────────────────────────────────────────────
+      
+      
+      
       adBusy: this.state.adBusy,
       adError: this.state.adError,
       adText: this.state.adText,
@@ -15933,7 +15706,7 @@ class Component extends DCLogic {
       })(),
       adUnderstanding: (this.state.adConversation && this.state.adConversation.understanding) || null,
 
-      // Handlers — every action posts to the server and renders its reply.
+      
       adaptiveLoad: () => this._adaptiveLoad(),
       adaptiveReload: () => this._adaptiveLoad(),
       adaptiveBack: () => this.go('onboardOtp'),
@@ -15983,13 +15756,13 @@ class Component extends DCLogic {
         if (!q) return;
         const kind = q.kind;
         if (kind === 'multi_choice') {
-          // Toggle locally; submit happens on the continue button.
+          
           const sel = new Set(this.state.adChipsSel || []);
           if (sel.has(chip.id)) sel.delete(chip.id); else sel.add(chip.id);
           this.setState({ adChipsSel: Array.from(sel) });
           return;
         }
-        // single_choice / mixed: tapping the chip answers immediately.
+        
         const payload = { questionKey: q.key, chip: chip.id };
         if (kind === 'mixed' && (this.state.adText || '').trim()) payload.text = this.state.adText.trim();
         this._adaptiveSubmit(payload);
@@ -16029,7 +15802,7 @@ class Component extends DCLogic {
         const api = getApi();
         if (!api) return;
         this.setState({ adBusy: true, adError: '' });
-        // Answer the confirm question, then seal onboarding with the mission.
+        
         api.submitAdaptiveAnswer({ questionKey: q.key, chip: 'confirm' })
           .then(() => api.completeAdaptiveOnboarding(text ? { missionTitle: text } : {}))
           .then(c => {
@@ -16048,8 +15821,8 @@ class Component extends DCLogic {
           });
       },
       adaptiveEditMission: () => {
-        // "Let me adjust it": restart the conversation so the user can re-shape
-        // their goal — supported first-class by the server ("change my goal").
+        
+        
         this.adaptiveStartOver();
       },
       updateAdText: (e) => this.setState({ adText: e && e.target ? e.target.value : e, adError: '' }),
@@ -16074,8 +15847,8 @@ class Component extends DCLogic {
         this.go('onboardBusiness');
       },
 
-      // Role Selection — the intent is held locally until there is an account
-      // to attach it to, then recorded on the server by _startServerOnboarding.
+      
+      
       setRoleBuyer: () => {
         this.setState({ userRole: 'buyer' });
         if (this.state.editFromReview) {
@@ -16110,7 +15883,7 @@ class Component extends DCLogic {
         }
       },
 
-      // Registration fields (real Clerk account creation)
+      
       regPassword: this.state.regPassword,
       regShowPassword: this.state.regShowPassword,
       regBusy: this.state.regBusy,
@@ -16123,11 +15896,11 @@ class Component extends DCLogic {
       }),
       toggleRegPassword: () => this.setState(s => ({ regShowPassword: !s.regShowPassword })),
 
-      // Whether this deployment can genuinely verify a phone number. Reported
-      // by the server, so the UI never offers a verification nothing can do.
+      
+      
       phoneVerificationAvailable: Boolean(this.state.phoneVerificationAvailable),
 
-      /** Real phone verification, available only when a provider is configured. */
+      
       startPhoneVerification: () => {
         const api = getApi();
         const clerk = getClerk();
@@ -16143,9 +15916,9 @@ class Component extends DCLogic {
           this.toast('A code is on its way to ' + phone);
         }).catch(err => {
           if (this._unmounted) return;
-          // A 503 here means the deployment has no SMS provider. Say so
-          // plainly rather than leaving the user waiting for a code that will
-          // never arrive.
+          
+          
+          
           const requirement = err && err.status === 503
             ? 'Phone verification is not switched on for LOUMOO yet.'
             : ((err && err.message) || 'Could not send that code.');
@@ -16153,7 +15926,7 @@ class Component extends DCLogic {
         });
       },
 
-      // Dynamic Flow Navigation
+      
       continueFromType: () => {
         if (!this.state.userRole) {
           this.toast('Please select how you will use LOUMOO to continue');
@@ -16171,11 +15944,7 @@ class Component extends DCLogic {
         }
         this.go('onboardIdentity');
       },
-      /**
-       * Creates the real account with Clerk and asks it to send a real code.
-       * Nothing local is marked "registered": the next screen only advances
-       * once the code the user actually received has been accepted.
-       */
+      
       continueFromIdentity: () => {
         const first = (this.state.regFirstName || '').trim();
         const last = (this.state.regLastName || '').trim();
@@ -16189,7 +15958,7 @@ class Component extends DCLogic {
           return;
         }
 
-        // Already signed in (resuming onboarding or editing identity):
+        
         if (this.state.authStatus === 'authenticated') {
           const api = getApi();
           if (api && api.saveOnboardingStep) {
@@ -16247,8 +16016,8 @@ class Component extends DCLogic {
             this._startEmailCooldown();
             this.go('onboardOtp');
 
-            // Some Clerk instances complete sign-up without a code; establish
-            // the LOUMOO session immediately in that case.
+            
+            
             if (!result.needsEmailCode) return this._establishSession();
             return null;
           })
@@ -16258,10 +16027,7 @@ class Component extends DCLogic {
           });
       },
 
-      /**
-       * Verifies the emailed code, establishes the LOUMOO session, records the
-       * buyer/seller intent on the server, then continues the wizard.
-       */
+      
       continueAfterOtp: () => {
         const now = Date.now();
         if (this._lastOtpClick && (now - this._lastOtpClick) < 1000) {
@@ -16273,7 +16039,7 @@ class Component extends DCLogic {
         const clerk = getClerk();
         const nextScreen = 'onboardAdaptive';
 
-        // Already verified and signed in — just move on.
+        
         if (this.state.emailVerifyState === 'verified' && this.state.authStatus === 'authenticated') {
           this._startServerOnboarding().then(() => { this.go(nextScreen); this._adaptiveLoad(); });
           return;
@@ -16303,7 +16069,7 @@ class Component extends DCLogic {
         Promise.resolve(attempt)
           .then(() => this._establishSession())
           .then(accountState => {
-            // Confirm the authenticated session with the server
+            
             return api.getAccountState().catch(() => accountState);
           })
           .then(accountState => {
@@ -16395,7 +16161,7 @@ class Component extends DCLogic {
         }
       },
 
-      // Form Field Two-Way Bindings
+      
       updateRegFirstName: (e) => this.setState({ regFirstName: e && e.target ? e.target.value : e }),
       updateRegLastName: (e) => this.setState({ regLastName: e && e.target ? e.target.value : e }),
       updateRegPhone: (e) => this.setState({ regPhone: e && e.target ? e.target.value : e }),
@@ -16406,7 +16172,7 @@ class Component extends DCLogic {
       updateRegRccm: (e) => this.setState({ regRccm: e && e.target ? e.target.value : e }),
       updateLegalForm: (e) => this.setState({ legalForm: e && e.target ? e.target.value : e }),
 
-      // Buyer Preferences Toggles
+      
       toggleInterestTech: () => this.setState(s => ({ interestTech: !s.interestTech })),
       toggleInterestFashion: () => this.setState(s => ({ interestFashion: !s.interestFashion })),
       toggleInterestTravel: () => this.setState(s => ({ interestTravel: !s.interestTravel })),
@@ -16416,7 +16182,7 @@ class Component extends DCLogic {
       togglePrioritySpeed: () => this.setState(s => ({ prioritySpeed: !s.prioritySpeed })),
       togglePriorityWarranty: () => this.setState(s => ({ priorityWarranty: !s.priorityWarranty })),
 
-      // Seller Classification Handlers (Instant smart routing based on seller classification)
+      
       setSellerIndividual: () => {
         this.setState({ sellerType: 'individual' });
         this.go('onboardVerify');
@@ -16438,7 +16204,7 @@ class Component extends DCLogic {
       toggleProdServices: () => this.setState(s => ({ prodServices: !s.prodServices })),
       toggleProdRentals: () => this.setState(s => ({ prodRentals: !s.prodRentals })),
 
-      // Verification Handlers (Instant smart progression to review with real document upload)
+      
       setVerifyNow: () => {
         this.setState({ verificationChoice: 'now' });
         this.go('onboardReview');
@@ -16457,9 +16223,9 @@ class Component extends DCLogic {
         const api = getApi();
         this.setState({ docUploading: true, docUploadError: '' });
 
-        // No offline branch. It used to wait 600ms and then declare the
-        // document "encrypted and attached for verification" without a single
-        // byte leaving the browser — the user believed their CNI was submitted.
+        
+        
+        
         if (!api) {
           this.setState({
             docUploading: false,
@@ -16486,8 +16252,8 @@ class Component extends DCLogic {
               docUploadId: data.uploadId,
               docUploadUrl: data.url
             });
-            // Uploaded is not verified. Saying "verified" told the user a
-            // review had already happened and passed.
+            
+            
             this.toast('Document uploaded securely — pending review');
           }
         }).catch(err => {
@@ -16529,9 +16295,9 @@ class Component extends DCLogic {
               verDocUploaded: true,
               verDocAttached: true,
               verDocFileName: file.name,
-              // Carried into submitStoreVerificationDocs as cniFrontUrl; the
-              // previous key `verDocFrontUrl` was written but never read, so the
-              // document never reached the verification record.
+              
+              
+              
               verDocUploadUrl: data.url,
               verDocFrontUrl: data.url
             });
@@ -16557,7 +16323,7 @@ class Component extends DCLogic {
       signOut: () => this.signOut(),
       resendOtp: () => this.toast('New 6-digit verification code sent to ' + (this.state.regPhone || 'your phone')),
 
-      // ── Dedicated Selling & Upload Wizard Handlers ──
+      
       handleSellClick,
       currentStoreName: (this.state.store && this.state.store.name) || this.state.regBusinessName || 'Your Boutique',
       hasOwnStore: Boolean(this.state.primaryStoreId),
@@ -16579,13 +16345,9 @@ class Component extends DCLogic {
       })(),
       storeCategory: (this.state.store && (this.state.store.categoryId || this.state.store.category_id || this.state.store.category)) || 'general',
 
-      // ── Seller Studio Dynamic Metrics & Empty States ──
+      
       sellerRevenue: this.state.sellerRevenue || 'XAF 0',
-      /* A delta and a note are different things. 'No sales this month yet' was
-         being fed into the delta slot, so an empty month rendered as a green
-         pill beside the number - the visual language for good news. A delta is
-         shown only when there is a real movement to report; otherwise the
-         sentence goes underneath as a note, in muted grey. */
+      
       sellerRevenueDelta: /^[+\-]/.test(String(this.state.sellerRevenueDelta || '')) ? this.state.sellerRevenueDelta : '',
       sellerRevenueNote: this.state.sellerRevenueNote
         || (this.state.sellerRevenueDelta && !/^[+\-]/.test(String(this.state.sellerRevenueDelta))
@@ -16601,9 +16363,9 @@ class Component extends DCLogic {
       sellerSoldCount: Number(this.state.sellerSoldCount || 0),
 
 
-      // ══════════════════════════════════════════════════════════════════
-      // PHASE A — ACCOUNT ACCESS (Sign In · Password Reset · Email Verify)
-      // ══════════════════════════════════════════════════════════════════
+      
+      
+      
 
       signInIdentifier: this.state.signInIdentifier,
       signInPassword: this.state.signInPassword,
@@ -16619,12 +16381,8 @@ class Component extends DCLogic {
       }),
       toggleSignInPassword: () => this.setState(s => ({ signInShowPassword: !s.signInShowPassword })),
 
-      /**
-       * POST /api/v1/auth/signin -> SignInUseCase.
-       * The backend accepts an identifier with an optional password; it returns
-       * a session token which the API client persists for later calls.
-       */
-      /** Real sign-in through Clerk; LOUMOO never sees the password. */
+      
+      
       submitSignIn: () => {
         const identifier = (this.state.signInIdentifier || '').trim();
         const password = this.state.signInPassword || '';
@@ -16662,7 +16420,7 @@ class Component extends DCLogic {
           });
       },
 
-      // ── Password reset ──
+      
       resetEmail: this.state.resetEmail,
       resetCode: this.state.resetCode,
       resetNewPassword: this.state.resetNewPassword,
@@ -16692,7 +16450,7 @@ class Component extends DCLogic {
       }),
       toggleResetPassword: () => this.setState(s => ({ resetShowPassword: !s.resetShowPassword })),
 
-      /** Real password reset: Clerk sends the code and checks it. */
+      
       submitResetRequest: () => {
         const email = (this.state.resetEmail || '').trim();
         if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
@@ -16716,15 +16474,15 @@ class Component extends DCLogic {
           this.setState({
             resetBusy: false,
             resetRequestSent: true,
-            // Deliberately uniform: it must not reveal whether the address is
-            // registered, so the wording is the same either way.
+            
+            
             resetServerMessage: 'If an account exists for ' + email
               + ', a recovery code has been sent to it.'
           });
           this._startResetCooldown();
         }).catch(err => {
           if (this._unmounted) return;
-          // A "not found" is also answered uniformly, for the same reason.
+          
           const notFound = err && err.errors
             && err.errors.some(e => e.code === 'form_identifier_not_found');
 
@@ -16784,7 +16542,7 @@ class Component extends DCLogic {
         });
       },
 
-      // ── Email verification (Clerk sends the code; the server confirms) ──
+      
       emailVerifyState: this.state.emailVerifyState,
       emailVerifyCode: this.state.emailVerifyCode,
       emailVerifyError: this.state.emailVerifyError,
@@ -16795,7 +16553,7 @@ class Component extends DCLogic {
       otpBtnLabel: this.state.emailVerifyState === 'verifying' ? 'CONFIRMING…' : (this.state.emailVerifyState === 'verified' ? 'CONTINUE' : 'VERIFY & CONTINUE'),
       otpBtnArrow: this.state.emailVerifyState === 'verifying' ? '' : '✓',
       verifyEmailAddress: this.state.regEmail || 'your email address',
-      // Shown so the screen can say what is being verified and why.
+      
       verifyEmailWhy: 'LOUMOO verifies your email so buyers and sellers can trust who they are dealing with, and so we can reach you about your orders.',
       verifyEmailNext: 'Once verified you can finish setting up your account and start using LOUMOO.',
       verifyEmailNoCodeHelp: 'Check your spam folder, or resend the code. You can also change the address on your account and try again.',
@@ -16806,12 +16564,7 @@ class Component extends DCLogic {
         emailVerifyError: ''
       }),
 
-      /**
-       * Submits the code the user actually received from Clerk, then asks the
-       * SERVER to confirm the outcome. The screen only shows "verified" after
-       * the server has re-read Clerk and mirrored the result — clicking a
-       * button never marks anything verified.
-       */
+      
       submitEmailVerification: () => {
         const now = Date.now();
         if (this._lastOtpClick && (now - this._lastOtpClick) < 1000) {
@@ -16841,8 +16594,8 @@ class Component extends DCLogic {
         this.setState({ emailVerifyState: 'verifying', emailVerifyError: '' });
 
         const attempt = clerk.isSignedIn()
-          ? clerk.attemptEmailVerification(code)   // already signed in
-          : clerk.verifyEmailCode(code);           // finishing a registration
+          ? clerk.attemptEmailVerification(code)   
+          : clerk.verifyEmailCode(code);           
 
         Promise.resolve(attempt)
           .catch(err => {
@@ -16894,7 +16647,7 @@ class Component extends DCLogic {
           });
       },
 
-      /** Asks Clerk to send a genuinely new code. */
+      
       resendEmailVerification: () => {
         if (this.state.emailVerifyCooldown > 0) return;
 
@@ -16920,10 +16673,7 @@ class Component extends DCLogic {
         });
       },
 
-      /**
-       * Re-checks with the server. Covers the case where the user completed
-       * verification in another tab or on their phone.
-       */
+      
       recheckEmailVerification: () => {
         const api = getApi();
         if (!api) return;
@@ -16941,11 +16691,7 @@ class Component extends DCLogic {
         });
       },
 
-      /**
-       * Lets the user correct a mistyped address. Signing out returns them to
-       * registration with a clean slate — the alternative (silently reusing a
-       * wrong address) is what strands people permanently.
-       */
+      
       changeVerifyEmail: () => {
         const clerk = getClerk();
         this.setState({ emailVerifyCode: '', emailVerifyError: '', emailVerifyState: 'pending' });
@@ -16972,16 +16718,16 @@ class Component extends DCLogic {
         });
       },
 
-      // ══════════════════════════════════════════════════════════════════
-      // PHASE B — USER ACCOUNT HUB & PROFILE EXPERIENCE
-      // ══════════════════════════════════════════════════════════════════
+      
+      
+      
 
-      // B1. Account Dashboard
+      
       dashboard: this.state.dashboard || {
         profile: {
-          // Real values only. This block previously hardcoded a name, an email
-          // and isEmailVerified/isPhoneVerified: true, so an unverified account
-          // was shown its own dashboard saying it was fully verified.
+          
+          
+          
           name: ((this.state.regFirstName || '') + ' ' + (this.state.regLastName || '')).trim(),
           email: this.state.regEmail || '',
           isPhoneVerified: Boolean(this.state.phoneVerified),
@@ -17031,7 +16777,7 @@ class Component extends DCLogic {
         });
       },
 
-      // B2. Edit Profile
+      
       profileFormFirstName: this.state.profileFormFirstName,
       profileFormLastName: this.state.profileFormLastName,
       profileFormCity: this.state.profileFormCity,
@@ -17088,7 +16834,7 @@ class Component extends DCLogic {
         });
       },
 
-      // B3. Address Book
+      
       addressesList: this.state.addressesList,
       addressesLoading: this.state.addressesLoading,
       addressFormName: this.state.addressFormName,
@@ -17117,8 +16863,8 @@ class Component extends DCLogic {
         if (api) {
           this.setState({ addressesLoading: true });
           api.getAddresses().then(list => {
-            // `list.length` was required before, so an account with zero
-            // addresses kept whatever was already on screen.
+            
+            
             if (!this._unmounted && Array.isArray(list)) this.setState({ addressesList: list, addressesLoading: false });
             else if (!this._unmounted) this.setState({ addressesLoading: false });
           }).catch(() => { if (!this._unmounted) this.setState({ addressesLoading: false }); });
@@ -17220,7 +16966,7 @@ class Component extends DCLogic {
         this.toast('Default delivery address updated');
       },
 
-      // B4. Notification Preferences
+      
       notifInApp: this.state.notifInApp,
       notifEmail: this.state.notifEmail,
       notifPush: this.state.notifPush,
@@ -17272,15 +17018,15 @@ class Component extends DCLogic {
         }).then(done).catch(err => fail((err && err.message) || 'Could not save your notification preferences.'));
       },
 
-      // B5. Privacy & Consent
+      
       privacyPersonalization: this.state.privacyPersonalization,
       privacyAnalytics: this.state.privacyAnalytics,
       privacyMarketing: this.state.privacyMarketing,
       privacySaving: this.state.privacySaving,
       togglePrivacyPersonalization: () => this.setState(s => {
         const next = !s.privacyPersonalization;
-        // Honour the opt-out in the browser engine immediately: stop profiling.
-        try { const R = getReco(); if (R && R.setConsent) R.setConsent(next); } catch (e) { /* non-fatal */ }
+        
+        try { const R = getReco(); if (R && R.setConsent) R.setConsent(next); } catch (e) {  }
         return { privacyPersonalization: next };
       }),
       togglePrivacyAnalytics: () => this.setState(s => ({ privacyAnalytics: !s.privacyAnalytics })),
@@ -17291,16 +17037,16 @@ class Component extends DCLogic {
         if (api) {
           api.getPrivacy().then(p => {
             if (p && !this._unmounted) {
-              // The server speaks camelCase (personalizedRecommendations,
-              // analyticsConsent, marketingEmails); earlier keys were dropped.
+              
+              
               const personalization = (p.personalizedRecommendations ?? p.personalization) ?? true;
               this.setState({
                 privacyPersonalization: personalization,
                 privacyAnalytics: (p.analyticsConsent ?? p.analytics) ?? true,
                 privacyMarketing: (p.marketingEmails ?? p.marketing) ?? false
               });
-              // Mirror the loaded preference into the engine so profiling honours it.
-              try { const R = getReco(); if (R && R.setConsent) R.setConsent(personalization); } catch (e) { /* non-fatal */ }
+              
+              try { const R = getReco(); if (R && R.setConsent) R.setConsent(personalization); } catch (e) {  }
             }
           }).catch(() => {});
         }
@@ -17319,21 +17065,21 @@ class Component extends DCLogic {
           this.toast(msg);
         };
         if (!api) { fail('LOUMOO is unreachable. Your privacy settings were not saved.'); return; }
-        // Send the server's canonical camelCase keys so the opt-out actually sticks.
+        
         api.updatePrivacy({
           personalizedRecommendations: this.state.privacyPersonalization,
           analyticsConsent: this.state.privacyAnalytics,
           marketingEmails: this.state.privacyMarketing
         }).then(done).catch(err => fail((err && err.message) || 'Could not save your privacy settings.'));
       },
-      // Clear the on-device taste profile and ask the server to forget it too.
+      
       resetRecommendations: () => {
         const R = getReco();
         if (R && R.reset) R.reset();
         this.setState({ toast: 'Your recommendations have been reset' });
       },
 
-      // B6. Security & Sessions
+      
       activeSessionsList: this.state.activeSessionsList,
       sessionsLoading: this.state.sessionsLoading,
       openSecurity: () => {
@@ -17354,7 +17100,7 @@ class Component extends DCLogic {
         this.toast('Session revoked successfully');
       },
 
-      // B7. Followed Stores
+      
       followedStoresList: this.state.followedStoresList,
       followedStoresLoading: this.state.followedStoresLoading,
       openFollowedStores: () => {
@@ -17375,7 +17121,7 @@ class Component extends DCLogic {
         this.toast('Unfollowed store');
       },
 
-      // B8. Activity History
+      
       activityList: this.state.activityList,
       activityLoading: this.state.activityLoading,
       openActivity: () => {
@@ -17390,7 +17136,7 @@ class Component extends DCLogic {
         }
       },
 
-      // B9. Delete Account
+      
       deleteAccountConfirmText: this.state.deleteAccountConfirmText,
       deleteAccountReason: this.state.deleteAccountReason,
       deleteAccountBusy: this.state.deleteAccountBusy,
@@ -17416,9 +17162,9 @@ class Component extends DCLogic {
         });
       },
 
-      // ══════════════════════════════════════════════════════════════════
-      // PHASE D — ORDERS, REVIEWS & VERTICALS
-      // ══════════════════════════════════════════════════════════════════
+      
+      
+      
       openPurchases: () => this.go('orders'),
       openOrderDetail: (order) => {
         if (order) this.setState({ currentOrder: order });
@@ -17445,7 +17191,7 @@ class Component extends DCLogic {
         }, 800);
       },
       openWriteReview: () => {
-        // Capture the product being reviewed from the current PDP context.
+        
         const p = (this.state.currentProductId && typeof PRODUCTS_DATA !== 'undefined')
           ? PRODUCTS_DATA[this.state.currentProductId] : null;
         this.setState({
@@ -17466,7 +17212,7 @@ class Component extends DCLogic {
       },
       updateReviewTitle: (e) => this.setState({ reviewTitle: e && e.target ? e.target.value : e }),
       updateReviewBody: (e) => this.setState({ reviewBody: e && e.target ? e.target.value : e }),
-      // Reviews for the product currently open, newest first (for the PDP).
+      
       myReviewsForProduct: (this.state.reviews || [])
         .filter((r) => r.productId && r.productId === this.state.currentProductId)
         .map((r) => ({
@@ -17498,7 +17244,7 @@ class Component extends DCLogic {
         const list = [review].concat(this.state.reviews || []);
         this.setState({ reviews: list, reviewTitle: '', reviewBody: '', reviewStars: 5, reviewRatingLabel: '5.0 EXCELLENT' });
         this._persistReviews(list);
-        // Best-effort: post to the real reviews API when signed in.
+        
         try {
           if (this.state.authStatus === 'authenticated' && productId) {
             const api = getApi();
@@ -17544,8 +17290,8 @@ class Component extends DCLogic {
       retryHotelList: () => this.loadHotels(),
       hotelListLoading: this.state.hotelListLoading,
       hotelListError: this.state.hotelListError,
-      // An empty result is a real answer ("no hotels in that city"), not an
-      // error, and it must not be shown while the request is still running.
+      
+      
       hotelListEmpty: this.state.hotelListLoaded
         && !this.state.hotelListLoading
         && !this.state.hotelListError
@@ -17572,8 +17318,8 @@ class Component extends DCLogic {
       },
       hotelCheckIn: this.state.hotelCheckIn,
       hotelCheckOut: this.state.hotelCheckOut,
-      // Changing the stay changes both the price and what is still available,
-      // so every edit re-asks the server rather than re-doing the maths here.
+      
+      
       updateHotelCheckIn: (e) => {
         const val = e && e.target ? e.target.value : e;
         if (!val) return;
@@ -17615,10 +17361,10 @@ class Component extends DCLogic {
       retryHotelDetail: () => this.loadHotelDetail(this.state.hotelSelectedId),
       selectHotelRoomId: (roomId) => this.setState({ hotelSelectedRoomId: roomId, hotelSubmitError: '' }),
 
-      // Opens the property's immersive tour INSIDE LOUMOO (a fullscreen iframe
-      // modal) so guests stay in the app. A persistent "open in new tab" action
-      // is the fallback for tour hosts that block embedding. readTourUrl already
-      // validated https+host; this guards again before mounting the frame.
+      
+      
+      
+      
       openHotelVirtualTour: (url) => {
         const u = typeof url === 'string' ? url.trim() : '';
         if (!/^https:\/\/[^\s]+\.[^\s]+/i.test(u)) return;
@@ -17634,7 +17380,7 @@ class Component extends DCLogic {
       },
       tourModalOpen: !!(this.state && this.state.tourModalOpen),
       tourModalUrl: (this.state && this.state.tourModalUrl) || '',
-      // Client-only favourite mark for the hero heart (not persisted).
+      
       toggleHotelFavorite: () => {
         const id = this.state.hotelSelectedId;
         if (!id) return;
@@ -17662,8 +17408,8 @@ class Component extends DCLogic {
 
       hotelDetailCard: (() => {
         const h = this.state.hotelDetailData;
-        // The template dereferences this object every render, including the
-        // first one before the fetch resolves — so it is never null.
+        
+        
         if (!h) {
           return {
             id: '', name: '', area: '', star: '', ratingLabel: '',
@@ -17678,13 +17424,13 @@ class Component extends DCLogic {
         const rooms = this.state.hotelRooms || [];
         const sel = rooms.find((r) => r.id === this.state.hotelSelectedRoomId) || rooms[0] || null;
         const nights = this._hotelNights(this.state.hotelCheckIn, this.state.hotelCheckOut);
-        // `stayQuote` is the server's own arithmetic for this stay. The client
-        // shows what the server will charge, and never recomputes it.
+        
+        
         const quote = sel && sel.stayQuote ? sel.stayQuote : null;
-        // Real property imagery only (hero mosaic + "Explore the property").
+        
         const imgs = (h.images || []).filter(Boolean).map(encImg);
-        // Optional named spaces — read from the object if present, else empty;
-        // nothing is fabricated (the backend does not expose these today).
+        
+        
         const spaces = (Array.isArray(h.spaces) ? h.spaces : []).map((sp) => {
           const url = readTourUrl(sp);
           return {
@@ -17783,9 +17529,9 @@ class Component extends DCLogic {
           };
         }
         const nights = this._hotelNights(this.state.hotelCheckIn, this.state.hotelCheckOut);
-        // Every figure below is the server's. The old screen added a flat
-        // 3 000 XAF "escrow" the server knew nothing about, so the total the
-        // traveller approved was never the total the server would charge.
+        
+        
+        
         const q = room.stayQuote || null;
         return {
           hotelName: h.name,
@@ -17811,18 +17557,7 @@ class Component extends DCLogic {
         };
       })(),
 
-      /**
-       * Creates the reservation on the server and only then shows a voucher.
-       *
-       * The previous version wrote a CONFIRMED trip with a client-invented
-       * reference, toasted "Reservation confirmed" and navigated to the
-       * voucher BEFORE calling the API — then swallowed every error with an
-       * empty catch. A traveller whose booking the server refused (no
-       * availability, dates in the past, room too small) still saw a confirmed
-       * voucher for a reservation that did not exist, and would arrive at the
-       * hotel with nothing behind it. Nothing is shown now until the server
-       * has actually created the booking, and failures are surfaced.
-       */
+      
       submitHotelReservation: () => {
         if (this.state.hotelSubmitting) return;
 
@@ -17890,12 +17625,12 @@ class Component extends DCLogic {
             guests: this.state.hotelGuests || 2,
             amount: (booking.pricing && booking.pricing.totalAmount) || (q && q.totalAmount) || 0,
             currency: 'XAF',
-            // The server decides the status. A reservation is held PENDING
-            // until payment is attested; it is not a confirmed stay yet.
+            
+            
             status: booking.status || 'PENDING',
             paymentStatus: (booking.payment && booking.payment.status) || 'PENDING',
             qr: booking.qrCodePayload || '',
-            // Hotel WhatsApp contact — persisted so the voucher can notify the hotel directly.
+            
             hotelWhatsApp: (booking.itinerary && (booking.itinerary.hotelWhatsapp || booking.itinerary.hotelPhone)) || h.whatsapp || h.phone || (h.contact && (h.contact.whatsapp || h.contact.phone)) || '',
             createdAt: Date.now()
           };
@@ -17915,7 +17650,7 @@ class Component extends DCLogic {
           } catch (e) {}
           this.toast('Reservation held at ' + h.name);
           this.go('hotelVoucher');
-          // Availability moved; refresh so the next traveller sees the truth.
+          
           this.loadHotelRooms(h.id);
         }).catch((err) => {
           if (this._unmounted) return;
@@ -17944,9 +17679,9 @@ class Component extends DCLogic {
           guestName: t.passenger || 'Guest',
           totalLabel: 'XAF ' + fmt(t.amount || 0),
           isHotel: t.type === 'hotel',
-          // The voucher states what the reservation actually is. Presenting a
-          // held, unpaid booking as "confirmed" sends travellers to a hotel
-          // that has taken no money and owes them no room.
+          
+          
+          
           statusLabel: isConfirmed && isPaid ? 'Confirmed' : 'Held — payment required',
           isConfirmed: isConfirmed && isPaid,
           statusNote: isConfirmed && isPaid
@@ -17954,14 +17689,7 @@ class Component extends DCLogic {
             : 'Your room is held. The reservation is confirmed once payment is completed.'
         };
       })(),
-      /**
-       * Sends a structured booking notice DIRECTLY to the hotel's WhatsApp
-       * front-desk line. The message includes: guest name, room type, check-in,
-       * check-out, number of guests, and booking reference — everything the
-       * front desk needs to prepare the room before arrival.
-       *
-       * Falls back to the generic share sheet if no hotel number is on file.
-       */
+      
       notifyHotelWhatsApp: () => {
         const t = this.state.lastTrip || {};
         const cleanWa = (t.hotelWhatsApp || '').replace(/[^0-9]/g, '').replace(/^00/, '');
@@ -18019,8 +17747,8 @@ class Component extends DCLogic {
             amount ? `Total: ${amount}` : '',
             `Référence: ${ref}`
           ].filter(Boolean).join('\n');
-          // Send directly to the hotel if we have a number, otherwise fallback
-          // to the user's WhatsApp contact picker.
+          
+          
           const url = cleanWa
             ? ('https://wa.me/' + cleanWa + '?text=' + encodeURIComponent(msg))
             : ('https://api.whatsapp.com/send?text=' + encodeURIComponent(msg));
@@ -18028,9 +17756,9 @@ class Component extends DCLogic {
         } catch (e) { this.toast("Impossible d'ouvrir WhatsApp"); }
       },
 
-      // ══════════════════════════════════════════════════════════════════
-      // PHASE E — STORE & BUSINESS SYSTEM (Prompt 05)
-      // ══════════════════════════════════════════════════════════════════
+      
+      
+      
       openCreateStore: () => this.go('createStore'),
       openStoreOnboarding: () => this.go('storeOnboarding'),
       openStoreSettings: () => {
@@ -18179,9 +17907,9 @@ class Component extends DCLogic {
         this.setState({ createStoreBusy: true, createStoreError: '' });
         const api = getApi();
         const done = () => {
-          // Refresh the account so `primaryStoreId` is populated immediately.
-          // Without it the client still believed the user had no boutique and
-          // sent them back to create a second one.
+          
+          
+          
           this._syncAccountState(true);
           this.setState({ createStoreBusy: false });
           this.toast('Storefront created! Finish setup to go live.');
@@ -18226,16 +17954,7 @@ class Component extends DCLogic {
       storeActivating: Boolean(this.state.storeActivating),
       storeActivateError: this.state.storeActivateError || '',
       activateStorefront: () => {
-        /*
-         * This used to set a local percentage to 100, toast "LIVE" and walk
-         * away without calling anything. The store stayed DRAFT, the account
-         * stayed SELLER_VERIFICATION_REQUIRED, and pressing Sell bounced the
-         * user back to the seller-type question - for ever.
-         *
-         * Activation is the ONE transition that makes an account SELLER_READY,
-         * so it has to be a real request whose outcome is reported honestly.
-         * It never requires a verification document.
-         */
+        
         const api = getApi();
         const storeId = this.state.primaryStoreId;
         if (this.state.storeActivating) return;
@@ -18259,8 +17978,8 @@ class Component extends DCLogic {
             this.go('seller');
           })
           .catch(err => {
-            // Name what is actually missing instead of bouncing the user to a
-            // screen that asks something they already answered.
+            
+            
             const msg = (err && err.message) || 'Could not activate your storefront.';
             fail(msg);
           });
@@ -18282,9 +18001,9 @@ class Component extends DCLogic {
         const storeId = this.state.primaryStoreId;
         if (this.state.verSubmitting) return;
 
-        // Previously `.then(done).catch(done)`: a rejected request reported
-        // "submitted for official review!" and navigated away. A seller could
-        // wait indefinitely for a review of a document the server never got.
+        
+        
+        
         const fail = (msg) => {
           if (this._unmounted) return;
           this.setState({ verSubmitting: false, verSubmitError: msg });
@@ -18295,9 +18014,9 @@ class Component extends DCLogic {
           fail('Create your boutique before submitting verification documents.');
           return;
         }
-        // No document is required. Verification is an optional trust upgrade,
-        // never a gate on selling, so a seller may submit their legal details
-        // now and attach a document later.
+        
+        
+        
         if (!api) {
           fail('LOUMOO is unreachable. Check your connection and try again.');
           return;
@@ -18525,7 +18244,7 @@ class Component extends DCLogic {
         });
       },
 
-      // ── Stores & Brands Discovery / Storefront Getters & Actions ──
+      
       storeSearchQuery: this.state.storeSearchQuery || '',
       updateStoreSearch: (e) => {
         const value = e && e.target ? e.target.value : e;
@@ -18540,10 +18259,7 @@ class Component extends DCLogic {
         this.loadStoreDiscovery();
       },
       storeCategoryFilter: this.state.storeCategoryFilter || 'all',
-      /* Category chip classes, resolved here rather than as a ternary in the
-         template. The engine returns the comparison's BOOLEAN and discards the
-         branches, so every chip rendered `class="tag false"` - no selected
-         state was ever visible and the filter gave no feedback when tapped. */
+      
       storeCatAllClass: (this.state.storeCategoryFilter || 'all') === 'all' ? 'tag-accent' : 'tag-neutral',
       storeCatTechClass: (this.state.storeCategoryFilter || 'all') === 'tech' ? 'tag-accent' : 'tag-neutral',
       storeCatFashionClass: (this.state.storeCategoryFilter || 'all') === 'fashion' ? 'tag-accent' : 'tag-neutral',
@@ -18560,7 +18276,7 @@ class Component extends DCLogic {
       storeDiscoveryLoading: Boolean(this.state.storeDiscoveryLoading),
       storeDiscoveryError: this.state.storeDiscoveryError || '',
       storeDiscoveryCards: (this.state.storeDiscovery || []).filter(store => {
-        // Defence-in-depth: strip QA/test boutiques client-side.
+        
         if (/^store_test_/i.test(String(store.id || ''))) return false;
         if (/test\s*boutique/i.test(String(store.name || ''))) return false;
 
@@ -18703,14 +18419,7 @@ class Component extends DCLogic {
       businessStoreProfileLoading: Boolean(this.state.storeProfileLoading),
       businessStoreProfileError: (/permission|authorized|authorization|forbidden|manage/i.test(this.state.storeProfileError || '')) ? '' : (this.state.storeProfileError || ''),
       reloadStoreProfile: () => this.loadStoreProfile(),
-      /* Storefront tabs, fully resolved in JS.
-
-         The template engine does not evaluate a ternary whose test is a
-         comparison: `{{ tab === 'products' ? 'tag-accent' : 'tag-neutral' }}`
-         rendered the literal string "false" as the class, and the matching
-         sc-if never opened - which is why STORE HOME was a blank page and the
-         inactive tabs had no styling at all. Booleans and finished class
-         strings cannot be misparsed. */
+      
       storeActiveTab: this.state.storeActiveTab || 'home',
       storeTabIsHome: (this.state.storeActiveTab || 'home') === 'home',
       storeTabHomeClass: (this.state.storeActiveTab || 'home') === 'home' ? 'tag-accent' : 'tag-neutral',
@@ -18727,11 +18436,7 @@ class Component extends DCLogic {
       storeTabIsReviews: (this.state.storeActiveTab || 'home') === 'reviews',
       storeTabReviewsClass: (this.state.storeActiveTab || 'home') === 'reviews' ? 'tag-accent' : 'tag-neutral',
       storeTabReviewsBorder: (this.state.storeActiveTab || 'home') === 'reviews' ? 'var(--color-accent)' : 'transparent',
-      /* Vertical gates for the Sell wizard, computed here rather than as long
-         `a === x || a === y || ...` expressions inside sc-if. The template
-         parser mishandles a condition that mixes comparison with logical-or -
-         the storefront's default tab used one and rendered a blank page. A
-         plain boolean cannot misparse. */
+      
       storeSellsPhysical: ['', 'electronics', 'fashion', 'home', 'food', 'beauty', 'automotive', 'general']
         .includes(String(this.state.store && (this.state.store.category_id || this.state.store.category) || 'electronics').toLowerCase()),
       storeSellsService: ['services', 'education', 'professional']
@@ -18743,7 +18448,7 @@ class Component extends DCLogic {
       shareStore: () => { this.toast('Store link copied to clipboard!'); },
       shareBrand: () => { this.toast('Official brand link copied to clipboard!'); },
 
-      // ── Brand Destinations Hub Getters & Actions ──
+      
       selectedBrand: this.state.selectedBrand || 'apple',
       selectBrand: (b) => this.setState({ selectedBrand: b }),
       openBrand: (b) => { this.setState({ selectedBrand: b }); this.go('brand'); },
@@ -18759,7 +18464,7 @@ class Component extends DCLogic {
         this.toast(next ? 'Following official brand updates' : 'Unfollowed official brand');
       },
 
-      // ── All Categories & Taxonomy Discovery Getters & Actions ──
+      
       categorySearchQuery: this.state.categorySearchQuery || '',
       updateCategorySearch: (e) => this.setState({ categorySearchQuery: e && e.target ? e.target.value : e }),
       clearCategorySearch: () => this.setState({ categorySearchQuery: '' }),
@@ -18801,9 +18506,9 @@ class Component extends DCLogic {
         this.go('category');
       },
 
-      // ── Data-driven category drill-down grid ────────────────────────────
-      // Every category resolves to real products (curated + live catalogue),
-      // so categories without a bespoke editorial block never render blank.
+      
+      
+      
       categoryProductCards: (() => {
         const activeCat = this.state.activeCategorySlug || 'all';
         const activeSub = this.state.activeSubcategorySlug || 'all';
@@ -18878,7 +18583,7 @@ class Component extends DCLogic {
       homeTotalCount: this._categoryProductPool('home').length,
       categoryTotalCount: this._categoryProductPool(this.state.activeCategorySlug || 'all').length,
 
-      // Category Search Match helpers
+      
       categoryHasQuery: Boolean((this.state.categorySearchQuery || '').trim()),
       matchElectronics: (() => {
         const q = (this.state.categorySearchQuery || '').trim().toLowerCase();
@@ -18948,18 +18653,18 @@ class Component extends DCLogic {
         this.toast('Category filters reset');
       },
 
-      // ══════════════════════════════════════════════════════════════════
-      // PUBLISHING STUDIO
-      // ------------------------------------------------------------------
-      // Everything below is derived, never stored. The engine owns the truth;
-      // this block turns it into the exact values the templates bind to, so
-      // the templates stay free of business rules.
-      // ══════════════════════════════════════════════════════════════════
+      
+      
+      
+      
+      
+      
+      
       ...(() => {
         const pub = getPublishing();
         const draft = this.state.pubDraft;
 
-        // The intent chooser is available before any draft exists.
+        
         const storeCategory = String(
           (this.state.store && (this.state.store.categoryId || this.state.store.category_id || this.state.store.category)) || ''
         ).toLowerCase();
@@ -19036,15 +18741,7 @@ class Component extends DCLogic {
         const ctx = this._pubContext();
         const allSections = pub.sections(draft, ctx);
         const report = pub.readiness(draft, ctx);
-        /* Which errors to show inline.
-         *
-         * Painting every untouched required field red the moment a section
-         * opens is hostile — the seller has not failed at anything yet. So an
-         * inline error appears once the seller has touched that field, or once
-         * they have asked to publish (from Review, where every blocker is
-         * listed anyway). Errors the SERVER returned always show: those are
-         * about something that was actually submitted.
-         */
+        
         const reveal = this.state.pubRevealErrors;
         const computed = report.errors || {};
         const errors = Object.assign({}, this.state.pubFieldErrors || {});
@@ -19057,7 +18754,7 @@ class Component extends DCLogic {
         const activeIndex = Math.max(0, allSections.findIndex(s => s.key === activeKey));
         const active = allSections[activeIndex] || { fields: [], label: '', hint: '' };
 
-        /* ---- resolve one field into everything the template binds to ---- */
+        
         const resolveField = (f) => {
           const raw = pub.getValue(draft, f.path);
           const error = errors[f.path];
@@ -19066,8 +18763,8 @@ class Component extends DCLogic {
             value: raw === undefined || raw === null ? '' : raw,
             hasError: Boolean(error),
             error: error || '',
-            // Some category attributes carry the unit in their own name
-            // ("Battery Health (%)"); appending it again reads as a stutter.
+            
+            
             showUnit: Boolean(f.unit) && String(f.label).indexOf(f.unit) === -1,
             isSimpleInput: ['text', 'number', 'date', 'time', 'datetime'].indexOf(f.type) !== -1,
             inputType: f.type === 'datetime' ? 'datetime-local'
@@ -19115,14 +18812,14 @@ class Component extends DCLogic {
         const basicFields = activeFields.filter(f => !f.advanced);
         const advancedFields = activeFields.filter(f => f.advanced);
 
-        /* ---- section states for the rail, the chips and the checklist ---- */
+        
         const sectionStates = report.sections.map((s, i) => Object.assign({}, s, {
           index: i + 1,
           active: s.key === activeKey,
           firstIssue: s.issues && s.issues.length ? s.issues[0].message : ''
         }));
 
-        /* ---- categories ---- */
+        
         const taxonomy = this.state.pubTaxonomy || [];
         const allowedTypes = (pub.INTENTS[draft.intent] || {}).listingTypes || [];
         const relevant = taxonomy.filter(node => {
@@ -19147,8 +18844,8 @@ class Component extends DCLogic {
           }))
           : [];
 
-        // A level-one category with no children IS the category — offering an
-        // empty subcategory column would look broken.
+        
+        
         if (parentNode && childCategories.length === 0) {
           childCategories.push({
             id: parentNode.id, name: parentNode.name + ' (general)',
@@ -19156,7 +18853,7 @@ class Component extends DCLogic {
           });
         }
 
-        /* ---- variants ---- */
+        
         const variantDefs = pub.variantOptionsOf(this.state.pubCategorySchema);
         const chosenVariants = draft.values.variantOptions || {};
         const variantOptions = variantDefs.map(vo => ({
@@ -19171,7 +18868,7 @@ class Component extends DCLogic {
           .filter(k => (chosenVariants[k] || []).length > 0)
           .reduce((n, k) => n * chosenVariants[k].length, 1);
 
-        /* ---- weekly schedule ---- */
+        
         const schedule = draft.values.weeklySchedule || {};
         const scheduleRows = pub.WEEKDAYS.map(d => {
           const windows = schedule[d.key] || [];
@@ -19183,7 +18880,7 @@ class Component extends DCLogic {
           };
         });
 
-        /* ---- media ---- */
+        
         const mediaMax = draft.intent === 'BROADCAST' ? 8 : 12;
         const media = draft.media.map((m, i) => Object.assign({}, m, {
           isCover: i === 0,
@@ -19191,7 +18888,7 @@ class Component extends DCLogic {
           canMoveRight: i < draft.media.length - 1
         }));
 
-        /* ---- post-publish actions ---- */
+        
         const published = this.state.pubPublished;
         const isBroadcast = draft.intent === 'BROADCAST';
         const scheduled = isBroadcast && draft.values.publishMode === 'SCHEDULE';
@@ -19214,12 +18911,12 @@ class Component extends DCLogic {
           ];
 
         return Object.assign(base, {
-          /* identity */
+          
           pubTitle: (draft.values.title || '').trim()
             || (draft.mode === 'edit' ? 'Edit publication' : 'New ' + ((pub.INTENTS[draft.intent] || {}).label || 'publication').toLowerCase()),
           pubIntent: draft.intent,
 
-          /* sections */
+          
           pubSections: sectionStates,
           pubSectionLabel: active.label,
           pubSectionHint: active.hint,
@@ -19230,12 +18927,12 @@ class Component extends DCLogic {
           pubNextSectionLabel: allSections[activeIndex + 1] ? allSections[activeIndex + 1].label : '',
           pubPrevSectionLabel: allSections[activeIndex - 1] ? allSections[activeIndex - 1].label : '',
 
-          /* fields */
+          
           pubBasicFields: basicFields,
           pubAdvancedFields: advancedFields,
           pubAdvancedOpen: advancedOpen,
 
-          /* readiness */
+          
           pubPercent: report.percent,
           pubReadinessSummary: report.summary,
           pubBlockers: report.blockers,
@@ -19248,12 +18945,12 @@ class Component extends DCLogic {
               : draft.mode === 'edit' && draft.remoteStatus === 'PUBLISHED' ? 'Save changes'
                 : isBroadcast ? 'Publish to Announce' : 'Publish to LOUMOO',
 
-          /* preview — the SAME projection the real feed renders */
+          
           pubPreviewCard: pub.toFeedCard(draft, ctx),
           pubPreviewOpen: this.state.pubPreviewOpen,
           pubPreviewDevice: this.state.pubPreviewDevice,
 
-          /* pickers */
+          
           pubParentCategories: parentCategories,
           pubChildCategories: childCategories,
           pubCategoryNote: this.state.pubCategorySchema
@@ -19272,14 +18969,14 @@ class Component extends DCLogic {
             selected: l.id === draft.values.attachmentId
           })),
 
-          /* media */
+          
           pubMedia: media,
           pubMediaCount: draft.media.length,
           pubCanAddMedia: draft.media.length < mediaMax,
           pubMediaError: this.state.pubMediaError,
           pubMediaBusy: this.state.pubMediaBusy,
 
-          /* lifecycle */
+          
           pubLifecycle: this.state.pubLifecycle,
           pubBusyLabel: this.state.pubBusyLabel,
           pubServerError: this.state.pubServerError,
@@ -19287,7 +18984,7 @@ class Component extends DCLogic {
           pubSaveState: this.state.pubSaveState,
           pubOffline: this.state.pubOffline,
 
-          /* success */
+          
           pubSuccessTitle: scheduled ? 'Scheduled' : isBroadcast ? 'Your broadcast is live' : 'Your listing is live',
           pubSuccessBlurb: scheduled
             ? 'It will publish automatically at the time you chose. You can still edit or cancel it until then.'
@@ -19296,7 +18993,7 @@ class Component extends DCLogic {
               : 'Buyers can find it in the marketplace, in search, and on your boutique page.',
           pubSuccessActions: successActions,
 
-          /* ---------- actions ---------- */
+          
           pubSetField: (path, value) => this.setPublishingField(path, value),
 
           pubToggleValue: (path, value) => {
@@ -19327,8 +19024,8 @@ class Component extends DCLogic {
             this.setPublishingField(path, current.filter(v => v !== value));
           },
 
-          // Enter commits the chip; Backspace on an empty box removes the last
-          // one, which is what every tag input people already use does.
+          
+          
           pubChipKey: (path, e) => {
             if (!e) return;
             const text = String((this.state.pubChipDrafts || {})[path] || '').trim();
@@ -19402,7 +19099,7 @@ class Component extends DCLogic {
             const files = e && e.target && e.target.files ? Array.from(e.target.files) : [];
             if (!files.length) return;
             this.uploadPublishingImages(files);
-            // Let the same file be chosen again after a removal.
+            
             if (e && e.target) { try { e.target.value = ''; } catch (_) {} }
           },
           pubRemoveImage: (id) => this.removePublishingImage(id),
@@ -19428,15 +19125,15 @@ class Component extends DCLogic {
           pubSetPreviewDevice: (device) => this.setState({ pubPreviewDevice: device }),
 
           pubOpenReview: () => {
-            // Asking to publish is the moment every gap becomes fair to show.
+            
             this.setState({ pubRevealErrors: true });
             this._syncPublishingDraft().catch(() => {});
             this.go('publishReview');
           },
           pubBackToStudio: () => this.go('publishStudio'),
 
-          // Jumping to an issue opens its section AND focuses the field, so
-          // "3 things need attention" is three clicks to fixed, not a hunt.
+          
+          
           pubJumpToIssue: (sectionKey, path) => {
             this.setState({ pubSectionKey: sectionKey, pubAdvancedOpen: true });
             this.go('publishStudio');
@@ -19476,11 +19173,11 @@ class Component extends DCLogic {
         });
       })(),
 
-      // ══════════════════════════════════════════════════════════════════
-      // DISCOVERY SURFACES
-      // The Announce feed and the seller's catalogue, projected through the
-      // SAME PublicationCard the studio previews.
-      // ══════════════════════════════════════════════════════════════════
+      
+      
+      
+      
+      
       ...(() => {
         const pub = getPublishing();
         const ctx = { broadcastSchema: this.state.pubBroadcastSchema };
@@ -19513,7 +19210,7 @@ class Component extends DCLogic {
         });
 
         return {
-          /* ---------- Announce ---------- */
+          
           activeAnnouncementCard: this.state.activeAnnouncement
             ? ((pub && pub.cardFromAnnouncement) ? (() => { try { return pub.cardFromAnnouncement(this.state.activeAnnouncement, ctx); } catch (e) { return null; } })() : null) || this._formatAnnouncementCard(this.state.activeAnnouncement)
             : null,
@@ -19554,7 +19251,7 @@ class Component extends DCLogic {
           shareAnnouncement: (ann) => this.shareAnnouncement(ann || this.state.activeAnnouncement),
           activateAnnouncementCta: (ann) => this.activateAnnouncementCta(ann || this.state.activeAnnouncement),
 
-          /* ---------- Announce: Zero Telemetry for New Stores ---------- */
+          
           announcePeriod: this.state.announcePeriod || '7d',
           setAnnouncePeriodToday: () => { this.setState({ announcePeriod: 'today' }); this.loadStoreAnnounceTelemetry(); },
           setAnnouncePeriod7d: () => { this.setState({ announcePeriod: '7d' }); this.loadStoreAnnounceTelemetry(); },
@@ -19576,7 +19273,7 @@ class Component extends DCLogic {
           announceRegionalReach: this.state.announceRegionalReach || '0%',
           openAnnounceDetail: (id) => this.openAnnouncement(id),
 
-          /* ---------- My Listings ---------- */
+          
           sellerListingCards: listings.map(l => {
             const isBroadcast = l.kind === 'BROADCAST' || l.type === 'ANNOUNCEMENT' || l.broadcastType;
             if (isBroadcast && pub && pub.cardFromAnnouncement) {
@@ -19655,32 +19352,32 @@ class Component extends DCLogic {
         };
       })(),
 
-      // ══════════════════════════════════════════════════════════════════
-      // SEARCH & FILTER INTERACTIONS
-      // ══════════════════════════════════════════════════════════════════
+      
+      
+      
       searchQuery: this.state.searchQuery,
       searchBusy: Boolean(this.state.searchBusy),
       searchError: this.state.searchError || '',
       searchQueryTrimmed: (this.state.searchQuery || '').trim(),
-      // A query is "active" once it is long enough to have reached the backend.
+      
       searchActive: (this.state.searchQuery || '').trim().length >= 2,
       searchResultCount: Array.isArray(this.state.searchResults) ? this.state.searchResults.length : 0,
-      // Result-list heading and empty-state copy. Both read naturally whether the
-      // result set came from a text query, an active filter, or both.
+      
+      
       searchResultsHeading: (Array.isArray(this.state.searchResults) ? this.state.searchResults.length : 0)
         + (Array.isArray(this.state.searchResults) && this.state.searchResults.length === 1 ? ' result' : ' results')
         + ((this.state.searchQuery || '').trim() ? (' for “' + (this.state.searchQuery || '').trim() + '”') : ''),
       searchEmptyLabel: (this.state.searchQuery || '').trim()
         ? ('No results for “' + (this.state.searchQuery || '').trim() + '”')
         : 'No results match your filters',
-      // Mutually-exclusive view flags so the search screen shows exactly one state.
+      
       searchShowLoading: Boolean(this.state.searchBusy),
       searchShowError: !this.state.searchBusy && !!this.state.searchError,
       searchShowResults: !this.state.searchBusy && !this.state.searchError && Array.isArray(this.state.searchResults) && this.state.searchResults.length > 0,
       searchShowEmpty: !this.state.searchBusy && !this.state.searchError && Array.isArray(this.state.searchResults) && this.state.searchResults.length === 0,
       searchShowDefault: !this.state.searchBusy && !this.state.searchError && !Array.isArray(this.state.searchResults),
-      // Display-ready result cards, built from the canonical GET /products
-      // payload ({ items }). encImg/fmt are the same helpers the home rail uses.
+      
+      
       searchResultCards: (Array.isArray(this.state.searchResults) ? this.state.searchResults : []).map((p) => ({
         id: p.id,
         title: p.title || 'Untitled listing',
@@ -19691,17 +19388,17 @@ class Component extends DCLogic {
         ratingLabel: p.rating != null ? ('★ ' + p.rating) : '',
         inStock: p.inStock !== false
       })),
-      // Type-through search: live, debounced, race-guarded (see _executeSearch).
+      
       handleSearchInput: (e) => {
         const query = e && e.target ? e.target.value : (e || '');
         this.setState({ searchQuery: query });
         clearTimeout(this._searchTimer);
-        // Bump the race token on every keystroke so any in-flight response for
-        // an earlier query is dropped the instant the user types again.
+        
+        
         this._searchSeq = (this._searchSeq || 0) + 1;
         if (String(query).trim().length < 2) {
-          // A short/empty query with an active filter is still a valid browse
-          // ("all verified stores"); otherwise return to the default state.
+          
+          
           if (this.state.filterCity || this.state.filterVerifiedOnly) {
             this._searchTimer = setTimeout(() => {
               if (!this._unmounted) this._executeSearch(query);
@@ -19715,7 +19412,7 @@ class Component extends DCLogic {
           if (!this._unmounted) this._executeSearch(query);
         }, 240);
       },
-      // Enter from the Hub search field: run now and reveal the results screen.
+      
       handleHubSearchKey: (e) => {
         if (e && (e.key === 'Enter' || e.keyCode === 13)) {
           if (e.preventDefault) e.preventDefault();
@@ -19724,13 +19421,13 @@ class Component extends DCLogic {
           this.go('search');
         }
       },
-      // The Hub magnifier button — explicit submit affordance.
+      
       submitSearch: () => {
         clearTimeout(this._searchTimer);
         this._executeSearch(this.state.searchQuery);
         this.go('search');
       },
-      // Popular-search chips: set the query, run it, and show the results screen.
+      
       runSearch: (term) => {
         const q = String(term == null ? '' : term);
         this.setState({ searchQuery: q });
@@ -19739,55 +19436,55 @@ class Component extends DCLogic {
         this.go('search');
       },
 
-      // ── Filter drawer (is.filters) — refines the same /products query ──
+      
       filterCity: this.state.filterCity || '',
       filterVerifiedOnly: Boolean(this.state.filterVerifiedOnly),
       hasActiveFilters: Boolean(this.state.filterCity) || Boolean(this.state.filterVerifiedOnly),
-      // Precompute chip classes in JS: the DC template engine does not evaluate
-      // `a === 'literal'` inside {{…}}, so the active state must be resolved here
-      // and interpolated as a ready-made class string.
+      
+      
+      
       cityChipClass: {
         douala: 'tag ' + (this.state.filterCity === 'douala' ? 'tag-accent' : 'tag-neutral'),
         yaounde: 'tag ' + (this.state.filterCity === 'yaounde' ? 'tag-accent' : 'tag-neutral'),
         kribi: 'tag ' + (this.state.filterCity === 'kribi' ? 'tag-accent' : 'tag-neutral')
       },
-      // Full inline styles for the verified switch (full-attribute interpolation
-      // is the DC-safe way to make a style depend on state).
+      
+      
       vfTrackStyle: 'width:42px;height:24px;border-radius:999px;position:relative;flex-shrink:0;transition:background .18s ease;background:'
         + (this.state.filterVerifiedOnly ? 'var(--color-accent)' : 'var(--color-neutral-300)'),
       vfKnobStyle: 'position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .18s ease;transform:'
         + (this.state.filterVerifiedOnly ? 'translateX(18px)' : 'translateX(0)'),
-      // City chip: single-select, tapping the active one clears it (back to all).
+      
       setFilterCity: (c) => {
         this.setState({ filterCity: this.state.filterCity === c ? '' : c });
       },
       toggleVerifiedOnly: () => {
         this.setState({ filterVerifiedOnly: !this.state.filterVerifiedOnly });
       },
-      // Apply: run the current query with the chosen filters and reveal results.
+      
       applyFilters: () => {
         clearTimeout(this._searchTimer);
         this._executeSearch(this.state.searchQuery);
         this.go('search');
       },
-      // Reset: clear filters in place (stays on the drawer so chips visibly clear).
+      
       resetFilters: () => {
         this.setState({ filterCity: '', filterVerifiedOnly: false });
       },
 
-      // Authentication State & Header CTA Reactivity
+      
       isLoggedIn: this.state.isLoggedIn,
       authStatus: this.state.authStatus,
-      // Only shown once the session has genuinely resolved to anonymous, so an
-      // authenticated user never sees the promotional CTA flash during boot.
+      
+      
       showGetStarted: this.state.authStatus === 'anonymous',
       userInitials: (this.state.regFirstName ? this.state.regFirstName[0].toUpperCase() : 'T') + (this.state.regLastName ? this.state.regLastName[0].toUpperCase() : 'K'),
       userAvatar: this.state.regAvatar || '',
       hasUserAvatar: !!this.state.regAvatar,
       profileRoleLabel: this.state.userRole === 'both' ? 'VERIFIED BUYER & SELLER' : (this.state.userRole === 'seller' ? 'VERIFIED SELLER' : 'VERIFIED BUYER'),
-      // Stored numbers already carry their country code, so blindly prefixing
-      // '+237' rendered "+237 +237690000001". Normalise instead of concatenate,
-      // and show nothing rather than a stranger's placeholder number.
+      
+      
+      
       userPhoneCity: (() => {
         const raw = String(this.state.regPhone || '').trim();
         const digits = raw.replace(/[^0-9]/g, '');
@@ -19799,13 +19496,7 @@ class Component extends DCLogic {
           : 'Douala';
         return (phone ? phone + ' · ' : '') + city + ', Cameroon';
       })(),
-      /*
-       * These were the literal strings '1 Active Delivery' and
-       * '34 Products Saved', shown identically to every account — a brand-new
-       * user with an empty wishlist was told they had 34 saved products.
-       * GET /users/me/dashboard already returns real counts; use them, and say
-       * "None" honestly when there are none.
-       */
+      
       activeDeliveriesLabel: (() => {
         const n = Number((this.state.dashboard && this.state.dashboard.counts
           && this.state.dashboard.counts.activeDeliveries) || 0);
@@ -19817,10 +19508,10 @@ class Component extends DCLogic {
           && this.state.dashboard.counts.savedItems) || 0);
         return n === 0 ? 'No saved products yet' : (n + (n === 1 ? ' Product Saved' : ' Products Saved'));
       })(),
-      // "Sell on LOUMOO" always leads somewhere useful. The guard asks the
-      // server whether this account may create a listing and, if not, sends
-      // the user to the ONE screen that lets them become eligible — with the
-      // listing wizard remembered as the destination to resume afterwards.
+      
+      
+      
+      
       ctaAction: () => this.requireCapability('publishIntent', 'canCreateListing'),
       ctaLabel: this.state.isLoggedIn ? 'Sell on LOUMOO' : 'Join LOUMOO',
       navUploadAction: () => this.requireCapability('publishIntent', 'canCreateListing'),
@@ -19828,11 +19519,11 @@ class Component extends DCLogic {
       canCreateListing: Boolean(this.state.capabilities.canCreateListing),
       canPurchase: Boolean(this.state.capabilities.canPurchase),
       accountStateLabel: this.state.accountState || '',
-      // The header's "Sign in" affordance opens the real sign-in screen. It
-      // no longer *performs* a sign-in: only Clerk can do that.
+      
+      
       signIn: () => this.go('signIn'),
 
-      /** Ends the Clerk session, then clears every cached principal. */
+      
       signOut: () => {
         const api = getApi();
         const clerk = getClerk();
@@ -19860,8 +19551,8 @@ class Component extends DCLogic {
         }
       },
 
-      // Server-backed onboarding progress, for the review screen and the
-      // progress indicator.
+      
+      
       onboardingBusy: this.state.onboardingBusy,
       onboardingError: this.state.onboardingError,
       onboardingPercentage: this.state.serverOnboarding
@@ -19871,11 +19562,7 @@ class Component extends DCLogic {
         ? this.state.serverOnboarding.nextStep
         : null,
 
-      /**
-       * Submits every outstanding onboarding step to the server, in order.
-       * The server records completion; the browser only reports the answers.
-       * If any step is rejected the wizard stays put and says which field.
-       */
+      
       completeOnboarding: () => {
         if (this.state.onboardingBusy) return;
 
@@ -19918,9 +19605,9 @@ class Component extends DCLogic {
             });
           });
       },
-      // The greeting is the AUTHENTICATED user's name. It used to fall back to
-      // the literal 'Tchuekam', so every LOUMOO account was greeted by another
-      // real person's name — and a signed-out visitor saw a name too.
+      
+      
+      
       userName: (() => {
         const u = this.state.sessionUser;
         const candidate = (u && (u.firstName || (u.fullName || '').split(' ')[0]))
@@ -19950,10 +19637,10 @@ class Component extends DCLogic {
         return n + (n === 1 ? ' item' : ' items') + (sellers > 1 ? (' · ' + sellers + ' sellers') : '');
       })(),
 
-      // ── Checkout Delivery Destination ──
-      // Shown straight from the shared resolver — never invented. When nothing
-      // real is on file these are empty and checkoutHasDestination is false, so
-      // the card shows an "add" prompt instead of a made-up name and street.
+      
+      
+      
+      
       checkoutIsPickup: isPickup,
       checkoutHasDestination: checkoutDest.hasDestination,
       checkoutRecipientName: checkoutDest.address.fullName,
@@ -19968,11 +19655,11 @@ class Component extends DCLogic {
         this.openAddresses();
       },
 
-      // ── Choose your delivery provider (home delivery only) ──
-      // Real providers from the quote endpoint. The buyer may pick one; it is a
-      // preference (the seller confirms) and it sets the delivery fee shown, which
-      // the server then charges. Picking is optional: with none chosen the order
-      // still goes, priced at the city rate, and the seller arranges a rider.
+      
+      
+      
+      
+      
       checkoutShowProviders: !isPickup && checkoutDest.hasDestination,
       checkoutProvidersLoading: Boolean(this.state.providersLoading),
       checkoutProvidersError: this.state.providersError || '',
@@ -19999,7 +19686,7 @@ class Component extends DCLogic {
       }),
       retryProviders: () => this._loadProviders(this.state.providersCity || '', true),
 
-      // ── Notifications feed ──
+      
       notifHasItems: (this.state.notifications || []).length > 0,
       notifUnreadCount: (this.state.notifications || []).filter((n) => !n.read).length,
       notifHasUnread: (this.state.notifications || []).some((n) => !n.read),
@@ -20017,20 +19704,20 @@ class Component extends DCLogic {
           read: Boolean(n.read),
           toneColor: n.tone === 'success' ? 'var(--color-success)' : (n.tone === 'sale' ? 'var(--color-accent-sale)' : 'var(--color-accent)'),
           dateLabel: this._orderDateLabel(n.createdAt),
-          // A delivery or order notification opens the screen it is about.
+          
           canOpen: Boolean(openLabels[action]),
           openLabel: openLabels[action] || '',
           open: () => this._openNotification(n)
         };
       }),
       markNotifsRead: () => this._markNotifsRead(),
-      // ── Placing an order (checkout) ──
+      
       placingOrder: Boolean(this.state.placingOrder),
       placeOrderLabel: this.state.placingOrder ? 'PLACING YOUR ORDER…' : 'PLACE ORDER · XAF ' + fmt(items + deliveryFee),
       placeOrderArrow: this.state.placingOrder ? '' : '→',
       orderError: this.state.orderError || '',
       orderErrorHasItems: (this.state.orderErrorItemIds || []).length > 0,
-      // ── The order whose detail is open: only ever a real order the user has ──
+      
       orderView: (() => {
         const o = this.state.currentOrder;
         const money = (n) => 'XAF ' + fmt(n || 0);
@@ -20055,10 +19742,10 @@ class Component extends DCLogic {
         if (!sent) noTrackNote = 'This order was saved on this device only, so no seller or rider knows about it. Add the items to your bag again to place it.';
         else if (cancelled) noTrackNote = 'This order was cancelled.';
         else if (!home) noTrackNote = 'This order is for pickup, so there is no delivery to track.';
-        // The buyer-protection attestation, in the buyer's words. NO money moves
-        // (pay on delivery); each state is driven by the delivery (spec item D):
-        // pending -> held (rider has it) -> released (delivered), or refundable /
-        // refunded if the order was cancelled or an admin refunded it.
+        
+        
+        
+        
         const totalLabel = money(o.totalXaf);
         const via = o.paymentMethod && o.paymentMethod !== 'Pay on delivery' ? ' via ' + o.paymentMethod : '';
         const escrow = (() => {
@@ -20077,7 +19764,7 @@ class Component extends DCLogic {
           placedAt: this._orderDateLabel(o.createdAt),
           statusLabel: circuit ? circuit.orderStatusLabel(o) : this._orderStatusLabel(o.status),
           totalLabel: totalLabel,
-          // " via MTN MoMo" only when a method was actually chosen on this device.
+          
           payVia: via,
           items: items,
           subtotalLabel: money(subtotal),
@@ -20087,13 +19774,13 @@ class Component extends DCLogic {
           sellerPhone: o.sellerPhone || o.sellerWhatsapp || '',
           canTrack: sent && home && !cancelled,
           noTrackNote: noTrackNote,
-          // Buyer-protection attestation (item D).
+          
           escrowTitle: escrow.title,
           escrowNote: escrow.note,
           escrowOk: escrow.tone === 'ok'
         };
       })(),
-      // ── Order confirmation (success screen) ──
+      
       lastOrderId: this.state.lastOrder ? (this.state.lastOrder.id || '') : '',
       lastOrdersTitle: (this.state.lastOrders || []).length > 1 ? (this.state.lastOrders.length + ' orders placed!') : 'Order placed!',
       lastOrdersHasMore: (this.state.lastOrders || []).length > 1,
@@ -20102,8 +19789,8 @@ class Component extends DCLogic {
         : '',
       lastOrderNumber: this.state.lastOrder ? this.state.lastOrder.orderNumber : '',
       lastOrderTotal: this.state.lastOrder ? ('XAF ' + fmt(this.state.lastOrder.totalXaf)) : '',
-      // A placement notice (e.g. the chosen delivery provider was unavailable and
-      // the order fell back to the city rate), shown once on the success screen.
+      
+      
       lastDeliveryNotice: Boolean((this.state.lastOrders || []).map((o) => o && o.deliveryNotice).filter(Boolean)[0]),
       lastDeliveryNoticeText: (() => {
         const dn = (this.state.lastOrders || []).map((o) => o && o.deliveryNotice).filter(Boolean)[0];
@@ -20117,12 +19804,12 @@ class Component extends DCLogic {
         if (!o) return '';
         return o.itemCount + (o.itemCount === 1 ? ' item' : ' items');
       })(),
-      // ── Order history ──
+      
       ordersHasItems: (this.state.orders || []).length > 0,
       ordersList: (this.state.orders || []).map((o) => ({
         id: o.id || '',
-        // Only an order the server holds can be opened and tracked; an older,
-        // device-only order never reached a seller and says so.
+        
+        
         canOpen: Boolean(o.id) && o.serverSynced !== false,
         notSent: !o.id || o.serverSynced === false,
         orderNumber: o.orderNumber,
@@ -20347,8 +20034,8 @@ class Component extends DCLogic {
             const scrollHeight = target.scrollHeight || document.documentElement.scrollHeight || 0;
             const distanceToBottom = scrollHeight - (scrollTop + clientHeight);
 
-            // SMART PROACTIVE PREFETCH: Triggers 1000px before the bottom
-            // Loads well before the user ever reaches the bottom of the feed
+            
+            
             if (distanceToBottom <= 1000) {
               if (this.state.screen === 'home') {
                 if ((this.state.infiniteFeedBatch || 1) < 3) {
@@ -20393,8 +20080,8 @@ class Component extends DCLogic {
         }
       },
       addToCart: (arg) => {
-        // Resolve which product to add: an explicit id string, otherwise the
-        // product currently open on the PDP. No product context = honest nudge.
+        
+        
         let id = (typeof arg === 'string' && arg) ? arg : null;
         if (!id && this.state.currentProductId) id = this.state.currentProductId;
         if (!id) { this.toast('Open a product to add it to your bag'); return; }
@@ -20416,7 +20103,7 @@ class Component extends DCLogic {
         this._recoNote('add_to_cart', this._resolveProductItem(id) || { id: id }, { surface: this.state.screen === 'product' ? 'pdp' : 'card' });
         this.toast('Added ' + name + ' to your bag');
       },
-      // Buy now: add the open product to the bag and jump straight to checkout.
+      
       buyNowProduct: () => {
         const id = this.state.currentProductId;
         if (!id) { this.toast('Open a product to buy it'); return; }
@@ -20446,19 +20133,19 @@ class Component extends DCLogic {
         this._persistCart(list);
         this.toast('Removed from bag');
       },
-      // Place the order from the bag. The SERVER creates the order: the server's
-      // order is the one the seller is told about, the rider delivers and the buyer
-      // tracks, so an order that exists only in this browser reaches nobody. One
-      // order per store (an order has exactly one seller). Nothing is shown as
-      // placed until the server confirms it, and a refusal keeps the bag and says
-      // why. Payment is deferred, so the order is "pay on delivery": no charge.
+      
+      
+      
+      
+      
+      
       placeOrder: () => {
         if (this.state.placingOrder || this._placingNow) return;
         const cart = this.state.cartItems || [];
         if (!cart.length) { this.toast('Your bag is empty'); return; }
         if (this.state.authStatus !== 'authenticated') {
-          // Orders belong to an account. The bag is kept on this device, and
-          // signing in brings the shopper straight back to checkout.
+          
+          
           this.toast('Sign in to place your order');
           this.setState({ postAuthRedirect: 'checkout' });
           this.go('signIn');
@@ -20471,10 +20158,10 @@ class Component extends DCLogic {
           return;
         }
 
-        // How the buyer chose to receive this order decides what we must collect,
-        // and it comes from the SAME resolver the destination card shows, so the
-        // card and this guard can never disagree. The server prices and treats the
-        // order by this method too, so all three agree.
+        
+        
+        
+        
         const dest = this._resolveDeliveryDestination();
         const deliveryMethod = dest.method;
         const address = dest.address;
@@ -20498,20 +20185,20 @@ class Component extends DCLogic {
         this.setState({ placingOrder: true, orderError: '', orderErrorItemIds: [] });
         const finish = (patch) => { this._placingNow = false; if (!this._unmounted) this.setState(Object.assign({ placingOrder: false }, patch || {})); };
 
-        // Only a home delivery carries a preferred provider; pickup never does.
+        
         const preferredDriverId = deliveryMethod === 'HOME_DELIVERY' ? (this.state.selectedProviderId || null) : null;
         this._placeBagAsOrders(groups, address, method, images, deliveryMethod, preferredDriverId).then((res) => {
           if (this._unmounted) { this._placingNow = false; return; }
           const placed = res.placed;
           if (placed.length) {
-            // Purchase is the strongest taste signal: learn every line item.
+            
             try {
               placed.forEach((o) => (o.items || []).forEach((it) => {
                 this._recoNote('purchase', this._resolveProductItem(it.id) || { id: it.id, storeName: it.store }, { surface: 'checkout' });
               }));
-            } catch (e) { /* non-fatal */ }
-            // The server has queued the buyer's and the seller's notifications;
-            // pull ours once it has had a moment to write them.
+            } catch (e) {  }
+            
+            
             setTimeout(() => { if (!this._unmounted) this.loadServerNotifications(); }, 1500);
             this.setState({ lastOrder: placed[0], lastOrders: placed });
           }
@@ -20530,9 +20217,9 @@ class Component extends DCLogic {
             return;
           }
           finish();
-          // If the server dropped the buyer's chosen delivery provider (it became
-          // unavailable between the quote and now), say so instead of the plain
-          // "placed" toast — the success screen repeats it. Honest, not silent.
+          
+          
+          
           var dropped = placed.map(function (o) { return o && o.deliveryNotice; }).filter(Boolean)[0];
           this.toast(dropped && dropped.message ? dropped.message : ('Order ' + placed[0].orderNumber + ' placed'));
           this.go('success');
@@ -20540,8 +20227,8 @@ class Component extends DCLogic {
           finish({ orderError: 'Something went wrong while placing your order. Check My Orders before trying again.', orderErrorItemIds: [] });
         });
       },
-      // The server refused items that cannot be ordered (showcase products): drop
-      // them so the rest of the bag can go through.
+      
+      
       removeUnavailableItems: () => {
         const gone = new Set(this.state.orderErrorItemIds || []);
         const list = (this.state.cartItems || []).filter((it) => !gone.has(it.id));
@@ -20601,21 +20288,21 @@ class Component extends DCLogic {
           this.toast((err && err.message) || 'Could not update follow status.');
         });
       },
-      // `following` is read directly by templates (e.g. the store card's
-      // follow button variant). It lived in state but was never exposed, so
-      // every `{{ following ? ... }}` resolved to an empty string and the
-      // button rendered with no variant class at all - transparent and
-      // indistinguishable from plain text.
+      
+      
+      
+      
+      
       following: Boolean((this.state.currentStore && this.state.currentStore.isFollowing) ?? this.state.following),
       followLabel: Boolean((this.state.currentStore && this.state.currentStore.isFollowing) ?? this.state.following) ? 'FOLLOWING' : 'FOLLOW',
       toggleSave: () => { const next = !this.state.saved; this.setState({ saved: next }); this.toast(next ? 'Saved to your list' : 'Removed from saved'); },
-      // ── Real seller messaging via WhatsApp deep-link ──
-      // Opens WhatsApp to the store's line with a pre-filled enquiry that names
-      // the product and price. Callable bare (uses the current product's store)
-      // or with an explicit { sellerName, productTitle, price } for storefronts
-      // and classifieds where there is no active product in state.
+      
+      
+      
+      
+      
       contactSellerWhatsApp: (opts) => this.contactSellerWhatsApp(opts),
-      // ── Boarding pass actions ──
+      
       downloadBoardingPass: () => {
         this.toast('Preparing your boarding pass — use “Save as PDF” in the print dialog.');
         try { setTimeout(() => { try { window.print(); } catch (_) {} }, 250); } catch (_) {}
@@ -20629,11 +20316,11 @@ class Component extends DCLogic {
       },
       publish: () => this.publishNow(),
 
-      // ── Wishlist State & Infinite Discovery Commerce Feed ──
-      // Real, persistent save/favourite. Entries are rich objects (name, image,
-      // price, store) enriched from the product catalogue by id, stored in
-      // localStorage so they survive reloads, and best-effort synced to the
-      // backend saved-items API when the user is signed in.
+      
+      
+      
+      
+      
       isWishlisted: (id) => Boolean(this.state.productWishlist && this.state.productWishlist[id]),
       wishlistCount: Object.keys(this.state.productWishlist || {}).length,
       wishlistHasItems: Object.keys(this.state.productWishlist || {}).length > 0,
@@ -20679,7 +20366,7 @@ class Component extends DCLogic {
         }
       },
 
-      // ── Travel & Mobility Ecosystem Getters & Actions ──
+      
       isTravelTabBus: this.state.travelServiceTab === 'bus',
       isTravelTabFlight: this.state.travelServiceTab === 'flight',
       isTravelTabTrain: this.state.travelServiceTab === 'train',
@@ -20689,7 +20376,7 @@ class Component extends DCLogic {
       setTravelTabTrain: () => { this.setState({ travelServiceTab: 'train' }); this.toast('Switched to Camrail InterCity Passenger Trains'); },
       setTravelTabTaxi: () => { this.setState({ travelServiceTab: 'taxi' }); this.toast('Switched to Taxi & Airport Transfers'); },
 
-      // Dynamic Bus Schedules & Operators
+      
       busSchedules: this.state.busSchedules || [],
       busSchedulesLoading: Boolean(this.state.busSchedulesLoading),
       busSchedulesError: this.state.busSchedulesError || '',
@@ -20792,13 +20479,13 @@ class Component extends DCLogic {
         this.setState({ travelFrom: to, travelTo: from });
         this.toast('Swapped Origin & Destination');
       },
-      // Mobile payment method selection
+      
       travelPaymentMethod: this.state.travelPaymentMethod || 'mtn',
       setPaymentMtn: () => this.setState({ travelPaymentMethod: 'mtn' }),
       setPaymentOrange: () => this.setState({ travelPaymentMethod: 'orange' }),
       isPaymentMtn: (this.state.travelPaymentMethod || 'mtn') === 'mtn',
       isPaymentOrange: (this.state.travelPaymentMethod || 'mtn') === 'orange',
-      // Passenger form bindings
+      
       travelPaxName: this.state.travelPaxName,
       travelPaxPhone: this.state.travelPaxPhone,
       travelPaxId: this.state.travelPaxId,
@@ -20829,10 +20516,10 @@ class Component extends DCLogic {
       travelTicketsLoading: Boolean(this.state.travelTicketsLoading),
       reloadTravelTrips: () => this.loadTravelTrips(),
       reloadTravelTickets: () => this.loadTravelTickets(),
-      // Confirm a real booking → persists a trip and issues the e-ticket.
+      
       bookTravelItem: () => this._confirmTravelBooking(),
       bookFlight: () => this._confirmTravelBooking(),
-      // E-ticket (boarding pass) fields, from the last confirmed trip.
+      
       ticketPnr: (this.state.lastTrip && this.state.lastTrip.reference) || '',
       ticketPassenger: (this.state.lastTrip && this.state.lastTrip.passenger) ? String(this.state.lastTrip.passenger).toUpperCase() : '',
       ticketFromCode: (this.state.lastTrip && this.state.lastTrip.fromCode) || '',
@@ -20849,7 +20536,7 @@ class Component extends DCLogic {
       ticketOperator: (this.state.lastTrip && this.state.lastTrip.operator) || '',
       ticketPriceLabel: (this.state.lastTrip && this.state.lastTrip.priceLabel) || '',
 
-      // ── Homepage Master Hub (HeroBanner Cinema & Editorial Suite - 10 Flagship Slides) ──
+      
       isHeroSlide0: (this.state.heroSlide || 0) === 0,
       isHeroSlide1: this.state.heroSlide === 1,
       isHeroSlide2: this.state.heroSlide === 2,
@@ -20873,7 +20560,7 @@ class Component extends DCLogic {
       heroNextSlide: () => this.heroNextSlide(),
       heroPrevSlide: () => this.heroPrevSlide(),
 
-      // ── Dynamic PDP Product Details Bindings ──
+      
       currentProduct: this.state.currentProduct,
       productLoading: this.state.productLoading,
       productNotFound: this.state.productNotFound,
@@ -20891,9 +20578,9 @@ class Component extends DCLogic {
       currentProductFulfillmentLabel: (this.state.currentProduct && this.state.currentProduct.fulfillmentLabel) || 'Same-Day Express Courier',
       currentProductBadge: (this.state.currentProduct && this.state.currentProduct.badge) || 'VERIFIED BOUTIQUE',
       currentProductRating: (this.state.currentProduct && this.state.currentProduct.rating != null) ? Number(this.state.currentProduct.rating).toFixed(1) : '5.0',
-      // Backend detail objects expose `reviewCount` (singular); catalog list
-      // items expose `reviewsCount` (plural). Accept either, then add the
-      // buyer's own locally-submitted reviews so the count stays truthful.
+      
+      
+      
       currentProductReviewCount: ((this.state.currentProduct && (this.state.currentProduct.reviewCount ?? this.state.currentProduct.reviewsCount)) || 0) + (this.state.reviews || []).filter((r) => r.productId === this.state.currentProductId).length,
       currentProductHasReviews: (((this.state.currentProduct && (this.state.currentProduct.reviewCount ?? this.state.currentProduct.reviewsCount)) || 0) + (this.state.reviews || []).filter((r) => r.productId === this.state.currentProductId).length) > 0,
       currentProductSoldCount: (this.state.currentProduct && this.state.currentProduct.soldCount) || 0,
@@ -20938,7 +20625,7 @@ class Component extends DCLogic {
       productStoreRating: (this.state.currentProduct && this.state.currentProduct.storeRating) || '4.9',
       productStoreVerified: (this.state.currentProduct && this.state.currentProduct.storeVerified !== undefined) ? this.state.currentProduct.storeVerified : true,
 
-      // ── Video Modal Player State & Actions ──
+      
       hasActiveVideoModal: Boolean(this.state.activeVideoModal),
       videoModalTitle: this.state.activeVideoModal ? this.state.activeVideoModal.title : '',
       videoModalSubtitle: this.state.activeVideoModal ? this.state.activeVideoModal.subtitle : '',
@@ -20974,7 +20661,7 @@ class Component extends DCLogic {
         } catch (_) {}
       },
 
-      // ── SuperAdmin Dashboard View Props ──
+      
       adminActiveTab: this.state.adminActiveTab || 'overview',
       adminTabIsOverview: (this.state.adminActiveTab || 'overview') === 'overview',
       adminTabIsStores: this.state.adminActiveTab === 'stores',
@@ -21011,9 +20698,9 @@ class Component extends DCLogic {
       adminAuditLogsList: this.state.adminAuditLogsList || [],
       adminSettingsSaveSuccess: Boolean(this.state.adminSettingsSaveSuccess)
     };
-    // Pass the already-derived render object to on-demand screen chunks. A
-    // shared object keeps lazy boundaries cheap and avoids recomputing the
-    // entire projection in every child component.
+    
+    
+    
     Object.assign(viewProps, this._searchView());
     viewProps.viewProps = viewProps;
     return viewProps;

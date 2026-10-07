@@ -18323,7 +18323,8 @@ def _compact_shell_markup(markup):
 
 full_html = (
     # Keep design notes in the source templates, out of the initial payload.
-    # Only markup is compacted; never apply this to the application script.
+    # Only markup is compacted here, never the application script: its comments
+    # are removed below by a real JavaScript parser, not by a regular expression.
     _optimize_media_markup(_compact_shell_markup(header_and_styles))
     + _optimize_media_markup(_compact_shell_markup(get_home_view()))
     + lazy_screen_markup
@@ -18332,6 +18333,17 @@ full_html = (
 
 with open('Commerce App.dc.html', 'w', encoding='utf-8') as f:
     f.write(full_html)
+
+# The controller's comments (~70 KB of design notes, kept in THIS file) are not
+# shipped to every visitor. scripts/strip_shell_comments.js finds them with acorn
+# and only writes the shell back if the token stream is unchanged; on any doubt it
+# leaves the shell as written above (correct, just heavier: the frontend
+# performance budget will then say so).
+try:
+    import subprocess
+    subprocess.run(['node', os.path.join('scripts', 'strip_shell_comments.js'), 'Commerce App.dc.html'], check=True)
+except (OSError, subprocess.CalledProcessError) as exc:
+    print('WARNING: the shell keeps its script comments (' + str(exc) + ').')
 
 # public/ is owned by scripts/assemble_public.js -- the same script Netlify
 # runs as its build command. It wipes and re-assembles the directory: shell,
