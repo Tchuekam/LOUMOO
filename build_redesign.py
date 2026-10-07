@@ -6611,10 +6611,10 @@ const SCREENS = [
   // control routed to it landed the user on a blank screen. The two "COMPARE
   // SELLERS" buttons now point at 'vs' (the comparison hub, which exists).
   'home','search','filters','voice','category','bestpicks','freeday','notifications','chat','threadAi','threadSeller',
-  'product','cart','checkout','paying','success','orders','store','business','brand','vs','vsCompare','visual',
+  'product','cart','checkout','success','orders','store','business','brand','vs','vsCompare','visual',
   'visualScan','visualResults','myListings','travel','travelBus',
   'travelPackages','travelVisa','travelResults','travelDetail','travelPassenger','travelTicket','hotelVoucher','announce','announceCampaigns','announceDetail',
-  'profile','seller','settings','payFailed','networkError','saved','transactions','loading',
+  'profile','seller','settings','networkError','saved','transactions','loading',
   'onboardWelcome','onboardType','onboardIdentity','onboardOtp','onboardAdaptive','onboardBuyer','onboardSeller','onboardBusiness','onboardVerify','onboardReview','onboardSuccess',
   // Phase A — Account access (returning users)
   'signIn','forgotPassword','resetPassword','verifyEmail',
@@ -6727,8 +6727,8 @@ const GROUPS = {
 };
 const NO_NAV = [
   'product',
-  'visual','visualScan','visualResults','threadAi','threadSeller','checkout','paying','success','travelTicket',
-  'voice','filters','payFailed','networkError','loading',
+  'visual','visualScan','visualResults','threadAi','threadSeller','checkout','success','travelTicket',
+  'voice','filters','networkError','loading',
   'onboardWelcome','onboardType','onboardIdentity','onboardOtp','onboardAdaptive','onboardBuyer','onboardSeller','onboardBusiness','onboardVerify','onboardReview','onboardSuccess',
   'signIn','forgotPassword','resetPassword','verifyEmail',
   'editProfile','addAddress','editAddress','deleteAccount','refundRequest','writeReview','sellerOrderDetail','hotelDetail','hotelBooking','hotelVoucher',
@@ -17616,7 +17616,6 @@ src/<domain>/ and is composed by the helpers in src/core/build/.
         catch (_) { try { window.location.href = url; } catch (e) {} }
         this.toast('Sharing your e-ticket via WhatsApp…');
       },
-      payNow: () => { this.go('paying'); setTimeout(() => this.go('success'), 1800); },
       publish: () => this.publishNow(),
 
       // ── Wishlist State & Infinite Discovery Commerce Feed ──
