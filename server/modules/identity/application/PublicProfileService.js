@@ -128,16 +128,24 @@ class PublicProfileService {
     let store = null;
 
     try {
-      let query = adminDb.from('stores').select('*');
-      if (UUID_REGEX.test(slugOrId) || slugOrId.startsWith('store_')) {
-        query = query.eq('id', slugOrId);
-      } else {
-        query = query.eq('slug', slugOrId.toLowerCase());
-      }
+      const identifier = String(slugOrId || '').trim();
+      // Store IDs are not guaranteed to be UUIDs. Older records use `str_...`
+      // identifiers, so a format heuristic incorrectly interpreted valid IDs as
+      // slugs and made their public storefronts unreachable. Resolve the
+      // primary key first, then fall back to the unique public slug.
+      const byId = await adminDb.from('stores').select('*').eq('id', identifier).maybeSingle();
+      if (byId.error) throw byId.error;
+      store = byId.data;
 
-      const { data, error } = await query.maybeSingle();
-      if (error) throw error;
-      store = data;
+      if (!store) {
+        const bySlug = await adminDb
+          .from('stores')
+          .select('*')
+          .eq('slug', identifier.toLowerCase())
+          .maybeSingle();
+        if (bySlug.error) throw bySlug.error;
+        store = bySlug.data;
+      }
     } catch (err) {
       handleDatabaseFailure(err, 'Get seller public profile');
     }
@@ -178,19 +186,64 @@ class PublicProfileService {
     const { reviews } = await ReviewService.listReviews('seller', store.id, { limit: 5 });
     const { recommendations } = await SocialGraphService.listRecommendations('seller', store.id, { limit: 5 });
 
-    // Active product listings (canonical published listings)
+    // Published listings come from the canonical listing columns. The previous
+    // projection selected retired `price_xaf` and `cover_image_url` columns,
+    // causing the whole listing query to fail against the live schema.
     let listings = [];
+    let listingCount = 0;
     try {
-      const { data: listData } = await adminDb
+      const { data: listData, error: listingError, count } = await adminDb
         .from('listings')
-        .select('id, title, description, price_xaf, listing_type, status, cover_image_url, rating, rating_count, created_at')
+        .select('id, title, short_description, description, base_price_minor, sale_price_minor, listing_type, category_id, rating, rating_count, created_at', { count: 'exact' })
         .eq('store_id', store.id)
         .eq('status', 'PUBLISHED')
         .order('created_at', { ascending: false })
-        .limit(12);
+        .limit(100);
 
-      listings = listData || [];
-    } catch (_) { /* ignore */ }
+      if (listingError) throw listingError;
+
+      const listingRows = listData || [];
+      listingCount = Number(count) || listingRows.length;
+      const listingIds = listingRows.map(listing => listing.id).filter(Boolean);
+      let coversByListingId = {};
+
+      // Load every displayed listing's first image in one query, avoiding an
+      // N+1 query per storefront card.
+      if (listingIds.length > 0) {
+        const { data: mediaRows, error: mediaError } = await adminDb
+          .from('listing_media')
+          .select('listing_id, url, thumbnail_url, is_cover, display_order')
+          .in('listing_id', listingIds)
+          .order('is_cover', { ascending: false })
+          .order('display_order', { ascending: true });
+
+        if (mediaError) throw mediaError;
+        coversByListingId = (mediaRows || []).reduce((covers, media) => {
+          if (!covers[media.listing_id]) {
+            covers[media.listing_id] = media.thumbnail_url || media.url || '';
+          }
+          return covers;
+        }, {});
+      }
+
+      listings = listingRows.map(listing => ({
+        id: listing.id,
+        title: listing.title,
+        description: listing.description || listing.short_description || '',
+        priceXaf: Number(listing.sale_price_minor ?? listing.base_price_minor ?? 0),
+        listingType: listing.listing_type,
+        categoryId: listing.category_id,
+        coverImageUrl: coversByListingId[listing.id] || '',
+        rating: listing.rating,
+        ratingCount: listing.rating_count || 0,
+        createdAt: listing.created_at
+      }));
+    } catch (err) {
+      logger.warn('[PublicProfileService] Could not load storefront listings', {
+        storeId: store.id,
+        message: err && err.message
+      });
+    }
 
     return {
       id: store.id,
@@ -204,7 +257,7 @@ class PublicProfileService {
       verificationTier: store.verification_tier || 'unverified',
       reputationScore: store.reputation_score || 100.0,
       trustTier: store.trust_tier || 'NEW',
-      rating: store.rating || 5.0,
+      rating: store.rating,
       ratingCount: store.rating_count || 0,
       followerCount: store.follower_count || 0,
       recommendationCount: store.recommendation_count || 0,
@@ -241,6 +294,7 @@ class PublicProfileService {
       ratingSummary,
       reviews,
       recommendations,
+      listingCount,
       listings
     };
   }

@@ -1,0 +1,19 @@
+<sc-if value="{{ hasActiveVideoModal }}">
+<div class="video-player-backdrop" onClick="{{ closeVideoModal }}">
+  <div class="video-player-dialog" onClick="{{ (e) => e && e.stopPropagation && e.stopPropagation() }}">
+    <div style="position:relative;aspect-ratio:16/9;background:#000;display:flex;align-items:center;justify-content:center;overflow:hidden">
+      <video src="{{ videoModalUrl }}" autoplay controls playsinline style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0"></video>
+      <button onClick="{{ closeVideoModal }}" aria-label="Close video" style="position:absolute;top:14px;right:14px;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,0.65);border:1px solid rgba(255,255,255,0.3);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:10;font-size:14px">✕</button>
+    </div>
+    <div style="padding:16px 22px;display:flex;align-items:center;justify-content:space-between;background:#141720;border-top:1px solid rgba(255,255,255,0.08)">
+      <div style="flex:1;min-width:0;margin-right:12px">
+        <span style="font:800 9.5px/1 var(--font-heading);letter-spacing:.12em;color:var(--color-accent);text-transform:uppercase">{{ videoModalTag }}</span>
+        <div style="font:800 16px/1.2 var(--font-heading);letter-spacing:-.02em;color:#fff;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ videoModalTitle }}</div>
+        <div style="font:500 12px/1.3 var(--font-body);color:#cbd1db;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ videoModalSubtitle }}</div>
+      </div>
+      <button onClick="{{ quickExploreInsta360 }}" class="btn btn-primary" style="height:38px;padding:0 18px;font-size:12.5px;flex-shrink:0">EXPLORE PRODUCT</button>
+    </div>
+  </div>
+</div>
+</sc-if>
+

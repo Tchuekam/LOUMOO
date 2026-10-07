@@ -12738,10 +12738,10 @@ class Component extends DCLogic {
     if (this.state.docUploaded || this.state.verificationChoice === 'later') score += 15;
     const completionScore = Math.min(100, score);
 
-    // Client-side password strength meter (UX affordance only — Clerk remains
-    // the authority on what it will accept, including breach checks).
-    const strength = passwordStrength(this.state.resetNewPassword || '');
-    const regStrength = passwordStrength(this.state.regPassword || '');
+Assembles the pristine, production-grade Commerce App.dc.html (plus its route-level
+*Screens.dc.html chunks and public/) from the domain modules under src/. This file only
+sequences the build; every piece of application logic, markup and styling lives in
+src/<domain>/ and is composed by the helpers in src/core/build/.
 
     const viewProps = {
       is, on, st, pick,
@@ -17893,113 +17893,31 @@ class Component extends DCLogic {
 </html>
 """
 
-# ── Emit the shared product catalogue ────────────────────────────────────────
-# The catalog is maintained in src/data/catalog_products.js and exported as
-# public/data/catalog.json, data/catalog.json and src/data/catalog_products_bundle.js
-# for fast, non-blocking client-side hydration without bloating the initial shell.
-def _emit_catalog_assets():
-    catalog_js = os.path.join('src', 'data', 'catalog_products.js')
-    if not os.path.exists(catalog_js):
-        return
-    with open(catalog_js, 'r', encoding='utf-8') as f:
-        content = f.read()
-    match = re.search(r'export\s+const\s+catalogProducts\s*=\s*(\{[\s\S]*?\});?\s*$', content)
-    if not match:
-        return
-    raw_obj = match.group(1)
-    # 1. Browser bundle (sets window.PRODUCTS_DATA)
-    bundle_path = os.path.join('src', 'data', 'catalog_products_bundle.js')
-    bundle_code = '/** LOUMOO Catalog Products Browser Bundle (Decoupled) */\nwindow.PRODUCTS_DATA = ' + raw_obj + ';\n'
-    with open(bundle_path, 'w', encoding='utf-8') as f:
-        f.write(bundle_code)
-    # 2. JSON exports for direct fetch
-    import subprocess
-    try:
-        subprocess.run(['node', '-e', """
-          const cp = require('./server/modules/catalog/dataLoader.js').catalogProducts;
-          const fs = require('fs');
-          fs.mkdirSync('data', { recursive: true });
-          fs.writeFileSync('data/catalog.json', JSON.stringify(cp, null, 2), 'utf-8');
-          if (fs.existsSync('public')) {
-            fs.mkdirSync('public/data', { recursive: true });
-            fs.copyFileSync('data/catalog.json', 'public/data/catalog.json');
-          }
-        """], check=True)
-    except Exception as e:
-        print('Catalog JSON update notice:', e)
-    print('catalog_products bundle & json verified.')
+import os
+import sys
 
-_emit_catalog_assets()
+sys.path.append(os.path.abspath('.'))
 
-_screen_chunks = [
-    ('SearchScreens', 'is.search || is.filters || is.voice || is.visual || is.visualScan || is.visualResults', get_search_and_ai_view()),
-    ('ChatProfileScreens', 'is.chat || is.threadAi || is.threadSeller || is.notifications || is.profile || is.saved || is.settings || is.loading || is.networkError', get_chat_and_profile_view()),
-    ('OnboardingScreens', 'is.onboardWelcome || is.onboardType || is.onboardIdentity || is.onboardOtp || is.onboardAdaptive || is.onboardBuyer || is.onboardSeller || is.onboardBusiness || is.onboardVerify || is.onboardReview || is.onboardSuccess', get_onboarding_view()),
-    ('AccountAccessScreens', 'is.signIn || is.forgotPassword || is.resetPassword || is.verifyEmail', get_account_access_view()),
-    ('AccountHubScreens', 'is.accountDashboard || is.editProfile || is.addresses || is.addAddress || is.editAddress || is.notificationPreferences || is.privacySettings || is.securitySettings || is.followedStores || is.userActivity || is.deleteAccount', get_account_hub_view()),
-    ('OrderScreens', 'is.orderDetail || is.refundRequest || is.writeReview || is.sellerOrderDetail || is.sellerPayouts', get_order_product_flow_view()),
-    ('HotelScreens', 'is.hotelSearch || is.hotelDetail || is.hotelBooking || is.hotelVoucher', get_hotel_vertical_view()),
-    ('ProductScreens', 'is.product', get_product_view()),
-    ('CheckoutScreens', 'is.cart || is.checkout || is.paying || is.success || is.payFailed || is.orders || is.transactions', get_cart_view() + get_checkout_view() + get_paying_view() + get_success_view() + get_payfailed_view() + get_orders_and_transactions_view()),
-    ('CollectionsScreens', 'is.category || is.bestpicks || is.freeday', get_collections_view()),
-    ('MerchantScreens', 'is.store || is.business || is.brand || is.seller || is.myListings', get_merchant_view()),
-    ('CommunityScreens', 'is.announce || is.announceCampaigns || is.announceDetail || is.vs || is.vsCompare', get_community_view()),
-    ('TravelScreens', 'is.travel || is.travelBus || is.travelPackages || is.travelVisa || is.travelResults || is.travelDetail || is.travelPassenger || is.travelTicket', get_travel_view()),
-    ('StoreBusinessScreens', 'is.createStore || is.storeOnboarding || is.storeSettings || is.storeVerification || is.storeAnalytics', get_store_business_view()),
-    ('PublishingScreens', 'is.publishIntent || is.publishStudio || is.publishReview || is.publishSuccess', build_publishing_view()),
-    ('PublicProfileScreens', 'is.publicUserProfile || is.sellerPublicPage', get_public_profile_view()),
-    ('SuperAdminScreens', 'is.superAdmin', get_super_admin_view()),
-]
-
-def _optimize_media_markup(markup):
-    """Make template media cheap before the route is actually mounted."""
-    def image_tag(match):
-        tag = match.group(0)
-        if not re.search(r'\bloading\s*=', tag, re.I):
-            tag = tag[:-2] + ' loading="lazy" />' if tag.endswith('/>') else tag[:-1] + ' loading="lazy">'
-        if not re.search(r'\bdecoding\s*=', tag, re.I):
-            tag = tag[:-2] + ' decoding="async" />' if tag.endswith('/>') else tag[:-1] + ' decoding="async">'
-        return tag
-
-    def video_tag(match):
-        tag = match.group(0)
-        if not re.search(r'\bpreload\s*=', tag, re.I):
-            tag = tag[:-1] + ' preload="none">'
-        return tag
-
-    markup = re.sub(r'<img\b[^>]*>', image_tag, markup, flags=re.I)
-    return re.sub(r'<video\b[^>]*>', video_tag, markup, flags=re.I)
+from src.core.build import catalog_assets, chunks, component, public_site, registry, screens, shell, styles
 
 
-def _write_screen_chunk(name, markup):
-    # A child DC component intentionally has no logic of its own. The root
-    # owns navigation/state and passes its already-derived view projection via
-    # `dcProps`, so the split changes loading boundaries without changing UX.
-    chunk = (
-        '<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n'
-        '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
-        '<title>LOUMOO Screen</title>\n'
-        '</head>\n<body>\n<x-dc>\n'
-        + _optimize_media_markup(markup)
-        + '\n</x-dc>\n'
-        '<script type="text/x-dc" data-dc-script>\n'
-        'class Component extends DCLogic {\n'
-        '  renderVals() { return (this.props && this.props.dcProps) || this.props || {}; }\n'
-        '}\n'
-        '</script>\n</body>\n</html>\n'
+def build():
+    # The catalogue bundle is emitted first: the shell loads it and the views read it.
+    catalog_assets.emit_catalog_assets()
+
+    lazy_markup = chunks.write_lazy_chunks(screens.screen_chunks())
+
+    header = shell.document_header(styles.master_stylesheet())
+    footer = shell.document_footer(component.assemble_component_script(registry.COMPONENT_DOMAINS))
+
+    full_html = (
+        chunks.optimize_media_markup(header)
+        + chunks.optimize_media_markup(screens.home_markup())
+        + lazy_markup
+        + chunks.optimize_media_markup(footer)
     )
-    with open(name + '.dc.html', 'w', encoding='utf-8') as f:
-        f.write(chunk)
-    return chunk
-
-lazy_screen_markup = ''
-for _name, _condition, _markup in _screen_chunks:
-    _write_screen_chunk(_name, _markup)
-    lazy_screen_markup += (
-        '\n<sc-if value="{{ ' + _condition + ' }}">\n'
-        '  <dc-import name="' + _name + '" dcProps="{{ viewProps }}"></dc-import>\n'
-        '</sc-if>\n'
-    )
+    with open('Commerce App.dc.html', 'w', encoding='utf-8') as handle:
+        handle.write(full_html)
 
 def _compact_shell_markup(markup):
     return re.sub(r'[\t ]+$', '', re.sub(r'<!--[\s\S]*?-->', '', markup), flags=re.M)
@@ -18016,23 +17934,6 @@ full_html = (
 with open('Commerce App.dc.html', 'w', encoding='utf-8') as f:
     f.write(full_html)
 
-# public/ is owned by scripts/assemble_public.js -- the same script Netlify
-# runs as its build command. It wipes and re-assembles the directory: shell,
-# every *Screens.dc.html chunk, support.js and the whole src/ tree, then drops
-# src/backend (which embeds the Supabase URL), sanitizes filenames Netlify
-# rejects and rewrites the asset references to match.
-#
-# This build used to write public/index.html by itself and nothing else, so a
-# local public/ ended up with a fresh shell beside months-old route chunks and
-# service clients -- the browser then ran code this build had already replaced,
-# and local behaviour silently diverged from the deployed site. Delegating to
-# the real assembler keeps a local run byte-identical to a deploy.
-if os.path.isdir('public') or os.path.isfile(os.path.join('scripts', 'assemble_public.js')):
-    import subprocess
-    try:
-        subprocess.run(['node', os.path.join('scripts', 'assemble_public.js')], check=True)
-    except (OSError, subprocess.CalledProcessError) as exc:
-        print('WARNING: could not assemble public/ (' + str(exc) + ').')
-        print('         Run `node scripts/assemble_public.js` before serving locally.')
 
-print("Commerce App.dc.html successfully rebuilt with all screens and backend integration!")
+if __name__ == '__main__':
+    build()
