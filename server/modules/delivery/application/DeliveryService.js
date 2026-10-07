@@ -22,6 +22,7 @@ const { getDefaultGeocoder } = require('../infrastructure/Geocoder');
 const { OrderRepository } = require('../../commerce/infrastructure/OrderRepository');
 const { OrderStateMachine } = require('../../commerce/domain/OrderStateMachine');
 const { FULFILLMENT_STATUS, DELIVERY_METHOD, PAYMENT_STATUS } = require('../../commerce/domain/Order');
+const { foldCity, resolveCityRate } = require('../../commerce/domain/PricingEngine');
 const { DeliveryStateMachine } = require('../domain/DeliveryStateMachine');
 const { codeFor, verifyCode, HANDOVER_CODE_DIGITS } = require('../domain/HandoverCode');
 const { RiderPresenceService } = require('./RiderPresenceService');
@@ -122,6 +123,75 @@ function cleanText(value, field, max = 255) {
   return trimmed;
 }
 
+// The vehicle kinds a rider can declare. Must match migration 018's CHECK.
+const VEHICLE_TYPES = Object.freeze(['motorbike', 'bicycle', 'car', 'van', 'tricycle', 'on_foot']);
+// How many providers a buyer's checkout quote returns at most.
+const MAX_PROVIDERS_QUOTED = 20;
+
+/**
+ * Validates and normalises the optional marketplace profile an admin may set on a
+ * rider (photo, vehicle, the cities they serve, their flat tariff). Returns only
+ * the keys that were supplied, so a partial edit never clears the others. Unknown
+ * or malformed values are refused, never silently dropped.
+ */
+function cleanRiderProfile(body) {
+  const out = {};
+  if (body.photoUrl !== undefined) out.photoUrl = cleanText(body.photoUrl, 'photoUrl', 500);
+  if (body.vehicleType !== undefined) {
+    const v = body.vehicleType === null ? null : cleanText(body.vehicleType, 'vehicleType', 24);
+    if (v !== null && !VEHICLE_TYPES.includes(v)) {
+      throw new ValidationError('Unknown vehicle type', [{ field: 'vehicleType', message: `Use one of: ${VEHICLE_TYPES.join(', ')}.` }]);
+    }
+    out.vehicleType = v;
+  }
+  if (body.serviceAreas !== undefined) {
+    if (body.serviceAreas === null) out.serviceAreas = [];
+    else if (!Array.isArray(body.serviceAreas)) {
+      throw new ValidationError('serviceAreas must be a list of city names', [{ field: 'serviceAreas', message: 'Send a list of cities.' }]);
+    } else {
+      // Store cities folded (lowercased, accent-stripped) so a buyer's "Yaoundé"
+      // matches a rider's "Yaounde", exactly as the city fee table is matched.
+      const areas = [];
+      for (const raw of body.serviceAreas) {
+        const folded = foldCity(String(raw || ''));
+        if (folded && !areas.includes(folded)) areas.push(folded);
+      }
+      if (areas.length > 50) throw new ValidationError('Too many service areas', [{ field: 'serviceAreas', message: 'List at most 50 cities.' }]);
+      out.serviceAreas = areas;
+    }
+  }
+  if (body.baseFeeXaf !== undefined) {
+    if (body.baseFeeXaf === null) out.baseFeeXaf = null;
+    else {
+      const n = Number(body.baseFeeXaf);
+      if (!Number.isInteger(n) || n < 0 || n > 1000000) {
+        throw new ValidationError('baseFeeXaf must be a whole amount in XAF', [{ field: 'baseFeeXaf', message: 'Use a non-negative whole number.' }]);
+      }
+      out.baseFeeXaf = n;
+    }
+  }
+  // Agency vs. plain rider. Only touched when `isAgency` is explicitly supplied,
+  // so editing a photo never changes a provider's kind. An agency MUST name its
+  // organization (the org whose members deliver for it); a plain rider belongs to
+  // none, so declaring isAgency=false clears any organization link.
+  if (body.isAgency !== undefined) {
+    if (typeof body.isAgency !== 'boolean') {
+      throw new ValidationError('isAgency must be true or false', [{ field: 'isAgency', message: 'Use a boolean.' }]);
+    }
+    out.isAgency = body.isAgency;
+    if (body.isAgency) {
+      const orgId = cleanText(body.organizationId, 'organizationId', 64);
+      if (!orgId) {
+        throw new ValidationError('An agency must name its organization', [{ field: 'organizationId', message: 'Provide the agency organization id.' }]);
+      }
+      out.organizationId = orgId;
+    } else {
+      out.organizationId = null;
+    }
+  }
+  return out;
+}
+
 class DeliveryService {
   /**
    * `offerTtlMs` is how long a rider has to accept an assigned delivery (0 = never
@@ -137,9 +207,19 @@ class DeliveryService {
    * counting as online (unset: RIDER_PRESENCE_TTL_SECONDS, then 2 minutes); `presence`
    * replaces the whole RiderPresenceService (tests).
    */
-  constructor({ repository, orderRepository, events, now, offerTtlMs, geocoder, undispatchedSellerMs, undispatchedAdminMs, presenceTtlMs, presence } = {}) {
+  constructor({ repository, orderRepository, events, now, offerTtlMs, geocoder, undispatchedSellerMs, undispatchedAdminMs, listAgencyMemberIds } = {}) {
     this.repo = repository || new DeliveryRepository();
     this.orders = orderRepository || new OrderRepository();
+    // How an agency's member riders are resolved (for listing and for delegation
+    // authorisation). Injectable so a test needs neither the organizations tables
+    // nor a database; in production it reads iam.organization_members through the
+    // repository, best-effort — a lookup that fails returns no members, which fails
+    // safe (delegation is then denied rather than wrongly allowed).
+    this._listAgencyMemberIds = typeof listAgencyMemberIds === 'function'
+      ? listAgencyMemberIds
+      : async (orgId) => {
+        try { return await this.repo.listOrgMemberIds(orgId); } catch (_) { return []; }
+      };
     this.events = events || deliveryEvents;
     this.geocoder = geocoder || getDefaultGeocoder();
     this.now = typeof now === 'function' ? now : () => Date.now();
@@ -481,13 +561,47 @@ class DeliveryService {
     }
   }
 
-  /** Repair path: re-applies the order status for a delivery. Admin/ops use. */
+  /**
+   * Moves the order's buyer-protection attestation (paymentStatus) in line with
+   * the delivery: picked_up -> escrow_held, delivered -> released. Idempotent and
+   * best-effort, exactly like _syncOrder — the delivery is the source of truth, so
+   * a failure here is logged and repairable (reconcileOrder), never a reason to
+   * fail a rider's request after the parcel has already moved. `released` and
+   * `refunded` are terminal and never walked back automatically. NO money moves:
+   * this is an honest status machine for pay-on-delivery (spec item D).
+   */
+  async _syncEscrow(delivery, actorId) {
+    const target = DeliveryStateMachine.paymentStatusFor(delivery.status);
+    if (!target) return;
+    try {
+      const order = await this._freshOrder(delivery.orderId);
+      if (!order) {
+        logger.error(`[Delivery] Order ${delivery.orderId} for delivery ${delivery.id} not found while syncing escrow.`);
+        return;
+      }
+      const current = order.paymentStatus;
+      // Settled states are final: a delivered (released) or administratively
+      // refunded order is not re-held by a late delivery event.
+      if (current === PAYMENT_STATUS.RELEASED || current === PAYMENT_STATUS.REFUNDED) return;
+      if (current === target) return;
+      await this.orders.updatePaymentStatusAtomic(order.id, current, target, {
+        note: `Escrow ${target}: delivery ${delivery.id} is ${delivery.status}`,
+        updatedBy: actorId || 'delivery'
+      });
+      await this._invalidateBuyerCache(order.buyerId);
+    } catch (err) {
+      logger.error(`[Delivery] Could not sync escrow for order ${delivery.orderId} to "${target}" for delivery ${delivery.id}: ${err.message}`);
+    }
+  }
+
+  /** Repair path: re-applies the order status AND escrow for a delivery. Admin/ops use. */
   async reconcileOrder(deliveryId, callerInput) {
     const caller = this._caller(callerInput);
     if (!this._isAdmin(caller.userRole)) throw new AuthorizationError('Only an administrator can reconcile an order.');
     const delivery = await this.repo.findById(deliveryId);
     if (!delivery) throw new NotFoundError('Delivery', deliveryId);
     await this._syncOrder(delivery, 'reconcile');
+    await this._syncEscrow(delivery, 'reconcile');
     return { reconciled: true, deliveryStatus: delivery.status };
   }
 
@@ -937,6 +1051,88 @@ class DeliveryService {
     return this._present(updated, role);
   }
 
+  // ---------------------------------------------------------------- agencies
+
+  /**
+   * The active rider members of an agency provider (item C). `agencyProviderId` is
+   * the agency's delivery-provider id; its `organization_id` names the org whose
+   * members deliver for it. Visible to an administrator, a member of that agency,
+   * or any seller (who may size up an agency's capacity before choosing it). Each
+   * rider carries only public, choosable facts and their current workload.
+   */
+  async listAgencyRiders(callerInput, agencyProviderId) {
+    const caller = this._caller(callerInput);
+    if (!agencyProviderId) throw new ValidationError('An agency id is required.');
+    const agency = await this.repo.findDriver(agencyProviderId);
+    if (!agency || !agency.isAgency || !agency.organizationId) throw new NotFoundError('Agency', agencyProviderId);
+    const memberIds = await this._listAgencyMemberIds(agency.organizationId);
+    const isAdmin = this._isAdmin(caller.userRole);
+    const isMember = memberIds.includes(caller.userId);
+    if (!isAdmin && !isMember && !SELLER_ROLES.includes(caller.userRole)) {
+      throw new NotFoundError('Agency', agencyProviderId);
+    }
+    const load = await this.repo.countOpenByDriver();
+    const riders = [];
+    for (const id of memberIds) {
+      const d = await this.repo.findDriver(id);
+      // A member who is an active rider (not the agency record itself) can be given work.
+      if (d && d.status === DRIVER_STATUS.ACTIVE && !d.isAgency) {
+        riders.push({ id: d.id, name: d.name, vehicleType: d.vehicleType || null, openDeliveries: load.get(d.id) || 0 });
+      }
+    }
+    riders.sort((a, b) => a.openDeliveries - b.openDeliveries || String(a.name || '').localeCompare(String(b.name || ''), 'en'));
+    return { agency: { id: agency.id, name: agency.name, organizationId: agency.organizationId }, riders };
+  }
+
+  /**
+   * An agency hands a delivery it holds to one of its own rider members (item C).
+   * Allowed to an administrator, the order's seller, or an active member of the
+   * agency's organization. Only before the parcel is collected (assigned/accepted),
+   * and only to an active rider who belongs to the agency and is not the buyer. The
+   * member then accepts in their app like any other offer (it becomes a fresh
+   * ASSIGNED offer), so the handover code and the rest of the circuit are unchanged.
+   */
+  async delegateDelivery(deliveryId, riderId, callerInput) {
+    const caller = this._caller(callerInput);
+    if (!riderId || typeof riderId !== 'string') {
+      throw new ValidationError('riderId is required', [{ field: 'riderId', message: 'Choose a rider from the agency.' }]);
+    }
+    const delivery = await this.repo.findById(deliveryId);
+    if (!delivery) throw new NotFoundError('Delivery', deliveryId);
+
+    const agency = delivery.driverId ? await this.repo.findDriver(delivery.driverId) : null;
+    if (!agency || !agency.isAgency || !agency.organizationId) {
+      throw new ConflictError('This delivery is not held by an agency, so it cannot be delegated.');
+    }
+    const memberIds = await this._listAgencyMemberIds(agency.organizationId);
+    const isAdmin = this._isAdmin(caller.userRole);
+    const isSeller = delivery.sellerId === caller.userId;
+    const isMember = memberIds.includes(caller.userId);
+    // Same 404 as any non-participant: no id enumeration for outsiders.
+    if (!isAdmin && !isSeller && !isMember) throw new NotFoundError('Delivery', deliveryId);
+
+    if (![S.ASSIGNED, S.ACCEPTED].includes(delivery.status)) {
+      throw new ConflictError(`An agency delivery can only be delegated before pickup (it is "${delivery.status}").`);
+    }
+    await this._assertOrderNotCancelled(delivery);
+
+    if (!memberIds.includes(riderId)) {
+      throw new ValidationError('That rider is not in this agency', [{ field: 'riderId', message: 'Choose one of the agency\'s riders.' }]);
+    }
+    if (riderId === delivery.buyerId) {
+      throw new ValidationError('A rider cannot deliver their own order', [{ field: 'riderId', message: 'Choose a different rider.' }]);
+    }
+    const rider = await this.repo.findDriver(riderId);
+    if (!rider || rider.status !== DRIVER_STATUS.ACTIVE || rider.isAgency) {
+      throw new ValidationError('That rider is not available', [{ field: 'riderId', message: 'Unknown or suspended rider.' }]);
+    }
+
+    // Reassign from the agency to the member: _applyAssignment's compare-and-swap
+    // expects the current (status, driverId) — the agency — and offers the member.
+    const role = isAdmin ? 'admin' : 'seller';
+    return this._applyAssignment(delivery, rider, caller, role, `Delegated to ${rider.name} by the agency`);
+  }
+
   // ------------------------------------------------------------ rider actions
 
   /**
@@ -1090,6 +1286,7 @@ class DeliveryService {
     );
 
     await this._syncOrder(updated, caller.userId);
+    await this._syncEscrow(updated, caller.userId);
 
     const buyerMessage = {
       [S.PICKED_UP]: { title: 'Your order is on its way', body: 'The rider has your parcel.', tone: 'accent' },
@@ -1246,6 +1443,7 @@ class DeliveryService {
       await this._record(updated, S.ARRIVED, caller.userId, 'Handover code verified');
       await this._syncPresence(delivery, updated, caller.userId);
       await this._syncOrder(updated, caller.userId);
+      await this._syncEscrow(updated, caller.userId);
       this._notify(updated.buyerId, {
         audience: 'buyer',
         title: 'Order delivered',
@@ -1535,10 +1733,12 @@ class DeliveryService {
     // An omitted status means "leave it as it is" for an existing rider: editing a
     // name or phone must not quietly reactivate someone an admin suspended. A new
     // rider starts active.
+    const profile = cleanRiderProfile(body);
     const existing = await this.repo.findDriver(profileId);
     const status = body.status || (existing ? existing.status : DRIVER_STATUS.ACTIVE);
     const driver = await this.repo.upsertDriver({
-      profileId, name, phone, status, createdBy: existing ? existing.createdBy : caller.userId
+      profileId, name, phone, status, createdBy: existing ? existing.createdBy : caller.userId,
+      profile: Object.keys(profile).length ? profile : null
     });
     if (status === DRIVER_STATUS.SUSPENDED) {
       await this._forceOffline(profileId);
@@ -1557,7 +1757,181 @@ class DeliveryService {
         tone: active ? 'success' : 'neutral'
       });
     }
-    return { id: driver.id, name: driver.name, phone: driver.phone, status: driver.status };
+    return {
+      id: driver.id, name: driver.name, phone: driver.phone, status: driver.status,
+      photoUrl: driver.photoUrl, vehicleType: driver.vehicleType,
+      serviceAreas: driver.serviceAreas, baseFeeXaf: driver.baseFeeXaf,
+      isAgency: driver.isAgency, organizationId: driver.organizationId
+    };
+  }
+
+  /**
+   * The standard platform delivery fee for a city (integer XAF), or null when the
+   * city is not in the admin's rate table or the setting cannot be read. Resolved
+   * the SAME way the order is priced (SuperAdmin `shipping_rates_by_city` +
+   * PricingEngine.resolveCityRate), so a rider with no tariff of their own quotes
+   * exactly what the order would charge. Lazy + best-effort: never throws.
+   */
+  async _standardCityFee(city) {
+    try {
+      const SuperAdminRepository = require('../../../../SuperAdmin/backend/repositories/SuperAdminRepository');
+      const cityRates = await SuperAdminRepository.getSetting('shipping_rates_by_city');
+      return resolveCityRate(cityRates, city);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /**
+   * The delivery providers a BUYER can see and prefer at checkout for a given city
+   * (GET /deliveries/providers?city=). Any signed-in user may ask. A provider is
+   * offered when it is an ACTIVE rider that serves the city — a rider serves a
+   * city when their service_areas list it, or when they have stated none (serves
+   * anywhere). Each is returned with the public, choosable facts only: no phone
+   * (that is shared once a delivery is theirs), but the photo, vehicle, areas,
+   * reputation (rating + deliveries completed, derived from real deliveries) and
+   * the fee they would quote (their own tariff, else the city's standard rate).
+   * Least busy and best rated first.
+   */
+  async listAvailableProviders(callerInput, { city } = {}) {
+    this._caller(callerInput); // any authenticated user; throws if unauthenticated
+    const wantedCity = typeof city === 'string' ? city.trim() : '';
+    const folded = wantedCity ? foldCity(wantedCity) : '';
+    const [drivers, load, completed, standardFee] = await Promise.all([
+      this.repo.listDrivers({ status: DRIVER_STATUS.ACTIVE, limit: MAX_RIDERS_CONSIDERED }),
+      this.repo.countOpenByDriver(),
+      this.repo.countCompletedByDriver(),
+      this._standardCityFee(wantedCity)
+    ]);
+    const serves = (d) => {
+      const areas = Array.isArray(d.serviceAreas) ? d.serviceAreas : [];
+      // No city asked, or the rider stated no areas: they are a candidate.
+      if (!folded || areas.length === 0) return true;
+      return areas.includes(folded);
+    };
+    const providers = drivers
+      .filter(serves)
+      .map((d) => ({
+        id: d.id,
+        name: d.name,
+        photoUrl: d.photoUrl || null,
+        vehicleType: d.vehicleType || null,
+        isAgency: Boolean(d.isAgency),
+        rating: (d.ratingAvg != null && d.ratingCount > 0)
+          ? { average: Number(d.ratingAvg), count: d.ratingCount }
+          : null,
+        completedDeliveries: completed.get(d.id) || 0,
+        openDeliveries: load.get(d.id) || 0,
+        serviceAreas: Array.isArray(d.serviceAreas) ? d.serviceAreas : [],
+        // The rider's own tariff, else the city's standard rate, else null when
+        // neither is known (the UI then shows "fee at checkout" rather than a lie).
+        feeXaf: d.baseFeeXaf != null ? d.baseFeeXaf : standardFee
+      }))
+      .sort((a, b) =>
+        a.openDeliveries - b.openDeliveries
+        || (b.rating ? b.rating.average : 0) - (a.rating ? a.rating.average : 0)
+        || b.completedDeliveries - a.completedDeliveries
+        || String(a.name || '').localeCompare(String(b.name || ''), 'en'))
+      .slice(0, MAX_PROVIDERS_QUOTED);
+    return { city: wantedCity || null, providers };
+  }
+
+  /**
+   * One provider's public marketplace profile (item B): the same choosable facts
+   * the quote list carries, plus — best-effort — whether the caller follows them
+   * and their recent reviews. Any signed-in user may ask. No phone is exposed. A
+   * `city` lets a rider with no own tariff quote that city's standard fee. 404 for
+   * an unknown or suspended provider, so the profile never advertises one who
+   * cannot take work. The follow + review lookups reuse the existing social graph
+   * (a provider is followed as its account id, target_type `user`); they are lazy
+   * and degrade to empty if the social module or its database is unavailable.
+   */
+  async getProviderProfile(callerInput, providerId, { city } = {}) {
+    this._caller(callerInput); // any authenticated user
+    if (!providerId) throw new ValidationError('A provider id is required.');
+    const d = await this.repo.findDriver(providerId);
+    if (!d || d.status !== DRIVER_STATUS.ACTIVE) throw new NotFoundError('Provider', providerId);
+
+    const wantedCity = typeof city === 'string' ? city.trim() : '';
+    const [load, completed, standardFee] = await Promise.all([
+      this.repo.countOpenByDriver(),
+      this.repo.countCompletedByDriver(),
+      wantedCity ? this._standardCityFee(wantedCity) : Promise.resolve(null)
+    ]);
+
+    const profile = {
+      id: d.id,
+      name: d.name,
+      photoUrl: d.photoUrl || null,
+      vehicleType: d.vehicleType || null,
+      isAgency: Boolean(d.isAgency),
+      organizationId: d.isAgency ? (d.organizationId || null) : null,
+      rating: (d.ratingAvg != null && d.ratingCount > 0) ? { average: Number(d.ratingAvg), count: d.ratingCount } : null,
+      completedDeliveries: completed.get(d.id) || 0,
+      openDeliveries: load.get(d.id) || 0,
+      serviceAreas: Array.isArray(d.serviceAreas) ? d.serviceAreas : [],
+      feeXaf: d.baseFeeXaf != null ? d.baseFeeXaf : (wantedCity ? standardFee : null)
+    };
+    profile.following = await this._providerFollow(callerInput, providerId);
+    profile.reviews = await this._providerReviews(providerId);
+    return profile;
+  }
+
+  /** Whether the caller follows this provider. Best-effort via the social graph. */
+  async _providerFollow(callerInput, providerId) {
+    const fallback = { isFollowing: false, targetType: 'user', targetId: providerId };
+    try {
+      const caller = this._caller(callerInput);
+      const SocialGraphService = require('../../identity/application/SocialGraphService');
+      const status = await SocialGraphService.getFollowStatus(caller.userId, 'user', providerId);
+      return { isFollowing: Boolean(status && status.isFollowing), targetType: 'user', targetId: providerId };
+    } catch (_) { return fallback; }
+  }
+
+  /** A provider's recent reviews (social_recommendations on their account). Best-effort. */
+  async _providerReviews(providerId, { limit = 10 } = {}) {
+    try {
+      const SocialGraphService = require('../../identity/application/SocialGraphService');
+      const res = await SocialGraphService.listRecommendations('user', providerId, { limit });
+      return (res && res.recommendations) || [];
+    } catch (_) { return []; }
+  }
+
+  /**
+   * The delivery providers the caller follows, for the account hub's "Riders &
+   * agencies you follow" list (item B). Reads the caller's follows (target_type
+   * `user`) from the social graph and keeps those that are active providers. Best
+   * effort: an unavailable social module yields an empty list, not an error.
+   */
+  async listFollowedProviders(callerInput) {
+    const caller = this._caller(callerInput);
+    let followingIds = [];
+    try {
+      const SocialGraphService = require('../../identity/application/SocialGraphService');
+      const res = await SocialGraphService.listFollowing(caller.userId, { limit: 100 });
+      followingIds = ((res && res.following) || []).filter((f) => f.targetType === 'user').map((f) => f.targetId);
+    } catch (_) { followingIds = []; }
+
+    if (!followingIds.length) return { providers: [] };
+    const [load, completed] = await Promise.all([this.repo.countOpenByDriver(), this.repo.countCompletedByDriver()]);
+    const providers = [];
+    for (const id of followingIds) {
+      const d = await this.repo.findDriver(id);
+      if (!d || d.status !== DRIVER_STATUS.ACTIVE) continue;
+      providers.push({
+        id: d.id,
+        name: d.name,
+        photoUrl: d.photoUrl || null,
+        vehicleType: d.vehicleType || null,
+        isAgency: Boolean(d.isAgency),
+        rating: (d.ratingAvg != null && d.ratingCount > 0) ? { average: Number(d.ratingAvg), count: d.ratingCount } : null,
+        completedDeliveries: completed.get(d.id) || 0,
+        openDeliveries: load.get(d.id) || 0,
+        serviceAreas: Array.isArray(d.serviceAreas) ? d.serviceAreas : [],
+        feeXaf: d.baseFeeXaf != null ? d.baseFeeXaf : null
+      });
+    }
+    return { providers };
   }
 
   // ----------------------------------------------------------------- presence
@@ -1911,14 +2285,24 @@ class DeliveryService {
         }
         delivery = presentDelivery({ ...d, driver }, role, { timeline: [], order, offerTtlMs: this.offerTtlMs });
       }
-      items.push({ order: summarizeOrder(order), delivery });
+      // The provider the buyer preferred at checkout, resolved so the seller can
+      // default their assignment to it (and see at a glance whether that rider is
+      // still active). Uses the same per-rider cache as the assigned driver above.
+      let preferredDriver = null;
+      const preferredId = order.preferredDriverId || (order.shippingAddress && order.shippingAddress._preferredDriverId) || null;
+      if (preferredId) {
+        if (!riders.has(preferredId)) riders.set(preferredId, await this.repo.findDriver(preferredId));
+        const pr = riders.get(preferredId);
+        if (pr) preferredDriver = { id: pr.id, name: pr.name, status: pr.status };
+      }
+      items.push({ order: summarizeOrder(order, { preferredId, preferredDriver }), delivery });
     }
     return { items };
   }
 }
 
 /** What the dispatch board shows of an order: enough to recognise it, nothing more. */
-function summarizeOrder(order) {
+function summarizeOrder(order, { preferredId = null, preferredDriver = null } = {}) {
   const items = Array.isArray(order.items) ? order.items : [];
   const ship = order.shippingAddress || {};
   return {
@@ -1931,7 +2315,12 @@ function summarizeOrder(order) {
     itemCount: items.reduce((n, i) => n + (Number(i.quantity) || 1), 0),
     title: items[0] && items[0].title ? items[0].title : null,
     buyerName: typeof ship.fullName === 'string' && ship.fullName.trim() ? ship.fullName.trim() : null,
-    area: describeArea(ship) || null
+    area: describeArea(ship) || null,
+    // The buyer's preferred provider (a hint; the seller still confirms). The id
+    // is always there when one was set; preferredDriver is resolved when the
+    // rider still exists, with their status so an unavailable one can be flagged.
+    preferredDriverId: preferredId || null,
+    preferredDriver: preferredDriver || null
   };
 }
 

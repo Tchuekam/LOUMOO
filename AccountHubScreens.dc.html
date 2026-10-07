@@ -137,6 +137,16 @@
             <div style="font:600 11.5px/1.3 var(--font-body);color:var(--color-text-secondary)">Followed stores</div>
           </button>
 
+          <!-- Riders & agencies you follow (item B). Opens the provider overlay
+               via its declarative trigger; no controller handler needed. -->
+          <button type="button" data-open-followed-providers class="card-premium" style="text-align:left;cursor:pointer;border:1px solid var(--color-divider);display:flex;flex-direction:column;gap:8px;padding:16px">
+            <div style="width:34px;height:34px;border-radius:50%;background:var(--color-accent-100);color:var(--color-accent);display:flex;align-items:center;justify-content:center">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="5.5" cy="17.5" r="2.5"/><circle cx="18.5" cy="17.5" r="2.5"/><path d="M8 17.5h7.5l-3-8H9"/><path d="M15 6h2.5l1 4.5"/></svg>
+            </div>
+            <div style="font:800 15px/1.1 var(--font-heading);color:var(--color-text);margin-top:2px">Riders &amp; agencies</div>
+            <div style="font:600 11.5px/1.3 var(--font-body);color:var(--color-text-secondary)">You follow · tap to view</div>
+          </button>
+
           <button onClick="{{ openAddresses }}" class="card-premium" style="text-align:left;cursor:pointer;border:1px solid var(--color-divider);display:flex;flex-direction:column;gap:8px;padding:16px">
             <div style="width:34px;height:34px;border-radius:50%;background:var(--color-neutral-200);color:var(--color-text);display:flex;align-items:center;justify-content:center">
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>

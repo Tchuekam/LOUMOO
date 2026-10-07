@@ -30,6 +30,11 @@ const AssignDriverSchema = z.object({
   driverId: z.string().trim().min(1, 'driverId is required').max(128)
 }).strict();
 
+// POST /:id/delegate — an agency hands a delivery it holds to one of its riders.
+const DelegateDeliverySchema = z.object({
+  riderId: z.string().trim().min(1, 'riderId is required').max(128)
+}).strict();
+
 // GET /drivers?deliveryId=…  Unlike bodies, a query string is NOT strict: clients
 // and proxies add harmless keys (cache busters), so unknown ones are dropped. The
 // one key we read must be a single, non-empty string (a repeated `deliveryId`
@@ -86,8 +91,25 @@ const CompleteDeliverySchema = z.object({
 const RegisterDriverSchema = z.object({
   name: z.string().max(200),
   phone: z.string().max(64),
-  status: z.enum(['active', 'suspended']).optional()
+  status: z.enum(['active', 'suspended']).optional(),
+  // Marketplace profile (migration 018). Shape only; the service validates the
+  // vehicle set, the fee range and folds the city names.
+  photoUrl: z.string().max(600).optional().nullable(),
+  vehicleType: z.string().max(32).optional().nullable(),
+  serviceAreas: z.array(z.string().max(120)).max(100).optional().nullable(),
+  baseFeeXaf: z.union([z.number(), z.string().trim().max(20)]).optional().nullable(),
+  // A provider may be an AGENCY backed by an organization (migration 008 +
+  // delivery_drivers.organization_id/is_agency from 018). Declaring isAgency=true
+  // requires organizationId; the service enforces the cross-field rule.
+  isAgency: z.boolean().optional(),
+  organizationId: z.string().max(64).optional().nullable()
 }).strict();
+
+// GET /deliveries/providers?city=  Not strict (query string), for the same reason
+// as the other query schemas: proxies add harmless keys.
+const ProvidersQuerySchema = z.object({
+  city: z.string().trim().min(1, 'city must not be empty').max(120).optional()
+});
 
 const ResolveDeliverySchema = z.object({
   action: z.enum(['unlock', 'fail']),
@@ -97,6 +119,7 @@ const ResolveDeliverySchema = z.object({
 module.exports = {
   CreateDeliverySchema,
   AssignDriverSchema,
+  DelegateDeliverySchema,
   ListDriversQuerySchema,
   DispatchBoardQuerySchema,
   CancelDeliverySchema,
@@ -106,5 +129,6 @@ module.exports = {
   PresenceActionSchema,
   CompleteDeliverySchema,
   RegisterDriverSchema,
+  ProvidersQuerySchema,
   ResolveDeliverySchema
 };

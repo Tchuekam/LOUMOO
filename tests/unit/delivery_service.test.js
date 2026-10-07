@@ -147,6 +147,55 @@ async function run() {
       assert.strictEqual(await code(w.service.listDrivers({ userRole: 'admin' })), 'PERMISSION_DENIED', 'a caller with no identity is refused');
     }
 
+    // --------------------------------------------- providers a buyer can prefer
+    {
+      const w = makeWorld();
+      // Riders with marketplace profiles. Cities are folded on save, so "Douala"
+      // and "Yaoundé" are stored as "douala"/"yaounde".
+      await w.service.registerDriver('rider_1', { name: 'Alain', phone: '+237600000001', vehicleType: 'motorbike', serviceAreas: ['Douala'], baseFeeXaf: 1500 }, ADMIN);
+      await w.service.registerDriver('rider_2', { name: 'Bruno', phone: '+237600000002', vehicleType: 'car', serviceAreas: ['Yaoundé'] }, ADMIN);
+      await w.service.registerDriver('rider_3', { name: 'Chidi', phone: '+237600000003', vehicleType: 'van' }, ADMIN); // no areas -> serves anywhere
+      await w.service.registerDriver('rider_sus', { name: 'Sus', phone: '+237600000004', status: 'suspended', serviceAreas: ['Douala'] }, ADMIN);
+
+      // A bad vehicle or fee is refused, not silently dropped.
+      assert.strictEqual(await code(w.service.registerDriver('rider_x', { name: 'X', phone: '+237600000009', vehicleType: 'rocket' }, ADMIN)), 'VALIDATION_ERROR', 'unknown vehicle type refused');
+      assert.strictEqual(await code(w.service.registerDriver('rider_x', { name: 'X', phone: '+237600000009', baseFeeXaf: -5 }, ADMIN)), 'VALIDATION_ERROR', 'negative tariff refused');
+
+      assert.strictEqual(await code(w.service.listAvailableProviders({ userRole: 'customer' }, { city: 'Douala' })), 'PERMISSION_DENIED', 'an unauthenticated caller is refused');
+
+      const { city, providers } = await w.service.listAvailableProviders(BUYER, { city: 'Douala' });
+      assert.strictEqual(city, 'Douala');
+      const ids = providers.map((p) => p.id);
+      assert.ok(ids.includes('rider_1') && ids.includes('rider_3'), 'a rider serving Douala and one serving anywhere are offered');
+      assert.ok(!ids.includes('rider_2'), 'a rider who serves only Yaoundé is not offered for Douala');
+      assert.ok(!ids.includes('rider_sus'), 'a suspended rider is never offered');
+
+      const alain = providers.find((p) => p.id === 'rider_1');
+      assert.strictEqual(alain.feeXaf, 1500, 'the rider\'s own tariff is quoted');
+      assert.strictEqual(alain.vehicleType, 'motorbike');
+      assert.strictEqual(alain.rating, null, 'a rider with no reviews has no rating, not a fake one');
+      assert.strictEqual(alain.completedDeliveries, 0, 'and no completed deliveries yet');
+      assert.ok(!('phone' in alain), 'the rider\'s phone is NOT exposed to a buyer at quote time');
+
+      const chidi = providers.find((p) => p.id === 'rider_3');
+      // No tariff of their own: they quote the platform's standard rate for the
+      // city, whatever it is — never another rider's private price.
+      assert.notStrictEqual(chidi.feeXaf, 1500, 'a no-tariff rider does not borrow another rider\'s price');
+
+      const y = await w.service.listAvailableProviders(BUYER, { city: 'Yaoundé' });
+      const yids = y.providers.map((p) => p.id);
+      assert.ok(yids.includes('rider_2'), 'city match is accent-insensitive (Yaoundé = yaounde)');
+      assert.ok(yids.includes('rider_3'), 'the anywhere rider also serves Yaoundé');
+      assert.ok(!yids.includes('rider_1'), 'the Douala-only rider is not offered for Yaoundé');
+
+      // A city with no configured rate: the anywhere rider is still offered, but
+      // no fee is invented — the UI then shows "fee at checkout".
+      const far = await w.service.listAvailableProviders(BUYER, { city: 'Zzxqcity' });
+      const chidiFar = far.providers.find((p) => p.id === 'rider_3');
+      assert.ok(chidiFar, 'the anywhere rider is offered even for an unknown city');
+      assert.strictEqual(chidiFar.feeXaf, null, 'with no configured rate for that city, no fee is invented');
+    }
+
     // ------------------------------------------------------------------ create
     {
       const w = makeWorld();
@@ -810,7 +859,83 @@ async function run() {
       assert.strictEqual((await w.repo.findDriver('rider_new')).status, 'active', 'a new rider starts active');
     }
 
-    console.log('    ✓ Delivery service: authorisation, flow, GPS policy, handover budget and races hold.');
+    // ---- agencies as first-class providers + delegation (item C) ----
+    {
+      const w = makeWorld();
+      // A plain rider defaults to not-an-agency.
+      await w.service.registerDriver('rider_1', { name: 'Alain', phone: '+237600000001', baseFeeXaf: 1500 }, ADMIN);
+      assert.strictEqual((await w.repo.findDriver('rider_1')).isAgency, false);
+
+      // An agency must name its organization.
+      assert.strictEqual(
+        await code(w.service.registerDriver('agency_x', { name: 'Swift', phone: '+237600000010', isAgency: true }, ADMIN)),
+        'VALIDATION_ERROR', 'an agency without an organization is refused'
+      );
+      // Registered with one, it is an agency provider.
+      const agency = await w.service.registerDriver('agency_1', { name: 'Swift Riders', phone: '+237600000011', isAgency: true, organizationId: 'org_1', baseFeeXaf: 2000, serviceAreas: ['Douala'] }, ADMIN);
+      assert.strictEqual(agency.isAgency, true);
+      assert.strictEqual(agency.organizationId, 'org_1');
+      // It appears to buyers like any provider, flagged as an agency.
+      const quoted = await w.service.listAvailableProviders(BUYER, { city: 'Douala' });
+      const agencyCard = quoted.providers.find((p) => p.id === 'agency_1');
+      assert.ok(agencyCard && agencyCard.isAgency === true && agencyCard.feeXaf === 2000, 'the agency is quoted with its own tariff');
+
+      // Its riders are the active rider members of its organization.
+      await w.service.registerDriver('rider_2', { name: 'Bruno', phone: '+237600000002' }, ADMIN);
+      w.repo.seedOrgMembers('org_1', ['mgr_1', 'rider_1', 'rider_2']); // mgr_1 is a dispatcher, not a rider
+      const roster = await w.service.listAgencyRiders(ADMIN, 'agency_1');
+      assert.deepStrictEqual(roster.riders.map((r) => r.id).sort(), ['rider_1', 'rider_2'], 'only member riders, not the dispatcher or the agency itself');
+      assert.strictEqual(await code(w.service.listAgencyRiders(STRANGER, 'agency_1')), 'NOT_FOUND', 'an outsider cannot read the roster');
+
+      // The seller assigns the delivery to the agency; a member delegates it to a rider.
+      const order = await placeOrder(w);
+      const created = await w.service.createDelivery(order.id, SELLER, { dropoffLocation: { lat: 4.06, lng: 9.77 } });
+      await w.service.assignDriver(created.id, 'agency_1', SELLER);
+      const MEMBER = { userId: 'mgr_1', userRole: 'customer' };
+      assert.strictEqual(await code(w.service.delegateDelivery(created.id, 'rider_3', MEMBER)), 'VALIDATION_ERROR', 'cannot delegate to a non-member');
+      assert.strictEqual(await code(w.service.delegateDelivery(created.id, 'rider_1', STRANGER)), 'NOT_FOUND', 'an outsider cannot delegate');
+      const delegated = await w.service.delegateDelivery(created.id, 'rider_1', MEMBER);
+      assert.strictEqual(delegated.status, 'assigned', 'as a fresh offer the rider accepts');
+      assert.strictEqual((await w.repo.findById(created.id)).driverId, 'rider_1', 'the delivery is now the member rider\'s');
+      // The member rider then runs the normal circuit.
+      await w.service.acceptDelivery(created.id, RIDER);
+      assert.strictEqual((await w.service.getDelivery(created.id, RIDER)).status, 'accepted');
+
+      // A delivery held by a normal rider cannot be delegated.
+      const order2 = await placeOrder(w);
+      const d2 = await w.service.createDelivery(order2.id, SELLER, { dropoffLocation: { lat: 4.06, lng: 9.77 } });
+      await w.service.assignDriver(d2.id, 'rider_2', SELLER);
+      assert.strictEqual(await code(w.service.delegateDelivery(d2.id, 'rider_1', ADMIN)), 'CONFLICT', 'only an agency delivery can be delegated');
+    }
+
+    // ---- provider public profile + followed list (item B) ----
+    {
+      const w = makeWorld();
+      await w.service.registerDriver('rider_1', { name: 'Alain', phone: '+237600000001', vehicleType: 'motorbike', baseFeeXaf: 1500, serviceAreas: ['Douala'] }, ADMIN);
+      await w.service.registerDriver('agency_1', { name: 'Swift Riders', phone: '+237600000011', isAgency: true, organizationId: 'org_1', baseFeeXaf: 2000 }, ADMIN);
+      await w.service.registerDriver('rider_sus', { name: 'Sus', phone: '+237600000004', status: 'suspended' }, ADMIN);
+
+      const rider = await w.service.getProviderProfile(BUYER, 'rider_1', { city: 'Douala' });
+      assert.strictEqual(rider.id, 'rider_1');
+      assert.strictEqual(rider.isAgency, false);
+      assert.strictEqual(rider.feeXaf, 1500, 'own tariff is quoted');
+      assert.strictEqual(rider.vehicleType, 'motorbike');
+      assert.ok(rider.following && rider.following.isFollowing === false, 'follow state degrades to false without the social backend');
+      assert.deepStrictEqual(rider.reviews, [], 'no reviews without the social backend');
+      assert.ok(!('phone' in rider), 'no phone is exposed on a public profile');
+
+      const prof = await w.service.getProviderProfile(BUYER, 'agency_1');
+      assert.strictEqual(prof.isAgency, true);
+      assert.strictEqual(prof.organizationId, 'org_1');
+
+      assert.strictEqual(await code(w.service.getProviderProfile(BUYER, 'ghost')), 'NOT_FOUND', 'unknown provider is 404');
+      assert.strictEqual(await code(w.service.getProviderProfile(BUYER, 'rider_sus')), 'NOT_FOUND', 'a suspended provider is not shown');
+
+      const followed = await w.service.listFollowedProviders(BUYER);
+      assert.deepStrictEqual(followed, { providers: [] }, 'the followed list degrades to empty without the social backend');
+    }
+
+    console.log('    ✓ Delivery service: authorisation, flow, GPS policy, handover budget, races, agencies and provider profiles hold.');
   } finally {
     NotificationService.create = originalCreate;
     if (!hadSecret) config.supabase.jwtSecret = hadSecret;

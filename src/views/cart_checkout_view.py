@@ -128,7 +128,7 @@ def get_checkout_view():
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
       </button>
       <div>
-        <h4 style="margin:0;font-size:16px">Escrow Protected Checkout</h4>
+        <h4 style="margin:0;font-size:16px">Buyer-Protected Checkout</h4>
         <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary)">Step 2 of 3 · Payment &amp; Delivery</div>
       </div>
     </div>
@@ -140,21 +140,89 @@ def get_checkout_view():
 
   <div style="padding:16px;max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:16px">
     
-    <!-- Delivery Address Card -->
+    <!-- Delivery Address Card. Shows the REAL destination the order will use, or,
+         when none is on file yet, an honest "add it" prompt — never an invented
+         address the order would then reject. -->
     <div class="card-premium">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
         <div style="font:800 12px/1 var(--font-heading);letter-spacing:.06em;color:var(--color-text-secondary);text-transform:uppercase">1. DELIVERY DESTINATION</div>
-        <button class="btn btn-secondary btn-sm" onClick="{{ changeDeliveryDestination }}">CHANGE</button>
+        <sc-if value="{{ checkoutHasDestination }}">
+          <button class="btn btn-secondary btn-sm" onClick="{{ changeDeliveryDestination }}">CHANGE</button>
+        </sc-if>
       </div>
-      <div style="font:700 14px/1.2 var(--font-heading);color:var(--color-text)">{{ checkoutRecipientName }} · +237 {{ checkoutRecipientPhone }}</div>
-      <div style="font:400 12.5px/1.4 var(--font-body);color:var(--color-text-secondary);margin-top:4px">
-        {{ checkoutDeliveryAddress }}
+      <sc-if value="{{ checkoutHasDestination }}">
+        <div style="font:700 14px/1.2 var(--font-heading);color:var(--color-text)">{{ checkoutRecipientName }} · +237 {{ checkoutRecipientPhone }}</div>
+        <sc-if value="{{ checkoutIsPickup }}">
+          <div style="font:400 12.5px/1.4 var(--font-body);color:var(--color-text-secondary);margin-top:4px">Pick up at the store — you'll be told when your order is ready to collect.</div>
+        </sc-if>
+        <sc-if value="{{ !checkoutIsPickup }}">
+          <div style="font:400 12.5px/1.4 var(--font-body);color:var(--color-text-secondary);margin-top:4px">{{ checkoutDeliveryAddress }}</div>
+        </sc-if>
+      </sc-if>
+      <sc-if value="{{ !checkoutHasDestination }}">
+        <div style="font:400 12.5px/1.45 var(--font-body);color:var(--color-text-secondary);margin-bottom:12px">
+          <sc-if value="{{ checkoutIsPickup }}">Add your name and a phone number so the store can reach you when your order is ready to collect.</sc-if>
+          <sc-if value="{{ !checkoutIsPickup }}">No delivery address yet. Add where the rider should bring your order, so we know where to go and how to reach you.</sc-if>
+        </div>
+        <button onClick="{{ changeDeliveryDestination }}" class="btn btn-primary btn-sm" style="height:42px">ADD DELIVERY DETAILS</button>
+      </sc-if>
+    </div>
+
+    <!-- Choose your delivery provider (home delivery only). Real providers from
+         the quote endpoint; picking one is optional and sets the fee shown, which
+         the server then charges. With none chosen the seller arranges a rider. -->
+    <sc-if value="{{ checkoutShowProviders }}">
+    <div class="card-premium">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+        <div style="font:800 12px/1 var(--font-heading);letter-spacing:.06em;color:var(--color-text-secondary);text-transform:uppercase">2. CHOOSE YOUR DELIVERY</div>
+        <span style="font:600 11px/1 var(--font-body);color:var(--color-text-secondary)">Optional</span>
+      </div>
+      <div style="font:400 12px/1.4 var(--font-body);color:var(--color-text-secondary);margin-bottom:14px">Pick a rider or agency to carry your order, or leave it and the store will arrange one.</div>
+
+      <sc-if value="{{ checkoutProvidersLoading }}">
+        <div style="font:500 12.5px/1.4 var(--font-body);color:var(--color-text-secondary);padding:8px 0">Finding delivery providers near you…</div>
+      </sc-if>
+
+      <sc-if value="{{ checkoutProvidersError }}">
+        <div style="display:flex;flex-direction:column;gap:10px;background:var(--color-surface-subtle);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:12px 14px">
+          <div style="font:500 12.5px/1.4 var(--font-body);color:var(--color-text)">{{ checkoutProvidersError }}</div>
+          <button onClick="{{ retryProviders }}" class="btn btn-secondary btn-sm" style="align-self:flex-start;height:36px">TRY AGAIN</button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ checkoutProvidersEmpty }}">
+        <div style="font:400 12.5px/1.4 var(--font-body);color:var(--color-text-secondary);padding:4px 0">No delivery providers list your area yet — place your order and the store will arrange a rider for you.</div>
+      </sc-if>
+
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <sc-for list="{{ checkoutProviders }}" as="prov">
+          <div>
+            <button onClick="{{ () => prov.select() }}" aria-label="Choose {{ prov.name }}" class="checkout-pay-method {{ prov.selected ? 'active' : '' }}">
+              <div style="display:flex;align-items:center;gap:12px">
+                <div style="width:40px;height:40px;border-radius:50%;background:var(--color-surface-subtle);border:1px solid var(--color-divider);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;font:800 15px/1 var(--font-heading);color:var(--color-text-secondary)">
+                  <sc-if value="{{ prov.hasPhoto }}"><img src="{{ prov.photo }}" alt="" style="width:100%;height:100%;object-fit:cover" loading="lazy" decoding="async"></sc-if>
+                  <sc-if value="{{ !prov.hasPhoto }}">{{ prov.initial }}</sc-if>
+                </div>
+                <div style="text-align:left">
+                  <div style="font:700 14px/1.2 var(--font-heading);color:var(--color-text)">{{ prov.name }} · <span style="font:600 11px/1 var(--font-body);color:var(--color-text-secondary)">{{ prov.kindLabel }}</span></div>
+                  <div style="font:400 11.5px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">{{ prov.ratingLabel }} · {{ prov.completedLabel }}<sc-if value="{{ prov.vehicleLabel }}"> · {{ prov.vehicleLabel }}</sc-if></div>
+                  <div style="font:800 12.5px/1 var(--font-heading);color:var(--color-text);margin-top:3px">{{ prov.feeLabel }}</div>
+                </div>
+              </div>
+              <div class="pay-radio-dot {{ prov.selected ? 'selected' : '' }}"></div>
+            </button>
+            <!-- Sibling of the select button (never nested in it), so viewing the
+                 profile cannot toggle the choice. Opens the provider overlay. -->
+            <button type="button" data-open-provider data-provider-id="{{ prov.id }}" data-city="{{ prov.city }}" style="margin:2px 0 0;border:none;background:transparent;padding:4px 6px;font:600 11.5px/1 var(--font-heading);color:var(--color-accent);cursor:pointer">View profile &amp; reviews →</button>
+          </div>
+        </sc-for>
       </div>
     </div>
+    </sc-if>
 
     <!-- Telecom Payment Selection -->
     <div class="card-premium">
-      <div style="font:800 12px/1 var(--font-heading);letter-spacing:.06em;color:var(--color-text-secondary);text-transform:uppercase;margin-bottom:14px">2. SELECT PAYMENT METHOD</div>
+      <div style="font:800 12px/1 var(--font-heading);letter-spacing:.06em;color:var(--color-text-secondary);text-transform:uppercase;margin-bottom:14px">3. SELECT PAYMENT METHOD</div>
 
       <div style="display:flex;flex-direction:column;gap:10px">
         
@@ -199,14 +267,16 @@ def get_checkout_view():
       </div>
     </div>
 
-    <!-- Escrow Protection Guarantee Callout -->
+    <!-- Buyer-protection callout. The honest promise for pay-on-delivery: no money
+         is held up front, so the protection is that the buyer pays only once the
+         order is in their hands and confirmed with the delivery code. -->
     <div style="display:flex;gap:12px;background:var(--color-surface-subtle);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:14px 18px;align-items:center">
       <div style="width:36px;height:36px;border-radius:50%;background:var(--color-success-100);color:var(--color-success);display:flex;align-items:center;justify-content:center;flex-shrink:0">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
       </div>
       <div style="font:400 12px/1.4 var(--font-body);color:var(--color-text-secondary)">
-        <strong style="color:var(--color-text)">Your payment is 100% safeguarded by LOUMOO Escrow.</strong>
-        The seller will only receive funds once your package is delivered and confirmed.
+        <strong style="color:var(--color-text)">LOUMOO Buyer Protection.</strong>
+        You pay on delivery — nothing leaves your hands until the rider hands over your order and you confirm it with your delivery code. If it never arrives, you don't pay, and LOUMOO steps in.
       </div>
     </div>
 
@@ -237,34 +307,6 @@ def get_checkout_view():
 </sc-if>
 """
 
-def get_paying_view():
-    return """
-<!-- ══════════════════════════════════════════════════════════════════════════
-     ANIMATED RADAR TELECOM PAYMENT PULSE (is.paying)
-     ══════════════════════════════════════════════════════════════════════ -->
-<sc-if value="{{ is.paying }}">
-<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:540px;padding:32px 16px;text-align:center">
-  
-  <div class="paying-radar-wrap">
-    <div class="radar-pulse" style="animation-delay: 0s"></div>
-    <div class="radar-pulse" style="animation-delay: 0.8s"></div>
-    <div class="radar-center-icon">
-      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-    </div>
-  </div>
-
-  <h2 style="font-size:22px;margin:24px 0 8px">Authorizing MoMo Payment...</h2>
-  <p style="font-size:13.5px;color:var(--color-text-secondary);max-width:360px;line-height:1.5;margin:0 auto 24px">
-    A payment request of <strong>XAF 878 000</strong> has been sent to your phone. Please confirm with your PIN.
-  </p>
-
-  <div style="font:700 12px/1 var(--font-mono);color:var(--color-accent);background:var(--color-accent-100);padding:8px 16px;border-radius:var(--radius-pill)">
-    SECURE ESCROW CONNECTION ACTIVE
-  </div>
-</div>
-</sc-if>
-"""
-
 def get_success_view():
     return """
 <!-- ══════════════════════════════════════════════════════════════════════════
@@ -287,6 +329,16 @@ def get_success_view():
     <p style="font-size:12.5px;color:var(--color-text-secondary);line-height:1.5;max-width:480px;margin:-12px auto 24px">{{ lastOrdersMoreNote }}</p>
   </sc-if>
 
+  <!-- The chosen delivery provider became unavailable between the quote and
+       placing: the order went through at the standard city rate, said honestly
+       rather than switched silently (integration spec item E). -->
+  <sc-if value="{{ lastDeliveryNotice }}">
+    <div style="display:flex;gap:10px;text-align:left;background:var(--color-warning-100, var(--color-surface-subtle));border:1px solid var(--color-warning, var(--color-divider));border-radius:var(--radius-md);padding:12px 14px;max-width:480px;margin:0 auto 24px">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-warning, #b45309)" stroke-width="2" style="flex-shrink:0;margin-top:1px"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+      <div style="font:500 12.5px/1.45 var(--font-body);color:var(--color-text)">{{ lastDeliveryNoticeText }}</div>
+    </div>
+  </sc-if>
+
   <!-- Where the order is, whose move it is, and your part in it. Fills itself
        from the delivery API (src/services/deliveryCircuit.js). -->
   <div class="card-premium" style="text-align:left;margin-bottom:24px">
@@ -301,28 +353,6 @@ def get_success_view():
     <button onClick="{{ on.home }}" style="border:none;background:transparent;padding:8px;font:700 12.5px/1 var(--font-heading);color:var(--color-text-secondary);cursor:pointer">Back to Marketplace</button>
   </div>
 
-</div>
-</sc-if>
-"""
-
-def get_payfailed_view():
-    return """
-<!-- ══════════════════════════════════════════════════════════════════════════
-     PAYMENT FAILED RECOVERY (is.payFailed)
-     ══════════════════════════════════════════════════════════════════════ -->
-<sc-if value="{{ is.payFailed }}">
-<div style="padding:48px 16px;max-width:540px;margin:0 auto;text-align:center">
-  <div style="width:64px;height:64px;border-radius:50%;background:var(--color-accent-sale-100);color:var(--color-accent-sale);display:flex;align-items:center;justify-content:center;margin:0 auto 16px">
-    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-  </div>
-  <h3 style="margin:0 0 8px;font-size:22px">Transaction Unsuccessful</h3>
-  <p style="font-size:13.5px;color:var(--color-text-secondary);margin:0 auto 20px">
-    The telecom provider timed out or reported insufficient balance. No funds were debited from your account.
-  </p>
-  <div style="display:flex;flex-direction:column;gap:10px">
-    <button onClick="{{ on.checkout }}" class="btn btn-primary btn-block" style="height:46px">RETRY WITH ANOTHER PAYMENT METHOD</button>
-    <button onClick="{{ on.cart }}" class="btn btn-secondary btn-block" style="height:44px">RETURN TO BAG</button>
-  </div>
 </div>
 </sc-if>
 """

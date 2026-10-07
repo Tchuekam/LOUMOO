@@ -101,6 +101,36 @@ class DeliveryApiClient {
   }
 
   /**
+   * The delivery providers a buyer can prefer at checkout for a city. Any signed-in
+   * user may ask. No rider contact is returned — only the choosable facts (name,
+   * photo, vehicle, rating-or-null, deliveries completed, the fee they quote).
+   * @param {string} [city] the delivery city; omitted lists providers for anywhere.
+   * @returns {Promise<{city: string|null, providers: Array<{id, name, photoUrl, vehicleType, isAgency, rating, completedDeliveries, openDeliveries, serviceAreas, feeXaf}>}>}
+   */
+  async getProviders(city) {
+    return this._request(`/providers${this._qs({ city })}`);
+  }
+
+  /**
+   * One provider's public marketplace profile (item B): the choosable facts plus,
+   * best-effort, the caller's follow state and recent reviews. No phone. 404 for
+   * an unknown or suspended provider. @returns {Promise<{provider: object}>}
+   */
+  async getProvider(id, city) {
+    return this._request(`/providers/${encodeURIComponent(id)}${this._qs({ city })}`);
+  }
+
+  /** The riders & agencies the signed-in user follows. @returns {Promise<{providers: Array}>} */
+  async followedProviders() {
+    return this._request('/providers/following');
+  }
+
+  /** An agency's active rider members (item C). @returns {Promise<{agency, riders: Array}>} */
+  async agencyRiders(agencyId) {
+    return this._request(`/providers/${encodeURIComponent(agencyId)}/riders`);
+  }
+
+  /**
    * The 4-digit handover code — the order BUYER only, and only from `accepted`
    * to `arrived`. Seller, admin and rider get 403.
    * @returns {Promise<{code: string, digits: number, attemptsRemaining: number}>}
@@ -168,9 +198,51 @@ class DeliveryApiClient {
     return this._post(`/${encodeURIComponent(id)}/auto-assign`);
   }
 
+  /** An agency delegates a delivery it holds to one of its riders (item C). */
+  async delegate(id, riderId) {
+    return this._post(`/${encodeURIComponent(id)}/delegate`, { riderId });
+  }
+
   /** Cancel before pickup. @returns {Promise<{delivery: object}>} */
   async cancel(id, reason) {
     return this._post(`/${encodeURIComponent(id)}/cancel`, reason ? { reason } : {});
+  }
+
+  // ------------------------------------------------- follow a provider (item B)
+  // A rider or agency is followed/reviewed as its account id through the shared
+  // social graph (POST /api/v1/social/*, target_type 'user') — no parallel
+  // follow system. These hit the API root beside /deliveries.
+
+  /** Follow a provider (rider or agency) by its id. */
+  async followProvider(providerId) {
+    return this._socialPost('/social/follow', { targetType: 'user', targetId: providerId });
+  }
+
+  /** Stop following a provider. */
+  async unfollowProvider(providerId) {
+    return this._socialPost('/social/unfollow', { targetType: 'user', targetId: providerId });
+  }
+
+  /** Leave a short review (endorsement) on a provider. */
+  async reviewProvider(providerId, note) {
+    return this._socialPost('/social/recommendations', { targetType: 'user', targetId: providerId, note });
+  }
+
+  async _socialPost(path, body) {
+    const token = await this._resolveToken();
+    const res = await fetch(`${this._apiRoot()}${path}`, {
+      method: 'POST',
+      headers: this._headers(token),
+      body: JSON.stringify(body || {})
+    });
+    const b = (await res.json().catch(() => null)) || {};
+    if (!res.ok) {
+      const err = new Error(b.error?.message || `Request failed with status ${res.status}`);
+      err.code = b.error?.code || 'API_ERROR';
+      err.status = res.status;
+      throw err;
+    }
+    return b.data !== undefined ? b.data : b;
   }
 
   // ------------------------------------------------------------------- rider
@@ -270,10 +342,12 @@ class DeliveryApiClient {
     return this._request(`/drivers${this._qs({ status })}`);
   }
 
-  /** Register, edit, suspend or reactivate a rider. */
-  async registerDriver(profileId, { name, phone, status } = {}) {
+  /** Register, edit, suspend or reactivate a rider — or an agency (isAgency + organizationId). */
+  async registerDriver(profileId, { name, phone, status, isAgency, organizationId } = {}) {
     const body = { name, phone };
     if (status) body.status = status;
+    if (isAgency !== undefined) body.isAgency = isAgency;
+    if (organizationId !== undefined) body.organizationId = organizationId;
     return this._post(`/drivers/${encodeURIComponent(profileId)}`, body);
   }
 

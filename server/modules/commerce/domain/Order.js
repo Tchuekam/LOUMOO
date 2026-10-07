@@ -14,10 +14,21 @@ const FULFILLMENT_STATUS = Object.freeze({
   CANCELLED: 'cancelled'
 });
 
+// The buyer-protection attestation lifecycle. NO real money moves (pay on
+// delivery): this is an honest status machine, driven by delivery events.
+//   pending      -> order placed, nothing in a rider's hands yet
+//   escrow_held  -> the parcel is in a rider's custody, protection active
+//   released     -> handover verified (delivered); settled, seller paid [terminal]
+//   refundable   -> the order was cancelled; nothing owed / refund due if paid
+//   refunded     -> an administrator completed the refund [terminal]
+// `paid` is kept for backward compatibility; the pay-on-delivery flow does not
+// set it.
 const PAYMENT_STATUS = Object.freeze({
   PENDING: 'pending',
   PAID: 'paid',
   ESCROW_HELD: 'escrow_held',
+  RELEASED: 'released',
+  REFUNDABLE: 'refundable',
   REFUNDED: 'refunded'
 });
 
@@ -134,6 +145,7 @@ class Order {
     currency = 'XAF',
     shippingAddress = {},
     deliveryMethod = DELIVERY_METHOD.HOME_DELIVERY,
+    preferredDriverId = null,
     paymentStatus = PAYMENT_STATUS.PENDING,
     fulfillmentStatus = FULFILLMENT_STATUS.PROCESSING,
     idempotencyKey = null,
@@ -158,6 +170,10 @@ class Order {
     this.currency = currency || 'XAF';
     this.shippingAddress = typeof shippingAddress === 'object' && shippingAddress ? shippingAddress : {};
     this.deliveryMethod = deliveryMethod || DELIVERY_METHOD.HOME_DELIVERY;
+    // The delivery provider the buyer preferred at checkout, if any. It is a
+    // HINT for dispatch — the seller still confirms the rider — never a pricing
+    // or security input, so it is just carried, not trusted.
+    this.preferredDriverId = preferredDriverId ? String(preferredDriverId) : null;
     this.paymentStatus = paymentStatus || PAYMENT_STATUS.PENDING;
     this.fulfillmentStatus = fulfillmentStatus || FULFILLMENT_STATUS.PROCESSING;
     this.idempotencyKey = idempotencyKey || null;
@@ -191,6 +207,7 @@ class Order {
       items: this.items.map(i => i.toJSON()),
       shippingAddress: this.shippingAddress,
       deliveryMethod: this.deliveryMethod,
+      preferredDriverId: this.preferredDriverId,
       paymentStatus: this.paymentStatus,
       fulfillmentStatus: this.fulfillmentStatus,
       idempotencyKey: this.idempotencyKey,

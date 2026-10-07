@@ -13,8 +13,8 @@ sys.path.append(os.path.abspath('.'))
 from src.views.home_view import get_home_view
 from src.views.pdp_view import get_product_view
 from src.views.cart_checkout_view import (
-    get_cart_view, get_checkout_view, get_paying_view,
-    get_success_view, get_payfailed_view, get_orders_and_transactions_view
+    get_cart_view, get_checkout_view,
+    get_success_view, get_orders_and_transactions_view
 )
 from src.views.search_ai_view import get_search_and_ai_view
 from src.views.collections_view import get_collections_view
@@ -1213,11 +1213,7 @@ html, body {
 .pay-radio-dot { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--color-divider); background: #fff; transition: all 0.15s ease; }
 .pay-radio-dot.selected { border-color: var(--color-accent); background: var(--color-accent); box-shadow: inset 0 0 0 3px #fff; }
 
-/* ── Paying Animation & Success Check ── */
-.paying-radar-wrap { position: relative; width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; margin-bottom: 24px; }
-.radar-pulse { position: absolute; width: 100%; height: 100%; border-radius: 50%; background: rgba(0, 122, 255, 0.2); animation: radarPing 2s cubic-bezier(0, 0, 0.2, 1) infinite; }
-@keyframes radarPing { 0% { transform: scale(0.6); opacity: 1; } 100% { transform: scale(1.8); opacity: 0; } }
-.radar-center-icon { width: 64px; height: 64px; border-radius: 50%; background: var(--color-accent); color: #fff; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-glow-blue); position: relative; z-index: 2; }
+/* ── Success Check ── */
 .success-check-badge { width: 72px; height: 72px; border-radius: 50%; background: var(--color-success); color: #fff; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; box-shadow: var(--shadow-glow-green); }
 
 /* ── Travel Concierge Styles (Apple-Grade Spatial Commerce) ── */
@@ -7149,6 +7145,12 @@ class Component extends DCLogic {
     // any account with no addresses of its own displayed as its own.
     addressesList: [],
     addressesLoading: false,
+    // Delivery providers the buyer can prefer at checkout (home delivery only).
+    providers: [],
+    providersLoading: false,
+    providersError: '',
+    providersCity: null,
+    selectedProviderId: null,
     addressFormName: '',
     addressFormPhone: '',
     addressFormCity: 'douala',
@@ -8132,7 +8134,7 @@ class Component extends DCLogic {
   // the placed items leave the bag, so if a later store fails the shopper is left
   // with exactly what was not ordered and can try again. Resolves with the orders
   // that were placed and, if one was refused, why.
-  _placeBagAsOrders(groups, address, method, images) {
+  _placeBagAsOrders(groups, address, method, images, deliveryMethod, preferredDriverId) {
     const api = getApi();
     const circuit = window.LoumooCircuit;
     const placed = [];
@@ -8141,7 +8143,7 @@ class Component extends DCLogic {
     const step = (i) => {
       if (i >= groups.length) return Promise.resolve({ placed: placed, failure: null });
       const group = groups[i];
-      return api.createOrder(circuit.toOrderPayload(group.items, address)).then((serverOrder) => {
+      return api.createOrder(circuit.toOrderPayload(group.items, address, deliveryMethod, preferredDriverId)).then((serverOrder) => {
         if (!serverOrder || !serverOrder.id) {
           // A reply without an order means the seller cannot have been told.
           const unconfirmed = new Error('The order was not confirmed.');
@@ -8161,6 +8163,58 @@ class Component extends DCLogic {
     };
     return step(0);
   }
+  // The ONE place that resolves the delivery destination — both the one the
+  // checkout card shows and the one placeOrder sends. Because the display and the
+  // action read the same answer, the card can never show a destination the order
+  // then rejects (the old bug: the card invented "Rue Joss, Bonanjo…" while the
+  // order refused the empty address). It invents nothing: it reads the selected
+  // address, else the default/first saved one, else the sign-up name/phone/city,
+  // and reports whether what it found is enough for the chosen method.
+  _resolveDeliveryDestination = () => {
+    const addrs = this.state.addressesList || [];
+    const sel = this.state.selectedDeliveryAddress;
+    const base = (sel && (sel.streetAddress || sel.recipientName || sel.phoneNumber))
+      ? sel
+      : (addrs.find((a) => a.isDefault) || addrs[0] || null);
+    const address = {
+      fullName: (base && base.recipientName) || [this.state.regFirstName, this.state.regLastName].filter(Boolean).join(' '),
+      phone: (base && base.phoneNumber) || this.state.regPhone || '',
+      street: (base && base.streetAddress) || '',
+      city: (base && base.city) || this.state.regCity || '',
+      region: (base && base.region) || ''
+    };
+    const method = (this.state.sel && this.state.sel.deliv === 'pickup') ? 'STORE_PICKUP' : 'HOME_DELIVERY';
+    const phoneOk = String(address.phone).replace(/[^0-9]/g, '').length >= 6;
+    const nameOk = address.fullName.trim().length >= 2;
+    // Home delivery needs a real place for the rider; pickup needs only a name and
+    // phone so the store can reach the buyer when the order is ready.
+    const hasDestination = method === 'STORE_PICKUP'
+      ? (nameOk && phoneOk)
+      : (Boolean(address.street.trim() && address.city.trim()) && phoneOk && nameOk);
+    return { address: address, method: method, hasDestination: hasDestination };
+  };
+  // Load the delivery providers a buyer can prefer for a city (home delivery). The
+  // list comes from the real quote endpoint, so every provider, fee and rating is
+  // real. Guarded so it fetches once per city, not on every render; a selection
+  // that is no longer offered is dropped.
+  _loadProviders = (city, force) => {
+    const api = (typeof window !== 'undefined') && window.deliveryApi;
+    if (!api || typeof api.getProviders !== 'function') return;
+    const normCity = String(city || '').trim();
+    if (this.state.providersLoading) return;
+    if (!force && this.state.providersCity === normCity && (this.state.providers.length || this.state.providersError)) return;
+    this.setState({ providersLoading: true, providersError: '', providersCity: normCity });
+    api.getProviders(normCity).then((res) => {
+      if (this._unmounted) return;
+      const list = (res && res.providers) || [];
+      const keep = this.state.selectedProviderId && list.some((p) => p.id === this.state.selectedProviderId)
+        ? this.state.selectedProviderId : null;
+      this.setState({ providers: list, providersLoading: false, selectedProviderId: keep });
+    }).catch((e) => {
+      if (this._unmounted) return;
+      this.setState({ providers: [], providersLoading: false, selectedProviderId: null, providersError: (e && e.message) || 'Could not load delivery options.' });
+    });
+  };
   // City → IATA-ish code + airport label for the boarding pass.
   _cityCode = (city) => {
     const map = {
@@ -8881,6 +8935,11 @@ class Component extends DCLogic {
     } else if (screen === 'orders' || screen === 'orderDetail') {
       // The server's orders carry the live status; refresh them on entry.
       this.loadServerOrders();
+    } else if (screen === 'checkout') {
+      // The buyer can prefer a delivery provider: load the ones serving their
+      // city (or everywhere, before an address is chosen). Home delivery only.
+      const dest = this._resolveDeliveryDestination();
+      if (dest.method === 'HOME_DELIVERY') this._loadProviders(dest.address.city || '');
     }
   }
 
@@ -12715,9 +12774,22 @@ class Component extends DCLogic {
     const dynamicSettings = (typeof window !== 'undefined' && window.LOUMOO_SYSTEM_SETTINGS) || this.state.systemSettings || this.state.adminSettings || {};
     // The delivery fee follows the city the order will be delivered to (the same
     // address placeOrder sends), because the server prices the order from that city.
-    const addrForFee = this.state.selectedDeliveryAddress || (this.state.addressesList && (this.state.addressesList.find(a => a.isDefault) || this.state.addressesList[0]));
-    const deliveryCity = (addrForFee && addrForFee.city) || this.state.regCity || (this.state.addressFormCity || 'Douala');
-    const deliveryFee = cartSubtotal > 0 ? resolveCityDeliveryFee(deliveryCity) : 0;
+    // The destination the order will use — resolved ONCE here and shown by the
+    // checkout card below, so what the buyer sees is exactly what placeOrder sends.
+    const checkoutDest = this._resolveDeliveryDestination();
+    // Store pickup has no rider leg, so the server charges no delivery fee and the
+    // checkout must show the same, or the shown total would not match the order.
+    const isPickup = checkoutDest.method === 'STORE_PICKUP';
+    const deliveryCity = checkoutDest.address.city || this.state.regCity || (this.state.addressFormCity || 'Douala');
+    // When the buyer has chosen a provider, the fee is THAT provider's quote — the
+    // server prices the order the same way, so what is shown is what is charged.
+    // Otherwise it is the city's standard rate.
+    const selectedProvider = (this.state.providers || []).find(p => p.id === this.state.selectedProviderId) || null;
+    const deliveryFee = (isPickup || cartSubtotal <= 0)
+      ? 0
+      : (selectedProvider && Number.isFinite(Number(selectedProvider.feeXaf))
+          ? Number(selectedProvider.feeXaf)
+          : resolveCityDeliveryFee(deliveryCity));
     const line = cartSubtotal;
     const items = cartSubtotal;
     const shipStyle = o => ({
@@ -16911,39 +16983,53 @@ src/<domain>/ and is composed by the helpers in src/core/build/.
       })(),
 
       // ── Checkout Delivery Destination ──
-      checkoutRecipientName: (() => {
-        const sel = this.state.selectedDeliveryAddress;
-        if (sel && sel.recipientName) return sel.recipientName;
-        const addrs = this.state.addressesList || [];
-        const def = addrs.find(a => a.isDefault) || addrs[0];
-        if (def && def.recipientName) return def.recipientName;
-        const name = [this.state.regFirstName, this.state.regLastName].filter(Boolean).join(' ');
-        return name || 'Rostand Tchuekam';
-      })(),
-      checkoutRecipientPhone: (() => {
-        const sel = this.state.selectedDeliveryAddress;
-        if (sel && sel.phoneNumber) return sel.phoneNumber;
-        const addrs = this.state.addressesList || [];
-        const def = addrs.find(a => a.isDefault) || addrs[0];
-        if (def && def.phoneNumber) return def.phoneNumber;
-        return this.state.regPhone || '690 12 34 56';
-      })(),
-      checkoutDeliveryAddress: (() => {
-        const sel = this.state.selectedDeliveryAddress;
-        if (sel && sel.streetAddress) {
-          return sel.streetAddress + (sel.city ? ', ' + (sel.city.charAt(0).toUpperCase() + sel.city.slice(1)) : '') + (sel.region ? ', ' + sel.region : ', Cameroon');
-        }
-        const addrs = this.state.addressesList || [];
-        const def = addrs.find(a => a.isDefault) || addrs[0];
-        if (def && def.streetAddress) {
-          return def.streetAddress + (def.city ? ', ' + (def.city.charAt(0).toUpperCase() + def.city.slice(1)) : '') + (def.region ? ', ' + def.region : ', Cameroon');
-        }
-        return 'Rue Joss, Bonanjo Commercial District (Near Standard Chartered Bank), Douala';
-      })(),
+      // Shown straight from the shared resolver — never invented. When nothing
+      // real is on file these are empty and checkoutHasDestination is false, so
+      // the card shows an "add" prompt instead of a made-up name and street.
+      checkoutIsPickup: isPickup,
+      checkoutHasDestination: checkoutDest.hasDestination,
+      checkoutRecipientName: checkoutDest.address.fullName,
+      checkoutRecipientPhone: checkoutDest.address.phone,
+      checkoutDeliveryAddress: checkoutDest.address.street
+        ? checkoutDest.address.street
+          + (checkoutDest.address.city ? ', ' + (checkoutDest.address.city.charAt(0).toUpperCase() + checkoutDest.address.city.slice(1)) : '')
+          + (checkoutDest.address.region ? ', ' + checkoutDest.address.region : ', Cameroon')
+        : '',
       changeDeliveryDestination: () => {
         this.setState({ checkoutReturn: true });
         this.openAddresses();
       },
+
+      // ── Choose your delivery provider (home delivery only) ──
+      // Real providers from the quote endpoint. The buyer may pick one; it is a
+      // preference (the seller confirms) and it sets the delivery fee shown, which
+      // the server then charges. Picking is optional: with none chosen the order
+      // still goes, priced at the city rate, and the seller arranges a rider.
+      checkoutShowProviders: !isPickup && checkoutDest.hasDestination,
+      checkoutProvidersLoading: Boolean(this.state.providersLoading),
+      checkoutProvidersError: this.state.providersError || '',
+      checkoutProvidersEmpty: !this.state.providersLoading && !this.state.providersError && (this.state.providers || []).length === 0,
+      checkoutSelectedProviderId: this.state.selectedProviderId || '',
+      checkoutProviders: (this.state.providers || []).map((p) => {
+        const vehicleNames = { motorbike: 'Motorbike', bicycle: 'Bicycle', car: 'Car', van: 'Van', tricycle: 'Tricycle', on_foot: 'On foot' };
+        return {
+          id: p.id,
+          city: this.state.providersCity || '',
+          name: p.name || 'Delivery provider',
+          photo: p.photoUrl || '',
+          hasPhoto: Boolean(p.photoUrl),
+          initial: String(p.name || '?').trim().charAt(0).toUpperCase() || '?',
+          kindLabel: p.isAgency ? 'Agency' : 'Rider',
+          vehicleLabel: vehicleNames[p.vehicleType] || '',
+          ratingLabel: (p.rating && p.rating.average != null) ? ('★ ' + Number(p.rating.average).toFixed(1)) : 'New',
+          ratingCountLabel: (p.rating && p.rating.count) ? (Number(p.rating.count) + ' ratings') : 'No ratings yet',
+          completedLabel: (Number(p.completedDeliveries) || 0) + ' deliveries',
+          feeLabel: Number.isFinite(Number(p.feeXaf)) ? ('XAF ' + fmt(Number(p.feeXaf))) : 'Fee at checkout',
+          selected: p.id === this.state.selectedProviderId,
+          select: () => this.setState((s) => ({ selectedProviderId: s.selectedProviderId === p.id ? null : p.id }))
+        };
+      }),
+      retryProviders: () => this._loadProviders(this.state.providersCity || '', true),
 
       // ── Notifications feed ──
       notifHasItems: (this.state.notifications || []).length > 0,
@@ -16981,7 +17067,7 @@ src/<domain>/ and is composed by the helpers in src/core/build/.
         const o = this.state.currentOrder;
         const money = (n) => 'XAF ' + fmt(n || 0);
         if (!o) {
-          return { id: '', orderNumber: '', placedAt: '', statusLabel: '', totalLabel: '', payVia: '', items: [], subtotalLabel: '', shippingLabel: '', cityLabel: '', seller: '', sellerPhone: '', canTrack: false, noTrackNote: '' };
+          return { id: '', orderNumber: '', placedAt: '', statusLabel: '', totalLabel: '', payVia: '', items: [], subtotalLabel: '', shippingLabel: '', cityLabel: '', seller: '', sellerPhone: '', canTrack: false, noTrackNote: '', escrowTitle: 'Pay on delivery', escrowNote: '', escrowOk: true };
         }
         const circuit = typeof window !== 'undefined' ? window.LoumooCircuit : null;
         const sent = Boolean(o.id) && o.serverSynced !== false;
@@ -17001,14 +17087,30 @@ src/<domain>/ and is composed by the helpers in src/core/build/.
         if (!sent) noTrackNote = 'This order was saved on this device only, so no seller or rider knows about it. Add the items to your bag again to place it.';
         else if (cancelled) noTrackNote = 'This order was cancelled.';
         else if (!home) noTrackNote = 'This order is for pickup, so there is no delivery to track.';
+        // The buyer-protection attestation, in the buyer's words. NO money moves
+        // (pay on delivery); each state is driven by the delivery (spec item D):
+        // pending -> held (rider has it) -> released (delivered), or refundable /
+        // refunded if the order was cancelled or an admin refunded it.
+        const totalLabel = money(o.totalXaf);
+        const via = o.paymentMethod && o.paymentMethod !== 'Pay on delivery' ? ' via ' + o.paymentMethod : '';
+        const escrow = (() => {
+          switch (o.paymentStatus) {
+            case 'escrow_held': return { title: 'Protected — on its way', note: 'Your order is under LOUMOO Buyer Protection while the rider has it. You pay ' + totalLabel + ' on delivery' + via + '.', tone: 'ok' };
+            case 'released': return { title: 'Delivered & settled', note: 'Your handover code was verified, so the seller has been paid. Nothing else is owed.', tone: 'ok' };
+            case 'refundable': return { title: 'Refund due', note: 'This order was cancelled. With pay-on-delivery no charge was taken; if you had already paid, a refund is due.', tone: 'muted' };
+            case 'refunded': return { title: 'Refunded', note: 'This order has been refunded.', tone: 'muted' };
+            case 'paid': return { title: 'Paid', note: 'Your payment is recorded.', tone: 'ok' };
+            default: return { title: 'Pay on delivery', note: 'No charge has been taken. You pay ' + totalLabel + ' when your order arrives' + via + '.', tone: 'ok' };
+          }
+        })();
         return {
           id: o.id || '',
           orderNumber: o.orderNumber || '',
           placedAt: this._orderDateLabel(o.createdAt),
           statusLabel: circuit ? circuit.orderStatusLabel(o) : this._orderStatusLabel(o.status),
-          totalLabel: money(o.totalXaf),
+          totalLabel: totalLabel,
           // " via MTN MoMo" only when a method was actually chosen on this device.
-          payVia: o.paymentMethod && o.paymentMethod !== 'Pay on delivery' ? ' via ' + o.paymentMethod : '',
+          payVia: via,
           items: items,
           subtotalLabel: money(subtotal),
           shippingLabel: o.shippingFeeXaf != null ? money(o.shippingFeeXaf) : '—',
@@ -17016,7 +17118,11 @@ src/<domain>/ and is composed by the helpers in src/core/build/.
           seller: o.seller || 'the seller',
           sellerPhone: o.sellerPhone || o.sellerWhatsapp || '',
           canTrack: sent && home && !cancelled,
-          noTrackNote: noTrackNote
+          noTrackNote: noTrackNote,
+          // Buyer-protection attestation (item D).
+          escrowTitle: escrow.title,
+          escrowNote: escrow.note,
+          escrowOk: escrow.tone === 'ok'
         };
       })(),
       // ── Order confirmation (success screen) ──
@@ -17028,6 +17134,13 @@ src/<domain>/ and is composed by the helpers in src/core/build/.
         : '',
       lastOrderNumber: this.state.lastOrder ? this.state.lastOrder.orderNumber : '',
       lastOrderTotal: this.state.lastOrder ? ('XAF ' + fmt(this.state.lastOrder.totalXaf)) : '',
+      // A placement notice (e.g. the chosen delivery provider was unavailable and
+      // the order fell back to the city rate), shown once on the success screen.
+      lastDeliveryNotice: Boolean((this.state.lastOrders || []).map((o) => o && o.deliveryNotice).filter(Boolean)[0]),
+      lastDeliveryNoticeText: (() => {
+        const dn = (this.state.lastOrders || []).map((o) => o && o.deliveryNotice).filter(Boolean)[0];
+        return dn && dn.message ? dn.message : '';
+      })(),
       lastOrderSeller: this.state.lastOrder ? this.state.lastOrder.seller : 'the seller',
       lastOrderSellerPhone: this.state.lastOrder ? (this.state.lastOrder.sellerPhone || this.state.lastOrder.sellerWhatsapp || '') : '',
       lastOrderPayMethod: this.state.lastOrder ? this.state.lastOrder.paymentMethod : '',
@@ -17390,18 +17503,20 @@ src/<domain>/ and is composed by the helpers in src/core/build/.
           return;
         }
 
-        // The rider needs a real place to go and a number to call. Do not invent
-        // either: without them the delivery would be sent to a made-up address.
-        const selAddr = this.state.selectedDeliveryAddress || (this.state.addressesList && (this.state.addressesList.find(a => a.isDefault) || this.state.addressesList[0]));
-        const address = {
-          fullName: (selAddr && selAddr.recipientName)
-            || [this.state.regFirstName, this.state.regLastName].filter(Boolean).join(' '),
-          phone: (selAddr && selAddr.phoneNumber) || this.state.regPhone || '',
-          street: (selAddr && selAddr.streetAddress) || '',
-          city: (selAddr && selAddr.city) || this.state.regCity || ''
-        };
-        if (!address.street.trim() || String(address.phone).replace(/[^0-9]/g, '').length < 6 || !address.city.trim() || address.fullName.trim().length < 2) {
-          this.setState({ orderError: 'Add a delivery address with your name, street, city and phone number, so the rider knows where to go and how to reach you.', orderErrorItemIds: [] });
+        // How the buyer chose to receive this order decides what we must collect,
+        // and it comes from the SAME resolver the destination card shows, so the
+        // card and this guard can never disagree. The server prices and treats the
+        // order by this method too, so all three agree.
+        const dest = this._resolveDeliveryDestination();
+        const deliveryMethod = dest.method;
+        const address = dest.address;
+        if (!dest.hasDestination) {
+          this.setState({
+            orderError: deliveryMethod === 'HOME_DELIVERY'
+              ? 'Add a delivery address with your name, street, city and phone number, so the rider knows where to go and how to reach you.'
+              : 'Add your name and a phone number so the store can reach you when your order is ready for pickup.',
+            orderErrorItemIds: []
+          });
           return;
         }
 
@@ -17415,7 +17530,9 @@ src/<domain>/ and is composed by the helpers in src/core/build/.
         this.setState({ placingOrder: true, orderError: '', orderErrorItemIds: [] });
         const finish = (patch) => { this._placingNow = false; if (!this._unmounted) this.setState(Object.assign({ placingOrder: false }, patch || {})); };
 
-        this._placeBagAsOrders(groups, address, method, images).then((res) => {
+        // Only a home delivery carries a preferred provider; pickup never does.
+        const preferredDriverId = deliveryMethod === 'HOME_DELIVERY' ? (this.state.selectedProviderId || null) : null;
+        this._placeBagAsOrders(groups, address, method, images, deliveryMethod, preferredDriverId).then((res) => {
           if (this._unmounted) { this._placingNow = false; return; }
           const placed = res.placed;
           if (placed.length) {
@@ -17445,7 +17562,11 @@ src/<domain>/ and is composed by the helpers in src/core/build/.
             return;
           }
           finish();
-          this.toast('Order ' + placed[0].orderNumber + ' placed');
+          // If the server dropped the buyer's chosen delivery provider (it became
+          // unavailable between the quote and now), say so instead of the plain
+          // "placed" toast — the success screen repeats it. Honest, not silent.
+          var dropped = placed.map(function (o) { return o && o.deliveryNotice; }).filter(Boolean)[0];
+          this.toast(dropped && dropped.message ? dropped.message : ('Order ' + placed[0].orderNumber + ' placed'));
           this.go('success');
         }).catch(() => {
           finish({ orderError: 'Something went wrong while placing your order. Check My Orders before trying again.', orderErrorItemIds: [] });
@@ -17893,28 +18014,112 @@ src/<domain>/ and is composed by the helpers in src/core/build/.
 </html>
 """
 
-import os
-import sys
+# ── Emit the shared product catalogue ────────────────────────────────────────
+# The catalog is maintained in src/data/catalog_products.js and exported as
+# public/data/catalog.json, data/catalog.json and src/data/catalog_products_bundle.js
+# for fast, non-blocking client-side hydration without bloating the initial shell.
+def _emit_catalog_assets():
+    catalog_js = os.path.join('src', 'data', 'catalog_products.js')
+    if not os.path.exists(catalog_js):
+        return
+    with open(catalog_js, 'r', encoding='utf-8') as f:
+        content = f.read()
+    match = re.search(r'export\s+const\s+catalogProducts\s*=\s*(\{[\s\S]*?\});?\s*$', content)
+    if not match:
+        return
+    raw_obj = match.group(1)
+    # 1. Browser bundle (sets window.PRODUCTS_DATA)
+    bundle_path = os.path.join('src', 'data', 'catalog_products_bundle.js')
+    bundle_code = '/** LOUMOO Catalog Products Browser Bundle (Decoupled) */\nwindow.PRODUCTS_DATA = ' + raw_obj + ';\n'
+    with open(bundle_path, 'w', encoding='utf-8') as f:
+        f.write(bundle_code)
+    # 2. JSON exports for direct fetch
+    import subprocess
+    try:
+        subprocess.run(['node', '-e', """
+          const cp = require('./server/modules/catalog/dataLoader.js').catalogProducts;
+          const fs = require('fs');
+          fs.mkdirSync('data', { recursive: true });
+          fs.writeFileSync('data/catalog.json', JSON.stringify(cp, null, 2), 'utf-8');
+          if (fs.existsSync('public')) {
+            fs.mkdirSync('public/data', { recursive: true });
+            fs.copyFileSync('data/catalog.json', 'public/data/catalog.json');
+          }
+        """], check=True)
+    except Exception as e:
+        print('Catalog JSON update notice:', e)
+    print('catalog_products bundle & json verified.')
 
-sys.path.append(os.path.abspath('.'))
+_emit_catalog_assets()
 
-from src.core.build import catalog_assets, chunks, component, public_site, registry, screens, shell, styles
+_screen_chunks = [
+    ('SearchScreens', 'is.search || is.filters || is.voice || is.visual || is.visualScan || is.visualResults', get_search_and_ai_view()),
+    ('ChatProfileScreens', 'is.chat || is.threadAi || is.threadSeller || is.notifications || is.profile || is.saved || is.settings || is.loading || is.networkError', get_chat_and_profile_view()),
+    ('OnboardingScreens', 'is.onboardWelcome || is.onboardType || is.onboardIdentity || is.onboardOtp || is.onboardAdaptive || is.onboardBuyer || is.onboardSeller || is.onboardBusiness || is.onboardVerify || is.onboardReview || is.onboardSuccess', get_onboarding_view()),
+    ('AccountAccessScreens', 'is.signIn || is.forgotPassword || is.resetPassword || is.verifyEmail', get_account_access_view()),
+    ('AccountHubScreens', 'is.accountDashboard || is.editProfile || is.addresses || is.addAddress || is.editAddress || is.notificationPreferences || is.privacySettings || is.securitySettings || is.followedStores || is.userActivity || is.deleteAccount', get_account_hub_view()),
+    ('OrderScreens', 'is.orderDetail || is.refundRequest || is.writeReview || is.sellerOrderDetail || is.sellerPayouts', get_order_product_flow_view()),
+    ('HotelScreens', 'is.hotelSearch || is.hotelDetail || is.hotelBooking || is.hotelVoucher', get_hotel_vertical_view()),
+    ('ProductScreens', 'is.product', get_product_view()),
+    ('CheckoutScreens', 'is.cart || is.checkout || is.success || is.orders || is.transactions', get_cart_view() + get_checkout_view() + get_success_view() + get_orders_and_transactions_view()),
+    ('CollectionsScreens', 'is.category || is.bestpicks || is.freeday', get_collections_view()),
+    ('MerchantScreens', 'is.store || is.business || is.brand || is.seller || is.myListings', get_merchant_view()),
+    ('CommunityScreens', 'is.announce || is.announceCampaigns || is.announceDetail || is.vs || is.vsCompare', get_community_view()),
+    ('TravelScreens', 'is.travel || is.travelBus || is.travelPackages || is.travelVisa || is.travelResults || is.travelDetail || is.travelPassenger || is.travelTicket', get_travel_view()),
+    ('StoreBusinessScreens', 'is.createStore || is.storeOnboarding || is.storeSettings || is.storeVerification || is.storeAnalytics', get_store_business_view()),
+    ('PublishingScreens', 'is.publishIntent || is.publishStudio || is.publishReview || is.publishSuccess', build_publishing_view()),
+    ('PublicProfileScreens', 'is.publicUserProfile || is.sellerPublicPage', get_public_profile_view()),
+    ('SuperAdminScreens', 'is.superAdmin', get_super_admin_view()),
+]
+
+def _optimize_media_markup(markup):
+    """Make template media cheap before the route is actually mounted."""
+    def image_tag(match):
+        tag = match.group(0)
+        if not re.search(r'\bloading\s*=', tag, re.I):
+            tag = tag[:-2] + ' loading="lazy" />' if tag.endswith('/>') else tag[:-1] + ' loading="lazy">'
+        if not re.search(r'\bdecoding\s*=', tag, re.I):
+            tag = tag[:-2] + ' decoding="async" />' if tag.endswith('/>') else tag[:-1] + ' decoding="async">'
+        return tag
+
+    def video_tag(match):
+        tag = match.group(0)
+        if not re.search(r'\bpreload\s*=', tag, re.I):
+            tag = tag[:-1] + ' preload="none">'
+        return tag
+
+    markup = re.sub(r'<img\b[^>]*>', image_tag, markup, flags=re.I)
+    return re.sub(r'<video\b[^>]*>', video_tag, markup, flags=re.I)
 
 
-def build():
-    # The catalogue bundle is emitted first: the shell loads it and the views read it.
-    catalog_assets.emit_catalog_assets()
+def _write_screen_chunk(name, markup):
+    # A child DC component intentionally has no logic of its own. The root
+    # owns navigation/state and passes its already-derived view projection via
+    # `dcProps`, so the split changes loading boundaries without changing UX.
+    chunk = (
+        '<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n'
+        '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
+        '<title>LOUMOO Screen</title>\n'
+        '</head>\n<body>\n<x-dc>\n'
+        + _optimize_media_markup(markup)
+        + '\n</x-dc>\n'
+        '<script type="text/x-dc" data-dc-script>\n'
+        'class Component extends DCLogic {\n'
+        '  renderVals() { return (this.props && this.props.dcProps) || this.props || {}; }\n'
+        '}\n'
+        '</script>\n</body>\n</html>\n'
+    )
+    with open(name + '.dc.html', 'w', encoding='utf-8') as f:
+        f.write(chunk)
+    return chunk
 
-    lazy_markup = chunks.write_lazy_chunks(screens.screen_chunks())
-
-    header = shell.document_header(styles.master_stylesheet())
-    footer = shell.document_footer(component.assemble_component_script(registry.COMPONENT_DOMAINS))
-
-    full_html = (
-        chunks.optimize_media_markup(header)
-        + chunks.optimize_media_markup(screens.home_markup())
-        + lazy_markup
-        + chunks.optimize_media_markup(footer)
+lazy_screen_markup = ''
+for _name, _condition, _markup in _screen_chunks:
+    _write_screen_chunk(_name, _markup)
+    lazy_screen_markup += (
+        '\n<sc-if value="{{ ' + _condition + ' }}">\n'
+        '  <dc-import name="' + _name + '" dcProps="{{ viewProps }}"></dc-import>\n'
+        '</sc-if>\n'
     )
     with open('Commerce App.dc.html', 'w', encoding='utf-8') as handle:
         handle.write(full_html)

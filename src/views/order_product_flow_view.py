@@ -32,13 +32,15 @@ def get_order_product_flow_view():
 
   <div style="padding:16px;max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:14px">
 
-    <!-- Payment: collected on delivery, so nothing has been charged yet -->
-    <div style="display:flex;align-items:center;gap:12px;background:var(--color-surface);border:1px solid var(--color-success);border-radius:var(--radius-md);padding:14px 16px">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--color-success)" stroke-width="2" style="flex-shrink:0"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    <!-- Buyer-protection attestation. Pay on delivery — NO money moves; the state
+         is driven by the delivery (spec item D): pending -> held (rider has it) ->
+         released (delivered), or refundable / refunded if cancelled or refunded. -->
+    <div style="display:flex;align-items:center;gap:12px;background:var(--color-surface);border:1px solid {{ orderView.escrowOk ? 'var(--color-success)' : 'var(--color-divider)' }};border-radius:var(--radius-md);padding:14px 16px">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="{{ orderView.escrowOk ? 'var(--color-success)' : 'var(--color-text-muted)' }}" stroke-width="2" style="flex-shrink:0"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
       <div>
-        <div style="font:800 13.5px/1.2 var(--font-heading);color:var(--color-text)">Pay on delivery</div>
+        <div style="font:800 13.5px/1.2 var(--font-heading);color:var(--color-text)">{{ orderView.escrowTitle }}</div>
         <div style="font:400 12px/1.35 var(--font-body);color:var(--color-text-secondary);margin-top:2px">
-          No charge has been taken. You pay {{ orderView.totalLabel }} when your order arrives{{ orderView.payVia }}.
+          {{ orderView.escrowNote }}
         </div>
       </div>
     </div>

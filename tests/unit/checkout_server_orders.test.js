@@ -117,12 +117,16 @@ function fakeServer() {
         }
       }
       if (server.reply === 'empty') return null;
+      // Mirror the server: a store pickup has no rider leg, so it is charged no
+      // delivery fee, and the method the buyer chose is the method the order gets.
+      const method = payload.deliveryMethod === 'STORE_PICKUP' ? 'STORE_PICKUP' : 'HOME_DELIVERY';
+      const fee = method === 'STORE_PICKUP' ? 0 : 1500;
       const sub = payload.items.reduce((n, it) => n + PRICE[it.listingId] * it.quantity, 0);
       const order = {
         id: `ord_${++server.seq}`, orderNumber: `KM-T-${server.seq}`, buyerId: 'b', sellerId: 's', sellerPhone: '699334455',
-        subtotalXaf: sub, shippingFeeXaf: 1500, totalAmountXaf: sub + 1500,
+        subtotalXaf: sub, shippingFeeXaf: fee, totalAmountXaf: sub + fee,
         items: payload.items.map((it) => ({ listingId: it.listingId, title: it.title, unitPriceXaf: PRICE[it.listingId], quantity: it.quantity, storeName: STORE_OF[it.listingId], storePhone: '699334455', imageUrl: null })),
-        shippingAddress: payload.shippingAddress, deliveryMethod: 'HOME_DELIVERY', paymentStatus: 'pending', fulfillmentStatus: 'processing', createdAt: new Date().toISOString()
+        shippingAddress: payload.shippingAddress, deliveryMethod: method, paymentStatus: 'pending', fulfillmentStatus: 'processing', createdAt: new Date().toISOString()
       };
       server.orders.unshift(order);
       return order;
@@ -162,6 +166,90 @@ async function testGuestAndAddress() {
     assert.strictEqual(server.payloads.length, 0, 'and sends nothing');
     assert.strictEqual(comp.state.placingOrder, false);
   }
+
+  // The card must not invent a destination it does not have: with nothing on file
+  // it shows no name, no address, and flags that one must be added — the old bug
+  // was a fabricated "Rue Joss, Bonanjo…" shown while the order refused the empty
+  // address, so the screen and the action disagreed.
+  comp.setState({ authStatus: 'authenticated', screen: 'checkout', cartItems: bag(), addressesList: [], selectedDeliveryAddress: null, regPhone: '', regCity: '', regFirstName: '', regLastName: '' });
+  const empty = comp.renderVals();
+  assert.strictEqual(empty.checkoutHasDestination, false, 'with nothing on file, there is no destination');
+  assert.strictEqual(empty.checkoutRecipientName, '', 'and no invented recipient name');
+  assert.strictEqual(empty.checkoutDeliveryAddress, '', 'and no invented street');
+}
+
+// Store pickup is the other fulfilment path: the buyer collects the order, so no
+// street or city is needed — only a name and a phone so the store can reach them.
+// The buyer's choice must reach the order, and a pickup is charged no delivery fee.
+async function testStorePickup() {
+  const server = fakeServer();
+  const apiRef = { current: server.api };
+  const { comp } = buildApp(apiRef);
+  const asPickup = (extra) => comp.setState(Object.assign(
+    { authStatus: 'authenticated', screen: 'checkout', sel: Object.assign({}, comp.state.sel, { deliv: 'pickup' }) },
+    extra
+  ));
+
+  // Pickup with no way to reach the buyer is refused — but for the pickup reason,
+  // not the delivery-address one, and nothing is sent.
+  asPickup({ cartItems: bag(), addressesList: [], selectedDeliveryAddress: null, regPhone: '', regCity: '', regFirstName: '', regLastName: '', orderError: '' });
+  comp.renderVals().placeOrder();
+  assert.ok(/pickup/i.test(comp.state.orderError), 'pickup still needs a name and phone');
+  assert.ok(!/delivery address/i.test(comp.state.orderError), 'but it does not ask for a street it will not use');
+  assert.strictEqual(server.payloads.length, 0, 'and sends nothing');
+
+  // A name and phone are enough: no street or city, the order is placed as a
+  // STORE_PICKUP, and the server charges no delivery fee.
+  asPickup({ cartItems: bag(), orderError: '', regFirstName: 'Awa', regLastName: 'Njoya', regPhone: '622222222' });
+  comp.renderVals().placeOrder();
+  await waitFor(() => comp.state.screen === 'success', 'the pickup success screen');
+  assert.strictEqual(server.payloads.length, 2, 'one order per store, same as delivery');
+  for (const p of server.payloads) {
+    assert.strictEqual(p.deliveryMethod, 'STORE_PICKUP', 'the buyer\'s pickup choice reaches the order');
+    assert.ok(!p.shippingAddress.street, 'no street is sent for a pickup');
+  }
+  for (const o of comp.state.orders) assert.strictEqual(o.shippingFeeXaf, 0, 'a pickup is charged no delivery fee');
+}
+
+// The buyer can prefer a delivery provider at checkout. The picker shows real,
+// selectable facts; the chosen provider's fee is the fee shown; and the choice is
+// sent with the order as preferredDriverId (home delivery only).
+async function testProviderPreference() {
+  const server = fakeServer();
+  const apiRef = { current: server.api };
+  const { comp } = buildApp(apiRef);
+  const oneStore = [{ id: 'l1', name: 'Phone', priceXaf: 50000, qty: 1, store: 'Tech Shop', image: 'p.jpg' }];
+  comp.setState({
+    authStatus: 'authenticated', screen: 'checkout', cartItems: oneStore, addressesList: [ADDRESS],
+    providers: [
+      { id: 'rider_a', name: 'Alain', vehicleType: 'motorbike', rating: { average: 4.5, count: 12 }, completedDeliveries: 42, openDeliveries: 0, feeXaf: 2500, serviceAreas: ['douala'], isAgency: false },
+      { id: 'agency_f', name: 'FastMove', vehicleType: null, rating: null, completedDeliveries: 0, openDeliveries: 1, feeXaf: 1800, serviceAreas: ['douala'], isAgency: true }
+    ],
+    providersCity: 'Douala', selectedProviderId: 'rider_a'
+  });
+
+  const vals = comp.renderVals();
+  assert.strictEqual(vals.checkoutShowProviders, true, 'the picker shows for a home delivery with an address');
+  // The chosen provider's fee is the fee shown (items 50 000 + rider 2 500).
+  assert.ok(/52 500/.test(vals.cartTotal), 'the chosen provider\'s fee is in the total: ' + vals.cartTotal);
+  const card = vals.checkoutProviders.find((p) => p.id === 'rider_a');
+  assert.strictEqual(card.selected, true, 'the chosen provider is marked selected');
+  assert.ok(/42 deliveries/.test(card.completedLabel), 'a real completed-delivery count is shown');
+  assert.ok(/2 500/.test(card.feeLabel), 'the provider\'s fee is shown');
+  assert.strictEqual(card.vehicleLabel, 'Motorbike');
+  const agency = vals.checkoutProviders.find((p) => p.id === 'agency_f');
+  assert.strictEqual(agency.kindLabel, 'Agency', 'an agency is labelled as one');
+  assert.strictEqual(agency.ratingLabel, 'New', 'no reviews shows "New", not a fabricated score');
+
+  vals.placeOrder();
+  await waitFor(() => comp.state.screen === 'success', 'the success screen');
+  assert.strictEqual(server.payloads.length, 1, 'one store, one order');
+  assert.strictEqual(server.payloads[0].preferredDriverId, 'rider_a', 'the buyer\'s chosen provider is sent with the order');
+
+  // Tapping the selected provider again clears the preference (it is optional).
+  comp.setState({ cartItems: oneStore, screen: 'checkout' });
+  comp.renderVals().checkoutProviders.find((p) => p.id === 'rider_a').select();
+  assert.strictEqual(comp.state.selectedProviderId, null, 'tapping the chosen provider clears it');
 }
 
 async function testHappyPath() {
@@ -364,6 +452,8 @@ async function runNotificationChecks(comp, server, toasts, opened) {
 async function run() {
   console.log('  Testing checkout and orders against the server\'s rules...');
   await testGuestAndAddress();
+  await testStorePickup();
+  await testProviderPreference();
   await testHappyPath();
   await testRefusalKeepsTheBag();
   await testDoubleTap();

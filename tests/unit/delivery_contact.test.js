@@ -37,6 +37,7 @@ const { DeliveryRepository, DeliveryNotReadyError } = require('../../server/modu
 const { DeliveryEvents } = require('../../server/modules/delivery/infrastructure/DeliveryEvents');
 const { OrderRepository } = require('../../server/modules/commerce/infrastructure/OrderRepository');
 const { OrderCreationService } = require('../../server/modules/commerce/application/OrderCreationService');
+const { OrderLifecycleService } = require('../../server/modules/commerce/application/OrderLifecycleService');
 const { Order, FULFILLMENT_STATUS, DELIVERY_METHOD, PAYMENT_STATUS } = require('../../server/modules/commerce/domain/Order');
 const { codeFor } = require('../../server/modules/delivery/domain/HandoverCode');
 const { MAX_HANDOVER_ATTEMPTS } = require('../../server/modules/delivery/domain/Delivery');
@@ -155,6 +156,91 @@ async function testOrderPlacement() {
       const { service } = makeCreationService();
       assert.strictEqual(await code(service.createOrder('buyer_1', { items: [{ listingId: 'elec-1', quantity: 1 }] })), 'NOT_FOUND');
     }
+  } finally {
+    rec.restore();
+  }
+}
+
+// --------------------------------- 1b. the buyer's preferred provider prices the order
+// The picker shows a provider's fee; the order must be priced at THAT fee server-side,
+// so the fee shown is the fee charged. An unavailable pick is dropped, not honoured.
+async function testPreferredProviderPricing() {
+  const rec = recordNotifications();
+  try {
+    // Providers the order service resolves a preference against — injected, so the
+    // test depends on neither the shared delivery singleton nor a database. Their
+    // service areas are folded exactly as the real provider store keeps them.
+    const PROVIDERS = {
+      pp_fee: { id: 'pp_fee', status: 'active', serviceAreas: ['douala'], baseFeeXaf: 2200 },
+      pp_nofee: { id: 'pp_nofee', status: 'active', serviceAreas: ['douala'], baseFeeXaf: null },
+      pp_susp: { id: 'pp_susp', status: 'suspended', serviceAreas: ['douala'], baseFeeXaf: 2200 },
+      pp_away: { id: 'pp_away', status: 'active', serviceAreas: ['yaounde'], baseFeeXaf: 2200 }
+    };
+    const resolveProvider = async (id) => PROVIDERS[id] || null;
+
+    const order = (extra) => {
+      const listings = { l1: listing('l1', 'seller_1', 'Tech Shop') };
+      const repository = {
+        findListingById: async (id) => listings[id] || null,
+        findVariantById: async () => null,
+        checkInventory: async () => ({ isAvailable: true, availableQuantity: 99 }),
+        saveOrder: async (o) => { o.id = 'ord_pp'; return o; }
+      };
+      const service = new OrderCreationService(repository, { resolveProvider });
+      return service.createOrder('buyer_1', Object.assign({
+        items: [{ listingId: 'l1', quantity: 1 }],
+        shippingAddress: { fullName: 'Awa Njoya', phone: '+237622222222', street: 'Rue 1', city: 'Douala' },
+        deliveryMethod: 'HOME_DELIVERY'
+      }, extra));
+    };
+
+    // Baseline: no preference -> the standard city fee (whatever this env seeds).
+    const baseline = await order({});
+    const cityFee = baseline.shippingFeeXaf;
+    assert.strictEqual(baseline.preferredDriverId, null);
+    assert.ok(!baseline.deliveryNotice, 'no preference means nothing to warn about');
+
+    // A provider with their own tariff prices the order at THAT tariff, and the
+    // preference is kept — this is what makes the picker's fee the charged fee.
+    const withFee = await order({ preferredDriverId: 'pp_fee' });
+    assert.strictEqual(withFee.shippingFeeXaf, 2200, 'the order is priced at the chosen provider\'s tariff');
+    assert.strictEqual(withFee.preferredDriverId, 'pp_fee', 'and the preference is kept');
+    assert.ok(!withFee.deliveryNotice, 'an honoured pick raises no notice');
+
+    // No tariff of their own: the standard city fee, preference kept.
+    const noFee = await order({ preferredDriverId: 'pp_nofee' });
+    assert.strictEqual(noFee.shippingFeeXaf, cityFee, 'a provider with no tariff charges the standard fee');
+    assert.strictEqual(noFee.preferredDriverId, 'pp_nofee');
+    assert.ok(!noFee.deliveryNotice, 'a kept pick raises no notice');
+
+    // Suspended: not honoured — standard fee, and the dead pick is dropped so the
+    // order never carries a provider who cannot do it. The buyer is TOLD (item E):
+    // a one-time notice rides on the returned order, priced at the city fee.
+    const susp = await order({ preferredDriverId: 'pp_susp' });
+    assert.strictEqual(susp.shippingFeeXaf, cityFee, 'a suspended provider does not set the price');
+    assert.strictEqual(susp.preferredDriverId, null, 'and the unavailable preference is dropped');
+    assert.ok(susp.deliveryNotice, 'the buyer is told the pick was dropped, not switched silently');
+    assert.strictEqual(susp.deliveryNotice.code, 'preferred_provider_unavailable');
+    assert.strictEqual(susp.deliveryNotice.reason, 'suspended');
+    assert.strictEqual(susp.deliveryNotice.effectiveFeeXaf, cityFee, 'the notice states the fee that was actually applied');
+    assert.ok(/standard delivery rate/i.test(susp.deliveryNotice.message), 'the message is honest about the fallback');
+
+    // Out of area: not honoured either, and the reason is specific.
+    const away = await order({ preferredDriverId: 'pp_away' });
+    assert.strictEqual(away.shippingFeeXaf, cityFee, 'an out-of-area provider does not set the price');
+    assert.strictEqual(away.preferredDriverId, null);
+    assert.ok(away.deliveryNotice && away.deliveryNotice.reason === 'out_of_area', 'the notice names the out-of-area reason');
+
+    // A provider that no longer exists at all (resolve returns null) is 'gone'.
+    const gone = await order({ preferredDriverId: 'pp_gone' });
+    assert.strictEqual(gone.preferredDriverId, null, 'a vanished provider is dropped');
+    assert.ok(gone.deliveryNotice && gone.deliveryNotice.reason === 'gone', 'and the notice names it');
+
+    // Store pickup never carries a provider or a delivery fee — and never a notice.
+    const pickup = await order({ deliveryMethod: 'STORE_PICKUP', preferredDriverId: 'pp_fee' });
+    assert.strictEqual(pickup.preferredDriverId, null, 'pickup drops any provider');
+    assert.strictEqual(pickup.shippingFeeXaf, 0, 'and has no delivery fee');
+    assert.ok(!pickup.deliveryNotice, 'a pickup never warns about a delivery provider');
   } finally {
     rec.restore();
   }
@@ -349,167 +435,74 @@ async function testTheCircuit() {
   }
 }
 
-// ------------------------------------------------------------ 6. rider presence
+// --------------------------------- 4b. escrow attestation follows the delivery (item D)
+// No real money moves (pay on delivery): Order.paymentStatus is an honest status
+// machine driven by delivery events — held when the rider has the parcel, released
+// on a verified handover, refundable when the order is cancelled.
 
-const noLongerAvailable = (list) => list.filter((n) => /no longer available/i.test(n.title));
+/** Saves a fresh, pending (not-yet-held) home-delivery order for the escrow tests. */
+async function pendingOrder(world) {
+  return world.orders.saveOrder(new Order({
+    buyerId: 'buyer_1',
+    sellerId: 'seller_1',
+    items: [{ listingId: 'lst_1', title: 'Phone', unitPriceXaf: 50000, quantity: 1, sellerId: 'seller_1', storeName: 'Tech Shop' }],
+    shippingAddress: { fullName: 'Awa Njoya', phone: '+237622222222', street: 'Rue 1', city: 'Douala' },
+    deliveryMethod: DELIVERY_METHOD.HOME_DELIVERY,
+    paymentStatus: PAYMENT_STATUS.PENDING,
+    fulfillmentStatus: FULFILLMENT_STATUS.PROCESSING
+  }));
+}
 
-async function testPresenceContacts() {
+async function testEscrowAttestation() {
   const rec = recordNotifications();
   try {
-    // ---- moving between online, paused and offline, and being refused work, tell nobody
+    const paymentOf = async (world, id) => (await world.orders.findOrderByIdFresh(id)).paymentStatus;
+
+    // Held on pickup, released on the verified handover.
     {
       const w = makeWorld();
       await w.service.registerDriver('rider_1', { name: 'Alain', phone: '+237600000001' }, ADMIN);
-      await w.service.registerDriver('rider_2', { name: 'Bruno', phone: '+237600000002' }, ADMIN);
-      rec.clear();
-
-      await w.service.riderGoOnline(RIDER, { ...NEAR });
-      w.clock.advance(30 * 1000);
-      await w.service.riderHeartbeat(RIDER, { ...NEAR });
-      await w.service.riderPause(RIDER);
-      await w.service.riderResume(RIDER);
-      assert.strictEqual((await w.service.getRiderPresence(RIDER)).status, 'online', 'the moves really happened');
-      await w.service.riderGoOffline(RIDER);
-      assert.strictEqual((await w.service.getRiderPresence(RIDER)).status, 'offline');
-      assert.strictEqual(rec.sent.length, 0, 'online, heartbeat, pause, resume and offline with nothing to take back are not news to anyone');
-
-      // A rider who is not available cannot be offered a delivery, and the refusal is not announced:
-      // not to the rider (who would be told about a job they cannot take), not to the buyer, not to the seller.
-      const order = await placeOrder(w);
-      const created = await w.service.createDelivery(order.id, SELLER, {});
-      rec.clear();
-      assert.strictEqual(await refusal(w.service.assignDriver(created.id, 'rider_1', SELLER)), 'RIDER_UNAVAILABLE:offline', 'offline');
-      assert.strictEqual(await refusal(w.service.assignDriver(created.id, 'rider_2', SELLER)), 'RIDER_UNAVAILABLE:offline', 'registered but never online');
-      await w.service.riderGoOnline(RIDER);
-      await w.service.riderPause(RIDER);
-      assert.strictEqual(await refusal(w.service.assignDriver(created.id, 'rider_1', SELLER)), 'RIDER_UNAVAILABLE:paused', 'paused');
-      assert.strictEqual(await code(w.service.autoAssignDriver(created.id, SELLER)), 'NO_RIDER_AVAILABLE', 'nobody is available, so nobody is picked');
-      assert.strictEqual(rec.sent.length, 0, 'an offer that was refused is not announced to anyone');
-      const untouched = await w.repo.findById(created.id);
-      assert.strictEqual(untouched.status, 'pending_assignment');
-      assert.strictEqual(untouched.driverId, null, 'and nobody holds it');
-
-      // Control: once the rider is available the same call goes through and the rider IS told,
-      // so the silence above is the rules and not a recorder that hears nothing.
-      await w.service.riderResume(RIDER);
-      rec.clear();
+      const order = await pendingOrder(w);
+      const created = await w.service.createDelivery(order.id, SELLER, { dropoffLocation: { lat: 4.0601, lng: 9.7679 } });
       await w.service.assignDriver(created.id, 'rider_1', SELLER);
-      assert.ok(has(rec.to('rider_1'), /New delivery assigned/), 'an available rider is told about their offer');
-
-      // Accepting makes the rider busy; going offline or pausing is then refused, and the refusal tells nobody.
       await w.service.acceptDelivery(created.id, RIDER);
-      assert.strictEqual((await w.service.getRiderPresence(RIDER)).status, 'busy');
-      rec.clear();
-      assert.strictEqual(await refusal(w.service.riderGoOffline(RIDER)), 'RIDER_BUSY:busy', 'a rider carrying a parcel cannot go offline');
-      assert.strictEqual(await refusal(w.service.riderPause(RIDER)), 'RIDER_BUSY:busy', 'nor pause');
-      const second = await w.service.createDelivery((await placeOrder(w)).id, SELLER, {});
-      rec.clear();
-      assert.strictEqual(await refusal(w.service.assignDriver(second.id, 'rider_1', SELLER)), 'RIDER_BUSY:busy', 'and cannot be offered another');
-      assert.strictEqual(rec.sent.length, 0, 'none of those refusals tells the buyer, the seller or an administrator anything');
+      assert.strictEqual(await paymentOf(w, order.id), PAYMENT_STATUS.PENDING, 'nothing is held until the parcel is collected');
+
+      await w.service.recordLocation(created.id, { ...NEAR }, RIDER);
+      w.clock.advance(5000);
+      await w.service.updateStatus(created.id, 'picked_up', null, RIDER);
+      assert.strictEqual(await paymentOf(w, order.id), PAYMENT_STATUS.ESCROW_HELD, 'held once the rider has the parcel');
+
+      await w.service.updateStatus(created.id, 'arrived', null, RIDER);
+      assert.strictEqual(await paymentOf(w, order.id), PAYMENT_STATUS.ESCROW_HELD, 'still held on arrival');
+
+      await w.service.completeDelivery(created.id, codeFor(created.id, 1), RIDER);
+      assert.strictEqual(await paymentOf(w, order.id), PAYMENT_STATUS.RELEASED, 'released on the verified handover');
     }
 
-    // ---- a rider whose app went quiet cannot accept, and accepting tells the buyer and seller nothing
-    {
-      const w = makeWorld({ presenceTtlMs: PRESENCE_TTL_MS });
-      await registerOnline(w, 'rider_1', 'Alain', '+237600000001');
-      const order = await placeOrder(w);
-      const created = await w.service.createDelivery(order.id, SELLER, {});
-      await w.service.assignDriver(created.id, 'rider_1', SELLER);
-      w.clock.advance(PRESENCE_TTL_MS); // the offer window (15 minutes) is still open; the presence window is not
-      rec.clear();
-      assert.strictEqual(await refusal(w.service.acceptDelivery(created.id, RIDER)), 'RIDER_UNAVAILABLE:expired');
-      assert.strictEqual(rec.sent.length, 0, 'the buyer and seller are not told a rider accepted when they did not');
-      assert.strictEqual((await w.repo.findById(created.id)).status, 'assigned', 'the offer is still there for when they are back');
-    }
-
-    // ---- an offer taken back because its rider stopped being available tells that seller, once
-    for (const scenario of [
-      { name: 'goes offline', stop: (w) => w.service.riderGoOffline(RIDER) },
-      { name: 'pauses', stop: (w) => w.service.riderPause(RIDER) },
-      { name: 'goes silent and their next heartbeat finds out', stop: async (w) => { w.clock.advance(PRESENCE_TTL_MS); await w.service.riderHeartbeat(RIDER); } },
-      { name: 'goes silent and the sweep finds out', stop: async (w) => { w.clock.advance(PRESENCE_TTL_MS); await w.service.expireStalePresence(); } }
-    ]) {
-      const w = makeWorld({ presenceTtlMs: PRESENCE_TTL_MS });
-      await registerOnline(w, 'rider_1', 'Alain', '+237600000001');
-      const order = await placeOrder(w);
-      const created = await w.service.createDelivery(order.id, SELLER, {});
-      await w.service.assignDriver(created.id, 'rider_1', SELLER);
-      rec.clear();
-
-      await scenario.stop(w);
-
-      const told = noLongerAvailable(rec.to('seller_1'));
-      assert.strictEqual(told.length, 1, `rider ${scenario.name}: the seller is told once that the rider is no longer available`);
-      assert.strictEqual(told[0].metadata.audience, 'seller');
-      assert.strictEqual(told[0].metadata.action, 'open_dispatch', 'it opens the dispatch board');
-      assert.strictEqual(told[0].metadata.deliveryId, created.id);
-      assert.strictEqual(told[0].metadata.orderId, order.id);
-      assert.ok(/Assign another rider/i.test(told[0].body), 'it says what to do next');
-      assert.strictEqual(rec.to('buyer_1').length, 0, 'the buyer never heard of the offer, so is not told it was taken back');
-      assert.strictEqual(rec.to('admin_1').length + rec.to('admin_2').length, 0, 'an ordinary offer taken back is not an administrator\'s business');
-      assert.strictEqual(rec.sent.length, 1, `rider ${scenario.name}: the seller is the only one told`);
-      const back = await w.repo.findById(created.id);
-      assert.strictEqual(back.status, 'pending_assignment', 'the delivery is back with the seller');
-      assert.strictEqual(back.driverId, null);
-    }
-
-    // ---- accepting one delivery takes the rider's other offers back, and tells THEIR sellers
+    // A failed attempt is recoverable: it does NOT walk escrow back from held.
     {
       const w = makeWorld();
-      const SELLER2 = { userId: 'seller_2', userRole: 'seller' };
-      await registerOnline(w, 'rider_1', 'Alain', '+237600000001');
-      const orderA = await placeOrder(w);
-      const orderB = await placeOrder(w, { buyerId: 'buyer_2', sellerId: 'seller_2' });
-      const a = await w.service.createDelivery(orderA.id, SELLER, {});
-      const b = await w.service.createDelivery(orderB.id, SELLER2, {});
-      await w.service.assignDriver(a.id, 'rider_1', SELLER);
-      await w.service.assignDriver(b.id, 'rider_1', SELLER2); // offers may stack until one is accepted
-      rec.clear();
-
-      await w.service.acceptDelivery(a.id, RIDER);
-
-      assert.ok(has(rec.to('buyer_1'), /rider accepted/i), 'the buyer whose delivery was accepted is told');
-      assert.ok(has(rec.to('seller_1'), /rider accepted/i), 'and its seller');
-      assert.strictEqual(noLongerAvailable(rec.to('seller_1')).length, 0, 'the seller whose delivery was accepted is not also told it was taken back');
-      const told = noLongerAvailable(rec.to('seller_2'));
-      assert.strictEqual(told.length, 1, 'the other seller is told their rider is no longer available');
-      assert.strictEqual(told[0].metadata.audience, 'seller');
-      assert.strictEqual(told[0].metadata.action, 'open_dispatch');
-      assert.strictEqual(told[0].metadata.deliveryId, b.id);
-      assert.strictEqual(rec.to('buyer_2').length, 0, 'and their buyer is not');
-      assert.strictEqual(rec.sent.length, 3, 'three notifications: the accepted buyer and seller, and the other seller');
-      assert.strictEqual((await w.repo.findById(a.id)).status, 'accepted');
-      assert.strictEqual((await w.repo.findById(b.id)).status, 'pending_assignment', 'the other offer is back with its seller');
+      await w.service.registerDriver('rider_1', { name: 'Alain', phone: '+237600000001' }, ADMIN);
+      const order = await pendingOrder(w);
+      const created = await w.service.createDelivery(order.id, SELLER, { dropoffLocation: { lat: 4.0601, lng: 9.7679 } });
+      await w.service.assignDriver(created.id, 'rider_1', SELLER);
+      await w.service.acceptDelivery(created.id, RIDER);
+      await w.service.recordLocation(created.id, { ...NEAR }, RIDER);
+      w.clock.advance(5000);
+      await w.service.updateStatus(created.id, 'picked_up', null, RIDER);
+      await w.service.updateStatus(created.id, 'failed', 'Customer unreachable', RIDER);
+      assert.strictEqual(await paymentOf(w, order.id), PAYMENT_STATUS.ESCROW_HELD, 'a failed attempt stays held — it may be retried');
     }
 
-    // ---- a suspended rider who was online: the seller of their offer and the rider are told; they are offline, and stay so
+    // Cancelling the order makes it refundable (no money moved).
     {
       const w = makeWorld();
-      await registerOnline(w, 'rider_1', 'Alain', '+237600000001');
-      const order = await placeOrder(w);
-      const created = await w.service.createDelivery(order.id, SELLER, {});
-      await w.service.assignDriver(created.id, 'rider_1', SELLER);
-      rec.clear();
-
-      await w.service.registerDriver('rider_1', { name: 'Alain', phone: '+237600000001', status: 'suspended' }, ADMIN);
-      assert.strictEqual(noLongerAvailable(rec.to('seller_1')).length, 1, 'the seller is told the offer was taken back');
-      assert.ok(has(rec.to('rider_1'), /access was paused/i), 'the rider is told their access changed');
-      assert.strictEqual(rec.to('admin_1').length, 0, 'no parcel is stranded, so no administrator is alerted');
-      assert.strictEqual(rec.to('buyer_1').length, 0);
-      assert.strictEqual((await w.repo.findPresence('rider_1')).status, 'offline', 'a suspension forces the stored row offline');
-      assert.strictEqual(await code(w.service.getRiderPresence(RIDER)), 'PERMISSION_DENIED', 'a suspended rider has no presence to read');
-      rec.clear();
-
-      await w.service.registerDriver('rider_1', { name: 'Alain', phone: '+237600000001', status: 'active' }, ADMIN);
-      assert.ok(has(rec.to('rider_1'), /now a LOUMOO rider/), 'a reactivated rider is told');
-      assert.strictEqual((await w.service.getRiderPresence(RIDER)).status, 'offline', 'but reactivation does not put them back online');
-      assert.strictEqual(await refusal(w.service.assignDriver(created.id, 'rider_1', SELLER)), 'RIDER_UNAVAILABLE:offline', 'so they cannot be offered anything until they go online themselves');
-
-      // Every presence notification says whose it is and where it opens, like the rest.
-      for (const n of rec.sent) {
-        assert.ok(['buyer', 'seller', 'rider', 'admin'].includes(n.metadata.audience), `"${n.title}" names its audience`);
-        assert.ok(n.metadata.action, `"${n.title}" says which screen it opens`);
-      }
+      const lifecycle = new OrderLifecycleService(w.orders);
+      const order = await pendingOrder(w);
+      const cancelled = await lifecycle.cancelOrder(order.id, 'buyer_1', 'Changed my mind');
+      assert.strictEqual(cancelled.fulfillmentStatus, FULFILLMENT_STATUS.CANCELLED);
+      assert.strictEqual(cancelled.paymentStatus, PAYMENT_STATUS.REFUNDABLE, 'a cancelled order is refundable');
     }
   } finally {
     rec.restore();
@@ -690,13 +683,14 @@ async function run() {
   if (!hadSecret) config.supabase.jwtSecret = 'unit-test-delivery-secret-0123456789abcdef';
   try {
     await testOrderPlacement();
+    await testPreferredProviderPricing();
     await testTheCircuit();
-    await testPresenceContacts();
+    await testEscrowAttestation();
     await testMissingMigration();
     await testMissingPresenceMigration();
     await testProbe();
     await testAdminLookup();
-    console.log('    ✓ Every party is contacted in their own role; presence moves tell only the seller whose offer was taken back; exceptions reach an admin; a missing migration (013, 014 or 017) is a clear 503.');
+    console.log('    ✓ Every party is contacted in their own role; escrow follows the delivery; exceptions reach an admin; a missing migration is a clear 503.');
   } finally {
     if (!hadSecret) config.supabase.jwtSecret = hadSecret;
   }

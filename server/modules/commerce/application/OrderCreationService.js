@@ -8,7 +8,7 @@
 
 const crypto = require('crypto');
 const { Order, OrderItem, FULFILLMENT_STATUS, PAYMENT_STATUS, DELIVERY_METHOD } = require('../domain/Order');
-const { PricingEngine, resolveCityRate } = require('../domain/PricingEngine');
+const { PricingEngine, resolveCityRate, foldCity } = require('../domain/PricingEngine');
 const { CreateOrderInputSchema } = require('../presentation/validators/orderSchemas');
 const { OrderRepository } = require('../infrastructure/OrderRepository');
 const IdempotencyService = require('../../../infrastructure/cache/IdempotencyService');
@@ -28,11 +28,38 @@ let NotificationService = null;
 try { UserActivityUseCase = require('../../identity/application/UserActivityUseCase'); } catch (e) {}
 try { NotificationService = require('../../identity/application/NotificationService'); } catch (e) {}
 
+/**
+ * A one-time, non-persisted notice for the buyer when the delivery provider they
+ * chose at checkout turned out unavailable by the time the order was placed. The
+ * order still succeeds at the standard city rate; this tells the buyer honestly
+ * rather than switching silently (integration spec item E). `reason` is one of
+ * 'gone' | 'suspended' | 'out_of_area'.
+ */
+function buildDroppedPreferenceNotice(reason, effectiveFeeXaf) {
+  const lead = reason === 'out_of_area'
+    ? 'The delivery provider you chose doesn’t cover this address'
+    : 'The delivery provider you chose is no longer available';
+  return {
+    code: 'preferred_provider_unavailable',
+    reason,
+    effectiveFeeXaf: Number.isFinite(Number(effectiveFeeXaf)) ? Number(effectiveFeeXaf) : null,
+    message: `${lead}, so your order was placed at the standard delivery rate. The seller will arrange another rider.`
+  };
+}
+
 class OrderCreationService {
-  constructor(repository = null) {
+  constructor(repository = null, deps = {}) {
     this.repository = repository || new OrderRepository();
     // Concurrency mutex for in-flight creations per user
     this._activeLocks = new Set();
+    // How a preferred provider is looked up when pricing the order. Injectable so
+    // a test can supply providers without the shared delivery singleton; in
+    // production it lazily reads the shared DeliveryService's repository, keeping
+    // the commerce→delivery dependency soft (lazy, best-effort).
+    this._resolveProvider = deps.resolveProvider || (async (profileId) => {
+      const { getSharedDeliveryService } = require('../../delivery/application/DeliveryService');
+      return getSharedDeliveryService().repo.findDriver(profileId);
+    });
   }
 
   /**
@@ -190,16 +217,50 @@ class OrderCreationService {
       }
 
       // 4. Server-Authoritative Pricing Calculation
+      const orderCity = data.shippingAddress?.city || data.city;
       let standardShippingFeeXaf = null;
       if (data.deliveryMethod !== DELIVERY_METHOD.STORE_PICKUP) {
         try {
           const SuperAdminRepository = require('../../../../SuperAdmin/backend/repositories/SuperAdminRepository');
           const cityRates = await SuperAdminRepository.getSetting('shipping_rates_by_city');
-          const city = data.shippingAddress?.city || data.city;
           // Accent- and punctuation-insensitive ("Yaoundé" is the table's "Yaounde"),
           // the same rule the checkout uses to show the fee.
-          standardShippingFeeXaf = resolveCityRate(cityRates, city);
+          standardShippingFeeXaf = resolveCityRate(cityRates, orderCity);
         } catch (_) {}
+      }
+
+      // If the buyer preferred a specific provider, the order is priced by THAT
+      // provider's own tariff when they set one — so the fee the picker showed is
+      // the fee the order gets — never the city rate, and never a client-sent
+      // price. Resolved server-side from the provider record. Best-effort and lazy
+      // to keep the module dependency soft (delivery already depends on commerce):
+      // an unknown, suspended, or out-of-area provider falls back to the city rate
+      // and the dead preference is dropped rather than stored on the order.
+      let effectivePreferredDriverId = data.deliveryMethod === DELIVERY_METHOD.STORE_PICKUP
+        ? null
+        : (data.preferredDriverId || null);
+      // When the buyer picked a provider that turns out unavailable between the
+      // quote and now, the preference is dropped and the order is priced at the
+      // city rate — but the buyer is TOLD (deliveryNotice below), not silently
+      // switched. Stays null while nothing was dropped. (Integration spec item E.)
+      let droppedPreferenceReason = null;
+      if (effectivePreferredDriverId) {
+        try {
+          const provider = await this._resolveProvider(effectivePreferredDriverId);
+          const folded = orderCity ? foldCity(orderCity) : '';
+          const areas = provider && Array.isArray(provider.serviceAreas) ? provider.serviceAreas : [];
+          const serves = provider && (areas.length === 0 || (folded && areas.includes(folded)));
+          const active = provider && provider.status === 'active';
+          if (active && serves) {
+            if (provider.baseFeeXaf != null) standardShippingFeeXaf = provider.baseFeeXaf;
+            // else the provider quotes the standard city rate: leave it as resolved.
+          } else {
+            // Gone, suspended, or cannot serve this city: do not keep a dead
+            // preference on the order, and price at the city rate.
+            droppedPreferenceReason = !provider ? 'gone' : (!active ? 'suspended' : 'out_of_area');
+            effectivePreferredDriverId = null;
+          }
+        } catch (_) { /* delivery module unavailable: keep the hint, price at city rate */ }
       }
 
       const clientSuppliedTotal = data.totalAmountXaf ?? data.totalXaf ?? null;
@@ -240,6 +301,9 @@ class OrderCreationService {
         currency: 'XAF',
         shippingAddress: data.shippingAddress || {},
         deliveryMethod: data.deliveryMethod,
+        // The preference as RESOLVED above: null for pickup, or when the chosen
+        // provider turned out unavailable, so the order never carries a dead pick.
+        preferredDriverId: effectivePreferredDriverId,
         paymentStatus: PAYMENT_STATUS.PENDING,
         fulfillmentStatus: FULFILLMENT_STATUS.PROCESSING,
         idempotencyKey: effectiveIdempotencyKey,
@@ -254,6 +318,15 @@ class OrderCreationService {
 
       // 6. Atomically persist to database
       const savedOrder = await this.repository.saveOrder(order);
+
+      // If the buyer's chosen provider was dropped above, tell them honestly: the
+      // order succeeded at the standard city rate, it was not silently switched.
+      // A transient on the returned order only — never persisted (toJSON ignores
+      // it); the route surfaces it in the create response and the checkout shows
+      // it once. A later idempotent replay reasonably omits it.
+      if (droppedPreferenceReason) {
+        savedOrder.deliveryNotice = buildDroppedPreferenceNotice(droppedPreferenceReason, savedOrder.shippingFeeXaf);
+      }
 
       // 7. Save Idempotency Cache Result
       if (scopedKey) {

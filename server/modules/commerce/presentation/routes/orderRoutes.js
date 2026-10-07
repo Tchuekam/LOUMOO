@@ -38,10 +38,16 @@ router.post('/', requireAuth, async (req, res, next) => {
     const idempotencyKey = req.headers['idempotency-key'] || req.headers['x-idempotency-key'] || req.body?.idempotencyKey;
 
     const order = await creationService.createOrder(userId, req.body, { idempotencyKey });
+    const orderJson = order.toJSON();
+    // A one-time notice (e.g. the buyer's chosen delivery provider was unavailable
+    // and the order fell back to the city rate) rides on the order instance as a
+    // transient, outside the persisted toJSON. Surface it so the checkout can tell
+    // the buyer honestly rather than switch silently.
+    if (order.deliveryNotice) orderJson.deliveryNotice = order.deliveryNotice;
     res.status(201).json({
       success: true,
       status: 'success',
-      data: { order: order.toJSON() }
+      data: { order: orderJson }
     });
   } catch (err) {
     next(err);

@@ -7,7 +7,7 @@
 
 const { OrderRepository } = require('../infrastructure/OrderRepository');
 const { OrderStateMachine } = require('../domain/OrderStateMachine');
-const { FULFILLMENT_STATUS } = require('../domain/Order');
+const { FULFILLMENT_STATUS, PAYMENT_STATUS } = require('../domain/Order');
 const CacheService = require('../../../infrastructure/cache/CacheService');
 const { NotFoundError, ValidationError, AuthorizationError, ConflictError } = require('../../../shared/errors/AppError');
 const logger = require('../../../shared/logging/logger');
@@ -28,6 +28,29 @@ async function cancelOpenDelivery(orderId, reason, actorId) {
     await getSharedDeliveryService().cancelForOrder(orderId, { reason: reason || 'Order cancelled', actorId });
   } catch (e) {
     logger.warn(`[OrderLifecycle] Could not cancel the delivery for order ${orderId}: ${e.message}`);
+  }
+}
+
+/**
+ * A cancelled order owes the buyer nothing: move the buyer-protection attestation
+ * to `refundable` (a refund is due if anything was paid — with pay-on-delivery,
+ * nothing was). Best-effort and guarded — never fails the cancellation, and never
+ * walks back a settled (released/refunded) or already-refundable order. NO money
+ * moves. Returns the updated order, or the one passed in when nothing changed.
+ */
+async function markOrderRefundable(repository, order, actorId, reason) {
+  const current = order.paymentStatus;
+  if (current === PAYMENT_STATUS.RELEASED || current === PAYMENT_STATUS.REFUNDED || current === PAYMENT_STATUS.REFUNDABLE) {
+    return order;
+  }
+  try {
+    return await repository.updatePaymentStatusAtomic(order.id, current, PAYMENT_STATUS.REFUNDABLE, {
+      note: reason || 'Order cancelled',
+      updatedBy: actorId || 'system'
+    });
+  } catch (e) {
+    logger.warn(`[OrderLifecycle] Could not mark order ${order.id} refundable: ${e.message}`);
+    return order;
   }
 }
 
@@ -78,6 +101,10 @@ class OrderLifecycleService {
       }
     );
 
+    // The buyer owes nothing on a cancelled order: the escrow attestation becomes
+    // refundable (no money moves — pay on delivery).
+    const settledOrder = await markOrderRefundable(this.repository, cancelledOrder, callerId, reason);
+
     await cancelOpenDelivery(order.id, reason, callerId);
 
     // Invalidate Buyer's Cache
@@ -110,7 +137,7 @@ class OrderLifecycleService {
       }).catch(e => logger.warn(`[OrderLifecycle] Notification error: ${e.message}`));
     }
 
-    return cancelledOrder.toJSON();
+    return settledOrder.toJSON();
   }
 
   /**
@@ -151,7 +178,11 @@ class OrderLifecycleService {
       { note, updatedBy: callerId }
     );
 
+    let result = updated;
     if (nextStatus === FULFILLMENT_STATUS.CANCELLED) {
+      // Cancelling the order makes its escrow attestation refundable (no money
+      // moves — pay on delivery), then releases any open delivery.
+      result = await markOrderRefundable(this.repository, updated, callerId, note);
       await cancelOpenDelivery(order.id, note, callerId);
     }
 
@@ -162,7 +193,7 @@ class OrderLifecycleService {
       }
     } catch (e) {}
 
-    return updated.toJSON();
+    return result.toJSON();
   }
 }
 

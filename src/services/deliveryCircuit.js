@@ -406,10 +406,17 @@
    * (items, then the city's delivery fee) and a client total that disagrees is
    * refused as a "pricing mismatch". The unit price IS sent, so a price that
    * changed since the bag was filled is caught instead of charged.
+   *
+   * `deliveryMethod` is how the buyer chose to receive the order — 'HOME_DELIVERY'
+   * (a rider brings it; needs a full address) or 'STORE_PICKUP' (they collect it;
+   * no address, and the server charges no delivery fee). Anything else, or
+   * nothing, is treated as a home delivery, which is both the common case and the
+   * safe default (it is the one that asks for an address).
    */
-  function toOrderPayload(items, address) {
+  function toOrderPayload(items, address, deliveryMethod, preferredDriverId) {
     var a = address || {};
-    return {
+    var method = deliveryMethod === 'STORE_PICKUP' ? 'STORE_PICKUP' : 'HOME_DELIVERY';
+    var payload = {
       items: (items || []).map(function (it) {
         var id = String(it.listingId || it.productId || it.id || '');
         return {
@@ -427,8 +434,15 @@
         city: a.city || undefined,
         neighbourhood: a.neighbourhood || undefined
       },
-      deliveryMethod: 'HOME_DELIVERY'
+      deliveryMethod: method
     };
+    // The provider the buyer preferred, only for a home delivery. A hint for the
+    // seller's dispatch — the server re-checks it and prices by it — never sent
+    // for a pickup (no rider), and omitted entirely when there is no preference.
+    if (method === 'HOME_DELIVERY' && preferredDriverId) {
+      payload.preferredDriverId = String(preferredDriverId);
+    }
+    return payload;
   }
 
   /**
@@ -470,7 +484,11 @@
       sellerPhone: o.sellerPhone || first.storePhone || null,
       sellerWhatsapp: o.sellerWhatsapp || o.sellerPhone || first.storePhone || null,
       address: { name: ship.fullName || '', phone: ship.phone || '', city: ship.city || '', street: ship.street || '' },
-      createdAt: isFinite(created) ? created : Date.now()
+      createdAt: isFinite(created) ? created : Date.now(),
+      // A one-time placement notice from the server (e.g. the chosen delivery
+      // provider was unavailable and the order fell back to the city rate). The
+      // checkout shows it once; it is not persisted on the order.
+      deliveryNotice: o.deliveryNotice || null
     };
   }
 
