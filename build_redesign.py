@@ -52,13 +52,12 @@ header_and_styles = """<!DOCTYPE html>
 <script defer src="./src/services/searchExperience.js"></script>
 <link rel="stylesheet" href="./src/styles/search.css">
 <script defer src="./src/services/travelApi.js"></script>
-<script defer src="./src/services/deliveryApi.js"></script>
-<script defer src="./src/services/deliveryTrackingScreen.js"></script>
 <script defer src="./src/services/deliveryCircuit.js"></script>
 <script defer src="./src/services/deliveryApi.js"></script>
 <script defer src="./src/services/deliveryTrackingScreen.js"></script>
 <script defer src="./src/services/dispatchUi.js"></script>
 <script defer src="./src/services/sellerDispatch.js"></script>
+<script defer src="./src/services/providerProfile.js"></script>
 <script defer src="./src/services/riderPresence.js"></script>
 <script defer src="./src/services/riderHub.js"></script>
 <script defer src="./src/services/ridersAdmin.js"></script>
@@ -6319,7 +6318,6 @@ html, body {
     top: -10px !important;
   }
 }
-
 </style>
 </helmet>
 
@@ -7423,7 +7421,12 @@ class Component extends DCLogic {
     announceYaoundeReach: '0%',
     announceRegionalReach: '0%',
     storeTagline: '',
+    storeName: '',
+    storeDescription: '',
+    storeBio: '',
+    storeReturnPolicy: '',
     storeWarrantyPolicy: '',
+    storeShippingPolicy: '',
     storeOpenStatusBadge: 'OPEN',
     storeOpenTime: '08:00',
     storeCloseTime: '18:30',
@@ -7848,9 +7851,22 @@ class Component extends DCLogic {
       return d.getDate() + ' ' + M[d.getMonth()] + ' ' + d.getFullYear();
     } catch (e) { return String(iso || ''); }
   };
+  // The price a buyer pays, by the SAME rule the product page shows it: of a
+  // price / salePrice pair the lower is the price and the higher the crossed-out
+  // "was" price. The catalogue sends the pair in two conventions (a curated
+  // product's salePrice is its was-price, a listing's is its discount), so
+  // `salePrice || price` put the was-price of a curated product in the bag.
+  _payablePriceLabel = (p) => {
+    const rawP = (p && p.price) || '';
+    const rawSale = (p && p.salePrice) || '';
+    const n1 = this._priceToXaf(rawP);
+    const n2 = this._priceToXaf(rawSale);
+    if (n1 > 0 && n2 > 0) return n1 <= n2 ? rawP : rawSale;
+    return rawSale || rawP;
+  };
   _wishlistEntry = (id, name) => {
     const p = this._resolveProduct(id);
-    const priceStr = p.salePrice || p.price || '';
+    const priceStr = this._payablePriceLabel(p);
     return {
       id: id,
       name: name || p.title || 'Saved item',
@@ -7899,7 +7915,7 @@ class Component extends DCLogic {
   // survives reloads (works for guests). Checkout/payment wiring comes later.
   _cartEntry = (id, name) => {
     const p = this._resolveProduct(id);
-    const priceStr = p.salePrice || p.price || '';
+    const priceStr = this._payablePriceLabel(p);
     return {
       id: id,
       name: name || p.title || 'Item',
@@ -9126,19 +9142,21 @@ class Component extends DCLogic {
     const api = getApi();
     if (!storeId || !api) return Promise.resolve();
 
-    // Prefer the public profile endpoint (no auth required) so visitors can
-    // browse any storefront without triggering management-only auth guards.
-    const fetcher = api.getStoreProfile
-      ? api.getStoreProfile(storeId)
-      : api.getStore
-        ? api.getStore(storeId)
+    // The public storefront endpoint is the complete read model: it includes
+    // this seller's published listings, current rating/review data, follow
+    // state, policies, hours, and public location. Owner-only dashboard data
+    // must never be used to render a visitor's store page.
+    const fetcher = api.getPublicStorefront
+      ? api.getPublicStorefront(storeId)
+      : api.getStoreProfile
+        ? api.getStoreProfile(storeId)
         : null;
     if (!fetcher) return Promise.resolve();
 
     this.setState({ storeProfileLoading: true, storeProfileError: '' });
     return fetcher.then(res => {
       if (this._unmounted) return;
-      const store = (res && res.data) || res;
+      const store = (res && (res.seller || res.data)) || res;
       if (!store || typeof store !== 'object') throw new Error('Store profile was not found.');
       this.setState({
         currentStore: store,
@@ -12810,10 +12828,10 @@ class Component extends DCLogic {
     if (this.state.docUploaded || this.state.verificationChoice === 'later') score += 15;
     const completionScore = Math.min(100, score);
 
-Assembles the pristine, production-grade Commerce App.dc.html (plus its route-level
-*Screens.dc.html chunks and public/) from the domain modules under src/. This file only
-sequences the build; every piece of application logic, markup and styling lives in
-src/<domain>/ and is composed by the helpers in src/core/build/.
+    // Client-side password strength meter (UX affordance only — Clerk remains
+    // the authority on what it will accept, including breach checks).
+    const strength = passwordStrength(this.state.resetNewPassword || '');
+    const regStrength = passwordStrength(this.state.regPassword || '');
 
     const viewProps = {
       is, on, st, pick,
@@ -15214,7 +15232,42 @@ src/<domain>/ and is composed by the helpers in src/core/build/.
       // ══════════════════════════════════════════════════════════════════
       openCreateStore: () => this.go('createStore'),
       openStoreOnboarding: () => this.go('storeOnboarding'),
-      openStoreSettings: () => this.go('storeSettings'),
+      openStoreSettings: () => {
+        const store = this.state.store || this.state.currentStore || {};
+        const profile = store.profile || {};
+        const populate = (source) => {
+          const sourceProfile = source.profile || {};
+          const sourceLocation = source.location || {};
+          const schedule = (source.hours && source.hours.schedule) || {};
+          const weekday = schedule.monday || schedule.open || {};
+          this.setState({
+            storeName: source.name || '',
+            storeDescription: source.description || '',
+            storeBio: sourceProfile.bio || '',
+            storeTagline: sourceProfile.tagline || source.tagline || '',
+            storeReturnPolicy: sourceProfile.returnPolicy || '',
+            storeWarrantyPolicy: sourceProfile.warrantyPolicy || '',
+            storeShippingPolicy: sourceProfile.shippingPolicy || '',
+            storePhone: source.phoneNumber || source.phone_number || '',
+            storeLogoUrl: source.logoUrl || source.logo_url || this.state.storeLogoUrl || '',
+            storeOpenTime: weekday.open || this.state.storeOpenTime,
+            storeCloseTime: weekday.close || this.state.storeCloseTime,
+            storeLocationStreet: sourceLocation.streetAddress || sourceLocation.street_address || '',
+            storeLocationLandmark: sourceLocation.landmark || ''
+          });
+        };
+        populate(store);
+        this.go('storeSettings');
+        const api = getApi();
+        const storeId = this.state.primaryStoreId || store.id;
+        if (api && storeId && typeof api.getPublicStorefront === 'function') {
+          api.getPublicStorefront(storeId).then(res => {
+            if (this._unmounted) return;
+            const source = (res && (res.seller || res.data)) || res;
+            if (source && typeof source === 'object') populate(source);
+          }).catch(() => {});
+        }
+      },
       openStoreVerification: () => this.go('storeVerification'),
       refreshStoreAnalytics: () => {
         const period = this.state.analyticsPeriod || '30d';
@@ -15585,16 +15638,26 @@ src/<domain>/ and is composed by the helpers in src/core/build/.
         }
         this.toast('Preset brand avatar selected');
       },
+      storeName: this.state.storeName || (this.state.store && this.state.store.name) || '',
+      storeDescription: this.state.storeDescription || (this.state.store && this.state.store.description) || '',
+      storeBio: this.state.storeBio,
       storeTagline: this.state.storeTagline,
+      storeReturnPolicy: this.state.storeReturnPolicy,
       storeWarrantyPolicy: this.state.storeWarrantyPolicy,
+      storeShippingPolicy: this.state.storeShippingPolicy,
       storePhone: this.state.storePhone || (this.state.currentStore && (this.state.currentStore.phoneNumber || this.state.currentStore.phone || this.state.currentStore.phone_number)) || '',
       storeOpenStatusBadge: this.state.storeOpenStatusBadge,
       storeOpenTime: this.state.storeOpenTime,
       storeCloseTime: this.state.storeCloseTime,
       storeLocationStreet: this.state.storeLocationStreet,
       storeLocationLandmark: this.state.storeLocationLandmark,
+      updateStoreName: (e) => this.setState({ storeName: e && e.target ? e.target.value : e }),
+      updateStoreDescription: (e) => this.setState({ storeDescription: e && e.target ? e.target.value : e }),
+      updateStoreBio: (e) => this.setState({ storeBio: e && e.target ? e.target.value : e }),
       updateStoreTagline: (e) => this.setState({ storeTagline: e && e.target ? e.target.value : e }),
+      updateStoreReturnPolicy: (e) => this.setState({ storeReturnPolicy: e && e.target ? e.target.value : e }),
       updateStoreWarrantyPolicy: (e) => this.setState({ storeWarrantyPolicy: e && e.target ? e.target.value : e }),
+      updateStoreShippingPolicy: (e) => this.setState({ storeShippingPolicy: e && e.target ? e.target.value : e }),
       updateStorePhone: (e) => this.setState({ storePhone: e && e.target ? e.target.value : e }),
       updateStoreOpenTime: (e) => this.setState({ storeOpenTime: e && e.target ? e.target.value : e }),
       updateStoreCloseTime: (e) => this.setState({ storeCloseTime: e && e.target ? e.target.value : e }),
@@ -15619,7 +15682,7 @@ src/<domain>/ and is composed by the helpers in src/core/build/.
           setTimeout(() => {
             if (this._unmounted) return;
             if (this.state.currentStore) {
-              this.setState(st => ({ currentStore: { ...st.currentStore, logoUrl: this.state.storeLogoUrl, phoneNumber: this.state.storePhone } }));
+              this.setState(st => ({ currentStore: { ...st.currentStore, name: this.state.storeName, description: this.state.storeDescription, logoUrl: this.state.storeLogoUrl, phoneNumber: this.state.storePhone } }));
             }
             this.setState({ storeSettingsSaving: false });
             this.toast('All store settings saved successfully');
@@ -15629,14 +15692,29 @@ src/<domain>/ and is composed by the helpers in src/core/build/.
         }
 
         Promise.all([
-          api.updateStore(storeId, { logoUrl: this.state.storeLogoUrl || null, phoneNumber: this.state.storePhone || null }),
-          api.updateStoreProfile(storeId, { tagline: this.state.storeTagline, warrantyPolicy: this.state.storeWarrantyPolicy, logoUrl: this.state.storeLogoUrl || null }),
+          api.updateStore(storeId, { name: this.state.storeName, description: this.state.storeDescription, logoUrl: this.state.storeLogoUrl || null, phoneNumber: this.state.storePhone || null }),
+          api.updateStoreProfile(storeId, { tagline: this.state.storeTagline, bio: this.state.storeBio, returnPolicy: this.state.storeReturnPolicy, warrantyPolicy: this.state.storeWarrantyPolicy, shippingPolicy: this.state.storeShippingPolicy, logoUrl: this.state.storeLogoUrl || null }),
           api.updateStoreHours(storeId, { schedule: { open: this.state.storeOpenTime, close: this.state.storeCloseTime } }),
           api.updateStoreLocation(storeId, { streetAddress: this.state.storeLocationStreet, landmark: this.state.storeLocationLandmark })
         ]).then(() => {
           if (this._unmounted) return;
           if (this.state.currentStore) {
-            this.setState(st => ({ currentStore: { ...st.currentStore, logoUrl: this.state.storeLogoUrl, phoneNumber: this.state.storePhone } }));
+            this.setState(st => ({
+              store: Object.assign({}, st.store, { name: this.state.storeName, description: this.state.storeDescription, logoUrl: this.state.storeLogoUrl, phoneNumber: this.state.storePhone }),
+              currentStore: Object.assign({}, st.currentStore, {
+                name: this.state.storeName,
+                description: this.state.storeDescription,
+                logoUrl: this.state.storeLogoUrl,
+                phoneNumber: this.state.storePhone,
+                profile: Object.assign({}, st.currentStore && st.currentStore.profile, {
+                  bio: this.state.storeBio,
+                  tagline: this.state.storeTagline,
+                  returnPolicy: this.state.storeReturnPolicy,
+                  warrantyPolicy: this.state.storeWarrantyPolicy,
+                  shippingPolicy: this.state.storeShippingPolicy
+                })
+              })
+            }));
           }
           this.setState({ storeSettingsSaving: false });
           this.toast('All store settings saved successfully');
@@ -15725,13 +15803,102 @@ src/<domain>/ and is composed by the helpers in src/core/build/.
         });
         this.go('business');
       },
-      businessStoreName: (this.state.currentStore && this.state.currentStore.name) || 'Orca Electronics',
+      businessStoreName: (this.state.currentStore && this.state.currentStore.name) || 'Storefront',
       businessStoreLogoUrl: (this.state.currentStore && (this.state.currentStore.logoUrl || this.state.currentStore.logo_url || this.state.currentStore.logo)) || (this.state.primaryStoreId && this.state.currentStore && this.state.currentStore.id === this.state.primaryStoreId ? this.state.storeLogoUrl : '') || '',
-      businessStoreDescription: (this.state.currentStore && (this.state.currentStore.description || this.state.currentStore.tagline)) || 'Authorized electronics reseller · Akwa, Douala',
-      businessStoreCity: (this.state.currentStore && this.state.currentStore.city) || 'Douala',
-      businessStoreRating: Number((this.state.currentStore && this.state.currentStore.rating) || 4.9).toFixed(1),
-      businessStoreInitial: String((this.state.currentStore && this.state.currentStore.name) || 'Orca Electronics').trim().charAt(0).toUpperCase(),
+      businessStoreDescription: (this.state.currentStore && (this.state.currentStore.description || (this.state.currentStore.profile && (this.state.currentStore.profile.tagline || this.state.currentStore.profile.bio)))) || '',
+      businessStoreCity: (this.state.currentStore && ((this.state.currentStore.location && this.state.currentStore.location.city) || this.state.currentStore.city)) || '',
+      businessStorePhone: (this.state.currentStore && (this.state.currentStore.phoneNumber || this.state.currentStore.phone_number)) || '',
+      businessStoreHasRating: Boolean(this.state.currentStore && Number(this.state.currentStore.ratingCount || this.state.currentStore.rating_count || 0) > 0),
+      businessStoreRating: this.state.currentStore && this.state.currentStore.rating != null ? Number(this.state.currentStore.rating).toFixed(1) : '',
+      businessStoreRatingCount: Number((this.state.currentStore && (this.state.currentStore.ratingCount || this.state.currentStore.rating_count)) || 0),
+      businessStoreFollowerCount: Number((this.state.currentStore && (this.state.currentStore.followerCount || this.state.currentStore.follower_count)) || 0),
+      businessStoreListingCount: Number((this.state.currentStore && (this.state.currentStore.listingCount || this.state.currentStore.productCount || this.state.currentStore.product_count)) || 0),
+      businessStoreInitial: String((this.state.currentStore && this.state.currentStore.name) || 'S').trim().charAt(0).toUpperCase(),
       businessStoreVerified: Boolean(this.state.currentStore && (this.state.currentStore.isVerified || this.state.currentStore.is_verified)),
+      businessStoreIsOwner: Boolean(this.state.currentStore && this.state.primaryStoreId && this.state.currentStore.id === this.state.primaryStoreId),
+      businessStoreListings: (this.state.currentStore && Array.isArray(this.state.currentStore.listings) ? this.state.currentStore.listings : []).map(listing => ({
+        id: listing.id,
+        title: listing.title || 'Untitled listing',
+        description: listing.description || '',
+        imageUrl: encImg(listing.coverImageUrl || listing.cover_image_url || ''),
+        hasImage: Boolean(listing.coverImageUrl || listing.cover_image_url),
+        priceLabel: 'XAF ' + fmt(Number(listing.priceXaf ?? listing.price_xaf ?? listing.sale_price_minor ?? listing.base_price_minor ?? 0)),
+        hasRating: Number(listing.ratingCount || listing.rating_count || 0) > 0,
+        ratingLabel: Number(listing.rating || 0).toFixed(1),
+        ratingCount: Number(listing.ratingCount || listing.rating_count || 0),
+        categoryLabel: String(listing.categoryId || listing.category_id || listing.listingType || listing.listing_type || 'Listings').replace(/[_-]+/g, ' '),
+        listingType: listing.listingType || listing.listing_type || ''
+      })),
+      businessFeaturedListings: (this.state.currentStore && Array.isArray(this.state.currentStore.listings) ? this.state.currentStore.listings : []).slice(0, 4).map(listing => ({
+        id: listing.id,
+        title: listing.title || 'Untitled listing',
+        description: listing.description || '',
+        imageUrl: encImg(listing.coverImageUrl || listing.cover_image_url || ''),
+        hasImage: Boolean(listing.coverImageUrl || listing.cover_image_url),
+        priceLabel: 'XAF ' + fmt(Number(listing.priceXaf ?? listing.price_xaf ?? listing.sale_price_minor ?? listing.base_price_minor ?? 0)),
+        hasRating: Number(listing.ratingCount || listing.rating_count || 0) > 0,
+        ratingLabel: Number(listing.rating || 0).toFixed(1),
+        ratingCount: Number(listing.ratingCount || listing.rating_count || 0)
+      })),
+      businessHeroListing: (() => {
+        const listings = this.state.currentStore && Array.isArray(this.state.currentStore.listings) ? this.state.currentStore.listings : [];
+        const listing = listings[0];
+        if (!listing) return null;
+        return {
+          id: listing.id,
+          title: listing.title || 'Latest listing',
+          description: listing.description || '',
+          priceLabel: 'XAF ' + fmt(Number(listing.priceXaf ?? listing.price_xaf ?? listing.sale_price_minor ?? listing.base_price_minor ?? 0))
+        };
+      })(),
+      businessHasListings: Boolean(this.state.currentStore && Array.isArray(this.state.currentStore.listings) && this.state.currentStore.listings.length > 0),
+      businessHasMoreListings: Boolean(this.state.currentStore && Number(this.state.currentStore.listingCount || 0) > (Array.isArray(this.state.currentStore.listings) ? this.state.currentStore.listings.length : 0)),
+      businessCollectionGroups: (() => {
+        const listings = this.state.currentStore && Array.isArray(this.state.currentStore.listings) ? this.state.currentStore.listings : [];
+        const groups = {};
+        listings.forEach(listing => {
+          const raw = String(listing.categoryId || listing.category_id || listing.listingType || listing.listing_type || 'Listings');
+          const key = raw.toLowerCase();
+          if (!groups[key]) groups[key] = { label: raw.replace(/[_-]+/g, ' '), count: 0, countLabel: '' };
+          groups[key].count += 1;
+        });
+        return Object.keys(groups).map(key => {
+          const group = groups[key];
+          group.countLabel = group.count + ' published item' + (group.count === 1 ? '' : 's');
+          return group;
+        });
+      })(),
+      businessHasCollectionGroups: Boolean(this.state.currentStore && Array.isArray(this.state.currentStore.listings) && this.state.currentStore.listings.length > 0),
+      businessStoreBio: (this.state.currentStore && ((this.state.currentStore.profile && this.state.currentStore.profile.bio) || this.state.currentStore.description)) || '',
+      businessStoreTagline: (this.state.currentStore && this.state.currentStore.profile && this.state.currentStore.profile.tagline) || '',
+      businessStoreWarrantyPolicy: (this.state.currentStore && this.state.currentStore.profile && this.state.currentStore.profile.warrantyPolicy) || '',
+      businessStoreReturnPolicy: (this.state.currentStore && this.state.currentStore.profile && this.state.currentStore.profile.returnPolicy) || '',
+      businessStoreShippingPolicy: (this.state.currentStore && this.state.currentStore.profile && this.state.currentStore.profile.shippingPolicy) || '',
+      businessStoreAddress: (this.state.currentStore && this.state.currentStore.location && (this.state.currentStore.location.formattedAddress || this.state.currentStore.location.approximateLocation)) || '',
+      businessStoreHours: (() => {
+        const hours = this.state.currentStore && this.state.currentStore.hours;
+        if (!hours) return [];
+        if (hours.isAlwaysOpen) return [{ label: 'Every day', value: 'Open 24 hours' }];
+        const schedule = hours.schedule || {};
+        return Object.keys(schedule).map(day => {
+          const entry = schedule[day] || {};
+          return { label: day.charAt(0).toUpperCase() + day.slice(1), value: entry.closed ? 'Closed' : ((entry.open && entry.close) ? entry.open + ' - ' + entry.close : '') };
+        }).filter(item => item.value);
+      })(),
+      businessHasStoreHours: Boolean(this.state.currentStore && this.state.currentStore.hours && (this.state.currentStore.hours.isAlwaysOpen || Object.keys(this.state.currentStore.hours.schedule || {}).length > 0)),
+      businessHasStoreCopy: Boolean(this.state.currentStore && ((this.state.currentStore.profile && (this.state.currentStore.profile.tagline || this.state.currentStore.profile.bio)) || this.state.currentStore.description)),
+      businessHasStorePolicies: Boolean(this.state.currentStore && this.state.currentStore.profile && (this.state.currentStore.profile.returnPolicy || this.state.currentStore.profile.warrantyPolicy || this.state.currentStore.profile.shippingPolicy)),
+      businessStoreOpenLabel: (this.state.currentStore && this.state.currentStore.hours && this.state.currentStore.hours.currentStatus && this.state.currentStore.hours.currentStatus.label) || '',
+      businessRatingSummary: (this.state.currentStore && this.state.currentStore.ratingSummary) || null,
+      businessHasRatingSummary: Boolean(this.state.currentStore && this.state.currentStore.ratingSummary && Number(this.state.currentStore.ratingSummary.total || 0) > 0),
+      businessHasReviews: Boolean(this.state.currentStore && Array.isArray(this.state.currentStore.reviews) && this.state.currentStore.reviews.length > 0),
+      businessReviews: (this.state.currentStore && Array.isArray(this.state.currentStore.reviews) ? this.state.currentStore.reviews : []).map(review => ({
+        authorName: (review.author && review.author.name) || 'LOUMOO buyer',
+        ratingLabel: Number(review.rating || 0).toFixed(1),
+        title: review.title || '',
+        content: review.content || '',
+        isVerifiedPurchase: Boolean(review.isVerifiedPurchase)
+      })),
       businessStoreProfileLoading: Boolean(this.state.storeProfileLoading),
       businessStoreProfileError: (/permission|authorized|authorization|forbidden|manage/i.test(this.state.storeProfileError || '')) ? '' : (this.state.storeProfileError || ''),
       reloadStoreProfile: () => this.loadStoreProfile(),
@@ -17589,14 +17756,57 @@ src/<domain>/ and is composed by the helpers in src/core/build/.
       },
       addToVs: () => { this.setState(st => ({ vs: st.vs + 1 })); this.go('vsCompare'); },
       claimGift: () => this.toast('Gift claimed. The seller will message you shortly.'),
-      toggleFollow: () => { const next = !this.state.following; this.setState({ following: next }); this.toast(next ? 'Following Orca Electronics' : 'Unfollowed'); },
+      toggleFollow: () => {
+        const store = this.state.currentStore || {};
+        const storeId = store.id || this.state.currentStoreId;
+        const wasFollowing = Boolean(store.isFollowing ?? this.state.following);
+        const next = !wasFollowing;
+        const previousFollowerCount = Number(store.followerCount || store.follower_count || 0);
+
+        this.setState({
+          following: next,
+          currentStore: Object.assign({}, store, {
+            isFollowing: next,
+            followerCount: Math.max(0, previousFollowerCount + (next ? 1 : -1))
+          })
+        });
+
+        const api = getApi();
+        const request = api && storeId
+          ? (next ? api.followStoreById(storeId) : api.unfollowStoreById(storeId))
+          : null;
+        if (!request) {
+          this.toast(next ? 'Following ' + (store.name || 'store') : 'Unfollowed');
+          return;
+        }
+
+        request.then(result => {
+          if (this._unmounted) return;
+          const data = (result && result.data) || result || {};
+          this.setState(st => ({
+            following: Boolean(data.isFollowing ?? next),
+            currentStore: Object.assign({}, st.currentStore, {
+              isFollowing: Boolean(data.isFollowing ?? next),
+              followerCount: Number(data.followerCount ?? st.currentStore.followerCount ?? previousFollowerCount)
+            })
+          }));
+          this.toast(next ? 'Following ' + (store.name || 'store') : 'Unfollowed');
+        }).catch(err => {
+          if (this._unmounted) return;
+          this.setState({
+            following: wasFollowing,
+            currentStore: Object.assign({}, store, { isFollowing: wasFollowing, followerCount: previousFollowerCount })
+          });
+          this.toast((err && err.message) || 'Could not update follow status.');
+        });
+      },
       // `following` is read directly by templates (e.g. the store card's
       // follow button variant). It lived in state but was never exposed, so
       // every `{{ following ? ... }}` resolved to an empty string and the
       // button rendered with no variant class at all - transparent and
       // indistinguishable from plain text.
-      following: Boolean(this.state.following),
-      followLabel: this.state.following ? 'FOLLOWING' : 'FOLLOW',
+      following: Boolean((this.state.currentStore && this.state.currentStore.isFollowing) ?? this.state.following),
+      followLabel: Boolean((this.state.currentStore && this.state.currentStore.isFollowing) ?? this.state.following) ? 'FOLLOWING' : 'FOLLOW',
       toggleSave: () => { const next = !this.state.saved; this.setState({ saved: next }); this.toast(next ? 'Saved to your list' : 'Removed from saved'); },
       // ── Real seller messaging via WhatsApp deep-link ──
       // Opens WhatsApp to the store's line with a pre-filled enquiry that names
@@ -18120,15 +18330,14 @@ for _name, _condition, _markup in _screen_chunks:
         '  <dc-import name="' + _name + '" dcProps="{{ viewProps }}"></dc-import>\n'
         '</sc-if>\n'
     )
-    with open('Commerce App.dc.html', 'w', encoding='utf-8') as handle:
-        handle.write(full_html)
 
 def _compact_shell_markup(markup):
     return re.sub(r'[\t ]+$', '', re.sub(r'<!--[\s\S]*?-->', '', markup), flags=re.M)
 
 full_html = (
     # Keep design notes in the source templates, out of the initial payload.
-    # Only markup is compacted; never apply this to the application script.
+    # Only markup is compacted here, never the application script: its comments
+    # are removed below by a real JavaScript parser, not by a regular expression.
     _optimize_media_markup(_compact_shell_markup(header_and_styles))
     + _optimize_media_markup(_compact_shell_markup(get_home_view()))
     + lazy_screen_markup
@@ -18138,6 +18347,34 @@ full_html = (
 with open('Commerce App.dc.html', 'w', encoding='utf-8') as f:
     f.write(full_html)
 
+# The controller's comments (~70 KB of design notes, kept in THIS file) are not
+# shipped to every visitor. scripts/strip_shell_comments.js finds them with acorn
+# and only writes the shell back if the token stream is unchanged; on any doubt it
+# leaves the shell as written above (correct, just heavier: the frontend
+# performance budget will then say so).
+try:
+    import subprocess
+    subprocess.run(['node', os.path.join('scripts', 'strip_shell_comments.js'), 'Commerce App.dc.html'], check=True)
+except (OSError, subprocess.CalledProcessError) as exc:
+    print('WARNING: the shell keeps its script comments (' + str(exc) + ').')
 
-if __name__ == '__main__':
-    build()
+# public/ is owned by scripts/assemble_public.js -- the same script Netlify
+# runs as its build command. It wipes and re-assembles the directory: shell,
+# every *Screens.dc.html chunk, support.js and the whole src/ tree, then drops
+# src/backend (which embeds the Supabase URL), sanitizes filenames Netlify
+# rejects and rewrites the asset references to match.
+#
+# This build used to write public/index.html by itself and nothing else, so a
+# local public/ ended up with a fresh shell beside months-old route chunks and
+# service clients -- the browser then ran code this build had already replaced,
+# and local behaviour silently diverged from the deployed site. Delegating to
+# the real assembler keeps a local run byte-identical to a deploy.
+if os.path.isdir('public') or os.path.isfile(os.path.join('scripts', 'assemble_public.js')):
+    import subprocess
+    try:
+        subprocess.run(['node', os.path.join('scripts', 'assemble_public.js')], check=True)
+    except (OSError, subprocess.CalledProcessError) as exc:
+        print('WARNING: could not assemble public/ (' + str(exc) + ').')
+        print('         Run `node scripts/assemble_public.js` before serving locally.')
+
+print("Commerce App.dc.html successfully rebuilt with all screens and backend integration!")
