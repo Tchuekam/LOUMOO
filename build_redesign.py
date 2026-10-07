@@ -17745,14 +17745,57 @@ class Component extends DCLogic {
       },
       addToVs: () => { this.setState(st => ({ vs: st.vs + 1 })); this.go('vsCompare'); },
       claimGift: () => this.toast('Gift claimed. The seller will message you shortly.'),
-      toggleFollow: () => { const next = !this.state.following; this.setState({ following: next }); this.toast(next ? 'Following Orca Electronics' : 'Unfollowed'); },
+      toggleFollow: () => {
+        const store = this.state.currentStore || {};
+        const storeId = store.id || this.state.currentStoreId;
+        const wasFollowing = Boolean(store.isFollowing ?? this.state.following);
+        const next = !wasFollowing;
+        const previousFollowerCount = Number(store.followerCount || store.follower_count || 0);
+
+        this.setState({
+          following: next,
+          currentStore: Object.assign({}, store, {
+            isFollowing: next,
+            followerCount: Math.max(0, previousFollowerCount + (next ? 1 : -1))
+          })
+        });
+
+        const api = getApi();
+        const request = api && storeId
+          ? (next ? api.followStoreById(storeId) : api.unfollowStoreById(storeId))
+          : null;
+        if (!request) {
+          this.toast(next ? 'Following ' + (store.name || 'store') : 'Unfollowed');
+          return;
+        }
+
+        request.then(result => {
+          if (this._unmounted) return;
+          const data = (result && result.data) || result || {};
+          this.setState(st => ({
+            following: Boolean(data.isFollowing ?? next),
+            currentStore: Object.assign({}, st.currentStore, {
+              isFollowing: Boolean(data.isFollowing ?? next),
+              followerCount: Number(data.followerCount ?? st.currentStore.followerCount ?? previousFollowerCount)
+            })
+          }));
+          this.toast(next ? 'Following ' + (store.name || 'store') : 'Unfollowed');
+        }).catch(err => {
+          if (this._unmounted) return;
+          this.setState({
+            following: wasFollowing,
+            currentStore: Object.assign({}, store, { isFollowing: wasFollowing, followerCount: previousFollowerCount })
+          });
+          this.toast((err && err.message) || 'Could not update follow status.');
+        });
+      },
       // `following` is read directly by templates (e.g. the store card's
       // follow button variant). It lived in state but was never exposed, so
       // every `{{ following ? ... }}` resolved to an empty string and the
       // button rendered with no variant class at all - transparent and
       // indistinguishable from plain text.
-      following: Boolean(this.state.following),
-      followLabel: this.state.following ? 'FOLLOWING' : 'FOLLOW',
+      following: Boolean((this.state.currentStore && this.state.currentStore.isFollowing) ?? this.state.following),
+      followLabel: Boolean((this.state.currentStore && this.state.currentStore.isFollowing) ?? this.state.following) ? 'FOLLOWING' : 'FOLLOW',
       toggleSave: () => { const next = !this.state.saved; this.setState({ saved: next }); this.toast(next ? 'Saved to your list' : 'Removed from saved'); },
       // ── Real seller messaging via WhatsApp deep-link ──
       // Opens WhatsApp to the store's line with a pre-filled enquiry that names
