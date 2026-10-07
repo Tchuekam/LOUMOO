@@ -88,35 +88,12 @@ class OrderRepository {
       handleDatabaseFailure(err, 'OrderRepository.findListingById');
     }
 
-    // Try fallback lookup via CatalogRepository (handles curated products in dev)
-    try {
-      const CatalogRepository = require('../../catalog/infrastructure/CatalogRepository');
-      const product = await CatalogRepository.findPublicProductByIdOrSlug(listingId);
-      if (product) {
-        const storePhone = product.storePhone || product.phoneNumber || (product.store && (product.store.phoneNumber || product.store.whatsapp)) || null;
-        return {
-          id: product.id,
-          storeId: product.storeId || 'str_default',
-          sellerId: product.sellerId || (product.store && product.store.id) || 'usr_seller_default',
-          storeName: product.merchant || (product.store && product.store.name) || 'LOUMOO Merchant',
-          storeStatus: 'ACTIVE',
-          storePhone,
-          sellerPhone: storePhone,
-          title: product.title,
-          status: 'PUBLISHED',
-          visibility: 'PUBLIC',
-          currency: product.currency || 'XAF',
-          basePriceMinor: product.priceNumeric || 0,
-          salePriceMinor: product.salePriceNumeric || null,
-          hasVariants: false,
-          fulfillment: null,
-          deletedAt: null
-        };
-      }
-    } catch (catErr) {
-      // Catalog fallback not available or failed
-    }
-
+    // Not a listing in iam.listings: nothing can be ordered. In particular, a curated
+    // storefront product (src/data) is NOT resolved through the catalogue here. It has
+    // no seller account, and filing its order under an invented seller
+    // ('usr_seller_default') broke every such checkout with a foreign-key 500
+    // ("LOUMOO is temporarily unavailable") and would have sent an order nobody
+    // receives. The caller answers 404, which the checkout explains as a showcase item.
     return null;
   }
 

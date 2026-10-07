@@ -123,13 +123,18 @@ class OrderCreationService {
     try {
       // 3. Resolve and authoritatively validate each listing and variant
       const evaluatedItems = [];
+      // Every line that cannot be ordered (not a listing: a showcase product) is
+      // named in ONE refusal, so the buyer removes them all at once rather than
+      // discovering them a retry at a time.
+      const unorderableIds = [];
 
       for (const itemInput of data.items) {
         const listingId = itemInput.listingId || itemInput.productId || itemInput.id;
         const listing = await this.repository.findListingById(listingId);
 
         if (!listing) {
-          throw new NotFoundError('Listing', listingId);
+          unorderableIds.push(listingId);
+          continue;
         }
 
         // Validate listing status and merchandisability
@@ -201,6 +206,10 @@ class OrderCreationService {
           imageUrl: null,
           listing
         });
+      }
+
+      if (unorderableIds.length) {
+        throw new NotFoundError('Listing', unorderableIds.join(', '));
       }
 
       // An order belongs to exactly one seller: the seller is who receives it, who

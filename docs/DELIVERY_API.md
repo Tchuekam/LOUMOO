@@ -776,7 +776,10 @@ the other delivery routes, the rider's own job list (`GET /driver/me`, presence 
    nothing breaks without it, those reads are just slower on a large orders table), and
    **`017_rider_presence.sql` (required, and before the v1.3 code is deployed: until it is
    applied accept, assign, auto-assign and the rider list answer `503`, and the boot log says
-   `NOT READY`)**. Apply the files you are missing one at a time:
+   `NOT READY`)**, then `018_rider_marketplace_profile.sql` (the provider list) and
+   `019_orders_payment_status_escrow_states.sql` (lets an order become `released` when it is
+   delivered and `refundable` when it is cancelled; without it both writes are refused and
+   only logged, so a delivered order stays `escrow_held`). Apply the files you are missing one at a time:
    `node scripts/apply_migration.js 013_delivery_tracking.sql`. `--all` re-applies every
    file and **stops at the first one that fails**; every migration is now re-runnable (a
    test applies the whole set twice on a real Postgres engine), but if your database was
