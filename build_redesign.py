@@ -57,6 +57,7 @@ header_and_styles = """<!DOCTYPE html>
 <script defer src="./src/services/deliveryTrackingScreen.js"></script>
 <script defer src="./src/services/dispatchUi.js"></script>
 <script defer src="./src/services/sellerDispatch.js"></script>
+<script defer src="./src/services/providerProfile.js"></script>
 <script defer src="./src/services/riderPresence.js"></script>
 <script defer src="./src/services/riderHub.js"></script>
 <script defer src="./src/services/ridersAdmin.js"></script>
