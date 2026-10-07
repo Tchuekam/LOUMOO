@@ -7851,9 +7851,22 @@ class Component extends DCLogic {
       return d.getDate() + ' ' + M[d.getMonth()] + ' ' + d.getFullYear();
     } catch (e) { return String(iso || ''); }
   };
+  // The price a buyer pays, by the SAME rule the product page shows it: of a
+  // price / salePrice pair the lower is the price and the higher the crossed-out
+  // "was" price. The catalogue sends the pair in two conventions (a curated
+  // product's salePrice is its was-price, a listing's is its discount), so
+  // `salePrice || price` put the was-price of a curated product in the bag.
+  _payablePriceLabel = (p) => {
+    const rawP = (p && p.price) || '';
+    const rawSale = (p && p.salePrice) || '';
+    const n1 = this._priceToXaf(rawP);
+    const n2 = this._priceToXaf(rawSale);
+    if (n1 > 0 && n2 > 0) return n1 <= n2 ? rawP : rawSale;
+    return rawSale || rawP;
+  };
   _wishlistEntry = (id, name) => {
     const p = this._resolveProduct(id);
-    const priceStr = p.salePrice || p.price || '';
+    const priceStr = this._payablePriceLabel(p);
     return {
       id: id,
       name: name || p.title || 'Saved item',
@@ -7902,7 +7915,7 @@ class Component extends DCLogic {
   // survives reloads (works for guests). Checkout/payment wiring comes later.
   _cartEntry = (id, name) => {
     const p = this._resolveProduct(id);
-    const priceStr = p.salePrice || p.price || '';
+    const priceStr = this._payablePriceLabel(p);
     return {
       id: id,
       name: name || p.title || 'Item',

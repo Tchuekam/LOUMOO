@@ -10496,9 +10496,17 @@ class Component extends DCLogic {
       return d.getDate() + ' ' + M[d.getMonth()] + ' ' + d.getFullYear();
     } catch (e) { return String(iso || ''); }
   };
+  _payablePriceLabel = (p) => {
+    const rawP = (p && p.price) || '';
+    const rawSale = (p && p.salePrice) || '';
+    const n1 = this._priceToXaf(rawP);
+    const n2 = this._priceToXaf(rawSale);
+    if (n1 > 0 && n2 > 0) return n1 <= n2 ? rawP : rawSale;
+    return rawSale || rawP;
+  };
   _wishlistEntry = (id, name) => {
     const p = this._resolveProduct(id);
-    const priceStr = p.salePrice || p.price || '';
+    const priceStr = this._payablePriceLabel(p);
     return {
       id: id,
       name: name || p.title || 'Saved item',
@@ -10544,7 +10552,7 @@ class Component extends DCLogic {
 
   _cartEntry = (id, name) => {
     const p = this._resolveProduct(id);
-    const priceStr = p.salePrice || p.price || '';
+    const priceStr = this._payablePriceLabel(p);
     return {
       id: id,
       name: name || p.title || 'Item',
