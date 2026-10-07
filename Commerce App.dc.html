@@ -9344,7 +9344,6 @@ html, body {
 </x-dc>
 
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:446,&quot;height&quot;:900},&quot;userName&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Tchuekam&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;showAds&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Home&quot;}}">
-
 if (typeof window !== 'undefined' && typeof document !== 'undefined') {
   window.toggleVideoSound = function(e) {
     if (e) {
@@ -9358,7 +9357,6 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
     if (!vid) return;
 
     if (vid.muted) {
-      
       document.querySelectorAll('video').forEach(function(v) {
         if (v !== vid) {
           v.muted = true;
@@ -9384,7 +9382,6 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
     }
   };
 
-  
   if (!window.__loumooVideoSoundAttached) {
     window.__loumooVideoSoundAttached = true;
     document.addEventListener('click', function(e) {
@@ -9397,7 +9394,6 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
     }, true);
   }
 
-  
   window.initLoumooAutoplayVideos = function() {
     var vids = document.querySelectorAll('video[autoplay]');
     vids.forEach(function(vid) {
@@ -9419,37 +9415,20 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
 }
 
 const SCREENS = [
-  
-  
-  
   'home','search','filters','voice','category','bestpicks','freeday','notifications','chat','threadAi','threadSeller',
   'product','cart','checkout','success','orders','store','business','brand','vs','vsCompare','visual',
   'visualScan','visualResults','myListings','travel','travelBus',
   'travelPackages','travelVisa','travelResults','travelDetail','travelPassenger','travelTicket','hotelVoucher','announce','announceCampaigns','announceDetail',
   'profile','seller','settings','networkError','saved','transactions','loading',
   'onboardWelcome','onboardType','onboardIdentity','onboardOtp','onboardAdaptive','onboardBuyer','onboardSeller','onboardBusiness','onboardVerify','onboardReview','onboardSuccess',
-  
   'signIn','forgotPassword','resetPassword','verifyEmail',
-  
   'accountDashboard','editProfile','addresses','addAddress','editAddress','notificationPreferences','privacySettings','securitySettings','followedStores','userActivity','deleteAccount',
-  
   'orderDetail','refundRequest','writeReview','sellerOrderDetail','sellerPayouts','hotelSearch','hotelDetail','hotelBooking',
-  
   'createStore','storeOnboarding','storeSettings','storeVerification','storeAnalytics',
-  
-  
-  
-  
   'publishIntent','publishStudio','publishReview','publishSuccess',
   'publicUserProfile','sellerPublicPage',
-  
   'superAdmin'
 ];
-
-
-
-
-
 const SELLER_WHATSAPP_DEFAULT = '237690123456';
 const SELLER_WHATSAPP = {
   'Orca Electronics': '237677101234',
@@ -9477,8 +9456,6 @@ function resolveSellerWhatsApp(name) {
     : SELLER_WHATSAPP_DEFAULT;
   if (!name) return dynamicDefault;
   if (SELLER_WHATSAPP[name]) return SELLER_WHATSAPP[name];
-  
-  
   const norm = String(name).toLowerCase().trim();
   for (const key in SELLER_WHATSAPP) {
     const k = key.toLowerCase();
@@ -9486,7 +9463,6 @@ function resolveSellerWhatsApp(name) {
   }
   return dynamicDefault;
 }
-
 
 function resolveCityDeliveryFee(city) {
   const defaultRates = {
@@ -9501,11 +9477,6 @@ function resolveCityDeliveryFee(city) {
   const dynamicRates = (typeof window !== 'undefined' && window.LOUMOO_SYSTEM_SETTINGS && window.LOUMOO_SYSTEM_SETTINGS.shipping_rates_by_city)
     ? window.LOUMOO_SYSTEM_SETTINGS.shipping_rates_by_city
     : defaultRates;
-  
-  
-  
-  
-  
   const fold = (s) => String(s == null ? '' : s).normalize('NFD').toLowerCase().replace(/[^a-z0-9 ]/g, '').replace(/ +/g, ' ').trim();
   if (!fold(city)) return Number.isInteger(Number(dynamicRates['Douala'])) ? Number(dynamicRates['Douala']) : 1000;
   const wanted = fold(city);
@@ -9550,7 +9521,6 @@ const NO_NAV = [
   'superAdmin'
 ];
 
-
 function getApi() {
   try {
     if (typeof window !== 'undefined' && window && window.LoumooAPI) return window.LoumooAPI;
@@ -9559,7 +9529,6 @@ function getApi() {
   return null;
 }
 
-
 function getReco() {
   try {
     if (typeof window !== 'undefined' && window && window.LoumooReco) return window.LoumooReco;
@@ -9567,7 +9536,6 @@ function getReco() {
   } catch (e) {  }
   return null;
 }
-
 
 function getGuard() {
   try {
@@ -9578,7 +9546,6 @@ function getGuard() {
 }
 
 
-
 function getPublishing() {
   try {
     if (typeof window !== 'undefined' && window && window.LoumooPublishing) return window.LoumooPublishing;
@@ -9586,7 +9553,6 @@ function getPublishing() {
   } catch (e) {  }
   return null;
 }
-
 
 function friendlyError(err) {
   if (!err) return 'Something went wrong. Please try again.';
@@ -9603,17 +9569,14 @@ function friendlyError(err) {
   return err.message || 'Something went wrong. Please try again.';
 }
 
-
 function mergeFieldErrors(existing, fields) {
   const out = Object.assign({}, existing || {});
   (fields || []).forEach(f => {
     if (!f || !f.field) return;
-    
     out[f.field] = f.message;
   });
   return out;
 }
-
 
 function scrollStudioToTop() {
   try {
@@ -9623,7 +9586,6 @@ function scrollStudioToTop() {
     else if (typeof window !== 'undefined' && window.scrollTo) window.scrollTo({ top: 0, behavior: 'smooth' });
   } catch (e) {  }
 }
-
 
 function focusStudioField(path) {
   try {
@@ -9640,7 +9602,6 @@ function focusStudioField(path) {
   } catch (e) {  }
 }
 
-
 function safeObjectUrl(file) {
   try {
     if (typeof URL !== 'undefined' && URL.createObjectURL) return URL.createObjectURL(file);
@@ -9649,7 +9610,6 @@ function safeObjectUrl(file) {
 }
 
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
-
 
 function passwordStrength(pw) {
   if (!pw) return { pct: '0%', label: '', color: 'var(--color-text-muted)' };
@@ -9664,7 +9624,6 @@ function passwordStrength(pw) {
   return { pct: '100%', label: 'STRONG', color: 'var(--color-success)' };
 }
 
-
 function getClerk() {
   try {
     if (typeof window !== 'undefined' && window && window.LoumooClerk) return window.LoumooClerk;
@@ -9672,10 +9631,6 @@ function getClerk() {
   } catch (e) {  }
   return null;
 }
-
-
-
-
 
 function isoDaysFromToday(days) {
   const d = new Date();
@@ -9685,19 +9640,11 @@ function isoDaysFromToday(days) {
 }
 
 
-
-
-
-
-
-
 const PRODUCTS_DATA = (typeof window !== 'undefined' && window.PRODUCTS_DATA) ? window.PRODUCTS_DATA : {
-  
 };
 if (typeof window !== 'undefined' && !window.PRODUCTS_DATA) {
   window.PRODUCTS_DATA = PRODUCTS_DATA;
 }
-
 
 if (typeof window !== 'undefined') {
   window.loumooPlayVideo = function(container) {
@@ -9751,45 +9698,32 @@ class Component extends DCLogic {
     infiniteFeedBatch: 1,
     qty: 1, freeday: false, darkMode: false,
     isLoggedIn: false,
-    
-    
-    
     authStatus: 'unknown',
     sessionUser: null,
 
-    
-    
-    
-    accountState: null,        
-    capabilities: {},          
-    serverOnboarding: null,    
-    authProviderStatus: 'loading',  
+    accountState: null,
+    capabilities: {},
+    serverOnboarding: null,
+    authProviderStatus: 'loading',
     authProviderError: '',
     onboardingBusy: false,
     onboardingError: '',
     onboardingFieldErrors: {},
 
-    
     regPassword: '',
     regShowPassword: false,
     regBusy: false,
     regError: '',
 
-    
     phoneVerificationAvailable: false,
 
-    
     signInIdentifier: '',
     signInPassword: '',
     signInShowPassword: false,
     signInBusy: false,
     signInError: '',
-    
-    
-    
     postAuthRedirect: '',
 
-    
     resetEmail: '',
     resetCode: '',
     resetNewPassword: '',
@@ -9801,13 +9735,11 @@ class Component extends DCLogic {
     resetServerMessage: '',
     resetCooldown: 0,
 
-    
     emailVerifyState: 'pending',
     emailVerifyCode: '',
     emailVerifyError: '',
     emailVerifyCooldown: 0,
 
-    
     adminActiveTab: 'overview',
     adminStats: {
       gmvXaf: 14850000,
@@ -9871,8 +9803,6 @@ class Component extends DCLogic {
     regEmail: '',
     regCity: 'douala',
     regAddress: '',
-    
-    
     regBusinessName: '',
     regRccm: 'RC/DLA/2023/B/1842',
     legalForm: 'sarl',
@@ -9900,7 +9830,6 @@ class Component extends DCLogic {
       pay: 'mtn', deliv: 'home', uqty: 'one'
     },
 
-    
     dashboard: null,
     dashboardLoading: false,
     dashboardError: '',
@@ -9912,11 +9841,8 @@ class Component extends DCLogic {
     profileFormDirty: false,
     profileSaving: false,
     profileFormError: '',
-    
-    
     addressesList: [],
     addressesLoading: false,
-    
     providers: [],
     providersLoading: false,
     providersError: '',
@@ -9957,8 +9883,6 @@ class Component extends DCLogic {
       { id: 'act_3', title: 'Followed Store', description: 'Subscribed to Orca Electronics Douala flash stock notifications', createdAt: '22 Aug 2026, 18:40' }
     ],
     activityLoading: false,
-    
-    
     sellerStatus: 'NONE',
     primaryStoreId: null,
     store: null,
@@ -9967,9 +9891,6 @@ class Component extends DCLogic {
     deleteAccountBusy: false,
     deleteAccountError: '',
 
-    
-    
-    
     currentOrder: null,
     refundReason: 'damaged',
     refundDetails: '',
@@ -10006,8 +9927,6 @@ class Component extends DCLogic {
     hotelCity: '',
     hotelSelectedId: '',
     hotelRoomIndex: 0,
-    
-    
     hotelCheckIn: isoDaysFromToday(1),
     hotelCheckOut: isoDaysFromToday(4),
     hotelGuests: 2,
@@ -10015,10 +9934,6 @@ class Component extends DCLogic {
     hotelGuestPhone: '+237 690 12 34 56',
     hotelReservation: null,
 
-    
-    
-    
-    
     hotelList: [],
     hotelListLoading: false,
     hotelListError: '',
@@ -10032,10 +9947,8 @@ class Component extends DCLogic {
     hotelSelectedRoomId: '',
     hotelSubmitting: false,
     hotelSubmitError: '',
-    
     hotelFavIds: {},
 
-    
     travelServiceTab: 'bus',
     travelMyTripsTab: 'upcoming',
     busOperatorFilter: 'all',
@@ -10151,7 +10064,6 @@ class Component extends DCLogic {
     visaApplicationStatus: 'IN REVIEW',
     visaCountryLabel: 'France / Schengen Short Stay (Type C)',
 
-    
     createStoreName: '',
     createStoreLogoUrl: '',
     storeLogoUrl: '',
@@ -10176,7 +10088,6 @@ class Component extends DCLogic {
     analyticsConversionRate: '0.0',
     analyticsTopProducts: [],
 
-    
     announcePeriod: '7d',
     announceCampaigns: [],
     announceTotalReach: '0',
@@ -10206,7 +10117,6 @@ class Component extends DCLogic {
     storeLocationStreet: '',
     storeLocationLandmark: '',
 
-    
     storeSearchQuery: '',
     storeCityFilter: 'all',
     storeCategoryFilter: 'all',
@@ -10215,7 +10125,6 @@ class Component extends DCLogic {
     selectedBrand: 'apple',
     brandFollowed: false,
 
-    
     categorySearchQuery: '',
     categorySelectedDomain: 'all',
     activeCategorySlug: 'all',
@@ -10224,24 +10133,13 @@ class Component extends DCLogic {
     categoryCityFilter: 'all',
     categoryVerifiedOnly: false,
 
-    
-    
-    
-    
     searchQuery: '',
     searchResults: null,
     searchBusy: false,
     searchError: '',
-    
-    filterCity: '',            
-    filterVerifiedOnly: false, 
+    filterCity: '',
+    filterVerifiedOnly: false,
 
-    
-    
-    
-    
-    
-    
     pubDraft: null,
     pubSectionKey: null,
     pubAdvancedOpen: false,
@@ -10249,14 +10147,12 @@ class Component extends DCLogic {
     pubPreviewDevice: 'mobile',
     pubChipDrafts: {},
 
-    
     pubTaxonomy: [],
     pubCategorySchema: null,
     pubCategorySchemaId: null,
     pubBroadcastSchema: null,
     pubAttachable: [],
 
-    
     pubLifecycle: '',
     pubBusyLabel: '',
     pubServerError: '',
@@ -10270,7 +10166,6 @@ class Component extends DCLogic {
     pubPublished: null,
     pubRevealErrors: false,
 
-    
     announcements: [],
     announceTotal: 0,
     announceLoading: false,
@@ -10290,7 +10185,6 @@ class Component extends DCLogic {
     storeDiscoveryLoading: false,
     storeDiscoveryError: '',
 
-    
     currentProductId: null,
     currentProduct: null,
     productLoading: false,
@@ -10309,8 +10203,6 @@ class Component extends DCLogic {
   go = (s) => {
     if (this._searchExperience) this._searchExperience.enter(s);
     this.setState(st => ({ screen: s, stack: [...st.stack, st.screen], toast: '' }));
-    
-    
     if (s === 'publishIntent' || s === 'publishStudio' || s === 'publishReview' || s === 'publishSuccess') {
       this._ensurePublishingEngine().then((pub) => {
         if (this._unmounted || !pub) return;
@@ -10352,9 +10244,6 @@ class Component extends DCLogic {
     }
   };
 
-  
-  
-  
   _restoreUserAvatar = () => {
     try {
       const a = localStorage.getItem('loumoo_user_avatar');
@@ -10373,7 +10262,6 @@ class Component extends DCLogic {
         reader.onload = () => {
           const img = new Image();
           img.onload = () => {
-            
             const size = 256;
             const canvas = document.createElement('canvas');
             canvas.width = size; canvas.height = size;
@@ -10472,17 +10360,11 @@ class Component extends DCLogic {
     return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
   };
 
-  
-  
-  
   _priceToXaf = (s) => {
     if (typeof s === 'number') return s;
     const digits = String(s || '').replace(/[^0-9]/g, '');
     return digits ? parseInt(digits, 10) : 0;
   };
-  
-  
-  
   _resolveProduct = (id) => {
     if (!id) return {};
     let p = this._resolveProductItem ? this._resolveProductItem(id) : null;
@@ -10492,9 +10374,6 @@ class Component extends DCLogic {
     }
     return p || (this._synthesizeAvailableListing ? this._synthesizeAvailableListing(id) : {});
   };
-  
-  
-  
   _categoryProductPool = (slug) => {
     if (!slug) return [];
     const MAP = {
@@ -10524,7 +10403,6 @@ class Component extends DCLogic {
     const cats = MAP[slug] || [slug];
     return merged.filter((p) => cats.indexOf(String(p.category || '').toLowerCase()) !== -1);
   };
-  
   _recoItem = (src) => {
     if (!src) return { id: null };
     return {
@@ -10538,14 +10416,9 @@ class Component extends DCLogic {
       storeCity: src.storeCity || src.merchantCity || ''
     };
   };
-  
   _recoNote = (kind, src, extra) => {
     try { const R = getReco(); if (R && R.note) R.note(kind, this._recoItem(src), extra || {}); } catch (e) {  }
   };
-  
-  
-  
-  
   _pdpSimilarList = () => {
     const p = this.state.currentProduct;
     const R = getReco();
@@ -10609,7 +10482,6 @@ class Component extends DCLogic {
 
     return sub === c || cl.includes(subClean) || t.includes(subClean);
   };
-  
   _hotelNights = (ci, co) => {
     try {
       const d = Math.round((new Date(co + 'T00:00:00') - new Date(ci + 'T00:00:00')) / 86400000);
@@ -10670,9 +10542,6 @@ class Component extends DCLogic {
     } catch (e) {}
   };
 
-  
-  
-  
   _cartEntry = (id, name) => {
     const p = this._resolveProduct(id);
     const priceStr = p.salePrice || p.price || '';
@@ -10699,10 +10568,6 @@ class Component extends DCLogic {
     } catch (e) {}
   };
 
-  
-  
-  
-  
   _persistOrders = (list) => {
     try { localStorage.setItem('loumoo_orders', JSON.stringify(list || [])); } catch (e) {}
   };
@@ -10733,10 +10598,6 @@ class Component extends DCLogic {
     }
   };
 
-  
-  
-  
-  
   _persistReviews = (list) => {
     try { localStorage.setItem('loumoo_reviews', JSON.stringify(list || [])); } catch (e) {}
   };
@@ -10749,7 +10610,6 @@ class Component extends DCLogic {
     } catch (e) {}
   };
 
-  
   _persistTrips = (list) => {
     try { localStorage.setItem('loumoo_trips', JSON.stringify(list || [])); } catch (e) {}
   };
@@ -10762,9 +10622,6 @@ class Component extends DCLogic {
     } catch (e) {}
   };
 
-  
-  
-  
   _persistNotifs = (list) => {
     try { localStorage.setItem('loumoo_notifs', JSON.stringify(list || [])); } catch (e) {}
   };
@@ -10775,7 +10632,6 @@ class Component extends DCLogic {
         const list = JSON.parse(raw);
         if (Array.isArray(list)) { this.setState({ notifications: list }); return; }
       }
-      
       const seed = [{
         id: 'ntf_welcome', tone: 'accent', title: 'Welcome to LOUMOO',
         body: 'Your notifications about orders, deliveries and trips will appear here.',
@@ -10798,7 +10654,6 @@ class Component extends DCLogic {
     const list = (this.state.notifications || []).map((n) => n.read ? n : Object.assign({}, n, { read: true }));
     this.setState({ notifications: list });
     this._persistNotifs(list);
-    
     try {
       if (this.state.authStatus === 'authenticated') {
         const api = getApi();
@@ -10806,8 +10661,6 @@ class Component extends DCLogic {
       }
     } catch (e) {}
   };
-  
-  
   loadServerNotifications(opts) {
     try {
       if (this.state.authStatus !== 'authenticated') return;
@@ -10822,7 +10675,6 @@ class Component extends DCLogic {
           .map((s) => ({
             id: 'srv_' + s.id, serverId: s.id, tone: s.tone || 'accent',
             title: s.title, body: s.body, read: Boolean(s.read),
-            
             metadata: s.metadata || {},
             createdAt: new Date(s.createdAt).getTime() || Date.now()
           }));
@@ -10830,30 +10682,21 @@ class Component extends DCLogic {
         const merged = local.concat(mapped).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)).slice(0, 40);
         this.setState({ notifications: merged });
         this._persistNotifs(merged);
-        
-        
         const fresh = mapped.filter((n) => !n.read);
         if (opts && opts.announce && fresh.length) {
           this.toast(fresh[0].title + (fresh.length > 1 ? ' (+' + (fresh.length - 1) + ' more)' : ''));
         }
-        
         if (fresh.some((n) => n.metadata && n.metadata.orderId)) this.loadServerOrders();
       }).catch(() => {});
     } catch (e) {}
   }
 
-  
   _openNotification(n) {
     const circuit = typeof window !== 'undefined' ? window.LoumooCircuit : null;
     if (!n || !circuit) return;
     circuit.openFromNotification(n);
   }
 
-  
-  
-  
-  
-  
   _startCircuitPolling() {
     if (typeof window === 'undefined' || typeof document === 'undefined' || this._circuitTimer) return;
     const tick = () => {
@@ -10875,9 +10718,6 @@ class Component extends DCLogic {
     this._onCircuitVisible = null;
   }
 
-  
-  
-  
   loadServerOrders() {
     try {
       if (this.state.authStatus !== 'authenticated' || this._ordersInFlight) return;
@@ -10889,7 +10729,6 @@ class Component extends DCLogic {
         if (this._unmounted) return;
         const serverOrders = ((page && page.orders) || []).map((o) => circuit.orderFromServer(o, {}));
         const merged = circuit.mergeOrders(this.state.orders || [], serverOrders);
-        
         const open = this.state.currentOrder;
         const fresh = open && open.id ? merged.find((o) => o.id === open.id) : null;
         this.setState(fresh ? { orders: merged, currentOrder: fresh } : { orders: merged });
@@ -10898,7 +10737,6 @@ class Component extends DCLogic {
     } catch (e) { this._ordersInFlight = false; }
   }
 
-  
   _openOrderById(id) {
     const order = (this.state.orders || []).find((o) => o && o.id === id);
     if (!order) return;
@@ -10906,10 +10744,6 @@ class Component extends DCLogic {
     this.go('orderDetail');
   }
 
-  
-  
-  
-  
   _placeBagAsOrders(groups, address, method, images, deliveryMethod, preferredDriverId) {
     const api = getApi();
     const circuit = window.LoumooCircuit;
@@ -10921,7 +10755,6 @@ class Component extends DCLogic {
       const group = groups[i];
       return api.createOrder(circuit.toOrderPayload(group.items, address, deliveryMethod, preferredDriverId)).then((serverOrder) => {
         if (!serverOrder || !serverOrder.id) {
-          
           const unconfirmed = new Error('The order was not confirmed.');
           unconfirmed.status = 502;
           return { placed: placed, failure: { error: unconfirmed, group: group } };
@@ -10939,13 +10772,6 @@ class Component extends DCLogic {
     };
     return step(0);
   }
-  
-  
-  
-  
-  
-  
-  
   _resolveDeliveryDestination = () => {
     const addrs = this.state.addressesList || [];
     const sel = this.state.selectedDeliveryAddress;
@@ -10962,17 +10788,11 @@ class Component extends DCLogic {
     const method = (this.state.sel && this.state.sel.deliv === 'pickup') ? 'STORE_PICKUP' : 'HOME_DELIVERY';
     const phoneOk = String(address.phone).replace(/[^0-9]/g, '').length >= 6;
     const nameOk = address.fullName.trim().length >= 2;
-    
-    
     const hasDestination = method === 'STORE_PICKUP'
       ? (nameOk && phoneOk)
       : (Boolean(address.street.trim() && address.city.trim()) && phoneOk && nameOk);
     return { address: address, method: method, hasDestination: hasDestination };
   };
-  
-  
-  
-  
   _loadProviders = (city, force) => {
     const api = (typeof window !== 'undefined') && window.deliveryApi;
     if (!api || typeof api.getProviders !== 'function') return;
@@ -10991,7 +10811,6 @@ class Component extends DCLogic {
       this.setState({ providers: [], providersLoading: false, selectedProviderId: null, providersError: (e && e.message) || 'Could not load delivery options.' });
     });
   };
-  
   _cityCode = (city) => {
     const map = {
       'douala': { code: 'DLA', airport: "Douala Int'l" },
@@ -11009,8 +10828,6 @@ class Component extends DCLogic {
     return map[key] || { code: (String(city || 'DLA').slice(0, 3).toUpperCase()), airport: city || 'Douala' };
   };
 
-  
-  
   _confirmTravelBooking() {
     const selected = this.state.selectedTravelResult || this.state.selectedBusSchedule || (this.state.busSchedules && this.state.busSchedules[0]) || {
       id: 'bus-sch-1',
@@ -11087,7 +10904,6 @@ class Component extends DCLogic {
           const ref = bookingData.reference || bookingData.bookingReference || pnrRef;
           const bookingId = bookingData.id;
 
-          
           if (bookingId && api.payTravelBooking) {
             api.payTravelBooking(bookingId, {
               paymentMethod: this.state.travelPaymentMethod || 'mtn',
@@ -11114,23 +10930,15 @@ class Component extends DCLogic {
   }
 
   componentDidMount() {
-    
-    
-    
     this._restoreLocalState();
     this._loadSystemSettings();
     this._bootAuth();
-    
-    
     this._ensureCatalogData();
     this.loadCatalogProducts({ limit: 16 });
     if (this.state.screen === 'announce' || this.state.screen === 'announceDetail') {
       this.ensureAnnouncements();
     }
-    
     setTimeout(() => { if (!this._unmounted) this.loadServerNotifications(); }, 2000);
-    
-    
     this._startCircuitPolling();
     if (typeof window !== 'undefined') {
       window._loumooHeroComponent = this;
@@ -11139,7 +10947,6 @@ class Component extends DCLogic {
           window._loumooHeroComponent.heroNextSlide();
         }
       };
-      
       this._onMediaPlay = (e) => {
         if (e.target && e.target.tagName === 'VIDEO') {
           if (!e.target.closest('.video-modal-player')) {
@@ -11158,12 +10965,6 @@ class Component extends DCLogic {
       };
       document.addEventListener('ended', this._onMediaEnded, true);
 
-      
-      
-      
-      
-      
-      
       try {
         const setupAmbient = (v) => {
           v.muted = true;
@@ -11187,12 +10988,10 @@ class Component extends DCLogic {
         this._scanAmbient = () => {
           document.querySelectorAll('video[data-ambient="true"]').forEach((v) => {
             setupAmbient(v);
-            this._ambientObserver.observe(v); 
+            this._ambientObserver.observe(v);
           });
         };
         this._scanAmbient();
-        
-        
         let scanScheduled = false;
         this._ambientMutationObserver = new MutationObserver(() => {
           if (scanScheduled) return;
@@ -11203,10 +11002,6 @@ class Component extends DCLogic {
         this._ambientMutationObserver.observe(root, { childList: true, subtree: true });
       } catch (_) {}
 
-      
-      
-      
-      
       this._onMediaError = (e) => {
         const img = e.target;
         if (img && img.tagName === 'IMG' && img.closest) {
@@ -11279,7 +11074,6 @@ class Component extends DCLogic {
     } catch (e) {}
   }
 
-  
   _restoreLocalState() {
     if (typeof localStorage === 'undefined') return;
     const next = {};
@@ -11345,7 +11139,6 @@ class Component extends DCLogic {
     if (Object.keys(next).length) this.setState(next);
   }
 
-  
   _restoreOnboardingDraft() {
     if (typeof localStorage === 'undefined') return;
     try {
@@ -11357,21 +11150,15 @@ class Component extends DCLogic {
     } catch (e) {}
   }
 
-  
   _bootAuth() {
     const clerk = getClerk();
 
     if (!clerk) {
-      
-      
-      
       this.setState({ authProviderStatus: 'unavailable' });
       this._syncAccountState();
       return;
     }
 
-    
-    
     if (typeof window !== 'undefined') {
       this._onWindowFocus = () => {
         if (this.state.authStatus === 'authenticated') this._syncAccountState(true);
@@ -11379,7 +11166,6 @@ class Component extends DCLogic {
       window.addEventListener('focus', this._onWindowFocus);
     }
 
-    
     this._clerkUnsubscribe = clerk.subscribe(evt => {
       if (this._unmounted) return;
       if (evt.type === 'session') this._syncAccountState(true);
@@ -11410,7 +11196,6 @@ class Component extends DCLogic {
     });
   }
 
-  
   _syncAccountState(force) {
     const guard = getGuard();
     const api = getApi();
@@ -11430,14 +11215,11 @@ class Component extends DCLogic {
       return state;
     }).catch(() => {
       if (this._unmounted) return null;
-      
-      
       this.setState({ authStatus: 'unknown' });
       return null;
     });
   }
 
-  
   _establishSession() {
     const api = getApi();
     const guard = getGuard();
@@ -11486,13 +11268,8 @@ class Component extends DCLogic {
       ? 'seller'
       : 'buyer';
 
-    
-    
-    
-    
     const seller = state.seller || {};
 
-    
     if (!this._dashboardRequested) {
       this._dashboardRequested = true;
       const dashApi = getApi();
@@ -11500,14 +11277,12 @@ class Component extends DCLogic {
         dashApi.getDashboard().then(d => {
           if (!this._unmounted && d) this.setState({ dashboard: d });
         }).catch(() => {
-          
           this._dashboardRequested = false;
     this._loadedStoreId = null;
         });
       }
     }
 
-    
     const ownStoreId = seller.storeId || user.primaryStoreId || null;
     if (ownStoreId && this._loadedStoreId !== ownStoreId) {
       this._loadedStoreId = ownStoreId;
@@ -11523,7 +11298,6 @@ class Component extends DCLogic {
             currentStoreSlug: store.slug || '',
             currentStoreCategory: store.categoryId || store.category_id || store.category || 'general'
           });
-          
           if (typeof storeApi.getStoreAnalytics === 'function') {
             storeApi.getStoreAnalytics(ownStoreId, this.state.analyticsPeriod || '30d').then(an => {
               if (this._unmounted || !an) return;
@@ -11548,7 +11322,6 @@ class Component extends DCLogic {
             }).catch(() => {});
           }
         }).catch(() => {
-          
           this._loadedStoreId = null;
         });
       }
@@ -11583,12 +11356,10 @@ class Component extends DCLogic {
     }
   }
 
-  
   _applyAnonymous() {
     if (this._searchExperience && (this.state.isLoggedIn || this.state.sessionUser)) { this._searchExperience.destroy(true); this._searchExperience = null; }
     const guard = getGuard();
     if (guard) guard.invalidate();
-    
     this._dashboardRequested = false;
 
     this.setState({
@@ -11621,7 +11392,6 @@ class Component extends DCLogic {
       cart: 0,
       saved: false,
       following: false,
-      
       adConversation: null,
       adBusy: false,
       adError: '',
@@ -11632,7 +11402,6 @@ class Component extends DCLogic {
     this._restoreOnboardingDraft();
   }
 
-  
   _onScreenEnter(screen) {
     if (screen === 'store') {
       this.loadStoreDiscovery();
@@ -11659,8 +11428,6 @@ class Component extends DCLogic {
     } else if (screen === 'publishIntent') {
       this.checkResumableDraft();
     } else if (screen === 'home' || screen === 'category') {
-      
-      
       if (!this.state.catalogProducts.length && !this.state.catalogLoading) {
         this.loadCatalogProducts({ limit: 16 });
       }
@@ -11669,17 +11436,13 @@ class Component extends DCLogic {
     } else if (screen === 'superAdmin') {
       this.loadAdminData();
     } else if (screen === 'orders' || screen === 'orderDetail') {
-      
       this.loadServerOrders();
     } else if (screen === 'checkout') {
-      
-      
       const dest = this._resolveDeliveryDestination();
       if (dest.method === 'HOME_DELIVERY') this._loadProviders(dest.address.city || '');
     }
   }
 
-  
   _loadSystemSettings() {
     const api = getApi();
     const applySettings = (settings) => {
@@ -11695,7 +11458,6 @@ class Component extends DCLogic {
       }
     };
 
-    
     if (api && typeof api.getPublicConfig === 'function') {
       api.getPublicConfig().then(res => {
         if (res && res.systemSettings) applySettings(res.systemSettings);
@@ -11709,7 +11471,6 @@ class Component extends DCLogic {
         .catch(() => {});
     }
 
-    
     if (typeof window !== 'undefined') {
       this._onSettingsUpdated = (evt) => {
         if (evt && evt.detail) {
@@ -11720,12 +11481,10 @@ class Component extends DCLogic {
     }
   }
 
-  
   loadAdminData() {
     const api = getApi();
     if (!api) return Promise.resolve();
 
-    
     if (typeof api.getAdminOverview === 'function') {
       api.getAdminOverview().then(res => {
         if (this._unmounted) return;
@@ -11748,7 +11507,6 @@ class Component extends DCLogic {
       }).catch(() => {});
     }
 
-    
     if (typeof api.getAdminStores === 'function') {
       api.getAdminStores().then(res => {
         if (this._unmounted) return;
@@ -11759,7 +11517,6 @@ class Component extends DCLogic {
       }).catch(() => {});
     }
 
-    
     if (typeof api.getAdminListings === 'function') {
       api.getAdminListings().then(res => {
         if (this._unmounted) return;
@@ -11770,7 +11527,6 @@ class Component extends DCLogic {
       }).catch(() => {});
     }
 
-    
     if (typeof api.getAdminUsers === 'function') {
       api.getAdminUsers().then(res => {
         if (this._unmounted) return;
@@ -11781,7 +11537,6 @@ class Component extends DCLogic {
       }).catch(() => {});
     }
 
-    
     if (typeof api.getAdminOrders === 'function') {
       api.getAdminOrders().then(res => {
         if (this._unmounted) return;
@@ -11792,7 +11547,6 @@ class Component extends DCLogic {
       }).catch(() => {});
     }
 
-    
     if (typeof api.getSystemSettings === 'function') {
       api.getSystemSettings().then(res => {
         if (this._unmounted) return;
@@ -11809,7 +11563,6 @@ class Component extends DCLogic {
       }).catch(() => {});
     }
 
-    
     if (typeof api.getAdminAuditLogs === 'function') {
       api.getAdminAuditLogs().then(res => {
         if (this._unmounted) return;
@@ -11856,10 +11609,6 @@ class Component extends DCLogic {
     const api = getApi();
     if (!storeId || !api) return Promise.resolve();
 
-    
-    
-    
-    
     const fetcher = api.getPublicStorefront
       ? api.getPublicStorefront(storeId)
       : api.getStoreProfile
@@ -11880,8 +11629,6 @@ class Component extends DCLogic {
     }).catch(err => {
       if (this._unmounted) return;
       const msg = (err && err.message) || '';
-      
-      
       if (/permission|authorized|authorization|forbidden|manage/i.test(msg)) {
         this.setState({ storeProfileLoading: false, storeProfileError: '' });
         return;
@@ -12071,10 +11818,6 @@ class Component extends DCLogic {
     });
   }
 
-  
-  
-  
-  
 
   loadHotels(city) {
     const api = getApi();
@@ -12123,7 +11866,6 @@ class Component extends DCLogic {
     });
   }
 
-  
   loadHotelRooms(hotelId) {
     const id = hotelId || this.state.hotelSelectedId;
     if (!id) return Promise.resolve();
@@ -12139,7 +11881,6 @@ class Component extends DCLogic {
       if (this._unmounted) return;
       const items = (res && res.items) || (res && res.data) || (Array.isArray(res) ? res : []);
       const rooms = Array.isArray(items) ? items : [];
-      
       const keep = rooms.some((r) => r.id === this.state.hotelSelectedRoomId);
       const firstFree = rooms.find((r) => r.availableInventory > 0);
       this.setState({
@@ -12216,11 +11957,6 @@ class Component extends DCLogic {
   selectTravelResult(result) {
     if (!result) return;
 
-    
-    
-    
-    
-    
     if (result.type === 'hotel' && result.id) {
       this.setState({
         hotelSelectedId: result.id,
@@ -12477,9 +12213,7 @@ class Component extends DCLogic {
     }
   }
 
-  
 
-  
   _startServerOnboarding() {
     const api = getApi();
     const guard = getGuard();
@@ -12501,7 +12235,6 @@ class Component extends DCLogic {
     });
   }
 
-  
   _submitRemainingOnboardingSteps() {
     const api = getApi();
     const guard = getGuard();
@@ -12547,8 +12280,6 @@ class Component extends DCLogic {
       COMPLETION: () => ({ acceptedTerms: true })
     };
 
-    
-    
     const step = (guardAgainstLoop) => {
       if (guardAgainstLoop > 12) return Promise.resolve(null);
 
@@ -12558,7 +12289,6 @@ class Component extends DCLogic {
 
         const build = answers[next];
         if (!build) {
-          
           return this._syncAccountState(true).then(() => onboarding);
         }
 
@@ -12575,9 +12305,7 @@ class Component extends DCLogic {
       .then(() => this._syncAccountState(true));
   }
 
-  
 
-  
   _adaptiveLoad() {
     const api = getApi();
     if (!api) {
@@ -12589,7 +12317,6 @@ class Component extends DCLogic {
       .then(c => {
         if (this._unmounted) return;
         this._adaptiveApply(c);
-        
         if (!c || c.status === 'COMPLETED' || !c.nextQuestion) this._adaptiveFinish();
       })
       .catch(err => {
@@ -12601,7 +12328,6 @@ class Component extends DCLogic {
       });
   }
 
-  
   _adaptiveApply(c) {
     const q = (c && c.nextQuestion) || null;
     const preselect = (q && q.preselect) || [];
@@ -12614,7 +12340,6 @@ class Component extends DCLogic {
     });
   }
 
-  
   _adaptiveSubmit(payload) {
     const api = getApi();
     if (!api) {
@@ -12637,14 +12362,11 @@ class Component extends DCLogic {
       });
   }
 
-  
   _adaptiveFinish() {
     const isSeller = (this.state.userRole === 'seller' || this.state.userRole === 'both' ||
       (this.state.accountState && this.state.accountState.capabilities && this.state.accountState.capabilities.canStartSelling));
     const next = isSeller ? 'seller' : 'home';
 
-    
-    
     this._syncAccountState(false).catch(() => {});
     if (!this._unmounted) {
       this.setState({ adBusy: false, adError: '' });
@@ -12652,9 +12374,7 @@ class Component extends DCLogic {
     }
   }
 
-  
 
-  
   _pub() {
     try {
       if (typeof window !== 'undefined' && window && window.LoumooPublishing) return window.LoumooPublishing;
@@ -12663,7 +12383,6 @@ class Component extends DCLogic {
     return null;
   }
 
-  
   _ensurePublishingEngine() {
     const ready = this._pub();
     if (ready) return Promise.resolve(ready);
@@ -12692,7 +12411,6 @@ class Component extends DCLogic {
     return window.__loumooPublishingEnginePromise;
   }
 
-  
   _pubContext() {
     return {
       store: this.state.store || { name: this.state.regBusinessName, city: this.state.regCity },
@@ -12713,7 +12431,6 @@ class Component extends DCLogic {
     return (this.state.pubAttachable || []).find(l => l.id === draft.values.attachmentId) || null;
   }
 
-  
   startPublishing(intent) {
     const pub = this._pub();
     if (!pub) { this.toast('The publishing studio could not start. Reload and try again.'); return; }
@@ -12740,7 +12457,6 @@ class Component extends DCLogic {
     this.go('publishStudio');
   }
 
-  
   _loadPublishingDefinitions(intent) {
     const api = getApi();
     if (!api) return;
@@ -12768,7 +12484,6 @@ class Component extends DCLogic {
     }
   }
 
-  
   _loadAttachableListings() {
     const api = getApi();
     if (!api || this.state.pubAttachable.length) return;
@@ -12780,7 +12495,6 @@ class Component extends DCLogic {
       .catch(() => {  });
   }
 
-  
   _loadCategorySchema(categoryId) {
     const api = getApi();
     if (!api || !categoryId) return;
@@ -12804,17 +12518,14 @@ class Component extends DCLogic {
       });
   }
 
-  
   setPublishingField(path, value) {
     const pub = this._pub();
     if (!pub || !this.state.pubDraft) return;
 
     const next = pub.setValue(this.state.pubDraft, path, value);
 
-    
     if (path === 'categoryId' && value) this._loadCategorySchema(value);
 
-    
     const errors = Object.assign({}, this.state.pubFieldErrors);
     delete errors[path];
 
@@ -12822,7 +12533,6 @@ class Component extends DCLogic {
     this._schedulePublishingAutosave(next);
   }
 
-  
   _schedulePublishingAutosave(draft) {
     const pub = this._pub();
     if (!pub) return;
@@ -12837,7 +12547,6 @@ class Component extends DCLogic {
     }, 1600);
   }
 
-  
   _syncPublishingDraft() {
     const pub = this._pub();
     const api = getApi();
@@ -12901,8 +12610,6 @@ class Component extends DCLogic {
         return listing;
       })
       .catch(err => {
-        
-        
         const fields = (err && err.details && err.details.fields) || [];
         finish(
           fields.length ? 'Saved on this device' : 'Saved on this device — will retry',
@@ -12921,9 +12628,7 @@ class Component extends DCLogic {
     }
   }
 
-  
 
-  
   uploadPublishingImages(files) {
     const api = getApi();
     const pub = this._pub();
@@ -12958,7 +12663,6 @@ class Component extends DCLogic {
 
     this.setState({ pubMediaBusy: true, pubMediaError: rejected.join(' ') });
 
-    
     const pending = accepted.map((file, i) => ({
       uploadId: 'pending_' + Date.now() + '_' + i,
       url: safeObjectUrl(file),
@@ -12968,8 +12672,6 @@ class Component extends DCLogic {
     }));
     this._replacePublishingMedia(m => m.concat(pending));
 
-    
-    
     return accepted.reduce((chain, file, i) => chain.then(() => {
       const placeholder = pending[i];
       return this._ensurePublishingRemote()
@@ -12986,8 +12688,6 @@ class Component extends DCLogic {
         })
         .catch(err => {
           if (this._unmounted) return;
-          
-          
           this._replacePublishingMedia(media => media.map(m => m.uploadId === placeholder.uploadId
             ? Object.assign({}, m, { status: 'error' })
             : m));
@@ -13004,7 +12704,6 @@ class Component extends DCLogic {
       });
   }
 
-  
   _ensurePublishingRemote() {
     const draft = this.state.pubDraft;
     if (!draft) return Promise.reject(new Error('No draft in progress.'));
@@ -13017,7 +12716,6 @@ class Component extends DCLogic {
     });
   }
 
-  
   _attachPublishingMedia() {
     const api = getApi();
     const draft = this.state.pubDraft;
@@ -13036,8 +12734,6 @@ class Component extends DCLogic {
           : m));
       })
       .catch(err => {
-        
-        
         if (err && err.status === 400 && /already attached/i.test(err.message || '')) {
           this._replacePublishingMedia(media => media.map(m => m.status === 'ready'
             ? Object.assign({}, m, { status: 'attached' })
@@ -13069,8 +12765,6 @@ class Component extends DCLogic {
 
     if (!api || !image) return;
 
-    
-    
     if (image.status === 'attached' && draft.remoteId && draft.intent !== 'BROADCAST') {
       api.removeListingMedia(draft.remoteId, uploadId).catch(() => {});
     } else if (image.status === 'ready') {
@@ -13090,7 +12784,6 @@ class Component extends DCLogic {
     this.uploadPublishingImages([image.file]);
   }
 
-  
   setPublishingCover(uploadId) {
     const api = getApi();
     const draft = this.state.pubDraft;
@@ -13132,9 +12825,7 @@ class Component extends DCLogic {
     }
   }
 
-  
 
-  
   publishNow() {
     if (this.state.pubLifecycle) return Promise.resolve();
 
@@ -13151,7 +12842,6 @@ class Component extends DCLogic {
 
     const ctx = this._pubContext();
 
-    
     this.setState({ pubLifecycle: 'Checking everything is there…', pubServerError: '', pubFieldErrors: {} });
     const check = pub.validate(draft, ctx, { forPublish: true });
     if (!check.valid) {
@@ -13163,7 +12853,6 @@ class Component extends DCLogic {
       return Promise.resolve();
     }
 
-    
     if (draft.media.some(m => m.status === 'uploading')) {
       this.setState({ pubLifecycle: '', pubServerError: 'Wait for your photos to finish uploading.' });
       return Promise.resolve();
@@ -13201,9 +12890,6 @@ class Component extends DCLogic {
 
         if (guard) guard.invalidate();
         pub.clearLocal();
-        
-        
-        
         if (this.state.pubDraft && this.state.pubDraft.intent === 'BROADCAST') this._announceFeedLoadedKey = null;
 
         const finished = Object.assign({}, this.state.pubDraft, {
@@ -13237,8 +12923,6 @@ class Component extends DCLogic {
             : friendlyError(err)
         });
 
-        
-        
         if (err && (err.status === 401 || err.status === 403)) {
           const resolveScreen = err.details && err.details.resolveScreen;
           this._syncAccountState(true).then(() => {
@@ -13249,9 +12933,7 @@ class Component extends DCLogic {
       });
   }
 
-  
 
-  
   checkResumableDraft() {
     const pub = this._pub();
     if (!pub) return;
@@ -13288,7 +12970,6 @@ class Component extends DCLogic {
     this.toast('Draft discarded');
   }
 
-  
   editPublication(id, kind) {
     const pub = this._pub();
     const api = getApi();
@@ -13329,7 +13010,6 @@ class Component extends DCLogic {
       });
   }
 
-  
   sharePublication(id, kind, title) {
     if (!id) { this.toast('That is not published yet'); return; }
 
@@ -13359,7 +13039,6 @@ class Component extends DCLogic {
     this.toast(url);
   }
 
-  
 
   _formatAnnouncementCard(ann) {
     if (!ann) return null;
@@ -13508,7 +13187,6 @@ class Component extends DCLogic {
     ];
   }
 
-  
   _announcementFeedKey() {
     return JSON.stringify({
       type: this.state.announceFilter || 'all',
@@ -13516,14 +13194,12 @@ class Component extends DCLogic {
     });
   }
 
-  
   ensureAnnouncements() {
     const key = this._announcementFeedKey();
     if (this._announceFeedLoadedKey === key && (this.state.announcements || []).length > 0) return Promise.resolve();
     return this.loadAnnouncements({ force: true });
   }
 
-  
   loadAnnouncements(options) {
     const api = getApi();
     const opts = options || {};
@@ -13603,11 +13279,9 @@ class Component extends DCLogic {
     return request;
   }
 
-  
   openAnnouncement(id) {
     if (!id) return;
 
-    
     const existing = (this.state.announcements || []).find(a => String(a.id) === String(id) || a.slug === id)
       || (this._getDefaultAnnouncements ? (this._getDefaultAnnouncements() || []).find(a => String(a.id) === String(id) || a.slug === id) : null);
 
@@ -13683,7 +13357,6 @@ class Component extends DCLogic {
   contactSellerWhatsApp(opts) {
     opts = (opts && typeof opts === 'object' && !opts.nativeEvent && !opts.target) ? opts : {};
     const p = this.state.currentProduct || {};
-    
     if (!opts.orderNumber && p && p.id) this._recoNote('contact_seller', p, { surface: 'pdp' });
     const sellerName = opts.sellerName || p.storeName || 'LOUMOO Seller';
     const productTitle = opts.productTitle || p.title || '';
@@ -13723,7 +13396,6 @@ class Component extends DCLogic {
     return api.recordAnnouncementEvent(id, eventType, {}).catch(() => {});
   }
 
-  
   loadStoreAnnounceTelemetry(targetStoreId) {
     const storeId = targetStoreId || this.state.primaryStoreId || (this.state.currentStore && this.state.currentStore.id) || (this.state.store && this.state.store.id);
     if (!storeId) {
@@ -13838,7 +13510,6 @@ class Component extends DCLogic {
       });
   }
 
-  
   loadSellerListings() {
     const api = getApi();
     if (!api) return Promise.resolve();
@@ -13893,7 +13564,6 @@ class Component extends DCLogic {
       });
   }
 
-  
   transitionListing(id, action, confirmMessage) {
     const api = getApi();
     if (!api || !id) return;
@@ -13938,7 +13608,6 @@ class Component extends DCLogic {
       });
   }
 
-  
   exitPublishing() {
     const pub = this._pub();
     const draft = this.state.pubDraft;
@@ -13990,9 +13659,7 @@ class Component extends DCLogic {
   _startHeroSlideAutoAdvance() {
     clearTimeout(this._heroSlideTimer);
     const curSlide = this.state.heroSlide || 0;
-    
     if (curSlide === 0 || curSlide === 2 || curSlide === 4) {
-      
       this._heroSlideTimer = setTimeout(() => {
         if (!this._unmounted && (!this.state.screen || this.state.screen === 'home')) {
           this.heroNextSlide();
@@ -14014,20 +13681,16 @@ class Component extends DCLogic {
       ? window.PRODUCTS_DATA
       : ((typeof PRODUCTS_DATA !== 'undefined' && Object.keys(PRODUCTS_DATA).length > 0) ? PRODUCTS_DATA : {});
 
-    
     if (pool[cleanId]) return pool[cleanId];
 
-    
     const poolValues = Object.values(pool);
     let match = poolValues.find(p => p && (p.id === cleanId || p.slug === cleanId || p.sku === cleanId));
     if (match) return match;
 
-    
     const liveCatalog = Array.isArray(this.state.catalogProducts) ? this.state.catalogProducts : [];
     match = liveCatalog.find(p => p && (p.id === cleanId || p.slug === cleanId || p.sku === cleanId));
     if (match) return match;
 
-    
     const norm = cleanId.toLowerCase().replace(/[^a-z0-9]+/g, '');
     match = poolValues.find(p => {
       if (!p) return false;
@@ -14038,7 +13701,6 @@ class Component extends DCLogic {
     });
     if (match) return match;
 
-    
     const searchRes = Array.isArray(this.state.searchResults) ? this.state.searchResults : [];
     match = searchRes.find(p => p && (p.id === cleanId || p.slug === cleanId));
     if (match) return match;
@@ -14050,7 +13712,6 @@ class Component extends DCLogic {
     const rawId = String(productId || 'loumoo_product').trim();
     const lower = rawId.toLowerCase();
 
-    
     let titleParts = rawId.replace(/^(phone_|laptop_|elec_|fashion_|home_|groc_|beauty_|sport_|na_)/, '')
       .replace(/[_\-]+/g, ' ')
       .trim()
@@ -14059,7 +13720,6 @@ class Component extends DCLogic {
       .map(w => w.charAt(0).toUpperCase() + w.slice(1));
     let humanTitle = titleParts.join(' ') || 'LOUMOO Official Selection';
 
-    
     let cat = 'electronics', catLabel = 'Smartphones & Mobile', brand = 'LOUMOO Official';
     if (lower.includes('phone') || lower.includes('camon') || lower.includes('pixel') || lower.includes('galaxy') || lower.includes('iphone') || lower.includes('tecno') || lower.includes('samsung')) {
       cat = 'electronics'; catLabel = 'Smartphones & Mobile';
@@ -14128,7 +13788,6 @@ class Component extends DCLogic {
     };
   }
 
-  
   openProduct(productId) {
     this.loadProductDetails(productId);
   }
@@ -14140,7 +13799,6 @@ class Component extends DCLogic {
     }
     const cleanId = String(productId).trim();
 
-    
     const resolved = this._resolveProductItem(cleanId);
     if (resolved) {
       const activeImg = resolved.coverImage || resolved.image || (resolved.images && resolved.images[0]) || (resolved.media && resolved.media[0] && resolved.media[0].url) || null;
@@ -14158,7 +13816,6 @@ class Component extends DCLogic {
       return;
     }
 
-    
     const api = getApi();
     this.setState({
       screen: 'product',
@@ -14202,7 +13859,6 @@ class Component extends DCLogic {
       })
       .catch(() => {
         if (this._unmounted) return;
-        
         const fallback = this._synthesizeAvailableListing(cleanId);
         this.setState({
           currentProduct: fallback,
@@ -14571,9 +14227,6 @@ class Component extends DCLogic {
     });
   }
 
-  
-  
-  
   runCompare() {
     const ids = this.state.vsCompareIds || ['elec-1', 'elec-macbook-pro'];
     if (!ids.length) {
@@ -14647,9 +14300,6 @@ class Component extends DCLogic {
     api.getProducts(params || {})
       .then(res => {
         if (this._unmounted) return;
-        
-        
-        
         const items = (res && res.items) || (res && res.data && res.data.items) || (Array.isArray(res) ? res : []);
         const limit = (params && params.limit) ? params.limit : 16;
         const hasMore = items.length >= limit;
@@ -14671,9 +14321,6 @@ class Component extends DCLogic {
       });
   }
 
-  
-  
-  
   _searchView() {
     if (typeof globalThis === 'undefined' || !globalThis.LoumooSearch) return {};
     if (!this._searchExperience) this._searchExperience = new globalThis.LoumooSearch({
@@ -14695,30 +14342,23 @@ class Component extends DCLogic {
 
   _executeSearch(rawQuery) {
     const query = String(rawQuery == null ? '' : rawQuery).trim();
-    
     const params = {};
     if (this.state.filterCity) params.city = this.state.filterCity;
     if (this.state.filterVerifiedOnly) params.verified = true;
     const hasFilter = Object.keys(params).length > 0;
     this._searchSeq = (this._searchSeq || 0) + 1;
     const seq = this._searchSeq;
-    
-    
     if (query.length < 2 && !hasFilter) {
       this.setState({ searchResults: null, searchBusy: false, searchError: '' });
       return;
     }
     if (query.length >= 2) { try { const R = getReco(); if (R && R.search) R.search(query, this.state.filterCity ? null : null); } catch (e) {  } }
     const api = getApi();
-    
-    
-    
     if (!api) return;
     this.setState({ searchBusy: true, searchError: '' });
     api.searchProducts(query, params)
       .then(res => {
         if (this._unmounted || seq !== this._searchSeq) return;
-        
         const items = (res && res.items) || (Array.isArray(res) ? res : []);
         this.setState({ searchResults: items, searchBusy: false, searchError: '' });
       })
@@ -14732,20 +14372,16 @@ class Component extends DCLogic {
     return keys.includes(this.state.screen) ? 'var(--color-accent)' : 'var(--color-neutral-700)';
   }
 
-  
   requireAuth(screen) {
     return this.requireCapability(screen, null);
   }
 
-  
   requireCapability(screen, capability) {
     if (!SCREENS.includes(screen)) return;
 
     const guard = getGuard();
 
     if (!guard) {
-      
-      
       this.go(screen);
       return;
     }
@@ -14771,7 +14407,6 @@ class Component extends DCLogic {
     });
   }
 
-  
   _afterAuthRedirect(fallback) {
     const guard = getGuard();
     const remembered = guard ? guard.takeIntent(SCREENS) : null;
@@ -14785,7 +14420,6 @@ class Component extends DCLogic {
     this.go(safe);
   }
 
-  
   _completeSignIn() {
     return this._establishSession().then(state => {
       if (this._unmounted) return;
@@ -14795,13 +14429,10 @@ class Component extends DCLogic {
       const firstName = (state && state.user && state.user.firstName) || '';
       this.toast('Welcome back to LOUMOO' + (firstName ? ', ' + firstName : ''));
 
-      
-      
       this._routeByAccountState(state);
     });
   }
 
-  
   _routeByAccountState(state) {
     if (!state) { this._afterAuthRedirect('home'); return; }
 
@@ -14884,7 +14515,6 @@ class Component extends DCLogic {
     SCREENS.forEach(k => { is[k] = s === k; });
     const on = {};
     SCREENS.forEach(k => { on[k] = () => this.go(k); });
-    
     on.notifications = () => { this.go('notifications'); this.loadServerNotifications(); this._markNotifsRead(); };
     on.announceCampaigns = () => { this.go('announceCampaigns'); this.loadStoreAnnounceTelemetry(); };
     on.toggleSidebar = () => this.toggleSidebar();
@@ -14919,19 +14549,15 @@ class Component extends DCLogic {
         this.go('signIn');
         return;
       }
-      
       const storeId = this.state.primaryStoreId;
 
       if (!storeId) {
-        
         this.toast('Create your Boutique to start publishing listings across Cameroon');
         this.go('createStore');
         return;
       }
 
       if (!this.state.capabilities.canCreateListing) {
-        
-        
         this.toast('Finish activating your boutique to publish listings');
         this.go('storeOnboarding');
         return;
@@ -14951,7 +14577,6 @@ class Component extends DCLogic {
     on.upload = handleSellClick;
     on.publishIntent = handleSellClick;
 
-    
     const getTargetId = (arg, fallback) => {
       if (typeof arg === 'string' && arg) return arg;
       if (arg && typeof arg.id === 'string') return arg.id;
@@ -15269,8 +14894,6 @@ class Component extends DCLogic {
       setTimeout(() => this.setState({ adminSettingsSaveSuccess: false }), 3500);
     };
 
-    
-    
     on.announceStudio = () => {
       if (this.state.authStatus !== 'authenticated' && !this.state.isLoggedIn) {
         this.toast('Sign in to publish a broadcast');
@@ -15316,13 +14939,8 @@ class Component extends DCLogic {
     });
 
     const fmt = n => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-    
-    
-    
     const encImg = (u) => u ? String(u).replace(/ /g, '%20').replace(/&/g, '%26') : '';
 
-    
-    
     const readTourUrl = (o) => {
       if (!o || typeof o !== 'object') return '';
       const raw = o.virtualTourUrl || o.virtual_tour_url || o.virtualTour ||
@@ -15331,8 +14949,6 @@ class Component extends DCLogic {
       const s = typeof raw === 'string' ? raw.trim() : '';
       return /^https:\/\/[^\s]+\.[^\s]+/i.test(s) ? s : '';
     };
-    
-    
     const roomSizeLabel = (r) => {
       const src = (r && (r.description || '')) + ' ' + ((r && r.amenities) || []).join(' ');
       const m = src.match(/(\d{2,4})\s*(?:m²|m2|sqm|sq\s?m)/i);
@@ -15343,9 +14959,6 @@ class Component extends DCLogic {
       return bed ? String(bed) : '';
     };
 
-    
-    
-    
     const hotelCard = (h) => ({
       id: h.id,
       name: h.name || '',
@@ -15360,22 +14973,12 @@ class Component extends DCLogic {
     });
     const hotelCards = (list) => (Array.isArray(list) ? list : []).map(hotelCard);
 
-    
     const cartList = this.state.cartItems || [];
     const cartSubtotal = cartList.reduce((a, it) => a + (Number(it.priceXaf) || 0) * (Number(it.qty) || 1), 0);
     const dynamicSettings = (typeof window !== 'undefined' && window.LOUMOO_SYSTEM_SETTINGS) || this.state.systemSettings || this.state.adminSettings || {};
-    
-    
-    
-    
     const checkoutDest = this._resolveDeliveryDestination();
-    
-    
     const isPickup = checkoutDest.method === 'STORE_PICKUP';
     const deliveryCity = checkoutDest.address.city || this.state.regCity || (this.state.addressFormCity || 'Douala');
-    
-    
-    
     const selectedProvider = (this.state.providers || []).find(p => p.id === this.state.selectedProviderId) || null;
     const deliveryFee = (isPickup || cartSubtotal <= 0)
       ? 0
@@ -15393,7 +14996,6 @@ class Component extends DCLogic {
     const sh = this.state.ship;
     const fdOn = this.state.freeday;
 
-    
     let score = 20;
     if (this.state.regFirstName && this.state.regLastName) score += 15;
     if (this.state.regPhone) score += 20;
@@ -15402,8 +15004,6 @@ class Component extends DCLogic {
     if (this.state.docUploaded || this.state.verificationChoice === 'later') score += 15;
     const completionScore = Math.min(100, score);
 
-    
-    
     const strength = passwordStrength(this.state.resetNewPassword || '');
     const regStrength = passwordStrength(this.state.regPassword || '');
 
@@ -15427,9 +15027,6 @@ class Component extends DCLogic {
       cartSubtotalLabel: 'XAF ' + fmt(items),
       cartDeliveryFee: deliveryFee,
       cartDeliveryFeeLabel: 'XAF ' + fmt(deliveryFee),
-      
-      
-      
       cartTotal: 'XAF ' + fmt(items + deliveryFee),
       payLabel: 'PAY XAF ' + fmt(items + deliveryFee) + ' WITH MOMO',
       hasAnnouncementBanner: Boolean(dynamicSettings.announcement_banner && (dynamicSettings.announcement_banner.enabled !== false && dynamicSettings.announcement_banner.active !== false)),
@@ -15438,7 +15035,6 @@ class Component extends DCLogic {
       maintenanceModeBanner: (dynamicSettings.maintenance_mode && (dynamicSettings.maintenance_mode.banner_text || dynamicSettings.maintenance_mode.message)) || '',
       systemSettings: dynamicSettings,
 
-      
       productLoading: Boolean(this.state.productLoading),
       productNotFound: Boolean(this.state.productNotFound),
       productError: this.state.productError || '',
@@ -15499,8 +15095,6 @@ class Component extends DCLogic {
         if (!p || !p.attributes) return [];
         return Object.entries(p.attributes).map(([k, v]) => ({ key: k.replace(/_/g, ' '), val: String(v) }));
       })(),
-      
-      
       pdpSimilarCards: (() => {
         return this._pdpSimilarList().map((s) => ({
           id: s.id,
@@ -15523,7 +15117,6 @@ class Component extends DCLogic {
       catalogProducts: this.state.catalogProducts || [],
       catalogLoading: Boolean(this.state.catalogLoading),
       catalogError: this.state.catalogError || '',
-      
       catalogHasCards: (this.state.catalogProducts || []).length > 0,
       catalogCards: (this.state.catalogProducts || []).map((p) => ({
         id: p.id,
@@ -15536,7 +15129,6 @@ class Component extends DCLogic {
         badge: p.badge || ''
       })),
 
-      
       hasHomeFeedCards: (() => {
         const pool = this._categoryProductPool('all');
         return pool.length > 0;
@@ -15548,9 +15140,6 @@ class Component extends DCLogic {
           return isNaN(n) ? 0 : n;
         };
         const limit = this.state.homeFeedLimit || 24;
-        
-        
-        
         const R = getReco();
         const personalizeOff = this.state.privacyPersonalization === false;
         const ranked = (R && R.rankHome && !personalizeOff) ? R.rankHome(pool, { limit: limit }) : pool.slice(0, limit);
@@ -15582,8 +15171,6 @@ class Component extends DCLogic {
             storeLabel: (p.storeName || p.merchant || p.store || 'LOUMOO verified seller') + (p.merchantCity || p.storeCity ? (' · ' + (p.merchantCity || p.storeCity)) : ''),
             badge: p.badge || (p.isSale ? 'PROMO' : (p.verified ? '✓ Verified' : '')),
             verified: Boolean(p.verified),
-            
-            
             recoReason: p._recoReason || '',
             recoExplore: Boolean(p._recoExplore),
             category: p.category || '',
@@ -15595,15 +15182,10 @@ class Component extends DCLogic {
           };
         });
       })(),
-      
-      
-      
       recoWatch: (el, card, surface) => {
         const R = getReco();
         if (R && R.watch && el && card) R.watch(el, this._recoItem(card), { surface: surface || 'home_feed' });
       },
-      
-      
       recoNotInterested: (card) => {
         const R = getReco();
         if (R && R.feedback) R.feedback('not_interested', this._recoItem(card));
@@ -15646,7 +15228,6 @@ class Component extends DCLogic {
         mainImg: () => this.toast('Application submitted with your LOUMOO profile'),
         addTag: () => this.toast('Tag added to the listing')
       },
-      
       userRole: this.state.userRole,
       regFirstName: this.state.regFirstName,
       regLastName: this.state.regLastName,
@@ -15673,9 +15254,6 @@ class Component extends DCLogic {
       verificationChoice: this.state.verificationChoice || 'now',
       docUploaded: this.state.docUploaded,
 
-      
-      
-      
       adBusy: this.state.adBusy,
       adError: this.state.adError,
       adText: this.state.adText,
@@ -15706,7 +15284,6 @@ class Component extends DCLogic {
       })(),
       adUnderstanding: (this.state.adConversation && this.state.adConversation.understanding) || null,
 
-      
       adaptiveLoad: () => this._adaptiveLoad(),
       adaptiveReload: () => this._adaptiveLoad(),
       adaptiveBack: () => this.go('onboardOtp'),
@@ -15756,13 +15333,11 @@ class Component extends DCLogic {
         if (!q) return;
         const kind = q.kind;
         if (kind === 'multi_choice') {
-          
           const sel = new Set(this.state.adChipsSel || []);
           if (sel.has(chip.id)) sel.delete(chip.id); else sel.add(chip.id);
           this.setState({ adChipsSel: Array.from(sel) });
           return;
         }
-        
         const payload = { questionKey: q.key, chip: chip.id };
         if (kind === 'mixed' && (this.state.adText || '').trim()) payload.text = this.state.adText.trim();
         this._adaptiveSubmit(payload);
@@ -15802,7 +15377,6 @@ class Component extends DCLogic {
         const api = getApi();
         if (!api) return;
         this.setState({ adBusy: true, adError: '' });
-        
         api.submitAdaptiveAnswer({ questionKey: q.key, chip: 'confirm' })
           .then(() => api.completeAdaptiveOnboarding(text ? { missionTitle: text } : {}))
           .then(c => {
@@ -15821,8 +15395,6 @@ class Component extends DCLogic {
           });
       },
       adaptiveEditMission: () => {
-        
-        
         this.adaptiveStartOver();
       },
       updateAdText: (e) => this.setState({ adText: e && e.target ? e.target.value : e, adError: '' }),
@@ -15847,8 +15419,6 @@ class Component extends DCLogic {
         this.go('onboardBusiness');
       },
 
-      
-      
       setRoleBuyer: () => {
         this.setState({ userRole: 'buyer' });
         if (this.state.editFromReview) {
@@ -15883,7 +15453,6 @@ class Component extends DCLogic {
         }
       },
 
-      
       regPassword: this.state.regPassword,
       regShowPassword: this.state.regShowPassword,
       regBusy: this.state.regBusy,
@@ -15896,11 +15465,8 @@ class Component extends DCLogic {
       }),
       toggleRegPassword: () => this.setState(s => ({ regShowPassword: !s.regShowPassword })),
 
-      
-      
       phoneVerificationAvailable: Boolean(this.state.phoneVerificationAvailable),
 
-      
       startPhoneVerification: () => {
         const api = getApi();
         const clerk = getClerk();
@@ -15916,9 +15482,6 @@ class Component extends DCLogic {
           this.toast('A code is on its way to ' + phone);
         }).catch(err => {
           if (this._unmounted) return;
-          
-          
-          
           const requirement = err && err.status === 503
             ? 'Phone verification is not switched on for LOUMOO yet.'
             : ((err && err.message) || 'Could not send that code.');
@@ -15926,7 +15489,6 @@ class Component extends DCLogic {
         });
       },
 
-      
       continueFromType: () => {
         if (!this.state.userRole) {
           this.toast('Please select how you will use LOUMOO to continue');
@@ -15944,7 +15506,6 @@ class Component extends DCLogic {
         }
         this.go('onboardIdentity');
       },
-      
       continueFromIdentity: () => {
         const first = (this.state.regFirstName || '').trim();
         const last = (this.state.regLastName || '').trim();
@@ -15958,7 +15519,6 @@ class Component extends DCLogic {
           return;
         }
 
-        
         if (this.state.authStatus === 'authenticated') {
           const api = getApi();
           if (api && api.saveOnboardingStep) {
@@ -16016,8 +15576,6 @@ class Component extends DCLogic {
             this._startEmailCooldown();
             this.go('onboardOtp');
 
-            
-            
             if (!result.needsEmailCode) return this._establishSession();
             return null;
           })
@@ -16027,7 +15585,6 @@ class Component extends DCLogic {
           });
       },
 
-      
       continueAfterOtp: () => {
         const now = Date.now();
         if (this._lastOtpClick && (now - this._lastOtpClick) < 1000) {
@@ -16039,7 +15596,6 @@ class Component extends DCLogic {
         const clerk = getClerk();
         const nextScreen = 'onboardAdaptive';
 
-        
         if (this.state.emailVerifyState === 'verified' && this.state.authStatus === 'authenticated') {
           this._startServerOnboarding().then(() => { this.go(nextScreen); this._adaptiveLoad(); });
           return;
@@ -16069,7 +15625,6 @@ class Component extends DCLogic {
         Promise.resolve(attempt)
           .then(() => this._establishSession())
           .then(accountState => {
-            
             return api.getAccountState().catch(() => accountState);
           })
           .then(accountState => {
@@ -16161,7 +15716,6 @@ class Component extends DCLogic {
         }
       },
 
-      
       updateRegFirstName: (e) => this.setState({ regFirstName: e && e.target ? e.target.value : e }),
       updateRegLastName: (e) => this.setState({ regLastName: e && e.target ? e.target.value : e }),
       updateRegPhone: (e) => this.setState({ regPhone: e && e.target ? e.target.value : e }),
@@ -16172,7 +15726,6 @@ class Component extends DCLogic {
       updateRegRccm: (e) => this.setState({ regRccm: e && e.target ? e.target.value : e }),
       updateLegalForm: (e) => this.setState({ legalForm: e && e.target ? e.target.value : e }),
 
-      
       toggleInterestTech: () => this.setState(s => ({ interestTech: !s.interestTech })),
       toggleInterestFashion: () => this.setState(s => ({ interestFashion: !s.interestFashion })),
       toggleInterestTravel: () => this.setState(s => ({ interestTravel: !s.interestTravel })),
@@ -16182,7 +15735,6 @@ class Component extends DCLogic {
       togglePrioritySpeed: () => this.setState(s => ({ prioritySpeed: !s.prioritySpeed })),
       togglePriorityWarranty: () => this.setState(s => ({ priorityWarranty: !s.priorityWarranty })),
 
-      
       setSellerIndividual: () => {
         this.setState({ sellerType: 'individual' });
         this.go('onboardVerify');
@@ -16204,7 +15756,6 @@ class Component extends DCLogic {
       toggleProdServices: () => this.setState(s => ({ prodServices: !s.prodServices })),
       toggleProdRentals: () => this.setState(s => ({ prodRentals: !s.prodRentals })),
 
-      
       setVerifyNow: () => {
         this.setState({ verificationChoice: 'now' });
         this.go('onboardReview');
@@ -16223,9 +15774,6 @@ class Component extends DCLogic {
         const api = getApi();
         this.setState({ docUploading: true, docUploadError: '' });
 
-        
-        
-        
         if (!api) {
           this.setState({
             docUploading: false,
@@ -16252,8 +15800,6 @@ class Component extends DCLogic {
               docUploadId: data.uploadId,
               docUploadUrl: data.url
             });
-            
-            
             this.toast('Document uploaded securely — pending review');
           }
         }).catch(err => {
@@ -16295,9 +15841,6 @@ class Component extends DCLogic {
               verDocUploaded: true,
               verDocAttached: true,
               verDocFileName: file.name,
-              
-              
-              
               verDocUploadUrl: data.url,
               verDocFrontUrl: data.url
             });
@@ -16323,7 +15866,6 @@ class Component extends DCLogic {
       signOut: () => this.signOut(),
       resendOtp: () => this.toast('New 6-digit verification code sent to ' + (this.state.regPhone || 'your phone')),
 
-      
       handleSellClick,
       currentStoreName: (this.state.store && this.state.store.name) || this.state.regBusinessName || 'Your Boutique',
       hasOwnStore: Boolean(this.state.primaryStoreId),
@@ -16345,9 +15887,7 @@ class Component extends DCLogic {
       })(),
       storeCategory: (this.state.store && (this.state.store.categoryId || this.state.store.category_id || this.state.store.category)) || 'general',
 
-      
       sellerRevenue: this.state.sellerRevenue || 'XAF 0',
-      
       sellerRevenueDelta: /^[+\-]/.test(String(this.state.sellerRevenueDelta || '')) ? this.state.sellerRevenueDelta : '',
       sellerRevenueNote: this.state.sellerRevenueNote
         || (this.state.sellerRevenueDelta && !/^[+\-]/.test(String(this.state.sellerRevenueDelta))
@@ -16363,9 +15903,6 @@ class Component extends DCLogic {
       sellerSoldCount: Number(this.state.sellerSoldCount || 0),
 
 
-      
-      
-      
 
       signInIdentifier: this.state.signInIdentifier,
       signInPassword: this.state.signInPassword,
@@ -16381,8 +15918,6 @@ class Component extends DCLogic {
       }),
       toggleSignInPassword: () => this.setState(s => ({ signInShowPassword: !s.signInShowPassword })),
 
-      
-      
       submitSignIn: () => {
         const identifier = (this.state.signInIdentifier || '').trim();
         const password = this.state.signInPassword || '';
@@ -16420,7 +15955,6 @@ class Component extends DCLogic {
           });
       },
 
-      
       resetEmail: this.state.resetEmail,
       resetCode: this.state.resetCode,
       resetNewPassword: this.state.resetNewPassword,
@@ -16450,7 +15984,6 @@ class Component extends DCLogic {
       }),
       toggleResetPassword: () => this.setState(s => ({ resetShowPassword: !s.resetShowPassword })),
 
-      
       submitResetRequest: () => {
         const email = (this.state.resetEmail || '').trim();
         if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
@@ -16474,15 +16007,12 @@ class Component extends DCLogic {
           this.setState({
             resetBusy: false,
             resetRequestSent: true,
-            
-            
             resetServerMessage: 'If an account exists for ' + email
               + ', a recovery code has been sent to it.'
           });
           this._startResetCooldown();
         }).catch(err => {
           if (this._unmounted) return;
-          
           const notFound = err && err.errors
             && err.errors.some(e => e.code === 'form_identifier_not_found');
 
@@ -16542,7 +16072,6 @@ class Component extends DCLogic {
         });
       },
 
-      
       emailVerifyState: this.state.emailVerifyState,
       emailVerifyCode: this.state.emailVerifyCode,
       emailVerifyError: this.state.emailVerifyError,
@@ -16553,7 +16082,6 @@ class Component extends DCLogic {
       otpBtnLabel: this.state.emailVerifyState === 'verifying' ? 'CONFIRMING…' : (this.state.emailVerifyState === 'verified' ? 'CONTINUE' : 'VERIFY & CONTINUE'),
       otpBtnArrow: this.state.emailVerifyState === 'verifying' ? '' : '✓',
       verifyEmailAddress: this.state.regEmail || 'your email address',
-      
       verifyEmailWhy: 'LOUMOO verifies your email so buyers and sellers can trust who they are dealing with, and so we can reach you about your orders.',
       verifyEmailNext: 'Once verified you can finish setting up your account and start using LOUMOO.',
       verifyEmailNoCodeHelp: 'Check your spam folder, or resend the code. You can also change the address on your account and try again.',
@@ -16564,7 +16092,6 @@ class Component extends DCLogic {
         emailVerifyError: ''
       }),
 
-      
       submitEmailVerification: () => {
         const now = Date.now();
         if (this._lastOtpClick && (now - this._lastOtpClick) < 1000) {
@@ -16594,8 +16121,8 @@ class Component extends DCLogic {
         this.setState({ emailVerifyState: 'verifying', emailVerifyError: '' });
 
         const attempt = clerk.isSignedIn()
-          ? clerk.attemptEmailVerification(code)   
-          : clerk.verifyEmailCode(code);           
+          ? clerk.attemptEmailVerification(code)
+          : clerk.verifyEmailCode(code);
 
         Promise.resolve(attempt)
           .catch(err => {
@@ -16647,7 +16174,6 @@ class Component extends DCLogic {
           });
       },
 
-      
       resendEmailVerification: () => {
         if (this.state.emailVerifyCooldown > 0) return;
 
@@ -16673,7 +16199,6 @@ class Component extends DCLogic {
         });
       },
 
-      
       recheckEmailVerification: () => {
         const api = getApi();
         if (!api) return;
@@ -16691,7 +16216,6 @@ class Component extends DCLogic {
         });
       },
 
-      
       changeVerifyEmail: () => {
         const clerk = getClerk();
         this.setState({ emailVerifyCode: '', emailVerifyError: '', emailVerifyState: 'pending' });
@@ -16718,16 +16242,9 @@ class Component extends DCLogic {
         });
       },
 
-      
-      
-      
 
-      
       dashboard: this.state.dashboard || {
         profile: {
-          
-          
-          
           name: ((this.state.regFirstName || '') + ' ' + (this.state.regLastName || '')).trim(),
           email: this.state.regEmail || '',
           isPhoneVerified: Boolean(this.state.phoneVerified),
@@ -16777,7 +16294,6 @@ class Component extends DCLogic {
         });
       },
 
-      
       profileFormFirstName: this.state.profileFormFirstName,
       profileFormLastName: this.state.profileFormLastName,
       profileFormCity: this.state.profileFormCity,
@@ -16834,7 +16350,6 @@ class Component extends DCLogic {
         });
       },
 
-      
       addressesList: this.state.addressesList,
       addressesLoading: this.state.addressesLoading,
       addressFormName: this.state.addressFormName,
@@ -16863,8 +16378,6 @@ class Component extends DCLogic {
         if (api) {
           this.setState({ addressesLoading: true });
           api.getAddresses().then(list => {
-            
-            
             if (!this._unmounted && Array.isArray(list)) this.setState({ addressesList: list, addressesLoading: false });
             else if (!this._unmounted) this.setState({ addressesLoading: false });
           }).catch(() => { if (!this._unmounted) this.setState({ addressesLoading: false }); });
@@ -16966,7 +16479,6 @@ class Component extends DCLogic {
         this.toast('Default delivery address updated');
       },
 
-      
       notifInApp: this.state.notifInApp,
       notifEmail: this.state.notifEmail,
       notifPush: this.state.notifPush,
@@ -17018,14 +16530,12 @@ class Component extends DCLogic {
         }).then(done).catch(err => fail((err && err.message) || 'Could not save your notification preferences.'));
       },
 
-      
       privacyPersonalization: this.state.privacyPersonalization,
       privacyAnalytics: this.state.privacyAnalytics,
       privacyMarketing: this.state.privacyMarketing,
       privacySaving: this.state.privacySaving,
       togglePrivacyPersonalization: () => this.setState(s => {
         const next = !s.privacyPersonalization;
-        
         try { const R = getReco(); if (R && R.setConsent) R.setConsent(next); } catch (e) {  }
         return { privacyPersonalization: next };
       }),
@@ -17037,15 +16547,12 @@ class Component extends DCLogic {
         if (api) {
           api.getPrivacy().then(p => {
             if (p && !this._unmounted) {
-              
-              
               const personalization = (p.personalizedRecommendations ?? p.personalization) ?? true;
               this.setState({
                 privacyPersonalization: personalization,
                 privacyAnalytics: (p.analyticsConsent ?? p.analytics) ?? true,
                 privacyMarketing: (p.marketingEmails ?? p.marketing) ?? false
               });
-              
               try { const R = getReco(); if (R && R.setConsent) R.setConsent(personalization); } catch (e) {  }
             }
           }).catch(() => {});
@@ -17065,21 +16572,18 @@ class Component extends DCLogic {
           this.toast(msg);
         };
         if (!api) { fail('LOUMOO is unreachable. Your privacy settings were not saved.'); return; }
-        
         api.updatePrivacy({
           personalizedRecommendations: this.state.privacyPersonalization,
           analyticsConsent: this.state.privacyAnalytics,
           marketingEmails: this.state.privacyMarketing
         }).then(done).catch(err => fail((err && err.message) || 'Could not save your privacy settings.'));
       },
-      
       resetRecommendations: () => {
         const R = getReco();
         if (R && R.reset) R.reset();
         this.setState({ toast: 'Your recommendations have been reset' });
       },
 
-      
       activeSessionsList: this.state.activeSessionsList,
       sessionsLoading: this.state.sessionsLoading,
       openSecurity: () => {
@@ -17100,7 +16604,6 @@ class Component extends DCLogic {
         this.toast('Session revoked successfully');
       },
 
-      
       followedStoresList: this.state.followedStoresList,
       followedStoresLoading: this.state.followedStoresLoading,
       openFollowedStores: () => {
@@ -17121,7 +16624,6 @@ class Component extends DCLogic {
         this.toast('Unfollowed store');
       },
 
-      
       activityList: this.state.activityList,
       activityLoading: this.state.activityLoading,
       openActivity: () => {
@@ -17136,7 +16638,6 @@ class Component extends DCLogic {
         }
       },
 
-      
       deleteAccountConfirmText: this.state.deleteAccountConfirmText,
       deleteAccountReason: this.state.deleteAccountReason,
       deleteAccountBusy: this.state.deleteAccountBusy,
@@ -17162,9 +16663,6 @@ class Component extends DCLogic {
         });
       },
 
-      
-      
-      
       openPurchases: () => this.go('orders'),
       openOrderDetail: (order) => {
         if (order) this.setState({ currentOrder: order });
@@ -17191,7 +16689,6 @@ class Component extends DCLogic {
         }, 800);
       },
       openWriteReview: () => {
-        
         const p = (this.state.currentProductId && typeof PRODUCTS_DATA !== 'undefined')
           ? PRODUCTS_DATA[this.state.currentProductId] : null;
         this.setState({
@@ -17212,7 +16709,6 @@ class Component extends DCLogic {
       },
       updateReviewTitle: (e) => this.setState({ reviewTitle: e && e.target ? e.target.value : e }),
       updateReviewBody: (e) => this.setState({ reviewBody: e && e.target ? e.target.value : e }),
-      
       myReviewsForProduct: (this.state.reviews || [])
         .filter((r) => r.productId && r.productId === this.state.currentProductId)
         .map((r) => ({
@@ -17244,7 +16740,6 @@ class Component extends DCLogic {
         const list = [review].concat(this.state.reviews || []);
         this.setState({ reviews: list, reviewTitle: '', reviewBody: '', reviewStars: 5, reviewRatingLabel: '5.0 EXCELLENT' });
         this._persistReviews(list);
-        
         try {
           if (this.state.authStatus === 'authenticated' && productId) {
             const api = getApi();
@@ -17290,8 +16785,6 @@ class Component extends DCLogic {
       retryHotelList: () => this.loadHotels(),
       hotelListLoading: this.state.hotelListLoading,
       hotelListError: this.state.hotelListError,
-      
-      
       hotelListEmpty: this.state.hotelListLoaded
         && !this.state.hotelListLoading
         && !this.state.hotelListError
@@ -17318,8 +16811,6 @@ class Component extends DCLogic {
       },
       hotelCheckIn: this.state.hotelCheckIn,
       hotelCheckOut: this.state.hotelCheckOut,
-      
-      
       updateHotelCheckIn: (e) => {
         const val = e && e.target ? e.target.value : e;
         if (!val) return;
@@ -17361,10 +16852,6 @@ class Component extends DCLogic {
       retryHotelDetail: () => this.loadHotelDetail(this.state.hotelSelectedId),
       selectHotelRoomId: (roomId) => this.setState({ hotelSelectedRoomId: roomId, hotelSubmitError: '' }),
 
-      
-      
-      
-      
       openHotelVirtualTour: (url) => {
         const u = typeof url === 'string' ? url.trim() : '';
         if (!/^https:\/\/[^\s]+\.[^\s]+/i.test(u)) return;
@@ -17380,7 +16867,6 @@ class Component extends DCLogic {
       },
       tourModalOpen: !!(this.state && this.state.tourModalOpen),
       tourModalUrl: (this.state && this.state.tourModalUrl) || '',
-      
       toggleHotelFavorite: () => {
         const id = this.state.hotelSelectedId;
         if (!id) return;
@@ -17408,8 +16894,6 @@ class Component extends DCLogic {
 
       hotelDetailCard: (() => {
         const h = this.state.hotelDetailData;
-        
-        
         if (!h) {
           return {
             id: '', name: '', area: '', star: '', ratingLabel: '',
@@ -17424,13 +16908,8 @@ class Component extends DCLogic {
         const rooms = this.state.hotelRooms || [];
         const sel = rooms.find((r) => r.id === this.state.hotelSelectedRoomId) || rooms[0] || null;
         const nights = this._hotelNights(this.state.hotelCheckIn, this.state.hotelCheckOut);
-        
-        
         const quote = sel && sel.stayQuote ? sel.stayQuote : null;
-        
         const imgs = (h.images || []).filter(Boolean).map(encImg);
-        
-        
         const spaces = (Array.isArray(h.spaces) ? h.spaces : []).map((sp) => {
           const url = readTourUrl(sp);
           return {
@@ -17529,9 +17008,6 @@ class Component extends DCLogic {
           };
         }
         const nights = this._hotelNights(this.state.hotelCheckIn, this.state.hotelCheckOut);
-        
-        
-        
         const q = room.stayQuote || null;
         return {
           hotelName: h.name,
@@ -17557,7 +17033,6 @@ class Component extends DCLogic {
         };
       })(),
 
-      
       submitHotelReservation: () => {
         if (this.state.hotelSubmitting) return;
 
@@ -17625,12 +17100,9 @@ class Component extends DCLogic {
             guests: this.state.hotelGuests || 2,
             amount: (booking.pricing && booking.pricing.totalAmount) || (q && q.totalAmount) || 0,
             currency: 'XAF',
-            
-            
             status: booking.status || 'PENDING',
             paymentStatus: (booking.payment && booking.payment.status) || 'PENDING',
             qr: booking.qrCodePayload || '',
-            
             hotelWhatsApp: (booking.itinerary && (booking.itinerary.hotelWhatsapp || booking.itinerary.hotelPhone)) || h.whatsapp || h.phone || (h.contact && (h.contact.whatsapp || h.contact.phone)) || '',
             createdAt: Date.now()
           };
@@ -17650,7 +17122,6 @@ class Component extends DCLogic {
           } catch (e) {}
           this.toast('Reservation held at ' + h.name);
           this.go('hotelVoucher');
-          
           this.loadHotelRooms(h.id);
         }).catch((err) => {
           if (this._unmounted) return;
@@ -17679,9 +17150,6 @@ class Component extends DCLogic {
           guestName: t.passenger || 'Guest',
           totalLabel: 'XAF ' + fmt(t.amount || 0),
           isHotel: t.type === 'hotel',
-          
-          
-          
           statusLabel: isConfirmed && isPaid ? 'Confirmed' : 'Held — payment required',
           isConfirmed: isConfirmed && isPaid,
           statusNote: isConfirmed && isPaid
@@ -17689,7 +17157,6 @@ class Component extends DCLogic {
             : 'Your room is held. The reservation is confirmed once payment is completed.'
         };
       })(),
-      
       notifyHotelWhatsApp: () => {
         const t = this.state.lastTrip || {};
         const cleanWa = (t.hotelWhatsApp || '').replace(/[^0-9]/g, '').replace(/^00/, '');
@@ -17747,8 +17214,6 @@ class Component extends DCLogic {
             amount ? `Total: ${amount}` : '',
             `Référence: ${ref}`
           ].filter(Boolean).join('\n');
-          
-          
           const url = cleanWa
             ? ('https://wa.me/' + cleanWa + '?text=' + encodeURIComponent(msg))
             : ('https://api.whatsapp.com/send?text=' + encodeURIComponent(msg));
@@ -17756,9 +17221,6 @@ class Component extends DCLogic {
         } catch (e) { this.toast("Impossible d'ouvrir WhatsApp"); }
       },
 
-      
-      
-      
       openCreateStore: () => this.go('createStore'),
       openStoreOnboarding: () => this.go('storeOnboarding'),
       openStoreSettings: () => {
@@ -17907,9 +17369,6 @@ class Component extends DCLogic {
         this.setState({ createStoreBusy: true, createStoreError: '' });
         const api = getApi();
         const done = () => {
-          
-          
-          
           this._syncAccountState(true);
           this.setState({ createStoreBusy: false });
           this.toast('Storefront created! Finish setup to go live.');
@@ -17954,7 +17413,6 @@ class Component extends DCLogic {
       storeActivating: Boolean(this.state.storeActivating),
       storeActivateError: this.state.storeActivateError || '',
       activateStorefront: () => {
-        
         const api = getApi();
         const storeId = this.state.primaryStoreId;
         if (this.state.storeActivating) return;
@@ -17978,8 +17436,6 @@ class Component extends DCLogic {
             this.go('seller');
           })
           .catch(err => {
-            
-            
             const msg = (err && err.message) || 'Could not activate your storefront.';
             fail(msg);
           });
@@ -18001,9 +17457,6 @@ class Component extends DCLogic {
         const storeId = this.state.primaryStoreId;
         if (this.state.verSubmitting) return;
 
-        
-        
-        
         const fail = (msg) => {
           if (this._unmounted) return;
           this.setState({ verSubmitting: false, verSubmitError: msg });
@@ -18014,9 +17467,6 @@ class Component extends DCLogic {
           fail('Create your boutique before submitting verification documents.');
           return;
         }
-        
-        
-        
         if (!api) {
           fail('LOUMOO is unreachable. Check your connection and try again.');
           return;
@@ -18244,7 +17694,6 @@ class Component extends DCLogic {
         });
       },
 
-      
       storeSearchQuery: this.state.storeSearchQuery || '',
       updateStoreSearch: (e) => {
         const value = e && e.target ? e.target.value : e;
@@ -18259,7 +17708,6 @@ class Component extends DCLogic {
         this.loadStoreDiscovery();
       },
       storeCategoryFilter: this.state.storeCategoryFilter || 'all',
-      
       storeCatAllClass: (this.state.storeCategoryFilter || 'all') === 'all' ? 'tag-accent' : 'tag-neutral',
       storeCatTechClass: (this.state.storeCategoryFilter || 'all') === 'tech' ? 'tag-accent' : 'tag-neutral',
       storeCatFashionClass: (this.state.storeCategoryFilter || 'all') === 'fashion' ? 'tag-accent' : 'tag-neutral',
@@ -18276,7 +17724,6 @@ class Component extends DCLogic {
       storeDiscoveryLoading: Boolean(this.state.storeDiscoveryLoading),
       storeDiscoveryError: this.state.storeDiscoveryError || '',
       storeDiscoveryCards: (this.state.storeDiscovery || []).filter(store => {
-        
         if (/^store_test_/i.test(String(store.id || ''))) return false;
         if (/test\s*boutique/i.test(String(store.name || ''))) return false;
 
@@ -18419,7 +17866,6 @@ class Component extends DCLogic {
       businessStoreProfileLoading: Boolean(this.state.storeProfileLoading),
       businessStoreProfileError: (/permission|authorized|authorization|forbidden|manage/i.test(this.state.storeProfileError || '')) ? '' : (this.state.storeProfileError || ''),
       reloadStoreProfile: () => this.loadStoreProfile(),
-      
       storeActiveTab: this.state.storeActiveTab || 'home',
       storeTabIsHome: (this.state.storeActiveTab || 'home') === 'home',
       storeTabHomeClass: (this.state.storeActiveTab || 'home') === 'home' ? 'tag-accent' : 'tag-neutral',
@@ -18436,7 +17882,6 @@ class Component extends DCLogic {
       storeTabIsReviews: (this.state.storeActiveTab || 'home') === 'reviews',
       storeTabReviewsClass: (this.state.storeActiveTab || 'home') === 'reviews' ? 'tag-accent' : 'tag-neutral',
       storeTabReviewsBorder: (this.state.storeActiveTab || 'home') === 'reviews' ? 'var(--color-accent)' : 'transparent',
-      
       storeSellsPhysical: ['', 'electronics', 'fashion', 'home', 'food', 'beauty', 'automotive', 'general']
         .includes(String(this.state.store && (this.state.store.category_id || this.state.store.category) || 'electronics').toLowerCase()),
       storeSellsService: ['services', 'education', 'professional']
@@ -18448,7 +17893,6 @@ class Component extends DCLogic {
       shareStore: () => { this.toast('Store link copied to clipboard!'); },
       shareBrand: () => { this.toast('Official brand link copied to clipboard!'); },
 
-      
       selectedBrand: this.state.selectedBrand || 'apple',
       selectBrand: (b) => this.setState({ selectedBrand: b }),
       openBrand: (b) => { this.setState({ selectedBrand: b }); this.go('brand'); },
@@ -18464,7 +17908,6 @@ class Component extends DCLogic {
         this.toast(next ? 'Following official brand updates' : 'Unfollowed official brand');
       },
 
-      
       categorySearchQuery: this.state.categorySearchQuery || '',
       updateCategorySearch: (e) => this.setState({ categorySearchQuery: e && e.target ? e.target.value : e }),
       clearCategorySearch: () => this.setState({ categorySearchQuery: '' }),
@@ -18506,9 +17949,6 @@ class Component extends DCLogic {
         this.go('category');
       },
 
-      
-      
-      
       categoryProductCards: (() => {
         const activeCat = this.state.activeCategorySlug || 'all';
         const activeSub = this.state.activeSubcategorySlug || 'all';
@@ -18583,7 +18023,6 @@ class Component extends DCLogic {
       homeTotalCount: this._categoryProductPool('home').length,
       categoryTotalCount: this._categoryProductPool(this.state.activeCategorySlug || 'all').length,
 
-      
       categoryHasQuery: Boolean((this.state.categorySearchQuery || '').trim()),
       matchElectronics: (() => {
         const q = (this.state.categorySearchQuery || '').trim().toLowerCase();
@@ -18653,18 +18092,10 @@ class Component extends DCLogic {
         this.toast('Category filters reset');
       },
 
-      
-      
-      
-      
-      
-      
-      
       ...(() => {
         const pub = getPublishing();
         const draft = this.state.pubDraft;
 
-        
         const storeCategory = String(
           (this.state.store && (this.state.store.categoryId || this.state.store.category_id || this.state.store.category)) || ''
         ).toLowerCase();
@@ -18741,7 +18172,6 @@ class Component extends DCLogic {
         const ctx = this._pubContext();
         const allSections = pub.sections(draft, ctx);
         const report = pub.readiness(draft, ctx);
-        
         const reveal = this.state.pubRevealErrors;
         const computed = report.errors || {};
         const errors = Object.assign({}, this.state.pubFieldErrors || {});
@@ -18754,7 +18184,6 @@ class Component extends DCLogic {
         const activeIndex = Math.max(0, allSections.findIndex(s => s.key === activeKey));
         const active = allSections[activeIndex] || { fields: [], label: '', hint: '' };
 
-        
         const resolveField = (f) => {
           const raw = pub.getValue(draft, f.path);
           const error = errors[f.path];
@@ -18763,8 +18192,6 @@ class Component extends DCLogic {
             value: raw === undefined || raw === null ? '' : raw,
             hasError: Boolean(error),
             error: error || '',
-            
-            
             showUnit: Boolean(f.unit) && String(f.label).indexOf(f.unit) === -1,
             isSimpleInput: ['text', 'number', 'date', 'time', 'datetime'].indexOf(f.type) !== -1,
             inputType: f.type === 'datetime' ? 'datetime-local'
@@ -18812,14 +18239,12 @@ class Component extends DCLogic {
         const basicFields = activeFields.filter(f => !f.advanced);
         const advancedFields = activeFields.filter(f => f.advanced);
 
-        
         const sectionStates = report.sections.map((s, i) => Object.assign({}, s, {
           index: i + 1,
           active: s.key === activeKey,
           firstIssue: s.issues && s.issues.length ? s.issues[0].message : ''
         }));
 
-        
         const taxonomy = this.state.pubTaxonomy || [];
         const allowedTypes = (pub.INTENTS[draft.intent] || {}).listingTypes || [];
         const relevant = taxonomy.filter(node => {
@@ -18844,8 +18269,6 @@ class Component extends DCLogic {
           }))
           : [];
 
-        
-        
         if (parentNode && childCategories.length === 0) {
           childCategories.push({
             id: parentNode.id, name: parentNode.name + ' (general)',
@@ -18853,7 +18276,6 @@ class Component extends DCLogic {
           });
         }
 
-        
         const variantDefs = pub.variantOptionsOf(this.state.pubCategorySchema);
         const chosenVariants = draft.values.variantOptions || {};
         const variantOptions = variantDefs.map(vo => ({
@@ -18868,7 +18290,6 @@ class Component extends DCLogic {
           .filter(k => (chosenVariants[k] || []).length > 0)
           .reduce((n, k) => n * chosenVariants[k].length, 1);
 
-        
         const schedule = draft.values.weeklySchedule || {};
         const scheduleRows = pub.WEEKDAYS.map(d => {
           const windows = schedule[d.key] || [];
@@ -18880,7 +18301,6 @@ class Component extends DCLogic {
           };
         });
 
-        
         const mediaMax = draft.intent === 'BROADCAST' ? 8 : 12;
         const media = draft.media.map((m, i) => Object.assign({}, m, {
           isCover: i === 0,
@@ -18888,7 +18308,6 @@ class Component extends DCLogic {
           canMoveRight: i < draft.media.length - 1
         }));
 
-        
         const published = this.state.pubPublished;
         const isBroadcast = draft.intent === 'BROADCAST';
         const scheduled = isBroadcast && draft.values.publishMode === 'SCHEDULE';
@@ -18911,12 +18330,10 @@ class Component extends DCLogic {
           ];
 
         return Object.assign(base, {
-          
           pubTitle: (draft.values.title || '').trim()
             || (draft.mode === 'edit' ? 'Edit publication' : 'New ' + ((pub.INTENTS[draft.intent] || {}).label || 'publication').toLowerCase()),
           pubIntent: draft.intent,
 
-          
           pubSections: sectionStates,
           pubSectionLabel: active.label,
           pubSectionHint: active.hint,
@@ -18927,12 +18344,10 @@ class Component extends DCLogic {
           pubNextSectionLabel: allSections[activeIndex + 1] ? allSections[activeIndex + 1].label : '',
           pubPrevSectionLabel: allSections[activeIndex - 1] ? allSections[activeIndex - 1].label : '',
 
-          
           pubBasicFields: basicFields,
           pubAdvancedFields: advancedFields,
           pubAdvancedOpen: advancedOpen,
 
-          
           pubPercent: report.percent,
           pubReadinessSummary: report.summary,
           pubBlockers: report.blockers,
@@ -18945,12 +18360,10 @@ class Component extends DCLogic {
               : draft.mode === 'edit' && draft.remoteStatus === 'PUBLISHED' ? 'Save changes'
                 : isBroadcast ? 'Publish to Announce' : 'Publish to LOUMOO',
 
-          
           pubPreviewCard: pub.toFeedCard(draft, ctx),
           pubPreviewOpen: this.state.pubPreviewOpen,
           pubPreviewDevice: this.state.pubPreviewDevice,
 
-          
           pubParentCategories: parentCategories,
           pubChildCategories: childCategories,
           pubCategoryNote: this.state.pubCategorySchema
@@ -18969,14 +18382,12 @@ class Component extends DCLogic {
             selected: l.id === draft.values.attachmentId
           })),
 
-          
           pubMedia: media,
           pubMediaCount: draft.media.length,
           pubCanAddMedia: draft.media.length < mediaMax,
           pubMediaError: this.state.pubMediaError,
           pubMediaBusy: this.state.pubMediaBusy,
 
-          
           pubLifecycle: this.state.pubLifecycle,
           pubBusyLabel: this.state.pubBusyLabel,
           pubServerError: this.state.pubServerError,
@@ -18984,7 +18395,6 @@ class Component extends DCLogic {
           pubSaveState: this.state.pubSaveState,
           pubOffline: this.state.pubOffline,
 
-          
           pubSuccessTitle: scheduled ? 'Scheduled' : isBroadcast ? 'Your broadcast is live' : 'Your listing is live',
           pubSuccessBlurb: scheduled
             ? 'It will publish automatically at the time you chose. You can still edit or cancel it until then.'
@@ -18993,7 +18403,6 @@ class Component extends DCLogic {
               : 'Buyers can find it in the marketplace, in search, and on your boutique page.',
           pubSuccessActions: successActions,
 
-          
           pubSetField: (path, value) => this.setPublishingField(path, value),
 
           pubToggleValue: (path, value) => {
@@ -19024,8 +18433,6 @@ class Component extends DCLogic {
             this.setPublishingField(path, current.filter(v => v !== value));
           },
 
-          
-          
           pubChipKey: (path, e) => {
             if (!e) return;
             const text = String((this.state.pubChipDrafts || {})[path] || '').trim();
@@ -19099,7 +18506,6 @@ class Component extends DCLogic {
             const files = e && e.target && e.target.files ? Array.from(e.target.files) : [];
             if (!files.length) return;
             this.uploadPublishingImages(files);
-            
             if (e && e.target) { try { e.target.value = ''; } catch (_) {} }
           },
           pubRemoveImage: (id) => this.removePublishingImage(id),
@@ -19125,15 +18531,12 @@ class Component extends DCLogic {
           pubSetPreviewDevice: (device) => this.setState({ pubPreviewDevice: device }),
 
           pubOpenReview: () => {
-            
             this.setState({ pubRevealErrors: true });
             this._syncPublishingDraft().catch(() => {});
             this.go('publishReview');
           },
           pubBackToStudio: () => this.go('publishStudio'),
 
-          
-          
           pubJumpToIssue: (sectionKey, path) => {
             this.setState({ pubSectionKey: sectionKey, pubAdvancedOpen: true });
             this.go('publishStudio');
@@ -19173,11 +18576,6 @@ class Component extends DCLogic {
         });
       })(),
 
-      
-      
-      
-      
-      
       ...(() => {
         const pub = getPublishing();
         const ctx = { broadcastSchema: this.state.pubBroadcastSchema };
@@ -19210,7 +18608,6 @@ class Component extends DCLogic {
         });
 
         return {
-          
           activeAnnouncementCard: this.state.activeAnnouncement
             ? ((pub && pub.cardFromAnnouncement) ? (() => { try { return pub.cardFromAnnouncement(this.state.activeAnnouncement, ctx); } catch (e) { return null; } })() : null) || this._formatAnnouncementCard(this.state.activeAnnouncement)
             : null,
@@ -19251,7 +18648,6 @@ class Component extends DCLogic {
           shareAnnouncement: (ann) => this.shareAnnouncement(ann || this.state.activeAnnouncement),
           activateAnnouncementCta: (ann) => this.activateAnnouncementCta(ann || this.state.activeAnnouncement),
 
-          
           announcePeriod: this.state.announcePeriod || '7d',
           setAnnouncePeriodToday: () => { this.setState({ announcePeriod: 'today' }); this.loadStoreAnnounceTelemetry(); },
           setAnnouncePeriod7d: () => { this.setState({ announcePeriod: '7d' }); this.loadStoreAnnounceTelemetry(); },
@@ -19273,7 +18669,6 @@ class Component extends DCLogic {
           announceRegionalReach: this.state.announceRegionalReach || '0%',
           openAnnounceDetail: (id) => this.openAnnouncement(id),
 
-          
           sellerListingCards: listings.map(l => {
             const isBroadcast = l.kind === 'BROADCAST' || l.type === 'ANNOUNCEMENT' || l.broadcastType;
             if (isBroadcast && pub && pub.cardFromAnnouncement) {
@@ -19352,32 +18747,23 @@ class Component extends DCLogic {
         };
       })(),
 
-      
-      
-      
       searchQuery: this.state.searchQuery,
       searchBusy: Boolean(this.state.searchBusy),
       searchError: this.state.searchError || '',
       searchQueryTrimmed: (this.state.searchQuery || '').trim(),
-      
       searchActive: (this.state.searchQuery || '').trim().length >= 2,
       searchResultCount: Array.isArray(this.state.searchResults) ? this.state.searchResults.length : 0,
-      
-      
       searchResultsHeading: (Array.isArray(this.state.searchResults) ? this.state.searchResults.length : 0)
         + (Array.isArray(this.state.searchResults) && this.state.searchResults.length === 1 ? ' result' : ' results')
         + ((this.state.searchQuery || '').trim() ? (' for “' + (this.state.searchQuery || '').trim() + '”') : ''),
       searchEmptyLabel: (this.state.searchQuery || '').trim()
         ? ('No results for “' + (this.state.searchQuery || '').trim() + '”')
         : 'No results match your filters',
-      
       searchShowLoading: Boolean(this.state.searchBusy),
       searchShowError: !this.state.searchBusy && !!this.state.searchError,
       searchShowResults: !this.state.searchBusy && !this.state.searchError && Array.isArray(this.state.searchResults) && this.state.searchResults.length > 0,
       searchShowEmpty: !this.state.searchBusy && !this.state.searchError && Array.isArray(this.state.searchResults) && this.state.searchResults.length === 0,
       searchShowDefault: !this.state.searchBusy && !this.state.searchError && !Array.isArray(this.state.searchResults),
-      
-      
       searchResultCards: (Array.isArray(this.state.searchResults) ? this.state.searchResults : []).map((p) => ({
         id: p.id,
         title: p.title || 'Untitled listing',
@@ -19388,17 +18774,12 @@ class Component extends DCLogic {
         ratingLabel: p.rating != null ? ('★ ' + p.rating) : '',
         inStock: p.inStock !== false
       })),
-      
       handleSearchInput: (e) => {
         const query = e && e.target ? e.target.value : (e || '');
         this.setState({ searchQuery: query });
         clearTimeout(this._searchTimer);
-        
-        
         this._searchSeq = (this._searchSeq || 0) + 1;
         if (String(query).trim().length < 2) {
-          
-          
           if (this.state.filterCity || this.state.filterVerifiedOnly) {
             this._searchTimer = setTimeout(() => {
               if (!this._unmounted) this._executeSearch(query);
@@ -19412,7 +18793,6 @@ class Component extends DCLogic {
           if (!this._unmounted) this._executeSearch(query);
         }, 240);
       },
-      
       handleHubSearchKey: (e) => {
         if (e && (e.key === 'Enter' || e.keyCode === 13)) {
           if (e.preventDefault) e.preventDefault();
@@ -19421,13 +18801,11 @@ class Component extends DCLogic {
           this.go('search');
         }
       },
-      
       submitSearch: () => {
         clearTimeout(this._searchTimer);
         this._executeSearch(this.state.searchQuery);
         this.go('search');
       },
-      
       runSearch: (term) => {
         const q = String(term == null ? '' : term);
         this.setState({ searchQuery: q });
@@ -19436,55 +18814,40 @@ class Component extends DCLogic {
         this.go('search');
       },
 
-      
       filterCity: this.state.filterCity || '',
       filterVerifiedOnly: Boolean(this.state.filterVerifiedOnly),
       hasActiveFilters: Boolean(this.state.filterCity) || Boolean(this.state.filterVerifiedOnly),
-      
-      
-      
       cityChipClass: {
         douala: 'tag ' + (this.state.filterCity === 'douala' ? 'tag-accent' : 'tag-neutral'),
         yaounde: 'tag ' + (this.state.filterCity === 'yaounde' ? 'tag-accent' : 'tag-neutral'),
         kribi: 'tag ' + (this.state.filterCity === 'kribi' ? 'tag-accent' : 'tag-neutral')
       },
-      
-      
       vfTrackStyle: 'width:42px;height:24px;border-radius:999px;position:relative;flex-shrink:0;transition:background .18s ease;background:'
         + (this.state.filterVerifiedOnly ? 'var(--color-accent)' : 'var(--color-neutral-300)'),
       vfKnobStyle: 'position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .18s ease;transform:'
         + (this.state.filterVerifiedOnly ? 'translateX(18px)' : 'translateX(0)'),
-      
       setFilterCity: (c) => {
         this.setState({ filterCity: this.state.filterCity === c ? '' : c });
       },
       toggleVerifiedOnly: () => {
         this.setState({ filterVerifiedOnly: !this.state.filterVerifiedOnly });
       },
-      
       applyFilters: () => {
         clearTimeout(this._searchTimer);
         this._executeSearch(this.state.searchQuery);
         this.go('search');
       },
-      
       resetFilters: () => {
         this.setState({ filterCity: '', filterVerifiedOnly: false });
       },
 
-      
       isLoggedIn: this.state.isLoggedIn,
       authStatus: this.state.authStatus,
-      
-      
       showGetStarted: this.state.authStatus === 'anonymous',
       userInitials: (this.state.regFirstName ? this.state.regFirstName[0].toUpperCase() : 'T') + (this.state.regLastName ? this.state.regLastName[0].toUpperCase() : 'K'),
       userAvatar: this.state.regAvatar || '',
       hasUserAvatar: !!this.state.regAvatar,
       profileRoleLabel: this.state.userRole === 'both' ? 'VERIFIED BUYER & SELLER' : (this.state.userRole === 'seller' ? 'VERIFIED SELLER' : 'VERIFIED BUYER'),
-      
-      
-      
       userPhoneCity: (() => {
         const raw = String(this.state.regPhone || '').trim();
         const digits = raw.replace(/[^0-9]/g, '');
@@ -19496,7 +18859,6 @@ class Component extends DCLogic {
           : 'Douala';
         return (phone ? phone + ' · ' : '') + city + ', Cameroon';
       })(),
-      
       activeDeliveriesLabel: (() => {
         const n = Number((this.state.dashboard && this.state.dashboard.counts
           && this.state.dashboard.counts.activeDeliveries) || 0);
@@ -19508,10 +18870,6 @@ class Component extends DCLogic {
           && this.state.dashboard.counts.savedItems) || 0);
         return n === 0 ? 'No saved products yet' : (n + (n === 1 ? ' Product Saved' : ' Products Saved'));
       })(),
-      
-      
-      
-      
       ctaAction: () => this.requireCapability('publishIntent', 'canCreateListing'),
       ctaLabel: this.state.isLoggedIn ? 'Sell on LOUMOO' : 'Join LOUMOO',
       navUploadAction: () => this.requireCapability('publishIntent', 'canCreateListing'),
@@ -19519,11 +18877,8 @@ class Component extends DCLogic {
       canCreateListing: Boolean(this.state.capabilities.canCreateListing),
       canPurchase: Boolean(this.state.capabilities.canPurchase),
       accountStateLabel: this.state.accountState || '',
-      
-      
       signIn: () => this.go('signIn'),
 
-      
       signOut: () => {
         const api = getApi();
         const clerk = getClerk();
@@ -19551,8 +18906,6 @@ class Component extends DCLogic {
         }
       },
 
-      
-      
       onboardingBusy: this.state.onboardingBusy,
       onboardingError: this.state.onboardingError,
       onboardingPercentage: this.state.serverOnboarding
@@ -19562,7 +18915,6 @@ class Component extends DCLogic {
         ? this.state.serverOnboarding.nextStep
         : null,
 
-      
       completeOnboarding: () => {
         if (this.state.onboardingBusy) return;
 
@@ -19605,9 +18957,6 @@ class Component extends DCLogic {
             });
           });
       },
-      
-      
-      
       userName: (() => {
         const u = this.state.sessionUser;
         const candidate = (u && (u.firstName || (u.fullName || '').split(' ')[0]))
@@ -19637,10 +18986,6 @@ class Component extends DCLogic {
         return n + (n === 1 ? ' item' : ' items') + (sellers > 1 ? (' · ' + sellers + ' sellers') : '');
       })(),
 
-      
-      
-      
-      
       checkoutIsPickup: isPickup,
       checkoutHasDestination: checkoutDest.hasDestination,
       checkoutRecipientName: checkoutDest.address.fullName,
@@ -19655,11 +19000,6 @@ class Component extends DCLogic {
         this.openAddresses();
       },
 
-      
-      
-      
-      
-      
       checkoutShowProviders: !isPickup && checkoutDest.hasDestination,
       checkoutProvidersLoading: Boolean(this.state.providersLoading),
       checkoutProvidersError: this.state.providersError || '',
@@ -19686,7 +19026,6 @@ class Component extends DCLogic {
       }),
       retryProviders: () => this._loadProviders(this.state.providersCity || '', true),
 
-      
       notifHasItems: (this.state.notifications || []).length > 0,
       notifUnreadCount: (this.state.notifications || []).filter((n) => !n.read).length,
       notifHasUnread: (this.state.notifications || []).some((n) => !n.read),
@@ -19704,20 +19043,17 @@ class Component extends DCLogic {
           read: Boolean(n.read),
           toneColor: n.tone === 'success' ? 'var(--color-success)' : (n.tone === 'sale' ? 'var(--color-accent-sale)' : 'var(--color-accent)'),
           dateLabel: this._orderDateLabel(n.createdAt),
-          
           canOpen: Boolean(openLabels[action]),
           openLabel: openLabels[action] || '',
           open: () => this._openNotification(n)
         };
       }),
       markNotifsRead: () => this._markNotifsRead(),
-      
       placingOrder: Boolean(this.state.placingOrder),
       placeOrderLabel: this.state.placingOrder ? 'PLACING YOUR ORDER…' : 'PLACE ORDER · XAF ' + fmt(items + deliveryFee),
       placeOrderArrow: this.state.placingOrder ? '' : '→',
       orderError: this.state.orderError || '',
       orderErrorHasItems: (this.state.orderErrorItemIds || []).length > 0,
-      
       orderView: (() => {
         const o = this.state.currentOrder;
         const money = (n) => 'XAF ' + fmt(n || 0);
@@ -19742,10 +19078,6 @@ class Component extends DCLogic {
         if (!sent) noTrackNote = 'This order was saved on this device only, so no seller or rider knows about it. Add the items to your bag again to place it.';
         else if (cancelled) noTrackNote = 'This order was cancelled.';
         else if (!home) noTrackNote = 'This order is for pickup, so there is no delivery to track.';
-        
-        
-        
-        
         const totalLabel = money(o.totalXaf);
         const via = o.paymentMethod && o.paymentMethod !== 'Pay on delivery' ? ' via ' + o.paymentMethod : '';
         const escrow = (() => {
@@ -19764,7 +19096,6 @@ class Component extends DCLogic {
           placedAt: this._orderDateLabel(o.createdAt),
           statusLabel: circuit ? circuit.orderStatusLabel(o) : this._orderStatusLabel(o.status),
           totalLabel: totalLabel,
-          
           payVia: via,
           items: items,
           subtotalLabel: money(subtotal),
@@ -19774,13 +19105,11 @@ class Component extends DCLogic {
           sellerPhone: o.sellerPhone || o.sellerWhatsapp || '',
           canTrack: sent && home && !cancelled,
           noTrackNote: noTrackNote,
-          
           escrowTitle: escrow.title,
           escrowNote: escrow.note,
           escrowOk: escrow.tone === 'ok'
         };
       })(),
-      
       lastOrderId: this.state.lastOrder ? (this.state.lastOrder.id || '') : '',
       lastOrdersTitle: (this.state.lastOrders || []).length > 1 ? (this.state.lastOrders.length + ' orders placed!') : 'Order placed!',
       lastOrdersHasMore: (this.state.lastOrders || []).length > 1,
@@ -19789,8 +19118,6 @@ class Component extends DCLogic {
         : '',
       lastOrderNumber: this.state.lastOrder ? this.state.lastOrder.orderNumber : '',
       lastOrderTotal: this.state.lastOrder ? ('XAF ' + fmt(this.state.lastOrder.totalXaf)) : '',
-      
-      
       lastDeliveryNotice: Boolean((this.state.lastOrders || []).map((o) => o && o.deliveryNotice).filter(Boolean)[0]),
       lastDeliveryNoticeText: (() => {
         const dn = (this.state.lastOrders || []).map((o) => o && o.deliveryNotice).filter(Boolean)[0];
@@ -19804,12 +19131,9 @@ class Component extends DCLogic {
         if (!o) return '';
         return o.itemCount + (o.itemCount === 1 ? ' item' : ' items');
       })(),
-      
       ordersHasItems: (this.state.orders || []).length > 0,
       ordersList: (this.state.orders || []).map((o) => ({
         id: o.id || '',
-        
-        
         canOpen: Boolean(o.id) && o.serverSynced !== false,
         notSent: !o.id || o.serverSynced === false,
         orderNumber: o.orderNumber,
@@ -20034,8 +19358,6 @@ class Component extends DCLogic {
             const scrollHeight = target.scrollHeight || document.documentElement.scrollHeight || 0;
             const distanceToBottom = scrollHeight - (scrollTop + clientHeight);
 
-            
-            
             if (distanceToBottom <= 1000) {
               if (this.state.screen === 'home') {
                 if ((this.state.infiniteFeedBatch || 1) < 3) {
@@ -20080,8 +19402,6 @@ class Component extends DCLogic {
         }
       },
       addToCart: (arg) => {
-        
-        
         let id = (typeof arg === 'string' && arg) ? arg : null;
         if (!id && this.state.currentProductId) id = this.state.currentProductId;
         if (!id) { this.toast('Open a product to add it to your bag'); return; }
@@ -20103,7 +19423,6 @@ class Component extends DCLogic {
         this._recoNote('add_to_cart', this._resolveProductItem(id) || { id: id }, { surface: this.state.screen === 'product' ? 'pdp' : 'card' });
         this.toast('Added ' + name + ' to your bag');
       },
-      
       buyNowProduct: () => {
         const id = this.state.currentProductId;
         if (!id) { this.toast('Open a product to buy it'); return; }
@@ -20133,19 +19452,11 @@ class Component extends DCLogic {
         this._persistCart(list);
         this.toast('Removed from bag');
       },
-      
-      
-      
-      
-      
-      
       placeOrder: () => {
         if (this.state.placingOrder || this._placingNow) return;
         const cart = this.state.cartItems || [];
         if (!cart.length) { this.toast('Your bag is empty'); return; }
         if (this.state.authStatus !== 'authenticated') {
-          
-          
           this.toast('Sign in to place your order');
           this.setState({ postAuthRedirect: 'checkout' });
           this.go('signIn');
@@ -20158,10 +19469,6 @@ class Component extends DCLogic {
           return;
         }
 
-        
-        
-        
-        
         const dest = this._resolveDeliveryDestination();
         const deliveryMethod = dest.method;
         const address = dest.address;
@@ -20185,20 +19492,16 @@ class Component extends DCLogic {
         this.setState({ placingOrder: true, orderError: '', orderErrorItemIds: [] });
         const finish = (patch) => { this._placingNow = false; if (!this._unmounted) this.setState(Object.assign({ placingOrder: false }, patch || {})); };
 
-        
         const preferredDriverId = deliveryMethod === 'HOME_DELIVERY' ? (this.state.selectedProviderId || null) : null;
         this._placeBagAsOrders(groups, address, method, images, deliveryMethod, preferredDriverId).then((res) => {
           if (this._unmounted) { this._placingNow = false; return; }
           const placed = res.placed;
           if (placed.length) {
-            
             try {
               placed.forEach((o) => (o.items || []).forEach((it) => {
                 this._recoNote('purchase', this._resolveProductItem(it.id) || { id: it.id, storeName: it.store }, { surface: 'checkout' });
               }));
             } catch (e) {  }
-            
-            
             setTimeout(() => { if (!this._unmounted) this.loadServerNotifications(); }, 1500);
             this.setState({ lastOrder: placed[0], lastOrders: placed });
           }
@@ -20217,9 +19520,6 @@ class Component extends DCLogic {
             return;
           }
           finish();
-          
-          
-          
           var dropped = placed.map(function (o) { return o && o.deliveryNotice; }).filter(Boolean)[0];
           this.toast(dropped && dropped.message ? dropped.message : ('Order ' + placed[0].orderNumber + ' placed'));
           this.go('success');
@@ -20227,8 +19527,6 @@ class Component extends DCLogic {
           finish({ orderError: 'Something went wrong while placing your order. Check My Orders before trying again.', orderErrorItemIds: [] });
         });
       },
-      
-      
       removeUnavailableItems: () => {
         const gone = new Set(this.state.orderErrorItemIds || []);
         const list = (this.state.cartItems || []).filter((it) => !gone.has(it.id));
@@ -20288,21 +19586,10 @@ class Component extends DCLogic {
           this.toast((err && err.message) || 'Could not update follow status.');
         });
       },
-      
-      
-      
-      
-      
       following: Boolean((this.state.currentStore && this.state.currentStore.isFollowing) ?? this.state.following),
       followLabel: Boolean((this.state.currentStore && this.state.currentStore.isFollowing) ?? this.state.following) ? 'FOLLOWING' : 'FOLLOW',
       toggleSave: () => { const next = !this.state.saved; this.setState({ saved: next }); this.toast(next ? 'Saved to your list' : 'Removed from saved'); },
-      
-      
-      
-      
-      
       contactSellerWhatsApp: (opts) => this.contactSellerWhatsApp(opts),
-      
       downloadBoardingPass: () => {
         this.toast('Preparing your boarding pass — use “Save as PDF” in the print dialog.');
         try { setTimeout(() => { try { window.print(); } catch (_) {} }, 250); } catch (_) {}
@@ -20316,11 +19603,6 @@ class Component extends DCLogic {
       },
       publish: () => this.publishNow(),
 
-      
-      
-      
-      
-      
       isWishlisted: (id) => Boolean(this.state.productWishlist && this.state.productWishlist[id]),
       wishlistCount: Object.keys(this.state.productWishlist || {}).length,
       wishlistHasItems: Object.keys(this.state.productWishlist || {}).length > 0,
@@ -20366,7 +19648,6 @@ class Component extends DCLogic {
         }
       },
 
-      
       isTravelTabBus: this.state.travelServiceTab === 'bus',
       isTravelTabFlight: this.state.travelServiceTab === 'flight',
       isTravelTabTrain: this.state.travelServiceTab === 'train',
@@ -20376,7 +19657,6 @@ class Component extends DCLogic {
       setTravelTabTrain: () => { this.setState({ travelServiceTab: 'train' }); this.toast('Switched to Camrail InterCity Passenger Trains'); },
       setTravelTabTaxi: () => { this.setState({ travelServiceTab: 'taxi' }); this.toast('Switched to Taxi & Airport Transfers'); },
 
-      
       busSchedules: this.state.busSchedules || [],
       busSchedulesLoading: Boolean(this.state.busSchedulesLoading),
       busSchedulesError: this.state.busSchedulesError || '',
@@ -20479,13 +19759,11 @@ class Component extends DCLogic {
         this.setState({ travelFrom: to, travelTo: from });
         this.toast('Swapped Origin & Destination');
       },
-      
       travelPaymentMethod: this.state.travelPaymentMethod || 'mtn',
       setPaymentMtn: () => this.setState({ travelPaymentMethod: 'mtn' }),
       setPaymentOrange: () => this.setState({ travelPaymentMethod: 'orange' }),
       isPaymentMtn: (this.state.travelPaymentMethod || 'mtn') === 'mtn',
       isPaymentOrange: (this.state.travelPaymentMethod || 'mtn') === 'orange',
-      
       travelPaxName: this.state.travelPaxName,
       travelPaxPhone: this.state.travelPaxPhone,
       travelPaxId: this.state.travelPaxId,
@@ -20516,10 +19794,8 @@ class Component extends DCLogic {
       travelTicketsLoading: Boolean(this.state.travelTicketsLoading),
       reloadTravelTrips: () => this.loadTravelTrips(),
       reloadTravelTickets: () => this.loadTravelTickets(),
-      
       bookTravelItem: () => this._confirmTravelBooking(),
       bookFlight: () => this._confirmTravelBooking(),
-      
       ticketPnr: (this.state.lastTrip && this.state.lastTrip.reference) || '',
       ticketPassenger: (this.state.lastTrip && this.state.lastTrip.passenger) ? String(this.state.lastTrip.passenger).toUpperCase() : '',
       ticketFromCode: (this.state.lastTrip && this.state.lastTrip.fromCode) || '',
@@ -20536,7 +19812,6 @@ class Component extends DCLogic {
       ticketOperator: (this.state.lastTrip && this.state.lastTrip.operator) || '',
       ticketPriceLabel: (this.state.lastTrip && this.state.lastTrip.priceLabel) || '',
 
-      
       isHeroSlide0: (this.state.heroSlide || 0) === 0,
       isHeroSlide1: this.state.heroSlide === 1,
       isHeroSlide2: this.state.heroSlide === 2,
@@ -20560,7 +19835,6 @@ class Component extends DCLogic {
       heroNextSlide: () => this.heroNextSlide(),
       heroPrevSlide: () => this.heroPrevSlide(),
 
-      
       currentProduct: this.state.currentProduct,
       productLoading: this.state.productLoading,
       productNotFound: this.state.productNotFound,
@@ -20578,9 +19852,6 @@ class Component extends DCLogic {
       currentProductFulfillmentLabel: (this.state.currentProduct && this.state.currentProduct.fulfillmentLabel) || 'Same-Day Express Courier',
       currentProductBadge: (this.state.currentProduct && this.state.currentProduct.badge) || 'VERIFIED BOUTIQUE',
       currentProductRating: (this.state.currentProduct && this.state.currentProduct.rating != null) ? Number(this.state.currentProduct.rating).toFixed(1) : '5.0',
-      
-      
-      
       currentProductReviewCount: ((this.state.currentProduct && (this.state.currentProduct.reviewCount ?? this.state.currentProduct.reviewsCount)) || 0) + (this.state.reviews || []).filter((r) => r.productId === this.state.currentProductId).length,
       currentProductHasReviews: (((this.state.currentProduct && (this.state.currentProduct.reviewCount ?? this.state.currentProduct.reviewsCount)) || 0) + (this.state.reviews || []).filter((r) => r.productId === this.state.currentProductId).length) > 0,
       currentProductSoldCount: (this.state.currentProduct && this.state.currentProduct.soldCount) || 0,
@@ -20625,7 +19896,6 @@ class Component extends DCLogic {
       productStoreRating: (this.state.currentProduct && this.state.currentProduct.storeRating) || '4.9',
       productStoreVerified: (this.state.currentProduct && this.state.currentProduct.storeVerified !== undefined) ? this.state.currentProduct.storeVerified : true,
 
-      
       hasActiveVideoModal: Boolean(this.state.activeVideoModal),
       videoModalTitle: this.state.activeVideoModal ? this.state.activeVideoModal.title : '',
       videoModalSubtitle: this.state.activeVideoModal ? this.state.activeVideoModal.subtitle : '',
@@ -20661,7 +19931,6 @@ class Component extends DCLogic {
         } catch (_) {}
       },
 
-      
       adminActiveTab: this.state.adminActiveTab || 'overview',
       adminTabIsOverview: (this.state.adminActiveTab || 'overview') === 'overview',
       adminTabIsStores: this.state.adminActiveTab === 'stores',
@@ -20698,9 +19967,6 @@ class Component extends DCLogic {
       adminAuditLogsList: this.state.adminAuditLogsList || [],
       adminSettingsSaveSuccess: Boolean(this.state.adminSettingsSaveSuccess)
     };
-    
-    
-    
     Object.assign(viewProps, this._searchView());
     viewProps.viewProps = viewProps;
     return viewProps;
