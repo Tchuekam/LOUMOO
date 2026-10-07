@@ -38,10 +38,11 @@ function stripComments(code) {
     const lineEnd = code.indexOf('\n', end);
     const before = code.slice(lineStart, start);
     const after = code.slice(end, lineEnd === -1 ? code.length : lineEnd);
-    if (/^[ \t]*$/.test(before) && /^[ \t]*$/.test(after)) {
+    // `after` may hold the '\r' of a CRLF line end: still a line of its own.
+    if (/^[ \t]*$/.test(before) && /^[ \t\r]*$/.test(after)) {
       start = lineStart;
       end = lineEnd === -1 ? code.length : lineEnd + 1;
-    } else if (/^[ \t]*$/.test(after)) {
+    } else if (/^[ \t\r]*$/.test(after)) {
       while (start > pos && (code[start - 1] === ' ' || code[start - 1] === '\t')) start--;
     }
     if (start < pos) start = pos;

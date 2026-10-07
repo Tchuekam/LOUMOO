@@ -52,6 +52,9 @@ function testCommentsGoLiteralsStay() {
 function testLinesAndSpacing() {
   const out = stripComments('a();\n    // note\nb();   // why\nc();\n');
   assert.strictEqual(out, 'a();\nb();\nc();\n', 'a comment line is dropped whole, a trailing comment with its spaces');
+  // build_redesign.py writes the shell with CRLF on Windows: the same, line ends kept.
+  const crlf = stripComments('a();\r\n    // note\r\nb();   // why\r\nc();\r\n');
+  assert.strictEqual(crlf, 'a();\r\nb();\r\nc();\r\n', 'with CRLF line ends a comment line still goes whole, leaving no blank line');
 }
 
 function testOnlyTheControllerIsTouched() {
