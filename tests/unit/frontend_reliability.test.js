@@ -22,7 +22,9 @@ function testHtmlScreensAndTags() {
   // Verify critical screen identifiers
   const criticalScreens = [
     'home', 'search', 'filters', 'voice', 'visual', 'visualScan', 'visualResults',
-    'product', 'cart', 'checkout', 'paying', 'success', 'payFailed', 'orders',
+    // (the mock `paying` / `payFailed` screens were removed in ce42e55: nothing ever
+    // navigated to them, the real path is checkout -> placeOrder -> success)
+    'product', 'cart', 'checkout', 'success', 'orders',
     'store', 'business', 'createStore', 'storeOnboarding', 'storeSettings', 'storeVerification', 'storeAnalytics',
     'publishIntent', 'publishStudio', 'publishReview', 'publishSuccess', 'myListings',
     'profile', 'accountDashboard', 'editProfile', 'addresses', 'addAddress', 'editAddress',
