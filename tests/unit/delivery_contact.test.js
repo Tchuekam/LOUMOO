@@ -461,7 +461,7 @@ async function testEscrowAttestation() {
     // Held on pickup, released on the verified handover.
     {
       const w = makeWorld();
-      await w.service.registerDriver('rider_1', { name: 'Alain', phone: '+237600000001' }, ADMIN);
+      await registerOnline(w, 'rider_1', 'Alain', '+237600000001');
       const order = await pendingOrder(w);
       const created = await w.service.createDelivery(order.id, SELLER, { dropoffLocation: { lat: 4.0601, lng: 9.7679 } });
       await w.service.assignDriver(created.id, 'rider_1', SELLER);
@@ -483,7 +483,7 @@ async function testEscrowAttestation() {
     // A failed attempt is recoverable: it does NOT walk escrow back from held.
     {
       const w = makeWorld();
-      await w.service.registerDriver('rider_1', { name: 'Alain', phone: '+237600000001' }, ADMIN);
+      await registerOnline(w, 'rider_1', 'Alain', '+237600000001');
       const order = await pendingOrder(w);
       const created = await w.service.createDelivery(order.id, SELLER, { dropoffLocation: { lat: 4.0601, lng: 9.7679 } });
       await w.service.assignDriver(created.id, 'rider_1', SELLER);

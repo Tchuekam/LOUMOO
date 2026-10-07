@@ -207,7 +207,7 @@ class DeliveryService {
    * counting as online (unset: RIDER_PRESENCE_TTL_SECONDS, then 2 minutes); `presence`
    * replaces the whole RiderPresenceService (tests).
    */
-  constructor({ repository, orderRepository, events, now, offerTtlMs, geocoder, undispatchedSellerMs, undispatchedAdminMs, listAgencyMemberIds } = {}) {
+  constructor({ repository, orderRepository, events, now, offerTtlMs, geocoder, undispatchedSellerMs, undispatchedAdminMs, presenceTtlMs, presence, listAgencyMemberIds } = {}) {
     this.repo = repository || new DeliveryRepository();
     this.orders = orderRepository || new OrderRepository();
     // How an agency's member riders are resolved (for listing and for delegation
@@ -896,8 +896,10 @@ class DeliveryService {
     // Being registered and active is not being here: only a rider who is online (heard
     // from lately) and not already carrying a delivery can be offered one. 409 with the
     // reason (RIDER_UNAVAILABLE / RIDER_BUSY), not a validation error: the seller chose
-    // a real rider, and the situation is what blocks it.
-    await this.presence.assertAvailable(driver.id, driver);
+    // a real rider, and the situation is what blocks it. An agency is not a rider that
+    // goes online: it holds the offer for its members and delegates it (delegateDelivery),
+    // and the member's own presence is checked when they are offered it.
+    if (!driver.isAgency) await this.presence.assertAvailable(driver.id, driver);
 
     return this._applyAssignment(delivery, driver, caller, role, `Assigned to ${driver.name}`);
   }
@@ -1018,7 +1020,7 @@ class DeliveryService {
     // two happens second sees the other, and a rider found unavailable has this one offer
     // taken back and the seller is told why (409), exactly as if the first check had failed.
     try {
-      await this.presence.assertAvailable(driver.id, driver);
+      if (!driver.isAgency) await this.presence.assertAvailable(driver.id, driver); // an agency has no presence
     } catch (err) {
       if (err instanceof RiderUnavailableError) {
         const why = err.details && err.details.reason;
@@ -1126,6 +1128,10 @@ class DeliveryService {
     if (!rider || rider.status !== DRIVER_STATUS.ACTIVE || rider.isAgency) {
       throw new ValidationError('That rider is not available', [{ field: 'riderId', message: 'Unknown or suspended rider.' }]);
     }
+    // Same rule as assigning: only a rider who is online and not already carrying a
+    // delivery can be offered one. Checked BEFORE the write, so refusing an offline
+    // member leaves the delivery with the agency instead of withdrawing it.
+    await this.presence.assertAvailable(rider.id, rider);
 
     // Reassign from the agency to the member: _applyAssignment's compare-and-swap
     // expects the current (status, driverId) — the agency — and offers the member.

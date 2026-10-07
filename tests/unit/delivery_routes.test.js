@@ -218,6 +218,8 @@ async function main() {
       const expected = [
         'GET /drivers', 'GET /dispatch', 'GET /providers', 'GET /providers/following', 'GET /providers/:id', 'GET /providers/:id/riders',
         'POST /drivers/:profileId', 'GET /driver/me', 'GET /by-order/:orderId', 'POST /',
+        'GET /driver/presence', 'POST /driver/presence/online', 'POST /driver/presence/offline',
+        'POST /driver/presence/pause', 'POST /driver/presence/resume', 'POST /driver/presence/heartbeat',
         'GET /:id/stream', 'GET /:id/code', 'GET /:id',
         'POST /:id/assign', 'POST /:id/auto-assign', 'POST /:id/delegate', 'POST /:id/cancel', 'POST /:id/resolve', 'POST /:id/reconcile',
         'POST /:id/accept', 'POST /:id/decline', 'POST /:id/status', 'POST /:id/location', 'POST /:id/complete'

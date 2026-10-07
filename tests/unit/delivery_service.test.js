@@ -863,7 +863,7 @@ async function run() {
     {
       const w = makeWorld();
       // A plain rider defaults to not-an-agency.
-      await w.service.registerDriver('rider_1', { name: 'Alain', phone: '+237600000001', baseFeeXaf: 1500 }, ADMIN);
+      await registerRider(w, 'rider_1', { name: 'Alain', phone: '+237600000001', baseFeeXaf: 1500 });
       assert.strictEqual((await w.repo.findDriver('rider_1')).isAgency, false);
 
       // An agency must name its organization.
@@ -881,7 +881,7 @@ async function run() {
       assert.ok(agencyCard && agencyCard.isAgency === true && agencyCard.feeXaf === 2000, 'the agency is quoted with its own tariff');
 
       // Its riders are the active rider members of its organization.
-      await w.service.registerDriver('rider_2', { name: 'Bruno', phone: '+237600000002' }, ADMIN);
+      await registerRider(w, 'rider_2', { name: 'Bruno', phone: '+237600000002' });
       w.repo.seedOrgMembers('org_1', ['mgr_1', 'rider_1', 'rider_2']); // mgr_1 is a dispatcher, not a rider
       const roster = await w.service.listAgencyRiders(ADMIN, 'agency_1');
       assert.deepStrictEqual(roster.riders.map((r) => r.id).sort(), ['rider_1', 'rider_2'], 'only member riders, not the dispatcher or the agency itself');
@@ -894,6 +894,15 @@ async function run() {
       const MEMBER = { userId: 'mgr_1', userRole: 'customer' };
       assert.strictEqual(await code(w.service.delegateDelivery(created.id, 'rider_3', MEMBER)), 'VALIDATION_ERROR', 'cannot delegate to a non-member');
       assert.strictEqual(await code(w.service.delegateDelivery(created.id, 'rider_1', STRANGER)), 'NOT_FOUND', 'an outsider cannot delegate');
+      // An agency is not a rider that goes online (it was assigned above without any
+      // presence), but a member who is offline cannot be handed the delivery, and
+      // refusing them leaves it with the agency rather than withdrawing it.
+      await w.service.registerDriver('rider_off', { name: 'Off', phone: '+237600000003' }, ADMIN);
+      w.repo.seedOrgMembers('org_1', ['mgr_1', 'rider_1', 'rider_2', 'rider_off']);
+      assert.strictEqual(await code(w.service.delegateDelivery(created.id, 'rider_off', MEMBER)), 'RIDER_UNAVAILABLE', 'an offline member cannot be offered it');
+      const still = await w.repo.findById(created.id);
+      assert.strictEqual(still.driverId, 'agency_1', 'the refused delegation leaves the delivery with the agency');
+      assert.strictEqual(still.status, 'assigned');
       const delegated = await w.service.delegateDelivery(created.id, 'rider_1', MEMBER);
       assert.strictEqual(delegated.status, 'assigned', 'as a fresh offer the rider accepts');
       assert.strictEqual((await w.repo.findById(created.id)).driverId, 'rider_1', 'the delivery is now the member rider\'s');

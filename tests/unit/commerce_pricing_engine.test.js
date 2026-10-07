@@ -33,10 +33,10 @@ async function run() {
   assert.strictEqual(pricing.subtotalXaf, 125000, 'Subtotal must be 125,000 XAF');
   assert.strictEqual(pricing.shippingFeeXaf, DEFAULT_STANDARD_SHIPPING_XAF, 'Standard shipping must apply');
   assert.strictEqual(pricing.totalAmountXaf, 128000, 'Total must be 128,000 XAF');
-  // PricingEngine's line items call this `lineTotalXaf` (renamed in a3a6d50);
-  // the OrderItem entity asserted in section 3 still calls it `totalLineXaf`.
-  assert.strictEqual(pricing.lineItems[0].lineTotalXaf, 100000);
-  assert.strictEqual(pricing.lineItems[1].lineTotalXaf, 25000);
+  // PricingEngine's line items use the canonical `totalLineXaf`, the same name the
+  // OrderItem entity (asserted in section 3) uses; nothing reads `lineTotalXaf`.
+  assert.strictEqual(pricing.lineItems[0].totalLineXaf, 100000);
+  assert.strictEqual(pricing.lineItems[1].totalLineXaf, 25000);
 
   // 1.2 Store Pickup has 0 shipping fee
   const pickupPricing = PricingEngine.calculateOrderPricing(items, {
