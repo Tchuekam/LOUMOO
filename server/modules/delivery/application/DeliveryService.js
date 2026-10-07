@@ -207,7 +207,7 @@ class DeliveryService {
    * counting as online (unset: RIDER_PRESENCE_TTL_SECONDS, then 2 minutes); `presence`
    * replaces the whole RiderPresenceService (tests).
    */
-  constructor({ repository, orderRepository, events, now, offerTtlMs, geocoder, undispatchedSellerMs, undispatchedAdminMs, listAgencyMemberIds } = {}) {
+  constructor({ repository, orderRepository, events, now, offerTtlMs, geocoder, undispatchedSellerMs, undispatchedAdminMs, listAgencyMemberIds, presence, presenceTtlMs } = {}) {
     this.repo = repository || new DeliveryRepository();
     this.orders = orderRepository || new OrderRepository();
     // How an agency's member riders are resolved (for listing and for delegation
