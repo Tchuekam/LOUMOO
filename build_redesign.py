@@ -12810,10 +12810,10 @@ class Component extends DCLogic {
     if (this.state.docUploaded || this.state.verificationChoice === 'later') score += 15;
     const completionScore = Math.min(100, score);
 
-Assembles the pristine, production-grade Commerce App.dc.html (plus its route-level
-*Screens.dc.html chunks and public/) from the domain modules under src/. This file only
-sequences the build; every piece of application logic, markup and styling lives in
-src/<domain>/ and is composed by the helpers in src/core/build/.
+    // Client-side password strength meter (UX affordance only — Clerk remains
+    // the authority on what it will accept, including breach checks).
+    const strength = passwordStrength(this.state.resetNewPassword || '');
+    const regStrength = passwordStrength(this.state.regPassword || '');
 
     const viewProps = {
       is, on, st, pick,
