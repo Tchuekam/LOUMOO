@@ -7423,7 +7423,12 @@ class Component extends DCLogic {
     announceYaoundeReach: '0%',
     announceRegionalReach: '0%',
     storeTagline: '',
+    storeName: '',
+    storeDescription: '',
+    storeBio: '',
+    storeReturnPolicy: '',
     storeWarrantyPolicy: '',
+    storeShippingPolicy: '',
     storeOpenStatusBadge: 'OPEN',
     storeOpenTime: '08:00',
     storeCloseTime: '18:30',
@@ -15214,7 +15219,42 @@ class Component extends DCLogic {
       // ══════════════════════════════════════════════════════════════════
       openCreateStore: () => this.go('createStore'),
       openStoreOnboarding: () => this.go('storeOnboarding'),
-      openStoreSettings: () => this.go('storeSettings'),
+      openStoreSettings: () => {
+        const store = this.state.store || this.state.currentStore || {};
+        const profile = store.profile || {};
+        const populate = (source) => {
+          const sourceProfile = source.profile || {};
+          const sourceLocation = source.location || {};
+          const schedule = (source.hours && source.hours.schedule) || {};
+          const weekday = schedule.monday || schedule.open || {};
+          this.setState({
+            storeName: source.name || '',
+            storeDescription: source.description || '',
+            storeBio: sourceProfile.bio || '',
+            storeTagline: sourceProfile.tagline || source.tagline || '',
+            storeReturnPolicy: sourceProfile.returnPolicy || '',
+            storeWarrantyPolicy: sourceProfile.warrantyPolicy || '',
+            storeShippingPolicy: sourceProfile.shippingPolicy || '',
+            storePhone: source.phoneNumber || source.phone_number || '',
+            storeLogoUrl: source.logoUrl || source.logo_url || this.state.storeLogoUrl || '',
+            storeOpenTime: weekday.open || this.state.storeOpenTime,
+            storeCloseTime: weekday.close || this.state.storeCloseTime,
+            storeLocationStreet: sourceLocation.streetAddress || sourceLocation.street_address || '',
+            storeLocationLandmark: sourceLocation.landmark || ''
+          });
+        };
+        populate(store);
+        this.go('storeSettings');
+        const api = getApi();
+        const storeId = this.state.primaryStoreId || store.id;
+        if (api && storeId && typeof api.getPublicStorefront === 'function') {
+          api.getPublicStorefront(storeId).then(res => {
+            if (this._unmounted) return;
+            const source = (res && (res.seller || res.data)) || res;
+            if (source && typeof source === 'object') populate(source);
+          }).catch(() => {});
+        }
+      },
       openStoreVerification: () => this.go('storeVerification'),
       refreshStoreAnalytics: () => {
         const period = this.state.analyticsPeriod || '30d';
@@ -15585,16 +15625,26 @@ class Component extends DCLogic {
         }
         this.toast('Preset brand avatar selected');
       },
+      storeName: this.state.storeName || (this.state.store && this.state.store.name) || '',
+      storeDescription: this.state.storeDescription || (this.state.store && this.state.store.description) || '',
+      storeBio: this.state.storeBio,
       storeTagline: this.state.storeTagline,
+      storeReturnPolicy: this.state.storeReturnPolicy,
       storeWarrantyPolicy: this.state.storeWarrantyPolicy,
+      storeShippingPolicy: this.state.storeShippingPolicy,
       storePhone: this.state.storePhone || (this.state.currentStore && (this.state.currentStore.phoneNumber || this.state.currentStore.phone || this.state.currentStore.phone_number)) || '',
       storeOpenStatusBadge: this.state.storeOpenStatusBadge,
       storeOpenTime: this.state.storeOpenTime,
       storeCloseTime: this.state.storeCloseTime,
       storeLocationStreet: this.state.storeLocationStreet,
       storeLocationLandmark: this.state.storeLocationLandmark,
+      updateStoreName: (e) => this.setState({ storeName: e && e.target ? e.target.value : e }),
+      updateStoreDescription: (e) => this.setState({ storeDescription: e && e.target ? e.target.value : e }),
+      updateStoreBio: (e) => this.setState({ storeBio: e && e.target ? e.target.value : e }),
       updateStoreTagline: (e) => this.setState({ storeTagline: e && e.target ? e.target.value : e }),
+      updateStoreReturnPolicy: (e) => this.setState({ storeReturnPolicy: e && e.target ? e.target.value : e }),
       updateStoreWarrantyPolicy: (e) => this.setState({ storeWarrantyPolicy: e && e.target ? e.target.value : e }),
+      updateStoreShippingPolicy: (e) => this.setState({ storeShippingPolicy: e && e.target ? e.target.value : e }),
       updateStorePhone: (e) => this.setState({ storePhone: e && e.target ? e.target.value : e }),
       updateStoreOpenTime: (e) => this.setState({ storeOpenTime: e && e.target ? e.target.value : e }),
       updateStoreCloseTime: (e) => this.setState({ storeCloseTime: e && e.target ? e.target.value : e }),
@@ -15619,7 +15669,7 @@ class Component extends DCLogic {
           setTimeout(() => {
             if (this._unmounted) return;
             if (this.state.currentStore) {
-              this.setState(st => ({ currentStore: { ...st.currentStore, logoUrl: this.state.storeLogoUrl, phoneNumber: this.state.storePhone } }));
+              this.setState(st => ({ currentStore: { ...st.currentStore, name: this.state.storeName, description: this.state.storeDescription, logoUrl: this.state.storeLogoUrl, phoneNumber: this.state.storePhone } }));
             }
             this.setState({ storeSettingsSaving: false });
             this.toast('All store settings saved successfully');
@@ -15629,14 +15679,29 @@ class Component extends DCLogic {
         }
 
         Promise.all([
-          api.updateStore(storeId, { logoUrl: this.state.storeLogoUrl || null, phoneNumber: this.state.storePhone || null }),
-          api.updateStoreProfile(storeId, { tagline: this.state.storeTagline, warrantyPolicy: this.state.storeWarrantyPolicy, logoUrl: this.state.storeLogoUrl || null }),
+          api.updateStore(storeId, { name: this.state.storeName, description: this.state.storeDescription, logoUrl: this.state.storeLogoUrl || null, phoneNumber: this.state.storePhone || null }),
+          api.updateStoreProfile(storeId, { tagline: this.state.storeTagline, bio: this.state.storeBio, returnPolicy: this.state.storeReturnPolicy, warrantyPolicy: this.state.storeWarrantyPolicy, shippingPolicy: this.state.storeShippingPolicy, logoUrl: this.state.storeLogoUrl || null }),
           api.updateStoreHours(storeId, { schedule: { open: this.state.storeOpenTime, close: this.state.storeCloseTime } }),
           api.updateStoreLocation(storeId, { streetAddress: this.state.storeLocationStreet, landmark: this.state.storeLocationLandmark })
         ]).then(() => {
           if (this._unmounted) return;
           if (this.state.currentStore) {
-            this.setState(st => ({ currentStore: { ...st.currentStore, logoUrl: this.state.storeLogoUrl, phoneNumber: this.state.storePhone } }));
+            this.setState(st => ({
+              store: Object.assign({}, st.store, { name: this.state.storeName, description: this.state.storeDescription, logoUrl: this.state.storeLogoUrl, phoneNumber: this.state.storePhone }),
+              currentStore: Object.assign({}, st.currentStore, {
+                name: this.state.storeName,
+                description: this.state.storeDescription,
+                logoUrl: this.state.storeLogoUrl,
+                phoneNumber: this.state.storePhone,
+                profile: Object.assign({}, st.currentStore && st.currentStore.profile, {
+                  bio: this.state.storeBio,
+                  tagline: this.state.storeTagline,
+                  returnPolicy: this.state.storeReturnPolicy,
+                  warrantyPolicy: this.state.storeWarrantyPolicy,
+                  shippingPolicy: this.state.storeShippingPolicy
+                })
+              })
+            }));
           }
           this.setState({ storeSettingsSaving: false });
           this.toast('All store settings saved successfully');
