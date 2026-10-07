@@ -48,6 +48,7 @@ function testRouteChunks() {
     'PublishingScreens.dc.html',
     'SearchScreens.dc.html',
     'StoreBusinessScreens.dc.html',
+    'SuperAdminScreens.dc.html',
     'TravelScreens.dc.html'
   ];
 
@@ -70,19 +71,29 @@ function testRouteChunks() {
 }
 
 function testPayloadBudget() {
-  const shellBytes = bytes(shell);
   const chunkBytes = chunks.reduce((total, chunk) => total + bytes(chunk.source), 0);
 
-  // The pre-split generated shell was 1,628,189 bytes. Ensure the markup shell
-  // (excluding the curated inlined 932-product catalog) stays well under 1 MB
-  // so route chunks are never silently re-inlined into the initial shell.
-  const shellWithoutCatalog = shell.replace(/const PRODUCTS_DATA = \{[\s\S]*?\n\};/, '');
-  const shellCodeBytes = bytes(shellWithoutCatalog);
+  // The pre-split generated shell was 1,628,189 bytes. The shell must stay under
+  // this budget so route chunks are never silently re-inlined into the initial
+  // shell (that would add hundreds of KB; organic growth adds a few).
+  //
+  // The product catalog is no longer inlined (it loads from data/catalog.json and
+  // src/data/catalog_products_bundle.js), so there is nothing to subtract: the
+  // budget applies to the whole shell. This used to strip an inline
+  // `const PRODUCTS_DATA = {…};` first; that pattern stopped matching when the
+  // catalog was externalised, leaving a no-op that implied a looser budget.
+  const SHELL_BUDGET_BYTES = 1_000_000;
 
-  assert.ok(shellCodeBytes < 1_000_000, `Initial shell markup must stay below 1 MB; got ${shellCodeBytes} bytes`);
-  assert.ok(shellBytes < 3_000_000, `Total initial shell with full 932 catalog items must stay below 3 MB; got ${shellBytes} bytes`);
+  // Measure with LF line endings. A Windows checkout (core.autocrlf=true) stores
+  // one extra byte per line — about 20 KB here — so measuring the file as found
+  // on disk gave a different answer on a developer's machine than in CI.
+  const shellCodeBytes = bytes(shell.replace(/\r\n/g, '\n'));
+
+  assert.ok(shellCodeBytes < SHELL_BUDGET_BYTES,
+    `Initial shell must stay below ${SHELL_BUDGET_BYTES} bytes; got ${shellCodeBytes} (${shellCodeBytes - SHELL_BUDGET_BYTES} over). ` +
+    'Measured with LF line endings, so the figure is the same on every platform.');
   assert.ok(chunkBytes > 0, 'Secondary route chunks must contain deferred screen markup');
-  console.log(`  ✓ Initial payload: ${(shellCodeBytes / 1024).toFixed(1)} KiB shell markup (${(shellBytes / 1024).toFixed(1)} KiB with 932 catalog listings); ${(chunkBytes / 1024).toFixed(1)} KiB deferred routes`);
+  console.log(`  ✓ Initial payload: ${(shellCodeBytes / 1024).toFixed(1)} KiB shell markup (budget ${(SHELL_BUDGET_BYTES / 1024).toFixed(1)} KiB); ${(chunkBytes / 1024).toFixed(1)} KiB deferred routes`);
 }
 
 function testMediaDeferral() {

@@ -75,7 +75,7 @@
   function boardView(nav) {
     return {
       title: 'Deliveries',
-      subtitle: 'Assign riders and follow every home delivery.',
+      subtitle: 'You are the seller · assign riders and follow every home delivery.',
       render: function (page) {
         var ui = UI(), api = API();
         var state = { tab: 'todo', active: null, completed: null, error: null, completedError: null };
@@ -237,8 +237,6 @@
     failed: function (d) { return { title: 'Delivery attempt failed', body: (d && d.failureReason ? '“' + d.failureReason + '”. ' : '') + 'Offer it to another rider to try again.' }; },
     cancelled: function () { return { title: 'Delivery cancelled', body: 'You can arrange a new delivery for this order.' }; }
   };
-  var STEP_OF = { assigned: 1, accepted: 2, picked_up: 3, arrived: 3, delivered: 4 };
-
   function orderView(nav, item) {
     var order = item.order;
     return {
@@ -289,16 +287,15 @@
           } else {
             card.querySelector('.ldx-hero-side').remove();
           }
-          if (status !== 'failed' && status !== 'cancelled') {
-            var n = STEP_OF[status] || 0;
-            var steps = '<div class="ldx-steps" aria-hidden="true">';
-            for (var i = 1; i <= 4; i++) steps += '<span class="ldx-step' + (i <= n ? (status === 'delivered' ? ' is-ok' : ' is-done') : '') + '"></span>';
-            steps += '</div><div class="ldx-step-labels">' + ['Offered', 'Accepted', 'Picked up', 'Delivered'].map(function (l, k) {
-              return '<span' + (k + 1 === n ? ' class="is-on"' : '') + '>' + l + '</span>';
-            }).join('') + '</div>';
-            card.insertAdjacentHTML('beforeend', steps);
-          }
           page.content.appendChild(card);
+
+          // Where the order is across all four parties and what part you play in
+          // it (a seller, or an administrator looking in). The hero above already
+          // says what to do, so the strip leaves its own banner out.
+          var strip = window.LoumooCircuit
+            ? window.LoumooCircuit.stripCard(delivery, (delivery && delivery.viewerRole) || 'seller', { banner: false })
+            : null;
+          if (strip) page.content.appendChild(strip);
 
           // Rider
           if (delivery && delivery.driver && ['assigned', 'accepted', 'picked_up', 'arrived', 'delivered'].indexOf(status) !== -1) {
@@ -453,10 +450,10 @@
   function pickerView(nav, delivery, order) {
     return {
       title: 'Choose a rider',
-      subtitle: 'Free riders come first. Riders who passed on this order are marked.',
+      subtitle: 'Online riders only. Free riders come first. Riders who passed on this order are marked.',
       render: function (page) {
         var ui = UI(), api = API();
-        var riders = null, query = '';
+        var riders = null, summary = null, query = '';
         var search = ui.searchField({ placeholder: 'Search riders', onInput: function (q) { query = q.toLowerCase(); draw(); } });
         page.content.appendChild(search);
         var autoSec = ui.section(null);
@@ -484,7 +481,9 @@
         function load() {
           api.listDrivers({ deliveryId: delivery.id }).then(function (res) {
             if (!page.alive) return;
-            riders = res.drivers || [];
+            // { drivers, summary: { registered, available } }; an older server sends no summary.
+            riders = Array.isArray(res) ? res : (res && res.drivers) || [];
+            summary = res && !Array.isArray(res) && res.summary ? res.summary : null;
             draw();
           }).catch(function (err) {
             if (!page.alive) return;
@@ -498,7 +497,11 @@
           listWrap.innerHTML = '';
           if (!riders.length) {
             autoSec.hidden = true;
-            listWrap.appendChild(ui.emptyState({ icon: 'users', title: 'No riders yet', body: 'Riders are added by the LOUMOO team. Contact support to add riders in your area.' }));
+            // Riders exist but none is online right now: say so, and that they show up here the moment they are.
+            var noneOnline = summary && summary.registered > 0 && summary.available === 0;
+            listWrap.appendChild(ui.emptyState(noneOnline
+              ? { icon: 'users', title: 'No rider is online right now', body: 'Riders appear here as soon as they go online. Check again in a moment.', actionLabel: 'Check again', actionKind: 'tinted', onAction: function () { listWrap.innerHTML = ''; listWrap.appendChild(ui.skeletonList(5)); load(); } }
+              : { icon: 'users', title: 'No riders yet', body: 'Riders are added by the LOUMOO team. Contact support to add riders in your area.' }));
             return;
           }
           autoSec.hidden = false;

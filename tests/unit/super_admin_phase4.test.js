@@ -62,7 +62,14 @@ async function run() {
   console.log('    ✓ 4. All 7 executive tabs and header bar verified in super_admin_view.py');
 
   // ── 5. Tag Balance & Screen Audit via verify_screens.py ──
-  const verifyOut = execSync('python -X utf8 verify_screens.py', { cwd: root, encoding: 'utf-8' });
+  // "python" on Windows and some images, "python3" on others (ubuntu runners).
+  const pythonBin = (() => {
+    for (const bin of ['python', 'python3']) {
+      try { execSync(`${bin} --version`, { stdio: 'ignore' }); return bin; } catch (e) { /* try the next */ }
+    }
+    throw new Error('Neither "python" nor "python3" is on PATH; verify_screens.py cannot run.');
+  })();
+  const verifyOut = execSync(`${pythonBin} -X utf8 verify_screens.py`, { cwd: root, encoding: 'utf-8' });
   assert.ok(verifyOut.includes('Total unique screen conditionals found: 92'), 'Must find 92 screen conditionals');
   assert.ok(verifyOut.includes('Total screens declared in SCREENS: 92'), 'Must match 92 declared screens');
   assert.ok(verifyOut.includes('Missing screens count: 0'), 'Missing screens count must be 0');

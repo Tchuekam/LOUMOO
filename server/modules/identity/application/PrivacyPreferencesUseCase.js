@@ -79,14 +79,17 @@ class PrivacyPreferencesUseCase {
     const adminDb = tryGetAdmin('PrivacyPreferencesUseCase');
     if (adminDb) {
       try {
-        await adminDb.schema('system').from('privacy_preferences').upsert({
+        // Must target the unique user_id, or a second update hits the unique
+        // constraint and the row silently never changes.
+        const { error } = await adminDb.schema('system').from('privacy_preferences').upsert({
           user_id: userId,
           analytics_consent: updated.analyticsConsent,
           marketing_emails: updated.marketingEmails,
           personalized_recommendations: updated.personalizedRecommendations,
           profile_visibility: updated.profileVisibility,
           updated_at: new Date().toISOString()
-        });
+        }, { onConflict: 'user_id' });
+        if (error) handleDatabaseFailure(error, 'Supabase upsert privacy_preferences');
       } catch (err) {
         handleDatabaseFailure(err, 'Supabase upsert');
       }

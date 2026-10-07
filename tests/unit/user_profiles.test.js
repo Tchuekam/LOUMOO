@@ -24,6 +24,7 @@ const {
   RateLimitError
 } = require('../../server/shared/errors/AppError');
 const RateLimitService = require('../../server/infrastructure/cache/RateLimitService');
+const { SUPABASE, missing } = require('../helpers/requirements');
 
 async function run() {
   console.log('  Testing Hardened User Profile Entity & Update Use Case...');
@@ -78,10 +79,13 @@ async function run() {
   kycCheck = richProfile.canTransitionKycStatus('verified');
   assert.strictEqual(kycCheck.valid, false, 'pending -> verified directly should be illegal');
 
-  // submitted -> verified | rejected (Legal)
+  // submitted -> verified | rejected: an ADMIN decision (eb8f921). A user can
+  // never verify their own documents.
   const submittedProfile = new UserProfile({ ...richProfile, kycDocStatus: 'submitted' });
-  assert.strictEqual(submittedProfile.canTransitionKycStatus('verified').valid, true);
-  assert.strictEqual(submittedProfile.canTransitionKycStatus('rejected').valid, true);
+  assert.strictEqual(submittedProfile.canTransitionKycStatus('verified').valid, false, 'A user must not self-verify KYC');
+  assert.strictEqual(submittedProfile.canTransitionKycStatus('verified', { isAdmin: true }).valid, true, 'An admin can verify submitted KYC');
+  assert.strictEqual(submittedProfile.canTransitionKycStatus('rejected').valid, false, 'A user must not reject their own KYC');
+  assert.strictEqual(submittedProfile.canTransitionKycStatus('rejected', { isAdmin: true }).valid, true, 'An admin can reject submitted KYC');
 
   // rejected -> submitted (Legal)
   const rejectedProfile = new UserProfile({ ...richProfile, kycDocStatus: 'rejected' });
@@ -158,11 +162,25 @@ async function run() {
     'Unauthenticated call must throw AuthorizationError'
   );
 
-  // Illegal KYC transition in UseCase throws ValidationError
+  // A holder cannot set the review outcome on their own profile: the use case
+  // answers AuthorizationError (not a state-machine ValidationError) so the
+  // privilege boundary is explicit.
   await assert.rejects(
     async () => UpdateUserProfileUseCase.execute(richProfile, { kycDocStatus: 'verified' }),
+    AuthorizationError,
+    'A non-admin setting kycDocStatus to verified must throw AuthorizationError'
+  );
+  await assert.rejects(
+    async () => UpdateUserProfileUseCase.execute(richProfile, { kycDocStatus: 'rejected' }),
+    AuthorizationError,
+    'A non-admin setting kycDocStatus to rejected must throw AuthorizationError'
+  );
+
+  // Not privileged, but still illegal for a user: submitted -> pending.
+  await assert.rejects(
+    async () => UpdateUserProfileUseCase.execute(submittedProfile, { kycDocStatus: 'pending' }),
     ValidationError,
-    'Direct pending -> verified in UseCase must throw ValidationError'
+    'An illegal non-privileged KYC transition must throw ValidationError'
   );
 
   // Version mismatch throws ConflictError
@@ -175,17 +193,46 @@ async function run() {
     'Stale version must throw ConflictError'
   );
 
-  // Valid update succeeds and increments version
-  const updateResult = await UpdateUserProfileUseCase.execute(richProfile, {
-    city: 'Yaoundé',
-    buyerInterests: ['electronics', 'fashion'],
-    version: 1
-  }, { ip: '127.0.0.1' });
+  // Valid update succeeds and increments version. This is the one step that
+  // PERSISTS (through the Supabase admin client), so it needs credentials; every
+  // check above and below it is pure and always runs.
+  const dbMissing = missing(SUPABASE);
+  if (dbMissing.length > 0) {
+    console.log(`    SKIPPED: persisted profile update (needs ${dbMissing.join(', ')})`);
+    // What can be proven without a database: a valid update gets all the way to the
+    // persistence step (validation, optimistic lock, KYC rules all passed) and then fails
+    // CLOSED with ServiceUnavailableError instead of pretending to save.
+    await assert.rejects(
+      async () => UpdateUserProfileUseCase.execute(new UserProfile({ ...richProfile }), {
+        city: 'Yaoundé',
+        buyerInterests: ['electronics', 'fashion'],
+        version: 1
+      }, { ip: '127.0.0.1' }),
+      ServiceUnavailableError,
+      'A valid update must fail closed with ServiceUnavailableError when the database is unavailable'
+    );
+    // An ADMIN may take submitted -> verified: it clears the authorization and transition
+    // checks (a non-admin is stopped earlier with AuthorizationError) and reaches persistence.
+    await assert.rejects(
+      async () => UpdateUserProfileUseCase.execute(
+        new UserProfile({ ...richProfile, primaryRole: 'admin', kycDocStatus: 'submitted' }),
+        { kycDocStatus: 'verified' }
+      ),
+      ServiceUnavailableError,
+      'An admin KYC decision must pass authorization and reach the persistence step'
+    );
+  } else {
+    const updateResult = await UpdateUserProfileUseCase.execute(richProfile, {
+      city: 'Yaoundé',
+      buyerInterests: ['electronics', 'fashion'],
+      version: 1
+    }, { ip: '127.0.0.1' });
 
-  assert.ok(updateResult.success, 'Profile update should succeed');
-  assert.strictEqual(updateResult.user.city, 'Yaoundé');
-  assert.strictEqual(updateResult.user.version, 2, 'Version must be incremented to 2');
-  assert.deepStrictEqual(updateResult.user.buyerInterests, ['electronics', 'fashion']);
+    assert.ok(updateResult.success, 'Profile update should succeed');
+    assert.strictEqual(updateResult.user.city, 'Yaoundé');
+    assert.strictEqual(updateResult.user.version, 2, 'Version must be incremented to 2');
+    assert.deepStrictEqual(updateResult.user.buyerInterests, ['electronics', 'fashion']);
+  }
 
   // 6. Rate Limiting Check
   console.log('    • Testing Rate Limiting (10 req/min limit)...');

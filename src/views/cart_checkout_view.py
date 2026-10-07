@@ -93,10 +93,6 @@ def get_cart_view():
           <span style="font-weight:700;color:var(--color-text)">{{ cartSubtotalLabel }}</span>
         </div>
         <div style="display:flex;justify-content:space-between">
-          <span style="color:var(--color-text-secondary)">Escrow Protection Fee</span>
-          <span style="font-weight:700;color:var(--color-text)">{{ cartEscrowLabel }}</span>
-        </div>
-        <div style="display:flex;justify-content:space-between">
           <span style="color:var(--color-text-secondary)">Courier Delivery (Douala)</span>
           <span style="font-weight:700;color:var(--color-success)">FREE</span>
         </div>
@@ -214,13 +210,26 @@ def get_checkout_view():
       </div>
     </div>
 
-    <!-- Place Order CTA — payment is collected on delivery for now -->
-    <button onClick="{{ placeOrder }}" class="btn btn-primary btn-block" style="height:52px;font-size:15px;letter-spacing:.02em">
-      <span>PLACE ORDER · {{ cartTotal }}</span>
-      <span>→</span>
+    <!-- Why the order was not placed (the bag is kept) -->
+    <sc-if value="{{ orderError }}">
+    <div role="alert" style="display:flex;flex-direction:column;gap:10px;background:var(--color-danger-100);border:1px solid var(--color-danger);border-radius:var(--radius-md);padding:14px 16px">
+      <div style="font:700 13.5px/1.3 var(--font-heading);color:var(--color-text)">We couldn't place your order</div>
+      <div style="font:400 12.5px/1.45 var(--font-body);color:var(--color-text)">{{ orderError }}</div>
+      <sc-if value="{{ orderErrorHasItems }}">
+        <button onClick="{{ removeUnavailableItems }}" class="btn btn-secondary btn-sm" style="align-self:flex-start;height:40px">REMOVE THEM FROM MY BAG</button>
+      </sc-if>
+    </div>
+    </sc-if>
+
+    <!-- Place Order CTA — payment is collected on delivery for now. The order is
+         created on the server (that is what tells the seller), so the button waits
+         for the answer instead of pretending. -->
+    <button onClick="{{ placeOrder }}" disabled="{{ placingOrder }}" class="btn btn-primary btn-block" style="height:52px;font-size:15px;letter-spacing:.02em;cursor:{{ placingOrder ? 'wait' : 'pointer' }};opacity:{{ placingOrder ? '0.7' : '1' }}">
+      <span>{{ placeOrderLabel }}</span>
+      <span>{{ placeOrderArrow }}</span>
     </button>
     <div style="text-align:center;font:500 11.5px/1.4 var(--font-body);color:var(--color-text-secondary);margin-top:-6px">
-      No charge now — you'll pay <strong style="color:var(--color-text)">on delivery</strong> with your chosen method. Online payment is coming soon.
+      No charge now — you'll pay <strong style="color:var(--color-text)">on delivery</strong> with your chosen method. The seller is told straight away and arranges a rider; you can follow it live.
     </div>
 
   </div>
@@ -268,35 +277,26 @@ def get_success_view():
     <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><polyline points="20 6 9 17 4 12"/></svg>
   </div>
 
-  <h2 style="font-size:24px;margin:16px 0 6px">Order placed!</h2>
+  <h2 style="font-size:24px;margin:16px 0 6px">{{ lastOrdersTitle }}</h2>
   <div style="font:800 12px/1 var(--font-mono);color:var(--color-text-muted);letter-spacing:.08em;margin-bottom:20px">ORDER #{{ lastOrderNumber }}</div>
 
   <p style="font-size:13.5px;color:var(--color-text-secondary);line-height:1.5;max-width:480px;margin:0 auto 24px">
-    Your order of <strong>{{ lastOrderTotal }}</strong> ({{ lastOrderItemsLabel }}) has been sent to <strong>{{ lastOrderSeller }}</strong>. You'll pay <strong>on delivery</strong> via {{ lastOrderPayMethod }} — no charge has been taken.
+    Your order of <strong>{{ lastOrderTotal }}</strong> ({{ lastOrderItemsLabel }}) has been sent to <strong>{{ lastOrderSeller }}</strong>, who has been notified. You'll pay <strong>on delivery</strong> via {{ lastOrderPayMethod }} — no charge has been taken.
   </p>
+  <sc-if value="{{ lastOrdersHasMore }}">
+    <p style="font-size:12.5px;color:var(--color-text-secondary);line-height:1.5;max-width:480px;margin:-12px auto 24px">{{ lastOrdersMoreNote }}</p>
+  </sc-if>
 
-  <!-- Order status tracker -->
+  <!-- Where the order is, whose move it is, and your part in it. Fills itself
+       from the delivery API (src/services/deliveryCircuit.js). -->
   <div class="card-premium" style="text-align:left;margin-bottom:24px">
-    <h4 style="margin:0 0 16px;font-size:15px">Order status</h4>
-
-    <div style="display:flex;flex-direction:column;gap:14px;position:relative">
-      <div style="display:flex;gap:12px;align-items:center">
-        <div style="width:24px;height:24px;border-radius:50%;background:var(--color-success);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px">✓</div>
-        <div style="font-weight:700;font-size:13px">Order received by LOUMOO</div>
-      </div>
-      <div style="display:flex;gap:12px;align-items:center">
-        <div style="width:24px;height:24px;border-radius:50%;background:var(--color-accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px">📦</div>
-        <div style="font-weight:700;font-size:13px;color:var(--color-accent)">Seller confirming &amp; preparing your items</div>
-      </div>
-      <div style="display:flex;gap:12px;align-items:center;opacity:0.5">
-        <div style="width:24px;height:24px;border-radius:50%;background:var(--color-neutral-300);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px">🚚</div>
-        <div style="font-size:13px">Out for delivery · pay on arrival</div>
-      </div>
-    </div>
+    <h4 style="margin:0 0 14px;font-size:15px">Order status</h4>
+    <div data-circuit-strip data-role="buyer" data-order-id="{{ lastOrderId }}"></div>
   </div>
 
   <div style="display:flex;flex-direction:column;gap:10px">
-    <button onClick="{{ on.orders }}" class="btn btn-primary btn-block" style="height:48px">VIEW MY ORDERS</button>
+    <button onClick="{{ openLastOrder }}" class="btn btn-primary btn-block" style="height:48px">TRACK MY ORDER</button>
+    <button onClick="{{ on.orders }}" class="btn btn-secondary btn-block" style="height:44px">VIEW MY ORDERS</button>
     <button onClick="{{ () => contactSellerWhatsApp({ sellerName: lastOrderSeller, phone: lastOrderSellerPhone, orderNumber: lastOrderNumber, price: lastOrderTotal }) }}" class="btn btn-secondary btn-block" style="height:44px;color:var(--color-wa-teal);font-weight:700">WHATSAPP MERCHANT</button>
     <button onClick="{{ on.home }}" style="border:none;background:transparent;padding:8px;font:700 12.5px/1 var(--font-heading);color:var(--color-text-secondary);cursor:pointer">Back to Marketplace</button>
   </div>
@@ -385,7 +385,16 @@ def get_orders_and_transactions_view():
         </div>
       </div>
 
+      <sc-if value="{{ order.notSent }}">
+        <div style="margin-top:12px;font:500 12px/1.45 var(--font-body);color:var(--color-text);background:var(--color-warning-100, var(--color-surface-subtle));border-radius:var(--radius-sm);padding:10px 12px">
+          This order was saved on this device only, so the seller never received it. Add the items to your bag again to place it.
+        </div>
+      </sc-if>
+
       <div style="display:flex;gap:10px;margin-top:14px;border-top:1px solid var(--color-divider);padding-top:12px">
+        <sc-if value="{{ order.canOpen }}">
+          <button onClick="{{ () => openOrderById(order.id) }}" class="btn btn-primary btn-block" style="height:38px;font-size:12px;font-weight:700">VIEW &amp; TRACK</button>
+        </sc-if>
         <button onClick="{{ () => contactSellerWhatsApp({ sellerName: order.seller, phone: order.sellerPhone || order.sellerWhatsapp, orderNumber: order.orderNumber, productTitle: order.itemsSummary, price: order.totalLabel }) }}" class="btn btn-secondary btn-block" style="height:38px;font-size:12px;color:var(--color-wa-teal);font-weight:700">CONTACT SELLER</button>
       </div>
     </div>

@@ -24,77 +24,94 @@ def get_order_product_flow_view():
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
     </button>
     <div style="flex:1;min-width:0">
-      <h4 style="margin:0;font-size:16px">Order #{{ currentOrder.id || 'LM-94820' }}</h4>
-      <div style="font:400 11px/1.2 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Placed on {{ currentOrder.placedAt || '28 Aug 2026' }}</div>
+      <h4 style="margin:0;font-size:16px">Order #{{ orderView.orderNumber }}</h4>
+      <div style="font:400 11px/1.2 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Placed {{ orderView.placedAt }}</div>
     </div>
-    <span class="tag tag-accent" style="min-height:22px;padding:2px 8px;font-size:10px">{{ currentOrder.statusLabel || 'IN TRANSIT' }}</span>
+    <span class="tag tag-accent" style="min-height:22px;padding:2px 8px;font-size:10px">{{ orderView.statusLabel }}</span>
   </div>
 
   <div style="padding:16px;max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:14px">
 
-    <!-- Escrow Protection Badge -->
-    <div style="display:flex;align-items:center;gap:12px;background:var(--color-success-100);border:1px solid var(--color-success);border-radius:var(--radius-md);padding:14px 16px">
+    <!-- Payment: collected on delivery, so nothing has been charged yet -->
+    <div style="display:flex;align-items:center;gap:12px;background:var(--color-surface);border:1px solid var(--color-success);border-radius:var(--radius-md);padding:14px 16px">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--color-success)" stroke-width="2" style="flex-shrink:0"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
       <div>
-        <div style="font:800 13.5px/1.2 var(--font-heading);color:var(--color-success)">Escrow Secured Payment</div>
+        <div style="font:800 13.5px/1.2 var(--font-heading);color:var(--color-text)">Pay on delivery</div>
         <div style="font:400 12px/1.35 var(--font-body);color:var(--color-text-secondary);margin-top:2px">
-          Your XAF {{ currentOrder.totalFormatted || '748 000' }} is held safely in escrow. The merchant is only paid when you confirm receipt.
+          No charge has been taken. You pay {{ orderView.totalLabel }} when your order arrives{{ orderView.payVia }}.
         </div>
       </div>
     </div>
 
-    <!-- Live Carrier Timeline -->
+    <!-- Delivery progress: where the order is, whose move it is, and your part in
+         it. The strip fills itself from the delivery API (src/services/
+         deliveryCircuit.js, [data-circuit-strip]); the button opens the live map,
+         the rider and your handover code (src/services/deliveryTrackingScreen.js,
+         [data-track-delivery]). Both need the order the SERVER holds. -->
     <div class="card-premium" style="display:flex;flex-direction:column;gap:14px">
       <div style="font:700 12px/1 var(--font-heading);letter-spacing:.08em;color:var(--color-text-muted);text-transform:uppercase">Delivery Progress</div>
 
-      <!-- Live delivery tracking (step 4). The button is handled by
-           src/services/deliveryTrackingScreen.js via [data-track-delivery] (no DC
-           event binding needed): it opens the live MapLibre map, the REAL status
-           timeline and the buyer's handover code against /api/v1/deliveries, or a
-           friendly notice if this order has no home delivery yet. The previous
-           hard-coded carrier steps were placeholder mock-ups and were removed so
-           nothing fabricated ships; the authoritative timeline is in the overlay. -->
-      <button type="button" data-track-delivery data-order-id="{{ currentOrder.id }}"
-        style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px 16px;border:none;border-radius:var(--radius-md);background:var(--color-accent);color:#fff;font:700 13.5px/1 var(--font-heading);cursor:pointer">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-6-5.686-6-10a6 6 0 1 1 12 0c0 4.314-6 10-6 10z"/><circle cx="12" cy="11" r="2"/></svg>
-        Track live delivery
-      </button>
+      <sc-if value="{{ orderView.canTrack }}">
+        <div data-circuit-strip data-role="buyer" data-order-id="{{ orderView.id }}"></div>
 
-      <div style="font:400 12px/1.45 var(--font-body);color:var(--color-text-secondary)">
-        Follow your rider on a live map, watch each status update in real time, and
-        read out your handover code on arrival. Available for home-delivery orders.
-      </div>
+        <button type="button" data-track-delivery data-order-id="{{ orderView.id }}"
+          style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:46px;padding:12px 16px;border:none;border-radius:var(--radius-md);background:var(--color-accent);color:#fff;font:700 13.5px/1 var(--font-heading);cursor:pointer">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-6-5.686-6-10a6 6 0 1 1 12 0c0 4.314-6 10-6 10z"/><circle cx="12" cy="11" r="2"/></svg>
+          Track live delivery
+        </button>
+
+        <div style="font:400 12px/1.45 var(--font-body);color:var(--color-text-secondary)">
+          Follow your rider on a live map, see each update as it happens, and read your handover code out to the rider on arrival.
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ !orderView.canTrack }}">
+        <div style="font:400 12.5px/1.5 var(--font-body);color:var(--color-text)">
+          {{ orderView.noTrackNote }}
+        </div>
+      </sc-if>
     </div>
 
     <!-- Items in Order -->
     <div class="card-premium" style="display:flex;flex-direction:column;gap:12px">
       <div style="font:700 12px/1 var(--font-heading);letter-spacing:.08em;color:var(--color-text-muted);text-transform:uppercase">Items Purchased</div>
 
+      <sc-for list="{{ orderView.items }}" as="line">
       <div style="display:flex;align-items:center;gap:12px">
-        <div style="width:52px;height:52px;border-radius:var(--radius-sm);background:var(--color-neutral-200);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">
-          📱
+        <div style="width:52px;height:52px;border-radius:var(--radius-sm);background:var(--color-neutral-200);overflow:hidden;flex-shrink:0">
+          <img src="{{ line.image }}" alt="{{ line.name }}" style="width:100%;height:100%;object-fit:cover">
         </div>
         <div style="flex:1;min-width:0">
-          <div style="font:700 13.5px/1.3 var(--font-heading);color:var(--color-text)">Apple iPhone 15 Pro Max 256GB</div>
-          <div style="font:400 12px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Natural Titanium · Qty: 1 · Orca Electronics</div>
+          <div style="font:700 13.5px/1.3 var(--font-heading);color:var(--color-text)">{{ line.name }}</div>
+          <div style="font:400 12px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Qty: {{ line.qty }} · {{ line.store }}</div>
         </div>
-        <div style="font:800 14px/1 var(--font-heading);color:var(--color-text)">XAF 745 000</div>
+        <div style="font:800 14px/1 var(--font-heading);color:var(--color-text)">{{ line.priceLabel }}</div>
       </div>
+      </sc-for>
 
       <div style="border-top:1px solid var(--color-divider);padding-top:10px;display:flex;flex-direction:column;gap:6px">
         <div style="display:flex;justify-content:space-between;font:400 12.5px/1 var(--font-body);color:var(--color-text-secondary)">
           <span>Subtotal</span>
-          <span>XAF 745 000</span>
+          <span>{{ orderView.subtotalLabel }}</span>
         </div>
         <div style="display:flex;justify-content:space-between;font:400 12.5px/1 var(--font-body);color:var(--color-text-secondary)">
-          <span>Express Delivery (Douala)</span>
-          <span>XAF 3 000</span>
+          <span>Delivery{{ orderView.cityLabel }}</span>
+          <span>{{ orderView.shippingLabel }}</span>
         </div>
         <div style="display:flex;justify-content:space-between;font:800 14.5px/1 var(--font-heading);color:var(--color-text);padding-top:6px;border-top:1px solid var(--color-divider)">
-          <span>Total Paid (MoMo)</span>
-          <span>XAF 748 000</span>
+          <span>Total to pay on delivery</span>
+          <span>{{ orderView.totalLabel }}</span>
         </div>
       </div>
+    </div>
+
+    <!-- The seller: the other half of the circuit, one tap away -->
+    <div class="card-premium" style="display:flex;align-items:center;gap:12px">
+      <div style="flex:1;min-width:0">
+        <div style="font:700 12px/1 var(--font-heading);letter-spacing:.08em;color:var(--color-text-muted);text-transform:uppercase">Your seller</div>
+        <div style="font:700 14px/1.3 var(--font-heading);color:var(--color-text);margin-top:6px">{{ orderView.seller }}</div>
+      </div>
+      <button onClick="{{ () => contactSellerWhatsApp({ sellerName: orderView.seller, phone: orderView.sellerPhone, orderNumber: orderView.orderNumber, price: orderView.totalLabel }) }}" class="btn btn-secondary" style="height:40px;font-size:12px;color:var(--color-wa-teal);font-weight:700;padding:0 16px">CONTACT SELLER</button>
     </div>
 
     <!-- Actions -->

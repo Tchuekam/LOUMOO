@@ -112,6 +112,90 @@ async function run() {
   await expect('suspend', () => deliveryApi.registerDriver('u1', { name: 'Alain', phone: '+237600000001', status: 'suspended' }), 'POST', '/drivers/u1', { name: 'Alain', phone: '+237600000001', status: 'suspended' });
   ok('every dispatch, rider and admin call sends the documented method, path and body');
 
+  // -- rider presence: action endpoints, optional position, never a status -------
+  const PRESENCE = { status: 'online', available: true, reason: null, heartbeatIntervalMs: 30000, ttlSeconds: 120 };
+  global.fetch = async (url, opts = {}) => {
+    sent.push({ url: String(url), method: opts.method || 'GET', body: opts.body ? JSON.parse(opts.body) : undefined });
+    return { ok: true, status: 200, json: async () => ({ success: true, data: { presence: PRESENCE } }) };
+  };
+  const fix = { lat: 4.0511, lng: 9.7679, accuracyM: 18 };
+  await expect('riderPresence', () => deliveryApi.riderPresence(), 'GET', '/api/v1/deliveries/driver/presence', undefined);
+  await expect('riderOnline', () => deliveryApi.riderOnline(), 'POST', '/api/v1/deliveries/driver/presence/online', {});
+  await expect('riderOnline with a position', () => deliveryApi.riderOnline(fix), 'POST', '/driver/presence/online', { lat: 4.0511, lng: 9.7679, accuracyM: 18 });
+  await expect('riderOffline', () => deliveryApi.riderOffline(), 'POST', '/api/v1/deliveries/driver/presence/offline', {});
+  await expect('riderPause', () => deliveryApi.riderPause(), 'POST', '/api/v1/deliveries/driver/presence/pause', {});
+  await expect('riderResume', () => deliveryApi.riderResume(), 'POST', '/api/v1/deliveries/driver/presence/resume', {});
+  await expect('riderResume with a position', () => deliveryApi.riderResume(fix), 'POST', '/driver/presence/resume', { lat: 4.0511, lng: 9.7679, accuracyM: 18 });
+  await expect('riderHeartbeat', () => deliveryApi.riderHeartbeat(), 'POST', '/api/v1/deliveries/driver/presence/heartbeat', {});
+  await expect('riderHeartbeat with a position', () => deliveryApi.riderHeartbeat({ lat: 4.0511, lng: 9.7679 }), 'POST', '/driver/presence/heartbeat', { lat: 4.0511, lng: 9.7679 });
+  assert.deepStrictEqual(await deliveryApi.riderHeartbeat(), { presence: PRESENCE }, 'a presence call unwraps to { presence }');
+  assert.deepStrictEqual(await deliveryApi.riderPresence(), { presence: PRESENCE });
+  ok('every presence call sends the documented method, path and body, and unwraps to { presence }');
+
+  // A position is sent only when both coordinates are finite numbers; junk never reaches the wire.
+  const junk = [
+    ['lat only', { lat: 4.05 }], ['lng only', { lng: 9.7 }], ['NaN lat', { lat: NaN, lng: 9.7 }], ['Infinity lng', { lat: 4.05, lng: Infinity }],
+    ['string coordinates', { lat: '4.05', lng: '9.7' }], ['null coordinates', { lat: null, lng: null }], ['null loc', null], ['empty loc', {}]
+  ];
+  for (const [label, loc] of junk) {
+    await expect('heartbeat with ' + label, () => deliveryApi.riderHeartbeat(loc), 'POST', '/driver/presence/heartbeat', {});
+  }
+  await expect('a bad accuracy is dropped, the position kept', () => deliveryApi.riderHeartbeat({ lat: 4.05, lng: 9.7, accuracyM: NaN }), 'POST', '/driver/presence/heartbeat', { lat: 4.05, lng: 9.7 });
+  await expect('a negative accuracy is dropped', () => deliveryApi.riderOnline({ lat: 4.05, lng: 9.7, accuracyM: -1 }), 'POST', '/driver/presence/online', { lat: 4.05, lng: 9.7 });
+  ok('a position is sent only when it is two finite numbers');
+
+  // Whatever a caller hands in, the body never carries a status or a rider id: the
+  // client has no way to ask for "online" or to act on someone else.
+  const FORBIDDEN = ['status', 'online', 'available', 'riderId', 'driverId', 'profileId', 'userId', 'id'];
+  const before = sent.length;
+  const hostile = { lat: 4.05, lng: 9.7, accuracyM: 5, status: 'online', online: true, available: true, riderId: 'rider_2', driverId: 'rider_2', profileId: 'rider_2', userId: 'rider_2', id: 'rider_2' };
+  await deliveryApi.riderOnline(hostile);
+  await deliveryApi.riderResume(hostile);
+  await deliveryApi.riderHeartbeat(hostile);
+  await deliveryApi.riderOffline(hostile);
+  await deliveryApi.riderPause(hostile);
+  const presenceCalls = sent.slice(before);
+  assert.strictEqual(presenceCalls.length, 5, 'one request per call');
+  for (const s of presenceCalls) {
+    assert.ok(s.url.includes('/driver/presence/'), s.url);
+    for (const key of FORBIDDEN) assert.ok(!Object.prototype.hasOwnProperty.call(s.body || {}, key), `${s.url} must not send "${key}"`);
+    assert.ok(!/rider_2/.test(s.url), 'a rider id is never in the path either: ' + s.url);
+  }
+  assert.deepStrictEqual(presenceCalls[0].body, { lat: 4.05, lng: 9.7, accuracyM: 5 }, 'only the position survives');
+  assert.deepStrictEqual(presenceCalls[3].body, {}, 'offline carries no body at all');
+  ok('no presence request can carry a status or a rider id, whatever it is handed');
+
+  // Server refusals reach the caller typed (the rider hub shows err.message in its toast).
+  global.fetch = async () => ({ ok: false, status: 409, json: async () => ({ error: { code: 'RIDER_BUSY', message: 'Finish your current delivery first.', details: { reason: 'busy' } } }) });
+  try {
+    await deliveryApi.riderOffline();
+    assert.fail('should have thrown on 409');
+  } catch (err) {
+    assert.strictEqual(err.status, 409);
+    assert.strictEqual(err.code, 'RIDER_BUSY');
+    assert.strictEqual(err.message, 'Finish your current delivery first.');
+    assert.deepStrictEqual(err.details, { reason: 'busy' });
+  }
+  ok('a refused presence call throws a typed error (409 RIDER_BUSY keeps its message and details)');
+
+  // The heartbeat is not the delivery GPS endpoint, and the GPS endpoint is not presence.
+  global.fetch = async (url, opts = {}) => {
+    sent.push({ url: String(url), method: opts.method || 'GET', body: opts.body ? JSON.parse(opts.body) : undefined });
+    return { ok: true, status: 200, json: async () => ({ success: true, data: {} }) };
+  };
+  const mark = sent.length;
+  await deliveryApi.riderHeartbeat({ lat: 4.05, lng: 9.7 });
+  await deliveryApi.postLocation('dlv_1', { lat: 4.05, lng: 9.7 });
+  assert.ok(!/\/location/.test(sent[mark].url), 'the heartbeat never goes to /location');
+  assert.ok(!/presence/.test(sent[mark + 1].url), 'the delivery GPS call never goes to /presence');
+  ok('the heartbeat and the delivery GPS endpoint stay separate');
+
+  // Restore the shared fetch stub the searchUsers check below expects.
+  global.fetch = async (url, opts = {}) => {
+    sent.push({ url: String(url), method: opts.method || 'GET', body: opts.body ? JSON.parse(opts.body) : undefined });
+    return { ok: true, status: 200, json: async () => ({ success: true, data: { ok: true, users: [{ id: 'u1', full_name: 'Alain Mbarga', phone_number: '237600000001', email: 'a@x.cm', primary_role: 'customer', city: 'Douala' }] } }) };
+  };
+
   const users = await deliveryApi.searchUsers('alain');
   assert.ok(last().url.endsWith('/api/v1/admin/users?search=alain&limit=20'), 'searchUsers hits the admin directory, not the delivery API: ' + last().url);
   assert.deepStrictEqual(users, [{ id: 'u1', name: 'Alain Mbarga', email: 'a@x.cm', phone: '237600000001', role: 'customer', city: 'Douala' }]);

@@ -6,6 +6,21 @@ on:
   pull_request:
 
 jobs:
+  search:
+    name: Search database, API and browser checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build:frontend
+      - run: npm run test:search
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:search:ui
+
   test:
     name: Tests (Node 22)
     runs-on: ubuntu-latest
@@ -21,6 +36,11 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      # npm test stops after about a dozen suites (one of them calls process.exit(0)
+      # when loaded), so the delivery circuit has its own gate that runs for real.
+      - name: Delivery circuit tests
+        run: npm run test:delivery
 
       - name: Run test suite
         run: npm test

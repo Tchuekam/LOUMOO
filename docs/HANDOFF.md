@@ -31,10 +31,80 @@ entry after finishing one. Newest entry first.
 | 2c. Driver assignment: offer expiry, workload-aware rider list, auto-assign | Claude | **done on `feat/delivery-assignment`** (unit-tested, **not merged**, **no DB-backed test yet**; no schema change) |
 | 3. Rider page (GPS posting) | ChatGPT/Codex | can start now against `docs/DELIVERY_API.md` v1 — **covered by step 3b's rider hub; check it before starting** |
 | 3b. Seller dispatch board, rider hub, riders admin (+ `GET /dispatch`, admin roster) | Claude | **done on `feat/delivery-dispatch-ui`** (unit-tested, reviewed in a dev harness; **not pushed, not merged**, not yet run against the real backend) |
+| 3c. Rider presence: go online / offline / pause, heartbeat, dispatch only to riders who are here (migration 017) | Claude | **done on `feat/rider-presence`** (unit-tested, migration checked on PGlite; **not pushed, not merged, migration 017 not applied anywhere**; the admin Riders screen does not show presence yet) |
 | 4. Customer tracking screen (map, timeline, code) | ChatGPT/Codex | |
 | 5. Merge both, rebuild frontend, end-to-end check | owner | |
 
 ## Log
+- **Step 3c — Rider presence (Claude, 2026-10-05, branch `feat/rider-presence`, from `main`
+  at `450b697`; NOT pushed, NOT merged, migration 017 NOT applied anywhere):** Until now every
+  *active* rider was offered every job, whether or not anyone was holding the phone: an offer to
+  a closed app sat for the whole 15 minutes. **A rider must now be online.** A rider has a
+  presence (`offline | online | busy | paused`, plus a derived `suspended`); they go online,
+  offline, pause and resume themselves, the app sends a heartbeat every 30 s, and a rider silent
+  for 120 s (`RIDER_PRESENCE_TTL_SECONDS`, 15 to 3600, no "never") is offline. Manual assign,
+  auto-assign and `GET /drivers` only consider riders who are online with a fresh beat and not
+  carrying an accepted delivery; assigning anyone else is `409 RIDER_UNAVAILABLE` / `RIDER_BUSY`
+  with a `details.reason`. Accepting claims the rider atomically (`online -> busy`), so two
+  accepts at once cannot both win, and withdraws their other offers; going offline or pausing
+  hands unanswered offers back to their sellers (timeline actor `presence`, so it is not a
+  decline). The contract, with every rule and error, is `docs/DELIVERY_API.md` v1.3, section
+  "Rider presence" (decisions 15 to 23).
+  *What exists:* `017_rider_presence.sql` (`iam.rider_presence`, one overwritten row per rider,
+  RLS service-role only); `domain/RiderPresence.js`; `application/RiderPresenceService.js`;
+  the rider acts, the claim, dispatch eligibility, offer withdrawal, the re-check after an offer
+  is written (auto-assign then tries the next ranked rider, up to 5) and roster presence in
+  `DeliveryService.js`; the presence methods and the boot probe in `DeliveryRepository.js`; the
+  presence sweep in `OfferSweeper.js` (an isolated job: a failing offer-expiry query no longer
+  skips the reminders or the presence sweep); six strict routes under `/driver/presence/*` in
+  `deliveryRoutes.js` and `deliverySchemas.js`. New fields: `GET /drivers` answers
+  `{ drivers, summary: { registered, available } }`, the admin roster rows carry `presence` and
+  `lastSeenAt`, `GET /driver/me` carries `presence`. *Client:* `src/services/riderPresence.js`
+  (the heartbeat controller), six calls in `deliveryApi.js`, an availability card in
+  `riderHub.js`, and a "No rider is online right now" state in `sellerDispatch.js`.
+  *Ops:* `scripts/verify_delivery_readiness.js` now fails when `iam.rider_presence` is missing
+  (naming 017), warns on an unusable `RIDER_PRESENCE_TTL_SECONDS`, and warns when active riders
+  exist but none is online (normal off-hours); `tests/delivery/run.js` runs the seven
+  `rider_presence_*` suites.
+  *Shared files touched:* `build_redesign.py` (one `<script defer>` for `riderPresence.js`).
+  Generated bundles were **not** rebuilt (rule 2): run `npm run build:frontend` after merging.
+  No change to `server/index.js`.
+  *How to test:* `npm test -- rider_presence` (the new suites), `node tests/helpers/run_suite.js
+  tests/unit/rider_presence_service.test.js` (one suite), `npm run test:delivery` (the CI gate:
+  every delivery suite, the readiness check, the migrations on a real Postgres engine, the
+  client checks). The migration suite needs PGlite (`@electric-sql/pglite`, a devDependency); on a
+  machine where it is not installed in the repo, point `NODE_PATH` at a `node_modules` that has
+  it, or the suite SKIPS locally (it fails under `CI`). Every suite is hermetic: in-memory
+  repository, a fake clock, notifications stubbed. The existing delivery suites were changed
+  so that their riders go online first and their world uses a one-hour window, so presence never
+  lapses under tests that move the clock for other reasons.
+  **WARNING, migration order: apply `017_rider_presence.sql` BEFORE deploying this code**
+  (`node scripts/apply_migration.js 017_rider_presence.sql`; `npm run delivery:readiness` checks
+  it). Until it is applied, in production, accept, assign, auto-assign, `GET /drivers` and
+  every presence route answer `503 DELIVERY_NOT_READY` (a rider's job list and the admin roster still
+  load, with presence `null`), and the boot log says
+  `[Delivery] NOT READY`. Every rider registered earlier **starts offline** and must open the app
+  and go online: tell riders first, or sellers will find nobody to offer a delivery to.
+  *Known limits:* the 120 s window and the 30 s beat are starting points, not measured values;
+  each online rider adds 2 calls/min to the shared `/api` rate budget (decision 7, not changed);
+  accept is atomic in the database, but offer stacking and assignment races across several API
+  instances are best effort (the re-check after the offer narrows them; auto-assign's queue is
+  per process); ranking reads at most 500 active riders and 1 000 online rows and logs a warning
+  at the cap; a delivery ended by a seller or administrator (not the rider) leaves the rider
+  online with an old last-seen time, so they read as expired until they go online again; nothing
+  has run against a real database with the real session guard, on Railway under load, or on
+  real phones.
+  **NOT done:** no routing or nearest-rider ranking (the optional position is stored on the
+  rider's own row, shown only to them, and not used); no administrator "force offline" (an
+  administrator can only suspend, which does force the rider offline); no push or wake-up for
+  riders (an offline rider hears nothing: notifications are only read from the feed, which the
+  app re-reads every 45 s while open); the admin Riders screen (`ridersAdmin.js`) does not show
+  `presence` / `lastSeenAt` yet; no history of when riders were online.
+  *Merge notes:* hot spots with the other open delivery branches are the same files as before
+  (`DeliveryService.js`, `deliveryRoutes.js`, `deliverySchemas.js`, `DeliveryRepository.js`,
+  `OfferSweeper.js`, `delivery_dispatch.test.js`, `delivery_routes.test.js`, `deliveryApi.js`,
+  `build_redesign.py`, `DELIVERY_API.md`, this file). Migration numbers: 015 is the
+  recommendation events and 016 the open-orders index; 017 is this one.
 - **Step 3b — Dispatch screens (Claude, 2026-10-04, branch `feat/delivery-dispatch-ui`,
   from `feat/delivery-frontend-tracking` with `origin/main` merged in; NOT pushed, NOT
   merged):** The screens around assignment that were missing. **Seller**: a dispatch

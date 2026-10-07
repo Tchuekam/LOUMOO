@@ -151,6 +151,7 @@
       '</div>' +
       '<div class="dt-map" data-dt-map><div class="dt-map-fallback" data-dt-mapmsg>Loading map…</div></div>' +
       '<div class="dt-body">' +
+        '<div class="dt-card" data-dt-circuit hidden></div>' +
         '<div class="dt-card dt-eta" data-dt-eta hidden></div>' +
         '<div class="dt-card dt-code" data-dt-code hidden></div>' +
         '<div class="dt-card dt-driver" data-dt-driver hidden></div>' +
@@ -184,6 +185,8 @@
   function close() {
     if (state.sub && state.sub.close) { try { state.sub.close(); } catch (e) {} }
     state.sub = null;
+    clearTimeout(state._waitTimer);
+    state._waitTimer = null;
     if (state._raf) { try { cancelAnimationFrame(state._raf); } catch (e) {} state._raf = null; }
     if (state.map && state.map.remove) { try { state.map.remove(); } catch (e) {} }
     state.map = null;
@@ -303,10 +306,29 @@
   }
   function hideCode() { var el = q('[data-dt-code]'); if (el) el.hidden = true; }
 
+  // Where the order is across the buyer, the seller and the rider, whose move it
+  // is, and that you are the buyer: the same strip the other parties see.
+  function renderCircuit(delivery) {
+    var el = q('[data-dt-circuit]'); if (!el) return;
+    if (!window.LoumooCircuit) { el.hidden = true; return; }
+    el.innerHTML = window.LoumooCircuit.renderStrip(delivery, 'buyer');
+    el.hidden = false;
+  }
+
+  // An order with no delivery yet is the NORMAL first state, not an error: the
+  // seller has been told and is arranging a rider. Show the buyer's place in the
+  // circuit instead of a map with nothing on it, and keep checking.
+  function setWaiting(on) {
+    var map = q('[data-dt-map]'); if (map) map.hidden = on;
+    var tl = q('[data-dt-timeline]'); if (tl && tl.parentNode) tl.parentNode.hidden = on;
+    var note = q('.dt-note'); if (note) note.hidden = on;
+  }
+
   function applyDelivery(d) {
     state.delivery = d;
     setSubtitle(d.orderNumber ? 'Order ' + d.orderNumber : (d.orderId ? 'Order ' + d.orderId : ''));
     setPill(labelFor(d.status).toUpperCase(), statusKind(d.status));
+    renderCircuit(d);
     renderTimeline(d);
     renderEta(d);
     renderDriver(d);
@@ -321,14 +343,21 @@
         ? await window.deliveryApi.get(deliveryId)
         : await window.deliveryApi.getByOrder(orderId);
       var d = res.delivery;
-      if (!d) { renderError('No delivery found for this order yet.'); setPill('NO DELIVERY', 'bad'); return; }
+      if (!d) { waitForSeller(orderId); return; }
+      if (!state.mounted) return;
+      var el = q('[data-dt-error]'); if (el) el.hidden = true;
+      setWaiting(false);
       state.deliveryId = d.id;
       if (typeof initMap === 'function') initMap(d);
       applyDelivery(d);
       loadCode(d);
       if (typeof startLive === 'function') startLive(d.id);
     } catch (err) {
-      renderError(err && err.status === 404 ? 'No delivery found for this order yet.' : ((err && err.message) || 'Could not load tracking.'));
+      if (!state.mounted) return;
+      // No delivery for an order the buyer asked about by order: the seller has not
+      // arranged one yet. Anything else is a real failure and is said plainly.
+      if (err && err.status === 404 && !deliveryId && orderId) { waitForSeller(orderId); return; }
+      renderError((err && err.message) || 'Could not load tracking.');
       setPill('UNAVAILABLE', 'bad');
     }
   }
@@ -556,6 +585,7 @@
         if (evt.etaMinutes !== undefined) state.delivery.etaMinutes = evt.etaMinutes;
         if (evt.distanceKm !== undefined) state.delivery.distanceKm = evt.distanceKm;
         setPill(labelFor(evt.status).toUpperCase(), statusKind(evt.status));
+        renderCircuit(state.delivery);
         renderTimeline(state.delivery);
         renderEta(state.delivery);
         // On a real transition, re-read the full record so the rider card,

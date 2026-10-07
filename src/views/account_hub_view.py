@@ -695,6 +695,14 @@ def get_account_hub_view():
       </sc-if>
     </button>
 
+    <div class="card-premium" style="display:flex;align-items:center;justify-content:space-between;gap:16px">
+      <div>
+        <div style="font:700 13.5px/1.2 var(--font-heading);color:var(--color-text)">Reset recommendations</div>
+        <div style="font:400 12px/1.4 var(--font-body);color:var(--color-text-secondary);margin-top:3px">Forget what the For-You feed has learned and start fresh. This clears your taste profile on this device and on LOUMOO.</div>
+      </div>
+      <button onClick="{{ resetRecommendations }}" class="btn btn-secondary" style="flex:0 0 auto;height:40px;padding:0 18px;font-size:13px;cursor:pointer">Reset</button>
+    </div>
+
   </div>
 </div>
 </sc-if>

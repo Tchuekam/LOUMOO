@@ -108,6 +108,8 @@
     var err = new Error(message);
     err.status = status;
     err.code = code;
+    // The server's own list of what was wrong (field-level reasons), when it sent one.
+    if (body && body.error && body.error.details) err.details = body.error.details;
     return err;
   }
 
@@ -217,6 +219,7 @@
       if (token) headers.Authorization = 'Bearer ' + token;
 
       var init = { method: options.method || 'GET', headers: headers };
+      if (options.signal) init.signal = options.signal;
       if (options.rawBody !== undefined && options.rawBody !== null) {
         init.body = options.rawBody;
       } else if (options.body !== undefined) {
@@ -235,6 +238,7 @@
         return unwrap(body);
       });
     }, function (networkErr) {
+      if (networkErr && networkErr.name === 'AbortError') throw networkErr;
       var err = new Error('Cannot reach LOUMOO. Check your connection and try again.');
       err.status = 0;
       err.code = 'OFFLINE';
@@ -491,16 +495,8 @@
     return this.request('/api/v1/users/me/purchases' + qs(params));
   };
 
-  LoumooApiClient.prototype.getOrder = function (orderId) {
-    return this.request('/api/v1/users/me/purchases/' + encodeURIComponent(orderId))
-      .then(function (data) { return (data && data.order) || null; });
-  };
-
-  // Place a new order from the bag (payment deferred — pay on delivery).
-  LoumooApiClient.prototype.createOrder = function (payload) {
-    return this.request('/api/v1/users/me/orders', { method: 'POST', body: payload })
-      .then(function (data) { return (data && data.order) || null; });
-  };
+  // getOrder / createOrder live with the other order calls in section 13 below
+  // (they were defined twice here, and the later definition silently won).
 
   /* --- Reviews --- */
   LoumooApiClient.prototype.createReview = function (payload) {
@@ -972,13 +968,44 @@
     return this.request('/api/v1/categories');
   };
 
+  // ── Discovery Engine (For You / recommendations) ──────────────────────────
+  LoumooApiClient.prototype.recordRecoEvents = function (payload) {
+    return this.request('/api/v1/recommendations/events', { method: 'POST', body: payload });
+  };
+
+  LoumooApiClient.prototype.getRecoFeed = function (params) {
+    return this.request('/api/v1/recommendations/feed' + qs(params));
+  };
+
+  LoumooApiClient.prototype.getRecoSimilar = function (itemId, params) {
+    return this.request('/api/v1/recommendations/similar/' + encodeURIComponent(itemId) + qs(params));
+  };
+
+  LoumooApiClient.prototype.getRecoTrending = function (params) {
+    return this.request('/api/v1/recommendations/trending' + qs(params));
+  };
+
+  LoumooApiClient.prototype.getRecoProfile = function () {
+    return this.request('/api/v1/recommendations/profile');
+  };
+
+  LoumooApiClient.prototype.recoFeedback = function (payload) {
+    return this.request('/api/v1/recommendations/feedback', { method: 'POST', body: payload });
+  };
+
   // GET /api/v1/products?q=... — request() unwraps the envelope, so a successful
   // call resolves to the canonical { items, total, page, limit } payload. The
   // rejection is re-thrown so callers can distinguish a real failure (show the
   // error state) from a genuine zero-result response ({ items: [] }).
-  LoumooApiClient.prototype.searchProducts = function (query, params) {
+  LoumooApiClient.prototype.search = function (params, signal) { return this.request('/api/v1/search' + qs(params), { signal: signal }); };
+  LoumooApiClient.prototype.suggestSearch = function (params, signal) { return this.request('/api/v1/search/suggest' + qs(params), { signal: signal }); };
+  LoumooApiClient.prototype.searchCapabilities = function () { return this.request('/api/v1/search/capabilities'); };
+  LoumooApiClient.prototype.searchAssistant = function (body, signal) { return this.request('/api/v1/search/assistant', { method:'POST', body:body, signal:signal }); };
+  LoumooApiClient.prototype.searchVisual = function (body, signal) { return this.request('/api/v1/search/visual', { method:'POST', body:body, signal:signal }); };
+  LoumooApiClient.prototype.startCombiSession = function (signal) { return this.request('/api/v1/search/voice/session', { method:'POST', body:{}, signal:signal }); };
+  LoumooApiClient.prototype.searchProducts = function (query, params, signal) {
     var p = Object.assign({ q: query }, params || {});
-    return this.request('/api/v1/products' + qs(p));
+    return this.request('/api/v1/products' + qs(p), { signal:signal });
   };
 
 
@@ -1272,19 +1299,28 @@
      13. ORDER CORE & COMMERCE LIFECYCLE
      ══════════════════════════════════════════════════════════════════════════ */
 
-  LoumooApiClient.prototype.createOrder = function (payload) {
-    return this.request('/api/v1/orders', {
-      method: 'POST',
-      body: payload
-    });
+  /**
+   * Place an order (payment deferred: pay on delivery). Resolves with the order the
+   * SERVER created, whose id and number are the ones every other party sees; the
+   * client never invents them. A repeat of the same `idempotencyKey` returns the
+   * original order instead of placing a second one.
+   */
+  LoumooApiClient.prototype.createOrder = function (payload, options) {
+    var req = { method: 'POST', body: payload };
+    if (options && options.idempotencyKey) req.idempotencyKey = options.idempotencyKey;
+    return this.request('/api/v1/orders', req)
+      .then(function (data) { return (data && data.order) || null; });
   };
 
+  /** The caller's orders, newest first: resolves with `{ orders, total, limit, offset }`. */
   LoumooApiClient.prototype.getOrders = function (params) {
     return this.request('/api/v1/orders' + qs(params));
   };
 
+  /** One order the caller may see (buyer, seller or admin). */
   LoumooApiClient.prototype.getOrder = function (id) {
-    return this.request('/api/v1/orders/' + encodeURIComponent(id));
+    return this.request('/api/v1/orders/' + encodeURIComponent(id))
+      .then(function (data) { return (data && data.order) || null; });
   };
 
   LoumooApiClient.prototype.cancelOrder = function (id, reason) {

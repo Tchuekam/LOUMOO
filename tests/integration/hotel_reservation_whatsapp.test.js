@@ -4,6 +4,11 @@
 
 require('../setup');
 const assert = require('assert');
+const { stayFromToday } = require('../helpers/dates');
+
+// A stay must start today or later, so these move with the calendar.
+const { checkIn: CHECK_IN, checkOut: CHECK_OUT } = stayFromToday(30, 3); // 3 nights
+
 const fs = require('fs');
 const path = require('path');
 const { TravelRepository } = require('../../server/modules/travel/infrastructure/TravelRepository');
@@ -38,8 +43,8 @@ async function testHotelReservationAndWhatsApp() {
   const avail = await hotelAvailService.checkRoomAvailability({
     hotelId: sampleHotel.id,
     roomId: sampleRoom.id,
-    checkIn: '2026-10-01',
-    checkOut: '2026-10-04',
+    checkIn: CHECK_IN,
+    checkOut: CHECK_OUT,
     guests: 2,
     roomsCount: 1
   });
@@ -59,8 +64,8 @@ async function testHotelReservationAndWhatsApp() {
     type: 'hotel',
     hotelId: sampleHotel.id,
     roomId: sampleRoom.id,
-    checkIn: '2026-10-01',
-    checkOut: '2026-10-04',
+    checkIn: CHECK_IN,
+    checkOut: CHECK_OUT,
     roomsCount: 1,
     guests: 2,
     passengers: [{ name: 'Paul Biya', phone: '+237690123456' }]
@@ -87,8 +92,8 @@ async function testHotelReservationAndWhatsApp() {
     hotelName: sampleHotel.name,
     passenger: 'Paul Biya',
     roomType: sampleRoom.name,
-    checkIn: '2026-10-01',
-    checkOut: '2026-10-04',
+    checkIn: CHECK_IN,
+    checkOut: CHECK_OUT,
     nights: 3,
     guests: 2,
     amount: bookingResult.booking.pricing.totalAmount
@@ -131,9 +136,12 @@ async function testHotelReservationAndWhatsApp() {
   // Verify hotelDetail in NO_NAV
   assert.ok(compiledHtml.includes("'hotelDetail','hotelBooking','hotelVoucher'"), 'hotelDetail must be in NO_NAV');
   
-  // Verify hotel-sticky-reserve-bar class & CSS rule
-  assert.ok(hotelChunkHtml.includes('class="hotel-sticky-reserve-bar"'), 'hotel-sticky-reserve-bar class must be present in HotelScreens.dc.html');
-  assert.ok(compiledHtml.includes('.hotel-sticky-reserve-bar { left: 260px !important; }'), 'Desktop offset rule must be present in master CSS');
+  // Verify the mobile reserve bar and its desktop offset. The 2026-09-25 hotel redesign
+  // renamed hotel-sticky-reserve-bar to hotel-mobile-reserve and moved the rule from the
+  // master CSS into src/styles/hotel.css.
+  const hotelCss = fs.readFileSync(path.join(__dirname, '../../src/styles/hotel.css'), 'utf8');
+  assert.ok(hotelChunkHtml.includes('class="hotel-mobile-reserve"'), 'hotel-mobile-reserve class must be present in HotelScreens.dc.html');
+  assert.ok(/\.hotel-mobile-reserve\s*\{\s*left:\s*260px;\s*\}/.test(hotelCss), 'Desktop offset rule (clear the 260px sidebar) must be present in hotel.css');
 
   // Verify WhatsApp sanitization in compiled HTML
   assert.ok(compiledHtml.includes(".replace(/[^0-9]/g, '').replace(/^00/, '')"), 'WhatsApp number sanitizer must be present');

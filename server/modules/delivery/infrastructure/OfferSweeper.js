@@ -6,6 +6,11 @@
  * when someone looks at it; this covers the case where nobody does, so the
  * seller is told the rider went quiet instead of finding out later.
  *
+ * It also sweeps rider presence: a rider who is online but has stopped sending
+ * heartbeats is set offline and the offers they never answered go back to their
+ * sellers (see "Rider presence" in docs/DELIVERY_API.md). Every read already treats
+ * a silent rider as offline, so this is tidiness and the offers, not correctness.
+ *
  * Only for a long-lived process. A serverless runtime cannot keep a timer, and
  * relies on the release-on-read alone.
  */
@@ -36,6 +41,9 @@ function startOfferSweeper({
     throw new RangeError('startOfferSweeper: intervalMs must be at least 1000');
   }
 
+  // A service that cannot sweep presence (a test double, an older service) simply
+  // has no such job.
+  const presenceOn = typeof service.expireStalePresence === 'function';
   let running = false;
 
   async function tick() {
@@ -44,8 +52,40 @@ function startOfferSweeper({
     if (running) return { expired: 0, skipped: true };
     running = true;
     try {
-      const result = await service.expireStaleOffers({ limit });
-      if (result.expired > 0) logger.info(`[OfferSweeper] returned ${result.expired} lapsed offer(s) to their sellers`);
+      const result = { expired: 0 };
+      if (service.offerTtlMs > 0) {
+        // Its own try, like the jobs below: a failing deliveries query must not stop the
+        // reminders or the presence sweep from running this tick.
+        try {
+          Object.assign(result, await service.expireStaleOffers({ limit }));
+          if (result.expired > 0) logger.info(`[OfferSweeper] returned ${result.expired} lapsed offer(s) to their sellers`);
+        } catch (err) {
+          logger.error(`[OfferSweeper] sweep failed: ${err.message}`);
+          result.expired = 0;
+          result.failed = true;
+        }
+      }
+      // Chasing an order nobody is arranging is a separate job: its failure must
+      // not hide the expiry above, and the expiry's must not hide this.
+      if (service.nudgeEnabled && typeof service.nudgeUndispatched === 'function') {
+        try {
+          result.nudged = await service.nudgeUndispatched();
+        } catch (err) {
+          logger.error(`[OfferSweeper] reminders failed: ${err.message}`);
+          result.nudgeFailed = true;
+        }
+      }
+      // So is presence, for the same reason.
+      if (presenceOn) {
+        try {
+          result.presence = await service.expireStalePresence({ limit });
+          if (result.presence.expired > 0) logger.info(`[OfferSweeper] set ${result.presence.expired} silent rider(s) offline`);
+          if (result.presence.healed > 0) logger.info(`[OfferSweeper] put ${result.presence.healed} stale busy rider(s) right`);
+        } catch (err) {
+          logger.error(`[OfferSweeper] presence sweep failed: ${err.message}`);
+          result.presenceFailed = true;
+        }
+      }
       return result;
     } catch (err) {
       // Never let a failed sweep become an unhandled rejection on a timer.
@@ -56,10 +96,10 @@ function startOfferSweeper({
     }
   }
 
-  // Expiry switched off (DELIVERY_OFFER_TTL_MINUTES=0): nothing to sweep, so do
-  // not hold a timer that wakes every minute to do nothing.
-  if (!(service.offerTtlMs > 0)) {
-    logger.info('[OfferSweeper] offer expiry is off; not scheduling a sweep');
+  // Nothing to do (offer expiry off, no reminders, no presence sweep): do not hold a
+  // timer that wakes every minute to do nothing.
+  if (!(service.offerTtlMs > 0) && !service.nudgeEnabled && !presenceOn) {
+    logger.info('[OfferSweeper] offer expiry, reminders and the presence sweep are off; not scheduling a sweep');
     return { tick, stop: () => {}, timer: null };
   }
 

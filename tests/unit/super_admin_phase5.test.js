@@ -70,7 +70,8 @@ async function runPhase5Tests() {
 
     // ── 3. GET /api/v1/admin/config RBAC Protected Endpoint ──
     const unauthAdminRes = await request(server, 'GET', '/api/v1/admin/config');
-    assert.strictEqual(unauthAdminRes.status, 403, 'Unauthenticated /api/v1/admin/config must be rejected with 403 Forbidden');
+    // 401, not 403: no credentials at all is "authenticate", 403 is "authenticated but not an admin".
+    assert.strictEqual(unauthAdminRes.status, 401, 'Unauthenticated /api/v1/admin/config must be rejected with 401 Unauthorized');
 
     const authHeaders = {
       'Authorization': 'Bearer admin_token'

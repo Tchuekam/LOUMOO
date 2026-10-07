@@ -37,10 +37,45 @@
   function API() { return window.deliveryApi; }
   function firstName(name) { return String(name || '').trim().split(/\s+/)[0] || name; }
 
+  // --------------------------------------------------------------- presence
+  // The rider's availability (online / offline / paused / on a delivery) belongs to
+  // the server; window.LoumooRiderPresence keeps the heartbeat and the buttons
+  // honest. ONE controller per page, so closing this overlay does not end an online
+  // rider's heartbeat. Missing (an older server, a script that failed to load): the
+  // hub works exactly as before, without the card.
+  var presenceCtl = null;
+  var inboxOpen = 0; // inbox screens on display right now (the heartbeat outlives them)
+  function PRESENCE() { return window.LoumooRiderPresence || null; }
+  /**
+   * One quick position for Go online / Resume / a heartbeat; null when it can't be had.
+   * Only while this screen is open: the contract's rule is no background tracking, so a
+   * rider who closed the hub stays online (the heartbeat goes on) but shares no position.
+   */
+  function locateOnce() {
+    return new Promise(function (resolve) {
+      if (!inboxOpen) return resolve(null);
+      if (!navigator.geolocation || typeof navigator.geolocation.getCurrentPosition !== 'function') return resolve(null);
+      try {
+        navigator.geolocation.getCurrentPosition(function (pos) {
+          var c = pos && pos.coords;
+          resolve(c ? { lat: c.latitude, lng: c.longitude, accuracyM: c.accuracy != null ? Math.round(c.accuracy) : undefined } : null);
+        }, function () { resolve(null); }, { enableHighAccuracy: false, maximumAge: 120000, timeout: 2500 });
+      } catch (e) { resolve(null); }
+    });
+  }
+  function presenceController() {
+    var mod = PRESENCE(), api = API();
+    if (!mod || !api || typeof api.riderHeartbeat !== 'function') return null;
+    if (!presenceCtl) presenceCtl = mod.createPresenceController({ api: api, locate: locateOnce });
+    return presenceCtl;
+  }
+
   // ------------------------------------------------------------------ entry
   function open() {
     var ui = UI(), api = API();
     if (!ui || !api) { console.warn('[RiderHub] the UI kit or the delivery API is missing'); return null; }
+    var ctl = presenceController();
+    if (ctl) ctl.start(); // arms the heartbeat if the server says this rider is online
     var nav = ui.openStack({ label: 'Rider deliveries' });
     nav.push(inboxView(nav));
     return nav;
@@ -53,18 +88,84 @@
       render: function (page) {
         var ui = UI(), api = API();
         var data = null, rings = [], sig = null, painted = false;
+        var ctl = presenceController(), P = PRESENCE(), hints = [], hideCard = false, cardShown = false;
+        inboxOpen += 1;
         page.setRight([{ icon: 'refresh', label: 'Refresh', onClick: function () { load(true); } }]);
+        // The availability card sits above the jobs and is redrawn on its own, so a
+        // change of availability never rebuilds the offer cards under the rider's thumb.
+        var presenceHost = document.createElement('div');
+        presenceHost.setAttribute('aria-live', 'polite');
+        page.content.appendChild(presenceHost);
         var body = document.createElement('div');
         page.content.appendChild(body);
         body.appendChild(ui.skeletonList(3));
 
         function stopRings() { rings.forEach(function (r) { r.stop(); }); rings = []; }
 
+        // ---- availability: one compact card, only the buttons that apply
+        var ACTIONS = { online: 'goOnline', offline: 'goOffline', pause: 'pause', resume: 'resume' };
+        function runPresence(act) {
+          if (ctl.getState().pending) return; // a tap is already out (a keyboard can still reach a busy button)
+          ctl[ACTIONS[act]]().catch(function (err) {
+            ui.toast(ui.errorMessage(err), { tone: 'error' }); // e.g. RIDER_BUSY: the server's own words
+          }).then(function () { if (page.alive) load(false); }); // offers may have been taken back, or the job list changed
+        }
+        function drawPresence(st) {
+          // The card is redrawn whole, so a keyboard user's focus would fall to the page: park it on the card.
+          var hadFocus = !!document.activeElement && presenceHost.contains(document.activeElement);
+          presenceHost.innerHTML = '';
+          var card = !hideCard && P && P.describeAvailability(st);
+          if (!card) return;
+          var el = ui.h(
+            '<div class="ldx-card" role="group" aria-label="Your availability" tabindex="-1" style="padding:16px;outline:none">' +
+              '<div class="ldx-row is-static no-sep" style="padding:0;min-height:0;align-items:flex-start">' +
+                '<span class="ldx-row-main"><div class="ldx-row-title" style="white-space:normal"></div><div class="ldx-row-sub is-wrap" data-text></div><div class="ldx-row-sub is-wrap" data-note style="color:var(--ldx-warn-ink)" hidden></div></span>' +
+                '<span class="ldx-row-end">' + ui.badge(card.label, card.tone) + '</span>' +
+              '</div>' +
+            '</div>'
+          );
+          el.querySelector('.ldx-row-title').textContent = card.title;
+          el.querySelector('[data-text]').textContent = card.text;
+          if (card.note) { var note = el.querySelector('[data-note]'); note.textContent = card.note; note.hidden = false; }
+          if (card.actions.length) {
+            var row = ui.h('<div class="ldx-btn-row" style="margin-top:14px"></div>');
+            card.actions.forEach(function (a) {
+              var b = ui.button({ label: a.label, kind: a.kind, size: 'medium', onClick: function () { runPresence(a.act); } });
+              if (st.pending) {
+                // The tapped button shows the spinner (is-busy blocks pointer input); the rest are disabled.
+                if (st.pending === a.act) { b.classList.add('is-busy'); b.setAttribute('aria-busy', 'true'); b.setAttribute('aria-disabled', 'true'); }
+                else b.disabled = true;
+              }
+              row.appendChild(b);
+            });
+            el.appendChild(row);
+          }
+          presenceHost.appendChild(el);
+          if (hadFocus) el.focus({ preventScroll: true });
+        }
+        // An offer can show up while the rider is offline or on a break (it was sent a
+        // moment before they left): say what to do instead of letting Accept just fail.
+        function applyHints(st) {
+          var text = P ? P.offerHint(st) : null;
+          hints.forEach(function (el) { el.textContent = text || ''; el.hidden = !text; });
+        }
+        // Nothing is drawn until this screen's own first overview has landed: the controller outlives the
+        // overlay, and what it remembers may be older than this visit (or another rider's, on a shared phone).
+        var unsubscribe = ctl ? ctl.subscribe(function (st) { if (cardShown) drawPresence(st); applyHints(st); }) : null;
+
         function load(manual) {
+          var token = ctl ? ctl.epoch() : undefined;
           return api.riderOverview().then(function (res) {
             if (!page.alive) return;
             data = res;
-            page.setTitle('Your deliveries', 'Hi ' + firstName(res.driver && res.driver.name) + ' — here’s your work.');
+            // The overview carries the rider's availability: no extra request. A snapshot
+            // older than something the controller already knows is dropped by adopt().
+            if (ctl && res && res.presence) {
+              if (hideCard) { hideCard = false; ctl.start(); } // an account that was not active is now (a refresh found it)
+              ctl.adopt(res.presence, token);
+              if (!cardShown) { cardShown = true; drawPresence(ctl.getState()); }
+            }
+            page.setTitle('Your deliveries', 'You are the rider · Hi ' + firstName(res.driver && res.driver.name));
             // Redraw only when the jobs changed: a background refresh must not
             // rebuild the cards under the rider's thumb (countdowns tick on their own).
             var next = JSON.stringify(res.deliveries || []);
@@ -81,6 +182,9 @@
         function notRider() {
           stopRings();
           page.setRight([]);
+          hideCard = true; cardShown = false; // not a rider (or not an active one): nothing to be available for
+          presenceHost.innerHTML = '';
+          if (ctl) ctl.stop(); // and nothing to keep alive; the next open() starts it again
           body.innerHTML = '';
           var empty = ui.emptyState({ icon: 'scooter', title: 'Deliver with LOUMOO', body: 'Riders are added by the LOUMOO team. Share your account ID with them to get started.' });
           var idBox = ui.h('<div style="margin-top:20px;display:flex;flex-direction:column;align-items:center;gap:10px"><span class="ldx-chip" style="font-family:var(--font-mono,ui-monospace,monospace);max-width:100%;overflow:hidden;text-overflow:ellipsis">Loading your ID…</span></div>');
@@ -102,6 +206,7 @@
 
         function draw() {
           stopRings();
+          hints = [];
           body.innerHTML = '';
           var jobs = (data && data.deliveries) || [];
           var offers = jobs.filter(function (d) { return d.status === 'assigned'; });
@@ -136,9 +241,13 @@
                   '<div class="ldx-meta" data-meta></div>' +
                 '</span>' +
               '</button>' +
+              '<div class="ldx-hint" data-hint style="padding:12px 0 0;color:var(--ldx-warn-ink)" hidden></div>' +
               '<div class="ldx-btn-row" style="margin-top:16px"></div>' +
             '</div>'
           );
+          var hint = card.querySelector('[data-hint]');
+          hints.push(hint);
+          if (ctl) applyHints(ctl.getState());
           card.querySelector('[data-pickup]').textContent = 'Pick up at ' + ((d.pickup && d.pickup.label) || 'the shop');
           card.querySelector('[data-route]').textContent = 'Deliver to ' + ((d.dropoff && d.dropoff.area) || 'the customer’s area');
           var meta = [];
@@ -182,7 +291,8 @@
         document.addEventListener('visibilitychange', onVisible);
         page.reload = function () { load(false); };
         load(false);
-        return function cleanup() { clearInterval(interval); stopRings(); document.removeEventListener('visibilitychange', onVisible); };
+        // The heartbeat is NOT stopped here: it is the page's, and ends when the server says the rider is no longer online.
+        return function cleanup() { inboxOpen = Math.max(0, inboxOpen - 1); clearInterval(interval); stopRings(); if (unsubscribe) unsubscribe(); document.removeEventListener('visibilitychange', onVisible); };
       },
       onResume: function (page) { if (page.reload) page.reload(); }
     };
@@ -461,13 +571,10 @@
 
           if (d.status === 'delivered') return drawDone();
 
-          // progress through the job (from acceptance on)
-          if (ph.step > 0) {
-            var steps = '<div class="ldx-steps" style="margin:0 4px 16px" aria-hidden="true">';
-            for (var i = 1; i <= 3; i++) steps += '<span class="ldx-step' + (i <= ph.step ? ' is-done' : '') + '"></span>';
-            steps += '</div>';
-            page.content.insertAdjacentHTML('beforeend', steps);
-          }
+          // Where the order is across all four parties, whose move it is, and that
+          // you are the rider: the same strip the buyer and seller see.
+          var strip = window.LoumooCircuit ? window.LoumooCircuit.stripCard(d, 'rider') : null;
+          if (strip) { strip.style.marginBottom = '16px'; page.content.appendChild(strip); }
 
           // map
           if (!map) map = jobMap(d); else map.update(d);

@@ -31,7 +31,7 @@
   function rosterView(nav) {
     return {
       title: 'Riders',
-      subtitle: 'Who can be offered deliveries.',
+      subtitle: 'You are an administrator · who can be offered deliveries.',
       render: function (page) {
         var ui = UI(), api = API();
         var riders = null, filter = 'all', query = '';

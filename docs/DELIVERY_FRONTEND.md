@@ -1,3 +1,4 @@
+# Delivery Tracking — Frontend (step 4: customer tracking screen)
 # Delivery — Frontend (step 4: customer tracking · step 5: dispatch screens)
 
 Built on branch `feat/delivery-frontend-tracking` (forked from `origin/main`).
@@ -32,9 +33,51 @@ exactly as the contract requires.
 |---|---|
 | `src/services/deliveryApi.js` | API client: `getByOrder`, `get`, `getCode`, and `subscribe(id, handlers)` (SSE + poll fallback). Registers `window.deliveryApi`. |
 | `src/services/deliveryTrackingScreen.js` | The overlay UI + map + timeline + code + live wiring. Registers `window.LoumooDeliveryTracking`. |
+| `src/services/deliveryCircuit.js` | The circuit model, the progress strip, notification routing and the checkout helpers shared by every screen. Registers `window.LoumooCircuit`. Loaded before the services below. |
 | `src/services/deliveryApi.test.js` | Node test for the DOM-free logic (parsing, envelope, errors, poll fallback). `node src/services/deliveryApi.test.js`. |
 | `build_redesign.py` | Two `<script defer>` tags in the head load the two services. (Only build edit needed.) |
 | `src/views/order_product_flow_view.py` | A "Track live delivery" button in the order-detail screen. |
+
+## The circuit: one story for four screens
+
+An order passes through the buyer, the seller, the rider and (on exceptions) an
+administrator. Each of them must see where the order is, whose move it is, and which
+part they play, so that is written once, in `src/services/deliveryCircuit.js`
+(`window.LoumooCircuit`; also `require`-able in Node, where it is tested by
+`tests/unit/delivery_circuit.test.js`):
+
+- **Stages and moves.** Five stages (order placed, rider arranged, parcel collected, on
+  the way, handed over) and who must act at each status. At the door both the buyer
+  (reads the code out) and the rider (enters it) have a move. "No delivery yet" is the
+  normal first state, the seller's move, not an error.
+- **What each role is told.** One line per role per status ("Your move: choose a rider",
+  "Have the parcel ready", "A rider is being asked"...).
+- **The strip.** "You are the buyer · Step 2 of 5", the five stages with the viewer's own
+  marked, and a banner saying whether the next move is theirs. Vanilla screens call
+  `LoumooCircuit.stripCard(delivery, role)`; a DC template drops in
+  `<div data-circuit-strip data-order-id="…" data-role="buyer"></div>` and it fills and
+  refreshes itself (every 15 s while visible). The buyer's tracker, the seller's order
+  view and the rider's job all use it; the admin's Riders screen and the seller's board
+  name the role in their subtitle. The API calls the rider's view `driver`; the module
+  reads that as the rider.
+- **Notifications.** `openFromNotification(n)` opens the screen a notification is about,
+  from its `metadata.action` (see "Who is told what" in `DELIVERY_API.md`). The
+  notifications screen shows an "Open" button on those; the app re-reads the feed every
+  45 s while a tab is visible and signed in, and announces what arrived.
+- **Checkout helpers.** One order per store, the payload the server accepts (no client
+  total), the server's order mapped back to the app's shape, merging server orders with
+  the device's, and a human reason when an order is refused.
+
+### The buyer's path in the app
+
+Bag → checkout (needs a signed-in account and a real delivery address; the bag is kept
+and the shopper is sent back to checkout after signing in) → **the server creates the
+order, one per store** → success screen (the strip, *Track my order*) → **My Orders** (each
+card opens the real order; an old order that only ever existed on the device says
+*NOT SENT*) → **order detail** (items, totals the server priced, the seller one tap away,
+the strip, *Track live delivery*) → **tracker**. Before the seller arranges a delivery the
+tracker shows the buyer's place in the circuit ("The seller is getting your order ready")
+and checks every 8 s, instead of an error.
 
 ## Why an overlay, not a DC child screen
 
