@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LOUMOO Universal Commerce Marketplace</title>
+<link rel="icon" href="./favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="./Assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="./Assets/brand/icon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="./Assets/brand/apple-touch-icon.png">
+<meta name="theme-color" content="#0025E5">
+<script src="./support.js"></script>
+<!-- Keep the critical API/auth bridges non-blocking; they execute before
+     DOMContentLoaded, which is when the DC runtime mounts the app. The
+     publishing engine is a route-level chunk loaded only when Sell is used. -->
+<!--@@ service-scripts @@-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600;1,700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<!--@@ external-styles @@-->
+<style>
+  /* Anti-flash / unmounted protection: hide raw uncompiled template elements until React mounts */
+  x-dc { display: none !important; }
+  sc-if { display: none !important; }
+  .video-player-backdrop { display: none !important; }
+  #dc-root .video-player-backdrop { display: flex !important; }
+  .toast-banner { display: none !important; }
+  #dc-root .toast-banner { display: flex !important; }
+</style>
+</head>
+<body>
+<div id="clerk-captcha" data-sitekey="1x00000000000000000000AA" style="display:none"></div>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-dcebbf7e-2a15-4750-a4b9-db3ba3d0c312/styles.css">
+<script src="_ds/modernist-dcebbf7e-2a15-4750-a4b9-db3ba3d0c312/_ds_bundle.js"></script>
+<style>

@@ -1,0 +1,83 @@
+<!-- Desktop Sidebar Navigation (≥1024px) -->
+<nav class="sidebar-nav {{ sidebarNavClass }}">
+  <div class="sidebar-header">
+    <div class="sidebar-brand-group">
+      <img class="brand-wordmark" src="./Assets/brand/loumoo-wordmark.png" alt="LOUMOO" height="22" style="height:22px;width:auto;display:block">
+      <span style="font:800 9px/1 var(--font-heading);letter-spacing:.08em;background:var(--color-accent-100);color:var(--color-accent);padding:2px 6px;border-radius:var(--radius-pill)">UNIVERSAL</span>
+    </div>
+    <div class="sidebar-logo-icon" onClick="{{ toggleSidebar }}" title="Expand sidebar navigation">
+      <img class="brand-mark" src="./Assets/brand/loumoo-icon-mark.png" alt="LOUMOO" style="width:24px;height:auto;display:block">
+    </div>
+    <button onClick="{{ toggleSidebar }}" class="sidebar-toggle-btn" aria-label="Collapse sidebar" title="Collapse sidebar to icon rail">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 3v18"/></svg>
+    </button>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:2px;flex:1;width:100%">
+    <div class="sidebar-section-title">Discovery &amp; Marketplace</div>
+    <button onClick="{{ on.home }}" class="nav-item {{ is.home ? 'active' : '' }}" title="Marketplace Hub">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span>Marketplace Hub</span>
+    </button>
+    <button onClick="{{ on.category }}" class="nav-item {{ is.category ? 'active' : '' }}" title="All Categories &amp; Taxonomy">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      <span>All Categories</span>
+    </button>
+    <button onClick="{{ on.store }}" class="nav-item {{ (is.store || is.business) ? 'active' : '' }}" title="Stores &amp; Official Brands">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 3h20l-2 10H4L2 3z"/><path d="M6 13v7a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-7"/></svg>
+      <span>Stores &amp; Brands</span>
+    </button>
+    <button onClick="{{ on.travel }}" class="nav-item {{ (is.travel || is.travelResults || is.travelDetail || is.travelBus || is.travelPackages || is.travelVisa) ? 'active' : '' }}" title="Travel, Hotels &amp; Mobility">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1z"/></svg>
+      <span>Travel &amp; Flights</span>
+    </button>
+    <button onClick="{{ on.announce }}" class="nav-item {{ (is.announce || is.announceDetail) ? 'active' : '' }}" title="Announcements &amp; Job Board">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
+      <span>Announcements &amp; Jobs</span>
+    </button>
+
+    <div class="sidebar-section-title" style="margin-top:12px">Tools &amp; Comparison</div>
+    <button onClick="{{ on.vs }}" class="nav-item {{ (is.vs || is.vsCompare) ? 'active' : '' }}" title="VS Comparison Matrix">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="18" rx="1"/><rect x="14" y="3" width="7" height="18" rx="1"/></svg>
+      <span>VS Comparison</span>
+      <span class="sidebar-badge">{{ vsCount }}</span>
+    </button>
+    <button onClick="{{ on.chat }}" class="nav-item {{ (is.chat || is.threadSeller) ? 'active' : '' }}" title="Direct Seller &amp; Merchant Discussions">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <span>Discussions</span>
+      <span class="sidebar-badge" style="background:var(--color-wa-green);color:#fff">2</span>
+    </button>
+    <button onClick="{{ on.threadAi }}" class="nav-item {{ is.threadAi ? 'active' : '' }}" title="TchueKAM AI Intelligence Engine">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+      <span>TchueKAM AI</span>
+      <span style="margin-left:auto;font:800 8.5px/1 var(--font-heading);background:var(--color-accent-100);color:var(--color-accent);padding:2px 6px;border-radius:var(--radius-pill)">AI</span>
+    </button>
+
+    <div class="sidebar-cta-wrap">
+      <button onClick="{{ ctaAction }}" class="sidebar-cta-btn" title="{{ ctaLabel }}">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        <span>{{ ctaLabel }}</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="sidebar-footer">
+    <sc-if value="{{ isLoggedIn }}">
+      <button onClick="{{ on.profile }}" class="nav-item {{ (is.profile || is.settings || is.orders || is.seller) ? 'active' : '' }}" style="padding:6px 8px" title="{{ userName }} · {{ profileRoleLabel }}">
+        <div class="user-avatar" style="width:30px;height:30px;border-radius:50%;background:var(--color-accent);color:#fff;display:flex;align-items:center;justify-content:center;font:800 11px/1 var(--font-heading);flex:none"><sc-if value="{{ hasUserAvatar }}"><img src="{{ userAvatar }}" alt=""></sc-if><sc-if value="{{ !hasUserAvatar }}">{{ userInitials }}</sc-if></div>
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:700;font-size:12.5px;color:var(--color-text);line-height:1.1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ userName }}</div>
+          <div style="font-size:10px;color:var(--color-text-secondary);margin-top:2px">{{ profileRoleLabel }}</div>
+        </div>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--color-text-muted)"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </sc-if>
+    <sc-if value="{{ !isLoggedIn }}">
+      <button onClick="{{ on.signIn }}" class="nav-item" style="padding:8px 12px;background:var(--color-accent-100);color:var(--color-accent);border-radius:var(--radius-sm);justify-content:center;font-weight:700" title="Sign In to LOUMOO">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+        <span>Sign In to LOUMOO</span>
+      </button>
+    </sc-if>
+  </div>
+</nav>
+
