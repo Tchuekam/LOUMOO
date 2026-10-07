@@ -9131,19 +9131,21 @@ class Component extends DCLogic {
     const api = getApi();
     if (!storeId || !api) return Promise.resolve();
 
-    // Prefer the public profile endpoint (no auth required) so visitors can
-    // browse any storefront without triggering management-only auth guards.
-    const fetcher = api.getStoreProfile
-      ? api.getStoreProfile(storeId)
-      : api.getStore
-        ? api.getStore(storeId)
+    // The public storefront endpoint is the complete read model: it includes
+    // this seller's published listings, current rating/review data, follow
+    // state, policies, hours, and public location. Owner-only dashboard data
+    // must never be used to render a visitor's store page.
+    const fetcher = api.getPublicStorefront
+      ? api.getPublicStorefront(storeId)
+      : api.getStoreProfile
+        ? api.getStoreProfile(storeId)
         : null;
     if (!fetcher) return Promise.resolve();
 
     this.setState({ storeProfileLoading: true, storeProfileError: '' });
     return fetcher.then(res => {
       if (this._unmounted) return;
-      const store = (res && res.data) || res;
+      const store = (res && (res.seller || res.data)) || res;
       if (!store || typeof store !== 'object') throw new Error('Store profile was not found.');
       this.setState({
         currentStore: store,
@@ -15790,13 +15792,102 @@ class Component extends DCLogic {
         });
         this.go('business');
       },
-      businessStoreName: (this.state.currentStore && this.state.currentStore.name) || 'Orca Electronics',
+      businessStoreName: (this.state.currentStore && this.state.currentStore.name) || 'Storefront',
       businessStoreLogoUrl: (this.state.currentStore && (this.state.currentStore.logoUrl || this.state.currentStore.logo_url || this.state.currentStore.logo)) || (this.state.primaryStoreId && this.state.currentStore && this.state.currentStore.id === this.state.primaryStoreId ? this.state.storeLogoUrl : '') || '',
-      businessStoreDescription: (this.state.currentStore && (this.state.currentStore.description || this.state.currentStore.tagline)) || 'Authorized electronics reseller · Akwa, Douala',
-      businessStoreCity: (this.state.currentStore && this.state.currentStore.city) || 'Douala',
-      businessStoreRating: Number((this.state.currentStore && this.state.currentStore.rating) || 4.9).toFixed(1),
-      businessStoreInitial: String((this.state.currentStore && this.state.currentStore.name) || 'Orca Electronics').trim().charAt(0).toUpperCase(),
+      businessStoreDescription: (this.state.currentStore && (this.state.currentStore.description || (this.state.currentStore.profile && (this.state.currentStore.profile.tagline || this.state.currentStore.profile.bio)))) || '',
+      businessStoreCity: (this.state.currentStore && ((this.state.currentStore.location && this.state.currentStore.location.city) || this.state.currentStore.city)) || '',
+      businessStorePhone: (this.state.currentStore && (this.state.currentStore.phoneNumber || this.state.currentStore.phone_number)) || '',
+      businessStoreHasRating: Boolean(this.state.currentStore && Number(this.state.currentStore.ratingCount || this.state.currentStore.rating_count || 0) > 0),
+      businessStoreRating: this.state.currentStore && this.state.currentStore.rating != null ? Number(this.state.currentStore.rating).toFixed(1) : '',
+      businessStoreRatingCount: Number((this.state.currentStore && (this.state.currentStore.ratingCount || this.state.currentStore.rating_count)) || 0),
+      businessStoreFollowerCount: Number((this.state.currentStore && (this.state.currentStore.followerCount || this.state.currentStore.follower_count)) || 0),
+      businessStoreListingCount: Number((this.state.currentStore && (this.state.currentStore.listingCount || this.state.currentStore.productCount || this.state.currentStore.product_count)) || 0),
+      businessStoreInitial: String((this.state.currentStore && this.state.currentStore.name) || 'S').trim().charAt(0).toUpperCase(),
       businessStoreVerified: Boolean(this.state.currentStore && (this.state.currentStore.isVerified || this.state.currentStore.is_verified)),
+      businessStoreIsOwner: Boolean(this.state.currentStore && this.state.primaryStoreId && this.state.currentStore.id === this.state.primaryStoreId),
+      businessStoreListings: (this.state.currentStore && Array.isArray(this.state.currentStore.listings) ? this.state.currentStore.listings : []).map(listing => ({
+        id: listing.id,
+        title: listing.title || 'Untitled listing',
+        description: listing.description || '',
+        imageUrl: encImg(listing.coverImageUrl || listing.cover_image_url || ''),
+        hasImage: Boolean(listing.coverImageUrl || listing.cover_image_url),
+        priceLabel: 'XAF ' + fmt(Number(listing.priceXaf ?? listing.price_xaf ?? listing.sale_price_minor ?? listing.base_price_minor ?? 0)),
+        hasRating: Number(listing.ratingCount || listing.rating_count || 0) > 0,
+        ratingLabel: Number(listing.rating || 0).toFixed(1),
+        ratingCount: Number(listing.ratingCount || listing.rating_count || 0),
+        categoryLabel: String(listing.categoryId || listing.category_id || listing.listingType || listing.listing_type || 'Listings').replace(/[_-]+/g, ' '),
+        listingType: listing.listingType || listing.listing_type || ''
+      })),
+      businessFeaturedListings: (this.state.currentStore && Array.isArray(this.state.currentStore.listings) ? this.state.currentStore.listings : []).slice(0, 4).map(listing => ({
+        id: listing.id,
+        title: listing.title || 'Untitled listing',
+        description: listing.description || '',
+        imageUrl: encImg(listing.coverImageUrl || listing.cover_image_url || ''),
+        hasImage: Boolean(listing.coverImageUrl || listing.cover_image_url),
+        priceLabel: 'XAF ' + fmt(Number(listing.priceXaf ?? listing.price_xaf ?? listing.sale_price_minor ?? listing.base_price_minor ?? 0)),
+        hasRating: Number(listing.ratingCount || listing.rating_count || 0) > 0,
+        ratingLabel: Number(listing.rating || 0).toFixed(1),
+        ratingCount: Number(listing.ratingCount || listing.rating_count || 0)
+      })),
+      businessHeroListing: (() => {
+        const listings = this.state.currentStore && Array.isArray(this.state.currentStore.listings) ? this.state.currentStore.listings : [];
+        const listing = listings[0];
+        if (!listing) return null;
+        return {
+          id: listing.id,
+          title: listing.title || 'Latest listing',
+          description: listing.description || '',
+          priceLabel: 'XAF ' + fmt(Number(listing.priceXaf ?? listing.price_xaf ?? listing.sale_price_minor ?? listing.base_price_minor ?? 0))
+        };
+      })(),
+      businessHasListings: Boolean(this.state.currentStore && Array.isArray(this.state.currentStore.listings) && this.state.currentStore.listings.length > 0),
+      businessHasMoreListings: Boolean(this.state.currentStore && Number(this.state.currentStore.listingCount || 0) > (Array.isArray(this.state.currentStore.listings) ? this.state.currentStore.listings.length : 0)),
+      businessCollectionGroups: (() => {
+        const listings = this.state.currentStore && Array.isArray(this.state.currentStore.listings) ? this.state.currentStore.listings : [];
+        const groups = {};
+        listings.forEach(listing => {
+          const raw = String(listing.categoryId || listing.category_id || listing.listingType || listing.listing_type || 'Listings');
+          const key = raw.toLowerCase();
+          if (!groups[key]) groups[key] = { label: raw.replace(/[_-]+/g, ' '), count: 0, countLabel: '' };
+          groups[key].count += 1;
+        });
+        return Object.keys(groups).map(key => {
+          const group = groups[key];
+          group.countLabel = group.count + ' published item' + (group.count === 1 ? '' : 's');
+          return group;
+        });
+      })(),
+      businessHasCollectionGroups: Boolean(this.state.currentStore && Array.isArray(this.state.currentStore.listings) && this.state.currentStore.listings.length > 0),
+      businessStoreBio: (this.state.currentStore && ((this.state.currentStore.profile && this.state.currentStore.profile.bio) || this.state.currentStore.description)) || '',
+      businessStoreTagline: (this.state.currentStore && this.state.currentStore.profile && this.state.currentStore.profile.tagline) || '',
+      businessStoreWarrantyPolicy: (this.state.currentStore && this.state.currentStore.profile && this.state.currentStore.profile.warrantyPolicy) || '',
+      businessStoreReturnPolicy: (this.state.currentStore && this.state.currentStore.profile && this.state.currentStore.profile.returnPolicy) || '',
+      businessStoreShippingPolicy: (this.state.currentStore && this.state.currentStore.profile && this.state.currentStore.profile.shippingPolicy) || '',
+      businessStoreAddress: (this.state.currentStore && this.state.currentStore.location && (this.state.currentStore.location.formattedAddress || this.state.currentStore.location.approximateLocation)) || '',
+      businessStoreHours: (() => {
+        const hours = this.state.currentStore && this.state.currentStore.hours;
+        if (!hours) return [];
+        if (hours.isAlwaysOpen) return [{ label: 'Every day', value: 'Open 24 hours' }];
+        const schedule = hours.schedule || {};
+        return Object.keys(schedule).map(day => {
+          const entry = schedule[day] || {};
+          return { label: day.charAt(0).toUpperCase() + day.slice(1), value: entry.closed ? 'Closed' : ((entry.open && entry.close) ? entry.open + ' - ' + entry.close : '') };
+        }).filter(item => item.value);
+      })(),
+      businessHasStoreHours: Boolean(this.state.currentStore && this.state.currentStore.hours && (this.state.currentStore.hours.isAlwaysOpen || Object.keys(this.state.currentStore.hours.schedule || {}).length > 0)),
+      businessHasStoreCopy: Boolean(this.state.currentStore && ((this.state.currentStore.profile && (this.state.currentStore.profile.tagline || this.state.currentStore.profile.bio)) || this.state.currentStore.description)),
+      businessHasStorePolicies: Boolean(this.state.currentStore && this.state.currentStore.profile && (this.state.currentStore.profile.returnPolicy || this.state.currentStore.profile.warrantyPolicy || this.state.currentStore.profile.shippingPolicy)),
+      businessStoreOpenLabel: (this.state.currentStore && this.state.currentStore.hours && this.state.currentStore.hours.currentStatus && this.state.currentStore.hours.currentStatus.label) || '',
+      businessRatingSummary: (this.state.currentStore && this.state.currentStore.ratingSummary) || null,
+      businessHasRatingSummary: Boolean(this.state.currentStore && this.state.currentStore.ratingSummary && Number(this.state.currentStore.ratingSummary.total || 0) > 0),
+      businessHasReviews: Boolean(this.state.currentStore && Array.isArray(this.state.currentStore.reviews) && this.state.currentStore.reviews.length > 0),
+      businessReviews: (this.state.currentStore && Array.isArray(this.state.currentStore.reviews) ? this.state.currentStore.reviews : []).map(review => ({
+        authorName: (review.author && review.author.name) || 'LOUMOO buyer',
+        ratingLabel: Number(review.rating || 0).toFixed(1),
+        title: review.title || '',
+        content: review.content || '',
+        isVerifiedPurchase: Boolean(review.isVerifiedPurchase)
+      })),
       businessStoreProfileLoading: Boolean(this.state.storeProfileLoading),
       businessStoreProfileError: (/permission|authorized|authorization|forbidden|manage/i.test(this.state.storeProfileError || '')) ? '' : (this.state.storeProfileError || ''),
       reloadStoreProfile: () => this.loadStoreProfile(),
