@@ -178,9 +178,11 @@ class DeliveryApiClient {
   }
 
   /**
-   * Active riders, ranked (responsive, then least busy). With a deliveryId each
-   * rider also carries `declined` for THAT delivery.
-   * @returns {Promise<{drivers: Array<{id, name, phone, openDeliveries, declined?}>}>}
+   * Riders who can take a delivery right now (active, online, not busy), ranked
+   * (responsive, then least busy). With a deliveryId each rider also carries
+   * `declined` for THAT delivery. `summary` says how many riders are registered
+   * and how many of them are available, so an empty list can be explained.
+   * @returns {Promise<{drivers: Array<{id, name, phone, openDeliveries, declined?}>, summary?: {registered: number, available: number}}>}
    */
   async listDrivers({ deliveryId } = {}) {
     return this._request(`/drivers${this._qs({ deliveryId })}`);
@@ -245,9 +247,61 @@ class DeliveryApiClient {
 
   // ------------------------------------------------------------------- rider
 
-  /** The signed-in rider's profile and open jobs; 403 for a non-rider. */
+  /**
+   * The signed-in rider's profile, open jobs and availability; 403 for a non-rider.
+   * @returns {Promise<{driver: object, deliveries: object[], presence?: object}>}
+   */
   async riderOverview() {
     return this._request('/driver/me');
+  }
+
+  // --------------------------------------------------------- rider presence
+  // Availability is the SERVER's decision. These calls name an ACTION and carry
+  // at most a position; there is deliberately no way to send a status or a rider
+  // id (the server rejects both). Each resolves to `{ presence }`.
+
+  /** A position the server accepts, or null: only finite numbers are ever sent. */
+  _presenceBody(loc) {
+    const body = {};
+    if (loc && typeof loc.lat === 'number' && isFinite(loc.lat) && typeof loc.lng === 'number' && isFinite(loc.lng)) {
+      body.lat = loc.lat;
+      body.lng = loc.lng;
+      if (typeof loc.accuracyM === 'number' && isFinite(loc.accuracyM) && loc.accuracyM >= 0) body.accuracyM = loc.accuracyM;
+    }
+    return body;
+  }
+
+  /** The rider's own availability as the server sees it right now. */
+  async riderPresence() {
+    return this._request('/driver/presence');
+  }
+
+  /** Go online (also leaves a pause). `loc` is `{lat, lng, accuracyM?}`, optional. */
+  async riderOnline(loc) {
+    return this._post('/driver/presence/online', this._presenceBody(loc));
+  }
+
+  /** Go offline. 409 RIDER_BUSY while carrying an accepted delivery. */
+  async riderOffline() {
+    return this._post('/driver/presence/offline');
+  }
+
+  /** Take a break: stay here, receive no new offers. 409 RIDER_BUSY while on a delivery. */
+  async riderPause() {
+    return this._post('/driver/presence/pause');
+  }
+
+  /** End a pause. */
+  async riderResume(loc) {
+    return this._post('/driver/presence/resume', this._presenceBody(loc));
+  }
+
+  /**
+   * "Still here." Keeps an online rider online; it can never bring an offline or
+   * paused rider back. Not the delivery GPS endpoint (postLocation).
+   */
+  async riderHeartbeat(loc) {
+    return this._post('/driver/presence/heartbeat', this._presenceBody(loc));
   }
 
   async accept(id) {

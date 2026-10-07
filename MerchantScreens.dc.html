@@ -396,13 +396,20 @@
               {{ businessStoreDescription }}
             </p>
             <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;font:500 13px/1 var(--font-body);color:var(--color-text-muted)">
-              <span style="color:var(--color-text);font-weight:600">★ {{ businessStoreRating }}</span>
-              <span style="opacity:.35">·</span>
-              <span>1,240 followers</span>
-              <span style="opacity:.35">·</span>
-              <span>318 products</span>
-              <span style="opacity:.35">·</span>
-              <span style="color:var(--color-success);font-weight:600">Open now</span>
+              <sc-if value="{{ businessStoreHasRating }}">
+                <span style="color:var(--color-text);font-weight:600">&#9733; {{ businessStoreRating }} ({{ businessStoreRatingCount }})</span>
+              </sc-if>
+              <sc-if value="{{ !businessStoreHasRating }}">
+                <span>No ratings yet</span>
+              </sc-if>
+              <span style="opacity:.35">&middot;</span>
+              <span>{{ businessStoreFollowerCount }} followers</span>
+              <span style="opacity:.35">&middot;</span>
+              <span>{{ businessStoreListingCount }} published items</span>
+              <sc-if value="{{ businessStoreOpenLabel }}">
+                <span style="opacity:.35">&middot;</span>
+                <span style="color:var(--color-success);font-weight:600">{{ businessStoreOpenLabel }}</span>
+              </sc-if>
             </div>
           </div>
         </div>
@@ -412,32 +419,37 @@
           <button onClick="{{ toggleFollow }}" class="btn {{ following ? 'btn-secondary' : 'btn-primary' }}" style="height:42px;padding:0 24px;font-weight:600;border-radius:var(--radius-pill)">
             {{ followLabel }}
           </button>
-          <button onClick="{{ (e) => contactSellerWhatsApp({ sellerName: businessStoreName }) }}" class="btn btn-secondary" style="height:42px;padding:0 20px;font-weight:600;border-radius:var(--radius-pill);color:var(--color-wa-teal)">
+          <button onClick="{{ (e) => contactSellerWhatsApp({ sellerName: businessStoreName, phone: businessStorePhone }) }}" class="btn btn-secondary" style="height:42px;padding:0 20px;font-weight:600;border-radius:var(--radius-pill);color:var(--color-wa-teal)">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="margin-right:6px"><path d="M17.5 14.4c-.3-.15-1.7-.85-2-.95-.26-.1-.46-.15-.65.15-.2.3-.75.95-.9 1.15-.17.2-.34.22-.63.07-.3-.15-1.25-.46-2.4-1.47-.9-.8-1.5-1.77-1.67-2.07-.17-.3-.02-.46.13-.6.13-.14.3-.34.44-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.65-1.57-.9-2.15-.24-.57-.48-.5-.65-.5h-.56c-.2 0-.5.07-.77.37-.26.3-1 .98-1 2.4s1.03 2.78 1.17 2.98c.15.2 2.02 3.08 4.9 4.32.68.3 1.22.47 1.63.6.68.22 1.3.18 1.8.11.55-.08 1.7-.7 1.93-1.36.24-.67.24-1.24.17-1.36-.07-.12-.26-.2-.55-.34zM12 2C6.48 2 2 6.48 2 12c0 1.77.46 3.43 1.27 4.87L2 22l5.25-1.38A9.94 9.94 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2z"/></svg>
             <span>Message</span>
           </button>
+          <sc-if value="{{ businessStoreIsOwner }}">
+            <button onClick="{{ openStoreSettings }}" class="btn btn-secondary" style="height:42px;padding:0 20px;font-weight:600;border-radius:var(--radius-pill)">Edit storefront</button>
+          </sc-if>
         </div>
 
       </div>
 
       <!-- ── TRUST LINE (minimal) ── -->
       <div style="display:flex;align-items:center;gap:22px;flex-wrap:wrap;padding-top:20px;border-top:1px solid var(--color-divider);font:500 12.5px/1 var(--font-body);color:var(--color-text-secondary)">
-        <span style="display:flex;align-items:center;gap:7px">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          <span>Escrow protected</span>
-        </span>
-        <span style="display:flex;align-items:center;gap:7px">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
-          <span>12-month warranty</span>
-        </span>
-        <span style="display:flex;align-items:center;gap:7px">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          <span>2h Douala · 24h Yaoundé</span>
-        </span>
-        <span style="display:flex;align-items:center;gap:7px">
+        <sc-if value="{{ businessStoreWarrantyPolicy }}">
+          <span style="display:flex;align-items:center;gap:7px">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
+            <span>{{ businessStoreWarrantyPolicy }}</span>
+          </span>
+        </sc-if>
+        <sc-if value="{{ businessStoreShippingPolicy }}">
+          <span style="display:flex;align-items:center;gap:7px">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span>{{ businessStoreShippingPolicy }}</span>
+          </span>
+        </sc-if>
+        <sc-if value="{{ businessStoreCity }}">
+          <span style="display:flex;align-items:center;gap:7px">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
           <span>{{ businessStoreCity }}</span>
-        </span>
+          </span>
+        </sc-if>
       </div>
 
     </div>
@@ -464,95 +476,47 @@
     <sc-if value="{{ storeTabIsHome }}">
       <div style="display:flex;flex-direction:column;gap:36px">
 
-        <!-- Hero Featured Merchandising Card -->
-        <div style="background:var(--color-neutral-100);border:1px solid var(--color-divider);border-radius:var(--radius-lg);padding:44px 36px;display:flex;flex-direction:column;gap:16px;align-items:center;text-align:center">
-          <span style="font:600 12px/1 var(--font-heading);letter-spacing:.08em;text-transform:uppercase;color:var(--color-text-muted)">Featured · Apple Silicon</span>
-          <h2 style="color:var(--color-text);margin:0;font-size:clamp(26px, 4vw, 40px);font-weight:700;letter-spacing:-.03em;line-height:1.05">MacBook Air &amp; Pro.<br>Studio power, sealed in box.</h2>
-          <p style="color:var(--color-text-secondary);max-width:520px;margin:2px 0 4px;font-size:15px;line-height:1.5">
-            M2 and M3 architecture with local Douala warranty and free express setup.
-          </p>
-          <div style="display:flex;gap:12px;margin-top:8px;align-items:center;flex-wrap:wrap;justify-content:center">
-            <button onClick="{{ on.product }}" class="btn btn-primary" style="height:46px;padding:0 26px;font-weight:600;border-radius:var(--radius-pill)">
-              Shop MacBook Air · XAF 745 000
-            </button>
-            <button onClick="{{ () => setStoreActiveTab('products') }}" style="border:none;background:transparent;color:var(--color-accent);font:600 14px/1 var(--font-heading);cursor:pointer">
-              View all laptops →
-            </button>
+        <sc-if value="{{ businessHeroListing }}">
+          <div style="background:var(--color-neutral-100);border:1px solid var(--color-divider);border-radius:var(--radius-lg);padding:44px 36px;display:flex;flex-direction:column;gap:16px;align-items:center;text-align:center">
+            <span style="font:600 12px/1 var(--font-heading);letter-spacing:.08em;text-transform:uppercase;color:var(--color-text-muted)">Latest published item</span>
+            <h2 style="color:var(--color-text);margin:0;font-size:clamp(26px, 4vw, 40px);font-weight:700;letter-spacing:-.03em;line-height:1.05">{{ businessHeroListing.title }}</h2>
+            <sc-if value="{{ businessHeroListing.description }}">
+              <p style="color:var(--color-text-secondary);max-width:520px;margin:2px 0 4px;font-size:15px;line-height:1.5">{{ businessHeroListing.description }}</p>
+            </sc-if>
+            <div style="display:flex;gap:12px;margin-top:8px;align-items:center;flex-wrap:wrap;justify-content:center">
+              <button onClick="{{ () => openProduct(businessHeroListing.id) }}" class="btn btn-primary" style="height:46px;padding:0 26px;font-weight:600;border-radius:var(--radius-pill)">View item · {{ businessHeroListing.priceLabel }}</button>
+              <button onClick="{{ () => setStoreActiveTab('products') }}" style="border:none;background:transparent;color:var(--color-accent);font:600 14px/1 var(--font-heading);cursor:pointer">View all published items →</button>
+            </div>
           </div>
-        </div>
+        </sc-if>
 
-        <!-- Best Sellers Grid -->
         <div>
           <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px">
-            <h3 style="margin:0;font-size:18px;letter-spacing:-.02em">Best Selling Tech In Stock</h3>
-            <button onClick="{{ () => setStoreActiveTab('products') }}" style="border:none;background:transparent;color:var(--color-accent);font:700 12px/1 var(--font-heading);cursor:pointer">
-              VIEW ALL 318 ITEMS →
-            </button>
+            <h3 style="margin:0;font-size:18px;letter-spacing:-.02em">Latest items from this store</h3>
+            <button onClick="{{ () => setStoreActiveTab('products') }}" style="border:none;background:transparent;color:var(--color-accent);font:700 12px/1 var(--font-heading);cursor:pointer">VIEW ALL {{ businessStoreListingCount }} ITEMS →</button>
           </div>
-
-          <div class="home-grid">
-            
-            <!-- Item 1 -->
-            <button onClick="{{ on.product }}" aria-label="View MacBook Air M2">
-              <div class="ph" style="aspect-ratio:4/3">
-                <span class="badge-floating badge-hot">BEST SELLER</span>
-              </div>
-              <div style="padding:10px 4px 4px">
-                <div style="font:700 13.5px/1.2 var(--font-heading);color:var(--color-text)">Apple MacBook Air 13” (M2)</div>
-                <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:4px">Space Grey · 8GB / 256GB SSD</div>
-                <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:8px">
-                  <span style="font:800 14px/1 var(--font-heading);color:var(--color-accent)">XAF 745 000</span>
-                  <span style="font:700 11px/1 var(--font-heading);color:#eab308">★ 4.9 (218)</span>
-                </div>
-              </div>
-            </button>
-
-            <!-- Item 2 -->
-            <button onClick="{{ on.product }}" aria-label="View Anker 737 Power Bank">
-              <div class="ph" style="aspect-ratio:4/3">
-                <span class="badge-floating badge-blue">POWER STATION</span>
-              </div>
-              <div style="padding:10px 4px 4px">
-                <div style="font:700 13.5px/1.2 var(--font-heading);color:var(--color-text)">Anker 737 Power Bank (24k)</div>
-                <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:4px">140W GaN Fast Charge Display</div>
-                <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:8px">
-                  <span style="font:800 14px/1 var(--font-heading);color:var(--color-accent)">XAF 62 000</span>
-                  <span style="font:700 11px/1 var(--font-heading);color:#eab308">★ 4.8 (94)</span>
-                </div>
-              </div>
-            </button>
-
-            <!-- Item 3 -->
-            <button onClick="{{ on.product }}" aria-label="View Sony WH-1000XM5">
-              <div class="ph" style="aspect-ratio:4/3">
-                <span class="badge-floating badge-sale">-28%</span>
-              </div>
-              <div style="padding:10px 4px 4px">
-                <div style="font:700 13.5px/1.2 var(--font-heading);color:var(--color-text)">Sony WH-1000XM5 ANC</div>
-                <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:4px">Industry Active Noise Cancelling</div>
-                <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:8px">
-                  <span style="font:800 14px/1 var(--font-heading);color:var(--color-accent)">XAF 189 000</span>
-                  <span style="font:700 11px/1 var(--font-heading);color:#eab308">★ 4.9 (142)</span>
-                </div>
-              </div>
-            </button>
-
-            <!-- Item 4 -->
-            <button onClick="{{ on.product }}" aria-label="View Samsung Galaxy A55">
-              <div class="ph" style="aspect-ratio:4/3">
-                <span class="badge-floating badge-new">NEW</span>
-              </div>
-              <div style="padding:10px 4px 4px">
-                <div style="font:700 13.5px/1.2 var(--font-heading);color:var(--color-text)">Samsung Galaxy A55 5G</div>
-                <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:4px">128GB Storage · Awesome Navy</div>
-                <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:8px">
-                  <span style="font:800 14px/1 var(--font-heading);color:var(--color-accent)">XAF 245 000</span>
-                  <span style="font:700 11px/1 var(--font-heading);color:#eab308">★ 4.7 (76)</span>
-                </div>
-              </div>
-            </button>
-
-          </div>
+          <sc-if value="{{ !businessHasListings }}">
+            <div style="padding:32px 16px;text-align:center;border:1px dashed var(--color-divider);border-radius:var(--radius-md);color:var(--color-text-secondary);font:400 14px/1.5 var(--font-body)">This seller has not published any items yet.</div>
+          </sc-if>
+          <sc-if value="{{ businessHasListings }}">
+            <div class="home-grid">
+              <sc-for items="{{ businessFeaturedListings }}" var="item">
+                <button onClick="{{ () => openProduct(item.id) }}" aria-label="View {{ item.title }}">
+                  <div class="ph" style="aspect-ratio:4/3;overflow:hidden">
+                    <sc-if value="{{ item.hasImage }}"><img src="{{ item.imageUrl }}" alt="{{ item.title }}" style="width:100%;height:100%;object-fit:cover" loading="lazy" decoding="async"></sc-if>
+                  </div>
+                  <div style="padding:10px 4px 4px">
+                    <div style="font:700 13.5px/1.2 var(--font-heading);color:var(--color-text)">{{ item.title }}</div>
+                    <sc-if value="{{ item.description }}"><div style="font:400 11.5px/1.35 var(--font-body);color:var(--color-text-secondary);margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ item.description }}</div></sc-if>
+                    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:8px">
+                      <span style="font:800 14px/1 var(--font-heading);color:var(--color-accent)">{{ item.priceLabel }}</span>
+                      <sc-if value="{{ item.hasRating }}"><span style="font:700 11px/1 var(--font-heading);color:#eab308">&#9733; {{ item.ratingLabel }} ({{ item.ratingCount }})</span></sc-if>
+                    </div>
+                  </div>
+                </button>
+              </sc-for>
+            </div>
+          </sc-if>
         </div>
 
       </div>
@@ -563,196 +527,69 @@
       <div style="display:flex;flex-direction:column;gap:18px">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
           <div>
-            <h3 style="margin:0;font-size:18px">Store Product Catalog (318 Items)</h3>
-            <div style="font:400 12px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">All items verified in Douala showroom inventory</div>
-          </div>
-          <div class="hs" style="gap:8px">
-            <button class="tag tag-accent">All (318)</button>
-            <button class="tag tag-neutral">Laptops (84)</button>
-            <button class="tag tag-neutral">Audio (62)</button>
-            <button class="tag tag-neutral">Power &amp; Batteries (45)</button>
-            <button class="tag tag-neutral">Smartphones (127)</button>
+            <h3 style="margin:0;font-size:18px">Published items ({{ businessStoreListingCount }})</h3>
+            <div style="font:400 12px/1.3 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Only items this seller has published are shown here.</div>
           </div>
         </div>
 
-        <div class="home-grid">
-          <button onClick="{{ on.product }}" aria-label="View MacBook Air M2">
-            <div class="ph" style="aspect-ratio:4/3"></div>
-            <div style="padding:10px 4px 4px">
-              <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">MacBook Air M2 13”</div>
-              <div style="font:800 14px/1 var(--font-heading);color:var(--color-accent);margin-top:4px">XAF 745 000</div>
-            </div>
-          </button>
-          <button onClick="{{ on.product }}" aria-label="View Anker 737 Power Bank">
-            <div class="ph" style="aspect-ratio:4/3"></div>
-            <div style="padding:10px 4px 4px">
-              <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Anker 737 Bank</div>
-              <div style="font:800 14px/1 var(--font-heading);color:var(--color-accent);margin-top:4px">XAF 62 000</div>
-            </div>
-          </button>
-          <button onClick="{{ on.product }}" aria-label="View Sony WH-1000XM5">
-            <div class="ph" style="aspect-ratio:4/3"></div>
-            <div style="padding:10px 4px 4px">
-              <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Sony WH-1000XM5</div>
-              <div style="font:800 14px/1 var(--font-heading);color:var(--color-accent);margin-top:4px">XAF 189 000</div>
-            </div>
-          </button>
-          <button onClick="{{ on.product }}" aria-label="View Samsung Galaxy A55">
-            <div class="ph" style="aspect-ratio:4/3"></div>
-            <div style="padding:10px 4px 4px">
-              <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">Samsung Galaxy A55</div>
-              <div style="font:800 14px/1 var(--font-heading);color:var(--color-accent);margin-top:4px">XAF 245 000</div>
-            </div>
-          </button>
-        </div>
+        <sc-if value="{{ !businessHasListings }}"><div style="padding:32px 16px;text-align:center;border:1px dashed var(--color-divider);border-radius:var(--radius-md);color:var(--color-text-secondary);font:400 14px/1.5 var(--font-body)">No published items yet.</div></sc-if>
+        <sc-if value="{{ businessHasListings }}">
+          <div class="home-grid">
+            <sc-for items="{{ businessStoreListings }}" var="item">
+              <button onClick="{{ () => openProduct(item.id) }}" aria-label="View {{ item.title }}">
+                <div class="ph" style="aspect-ratio:4/3;overflow:hidden"><sc-if value="{{ item.hasImage }}"><img src="{{ item.imageUrl }}" alt="{{ item.title }}" style="width:100%;height:100%;object-fit:cover" loading="lazy" decoding="async"></sc-if></div>
+                <div style="padding:10px 4px 4px">
+                  <div style="font:700 13px/1.2 var(--font-heading);color:var(--color-text)">{{ item.title }}</div>
+                  <div style="font:400 11.5px/1.35 var(--font-body);color:var(--color-text-secondary);margin-top:4px">{{ item.categoryLabel }}</div>
+                  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:8px"><span style="font:800 14px/1 var(--font-heading);color:var(--color-accent)">{{ item.priceLabel }}</span><sc-if value="{{ item.hasRating }}"><span style="font:700 11px/1 var(--font-heading);color:#eab308">&#9733; {{ item.ratingLabel }} ({{ item.ratingCount }})</span></sc-if></div>
+                </div>
+              </button>
+            </sc-for>
+          </div>
+          <sc-if value="{{ businessHasMoreListings }}"><div style="font:400 12px/1.4 var(--font-body);color:var(--color-text-secondary)">Showing the 100 most recently published items.</div></sc-if>
+        </sc-if>
       </div>
     </sc-if>
 
     <!-- ── SUB-TAB 3: COLLECTIONS & BUNDLES ── -->
     <sc-if value="{{ storeTabIsCollections }}">
-      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));gap:16px">
-        <div class="card-premium" style="display:flex;flex-direction:column;gap:12px">
-          <div class="ph" style="aspect-ratio:16/9;border-radius:var(--radius-md)">
-            <span>BUNDLE VISUAL</span>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <h3 style="margin:0;font-size:18px">Published item groups</h3>
+        <sc-if value="{{ !businessHasCollectionGroups }}"><div style="padding:32px 16px;text-align:center;border:1px dashed var(--color-divider);border-radius:var(--radius-md);color:var(--color-text-secondary);font:400 14px/1.5 var(--font-body)">No item groups are available until this seller publishes a listing.</div></sc-if>
+        <sc-if value="{{ businessHasCollectionGroups }}">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px">
+            <sc-for items="{{ businessCollectionGroups }}" var="group"><button onClick="{{ () => setStoreActiveTab('products') }}" class="card-premium" style="text-align:left;cursor:pointer"><div style="font:700 15px/1.2 var(--font-heading);color:var(--color-text);text-transform:capitalize">{{ group.label }}</div><div style="font:500 12px/1.4 var(--font-body);color:var(--color-text-secondary);margin-top:5px">{{ group.countLabel }}</div></button></sc-for>
           </div>
-          <span class="kicker">CREATOR ECOSYSTEM</span>
-          <h4 style="margin:0;font-size:16px">Developer Pro Workstation Bundle</h4>
-          <p style="font-size:13px;color:var(--color-text-secondary);margin:0">
-            MacBook Air M2 + Anker 737 GaN Fast Charger + Magic Mouse. Save 12% on complete workstation.
-          </p>
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px">
-            <span style="font:800 16px/1 var(--font-heading);color:var(--color-accent)">XAF 820 000</span>
-            <button onClick="{{ on.product }}" class="btn btn-primary" style="height:36px;font-size:12px">VIEW BUNDLE</button>
-          </div>
-        </div>
-
-        <div class="card-premium" style="display:flex;flex-direction:column;gap:12px">
-          <div class="ph" style="aspect-ratio:16/9;border-radius:var(--radius-md)">
-            <span>STUDIO SOUND</span>
-          </div>
-          <span class="kicker">AUDIOPHILE LINEUP</span>
-          <h4 style="margin:0;font-size:16px">Sony Acoustic Masters</h4>
-          <p style="font-size:13px;color:var(--color-text-secondary);margin:0">
-            Wireless noise cancelling headphones with LDAC high resolution codec and hard carry cases.
-          </p>
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px">
-            <span style="font:800 16px/1 var(--font-heading);color:var(--color-accent)">From XAF 189 000</span>
-            <button onClick="{{ on.product }}" class="btn btn-primary" style="height:36px;font-size:12px">VIEW BUNDLE</button>
-          </div>
-        </div>
+        </sc-if>
       </div>
     </sc-if>
 
     <!-- ── SUB-TAB 4: ABOUT & LOCATION ── -->
     <sc-if value="{{ storeTabIsAbout }}">
       <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));gap:20px">
-        
         <div class="card-premium" style="display:flex;flex-direction:column;gap:14px">
-          <h4 style="margin:0;font-size:16px">Storefront Identity &amp; Heritage</h4>
-          <p style="font-size:13.5px;line-height:1.6;color:var(--color-text-secondary);margin:0">
-            Orca Electronics has operated in Douala since 2018, providing certified consumer electronics, laptops, and mobile accessories. We hold authorized distribution licenses for Apple, Dell, and Anker hardware in Central Africa.
-          </p>
-          <div style="border-top:1px solid var(--color-divider);padding-top:12px;display:flex;flex-direction:column;gap:8px;font-size:13px">
-            <div><strong>RCCM Number:</strong> RC/DLA/2023/B/1842</div>
-            <div><strong>Tax ID (NIU):</strong> M052112345678A</div>
-            <div><strong>Business Type:</strong> SARL Commercial Tech Distributor</div>
-          </div>
+          <h4 style="margin:0;font-size:16px">About {{ businessStoreName }}</h4>
+          <sc-if value="{{ businessStoreTagline }}"><div style="font:700 13px/1.4 var(--font-heading);color:var(--color-text)">{{ businessStoreTagline }}</div></sc-if>
+          <sc-if value="{{ businessStoreBio }}"><p style="font-size:13.5px;line-height:1.6;color:var(--color-text-secondary);margin:0">{{ businessStoreBio }}</p></sc-if>
+          <sc-if value="{{ !businessHasStoreCopy }}"><div style="font-size:13.5px;line-height:1.6;color:var(--color-text-secondary)">This seller has not added an introduction yet.</div></sc-if>
+          <sc-if value="{{ businessHasStorePolicies }}"><div style="border-top:1px solid var(--color-divider);padding-top:12px;display:flex;flex-direction:column;gap:8px;font-size:13px"><sc-if value="{{ businessStoreReturnPolicy }}"><div><strong>Returns:</strong> {{ businessStoreReturnPolicy }}</div></sc-if><sc-if value="{{ businessStoreWarrantyPolicy }}"><div><strong>Warranty:</strong> {{ businessStoreWarrantyPolicy }}</div></sc-if><sc-if value="{{ businessStoreShippingPolicy }}"><div><strong>Delivery:</strong> {{ businessStoreShippingPolicy }}</div></sc-if></div></sc-if>
         </div>
 
         <div class="card-premium" style="display:flex;flex-direction:column;gap:14px">
-          <h4 style="margin:0;font-size:16px">Showroom Location &amp; Operating Hours</h4>
-          <div style="font-size:13px;color:var(--color-text-secondary)">
-            <div>📍 <strong>Address:</strong> Boulevard de la Liberté, Akwa Commercial Zone, Douala</div>
-            <div style="margin-top:4px">🏢 <strong>Landmark:</strong> Next to Total Akwa Roundabout</div>
-            <div style="margin-top:4px">📞 <strong>Direct Line:</strong> +237 690 12 34 56</div>
-          </div>
-          <div style="border-top:1px solid var(--color-divider);padding-top:12px">
-            <div style="font:700 12px/1 var(--font-heading);color:var(--color-text);margin-bottom:6px">OPERATING SCHEDULE</div>
-            <div style="font-size:12.5px;color:var(--color-text-secondary);display:flex;flex-direction:column;gap:4px">
-              <div>Monday – Friday: 08:00 – 18:30</div>
-              <div>Saturday: 08:30 – 17:00</div>
-              <div>Sunday: Closed (Escrow Orders Processed Online)</div>
-            </div>
-          </div>
+          <h4 style="margin:0;font-size:16px">Location &amp; operating hours</h4>
+          <sc-if value="{{ businessStoreAddress }}"><div style="font-size:13px;color:var(--color-text-secondary)"><strong>Address:</strong> {{ businessStoreAddress }}</div></sc-if>
+          <sc-if value="{{ !businessStoreAddress }}"><div style="font-size:13px;color:var(--color-text-secondary)">This seller has not shared a public address.</div></sc-if>
+          <sc-if value="{{ businessHasStoreHours }}"><div style="border-top:1px solid var(--color-divider);padding-top:12px"><div style="font:700 12px/1 var(--font-heading);color:var(--color-text);margin-bottom:6px">OPERATING SCHEDULE</div><div style="font-size:12.5px;color:var(--color-text-secondary);display:flex;flex-direction:column;gap:4px"><sc-for items="{{ businessStoreHours }}" var="hour"><div>{{ hour.label }}: {{ hour.value }}</div></sc-for></div></div></sc-if>
         </div>
-
       </div>
     </sc-if>
 
     <!-- ── SUB-TAB 5: REVIEWS & TRUST ── -->
     <sc-if value="{{ storeTabIsReviews }}">
       <div style="display:flex;flex-direction:column;gap:20px">
-        
-        <!-- Scorecard Summary -->
-        <div class="card-premium" style="display:flex;align-items:center;gap:32px;flex-wrap:wrap;padding:24px">
-          <div style="text-align:center;min-width:120px">
-            <div style="font:800 36px/1 var(--font-heading);color:var(--color-text)">4.9</div>
-            <div style="color:#eab308;font-size:16px;margin:6px 0">★★★★★</div>
-            <div style="font:500 12px/1 var(--font-body);color:var(--color-text-secondary)">218 Verified Reviews</div>
-          </div>
-
-          <div style="flex:1;min-width:200px;display:flex;flex-direction:column;gap:6px;font-size:12px">
-            <div style="display:flex;align-items:center;gap:8px">
-              <span style="width:24px">5★</span>
-              <div style="flex:1;height:8px;background:var(--color-neutral-200);border-radius:4px;overflow:hidden">
-                <div style="width:88%;height:100%;background:var(--color-accent);border-radius:4px"></div>
-              </div>
-              <span style="width:36px;text-align:right">88%</span>
-            </div>
-            <div style="display:flex;align-items:center;gap:8px">
-              <span style="width:24px">4★</span>
-              <div style="flex:1;height:8px;background:var(--color-neutral-200);border-radius:4px;overflow:hidden">
-                <div style="width:9%;height:100%;background:var(--color-accent);border-radius:4px"></div>
-              </div>
-              <span style="width:36px;text-align:right">9%</span>
-            </div>
-            <div style="display:flex;align-items:center;gap:8px">
-              <span style="width:24px">3★</span>
-              <div style="flex:1;height:8px;background:var(--color-neutral-200);border-radius:4px;overflow:hidden">
-                <div style="width:2%;height:100%;background:var(--color-neutral-400);border-radius:4px"></div>
-              </div>
-              <span style="width:36px;text-align:right">2%</span>
-            </div>
-            <div style="display:flex;align-items:center;gap:8px">
-              <span style="width:24px">2★</span>
-              <div style="flex:1;height:8px;background:var(--color-neutral-200);border-radius:4px;overflow:hidden">
-                <div style="width:1%;height:100%;background:var(--color-neutral-400);border-radius:4px"></div>
-              </div>
-              <span style="width:36px;text-align:right">1%</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Verified Reviews Items -->
-        <div style="display:flex;flex-direction:column;gap:12px">
-          
-          <div class="card-premium" style="padding:16px">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-              <div style="display:flex;align-items:center;gap:8px">
-                <span style="font:700 13.5px/1 var(--font-heading)">Emmanuel N. (Douala)</span>
-                <span class="tag" style="background:var(--color-success-100);color:var(--color-success);font-size:9.5px;padding:1px 6px">VERIFIED PURCHASE</span>
-              </div>
-              <span style="color:#eab308;font-weight:800;font-size:12.5px">★ 5.0</span>
-            </div>
-            <div style="font:400 13px/1.5 var(--font-body);color:var(--color-text)">
-              "Bought a MacBook Air M2. The box was sealed, original serial number verified on Apple's check coverage portal. Hand-delivered in Akwa within 2 hours. Escrow release was super smooth!"
-            </div>
-          </div>
-
-          <div class="card-premium" style="padding:16px">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-              <div style="display:flex;align-items:center;gap:8px">
-                <span style="font:700 13.5px/1 var(--font-heading)">Clarisse M. (Yaoundé Bastos)</span>
-                <span class="tag" style="background:var(--color-success-100);color:var(--color-success);font-size:9.5px;padding:1px 6px">VERIFIED PURCHASE</span>
-              </div>
-              <span style="color:#eab308;font-weight:800;font-size:12.5px">★ 5.0</span>
-            </div>
-            <div style="font:400 13px/1.5 var(--font-body);color:var(--color-text)">
-              "Fast shipping to Yaoundé via Finexs VIP parcel delivery. Product arrived in pristine condition with receipt and 12-month store warranty certificate."
-            </div>
-          </div>
-
-        </div>
+        <sc-if value="{{ businessHasRatingSummary }}"><div class="card-premium" style="display:flex;align-items:center;gap:32px;flex-wrap:wrap;padding:24px"><div style="text-align:center;min-width:120px"><div style="font:800 36px/1 var(--font-heading);color:var(--color-text)">{{ businessRatingSummary.average }}</div><div style="color:#eab308;font-size:16px;margin:6px 0">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div style="font:500 12px/1 var(--font-body);color:var(--color-text-secondary)">{{ businessRatingSummary.total }} customer reviews</div></div><div style="flex:1;min-width:200px;display:flex;flex-direction:column;gap:6px;font-size:12px"><div style="display:flex;align-items:center;gap:8px"><span style="width:24px">5&#9733;</span><div style="flex:1;height:8px;background:var(--color-neutral-200);border-radius:4px;overflow:hidden"><div style="width:{{ businessRatingSummary.percentageBreakdown[5] }}%;height:100%;background:var(--color-accent);border-radius:4px"></div></div><span style="width:36px;text-align:right">{{ businessRatingSummary.breakdown[5] }}</span></div><div style="display:flex;align-items:center;gap:8px"><span style="width:24px">4&#9733;</span><div style="flex:1;height:8px;background:var(--color-neutral-200);border-radius:4px;overflow:hidden"><div style="width:{{ businessRatingSummary.percentageBreakdown[4] }}%;height:100%;background:var(--color-accent);border-radius:4px"></div></div><span style="width:36px;text-align:right">{{ businessRatingSummary.breakdown[4] }}</span></div><div style="display:flex;align-items:center;gap:8px"><span style="width:24px">3&#9733;</span><div style="flex:1;height:8px;background:var(--color-neutral-200);border-radius:4px;overflow:hidden"><div style="width:{{ businessRatingSummary.percentageBreakdown[3] }}%;height:100%;background:var(--color-accent);border-radius:4px"></div></div><span style="width:36px;text-align:right">{{ businessRatingSummary.breakdown[3] }}</span></div><div style="display:flex;align-items:center;gap:8px"><span style="width:24px">2&#9733;</span><div style="flex:1;height:8px;background:var(--color-neutral-200);border-radius:4px;overflow:hidden"><div style="width:{{ businessRatingSummary.percentageBreakdown[2] }}%;height:100%;background:var(--color-accent);border-radius:4px"></div></div><span style="width:36px;text-align:right">{{ businessRatingSummary.breakdown[2] }}</span></div><div style="display:flex;align-items:center;gap:8px"><span style="width:24px">1&#9733;</span><div style="flex:1;height:8px;background:var(--color-neutral-200);border-radius:4px;overflow:hidden"><div style="width:{{ businessRatingSummary.percentageBreakdown[1] }}%;height:100%;background:var(--color-accent);border-radius:4px"></div></div><span style="width:36px;text-align:right">{{ businessRatingSummary.breakdown[1] }}</span></div></div></div></sc-if>
+        <sc-if value="{{ !businessHasRatingSummary }}"><div style="padding:32px 16px;text-align:center;border:1px dashed var(--color-divider);border-radius:var(--radius-md);color:var(--color-text-secondary);font:400 14px/1.5 var(--font-body)">This store has not received a customer review yet.</div></sc-if>
+        <sc-if value="{{ businessHasReviews }}"><div style="display:flex;flex-direction:column;gap:12px"><sc-for items="{{ businessReviews }}" var="review"><div class="card-premium" style="padding:16px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div style="display:flex;align-items:center;gap:8px"><span style="font:700 13.5px/1 var(--font-heading)">{{ review.authorName }}</span><sc-if value="{{ review.isVerifiedPurchase }}"><span class="tag" style="background:var(--color-success-100);color:var(--color-success);font-size:9.5px;padding:1px 6px">VERIFIED PURCHASE</span></sc-if></div><span style="color:#eab308;font-weight:800;font-size:12.5px">&#9733; {{ review.ratingLabel }}</span></div><sc-if value="{{ review.title }}"><div style="font:700 13px/1.3 var(--font-heading);color:var(--color-text);margin-bottom:4px">{{ review.title }}</div></sc-if><div style="font:400 13px/1.5 var(--font-body);color:var(--color-text)">{{ review.content }}</div></div></sc-for></div></sc-if>
 
       </div>
     </sc-if>

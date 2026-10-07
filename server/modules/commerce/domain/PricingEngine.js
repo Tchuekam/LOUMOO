@@ -74,8 +74,19 @@ class PricingEngine {
         throw new ValidationError(`Price must be a non-negative integer, got ${item.unitPriceXaf}.`);
       }
 
+      // Integer arithmetic is only exact up to Number.MAX_SAFE_INTEGER; past that a
+      // product or sum silently rounds, so refuse the order instead of mispricing it.
       const lineTotalXaf = qty * price;
+      if (!Number.isSafeInteger(lineTotalXaf)) {
+        throw new ValidationError(
+          `Line total for ${qty} x XAF ${price} exceeds the maximum safe integer calculation limit.`
+        );
+      }
+
       subtotalXaf += lineTotalXaf;
+      if (!Number.isSafeInteger(subtotalXaf)) {
+        throw new ValidationError('Order subtotal exceeds the maximum safe integer calculation limit.');
+      }
 
       lineItems.push({
         listingId: item.listing?.id || item.listingId || null,

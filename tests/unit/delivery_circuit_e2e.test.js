@@ -13,6 +13,11 @@
  * does the seller hear about it, can they arrange the delivery, does the rider get
  * the job, does the buyer see it arrive, and does every one of them read the same
  * story from their own point of view?
+ *
+ * The rider's availability is part of the circuit: a registered rider is OFFLINE until
+ * they go online over the API, only an online rider is offered the delivery (the
+ * seller's list, auto-assign and a manual choice all agree), accepting makes them busy,
+ * the GPS trail is not a heartbeat, and finishing frees them again.
  */
 
 require('../setup');
@@ -81,7 +86,10 @@ async function run() {
 
   const repo = new DeliveryRepository({ db: null });
   repo._adminIds = ['admin_1'];
-  const service = new DeliveryService({ repository: repo, orderRepository: orders, events: new DeliveryEvents(), now: clock.now });
+  // The rider is "here" for an hour after their last heartbeat. The journey below moves the clock by
+  // seconds, so expiry never plays a part (and the environment's RIDER_PRESENCE_TTL_SECONDS cannot
+  // change the outcome); heartbeat expiry itself is covered by the presence suites.
+  const service = new DeliveryService({ repository: repo, orderRepository: orders, events: new DeliveryEvents(), now: clock.now, presenceTtlMs: 60 * 60 * 1000 });
 
   const app = express();
   app.use(express.json());
@@ -171,6 +179,14 @@ async function run() {
     assert.ok(find(await feed('rider_1'), /now a LOUMOO rider/), 'the rider hears they were registered');
     assert.strictEqual((await api('POST', '/drivers/rider_2', SELLER, { name: 'X', phone: '+237600000009' })).status, 403, 'only an admin registers riders');
 
+    // Registered is not online: a new rider has to open the app and go online before anyone can offer them work.
+    const fresh = await api('GET', '/driver/presence', RIDER);
+    assert.strictEqual(fresh.status, 200);
+    assert.strictEqual(fresh.data.presence.status, 'offline', 'a freshly registered rider is offline');
+    assert.strictEqual(fresh.data.presence.available, false);
+    const rosterBefore = await api('GET', '/drivers?status=all', ADMIN);
+    assert.deepStrictEqual(rosterBefore.data.drivers.map((r) => [r.id, r.presence]), [['rider_1', 'offline']], 'the administrator sees the same: registered, offline');
+
     // ============================ 5. the seller arranges the delivery
     const created = await api('POST', '/', SELLER, { orderId: techOrder.id, dropoffLocation: DROP });
     assert.strictEqual(created.status, 201, JSON.stringify(created.error));
@@ -178,8 +194,39 @@ async function run() {
     assert.ok(find(await feed('buyer_1'), /Delivery being arranged/), 'the buyer hears a rider is being found');
     assert.strictEqual((await api('POST', '/', OTHER_SELLER, { orderId: techOrder.id })).status, 404, 'another seller cannot dispatch this order');
 
+    // The rider is registered but has not gone online: the seller is shown nobody (and can tell "nobody is
+    // online" from "no riders"), and neither way of offering the delivery will pick them.
+    const nobody = await api('GET', `/drivers?deliveryId=${deliveryId}`, SELLER);
+    assert.strictEqual(nobody.status, 200);
+    assert.deepStrictEqual(nobody.data.drivers, [], 'a rider who is not online is not on the seller\'s list');
+    assert.deepStrictEqual(nobody.data.summary, { registered: 1, available: 0 }, 'one rider registered, none available');
+    const noAuto = await api('POST', `/${deliveryId}/auto-assign`, SELLER);
+    assert.strictEqual(noAuto.status, 409, 'auto-assign finds nobody');
+    assert.strictEqual(noAuto.error.code, 'NO_RIDER_AVAILABLE');
+    const noManual = await api('POST', `/${deliveryId}/assign`, SELLER, { driverId: 'rider_1' });
+    assert.strictEqual(noManual.status, 409, 'and choosing the offline rider by hand is refused');
+    assert.strictEqual(noManual.error.code, 'RIDER_UNAVAILABLE');
+    assert.strictEqual(noManual.error.details.reason, 'offline');
+    assert.strictEqual((await api('GET', `/${deliveryId}`, SELLER)).data.delivery.status, 'pending_assignment', 'so the delivery is still waiting for a rider');
+
+    // Presence belongs to the rider alone: nobody else can raise it, and the body can not name anyone.
+    assert.strictEqual((await api('POST', '/driver/presence/online', STRANGER, {})).status, 403, 'a customer is not a rider');
+    assert.strictEqual((await api('POST', '/driver/presence/online', SELLER, {})).status, 403, 'nor is a seller');
+    assert.strictEqual((await api('POST', '/driver/presence/online', ADMIN, {})).status, 403, 'nor an administrator, who cannot put a rider online either');
+    assert.strictEqual((await api('POST', '/driver/presence/online', null, {})).status, 401, 'and it needs a session');
+    assert.strictEqual((await api('POST', '/driver/presence/online', STRANGER, { riderId: 'rider_1' })).status, 400, 'a body naming a rider is refused outright');
+    assert.strictEqual((await api('POST', '/driver/presence/online', RIDER, { status: 'online' })).status, 400, 'and so is one that tries to set the status');
+    assert.strictEqual((await api('GET', '/driver/presence', RIDER)).data.presence.status, 'offline', 'none of that changed Alain');
+
+    // The rider opens the app and goes online. The seller can now see who to offer it to.
+    const online = await api('POST', '/driver/presence/online', RIDER, {});
+    assert.strictEqual(online.status, 200, JSON.stringify(online.error));
+    assert.strictEqual(online.data.presence.status, 'online');
+    assert.strictEqual(online.data.presence.available, true);
+    assert.strictEqual(online.data.presence.lastSeenAt, new Date(clock.now()).toISOString(), 'stamped with the server\'s clock');
     const drivers = await api('GET', `/drivers?deliveryId=${deliveryId}`, SELLER);
     assert.deepStrictEqual(drivers.data.drivers.map((d) => d.id), ['rider_1'], 'the seller can see who to offer it to');
+    assert.deepStrictEqual(drivers.data.summary, { registered: 1, available: 1 });
     const offered = await api('POST', `/${deliveryId}/auto-assign`, SELLER);
     assert.strictEqual(offered.status, 200, JSON.stringify(offered.error));
     assert.strictEqual(offered.data.delivery.status, 'assigned');
@@ -229,6 +276,16 @@ async function run() {
     assert.ok(find(await feed('buyer_1'), /rider accepted/i), 'the buyer is told someone is coming');
     assert.ok(find(await feed('seller_1'), /rider accepted/i), 'the seller is told to have the parcel ready');
     await checkStory('accepted', 'accepted', ['rider']);
+
+    // Accepting made the rider busy: they are carrying a parcel, so nobody can offer them another.
+    const busy = (await api('GET', '/driver/presence', RIDER)).data.presence;
+    assert.strictEqual(busy.status, 'busy', 'online -> busy on accept');
+    assert.strictEqual(busy.available, false);
+    const noneFree = await api('GET', '/drivers', SELLER);
+    assert.deepStrictEqual(noneFree.data.drivers, [], 'a busy rider is not on the seller\'s list');
+    assert.deepStrictEqual(noneFree.data.summary, { registered: 1, available: 0 });
+    assert.strictEqual((await api('POST', '/driver/presence/offline', RIDER, {})).status, 409, 'and cannot go offline with the parcel');
+    assert.strictEqual((await api('GET', '/drivers?status=all', ADMIN)).data.drivers[0].presence, 'busy', 'the administrator reads the same');
     const afterAccept = (await api('GET', `/${deliveryId}`, RIDER)).data.delivery;
     assert.ok(afterAccept.dropoff.address, 'once accepted, the rider gets the customer\'s address');
 
@@ -237,7 +294,19 @@ async function run() {
     assert.strictEqual(codeRes.status, 200);
     assert.strictEqual(codeRes.data.code, codeFor(deliveryId, 1), 'the buyer\'s code is the one the rider will be asked for');
 
+    // A GPS ping is history for this delivery, not a heartbeat: ten seconds on, the ping is accepted but the
+    // rider's presence has not moved. Only the heartbeat endpoint says "I am still here".
+    clock.advance(10000);
     assert.strictEqual((await api('POST', `/${deliveryId}/location`, RIDER, { ...NEAR })).data.accepted, true);
+    const afterPing = (await api('GET', '/driver/presence', RIDER)).data.presence;
+    assert.strictEqual(afterPing.lastSeenAt, busy.lastSeenAt, 'the GPS ping did not count as a heartbeat');
+    assert.strictEqual(afterPing.location, null, 'nor did it become the rider\'s availability position');
+    const beat = await api('POST', '/driver/presence/heartbeat', RIDER, { ...NEAR });
+    assert.strictEqual(beat.status, 200, JSON.stringify(beat.error));
+    assert.strictEqual(beat.data.presence.status, 'busy', 'a heartbeat from a busy rider keeps them busy');
+    assert.strictEqual(beat.data.presence.lastSeenAt, new Date(clock.now()).toISOString(), 'and is what moves the last-seen time');
+    assert.notStrictEqual(beat.data.presence.lastSeenAt, busy.lastSeenAt);
+    assert.deepStrictEqual(beat.data.presence.location, { lat: NEAR.lat, lng: NEAR.lng, accuracyM: null }, 'with their position, kept apart from the delivery trail');
     clock.advance(5000);
     assert.strictEqual((await api('POST', `/${deliveryId}/status`, RIDER, { status: 'picked_up' })).status, 200);
     assert.strictEqual((await orders.findOrderById(techOrder.id)).fulfillmentStatus, 'in_transit', 'the order itself moves to in transit');
@@ -260,6 +329,14 @@ async function run() {
     assert.strictEqual(done.status, 200, JSON.stringify(done.error));
     assert.strictEqual((await orders.findOrderById(techOrder.id)).fulfillmentStatus, 'delivered', 'the order is delivered');
     await checkStory('delivered', 'delivered', []);
+
+    // The job is over, so the rider is free again: busy -> online, and offerable once more.
+    const free = (await api('GET', '/driver/presence', RIDER)).data.presence;
+    assert.strictEqual(free.status, 'online', 'busy -> online when the delivery ends');
+    assert.strictEqual(free.available, true);
+    assert.deepStrictEqual((await api('GET', '/drivers', SELLER)).data.drivers.map((d) => d.id), ['rider_1'], 'back on the seller\'s list');
+    assert.strictEqual((await api('POST', '/driver/presence/offline', RIDER, {})).data.presence.status, 'offline', 'and free to finish for the day');
+    assert.deepStrictEqual((await api('GET', '/drivers', SELLER)).data.drivers, [], 'after which nobody can offer them anything');
 
     // ============================ 8. who heard what, over the whole journey
     const buyerFeed = await feed('buyer_1');

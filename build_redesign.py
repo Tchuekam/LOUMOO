@@ -52,12 +52,14 @@ header_and_styles = """<!DOCTYPE html>
 <script defer src="./src/services/searchExperience.js"></script>
 <link rel="stylesheet" href="./src/styles/search.css">
 <script defer src="./src/services/travelApi.js"></script>
+<script defer src="./src/services/deliveryApi.js"></script>
+<script defer src="./src/services/deliveryTrackingScreen.js"></script>
 <script defer src="./src/services/deliveryCircuit.js"></script>
 <script defer src="./src/services/deliveryApi.js"></script>
 <script defer src="./src/services/deliveryTrackingScreen.js"></script>
 <script defer src="./src/services/dispatchUi.js"></script>
 <script defer src="./src/services/sellerDispatch.js"></script>
-<script defer src="./src/services/providerProfile.js"></script>
+<script defer src="./src/services/riderPresence.js"></script>
 <script defer src="./src/services/riderHub.js"></script>
 <script defer src="./src/services/ridersAdmin.js"></script>
 <script defer src="./src/services/clerkSession.js"></script>
@@ -12808,10 +12810,10 @@ class Component extends DCLogic {
     if (this.state.docUploaded || this.state.verificationChoice === 'later') score += 15;
     const completionScore = Math.min(100, score);
 
-    // Client-side password strength meter (UX affordance only — Clerk remains
-    // the authority on what it will accept, including breach checks).
-    const strength = passwordStrength(this.state.resetNewPassword || '');
-    const regStrength = passwordStrength(this.state.regPassword || '');
+Assembles the pristine, production-grade Commerce App.dc.html (plus its route-level
+*Screens.dc.html chunks and public/) from the domain modules under src/. This file only
+sequences the build; every piece of application logic, markup and styling lives in
+src/<domain>/ and is composed by the helpers in src/core/build/.
 
     const viewProps = {
       is, on, st, pick,
@@ -18119,6 +18121,8 @@ for _name, _condition, _markup in _screen_chunks:
         '  <dc-import name="' + _name + '" dcProps="{{ viewProps }}"></dc-import>\n'
         '</sc-if>\n'
     )
+    with open('Commerce App.dc.html', 'w', encoding='utf-8') as handle:
+        handle.write(full_html)
 
 def _compact_shell_markup(markup):
     return re.sub(r'[\t ]+$', '', re.sub(r'<!--[\s\S]*?-->', '', markup), flags=re.M)
@@ -18135,23 +18139,6 @@ full_html = (
 with open('Commerce App.dc.html', 'w', encoding='utf-8') as f:
     f.write(full_html)
 
-# public/ is owned by scripts/assemble_public.js -- the same script Netlify
-# runs as its build command. It wipes and re-assembles the directory: shell,
-# every *Screens.dc.html chunk, support.js and the whole src/ tree, then drops
-# src/backend (which embeds the Supabase URL), sanitizes filenames Netlify
-# rejects and rewrites the asset references to match.
-#
-# This build used to write public/index.html by itself and nothing else, so a
-# local public/ ended up with a fresh shell beside months-old route chunks and
-# service clients -- the browser then ran code this build had already replaced,
-# and local behaviour silently diverged from the deployed site. Delegating to
-# the real assembler keeps a local run byte-identical to a deploy.
-if os.path.isdir('public') or os.path.isfile(os.path.join('scripts', 'assemble_public.js')):
-    import subprocess
-    try:
-        subprocess.run(['node', os.path.join('scripts', 'assemble_public.js')], check=True)
-    except (OSError, subprocess.CalledProcessError) as exc:
-        print('WARNING: could not assemble public/ (' + str(exc) + ').')
-        print('         Run `node scripts/assemble_public.js` before serving locally.')
 
-print("Commerce App.dc.html successfully rebuilt with all screens and backend integration!")
+if __name__ == '__main__':
+    build()

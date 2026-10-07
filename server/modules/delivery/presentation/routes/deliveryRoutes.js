@@ -119,12 +119,14 @@ function createDeliveryRouter({
 
   router.get('/drivers', authenticate, route(async (req, res) => {
     const { deliveryId, status } = parseBody(schemas.ListDriversQuerySchema, req.query, 'query');
-    // ?status= is the admin roster (every rider, suspended ones included); without
-    // it this is the ranked list of active riders a seller picks from.
-    const drivers = status
-      ? await svc().listRiderRoster(callerOf(req), { status })
-      : await svc().listDrivers(callerOf(req), { deliveryId });
-    ok(res, { drivers });
+    // ?status= is the admin roster (every rider, suspended ones included, each with
+    // its presence); without it this is the ranked list of riders who are available
+    // now that a seller picks from, plus how many riders are registered at all.
+    if (status) {
+      ok(res, { drivers: await svc().listRiderRoster(callerOf(req), { status }) });
+      return;
+    }
+    ok(res, await svc().listDrivers(callerOf(req), { deliveryId, withSummary: true }));
   }));
 
   // The seller's dispatch board (literal path: registered before /:id).
@@ -165,6 +167,45 @@ function createDeliveryRouter({
 
   router.get('/driver/me', authenticate, route(async (req, res) => {
     ok(res, await svc().getRiderOverview(callerOf(req)));
+  }));
+
+  // ---------------------------------------------------------- rider presence
+  //
+  // Whether the signed-in rider can be offered work. Every one of these acts on the
+  // AUTHENTICATED caller's own presence: the path and body carry no rider id and no
+  // status (the schemas are strict, so one that tries is refused), which is what
+  // makes "only the rider can change their own presence" true by construction. Only a
+  // registered, active rider has presence (403 otherwise). Registered before /:id.
+  // The heartbeat is its own endpoint on purpose: the delivery location ping is a
+  // delivery's GPS trail, and posting one never counts as being available.
+
+  router.get('/driver/presence', authenticate, route(async (req, res) => {
+    ok(res, { presence: await svc().getRiderPresence(callerOf(req)) });
+  }));
+
+  router.post('/driver/presence/online', authenticate, route(async (req, res) => {
+    const body = parseBody(schemas.PresencePingSchema, req.body, 'presence');
+    ok(res, { presence: await svc().riderGoOnline(callerOf(req), body) });
+  }));
+
+  router.post('/driver/presence/offline', authenticate, route(async (req, res) => {
+    parseBody(schemas.PresenceActionSchema, req.body, 'presence');
+    ok(res, { presence: await svc().riderGoOffline(callerOf(req)) });
+  }));
+
+  router.post('/driver/presence/pause', authenticate, route(async (req, res) => {
+    parseBody(schemas.PresenceActionSchema, req.body, 'presence');
+    ok(res, { presence: await svc().riderPause(callerOf(req)) });
+  }));
+
+  router.post('/driver/presence/resume', authenticate, route(async (req, res) => {
+    const body = parseBody(schemas.PresencePingSchema, req.body, 'presence');
+    ok(res, { presence: await svc().riderResume(callerOf(req), body) });
+  }));
+
+  router.post('/driver/presence/heartbeat', authenticate, route(async (req, res) => {
+    const body = parseBody(schemas.PresencePingSchema, req.body, 'presence');
+    ok(res, { presence: await svc().riderHeartbeat(callerOf(req), body) });
   }));
 
   // -------------------------------------------------------- create / look-ups

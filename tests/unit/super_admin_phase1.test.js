@@ -119,33 +119,36 @@ async function run() {
   });
   assert.strictEqual(rejected, true, 'Customer role must be blocked by guard');
 
-  let devTokenPassed = false;
+  // The only non-session way in is the harness's test token (secret-verified).
+  const harness = require('../helpers/harness');
+  let testTokenPassed = false;
   const mockReqToken = {
-    headers: { authorization: 'Bearer admin_token' }
+    headers: { authorization: `Bearer ${harness.superAdminToken()}` }
   };
-  requireSuperAdminRole(mockReqToken, {}, () => { devTokenPassed = true; });
-  assert.strictEqual(devTokenPassed, true, 'Admin dev bearer token must pass guard in test/dev');
+  await requireSuperAdminRole(mockReqToken, {}, (err) => { if (!err) testTokenPassed = true; });
+  assert.strictEqual(testTokenPassed, true, 'Harness super-admin test token must pass guard when test auth is enabled');
+  assert.strictEqual(mockReqToken.principal.primaryRole, ROLES.SUPER_ADMIN);
   console.log('    ✓ 7. RBAC security guard verification passed');
 
   // ── 8. HTTP Endpoint Integration via Harness ──
-  const harness = require('../helpers/harness');
+  const adminToken = harness.superAdminToken();
   const pageRes = await harness.request('GET', '/superadmin');
   assert.strictEqual(pageRes.status, 200, '/superadmin dedicated page must return 200');
   const htmlContent = typeof pageRes.body === 'string' ? pageRes.body : JSON.stringify(pageRes.body);
-  assert.ok(htmlContent.includes('LOUMOO — SuperAdmin Executive Control Center'), 'Page must contain SuperAdmin title');
+  assert.ok(htmlContent.includes('<title>LOUMOO — Enterprise Control</title>'), 'Page must be the SuperAdmin control center (SuperAdmin/frontend/index.html)');
 
-  const settingsRes = await harness.request('GET', '/api/v1/admin/settings', { token: 'admin_token' });
+  const settingsRes = await harness.request('GET', '/api/v1/admin/settings', { token: adminToken });
   assert.strictEqual(settingsRes.status, 200, 'GET /api/v1/admin/settings must return 200');
   assert.ok(settingsRes.body.data.settings, 'Settings payload must be returned');
 
   const updateHttp = await harness.request('PUT', '/api/v1/admin/settings/platform_commission_rate', {
-    token: 'admin_token',
+    token: adminToken,
     body: { value: { rate_percent: 6.2 }, reason: 'HTTP integration test update' }
   });
   assert.strictEqual(updateHttp.status, 200, 'PUT /api/v1/admin/settings/:key must return 200');
   assert.strictEqual(updateHttp.body.data.value.rate_percent, 6.2);
 
-  const overviewRes = await harness.request('GET', '/api/v1/admin/overview', { token: 'admin_token' });
+  const overviewRes = await harness.request('GET', '/api/v1/admin/overview', { token: adminToken });
   assert.strictEqual(overviewRes.status, 200, 'GET /api/v1/admin/overview must return 200');
   assert.ok(overviewRes.body.data.kpis, 'KPIs must be returned in overview');
 

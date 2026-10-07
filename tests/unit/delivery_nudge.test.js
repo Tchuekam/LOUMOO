@@ -11,6 +11,8 @@
  *     a delivered, cancelled, refunded or pickup order, an order a day old);
  *   - each reminder fires once per order, in the right voice, and routes to the screen;
  *   - administrators get ONE alert for everything that crossed the line together;
+ *   - an offer taken back because the rider went offline puts the order back on the
+ *     waiting list, counted from the withdrawal rather than from the order;
  *   - a tier set to 0 is off, and unusable settings fall back to the defaults.
  */
 
@@ -47,8 +49,13 @@ async function world(options = {}) {
   const orders = new OrderRepository({ db: null });
   const repo = new DeliveryRepository({ db: null });
   repo._adminIds = ['admin_1', 'admin_2'];
-  const service = new DeliveryService({ repository: repo, orderRepository: orders, events: new DeliveryEvents(), now: clock.now, ...options });
+  // The longest presence window there is (an hour): the clock here moves by tens of minutes, and these
+  // cases are about reminders, not heartbeats, so the rider must still be "here" when it has moved.
+  const service = new DeliveryService({
+    repository: repo, orderRepository: orders, events: new DeliveryEvents(), now: clock.now, presenceTtlMs: 60 * MIN, ...options
+  });
   await service.registerDriver('rider_1', { name: 'Alain', phone: '+237600000001' }, ADMIN);
+  await service.riderGoOnline(RIDER); // an offer can only go to a rider who is online
   if (recorder) recorder.clear(); // setting the world up told the rider; that is not under test
   const place = (ageMs, over = {}) => orders.saveOrder(new Order({
     buyerId: 'buyer_1', sellerId: 'seller_1', orderNumber: over.orderNumber,
@@ -178,6 +185,41 @@ async function run() {
       rec.clear();
       w.clock.advance(60 * MIN);
       assert.strictEqual((await w.service.nudgeUndispatched()).overdue, 0, 'an offered delivery is the rider\'s to answer (its own expiry handles that)');
+    }
+
+    // ------------- a rider who goes offline holding an offer puts the order back on the waiting list
+    {
+      rec.clear();
+      const w = await world();
+      // An order an hour old, so that "counted from the order" and "counted from the withdrawal" differ.
+      const order = await w.place(60 * MIN, { orderNumber: 'KM-WENTOFFLINE' });
+      const created = await w.service.createDelivery(order.id, SELLER, {});
+      await w.service.assignDriver(created.id, 'rider_1', SELLER);
+      assert.deepStrictEqual(await w.service.nudgeUndispatched(), { sellers: 0, admins: 0, overdue: 0 },
+        'while the rider holds the offer the order is theirs to answer, however old it is');
+      rec.clear();
+
+      await w.service.riderGoOffline(RIDER);
+      const back = await w.repo.findById(created.id);
+      assert.strictEqual(back.status, 'pending_assignment', 'the unanswered offer went back to the seller');
+      assert.strictEqual(back.driverId, null);
+      assert.ok(rec.to('seller_1').some((n) => n.title === 'A rider is no longer available'), 'and the seller was told it was taken back');
+      rec.clear();
+
+      // Nobody is on the order again, but the wait starts at the withdrawal (the seller has just been
+      // told), not at the order's creation an hour ago: otherwise they would be chased at once.
+      assert.deepStrictEqual(await w.service.nudgeUndispatched(), { sellers: 0, admins: 0, overdue: 0 }, 'not chased the moment the offer is taken back');
+      w.clock.advance(10 * MIN);
+      assert.strictEqual((await w.service.nudgeUndispatched()).sellers, 0, 'nor after ten minutes');
+      w.clock.advance(6 * MIN);
+      const chase = await w.service.nudgeUndispatched();
+      assert.strictEqual(chase.sellers, 1, 'but after fifteen the seller is reminded: the order needs a rider again');
+      assert.strictEqual(chase.overdue, 0, 'administrators are not alerted yet');
+      const note = rec.to('seller_1').find((n) => /still needs a rider/.test(n.title));
+      assert.ok(note && /KM-WENTOFFLINE/.test(note.title), 'about that order');
+      assert.ok(/Choose a rider/.test(note.body), 'the delivery exists, so the advice is "choose a rider"');
+      assert.strictEqual(note.metadata.orderId, order.id);
+      assert.strictEqual(rec.to('admin_1').length, 0);
     }
 
     // --------------------------------------------------------------- tiers can be switched off

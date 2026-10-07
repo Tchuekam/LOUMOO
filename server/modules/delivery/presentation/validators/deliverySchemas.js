@@ -68,6 +68,20 @@ const LocationPingSchema = z.object({
   accuracyM: NumberLike.optional().nullable()
 }).strict();
 
+// POST /driver/presence/{online,resume,heartbeat}. An optional position and NOTHING
+// else. `.strict()` is the security property here: there is no `status`, `online`,
+// `riderId`, `driverId` or `profileId` key to send, and a request that tries is
+// refused outright (400) rather than quietly ignored, so presence can only ever be
+// changed by the ACTION asked for, on the authenticated caller's own record.
+const PresencePingSchema = z.object({
+  lat: NumberLike.optional().nullable(),
+  lng: NumberLike.optional().nullable(),
+  accuracyM: NumberLike.optional().nullable()
+}).strict();
+
+// POST /driver/presence/{offline,pause}: no body at all, for the same reason.
+const PresenceActionSchema = z.object({}).strict();
+
 const CompleteDeliverySchema = z.object({
   // Accept a number too: a client that sends 0042 as 42 gets a clear
   // "4 digits" error from the service rather than a type error.
@@ -111,6 +125,8 @@ module.exports = {
   CancelDeliverySchema,
   RiderStatusSchema,
   LocationPingSchema,
+  PresencePingSchema,
+  PresenceActionSchema,
   CompleteDeliverySchema,
   RegisterDriverSchema,
   ProvidersQuerySchema,

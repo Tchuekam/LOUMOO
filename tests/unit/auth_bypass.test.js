@@ -18,7 +18,18 @@ const PROJECT_ROOT = path.resolve(__dirname, '..', '..');
 function evalInEnv(script, env, options = {}) {
   return execFileSync(process.execPath, ['-e', script], {
     cwd: PROJECT_ROOT,
-    env: { ...process.env, ...env },
+    env: {
+      ...process.env,
+      // Hermetic however this suite is launched: no .env, no real Redis / error-tracking /
+      // analytics / email. (tests/setup.js already strips these; this keeps it true if the
+      // suite is ever run with real services opted into.)
+      LOUMOO_NO_DOTENV: '1',
+      REDIS_URL: '',
+      SENTRY_DSN: '',
+      POSTHOG_API_KEY: '',
+      RESEND_API_KEY: '',
+      ...env
+    },
     encoding: 'utf8',
     stdio: ['ignore', 'pipe', 'pipe'],
     ...options
@@ -41,8 +52,18 @@ function productionEnv(overrides = {}) {
     CLERK_SECRET_KEY: 'sk_test_dummy',
     CLERK_PUBLISHABLE_KEY: 'pk_test_dummy',
     CLERK_WEBHOOK_SECRET: '',
-    SUPABASE_URL: 'https://example.supabase.co',
+    // Loopback with a closed port, not a made-up public hostname: scenario 6 boots the
+    // real server, which opens a connection to this URL. A hostname means a real DNS
+    // lookup and TCP connect from a unit test (it hung for 30s on a slow resolver).
+    // 127.0.0.1:9 refuses instantly and can never reach anyone's project.
+    SUPABASE_URL: 'http://127.0.0.1:9',
     SUPABASE_SERVICE_ROLE_KEY: 'sb_test_dummy',
+    // Also required in production since the auth hardening (see
+    // PRODUCTION_REQUIRED in server/config/env.js). They used to be inherited
+    // from the developer's own environment, so this scenario passed on a
+    // machine with real credentials and failed everywhere else.
+    SUPABASE_JWT_SECRET: 'dummy-jwt-secret-for-the-config-validator-only',
+    SUPABASE_ANON_KEY: 'sb_anon_dummy_key',
     CORS_ORIGINS: 'https://loumoo.cm',
     LOUMOO_TEST_AUTH_SECRET: '',
     ...overrides
@@ -187,7 +208,7 @@ async function run() {
        req.write(payload); req.end();
      });`,
     productionEnv(),
-    { timeout: 30000 }
+    { timeout: 90000 } // loading the whole server takes 5-30s depending on machine load
   ));
 
   assert.strictEqual(webhookProbe.status, 503,

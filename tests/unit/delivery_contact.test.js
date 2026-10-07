@@ -16,7 +16,16 @@
  *      administrator must resolve this" and nobody was telling the administrator.
  *   4. Riders hear about being registered, replaced and unlocked.
  *   5. A deployment whose delivery migration was never applied answers a plain
- *      503 instead of looking like an empty system.
+ *      503 instead of looking like an empty system. That includes the presence
+ *      migration (017): without iam.rider_presence nobody can be offered anything.
+ *   6. Rider presence (docs/DELIVERY_API.md, "Rider presence"): going online, pausing
+ *      or going offline tells nobody; an offer taken back because its rider stopped
+ *      being available tells that offer's SELLER (and only them); an offer refused
+ *      because the rider is not available is never announced to anyone.
+ *
+ * Riders are only offered work while they are online, so every rider here is put
+ * online after being registered, and the world's presence window is long enough
+ * that it never lapses under the tests that move the clock for other reasons.
  */
 
 require('../setup');
@@ -41,6 +50,13 @@ const NEAR = { lat: 4.0511, lng: 9.7679 };
 
 async function code(promise) {
   try { await promise; return 'OK'; } catch (e) { return e.code || e.name || 'ERROR'; }
+}
+
+/** `CODE:reason` of a refusal (RIDER_UNAVAILABLE:paused), or 'OK': says WHY a rider was turned down. */
+async function refusal(promise) {
+  try { await promise; return 'OK'; } catch (e) {
+    return `${e.code || e.name || 'ERROR'}${e.details && e.details.reason ? `:${e.details.reason}` : ''}`;
+  }
 }
 
 /** Replaces the notification service with a recorder; returns it and a restore(). */
@@ -232,26 +248,41 @@ async function testPreferredProviderPricing() {
 
 // ------------------------------------------------------------ 2-4. the circuit itself
 
-function makeWorld() {
+const MIN = 60 * 1000;
+// A rider's app may stay silent this long and still count as online. The service clamps
+// it to an hour at most, which is as long as presence can be made to last.
+const LONG_PRESENCE_TTL_MS = 60 * MIN;
+// The window the silence scenarios use: short, and pinned here rather than read from a default.
+const PRESENCE_TTL_MS = 2 * MIN;
+
+function makeWorld({ presenceTtlMs = LONG_PRESENCE_TTL_MS } = {}) {
   let t = Date.parse('2026-10-03T10:00:00.000Z');
   const clock = { now: () => t, advance: (ms) => { t += ms; } };
   const orders = new OrderRepository({ db: null });
   const repo = new DeliveryRepository({ db: null });
   repo._adminIds = ['admin_1', 'admin_2'];
-  const service = new DeliveryService({ repository: repo, orderRepository: orders, events: new DeliveryEvents(), now: clock.now });
+  const service = new DeliveryService({ repository: repo, orderRepository: orders, events: new DeliveryEvents(), now: clock.now, presenceTtlMs });
   return { clock, orders, repo, service };
 }
 
-async function placeOrder(world) {
+async function placeOrder(world, { buyerId = 'buyer_1', sellerId = 'seller_1' } = {}) {
   return world.orders.saveOrder(new Order({
-    buyerId: 'buyer_1',
-    sellerId: 'seller_1',
-    items: [{ listingId: 'lst_1', title: 'Phone', unitPriceXaf: 50000, quantity: 1, sellerId: 'seller_1', storeName: 'Tech Shop' }],
+    buyerId,
+    sellerId,
+    items: [{ listingId: 'lst_1', title: 'Phone', unitPriceXaf: 50000, quantity: 1, sellerId, storeName: 'Tech Shop' }],
     shippingAddress: { fullName: 'Awa Njoya', phone: '+237622222222', street: 'Rue 1', city: 'Douala' },
     deliveryMethod: DELIVERY_METHOD.HOME_DELIVERY,
     paymentStatus: PAYMENT_STATUS.PAID,
     fulfillmentStatus: FULFILLMENT_STATUS.PROCESSING
   }));
+}
+
+/** An administrator registers a rider, who then opens the app and goes online. Returns who they act as. */
+async function registerOnline(world, id, name, phone) {
+  await world.service.registerDriver(id, { name, phone }, ADMIN);
+  const caller = { userId: id, userRole: 'customer' };
+  await world.service.riderGoOnline(caller);
+  return caller;
 }
 
 const titles = (list) => list.map((n) => n.title);
@@ -267,6 +298,11 @@ async function testTheCircuit() {
       assert.ok(has(rec.to('rider_1'), /now a LOUMOO rider/), 'a newly registered rider is told, and what to open');
       assert.strictEqual(rec.to('rider_1')[0].metadata.action, 'open_rider_hub');
       rec.clear();
+
+      // Registered is not available: the rider opens the app and goes online. That tells nobody.
+      await w.service.riderGoOnline(RIDER);
+      assert.strictEqual((await w.service.getRiderPresence(RIDER)).status, 'online');
+      assert.strictEqual(rec.sent.length, 0, 'going online is not news to anyone');
 
       const order = await placeOrder(w);
       const created = await w.service.createDelivery(order.id, SELLER, { dropoffLocation: { lat: 4.0601, lng: 9.7679 } });
@@ -319,8 +355,8 @@ async function testTheCircuit() {
     {
       rec.clear();
       const w = makeWorld();
-      await w.service.registerDriver('rider_1', { name: 'Alain', phone: '+237600000001' }, ADMIN);
-      await w.service.registerDriver('rider_2', { name: 'Bruno', phone: '+237600000002' }, ADMIN);
+      await registerOnline(w, 'rider_1', 'Alain', '+237600000001');
+      await registerOnline(w, 'rider_2', 'Bruno', '+237600000002');
       const order = await placeOrder(w);
       const created = await w.service.createDelivery(order.id, SELLER, {});
       await w.service.assignDriver(created.id, 'rider_1', SELLER);
@@ -335,7 +371,7 @@ async function testTheCircuit() {
     {
       rec.clear();
       const w = makeWorld();
-      await w.service.registerDriver('rider_1', { name: 'Alain', phone: '+237600000001' }, ADMIN);
+      await registerOnline(w, 'rider_1', 'Alain', '+237600000001');
       const order = await placeOrder(w);
       const created = await w.service.createDelivery(order.id, SELLER, { dropoffLocation: { lat: 4.0601, lng: 9.7679 } });
       await w.service.assignDriver(created.id, 'rider_1', SELLER);
@@ -380,7 +416,7 @@ async function testTheCircuit() {
       rec.clear();
       const w = makeWorld();
       w.repo._adminIds = [];
-      await w.service.registerDriver('rider_1', { name: 'Alain', phone: '+237600000001' }, ADMIN);
+      await registerOnline(w, 'rider_1', 'Alain', '+237600000001');
       const order = await placeOrder(w);
       const created = await w.service.createDelivery(order.id, SELLER, { dropoffLocation: { lat: 4.0601, lng: 9.7679 } });
       await w.service.assignDriver(created.id, 'rider_1', SELLER);
@@ -475,17 +511,31 @@ async function testEscrowAttestation() {
 
 // ------------------------------------------------- 5. a missing migration is a clear 503
 
-function brokenDb(errorCode) {
+/**
+ * A database whose queries fail with `errorCode`. By default every table fails; with `only`
+ * (a list of table names) just those do and every other table answers an empty success, which
+ * is how "only migration 017 is missing" looks to the probe. `calls`, when given an array,
+ * records the table of every query in order. `throwOn` makes the client itself throw for one
+ * table, the way a dropped connection does.
+ */
+function brokenDb(errorCode, { only = null, calls = null, throwOn = null } = {}) {
   const failing = { data: null, error: { code: errorCode, message: 'relation does not exist' } };
-  const q = () => {
+  const q = (table) => {
+    const broken = !only || only.includes(table);
     const chain = {};
-    for (const m of ['select', 'eq', 'in', 'not', 'order', 'limit', 'update', 'insert', 'upsert', 'gte', 'lte', 'or']) chain[m] = () => chain;
-    chain.maybeSingle = async () => failing;
-    chain.single = async () => failing;
-    chain.then = (resolve) => resolve(failing);
+    for (const m of ['select', 'eq', 'in', 'not', 'order', 'limit', 'update', 'insert', 'upsert', 'gt', 'gte', 'lte', 'or']) chain[m] = () => chain;
+    chain.maybeSingle = async () => (broken ? failing : { data: null, error: null });
+    chain.single = async () => (broken ? failing : { data: null, error: null });
+    chain.then = (resolve) => resolve(broken ? failing : { data: [], error: null });
     return chain;
   };
-  return { from: () => q() };
+  return {
+    from: (table) => {
+      if (calls) calls.push(table);
+      if (throwOn === table) throw new Error('socket hang up');
+      return q(table);
+    }
+  };
 }
 
 async function testMissingMigration() {
@@ -513,6 +563,96 @@ async function testMissingMigration() {
   } finally {
     config.isProduction = wasProduction;
   }
+}
+
+/**
+ * Migration 017 on its own. The delivery tables can be there while iam.rider_presence is not
+ * (a deploy that applied 013 and 014 and stopped): every presence read and write must then be
+ * the same plain 503 in production, never an empty "nobody is online" that looks like a quiet
+ * evening, and the boot probe must say which migration is missing.
+ */
+async function testMissingPresenceMigration() {
+  const wasProduction = config.isProduction;
+  const presenceCalls = (repo) => [
+    ['findPresence', () => repo.findPresence('rider_1')],
+    ['ensurePresence', () => repo.ensurePresence('rider_1')],
+    ['transitionPresence', () => repo.transitionPresence('rider_1', ['online'], { status: 'busy' })],
+    ['listPresence', () => repo.listPresence()],
+    ['listFreshOnlinePresence', () => repo.listFreshOnlinePresence(new Date().toISOString())],
+    ['findStalePresence', () => repo.findStalePresence(new Date().toISOString())],
+    ['findStaleBusyPresence', () => repo.findStaleBusyPresence(new Date().toISOString())]
+  ];
+  try {
+    config.isProduction = true;
+    const repo = new DeliveryRepository({ db: brokenDb('PGRST205', { only: ['rider_presence'] }) });
+    for (const [name, call] of presenceCalls(repo)) {
+      let error = null;
+      try { await call(); } catch (e) { error = e; }
+      assert.ok(error instanceof DeliveryNotReadyError, `${name}: a missing presence table is a typed error, not an empty answer`);
+      assert.strictEqual(error.statusCode, 503, `${name} answers 503`);
+      assert.strictEqual(error.code, 'DELIVERY_NOT_READY', `${name} says delivery is not ready`);
+      assert.ok(!/relation|PGRST|iam\.|rider_presence/.test(error.message), `${name}: no database detail reaches the client`);
+    }
+    // The delivery tables themselves are fine in that database: only presence is refused.
+    assert.strictEqual(await repo.findById('dlv_1'), null, 'a read of a table that exists is not refused');
+
+    // A rider's own presence call through the service is the same 503, not a 500 and not "offline".
+    const service = new DeliveryService({ repository: new DeliveryRepository({ db: brokenDb('PGRST205') }), orderRepository: new OrderRepository({ db: null }), events: new DeliveryEvents() });
+    assert.strictEqual(await code(service.getRiderPresence(RIDER)), 'DELIVERY_NOT_READY', 'a rider asking for their presence in a deployment without the tables gets the 503');
+
+    // Outside production the development fallback is unchanged: no throw, and no row invented.
+    config.isProduction = false;
+    const dev = new DeliveryRepository({ db: brokenDb('PGRST205', { only: ['rider_presence'] }) });
+    assert.strictEqual(await dev.findPresence('rider_1'), null, 'no row, no throw');
+    assert.deepStrictEqual(await dev.listFreshOnlinePresence(new Date(0).toISOString()), [], 'nobody is online, no throw');
+  } finally {
+    config.isProduction = wasProduction;
+  }
+}
+
+/** The boot probe (server/index.js): says "not ready" for a missing table, and only for that. */
+async function testProbe() {
+  // Every table there: ready, nothing to say, and it looked at BOTH the deliveries and the presence table.
+  {
+    const calls = [];
+    const probe = await new DeliveryRepository({ db: brokenDb('PGRST205', { only: [], calls }) }).probe();
+    assert.deepStrictEqual(probe, { ready: true }, 'a complete database is ready with no reason');
+    assert.deepStrictEqual(calls, ['deliveries', 'rider_presence'], 'the probe checks the presence table as well as the deliveries one');
+  }
+
+  // Only the presence table missing: not ready, and the reason names migration 017 (not the ones that ran).
+  for (const errorCode of ['PGRST205', '42P01']) {
+    const calls = [];
+    const probe = await new DeliveryRepository({ db: brokenDb(errorCode, { only: ['rider_presence'], calls }) }).probe();
+    assert.strictEqual(probe.ready, false, `a missing presence table (${errorCode}) means not ready`);
+    assert.ok(/017/.test(probe.reason), `the reason names migration 017 (got "${probe.reason}")`);
+    assert.ok(/rider_presence/.test(probe.reason), 'and the table');
+    assert.ok(!/013|014/.test(probe.reason), 'and not the migrations that were applied');
+    assert.deepStrictEqual(calls, ['deliveries', 'rider_presence'], 'the deliveries table was checked first and was fine');
+  }
+
+  // The deliveries table missing: not ready, naming 013 and 014 (the presence table is not what is wrong first).
+  {
+    const probe = await new DeliveryRepository({ db: brokenDb('PGRST205') }).probe();
+    assert.strictEqual(probe.ready, false);
+    assert.ok(/013/.test(probe.reason) && /014/.test(probe.reason), `the reason names the delivery migrations (got "${probe.reason}")`);
+  }
+
+  // A flaky network is NOT a missing migration, whichever table it hits and however it shows up.
+  for (const errorCode of ['XX000', '08006', '57014']) {
+    for (const only of [['rider_presence'], ['deliveries']]) {
+      const probe = await new DeliveryRepository({ db: brokenDb(errorCode, { only }) }).probe();
+      assert.strictEqual(probe.ready, true, `error ${errorCode} on ${only[0]} is not reported as "migration missing"`);
+    }
+  }
+  for (const table of ['rider_presence', 'deliveries']) {
+    const probe = await new DeliveryRepository({ db: brokenDb('XX000', { only: [], throwOn: table }) }).probe();
+    assert.strictEqual(probe.ready, true, `a dropped connection on ${table} is not "migration missing"`);
+    assert.ok(/socket hang up/.test(probe.reason), 'but the probe says it could not check, and why');
+  }
+
+  // No database client (the in-memory store): nothing to probe.
+  assert.strictEqual((await new DeliveryRepository({ db: null }).probe()).ready, true);
 }
 
 async function testAdminLookup() {
@@ -547,6 +687,8 @@ async function run() {
     await testTheCircuit();
     await testEscrowAttestation();
     await testMissingMigration();
+    await testMissingPresenceMigration();
+    await testProbe();
     await testAdminLookup();
     console.log('    ✓ Every party is contacted in their own role; escrow follows the delivery; exceptions reach an admin; a missing migration is a clear 503.');
   } finally {

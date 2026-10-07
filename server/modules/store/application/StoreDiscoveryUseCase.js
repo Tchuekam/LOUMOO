@@ -25,7 +25,10 @@ class StoreDiscoveryUseCase {
     const page = Math.max(1, parseInt(filters.page, 10) || 1);
     const limit = Math.min(50, Math.max(1, parseInt(filters.limit, 10) || 20));
 
-    const cacheKey = `stores:discovery:${category}:${city}:${verifiedOnly}:${query}:${page}:${limit}`;
+    // Bump the namespace to discard discovery entries cached by revisions that
+    // still returned curated demo stores. Every record in this result must be
+    // resolvable by the public storefront endpoint.
+    const cacheKey = `stores:discovery:v2:${category}:${city}:${verifiedOnly}:${query}:${page}:${limit}`;
 
     return CacheService.remember(cacheKey, 120, async () => {
       const db = SupabaseDatabase.getAdmin();

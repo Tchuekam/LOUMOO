@@ -16,6 +16,12 @@
 
 require('../setup');
 const assert = require('assert');
+const { isoDaysFromToday, stayFromToday } = require('../helpers/dates');
+
+// A stay must start today or later, so these move with the calendar.
+const { checkIn: CHECK_IN, checkOut: CHECK_OUT } = stayFromToday(30, 3); // 3 nights
+const { checkIn: BOOK_IN, checkOut: BOOK_OUT } = stayFromToday(60, 2); // 2 nights
+
 const http = require('http');
 const app = require('../../server/index');
 const { createUser } = require('../helpers/harness');
@@ -125,8 +131,8 @@ async function run() {
   assert.ok(krystal.latitude && krystal.longitude, 'Coordinates must be present');
 
   // Fetch Rooms with 3 nights stay calculation
-  const checkIn = '2026-10-15';
-  const checkOut = '2026-10-18'; // 3 nights
+  const checkIn = CHECK_IN;
+  const checkOut = CHECK_OUT; // 3 nights
   const roomsRes = await makeRequest('GET', `/api/travel/hotels/${krystal.id}/rooms?checkIn=${checkIn}&checkOut=${checkOut}&guests=2`);
   assert.strictEqual(roomsRes.status, 200);
   assert.ok(roomsRes.body.items.length >= 2, 'Krystal should have multiple room tiers');
@@ -308,8 +314,8 @@ async function run() {
     type: 'hotel',
     hotelId: 'htl-krystal-douala',
     roomId: 'rm-krystal-deluxe',
-    checkIn: '2026-11-01',
-    checkOut: '2026-11-03', // 2 nights
+    checkIn: BOOK_IN,
+    checkOut: BOOK_OUT, // 2 nights
     roomsCount: 1,
     guests: 2
   }, primaryAuth);
@@ -389,7 +395,7 @@ async function run() {
   assert.ok(notFoundRes.body.error, 'Error object present');
   assert.strictEqual(notFoundRes.body.error.code, 'NOT_FOUND');
 
-  const badDateRes = await makeRequest('GET', '/api/travel/hotels/htl-krystal-douala/rooms?checkIn=2026-10-20&checkOut=2026-10-18');
+  const badDateRes = await makeRequest('GET', `/api/travel/hotels/htl-krystal-douala/rooms?checkIn=${isoDaysFromToday(40)}&checkOut=${isoDaysFromToday(38)}`);
   assert.strictEqual(badDateRes.status, 400);
   assert.ok(badDateRes.body.error, 'Bad date range caught by validation');
   assert.strictEqual(badDateRes.body.error.code, 'VALIDATION_ERROR');
