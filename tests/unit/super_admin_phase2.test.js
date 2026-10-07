@@ -87,20 +87,21 @@ async function run() {
 
   // ── 6. HTTP REST Endpoints via Harness ──
   const harness = require('../helpers/harness');
+  const adminToken = harness.superAdminToken();
 
   // GET /api/v1/admin/stores
-  const listRes = await harness.request('GET', '/api/v1/admin/stores', { token: 'admin_token' });
+  const listRes = await harness.request('GET', '/api/v1/admin/stores', { token: adminToken });
   assert.strictEqual(listRes.status, 200);
   assert.ok(Array.isArray(listRes.body.data.stores));
 
   // GET /api/v1/admin/stores/:id
-  const getRes = await harness.request('GET', `/api/v1/admin/stores/${targetId}`, { token: 'admin_token' });
+  const getRes = await harness.request('GET', `/api/v1/admin/stores/${targetId}`, { token: adminToken });
   assert.strictEqual(getRes.status, 200);
   assert.strictEqual(getRes.body.data.store.id, targetId);
 
   // POST /api/v1/admin/stores/:id/verify-kyc
   const verifyRes = await harness.request('POST', `/api/v1/admin/stores/${targetId}/verify-kyc`, {
-    token: 'admin_token',
+    token: adminToken,
     body: { tier: 'official_brand', reason: 'Upgraded to Official Brand' }
   });
   assert.strictEqual(verifyRes.status, 200);
@@ -108,7 +109,7 @@ async function run() {
 
   // POST /api/v1/admin/stores/:id/suspend
   const suspendRes = await harness.request('POST', `/api/v1/admin/stores/${targetId}/suspend`, {
-    token: 'admin_token',
+    token: adminToken,
     body: { reason: 'Policy test' }
   });
   assert.strictEqual(suspendRes.status, 200);
@@ -116,7 +117,7 @@ async function run() {
 
   // POST /api/v1/admin/stores/:id/reactivate
   const reactivateRes = await harness.request('POST', `/api/v1/admin/stores/${targetId}/reactivate`, {
-    token: 'admin_token',
+    token: adminToken,
     body: { reason: 'Test reactivate' }
   });
   assert.strictEqual(reactivateRes.status, 200);

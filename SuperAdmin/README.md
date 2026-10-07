@@ -34,7 +34,7 @@ SuperAdmin/
 
 ## 2. Endpoints
 
-All administrative endpoints are mounted at `/api/v1/admin/*` and require administrative privileges (`admin` or `super_admin` role, or bearer token):
+All administrative endpoints are mounted at `/api/v1/admin/*` and require administrative privileges (`admin` or `super_admin` role on a verified session). The only other way in is the test harness's `loumoo_test:<LOUMOO_TEST_AUTH_SECRET>:loumoo_test_super_admin` token, which works only outside production and only when that secret is set:
 
 ### Web UI
 - `GET /superadmin` or `GET /admin`: Serves the dedicated SuperAdmin web application.

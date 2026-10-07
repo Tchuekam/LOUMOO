@@ -46,7 +46,7 @@ async function run() {
   // ── 2. Boot Harness & Configure Client ──
   const serverUrl = await harness.start();
   api.setBaseUrl(serverUrl);
-  api.setAuthToken('admin_token');
+  api.setAuthToken(harness.superAdminToken());
 
   // ── 3. getAdminOverview() ──
   const overview = await api.getAdminOverview();
