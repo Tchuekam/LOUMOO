@@ -190,6 +190,21 @@ async function run() {
   const order = (await db.query(`SELECT shipping_address->>'_deliveryMethod' AS m FROM iam.orders WHERE id = 'ord_1'`)).rows[0];
   assert.strictEqual(order.m, 'HOME_DELIVERY', 'the delivery method rides in the order row, which is where OrderRepository reads it back from');
 
+  // ---------- 11b. every order state the code writes is one the database accepts (019)
+  // The escrow and cancel writes are best-effort, so a CHECK that lags the code
+  // fails silently (a delivered order stayed "escrow_held" for ever). Pin them.
+  {
+    const { PAYMENT_STATUS, FULFILLMENT_STATUS } = require('../../server/modules/commerce/domain/Order');
+    for (const status of Object.values(PAYMENT_STATUS)) {
+      assert.strictEqual(await sqlstate(db, `UPDATE iam.orders SET payment_status = $1 WHERE id = 'ord_3'`, [status]), 'OK', `payment status "${status}" is accepted`);
+    }
+    for (const status of Object.values(FULFILLMENT_STATUS)) {
+      assert.strictEqual(await sqlstate(db, `UPDATE iam.orders SET fulfillment_status = $1 WHERE id = 'ord_3'`, [status]), 'OK', `fulfillment status "${status}" is accepted`);
+    }
+    assert.strictEqual(await sqlstate(db, `UPDATE iam.orders SET payment_status = 'lost' WHERE id = 'ord_3'`), '23514', 'an unknown payment status is refused');
+    await db.query(`UPDATE iam.orders SET payment_status = 'pending', fulfillment_status = 'processing' WHERE id = 'ord_3'`);
+  }
+
   // ---------------------------------------------- 12. rider presence (migration 017)
   // A rider in delivery_drivers EXISTS; iam.rider_presence says whether they are HERE: one
   // overwritten row per rider, kept apart from the GPS trail of a delivery. The rows this
