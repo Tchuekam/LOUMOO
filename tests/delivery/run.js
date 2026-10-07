@@ -43,6 +43,8 @@ const SUITES = [
   'shipping_city_rates',
   // The order path in the compiled app: what a buyer does before a delivery can exist.
   'checkout_server_orders',
+  // A showcase (curated) product is refused with a 404, never filed under a fake seller.
+  'order_showcase_items',
   'checkout_published_notifications_fixes',
   'store_whatsapp_redirect'
 ];
