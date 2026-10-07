@@ -11,6 +11,7 @@ process.env.LOUMOO_TEST_AUTH_SECRET = 'loumoo_test_jwt_secret_dev_only_never_pro
 const assert = require('assert');
 const http = require('http');
 const app = require('../../server/index');
+const harness = require('../helpers/harness');
 const SuperAdminService = require('../../SuperAdmin/backend/services/SuperAdminService');
 const SuperAdminRepository = require('../../SuperAdmin/backend/repositories/SuperAdminRepository');
 const CacheService = require('../../server/infrastructure/cache/CacheService');
@@ -73,7 +74,7 @@ async function runPhase5Tests() {
     assert.strictEqual(unauthAdminRes.status, 403, 'Unauthenticated /api/v1/admin/config must be rejected with 403 Forbidden');
 
     const authHeaders = {
-      'Authorization': 'Bearer admin_token'
+      'Authorization': `Bearer ${harness.superAdminToken()}`
     };
     const adminConfigRes = await request(server, 'GET', '/api/v1/admin/config', authHeaders);
     assert.strictEqual(adminConfigRes.status, 200, 'Authenticated admin should access /api/v1/admin/config');
@@ -174,7 +175,7 @@ async function runPhase5Tests() {
     const publicConfigFromClient = await api.getPublicConfig();
     assert.ok(publicConfigFromClient.systemSettings, 'api.getPublicConfig() must return systemSettings');
 
-    api.setAuthToken('admin_token');
+    api.setAuthToken(harness.superAdminToken());
     const adminConfigFromClient = await api.getAdminConfig();
     const settingsObj = (adminConfigFromClient && adminConfigFromClient.settings) || (adminConfigFromClient && adminConfigFromClient.data && adminConfigFromClient.data.settings) || adminConfigFromClient;
     assert.ok(settingsObj, 'api.getAdminConfig() must return settings payload');
