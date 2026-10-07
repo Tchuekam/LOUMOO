@@ -22,6 +22,7 @@ const app = require('../../server/index');
 const config = require('../../server/config/env');
 const { SupabaseDatabase } = require('../../server/infrastructure/database/SupabaseClient');
 const { ONBOARDING_STATUS, SELLER_STATUS, ONBOARDING_STEPS } = require('../../server/modules/identity/domain/AccountState');
+const { TEST_SUPER_ADMIN_SUBJECT } = require('../../SuperAdmin/backend/middleware/superAdminGuard');
 
 let server = null;
 let baseUrl = null;
@@ -87,6 +88,15 @@ async function request(method, path, { token = null, body = undefined, raw = nul
 
 function tokenFor(clerkUserId) {
   return `loumoo_test:${config.testAuth.secret}:${clerkUserId}`;
+}
+
+/**
+ * Token for the one test subject the SuperAdmin guard treats as a super
+ * administrator. It needs no profile row — the guard resolves it from the
+ * verified test token alone — so suites using it stay hermetic.
+ */
+function superAdminToken() {
+  return tokenFor(TEST_SUPER_ADMIN_SUBJECT);
 }
 
 /**
@@ -290,6 +300,6 @@ async function cleanup() {
 module.exports = {
   start, stop, request, cleanup,
   createUser, createStore, createListing,
-  tokenFor, makePng,
+  tokenFor, superAdminToken, makePng,
   db
 };
