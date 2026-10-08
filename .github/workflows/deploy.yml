@@ -28,7 +28,7 @@ jobs:
         run: npm test
 
   deploy:
-    name: Deploy (railwayapp/actions-push)
+    name: Deploy (Railway CLI)
     runs-on: ubuntu-latest
     needs: validate
     # A step's own env is not visible to its `if`, so the check lives here.
@@ -38,30 +38,28 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Pushes the pushed commit to Railway. It is inert until the repository
-      # secrets below exist — set them once, then every merge to main ships:
+      # Ships the pushed commit with the official Railway CLI (`railway up`). It is a
+      # plain shell step on purpose: GitHub resolves every `uses:` action before the
+      # job starts, even a skipped one, and the action this used to name
+      # (railwayapp/actions-push) does not exist, so the job failed on every run.
       #
-      #   RAILWAY_TOKEN      (required)
-      #     Railway Dashboard -> Account -> Tokens -> New Token
+      # Inert until the repository secrets below exist (Railway also deploys main
+      # from its own git link, so nothing is lost meanwhile):
+      #
+      #   RAILWAY_TOKEN      (required) a PROJECT token
+      #     Railway Dashboard -> Project -> Settings -> Tokens -> New Token
       #     then GitHub repo -> Settings -> Secrets and variables -> Actions
       #     -> New repository secret -> RAILWAY_TOKEN
       #
-      #   RAILWAY_SERVICE_ID (recommended; targets one service)
+      #   RAILWAY_SERVICE_ID (required with the token; targets the LOUMOO service)
       #     Railway Dashboard -> Service -> Settings -> General -> Service ID
-      #
-      #   Alternative: set RAILWAY_PROJECT_ID instead of RAILWAY_SERVICE_ID to
-      #   ship to the project's default branch target.
-      # Railway also deploys main from its own git link, so without the token this
-      # step is skipped (with a notice) instead of failing every run.
       - name: Note when the Railway token is not configured
         if: env.HAS_RAILWAY_TOKEN != 'true'
         run: echo "::notice::RAILWAY_TOKEN is not set; Railway deploys main from its git link, so this push step is skipped."
 
       - name: Deploy to Railway
         if: env.HAS_RAILWAY_TOKEN == 'true'
-        uses: railwayapp/actions-push@v1
-        with:
-          token: ${{ secrets.RAILWAY_TOKEN }}
-          service: ${{ secrets.RAILWAY_SERVICE_ID }}
-          # project: ${{ secrets.RAILWAY_PROJECT_ID }}
-          # verbose: true
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RAILWAY_SERVICE_ID: ${{ secrets.RAILWAY_SERVICE_ID }}
+        run: npx --yes @railway/cli@5 up --ci --service "$RAILWAY_SERVICE_ID"
