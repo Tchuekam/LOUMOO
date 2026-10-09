@@ -79,5 +79,14 @@ async function startLocalStack(opts = {}) {
   const testAuthSecret = crypto.randomBytes(24).toString('hex');
 
   const { db, migrations } = await createLocalDb({ dataDir: opts.dataDir });
+  const auth = createMiniAuth({ db, secret });
+  const restLog = [];
+  const storage = createMiniStorage({});
+  const rest = createMiniPostgrest({ db, secret, auth, storage, onRequest: (r) => { restLog.push(r); if (restLog.length > 5000) restLog.shift(); } });
+  await new Promise((r) => rest.server.listen(0, '127.0.0.1', r));
+  const restUrl = `http://127.0.0.1:${rest.server.address().port}`;
+
+  const anonKey = rest.mintKey('anon');
+  const serviceKey = rest.mintKey('service_role');
 
 }
