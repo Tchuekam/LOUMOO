@@ -77,3 +77,21 @@ function userJson(row) {
 }
 
 const authError = (status, errorCode, msg) => ({ status, body: { code: status, error_code: errorCode, msg } });
+
+function createMiniAuth({ db, secret }) {
+  const byId = async (id) => (await db.query('SELECT * FROM auth.users WHERE id::text = $1', [String(id)])).rows[0] || null;
+  const byEmail = async (email) => (await db.query('SELECT * FROM auth.users WHERE lower(email) = lower($1)', [String(email)])).rows[0] || null;
+
+  function requireServiceRole(req) {
+    const auth = req.headers.authorization || '';
+    const token = auth.toLowerCase().startsWith('bearer ') ? auth.slice(7).trim() : '';
+    const v = verifyJwt(token, secret);
+    if (!v.ok || v.payload.role !== 'service_role') return authError(403, 'not_admin', 'User not allowed');
+    return null;
+  }
+
+  /**
+   * @returns {Promise<{status:number, body:any}|null>} null when the path is not an auth path.
+   */
+
+}
