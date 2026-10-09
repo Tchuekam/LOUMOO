@@ -110,4 +110,15 @@ async function startLocalStack(opts = {}) {
     ...(opts.env || {}),
   };
 
+  if (opts.seed !== false) {
+    await new Promise((resolve, reject) => {
+      const seed = spawn(process.execPath, ['scripts/seed_taxonomy.js'], { cwd: REPO, env, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true });
+      let out = '';
+      seed.stdout.on('data', (c) => { out += c; });
+      seed.stderr.on('data', (c) => { out += c; });
+      seed.on('exit', (code) => (code === 0 ? resolve() : reject(new Error(`taxonomy seed failed (exit ${code}):
+${out.slice(-1500)}`))));
+    });
+  }
+
 }
