@@ -194,3 +194,11 @@ async function ensurePublishedListing(api, token, listing) {
   const published = await api.must('POST', `/api/v1/listings/${id}/publish`, { token, body: {} });
   return dataOf(published);
 }
+
+/** LOCAL ONLY. Promotes a profile to administrator with one UPDATE (no public route does this). */
+async function promoteAdminLocal(db, userId) {
+  const r = await db.query(
+    `UPDATE iam.profiles SET primary_role = 'admin', updated_at = now() WHERE clerk_user_id = $1 RETURNING id`, [userId]);
+  if (!r.rows.length) throw new Error(`no profile for user ${userId}`);
+  return r.rows[0].id;
+}
