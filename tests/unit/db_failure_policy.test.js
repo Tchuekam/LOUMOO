@@ -112,3 +112,17 @@ async function childScenarios() {
 
   process.stdout.write(`\n@@RESULT@@${JSON.stringify(out)}@@END@@\n`);
 }
+
+// ----------------------------------------------------------------- parent side
+function runChild(nodeEnv) {
+  const r = spawnSync(process.execPath, [__filename, '--child'], {
+    env: {
+      PATH: process.env.PATH, Path: process.env.Path, SystemRoot: process.env.SystemRoot,
+      NODE_ENV: nodeEnv, LOUMOO_NO_DOTENV: '1'
+    },
+    encoding: 'utf8', timeout: 60000
+  });
+  const m = /@@RESULT@@(.*)@@END@@/s.exec(r.stdout || '');
+  if (!m) throw new Error(`child (${nodeEnv}) produced no result.\nstdout: ${(r.stdout || '').slice(-600)}\nstderr: ${(r.stderr || '').slice(-600)}`);
+  return JSON.parse(m[1]);
+}
