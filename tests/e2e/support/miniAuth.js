@@ -93,5 +93,14 @@ function createMiniAuth({ db, secret }) {
   /**
    * @returns {Promise<{status:number, body:any}|null>} null when the path is not an auth path.
    */
+  async function handle(req, url, bodyText) {
+    const p = url.pathname;
+    if (!p.startsWith('/auth/v1')) return null;
+    const sub = p.slice('/auth/v1'.length) || '/';
+    let body = {};
+    if (bodyText) { try { body = JSON.parse(bodyText); } catch { return authError(400, 'bad_json', 'Could not parse request body as JSON'); } }
 
+    if (sub === '/health') return { status: 200, body: { status: 'ok' } };
+
+}
 }
