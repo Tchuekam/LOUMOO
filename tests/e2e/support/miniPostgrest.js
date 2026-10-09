@@ -449,4 +449,39 @@ function createMiniPostgrest({ db, secret, schemas = ['public', 'iam', 'system']
     return JSON.parse(r.rows[0].body);
   }
 
+  async function handleTable(tx, req, url, schema, table, bodyText, role) {
+    if (!(await relationExists(tx, schema, table))) {
+      throw new RestError(404, 'PGRST205', `Could not find the table '${schema}.${table}' in the schema cache`);
+    }
+    const types = await columnTypes(tx, schema, table);
+    const fq = `${q(schema)}.${q(table)}`;
+    const pref = prefer(req);
+    const sp = url.searchParams;
+    const p = Params([]);
+
+    if (req.method === 'GET' || req.method === 'HEAD') {
+      const ctx = { p, embedFilters: collectEmbedFilters(sp), used: new Set() };
+      const sel = await buildSelect(tx, schema, table, sp.get('select'), '_t', 0, ctx);
+      for (const name of ctx.embedFilters.keys()) {
+        if (!ctx.used.has(name)) throw new RestError(400, 'PGRST108', `'${name}' is not an embedded resource in this request`);
+      }
+      const list = sel.list;
+      const where = whereSql([...sel.inner, ...buildWhere(sp, types, p)]);
+      const order = buildOrder(sp, types);
+      const limit = intParam(sp, 'limit');
+      const offset = intParam(sp, 'offset');
+      const inner = `SELECT ${list} FROM ${fq} AS _t${where}${order}${limit !== null ? ` LIMIT ${limit}` : ''}${offset ? ` OFFSET ${offset}` : ''}`;
+      const rows = await jsonRows(tx, inner, p.values);
+      let range = rows.length ? `${offset || 0}-${(offset || 0) + rows.length - 1}` : '*';
+      let total = '*';
+      if (pref.count) {
+        const c = await tx.query(`SELECT count(*)::int AS n FROM ${fq} AS _t${where}`, p.values);
+        total = String(c.rows[0].n);
+      }
+      const res = req.method === 'HEAD' ? { status: 200, body: '', content: `${range}/${total}` } : respondRows(rows, { req, status: 200, content: `${range}/${total}` });
+      if (pref.count && rows.length < (limit ?? Infinity) && !offset) res.status = 200;
+      return res;
+    }
+
+}
 }
