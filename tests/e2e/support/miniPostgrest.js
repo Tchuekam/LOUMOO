@@ -483,5 +483,40 @@ function createMiniPostgrest({ db, secret, schemas = ['public', 'iam', 'system']
       return res;
     }
 
+    if (req.method === 'POST') {
+      let payload;
+      try { payload = JSON.parse(bodyText || '{}'); } catch { throw new RestError(400, 'PGRST102', 'Empty or invalid json'); }
+      const rows = Array.isArray(payload) ? payload : [payload];
+      const colParam = sp.get('columns');
+      const cols = colParam ? colParam.split(',').map((s) => unquote(s.trim())) : [...new Set(rows.flatMap((r) => Object.keys(r)))];
+      for (const c of cols) {
+        if (!types.has(c)) throw new RestError(400, 'PGRST204', `Could not find the '${c}' column of '${table}' in the schema cache`);
+      }
+      const { list } = await buildSelect(tx, schema, table, sp.get('select'));
+      const retRep = pref.return === 'representation';
+      const colSql = cols.map(q).join(', ');
+      const onConflict = sp.get('on_conflict');
+      const resolution = pref.resolution;
+      let conflict = '';
+      if (resolution === 'merge-duplicates' || resolution === 'ignore-duplicates') {
+        const target = onConflict ? onConflict.split(',').map((s) => unquote(s.trim())) : await primaryKey(tx, schema, table);
+        if (!target.length) throw new RestError(400, 'PGRST100', 'upsert needs a primary key or on_conflict');
+        const tgt = target.map(q).join(', ');
+        conflict = resolution === 'ignore-duplicates'
+          ? ` ON CONFLICT (${tgt}) DO NOTHING`
+          : ` ON CONFLICT (${tgt}) DO UPDATE SET ${cols.map((c) => `${q(c)} = EXCLUDED.${q(c)}`).join(', ')}`;
+      }
+      if (!rows.length || !cols.length) {
+        return retRep ? { status: 201, body: '[]' } : { status: 201, body: '' };
+      }
+      const ins = `INSERT INTO ${fq} (${colSql}) SELECT ${colSql} FROM json_populate_recordset(null::${fq}, ${p.push(JSON.stringify(rows))}::json)${conflict} RETURNING *`;
+      if (!retRep) {
+        await tx.query(ins, p.values);
+        return { status: 201, body: '' };
+      }
+      const r = await tx.query(`WITH _ins AS (${ins}) SELECT coalesce(json_agg(_r), '[]'::json)::text AS body FROM (SELECT ${list} FROM _ins AS _t) _r`, p.values);
+      return respondRows(JSON.parse(r.rows[0].body), { req, status: 201 });
+    }
+
 }
 }
