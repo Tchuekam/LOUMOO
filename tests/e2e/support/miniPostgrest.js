@@ -307,5 +307,45 @@ function createMiniPostgrest({ db, secret, schemas = ['public', 'iam', 'system']
   }
 
   /** Parse one `col.op.value` / `not.col...` / `and(...)` / `or(...)` element of a logical group. */
+  function logicalElement(p, types, el) {
+    const t = el.trim();
+    let m = /^(not\.)?(and|or)\((.*)\)$/s.exec(t);
+    if (m) return group(p, types, m[2], m[3], Boolean(m[1]));
+    const firstDot = t.indexOf('.');
+    const col = t.slice(0, firstDot);
+    let rest = t.slice(firstDot + 1);
+    let negate = false;
+    if (rest.startsWith('not.')) { negate = true; rest = rest.slice(4); }
+    return condition(p, types, col, rest, negate);
+  }
+
+  function group(p, types, kind, inner, negate) {
+    const parts = splitTop(inner).map((el) => logicalElement(p, types, el));
+    const sql = `(${parts.join(kind === 'and' ? ' AND ' : ' OR ')})`;
+    return negate ? `NOT ${sql}` : sql;
+  }
+
+  function buildWhere(searchParams, types, p) {
+    const clauses = [];
+    for (const [key, value] of searchParams.entries()) {
+      if (RESERVED.has(key)) continue;
+      if (key === 'and' || key === 'or') {
+        clauses.push(group(p, types, key, value.replace(/^\(/, '').replace(/\)$/, ''), false));
+        continue;
+      }
+      if (key === 'not.and' || key === 'not.or') {
+        clauses.push(group(p, types, key.slice(4), value.replace(/^\(/, '').replace(/\)$/, ''), true));
+        continue;
+      }
+      if (key.includes('.')) continue; // a filter on an embedded resource: applied inside that embed
+      let rest = value;
+      let negate = false;
+      if (rest.startsWith('not.')) { negate = true; rest = rest.slice(4); }
+      clauses.push(condition(p, types, key, rest, negate));
+    }
+    return clauses;
+  }
+
+  const whereSql = (clauses) => (clauses.length ? ` WHERE ${clauses.join(' AND ')}` : '');
 
 }
