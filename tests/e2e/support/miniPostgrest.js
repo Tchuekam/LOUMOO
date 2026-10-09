@@ -556,4 +556,29 @@ function createMiniPostgrest({ db, secret, schemas = ['public', 'iam', 'system']
     throw new RestError(405, 'PGRST117', `Unsupported HTTP method: ${req.method}`);
   }
 
+  async function handleRpc(tx, req, url, schema, fn, bodyText) {
+    let args = {};
+    if (req.method === 'POST') {
+      try { args = JSON.parse(bodyText || '{}'); } catch { throw new RestError(400, 'PGRST102', 'Empty or invalid json'); }
+    } else {
+      for (const [k, v] of url.searchParams.entries()) args[k] = v;
+    }
+    const meta = await tx.query(
+      `SELECT p.proretset AS "set", format_type(p.prorettype, NULL) AS ret
+         FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace WHERE n.nspname = $1 AND p.proname = $2 LIMIT 1`, [schema, fn]);
+    if (!meta.rows.length) {
+      throw new RestError(404, 'PGRST202', `Could not find the function ${schema}.${fn} in the schema cache`);
+    }
+    const p = Params([]);
+    const named = Object.entries(args).map(([k, v]) => `${q(k)} := ${p.push(typeof v === 'string' ? v : JSON.stringify(v))}`);
+    const call = `${q(schema)}.${q(fn)}(${named.join(', ')})`;
+    if (meta.rows[0].set) {
+      return { status: 200, body: JSON.stringify(await jsonRows(tx, `SELECT * FROM ${call} AS _t`, p.values)) };
+    }
+    const r = await tx.query(`SELECT to_json(${call})::text AS body`, p.values);
+    return { status: 200, body: r.rows[0].body ?? 'null' };
+  }
+
+  /* ------------------------------------------------------------------- server */
+
 }
