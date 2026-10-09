@@ -49,3 +49,31 @@ function chunk(type, data) {
   const crc = Buffer.alloc(4); crc.writeUInt32BE(crc32(body));
   return Buffer.concat([len, body, crc]);
 }
+
+/**
+ * A real, valid RGB PNG (default 480x480) of a soft diagonal gradient with a
+ * stripe pattern, so a product card in a screenshot looks like a product photo
+ * placeholder rather than static. Generated, not bundled: no binary in the repo.
+ */
+function makePng(width = 480, height = 480, [r0, g0, b0] = [196, 138, 74], [r1, g1, b1] = [58, 74, 120]) {
+  const stride = width * 3 + 1;
+  const raw = Buffer.alloc(stride * height);
+  for (let y = 0; y < height; y++) {
+    raw[y * stride] = 0; // filter: none
+    for (let x = 0; x < width; x++) {
+      const t = (x + y) / (width + height);
+      const stripe = ((x >> 5) + (y >> 5)) & 1 ? 10 : 0;
+      const o = y * stride + 1 + x * 3;
+      raw[o] = Math.min(255, Math.round(r0 + (r1 - r0) * t) + stripe);
+      raw[o + 1] = Math.min(255, Math.round(g0 + (g1 - g0) * t) + stripe);
+      raw[o + 2] = Math.min(255, Math.round(b0 + (b1 - b0) * t) + ((x * 7 + y * 13) & 7));
+    }
+  }
+  const ihdr = Buffer.alloc(13);
+  ihdr.writeUInt32BE(width, 0); ihdr.writeUInt32BE(height, 4);
+  ihdr[8] = 8; ihdr[9] = 2; ihdr[10] = 0; ihdr[11] = 0; ihdr[12] = 0;
+  return Buffer.concat([
+    Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
+    chunk('IHDR', ihdr), chunk('IDAT', zlib.deflateSync(raw, { level: 9 })), chunk('IEND', Buffer.alloc(0)),
+  ]);
+}
