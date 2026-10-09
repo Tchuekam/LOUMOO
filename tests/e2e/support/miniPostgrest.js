@@ -397,4 +397,21 @@ function createMiniPostgrest({ db, secret, schemas = ['public', 'iam', 'system']
 
   /* --------------------------------------------------------------- JWT / role */
 
+  function roleFor(req) {
+    const header = req.headers.authorization || '';
+    const token = header.toLowerCase().startsWith('bearer ') ? header.slice(7).trim() : (req.headers.apikey || '');
+    if (!token) return 'anon';
+    if (token.split('.').length !== 3) throw new RestError(401, 'PGRST301', 'JWSError CompactDecodeError');
+    const v = verifyJwt(token, secret);
+    if (!v.ok) {
+      if (v.reason === 'expired') throw new RestError(401, 'PGRST303', 'JWT expired');
+      throw new RestError(401, 'PGRST301', v.reason === 'signature' ? 'JWSError JWSInvalidSignature' : 'JWSError CompactDecodeError');
+    }
+    const role = v.payload.role || 'anon';
+    if (!ROLES.has(role)) throw new RestError(401, 'PGRST301', `role "${role}" is not permitted`);
+    return role;
+  }
+
+  /* ------------------------------------------------------------------ handlers */
+
 }
