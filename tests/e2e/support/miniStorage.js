@@ -57,6 +57,21 @@ function createMiniStorage({ publicOrigin }) {
     if (bm && req.method === 'GET') {
       return buckets.has(bm[1]) ? { status: 200, body: buckets.get(bm[1]) } : err(404, 'Bucket not found');
     }
+    if (url.pathname.startsWith('/storage/v1/object/')) {
+      const { kind, bucket, key } = parse(url.pathname);
 
+      if (req.method === 'POST' && kind === 'object') {
+        const type = String(req.headers['content-type'] || 'application/octet-stream');
+        if (/^multipart\/form-data/i.test(type)) return err(501, 'multipart uploads are not provided by the local storage stand-in');
+        if (!buckets.has(bucket)) return err(404, 'Bucket not found');
+        const id = `${bucket}/${key}`;
+        if (objects.has(id) && String(req.headers['x-upsert']).toLowerCase() !== 'true') {
+          return { status: 409, body: { statusCode: '409', error: 'Duplicate', message: 'The resource already exists' } };
+        }
+        objects.set(id, { buf: Buffer.from(bodyBuf), type, token: crypto.randomBytes(16).toString('hex') });
+        return { status: 200, body: { Id: crypto.randomUUID(), Key: id } };
+      }
+
+}
 }
 }
