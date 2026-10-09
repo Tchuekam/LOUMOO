@@ -309,16 +309,13 @@ function isWriteContext(context) {
  * answering "fine" would report an order that was never stored.
  */
 function isReadOperation(context, err) {
+  if (isWriteContext(context)) return false;
   if (err && (err.code === 'PGRST301' || err.code === 'PGRST116' || err.code === 'PGRST204')) {
     return true;
   }
   const ctx = String(context || '').toLowerCase();
-  const writeVerbs = ['insert', 'update', 'delete', 'upsert', 'create', 'remove', 'submit', 'mutate', 'provision'];
-  if (writeVerbs.some(w => ctx.includes(w))) {
-    return false;
-  }
-  const readVerbs = ['query', 'get', 'list', 'select', 'count', 'check', 'fetch', 'read', 'aggregation', 'search', 'find', 'preferences', 'profile', 'addresses', 'analytics', 'history'];
-  return readVerbs.some(r => ctx.includes(r));
+  if (contextWords(context).includes('get')) return true;
+  return READ_SUBSTRINGS.some(r => ctx.includes(r));
 }
 
 /**
