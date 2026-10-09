@@ -96,4 +96,42 @@ function createMiniPostgrest({ db, secret, schemas = ['public', 'iam', 'system']
 
   /* ----------------------------------------------------------------- catalog */
 
+  async function relationExists(tx, schema, table) {
+    const key = `${schema}.${table}`;
+    if (relCache.get(key)) return true;
+    const r = await tx.query(
+      `SELECT 1 FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
+        WHERE n.nspname = $1 AND c.relname = $2 AND c.relkind IN ('r','v','m','p')`, [schema, table]);
+    const ok = r.rows.length > 0;
+    if (ok) relCache.set(key, true);
+    return ok;
+  }
+
+  async function columnTypes(tx, schema, table) {
+    const key = `${schema}.${table}`;
+    if (typeCache.has(key)) return typeCache.get(key);
+    const r = await tx.query(
+      `SELECT a.attname AS name, format_type(a.atttypid, a.atttypmod) AS type
+         FROM pg_attribute a JOIN pg_class c ON c.oid = a.attrelid JOIN pg_namespace n ON n.oid = c.relnamespace
+        WHERE n.nspname = $1 AND c.relname = $2 AND a.attnum > 0 AND NOT a.attisdropped`, [schema, table]);
+    const map = new Map(r.rows.map((x) => [x.name, x.type]));
+    typeCache.set(key, map);
+    return map;
+  }
+
+  async function primaryKey(tx, schema, table) {
+    const key = `${schema}.${table}`;
+    if (pkCache.has(key)) return pkCache.get(key);
+    const r = await tx.query(
+      `SELECT a.attname AS name
+         FROM pg_index i JOIN pg_class c ON c.oid = i.indrelid JOIN pg_namespace n ON n.oid = c.relnamespace
+         JOIN pg_attribute a ON a.attrelid = c.oid AND a.attnum = ANY(i.indkey)
+        WHERE i.indisprimary AND n.nspname = $1 AND c.relname = $2`, [schema, table]);
+    const cols = r.rows.map((x) => x.name);
+    pkCache.set(key, cols);
+    return cols;
+  }
+
+  /* ----------------------------------------------------------------- parsing */
+
 }
