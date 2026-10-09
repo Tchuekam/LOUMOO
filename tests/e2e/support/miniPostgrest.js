@@ -540,5 +540,20 @@ function createMiniPostgrest({ db, secret, schemas = ['public', 'iam', 'system']
       return respondRows(JSON.parse(r.rows[0].body), { req, status: 200 });
     }
 
-}
+    if (req.method === 'DELETE') {
+      const retRep = pref.return === 'representation';
+      const { list } = await buildSelect(tx, schema, table, sp.get('select'));
+      const where = whereSql(buildWhere(sp, types, p));
+      const del = `DELETE FROM ${fq} AS _t${where} RETURNING _t.*`;
+      if (!retRep) {
+        await tx.query(del, p.values);
+        return { status: 204, body: '' };
+      }
+      const r = await tx.query(`WITH _del AS (${del}) SELECT coalesce(json_agg(_r), '[]'::json)::text AS body FROM (SELECT ${list} FROM _del AS _t) _r`, p.values);
+      return respondRows(JSON.parse(r.rows[0].body), { req, status: 200 });
+    }
+
+    throw new RestError(405, 'PGRST117', `Unsupported HTTP method: ${req.method}`);
+  }
+
 }
