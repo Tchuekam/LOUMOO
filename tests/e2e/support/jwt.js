@@ -31,3 +31,8 @@ function verifyJwt(token, secret) {
   if (payload.exp && payload.exp * 1000 < Date.now()) return { ok: false, reason: 'expired' };
   return { ok: true, payload };
 }
+
+/** A Supabase-style API key: a JWT whose `role` claim names a Postgres role. */
+const mintKey = (secret, role, extra = {}) => mintJwt(secret, { iss: 'loumoo-local-e2e', role, ...extra });
+
+module.exports = { mintJwt, verifyJwt, mintKey, b64u };
