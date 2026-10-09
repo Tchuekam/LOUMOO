@@ -369,4 +369,32 @@ function createMiniPostgrest({ db, secret, schemas = ['public', 'iam', 'system']
     return out;
   }
 
+  function buildOrder(searchParams, types) {
+    const raw = searchParams.get('order');
+    if (!raw) return '';
+    const parts = splitTop(raw).map((s) => {
+      const [col, ...mods] = s.split('.');
+      if (types && !types.has(col)) throw new RestError(400, '42703', `column ${col} does not exist`);
+      let sql = `_t.${q(col)}`;
+      for (const m of mods) {
+        if (m === 'asc') sql += ' ASC';
+        else if (m === 'desc') sql += ' DESC';
+        else if (m === 'nullsfirst') sql += ' NULLS FIRST';
+        else if (m === 'nullslast') sql += ' NULLS LAST';
+        else throw new RestError(400, 'PGRST100', `bad order modifier "${m}"`);
+      }
+      return sql;
+    });
+    return ` ORDER BY ${parts.join(', ')}`;
+  }
+
+  function intParam(searchParams, key) {
+    const v = searchParams.get(key);
+    if (v === null) return null;
+    if (!/^\d+$/.test(v)) throw new RestError(400, 'PGRST100', `"${key}" must be a non-negative integer`);
+    return Number(v);
+  }
+
+  /* --------------------------------------------------------------- JWT / role */
+
 }
