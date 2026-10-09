@@ -89,4 +89,25 @@ async function startLocalStack(opts = {}) {
   const anonKey = rest.mintKey('anon');
   const serviceKey = rest.mintKey('service_role');
 
+  const appPort = opts.appPort || await freePort();
+  const baseUrl = `http://127.0.0.1:${appPort}`;
+
+  const env = {
+    ...baseEnv(),
+    NODE_ENV: nodeEnv,
+    PORT: String(appPort),
+    APP_BASE_URL: baseUrl,
+    CORS_ORIGINS: baseUrl,
+    LOUMOO_NO_DOTENV: '1',
+    SUPABASE_URL: restUrl,
+    SUPABASE_ANON_KEY: anonKey,
+    SUPABASE_SERVICE_ROLE_KEY: serviceKey,
+    SUPABASE_JWT_SECRET: secret,
+    SUPABASE_PROJECT_REF: 'local-e2e',
+    LOUMOO_TEST_AUTH_SECRET: testAuthSecret,
+    DELIVERY_GEOCODER_URL: 'off',
+    SEARCH_ENABLED: 'false',
+    ...(opts.env || {}),
+  };
+
 }
