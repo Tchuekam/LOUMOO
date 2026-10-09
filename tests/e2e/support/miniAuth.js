@@ -149,5 +149,25 @@ function createMiniAuth({ db, secret }) {
       }
     }
 
+    if (sub === '/token' && req.method === 'POST') {
+      if (url.searchParams.get('grant_type') !== 'password') return authError(501, 'unsupported_grant_type', 'Only the password grant is provided by the local auth stand-in');
+      const row = await byEmail(body.email || '');
+      if (!row || !row.encrypted_password || !checkPassword(body.password, row.encrypted_password)) {
+        return authError(400, 'invalid_credentials', 'Invalid login credentials');
+      }
+      if (!row.email_confirmed_at) return authError(400, 'email_not_confirmed', 'Email not confirmed');
+      if (row.banned_until && new Date(row.banned_until) > new Date()) return authError(400, 'user_banned', 'User is banned');
+      await db.query('UPDATE auth.users SET last_sign_in_at = now() WHERE id = $1::uuid', [row.id]);
+      const now = Math.floor(Date.now() / 1000);
+      const accessToken = mintJwt(secret, { iss: 'loumoo-local-e2e/auth', aud: 'authenticated', sub: row.id, email: row.email, role: 'authenticated', iat: now, exp: now + 3600 });
+      return {
+        status: 200,
+        body: {
+          access_token: accessToken, token_type: 'bearer', expires_in: 3600, expires_at: now + 3600,
+          refresh_token: crypto.randomBytes(8).toString('hex'), user: userJson((await byId(row.id))),
+        },
+      };
+    }
+
 }
 }
