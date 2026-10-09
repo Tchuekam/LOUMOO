@@ -143,6 +143,12 @@ async function run() {
     r = await admin.from('profiles').select('id', { count: 'exact', head: true });
     assert.strictEqual(r.count, 2, 'and it is gone');
 
+    // ------------------------------------------------------------------ jsonb / arrays
+    r = await admin.from('profiles').update({ metadata: { a: [1, 2], b: 'x' } }).eq('id', 'u_b').select('id,metadata').single();
+    if (!r.error) {
+      assert.deepStrictEqual(r.data.metadata, { a: [1, 2], b: 'x' }, 'jsonb round-trips as an object');
+    }
+
 } finally {
     await new Promise((r) => rest.server.close(r));
     await db.close();
