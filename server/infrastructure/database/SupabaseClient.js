@@ -379,6 +379,7 @@ module.exports = {
   getAdminClient: () => adminClient,
   getPublicClient: () => publicClient,
   handleDatabaseFailure,
+  isReadOperation,
   SupabaseClient: {
     getAdmin: SupabaseDatabase.getAdmin,
     getPublic: SupabaseDatabase.getPublic,
