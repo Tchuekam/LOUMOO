@@ -58,3 +58,25 @@ const SUPABASE_BASELINE = `
   ALTER DEFAULT PRIVILEGES IN SCHEMA public, iam, system GRANT ALL ON SEQUENCES TO anon, authenticated, service_role;
   ALTER DEFAULT PRIVILEGES IN SCHEMA public, iam, system GRANT ALL ON FUNCTIONS TO anon, authenticated, service_role;
 `;
+
+function migrationFiles() {
+  return fs.readdirSync(MIGRATIONS).filter((f) => /^\d+_.*\.sql$/.test(f)).sort();
+}
+
+async function applyMigrations(db, { log = () => {} } = {}) {
+  const files = migrationFiles();
+  for (const f of files) {
+    try {
+      await db.exec(fs.readFileSync(path.join(MIGRATIONS, f), 'utf8'));
+      log(`migration applied: ${f}`);
+    } catch (e) {
+      try { await db.exec('ROLLBACK'); } catch (_) { /* nothing open */ }
+      throw new Error(`migration ${f} failed on the local Postgres: ${String(e.message).split('\n')[0]}`);
+    }
+  }
+  return files;
+}
+
+/**
+ * @param {{dataDir?: string, log?: Function}} [opts] dataDir persists the database between runs (debugging only).
+ */
