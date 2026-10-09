@@ -121,4 +121,26 @@ ${out.slice(-1500)}`))));
     });
   }
 
+  const logs = [];
+  const sink = opts.logFile ? fs.createWriteStream(opts.logFile, { flags: 'w' }) : null;
+  const child = spawn(process.execPath, ['server/index.js'], { cwd: REPO, env, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true });
+  let exited = null;
+  const onData = (chunk) => {
+    const text = chunk.toString('utf8');
+    if (sink) sink.write(text);
+    for (const line of text.split(/\r?\n/)) if (line.trim()) logs.push(line);
+  };
+  child.stdout.on('data', onData);
+  child.stderr.on('data', onData);
+  child.on('exit', (code, sig) => { exited = { code, sig }; });
+
+  try {
+    await waitFor(`${baseUrl}/api/v1/health`);
+  } catch (e) {
+    child.kill();
+    await new Promise((r) => rest.server.close(r));
+    await db.close();
+    throw new Error(`${e.message}\n--- server output (last 40 lines)\n${logs.slice(-40).join('\n')}${exited ? `\n--- exited ${JSON.stringify(exited)}` : ''}`);
+  }
+
 }
