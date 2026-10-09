@@ -518,5 +518,27 @@ function createMiniPostgrest({ db, secret, schemas = ['public', 'iam', 'system']
       return respondRows(JSON.parse(r.rows[0].body), { req, status: 201 });
     }
 
+    if (req.method === 'PATCH') {
+      let payload;
+      try { payload = JSON.parse(bodyText || '{}'); } catch { throw new RestError(400, 'PGRST102', 'Empty or invalid json'); }
+      const cols = Object.keys(payload);
+      for (const c of cols) {
+        if (!types.has(c)) throw new RestError(400, 'PGRST204', `Could not find the '${c}' column of '${table}' in the schema cache`);
+      }
+      const retRep = pref.return === 'representation';
+      const { list } = await buildSelect(tx, schema, table, sp.get('select'));
+      if (!cols.length) return retRep ? { status: 200, body: '[]' } : { status: 204, body: '' };
+      const bodyParam = p.push(JSON.stringify(payload));
+      const sets = cols.map((c) => `${q(c)} = (json_populate_record(null::${fq}, ${bodyParam}::json)).${q(c)}`).join(', ');
+      const where = whereSql(buildWhere(sp, types, p));
+      const upd = `UPDATE ${fq} AS _t SET ${sets}${where} RETURNING _t.*`;
+      if (!retRep) {
+        await tx.query(upd, p.values);
+        return { status: 204, body: '' };
+      }
+      const r = await tx.query(`WITH _upd AS (${upd}) SELECT coalesce(json_agg(_r), '[]'::json)::text AS body FROM (SELECT ${list} FROM _upd AS _t) _r`, p.values);
+      return respondRows(JSON.parse(r.rows[0].body), { req, status: 200 });
+    }
+
 }
 }
