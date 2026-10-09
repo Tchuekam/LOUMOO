@@ -169,5 +169,20 @@ function createMiniAuth({ db, secret }) {
       };
     }
 
+    if (sub === '/user' && req.method === 'GET') {
+      const auth = req.headers.authorization || '';
+      const v = verifyJwt(auth.toLowerCase().startsWith('bearer ') ? auth.slice(7).trim() : '', secret);
+      if (!v.ok || !v.payload.sub) return authError(401, 'bad_jwt', 'invalid JWT: unable to parse or verify signature');
+      const row = await byId(v.payload.sub);
+      return row ? { status: 200, body: userJson(row) } : authError(404, 'user_not_found', 'User from sub claim in JWT does not exist');
+    }
+
+    if (sub === '/logout') return { status: 204, body: null };
+
+    return authError(501, 'not_provided', `${req.method} ${p} is not provided by the local auth stand-in`);
+  }
+
+  return { handle };
 }
-}
+
+module.exports = { createMiniAuth, AUTH_BASELINE };
