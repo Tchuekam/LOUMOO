@@ -149,8 +149,31 @@ async function run() {
       assert.deepStrictEqual(r.data.metadata, { a: [1, 2], b: 'x' }, 'jsonb round-trips as an object');
     }
 
-} finally {
+    // ------------------------------------------------------------- schema + roles
+    r = await admin.schema('system').from('feature_flags').select('*');
+    assert.ifError(r.error);
+    assert.ok(Array.isArray(r.data), 'the system schema is reachable through Accept-Profile');
+
+    r = await admin.schema('pg_catalog').from('pg_class').select('*');
+    assert.strictEqual(r.error && r.error.code, 'PGRST106', 'a schema that is not exposed is refused');
+
+    r = await anon.from('orders').select('id');
+    const anonSeesNothing = (r.error && ['42501'].includes(r.error.code)) || (Array.isArray(r.data) && r.data.length === 0);
+    assert.ok(anonSeesNothing, 'the anon key cannot read orders (RLS/grants are enforced by Postgres)');
+
+    const forged = createClient(url, rest.mintKey('service_role').replace(/.$/, 'x'), opts);
+    r = await forged.from('profiles').select('id');
+    assert.strictEqual(r.error && r.error.code, 'PGRST301', 'a key with a bad signature is refused');
+
+    console.log('    ✓ miniPostgrest: filters, paging, counts, single, upsert, errors, schema and role enforcement');
+  } finally {
     await new Promise((r) => rest.server.close(r));
     await db.close();
+  }
 }
+
+module.exports = { run };
+
+if (require.main === module) {
+  run().then(() => process.exit(0), (e) => { console.error(e); process.exit(1); });
 }
