@@ -241,4 +241,71 @@ function createMiniPostgrest({ db, secret, schemas = ['public', 'iam', 'system']
     return { list: out.join(', '), inner };
   }
 
+  function Params(values) {
+    const push = (v) => { values.push(v); return `$${values.length}`; };
+    return { values, push };
+  }
+
+  function typed(p, types, col, value) {
+    const t = types.get(col);
+    if (!t) throw new RestError(400, '42703', `column ${col} does not exist`);
+    return `(${p.push(String(value))}::text)::${t}`;
+  }
+
+  function condition(p, types, col, rawOp, negate, alias = '_t') {
+    if (!types.has(col)) throw new RestError(400, '42703', `column ${col} does not exist`);
+    const colSql = `${alias}.${q(col)}`;
+    const dot = rawOp.indexOf('.');
+    if (dot < 0) throw new RestError(400, 'PGRST100', `failed to parse filter "${col}=${rawOp}"`);
+    let op = rawOp.slice(0, dot);
+    const operand = rawOp.slice(dot + 1);
+    let quant = null;
+    const qm = /^(\w+)\((any|all)\)$/.exec(op);
+    if (qm) { op = qm[1]; quant = qm[2]; }
+
+    let sql;
+    switch (op) {
+      case 'eq': sql = `${colSql} = ${typed(p, types, col, operand)}`; break;
+      case 'neq': sql = `${colSql} <> ${typed(p, types, col, operand)}`; break;
+      case 'gt': sql = `${colSql} > ${typed(p, types, col, operand)}`; break;
+      case 'gte': sql = `${colSql} >= ${typed(p, types, col, operand)}`; break;
+      case 'lt': sql = `${colSql} < ${typed(p, types, col, operand)}`; break;
+      case 'lte': sql = `${colSql} <= ${typed(p, types, col, operand)}`; break;
+      case 'like':
+      case 'ilike': {
+        const kw = op === 'like' ? 'LIKE' : 'ILIKE';
+        if (quant) {
+          const pats = splitTop(operand.replace(/^\{|\}$/g, '')).map((s) => p.push(unquote(s).replace(/\*/g, '%')));
+          sql = `${colSql}::text ${kw} ${quant.toUpperCase()} (ARRAY[${pats.join(',')}])`;
+        } else {
+          sql = `${colSql}::text ${kw} ${p.push(operand.replace(/\*/g, '%'))}`;
+        }
+        break;
+      }
+      case 'match': sql = `${colSql}::text ~ ${p.push(operand)}`; break;
+      case 'imatch': sql = `${colSql}::text ~* ${p.push(operand)}`; break;
+      case 'is': {
+        const v = operand.toLowerCase();
+        if (!['null', 'true', 'false', 'unknown'].includes(v)) throw new RestError(400, 'PGRST100', `bad "is" operand "${operand}"`);
+        sql = `${colSql} IS ${v === 'null' ? 'NULL' : v.toUpperCase()}`;
+        break;
+      }
+      case 'isdistinct': sql = `${colSql} IS DISTINCT FROM ${typed(p, types, col, operand)}`; break;
+      case 'in': {
+        const inner = operand.replace(/^\(/, '').replace(/\)$/, '');
+        const vals = inner === '' ? [] : splitTop(inner).map((s) => typed(p, types, col, unquote(s)));
+        sql = vals.length ? `${colSql} IN (${vals.join(', ')})` : 'FALSE';
+        break;
+      }
+      case 'cs': sql = `${colSql} @> ${typed(p, types, col, operand)}`; break;
+      case 'cd': sql = `${colSql} <@ ${typed(p, types, col, operand)}`; break;
+      case 'ov': sql = `${colSql} && ${typed(p, types, col, operand)}`; break;
+      default:
+        throw new RestError(501, 'LOUMOO_E2E_UNSUPPORTED', `filter operator "${op}" is not supported by the local PostgREST stand-in`);
+    }
+    return negate ? `NOT (${sql})` : sql;
+  }
+
+  /** Parse one `col.op.value` / `not.col...` / `and(...)` / `or(...)` element of a logical group. */
+
 }
