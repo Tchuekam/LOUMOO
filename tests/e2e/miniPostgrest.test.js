@@ -40,6 +40,43 @@ async function run() {
   const anon = createClient(url, rest.mintKey('anon'), opts);
 
   try {
+    // ------------------------------------------------------------ insert / select
+    let r = await admin.from('profiles').insert([
+      { id: 'u_a', clerk_user_id: 'c_a', email: 'a@x.test' },
+      { id: 'u_b', clerk_user_id: 'c_b', email: 'b@x.test' },
+      { id: 'u_c', clerk_user_id: 'c_c', email: 'c@x.test' },
+    ]).select();
+    assert.ifError(r.error);
+    assert.strictEqual(r.data.length, 3, 'a bulk insert returns the rows');
+    assert.ok(r.data[0].created_at, 'column defaults are applied');
+
+    r = await admin.from('profiles').select('id,email').eq('id', 'u_a').single();
+    assert.ifError(r.error);
+    assert.deepStrictEqual(r.data, { id: 'u_a', email: 'a@x.test' }, 'select list + eq + single() give exactly the object');
+
+    r = await admin.from('profiles').select('id').in('id', ['u_a', 'u_c']).order('id', { ascending: false });
+    assert.deepStrictEqual(r.data.map((x) => x.id), ['u_c', 'u_a'], 'in() + order desc');
+
+    r = await admin.from('profiles').select('id').ilike('email', 'B@%').maybeSingle();
+    assert.strictEqual(r.data && r.data.id, 'u_b', 'ilike with a wildcard + maybeSingle()');
+
+    r = await admin.from('profiles').select('id').is('phone_number', null).or('id.eq.u_a,id.eq.u_b').order('id');
+    assert.ifError(r.error);
+    assert.deepStrictEqual(r.data.map((x) => x.id), ['u_a', 'u_b'], 'is null + or(...)');
+
+    r = await admin.from('profiles').select('id', { count: 'exact' }).order('id').range(1, 1);
+    assert.strictEqual(r.count, 3, 'count=exact reports the total ignoring the page');
+    assert.deepStrictEqual(r.data.map((x) => x.id), ['u_b'], 'range() pages');
+
+    r = await admin.from('profiles').select('id', { count: 'exact', head: true }).neq('id', 'u_a');
+    assert.strictEqual(r.count, 2, 'head + count');
+
+    r = await admin.from('profiles').select('id').eq('id', 'nobody').maybeSingle();
+    assert.ifError(r.error);
+    assert.strictEqual(r.data, null, 'maybeSingle() on no rows is null, not an error');
+
+    r = await admin.from('profiles').select('id').eq('id', 'nobody').single();
+    assert.strictEqual(r.error && r.error.code, 'PGRST116', 'single() on no rows is PGRST116, as PostgREST reports it');
 
 } finally {
     await new Promise((r) => rest.server.close(r));
