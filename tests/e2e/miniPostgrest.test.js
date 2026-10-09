@@ -78,6 +78,22 @@ async function run() {
     r = await admin.from('profiles').select('id').eq('id', 'nobody').single();
     assert.strictEqual(r.error && r.error.code, 'PGRST116', 'single() on no rows is PGRST116, as PostgREST reports it');
 
+    // ------------------------------------------------------------------- errors
+    r = await admin.from('profiles').insert({ id: 'u_a', clerk_user_id: 'c_dupe' });
+    assert.strictEqual(r.error && r.error.code, '23505', 'a unique violation keeps its SQLSTATE');
+
+    r = await admin.from('orders').insert({ id: 'o_x', buyer_id: 'ghost', seller_id: 'u_a', order_number: 'N1', total_amount_xaf: 1000 });
+    assert.strictEqual(r.error && r.error.code, '23503', 'a foreign-key violation keeps its SQLSTATE');
+
+    r = await admin.from('no_such_table').select('*');
+    assert.strictEqual(r.error && r.error.code, 'PGRST205', 'a missing table (an unapplied migration) is PGRST205');
+
+    r = await admin.from('profiles').insert({ id: 'u_z', clerk_user_id: 'c_z', not_a_column: 1 });
+    assert.strictEqual(r.error && r.error.code, 'PGRST204', 'an unknown column (an unapplied migration) is PGRST204');
+
+    r = await admin.from('profiles').select('id, nothing_here(id)');
+    assert.strictEqual(r.error && r.error.code, 'PGRST200', 'embedding a table with no relationship is PGRST200, not an empty result');
+
 } finally {
     await new Promise((r) => rest.server.close(r));
     await db.close();
