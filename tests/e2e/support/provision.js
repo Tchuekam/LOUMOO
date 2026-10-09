@@ -77,3 +77,34 @@ function makePng(width = 480, height = 480, [r0, g0, b0] = [196, 138, 74], [r1, 
     chunk('IHDR', ihdr), chunk('IDAT', zlib.deflateSync(raw, { level: 9 })), chunk('IEND', Buffer.alloc(0)),
   ]);
 }
+
+class Api {
+  constructor(baseUrl) { this.baseUrl = baseUrl; }
+
+  async call(method, path, { body, token, headers = {}, raw } = {}) {
+    const init = { method, headers: { ...headers } };
+    if (token) init.headers.authorization = `Bearer ${token}`;
+    if (raw !== undefined) {
+      init.body = raw;
+    } else if (body !== undefined) {
+      init.headers['content-type'] = 'application/json';
+      init.body = JSON.stringify(body);
+    }
+    const res = await fetch(this.baseUrl + path, init);
+    const text = await res.text();
+    let parsed;
+    try { parsed = text ? JSON.parse(text) : null; } catch { parsed = text; }
+    return { status: res.status, body: parsed, headers: Object.fromEntries(res.headers.entries()) };
+  }
+
+  /** Like call(), but throws with the response attached when the status is not the expected one. */
+  async must(method, path, opts = {}, expect = [200, 201]) {
+    const r = await this.call(method, path, opts);
+    if (!expect.includes(r.status)) {
+      const e = new Error(`${method} ${path} -> ${r.status} ${JSON.stringify(r.body).slice(0, 400)}`);
+      e.response = r;
+      throw e;
+    }
+    return r;
+  }
+}
