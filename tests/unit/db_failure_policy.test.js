@@ -179,4 +179,21 @@ async function run() {
     assert.strictEqual(prod[`policy:${c}`].ok, true, `production: a failed read "${c}" may fall back`);
   }
 
+  // 3. A swap that matched nothing is a conflict in every environment: there IS a database
+  //    and it says the row is not in the status the caller read.
+  const dev = runChild('test');
+  for (const key of ['cas-fulfillment:nothing-matched', 'cas-payment:nothing-matched']) {
+    assert.strictEqual(dev[key].ok, false, `test env: ${key} is a conflict too`);
+    assert.strictEqual(dev[key].code, 'CONFLICT');
+  }
+  // Development without a working database keeps its documented in-memory fallback.
+  assert.strictEqual(dev['saveOrder:PGRST204'].ok, true, 'development keeps its demo fallback for an insert error');
+
+  console.log('    ✓ db_failure_policy: writes never answer success in production; CAS conflicts are explicit');
+}
+
+module.exports = { run };
+
+if (CHILD) {
+  childScenarios().then(() => process.exit(0), (e) => { console.error(e); process.exit(1); });
 }
