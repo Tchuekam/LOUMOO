@@ -126,3 +126,37 @@ function runChild(nodeEnv) {
   if (!m) throw new Error(`child (${nodeEnv}) produced no result.\nstdout: ${(r.stdout || '').slice(-600)}\nstderr: ${(r.stderr || '').slice(-600)}`);
   return JSON.parse(m[1]);
 }
+
+async function run() {
+  // 1. The classification itself.
+  process.env.LOUMOO_NO_DOTENV = '1';
+  require('../setup');
+  const { isReadOperation } = require('../../server/infrastructure/database/SupabaseClient');
+  const table = [
+    // [context, error, isRead]
+    ['OrderRepository.saveOrder', { code: 'PGRST204' }, false],
+    ['OrderRepository.saveOrder', { code: 'PGRST301' }, false],
+    ['OrderRepository.updateFulfillmentStatusAtomic', { code: 'PGRST116' }, false],
+    ['Follow target', {}, false],
+    ['Unfollow target', {}, false],
+    ['Block user', {}, false],
+    ['Add org member', {}, false],
+    ['ProfileRepository.recordLogin', {}, false],
+    ['Update', {}, false],
+    ['OrderRepository.findListingById', { code: 'PGRST116' }, true],
+    ['DeliveryRepository.listDrivers', {}, true],
+    ['Get org membership', {}, true],
+    ['Check org slug', {}, true],
+    ['Get follow status', {}, true],
+    ['Check block status', {}, true],
+    ['List following', {}, true],
+    ['DeliveryRepository.findDriver', {}, true],
+    ['Recalculate follow counts', {}, false],
+    ['Query', {}, true],
+    ['a widget with a budget', {}, false]
+  ];
+  for (const [ctx, err, want] of table) {
+    assert.strictEqual(isReadOperation(ctx, err), want, `"${ctx}" ${JSON.stringify(err)} should be a ${want ? 'read' : 'write'}`);
+  }
+
+}
