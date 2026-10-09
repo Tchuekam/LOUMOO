@@ -64,3 +64,20 @@ async function waitFor(url, { timeoutMs = 90000, intervalMs = 400 } = {}) {
   }
   throw new Error(`timed out waiting for ${url}: ${last && last.message}`);
 }
+
+/**
+ * @param {object} [opts]
+ * @param {string} [opts.nodeEnv='development']  development exposes the signup OTP in the API response (config.isDevelopment)
+ * @param {object} [opts.env]                    extra variables for the server process
+ * @param {string} [opts.logFile]                where to tee the server's output
+ * @param {boolean} [opts.seed=true]             run scripts/seed_taxonomy.js (what `npm run db:seed` does on a real deploy):
+ *                                               without it no listing can be created (listings.category_id is a foreign key)
+ */
+async function startLocalStack(opts = {}) {
+  const nodeEnv = opts.nodeEnv || 'development';
+  const secret = crypto.randomBytes(32).toString('hex');
+  const testAuthSecret = crypto.randomBytes(24).toString('hex');
+
+  const { db, migrations } = await createLocalDb({ dataDir: opts.dataDir });
+
+}
