@@ -348,4 +348,25 @@ function createMiniPostgrest({ db, secret, schemas = ['public', 'iam', 'system']
 
   const whereSql = (clauses) => (clauses.length ? ` WHERE ${clauses.join(' AND ')}` : '');
 
+  /** `stores.status=eq.ACTIVE` -> Map('stores' -> [{ col: 'status', rawOp: 'eq.ACTIVE', negate: false }]) */
+  function collectEmbedFilters(searchParams) {
+    const out = new Map();
+    for (const [key, value] of searchParams.entries()) {
+      if (RESERVED.has(key) || key === 'and' || key === 'or' || key === 'not.and' || key === 'not.or') continue;
+      const dot = key.indexOf('.');
+      if (dot < 0) continue;
+      const rel = key.slice(0, dot);
+      const col = key.slice(dot + 1);
+      if (!IDENT.test(rel) || !IDENT.test(col)) {
+        throw new RestError(501, 'LOUMOO_E2E_UNSUPPORTED', `filter "${key}" is not supported by the local PostgREST stand-in`);
+      }
+      let rawOp = value;
+      let negate = false;
+      if (rawOp.startsWith('not.')) { negate = true; rawOp = rawOp.slice(4); }
+      if (!out.has(rel)) out.set(rel, []);
+      out.get(rel).push({ col, rawOp, negate });
+    }
+    return out;
+  }
+
 }
