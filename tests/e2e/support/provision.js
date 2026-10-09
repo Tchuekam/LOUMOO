@@ -125,3 +125,32 @@ async function registerAccount(api, { email, password, firstName, lastName, city
   const d = dataOf(r);
   return { token: d.token, userId: d.user.id, email, created: true };
 }
+
+async function accountState(api, token) {
+  return dataOf(await api.must('GET', '/api/v1/me/state', { token }));
+}
+
+/** Walks the onboarding wizard from wherever the account is. */
+async function completeOnboarding(api, token, { intent = 'buyer', firstName, lastName, phone, city = 'Douala', address, sellerType = 'individual' }) {
+  let st = await accountState(api, token);
+  if (st.state === 'ONBOARDING_REQUIRED') {
+    await api.must('POST', '/api/v1/me/onboarding/start', { token, body: { intent } });
+    st = await accountState(api, token);
+  }
+  const steps = {
+    PERSONAL_INFO: { firstName, lastName, phoneNumber: phone, city },
+    LOCATION: { city, address },
+    MARKETPLACE_PREFERENCES: { interests: ['fashion'], priorities: ['price'] },
+    SELLER_SETUP: { sellerType },
+    COMPLETION: { acceptedTerms: true },
+  };
+  for (let guard = 0; guard < 8 && st.state === 'ONBOARDING_IN_PROGRESS'; guard++) {
+    const next = (st.onboarding && st.onboarding.nextStep) || (dataOf(await api.must('GET', '/api/v1/me/onboarding', { token })).nextStep);
+    if (!next || !steps[next]) throw new Error(`onboarding wants step ${next}, which the harness does not know`);
+    await api.must('POST', `/api/v1/me/onboarding/steps/${next}`, { token, body: steps[next] });
+    st = await accountState(api, token);
+  }
+  return st;
+}
+
+/** Creates (or finds) the seller's store and activates it, which makes the account SELLER_READY. */
