@@ -504,6 +504,13 @@ class OrderRepository {
     const updatedTimeline = [...(existing.timeline || []), newTimelineEntry];
 
     if (this.db) {
+      // The compare-and-swap: the UPDATE only matches while the row is still in the
+      // status the caller read. maybeSingle() makes "nothing matched" a plain null
+      // instead of a PGRST116 error, because that error used to be swallowed by the
+      // production failure policy and the method went on to report an in-memory
+      // "update" that never happened, defeating the swap.
+      let attempted = false;
+      let persisted = null;
       try {
         const { data, error } = await this.db
           .from('orders')
@@ -518,19 +525,29 @@ class OrderRepository {
           .eq('id', orderId)
           .eq('fulfillment_status', expectedCurrentStatus)
           .select()
-          .single();
+          .maybeSingle();
 
         if (error) {
           handleDatabaseFailure(error, 'OrderRepository.updateFulfillmentStatusAtomic');
-        }
-
-        if (data) {
-          const updated = this._mapRowToOrder(data);
-          this._inMemoryOrders.set(updated.id, updated);
-          return updated;
+        } else {
+          attempted = true;
+          persisted = data;
         }
       } catch (err) {
+        if (err instanceof InfrastructureError) throw err;
         handleDatabaseFailure(err, 'OrderRepository.updateFulfillmentStatusAtomic');
+      }
+
+      if (attempted && !persisted) {
+        throw new ConflictError(
+          `Concurrency conflict: Order status changed while this transition ` +
+          `("${expectedCurrentStatus}" to "${nextStatus}") was being applied.`
+        );
+      }
+      if (persisted) {
+        const updated = this._mapRowToOrder(persisted);
+        this._inMemoryOrders.set(updated.id, updated);
+        return updated;
       }
     }
 
