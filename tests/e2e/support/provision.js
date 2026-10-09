@@ -202,3 +202,13 @@ async function promoteAdminLocal(db, userId) {
   if (!r.rows.length) throw new Error(`no profile for user ${userId}`);
   return r.rows[0].id;
 }
+
+/**
+ * The server caches a signed-in user's profile for five minutes, and a role changed
+ * with a direct UPDATE does not clear that cache (a real role change goes through
+ * ProfileRepository.update, which does). An ordinary profile edit through the API
+ * takes that same path, so one is made right after a local promotion.
+ */
+async function refreshProfileCache(api, token) {
+  await api.must('PATCH', '/api/v1/users/me', { token, body: { bio: 'LOUMOO operations' } });
+}
