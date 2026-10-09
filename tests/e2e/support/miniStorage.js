@@ -38,5 +38,25 @@ function createMiniStorage({ publicOrigin }) {
   };
 
   /** @returns {Promise<{status:number, body:any, raw?:Buffer, type?:string}|null>} */
+  async function handle(req, url, bodyBuf) {
+    if (!url.pathname.startsWith('/storage/v1/')) return null;
 
+    if (url.pathname === '/storage/v1/bucket') {
+      if (req.method === 'GET') return { status: 200, body: [...buckets.values()] };
+      if (req.method === 'POST') {
+        let b = {};
+        try { b = JSON.parse(Buffer.from(bodyBuf).toString('utf8') || '{}'); } catch { return err(400, 'bad json'); }
+        const id = b.id || b.name;
+        if (!id) return err(400, 'a bucket needs a name');
+        if (buckets.has(id)) return { status: 409, body: { statusCode: '409', error: 'Duplicate', message: 'The resource already exists' } };
+        buckets.set(id, { id, name: id, public: Boolean(b.public), file_size_limit: b.file_size_limit || null, allowed_mime_types: b.allowed_mime_types || null, created_at: new Date().toISOString() });
+        return { status: 200, body: { name: id } };
+      }
+    }
+    const bm = /^\/storage\/v1\/bucket\/([^/]+)$/.exec(url.pathname);
+    if (bm && req.method === 'GET') {
+      return buckets.has(bm[1]) ? { status: 200, body: buckets.get(bm[1]) } : err(404, 'Bucket not found');
+    }
+
+}
 }
