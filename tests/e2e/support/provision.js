@@ -169,3 +169,28 @@ async function ensureActiveStore(api, token, { name, category = 'fashion', city 
   }
   return { storeId, state: (await accountState(api, token)).state };
 }
+
+/** Uploads one image and returns its upload id. */
+async function uploadImage(api, token, bytes = makePng()) {
+  const r = await api.must('POST', '/api/v1/uploads/listing-media', { token, raw: bytes, headers: { 'content-type': 'image/png' } });
+  const d = dataOf(r);
+  return d.uploadId || d.id;
+}
+
+/** Creates and publishes a listing (or returns the one already published with this title). */
+async function ensurePublishedListing(api, token, listing) {
+  const mine = await api.call('GET', '/api/v1/listings/seller?limit=100', { token });
+  const rows = (dataOf(mine) && (dataOf(mine).listings || dataOf(mine).items || dataOf(mine))) || [];
+  const existing = Array.isArray(rows) ? rows.find((l) => (l.title || '') === listing.title) : null;
+  if (existing && String(existing.status).toUpperCase() === 'PUBLISHED') return existing;
+
+  const uploadId = await uploadImage(api, token);
+  const created = await api.must('POST', '/api/v1/listings', {
+    token,
+    headers: { 'Idempotency-Key': `e2e-${crypto.createHash('sha1').update(listing.title).digest('hex')}` },
+    body: { ...listing, uploadIds: [uploadId] },
+  });
+  const id = dataOf(created).id;
+  const published = await api.must('POST', `/api/v1/listings/${id}/publish`, { token, body: {} });
+  return dataOf(published);
+}
