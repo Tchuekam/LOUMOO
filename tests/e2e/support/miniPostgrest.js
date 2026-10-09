@@ -581,4 +581,93 @@ function createMiniPostgrest({ db, secret, schemas = ['public', 'iam', 'system']
 
   /* ------------------------------------------------------------------- server */
 
+  function readBody(req) {
+    return new Promise((resolve, reject) => {
+      const chunks = [];
+      req.on('data', (c) => chunks.push(c));
+      req.on('end', () => resolve(Buffer.concat(chunks)));
+      req.on('error', reject);
+    });
+  }
+
+  function send(res, status, body, extra = {}) {
+    const headers = { 'Content-Type': 'application/json; charset=utf-8', ...extra };
+    res.writeHead(status, headers);
+    res.end(body);
+  }
+
+  const server = http.createServer(async (req, res) => {
+    let url;
+    try { url = new URL(req.url, 'http://local'); } catch { return send(res, 400, '{}'); }
+    const started = Date.now();
+    let logStatus = 0;
+    let logError = null;
+    try {
+      if (url.pathname === '/__health') return send(res, 200, '{"ok":true}');
+      if (url.pathname.startsWith('/auth/v1')) {
+        if (!auth) throw new RestError(501, 'LOUMOO_E2E_UNSUPPORTED', 'auth is not provided by this local stack');
+        const out = await auth.handle(req, url, (await readBody(req)).toString('utf8'));
+        logStatus = out.status;
+        if (out.status >= 400) logError = String(out.body && out.body.error_code);
+        return send(res, out.status, out.body === null ? undefined : JSON.stringify(out.body), out.headers || {});
+      }
+      if (url.pathname.startsWith('/storage/v1') && storage) {
+        const out = await storage.handle(req, url, await readBody(req));
+        logStatus = out.status;
+        if (out.status >= 400) logError = 'storage';
+        if (out.raw) {
+          res.writeHead(out.status, { 'Content-Type': out.type || 'application/octet-stream', 'Access-Control-Allow-Origin': '*', 'Cache-Control': 'private, max-age=60' });
+          return res.end(out.raw);
+        }
+        return send(res, out.status, JSON.stringify(out.body));
+      }
+      if (url.pathname.startsWith('/storage/v1') || url.pathname.startsWith('/realtime/v1')) {
+        throw new RestError(501, 'LOUMOO_E2E_UNSUPPORTED', `${url.pathname.split('/')[1]} is not provided by the local stack`);
+      }
+      const m = /^\/rest\/v1\/(.*)$/.exec(url.pathname);
+      if (!m) throw new RestError(404, 'PGRST125', `Invalid path specified in request URL`);
+      const target = decodeURIComponent(m[1]);
+      if (target === '') return send(res, 200, '{}');
+      const bodyText = (await readBody(req)).toString('utf8');
+      const role = roleFor(req);
+      const schema = schemaFor(req);
+
+      const out = await db.transaction(async (tx) => {
+        await tx.exec(`SET LOCAL ROLE ${role}`);
+        if (target.startsWith('rpc/')) return handleRpc(tx, req, url, schema, target.slice(4), bodyText);
+        return handleTable(tx, req, url, schema, target, bodyText, role);
+      });
+      logStatus = out.status;
+      const extra = {};
+      if (out.content) extra['Content-Range'] = out.content;
+      res.writeHead(out.status, { 'Content-Type': 'application/json; charset=utf-8', ...extra });
+      return res.end(out.status === 204 ? undefined : out.body);
+    } catch (err) {
+      if (err instanceof RestError) {
+        logStatus = err.status;
+        logError = err.body.code;
+        return send(res, err.status, JSON.stringify(err.body));
+      }
+      let role = 'anon';
+      try { role = roleFor(req); } catch { /* keep anon */ }
+      const code = err && err.code && /^[0-9A-Z]{5}$/.test(err.code) ? err.code : null;
+      const status = statusForSqlstate(code, role);
+      logStatus = status;
+      logError = code || 'ERR';
+      return send(res, status, JSON.stringify({
+        code: code || 'PGRST000',
+        details: err && err.detail ? err.detail : null,
+        hint: err && err.hint ? err.hint : null,
+        message: String((err && err.message) || err),
+      }));
+    } finally {
+      if (onRequest) {
+        try { onRequest({ method: req.method, path: url.pathname + url.search, status: logStatus, error: logError, ms: Date.now() - started }); } catch { /* observer must never break a request */ }
+      }
+    }
+  });
+
+  return { server, mintKey: (role, extra) => mintKey(secret, role, extra) };
 }
+
+module.exports = { createMiniPostgrest, RestError };
