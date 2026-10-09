@@ -78,6 +78,14 @@ function createMiniStorage({ publicOrigin }) {
         return { status: 200, body: { signedURL: `/object/sign/${bucket}/${key}?token=${o.token}` } };
       }
 
+      if (req.method === 'GET' || req.method === 'HEAD') {
+        const o = objects.get(`${bucket}/${key}`);
+        if (!o) return err(404, 'Object not found');
+        if (kind === 'sign' && url.searchParams.get('token') !== o.token) return err(400, 'Invalid token');
+        if (kind === 'object' || kind === 'authenticated') return err(400, 'A signed URL or the public path is required');
+        return { status: 200, raw: req.method === 'HEAD' ? Buffer.alloc(0) : o.buf, type: o.type };
+      }
+
 }
 }
 }
