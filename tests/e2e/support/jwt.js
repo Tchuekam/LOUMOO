@@ -16,3 +16,18 @@ function mintJwt(secret, payload) {
   const sig = b64u(crypto.createHmac('sha256', secret).update(`${header}.${body}`).digest());
   return `${header}.${body}.${sig}`;
 }
+
+/** @returns {{ok:true,payload:object}|{ok:false,reason:string}} */
+function verifyJwt(token, secret) {
+  const parts = String(token || '').split('.');
+  if (parts.length !== 3) return { ok: false, reason: 'malformed' };
+  if (secret) {
+    const expect = Buffer.from(b64u(crypto.createHmac('sha256', secret).update(`${parts[0]}.${parts[1]}`).digest()));
+    const got = Buffer.from(parts[2]);
+    if (expect.length !== got.length || !crypto.timingSafeEqual(expect, got)) return { ok: false, reason: 'signature' };
+  }
+  let payload;
+  try { payload = JSON.parse(fromB64u(parts[1]).toString('utf8')); } catch { return { ok: false, reason: 'malformed' }; }
+  if (payload.exp && payload.exp * 1000 < Date.now()) return { ok: false, reason: 'expired' };
+  return { ok: true, payload };
+}
