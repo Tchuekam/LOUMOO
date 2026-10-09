@@ -108,3 +108,20 @@ class Api {
     return r;
   }
 }
+
+const dataOf = (r) => (r && r.body && r.body.data) || null;
+
+/** Sign in if the account exists, otherwise sign up and confirm the emailed code. */
+async function registerAccount(api, { email, password, firstName, lastName, city = 'Douala', phone }) {
+  let r = await api.call('POST', '/api/v1/auth/login', { body: { email, password } });
+  if (r.status === 200) {
+    const d = dataOf(r);
+    return { token: d.token, userId: d.user.id, email, created: false };
+  }
+  r = await api.must('POST', '/api/v1/auth/signup', { body: { email, password, firstName, lastName, city, phone } });
+  const code = dataOf(r).devOtp;
+  if (!code) throw new Error('signup returned no devOtp: run the server with NODE_ENV=development');
+  r = await api.must('POST', '/api/v1/auth/verify-otp', { body: { email, code } });
+  const d = dataOf(r);
+  return { token: d.token, userId: d.user.id, email, created: true };
+}
