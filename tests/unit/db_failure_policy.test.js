@@ -159,4 +159,24 @@ async function run() {
     assert.strictEqual(isReadOperation(ctx, err), want, `"${ctx}" ${JSON.stringify(err)} should be a ${want ? 'read' : 'write'}`);
   }
 
+  // 2. Production: a failed write throws; a failed read may fall back.
+  const prod = runChild('production');
+  for (const code of ['PGRST204', 'PGRST301', 'PGRST116', '23505']) {
+    const r = prod[`saveOrder:${code}`];
+    assert.strictEqual(r.ok, false, `production: an insert that failed with ${code} must throw, not return an unsaved order`);
+    assert.strictEqual(r.code, 'INFRASTRUCTURE_ERROR', `production: ${code} surfaces as an infrastructure error`);
+  }
+  for (const key of ['cas-fulfillment:nothing-matched', 'cas-payment:nothing-matched']) {
+    assert.strictEqual(prod[key].ok, false, `production: ${key} must not report a transition that did not happen`);
+    assert.strictEqual(prod[key].code, 'CONFLICT', `production: ${key} is a conflict the caller can retry or refuse`);
+  }
+  assert.strictEqual(prod['cas-fulfillment:matched'].ok, true, 'a swap that matched still succeeds');
+  assert.strictEqual(prod['cas-fulfillment:matched'].value.status, 'in_transit');
+  for (const c of ['Follow target', 'Unfollow target', 'Block user', 'OrderRepository.saveOrder']) {
+    assert.strictEqual(prod[`policy:${c}`].ok, false, `production: a failed "${c}" throws`);
+  }
+  for (const c of ['OrderRepository.findListingById', 'DeliveryRepository.listDrivers', 'Get org membership']) {
+    assert.strictEqual(prod[`policy:${c}`].ok, true, `production: a failed read "${c}" may fall back`);
+  }
+
 }
