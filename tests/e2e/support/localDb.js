@@ -80,3 +80,19 @@ async function applyMigrations(db, { log = () => {} } = {}) {
 /**
  * @param {{dataDir?: string, log?: Function}} [opts] dataDir persists the database between runs (debugging only).
  */
+async function createLocalDb(opts = {}) {
+  const lib = loadPglite();
+  if (!lib) {
+    const err = new Error('@electric-sql/pglite is not installed (it is a devDependency: run `npm ci`, or set NODE_PATH to a folder that has it).');
+    err.code = 'PGLITE_MISSING';
+    throw err;
+  }
+  const db = new lib.PGlite(opts.dataDir ? { dataDir: opts.dataDir, extensions: lib.extensions } : { extensions: lib.extensions });
+  await db.waitReady;
+  await db.exec(SUPABASE_BASELINE);
+  await db.exec(AUTH_BASELINE);
+  const files = await applyMigrations(db, { log: opts.log });
+  return { db, migrations: files };
+}
+
+module.exports = { createLocalDb, applyMigrations, migrationFiles, loadPglite, SUPABASE_BASELINE, MIGRATIONS };
