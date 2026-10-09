@@ -32,3 +32,29 @@ function loadPglite() {
     return null;
   }
 }
+
+/** What a Supabase project has in place before the first migration. */
+const SUPABASE_BASELINE = `
+  CREATE ROLE anon NOLOGIN;
+  CREATE ROLE authenticated NOLOGIN;
+  CREATE ROLE service_role NOLOGIN BYPASSRLS;
+
+  CREATE SCHEMA IF NOT EXISTS extensions;
+  CREATE SCHEMA IF NOT EXISTS auth;
+  -- No end-user JWT ever reaches the database in this application (the server
+  -- uses the service-role key), so uid() is NULL; role() mirrors PostgREST's
+  -- SET ROLE so a policy written against auth.role() sees the caller's role.
+  CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql STABLE AS 'SELECT NULL::uuid';
+  CREATE FUNCTION auth.role() RETURNS text LANGUAGE sql STABLE AS 'SELECT current_user::text';
+
+  -- The application schemas, created before the migrations so the same default
+  -- privileges Supabase applies to objects the migration role creates are in
+  -- force: API roles can reach every table and row-level security alone decides
+  -- what an anonymous caller may read.
+  CREATE SCHEMA IF NOT EXISTS iam;
+  CREATE SCHEMA IF NOT EXISTS system;
+  GRANT USAGE ON SCHEMA public, iam, system, extensions TO anon, authenticated, service_role;
+  ALTER DEFAULT PRIVILEGES IN SCHEMA public, iam, system GRANT ALL ON TABLES TO anon, authenticated, service_role;
+  ALTER DEFAULT PRIVILEGES IN SCHEMA public, iam, system GRANT ALL ON SEQUENCES TO anon, authenticated, service_role;
+  ALTER DEFAULT PRIVILEGES IN SCHEMA public, iam, system GRANT ALL ON FUNCTIONS TO anon, authenticated, service_role;
+`;
