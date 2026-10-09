@@ -94,6 +94,38 @@ async function run() {
     r = await admin.from('profiles').select('id, nothing_here(id)');
     assert.strictEqual(r.error && r.error.code, 'PGRST200', 'embedding a table with no relationship is PGRST200, not an empty result');
 
+    // --------------------------------------------------------- resource embedding
+    await db.query(`INSERT INTO iam.listing_categories (id, vertical, name, slug) VALUES ('electronics', 'shop', 'Electronics', 'electronics') ON CONFLICT DO NOTHING`);
+    await db.query(`INSERT INTO iam.stores (id, owner_id, name, slug) VALUES ('s_a1', 'u_a', 'A One', 'a-one'), ('s_a2', 'u_a', 'A Two', 'a-two')`);
+    r = await admin.from('stores').select('id, owner:profiles(id, email)').eq('id', 's_a1').single();
+    assert.ifError(r.error);
+    assert.deepStrictEqual(r.data, { id: 's_a1', owner: { id: 'u_a', email: 'a@x.test' } }, 'many-to-one embed with an alias is an object');
+
+    r = await admin.from('profiles').select('id, stores(id, name)').eq('id', 'u_a').single();
+    assert.ifError(r.error);
+    assert.deepStrictEqual(r.data.stores.map((x) => x.id).sort(), ['s_a1', 's_a2'], 'one-to-many embed is an array');
+
+    r = await admin.from('profiles').select('id, stores(id)').eq('id', 'u_b').single();
+    assert.deepStrictEqual(r.data.stores, [], 'a parent with no children gets [] (not null)');
+
+    r = await admin.from('profiles').select('id, stores!inner(id)').order('id');
+    assert.deepStrictEqual(r.data.map((x) => x.id), ['u_a'], '!inner drops parents without a related row');
+
+    r = await admin.from('profiles').select('id, stores!inner(id)').eq('stores.name', 'A One').order('id');
+    assert.ifError(r.error);
+    assert.deepStrictEqual(r.data, [{ id: 'u_a', stores: [{ id: 's_a1' }] }], 'a filter on an !inner embed narrows both the embed and the parents (how the catalogue lists only ACTIVE stores)');
+
+    r = await admin.from('profiles').select('id, stores(id)').eq('stores.name', 'A One').order('id');
+    assert.ifError(r.error);
+    assert.deepStrictEqual(r.data.find((x) => x.id === 'u_a').stores, [{ id: 's_a1' }], 'without !inner the filter narrows only the embedded rows');
+    assert.deepStrictEqual(r.data.find((x) => x.id === 'u_b').stores, [], 'and keeps every parent');
+
+    r = await admin.from('profiles').select('id').eq('stores.name', 'A One');
+    assert.strictEqual(r.error && r.error.code, 'PGRST108', 'a filter on an embed that is not in the select is refused, as PostgREST does');
+
+    r = await admin.from('profiles').select('id, stores(id)').order('id');
+    assert.deepStrictEqual(r.data.map((x) => x.id), ['u_a', 'u_b', 'u_c'], 'a plain embed keeps every parent');
+
 } finally {
     await new Promise((r) => rest.server.close(r));
     await db.close();
