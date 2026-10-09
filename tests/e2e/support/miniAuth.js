@@ -44,3 +44,36 @@ const AUTH_BASELINE = `
     banned_until timestamptz
   );
 `;
+
+const hashPassword = (password) => {
+  const salt = crypto.randomBytes(16);
+  return `scrypt$${salt.toString('hex')}$${crypto.scryptSync(String(password), salt, 32).toString('hex')}`;
+};
+
+function checkPassword(password, stored) {
+  const [alg, salt, hash] = String(stored || '').split('$');
+  if (alg !== 'scrypt' || !salt || !hash) return false;
+  const got = crypto.scryptSync(String(password), Buffer.from(salt, 'hex'), 32);
+  const want = Buffer.from(hash, 'hex');
+  return got.length === want.length && crypto.timingSafeEqual(got, want);
+}
+
+function userJson(row) {
+  return {
+    id: row.id,
+    aud: row.aud,
+    role: row.role,
+    email: row.email,
+    phone: '',
+    email_confirmed_at: row.email_confirmed_at ? new Date(row.email_confirmed_at).toISOString() : null,
+    confirmed_at: row.email_confirmed_at ? new Date(row.email_confirmed_at).toISOString() : null,
+    last_sign_in_at: row.last_sign_in_at ? new Date(row.last_sign_in_at).toISOString() : null,
+    app_metadata: row.raw_app_meta_data,
+    user_metadata: row.raw_user_meta_data,
+    identities: [],
+    created_at: new Date(row.created_at).toISOString(),
+    updated_at: new Date(row.updated_at).toISOString(),
+  };
+}
+
+const authError = (status, errorCode, msg) => ({ status, body: { code: status, error_code: errorCode, msg } });
