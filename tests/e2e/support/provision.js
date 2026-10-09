@@ -212,3 +212,21 @@ async function promoteAdminLocal(db, userId) {
 async function refreshProfileCache(api, token) {
   await api.must('PATCH', '/api/v1/users/me', { token, body: { bio: 'LOUMOO operations' } });
 }
+
+/** The profile row id (what the delivery module calls a profileId) for an auth user id. */
+async function profileIdFor(db, userId) {
+  const r = await db.query('SELECT id FROM iam.profiles WHERE clerk_user_id = $1', [userId]);
+  return r.rows[0] && r.rows[0].id;
+}
+
+/** An administrator registers a rider (POST /deliveries/drivers/:profileId), as an operator would. */
+async function registerRider(api, adminToken, profileId, rider) {
+  const r = await api.must('POST', `/api/v1/deliveries/drivers/${profileId}`, { token: adminToken, body: rider });
+  return dataOf(r).driver;
+}
+
+module.exports = {
+  Api, makePng, dataOf,
+  registerAccount, accountState, completeOnboarding, ensureActiveStore, uploadImage, ensurePublishedListing,
+  promoteAdminLocal, refreshProfileCache, profileIdFor, registerRider,
+};
