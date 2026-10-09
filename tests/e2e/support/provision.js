@@ -154,3 +154,18 @@ async function completeOnboarding(api, token, { intent = 'buyer', firstName, las
 }
 
 /** Creates (or finds) the seller's store and activates it, which makes the account SELLER_READY. */
+async function ensureActiveStore(api, token, { name, category = 'fashion', city = 'Douala', description, phone }) {
+  let r = await api.call('GET', '/api/v1/stores/me', { token });
+  let store = r.status === 200 ? (dataOf(r).store || null) : null;
+  if (!store) {
+    r = await api.must('POST', '/api/v1/stores', { token, body: { name, category, city, description, phone } });
+    store = dataOf(r);
+  }
+  const storeId = store.id;
+  const st = await accountState(api, token);
+  if (st.state !== 'SELLER_READY') {
+    await api.must('PATCH', `/api/v1/stores/${storeId}/location`, { token, body: { city, region: 'Littoral', country: 'CM' } });
+    await api.must('PATCH', `/api/v1/stores/${storeId}/onboarding`, { token, body: { step: 'ACTIVE' } });
+  }
+  return { storeId, state: (await accountState(api, token)).state };
+}
