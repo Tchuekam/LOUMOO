@@ -86,6 +86,18 @@ function createMiniStorage({ publicOrigin }) {
         return { status: 200, raw: req.method === 'HEAD' ? Buffer.alloc(0) : o.buf, type: o.type };
       }
 
+      if (req.method === 'DELETE') {
+        let removed = 0;
+        let body = {};
+        try { body = JSON.parse(Buffer.from(bodyBuf).toString('utf8') || '{}'); } catch { /* none */ }
+        for (const p of body.prefixes || []) if (objects.delete(`${bucket}/${p}`)) removed++;
+        return { status: 200, body: Array.from({ length: removed }, () => ({})) };
+      }
+    }
+    return err(501, `${req.method} ${url.pathname} is not provided by the local storage stand-in`);
+  }
+
+  return { handle, objects, publicOrigin };
 }
-}
-}
+
+module.exports = { createMiniStorage };
