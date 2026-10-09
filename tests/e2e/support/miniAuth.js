@@ -102,5 +102,26 @@ function createMiniAuth({ db, secret }) {
 
     if (sub === '/health') return { status: 200, body: { status: 'ok' } };
 
+    if (sub === '/admin/users' && req.method === 'POST') {
+      const denied = requireServiceRole(req); if (denied) return denied;
+      const email = String(body.email || '').trim().toLowerCase();
+      if (!email) return authError(422, 'validation_failed', 'To create a user, either email or phone must be provided');
+      if (await byEmail(email)) return authError(422, 'email_exists', 'A user with this email address has already been registered');
+      const r = await db.query(
+        `INSERT INTO auth.users (email, encrypted_password, email_confirmed_at, raw_user_meta_data)
+         VALUES ($1, $2, $3, $4::jsonb) RETURNING *`,
+        [email, body.password ? hashPassword(body.password) : null, body.email_confirm ? new Date().toISOString() : null, JSON.stringify(body.user_metadata || {})]);
+      return { status: 200, body: userJson(r.rows[0]) };
+    }
+
+    if (sub === '/admin/users' && req.method === 'GET') {
+      const denied = requireServiceRole(req); if (denied) return denied;
+      const page = Math.max(1, Number(url.searchParams.get('page') || 1));
+      const per = Math.min(1000, Math.max(1, Number(url.searchParams.get('per_page') || 50)));
+      const total = (await db.query('SELECT count(*)::int n FROM auth.users')).rows[0].n;
+      const rows = (await db.query('SELECT * FROM auth.users ORDER BY created_at LIMIT $1 OFFSET $2', [per, (page - 1) * per])).rows;
+      return { status: 200, body: { users: rows.map(userJson), aud: 'authenticated' }, headers: { 'x-total-count': String(total) } };
+    }
+
 }
 }
