@@ -126,6 +126,23 @@ async function run() {
     r = await admin.from('profiles').select('id, stores(id)').order('id');
     assert.deepStrictEqual(r.data.map((x) => x.id), ['u_a', 'u_b', 'u_c'], 'a plain embed keeps every parent');
 
+    // ------------------------------------------------------------ upsert / update / delete
+    r = await admin.from('profiles').upsert({ id: 'u_a', clerk_user_id: 'c_a', first_name: 'Ada' }, { onConflict: 'id' }).select().single();
+    assert.ifError(r.error);
+    assert.strictEqual(r.data.first_name, 'Ada', 'upsert merges into the existing row');
+
+    r = await admin.from('profiles').update({ last_name: 'Lovelace' }).eq('id', 'u_a').select();
+    assert.strictEqual(r.data.length, 1);
+    assert.strictEqual(r.data[0].last_name, 'Lovelace', 'update returns the changed row');
+
+    r = await admin.from('profiles').update({ last_name: 'X' }).eq('id', 'nobody').select();
+    assert.deepStrictEqual(r.data, [], 'an update that matches nothing returns []');
+
+    r = await admin.from('profiles').delete().eq('id', 'u_c').select();
+    assert.strictEqual(r.data.length, 1, 'delete returns the removed row');
+    r = await admin.from('profiles').select('id', { count: 'exact', head: true });
+    assert.strictEqual(r.count, 2, 'and it is gone');
+
 } finally {
     await new Promise((r) => rest.server.close(r));
     await db.close();
