@@ -414,4 +414,39 @@ function createMiniPostgrest({ db, secret, schemas = ['public', 'iam', 'system']
 
   /* ------------------------------------------------------------------ handlers */
 
+  function schemaFor(req) {
+    const h = req.method === 'GET' || req.method === 'HEAD' ? req.headers['accept-profile'] : req.headers['content-profile'];
+    const schema = h || schemas[0];
+    if (!schemas.includes(schema)) {
+      throw new RestError(406, 'PGRST106', `The schema must be one of the following: ${schemas.join(', ')}`, null, null);
+    }
+    return schema;
+  }
+
+  const prefer = (req) => {
+    const out = {};
+    for (const part of String(req.headers.prefer || '').split(',')) {
+      const [k, v] = part.trim().split('=');
+      if (k) out[k] = v === undefined ? true : v;
+    }
+    return out;
+  };
+
+  const wantsObject = (req) => /application\/vnd\.pgrst\.object\+json/.test(req.headers.accept || '');
+
+  function respondRows(rows, { req, status, content }) {
+    if (wantsObject(req)) {
+      if (rows.length !== 1) {
+        throw new RestError(406, 'PGRST116', 'JSON object requested, multiple (or no) rows returned', `The result contains ${rows.length} rows`);
+      }
+      return { status, body: JSON.stringify(rows[0]), content };
+    }
+    return { status, body: JSON.stringify(rows), content };
+  }
+
+  async function jsonRows(tx, innerSql, values) {
+    const r = await tx.query(`SELECT coalesce(json_agg(_r), '[]'::json)::text AS body FROM (${innerSql}) _r`, values);
+    return JSON.parse(r.rows[0].body);
+  }
+
 }
