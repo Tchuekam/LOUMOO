@@ -143,4 +143,33 @@ ${out.slice(-1500)}`))));
     throw new Error(`${e.message}\n--- server output (last 40 lines)\n${logs.slice(-40).join('\n')}${exited ? `\n--- exited ${JSON.stringify(exited)}` : ''}`);
   }
 
+  const stack = {
+    baseUrl,
+    restUrl,
+    db,
+    migrations,
+    testAuthSecret,
+    keys: { anon: anonKey, service: serviceKey },
+    logs,
+    restLog,
+    /** Server log lines showing a database failure was swallowed by a dev-mode fallback. */
+    silentFallbacks: () => logs.filter((l) => /\[DB-FAILURE\]|continuing with in-memory fallback/i.test(l)),
+    /** Server log lines at error level (excluding the fallback lines above). */
+    errors: () => logs.filter((l) => /\b(ERROR|error)\b/.test(l) && !/\[DB-FAILURE\]|in-memory fallback/i.test(l)),
+    /** REST requests the database answered with an error status. */
+    dbErrors: () => restLog.filter((r) => r.status >= 400),
+    sql: (text, params) => db.query(text, params),
+    async stop() {
+      if (!exited) {
+        child.kill();
+        await new Promise((r) => { const t = setTimeout(r, 4000); child.once('exit', () => { clearTimeout(t); r(); }); });
+      }
+      if (sink) sink.end();
+      await new Promise((r) => rest.server.close(r));
+      await db.close();
+    },
+  };
+  return stack;
 }
+
+module.exports = { startLocalStack, freePort, waitFor, REPO };
