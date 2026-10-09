@@ -50,3 +50,17 @@ function baseEnv() {
   for (const k of keep) if (process.env[k] !== undefined) out[k] = process.env[k];
   return out;
 }
+
+async function waitFor(url, { timeoutMs = 90000, intervalMs = 400 } = {}) {
+  const t0 = Date.now();
+  let last = null;
+  while (Date.now() - t0 < timeoutMs) {
+    try {
+      const res = await fetch(url);
+      if (res.status < 500) return res;
+      last = new Error(`HTTP ${res.status}`);
+    } catch (e) { last = e; }
+    await new Promise((r) => setTimeout(r, intervalMs));
+  }
+  throw new Error(`timed out waiting for ${url}: ${last && last.message}`);
+}
