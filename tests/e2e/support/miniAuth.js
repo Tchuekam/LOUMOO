@@ -123,5 +123,31 @@ function createMiniAuth({ db, secret }) {
       return { status: 200, body: { users: rows.map(userJson), aud: 'authenticated' }, headers: { 'x-total-count': String(total) } };
     }
 
+    const m = /^\/admin\/users\/([^/]+)$/.exec(sub);
+    if (m) {
+      const denied = requireServiceRole(req); if (denied) return denied;
+      const id = decodeURIComponent(m[1]);
+      const row = await byId(id).catch(() => null);
+      if (!row) return authError(404, 'user_not_found', 'User not found');
+      if (req.method === 'GET') return { status: 200, body: userJson(row) };
+      if (req.method === 'DELETE') {
+        await db.query('DELETE FROM auth.users WHERE id::text = $1', [id]);
+        return { status: 200, body: {} };
+      }
+      if (req.method === 'PUT') {
+        const sets = []; const vals = [];
+        const add = (col, v, cast = '') => { vals.push(v); sets.push(`${col} = $${vals.length}${cast}`); };
+        if (body.email) add('email', String(body.email).trim().toLowerCase());
+        if (body.password) add('encrypted_password', hashPassword(body.password));
+        if (body.email_confirm === true) add('email_confirmed_at', new Date().toISOString());
+        if (body.user_metadata) add('raw_user_meta_data', JSON.stringify({ ...row.raw_user_meta_data, ...body.user_metadata }), '::jsonb');
+        if (body.ban_duration === 'none') sets.push('banned_until = NULL');
+        sets.push('updated_at = now()');
+        vals.push(id);
+        const r = await db.query(`UPDATE auth.users SET ${sets.join(', ')} WHERE id::text = $${vals.length} RETURNING *`, vals);
+        return { status: 200, body: userJson(r.rows[0]) };
+      }
+    }
+
 }
 }
