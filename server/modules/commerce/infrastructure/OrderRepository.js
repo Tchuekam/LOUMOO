@@ -262,15 +262,16 @@ class OrderRepository {
 
       if (error) {
         handleDatabaseFailure(error, 'OrderRepository.saveOrder');
-      }
-
-      if (data) {
+      } else if (data) {
         return this._mapRowToOrder(data);
       }
     } catch (err) {
+      if (err instanceof InfrastructureError) throw err;
       handleDatabaseFailure(err, 'OrderRepository.saveOrder');
     }
 
+    // Reached only when the database did not store the order and the failure policy
+    // allowed carrying on (development, no credentials). Production throws above.
     return order;
   }
 
