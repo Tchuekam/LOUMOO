@@ -72,6 +72,12 @@ function createMiniStorage({ publicOrigin }) {
         return { status: 200, body: { Id: crypto.randomUUID(), Key: id } };
       }
 
+      if (req.method === 'POST' && kind === 'sign') {
+        const o = objects.get(`${bucket}/${key}`);
+        if (!o) return err(404, 'Object not found');
+        return { status: 200, body: { signedURL: `/object/sign/${bucket}/${key}?token=${o.token}` } };
+      }
+
 }
 }
 }
