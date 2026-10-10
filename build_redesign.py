@@ -8182,13 +8182,16 @@ class Component extends DCLogic {
     const step = (i) => {
       if (i >= groups.length) return Promise.resolve({ placed: placed, failure: null });
       const group = groups[i];
-      return api.createOrder(circuit.toOrderPayload(group.items, address, deliveryMethod, preferredDriverId)).then((serverOrder) => {
+      const payload = circuit.toOrderPayload(group.items, address, deliveryMethod, preferredDriverId);
+      const attempt = this._orderAttempt(payload);
+      return api.createOrder(payload, { idempotencyKey: attempt.key }).then((serverOrder) => {
         if (!serverOrder || !serverOrder.id) {
           // A reply without an order means the seller cannot have been told.
           const unconfirmed = new Error('The order was not confirmed.');
           unconfirmed.status = 502;
           return { placed: placed, failure: { error: unconfirmed, group: group } };
         }
+        attempt.done(); // confirmed: the next order for the same things is a new order
         const order = circuit.orderFromServer(serverOrder, { images: images, paymentMethod: method });
         placed.push(order);
         const gone = new Set(group.items.map((it) => it.id));
@@ -8198,7 +8201,13 @@ class Component extends DCLogic {
         this._persistOrders(list);
         this._persistCart(remaining);
         return step(i + 1);
-      }, (err) => ({ placed: placed, failure: { error: err, group: group } }));
+      }, (err) => {
+        // A definitive refusal (the server looked at the order and said no) ends the attempt; a
+        // network error, a timeout or a 5xx keeps the key, because the order may have been stored.
+        const status = err && err.status;
+        if (status >= 400 && status < 500 && status !== 408 && status !== 409 && status !== 429) attempt.done();
+        return { placed: placed, failure: { error: err, group: group } };
+      });
     };
     return step(0);
   }
