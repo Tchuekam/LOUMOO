@@ -193,7 +193,10 @@ def get_checkout_view():
       </sc-if>
 
       <sc-if value="{{ checkoutProvidersEmpty }}">
-        <div style="font:400 12.5px/1.4 var(--font-body);color:var(--color-text-secondary);padding:4px 0">No delivery providers list your area yet — place your order and the store will arrange a rider for you.</div>
+        <div role="status" style="display:flex;flex-direction:column;gap:4px;background:var(--color-surface-subtle);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:12px 14px">
+          <div style="font:700 12.5px/1.3 var(--font-heading);color:var(--color-text)">No rider or agency is available in your area right now</div>
+          <div style="font:400 12px/1.4 var(--font-body);color:var(--color-text-secondary)">You can still place your order. The store is told straight away and will arrange delivery as soon as a rider is available; you will be notified and can follow it live.</div>
+        </div>
       </sc-if>
 
       <div style="display:flex;flex-direction:column;gap:10px">
