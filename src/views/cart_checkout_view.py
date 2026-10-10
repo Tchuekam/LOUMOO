@@ -95,8 +95,8 @@ def get_cart_view():
           <span style="font-weight:700;color:var(--color-text)">{{ cartSubtotalLabel }}</span>
         </div>
         <div style="display:flex;justify-content:space-between">
-          <span style="color:var(--color-text-secondary)">Courier Delivery (Douala)</span>
-          <span style="font-weight:700;color:var(--color-success)">FREE</span>
+          <span style="color:var(--color-text-secondary)">{{ cartDeliveryRowLabel }}</span>
+          <span style="font-weight:700;color:{{ cartDeliveryIsFree ? 'var(--color-success)' : 'var(--color-text)' }}">{{ cartDeliveryRowValue }}</span>
         </div>
         <div style="border-top:1px solid var(--color-divider);padding-top:10px;display:flex;justify-content:space-between;align-items:baseline">
           <span style="font:800 15px/1 var(--font-heading)">Total</span>
