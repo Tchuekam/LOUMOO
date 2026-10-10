@@ -67,9 +67,17 @@ class StoreLocationUseCase {
     try {
       const { data: existing, error: readError } = await supabase
         .from('store_locations')
-        .upsert({ store_id: store.id, ...dbUpdates }, { onConflict: 'store_id' });
+        .select('store_id')
+        .eq('store_id', store.id)
+        .maybeSingle();
+      if (readError) throw readError;
+
+      const { error: writeError } = existing
+        ? await supabase.from('store_locations').update(dbUpdates).eq('store_id', store.id)
+        : await supabase.from('store_locations').insert({ street_address: '', ...dbUpdates, store_id: store.id });
+      if (writeError) throw writeError;
     } catch (err) {
-      handleDatabaseFailure(err, 'Update');
+      handleDatabaseFailure(err, 'Update store location');
     }
 
     await CacheService.del(`store:public:${store.id}`);
