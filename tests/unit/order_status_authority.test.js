@@ -44,3 +44,31 @@ async function rejects(fn, Type, re) {
   }
   assert.fail('expected a rejection');
 }
+
+async function run() {
+  // db: null = the repository's in-memory mode (no database, no network).
+  const repo = new OrderRepository({ db: null });
+  const lifecycle = new OrderLifecycleService(repo);
+  const seller = { userRole: 'seller' };
+  const admin = { userRole: 'admin' };
+
+  // 1. A home delivery cannot be moved by a status edit — by anyone.
+  makeOrder(repo, 'home-1', DELIVERY_METHOD.HOME_DELIVERY);
+  for (const [who, opts, callerId] of [['the seller', seller, 'seller-1'], ['an admin', admin, 'admin-1']]) {
+    for (const status of [FULFILLMENT_STATUS.IN_TRANSIT, FULFILLMENT_STATUS.DELIVERED]) {
+      await rejects(() => lifecycle.updateFulfillmentStatus('home-1', status, callerId, opts), ConflictError, /moved by its rider/);
+    }
+    assert.strictEqual(repo._inMemoryOrders.get('home-1').fulfillmentStatus, FULFILLMENT_STATUS.PROCESSING, `${who} left the order untouched`);
+    assert.strictEqual(repo._inMemoryOrders.get('home-1').paymentStatus, PAYMENT_STATUS.PENDING);
+  }
+
+  // 2. Cancelling a home delivery is still allowed, and makes the attestation refundable.
+  const cancelled = await lifecycle.updateFulfillmentStatus('home-1', FULFILLMENT_STATUS.CANCELLED, 'seller-1', seller);
+  assert.strictEqual(cancelled.fulfillmentStatus, FULFILLMENT_STATUS.CANCELLED);
+  assert.strictEqual(cancelled.paymentStatus, PAYMENT_STATUS.REFUNDABLE);
+
+  // 3. A stranger still learns nothing (404, not 403).
+  makeOrder(repo, 'home-2', DELIVERY_METHOD.HOME_DELIVERY);
+  await rejects(() => lifecycle.updateFulfillmentStatus('home-2', FULFILLMENT_STATUS.CANCELLED, 'someone-else', seller), NotFoundError);
+
+}
