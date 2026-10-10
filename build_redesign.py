@@ -17209,7 +17209,7 @@ class Component extends DCLogic {
           ratingLabel: (p.rating && p.rating.average != null) ? ('★ ' + Number(p.rating.average).toFixed(1)) : 'New',
           ratingCountLabel: (p.rating && p.rating.count) ? (Number(p.rating.count) + ' ratings') : 'No ratings yet',
           completedLabel: (Number(p.completedDeliveries) || 0) + ' deliveries',
-          feeLabel: Number.isFinite(Number(p.feeXaf)) ? ('XAF ' + fmt(Number(p.feeXaf))) : 'Fee at checkout',
+          feeLabel: 'XAF ' + fmt((p.feeXaf != null && Number.isFinite(Number(p.feeXaf))) ? Number(p.feeXaf) : resolveCityDeliveryFee(deliveryCity)),
           selected: p.id === this.state.selectedProviderId,
           select: () => this.setState((s) => ({ selectedProviderId: s.selectedProviderId === p.id ? null : p.id }))
         };
