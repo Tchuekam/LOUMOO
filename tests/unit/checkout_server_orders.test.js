@@ -465,12 +465,53 @@ async function runNotificationChecks(comp, server, toasts, opened) {
   assert.strictEqual(comp.state.notifications.length, before);
 }
 
+// The checkout must not create a duplicate order when the buyer retries. It sends one idempotency
+// key per order attempt and keeps it until the order is confirmed or definitively refused.
+async function testIdempotencyKeys() {
+  const memory = { _d: {}, getItem(k) { return this._d[k] || null; }, setItem(k, v) { this._d[k] = String(v); }, removeItem(k) { delete this._d[k]; } };
+  const server = fakeServer();
+  const apiRef = { current: server.api };
+  const { comp } = buildApp(apiRef, { sessionStorage: memory });
+  const oneStore = () => [{ id: 'l1', name: 'Phone', priceXaf: 50000, qty: 1, store: 'Tech Shop', image: 'p.jpg' }];
+  const place = () => comp.renderVals().placeOrder();
+  const ready = () => comp.setState({ authStatus: 'authenticated', cartItems: oneStore(), addressesList: [ADDRESS], screen: 'checkout', orderError: '', placingOrder: false, _placingNow: false });
+
+  // 1. The reply is lost (a 503 after the server may have stored the order): the buyer taps again.
+  ready();
+  server.failWith = 503;
+  place();
+  await waitFor(() => comp.state.placingOrder === false && server.payloads.length === 1, 'the first attempt to fail');
+  assert.ok(server.keys[0], 'the first attempt carries an idempotency key');
+  assert.strictEqual(comp.state.cartItems.length, 1, 'the bag is kept after a failure that may or may not have stored the order');
+  ready();
+  place();
+  await waitFor(() => comp.state.screen === 'success', 'the retry to succeed');
+  assert.strictEqual(server.keys.length, 2);
+  assert.strictEqual(server.keys[1], server.keys[0], 'the retry sends the SAME key, so the server returns the original order instead of a second one');
+
+  // 2. Once an order is confirmed, ordering the same things again is a NEW order with a new key.
+  ready();
+  place();
+  await waitFor(() => server.keys.length === 3 && comp.state.cartItems.length === 0, 'the second order');
+  assert.notStrictEqual(server.keys[2], server.keys[1], 'a new order after a confirmed one gets a new key');
+
+  // 3. A definitive refusal ends the attempt: the same payload next time gets a fresh key.
+  comp.setState({ authStatus: 'authenticated', cartItems: [{ id: 'ghost', name: 'Ghost', priceXaf: 1000, qty: 1, store: 'Nowhere', image: '' }], addressesList: [ADDRESS], screen: 'checkout', orderError: '', placingOrder: false });
+  place();
+  await waitFor(() => server.keys.length === 4 && comp.state.placingOrder === false, 'the refused order');
+  comp.setState({ cartItems: [{ id: 'ghost', name: 'Ghost', priceXaf: 1000, qty: 1, store: 'Nowhere', image: '' }], orderError: '', placingOrder: false, _placingNow: false });
+  place();
+  await waitFor(() => server.keys.length === 5 && comp.state.placingOrder === false, 'the second refused order');
+  assert.notStrictEqual(server.keys[4], server.keys[3], 'after a 404 the attempt is over, so a corrected retry is not tied to the refused one');
+}
+
 async function run() {
   console.log('  Testing checkout and orders against the server\'s rules...');
   await testGuestAndAddress();
   await testStorePickup();
   await testProviderPreference();
   await testHappyPath();
+  await testIdempotencyKeys();
   await testRefusalKeepsTheBag();
   await testDoubleTap();
   await testOrdersAndDetail();
