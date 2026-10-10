@@ -49,4 +49,15 @@ async function run() {
   }
   assert.strictEqual(limited, 0, '800 requests from 400 different clients through one proxy are all served');
 
+  // 2. ONE client that really does hammer the API is still limited to its own budget.
+  const mw2 = RateLimitService.middleware({ ...LIMITS.api, keyPrefix: `t2-${process.pid}` });
+  let served = 0;
+  let refused = 0;
+  for (let i = 0; i < LIMITS.api.maxRequests + 30; i++) {
+    const r = await hit(mw2, request('198.51.100.7', '10.0.0.1'));
+    if (r === 'ok') served++; else refused++;
+  }
+  assert.strictEqual(served, LIMITS.api.maxRequests, 'one client is served exactly its own allowance');
+  assert.strictEqual(refused, 30, 'and refused beyond it');
+
 }
