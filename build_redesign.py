@@ -12803,11 +12803,20 @@ class Component extends DCLogic {
     // server prices the order the same way, so what is shown is what is charged.
     // Otherwise it is the city's standard rate.
     const selectedProvider = (this.state.providers || []).find(p => p.id === this.state.selectedProviderId) || null;
+    // A provider with no tariff of its own quotes feeXaf null: Number(null) is 0, which used to
+    // zero the fee here while the server charged the city rate. Only a real number is a quote.
+    const providerQuote = (selectedProvider && selectedProvider.feeXaf != null && Number.isFinite(Number(selectedProvider.feeXaf)))
+      ? Number(selectedProvider.feeXaf)
+      : null;
     const deliveryFee = (isPickup || cartSubtotal <= 0)
       ? 0
-      : (selectedProvider && Number.isFinite(Number(selectedProvider.feeXaf))
-          ? Number(selectedProvider.feeXaf)
-          : resolveCityDeliveryFee(deliveryCity));
+      : (providerQuote != null ? providerQuote : resolveCityDeliveryFee(deliveryCity));
+    // Each store in the bag becomes its own order, and the server prices every order with its own
+    // delivery fee, so the bag must show (and the buttons must charge) one fee per store.
+    const storeGroupCount = (isPickup || cartSubtotal <= 0)
+      ? 0
+      : Math.max(1, new Set(cartList.map((it) => String((it && (it.store || it.storeName)) || 'LOUMOO seller'))).size);
+    const deliveryTotal = deliveryFee * storeGroupCount;
     const line = cartSubtotal;
     const items = cartSubtotal;
     const shipStyle = o => ({
