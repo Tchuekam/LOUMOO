@@ -44,6 +44,11 @@ async function run() {
     await db.query(`INSERT INTO iam.store_locations (store_id, city, street_address) VALUES ('s-old', 'Douala', 'Rue de la Joie')`);
     const row = async (id) => (await db.query('SELECT city, region, landmark, street_address FROM iam.store_locations WHERE store_id = $1', [id])).rows[0];
 
+    // 1. A store with no location row yet: the edit creates one (with the empty street the column needs).
+    await StoreLocationUseCase.updateLocation({ id: 's-new', slug: 's-new' }, { city: 'Douala', region: 'Littoral' });
+    assert.deepStrictEqual(await row('s-new'), { city: 'Douala', region: 'Littoral', landmark: null, street_address: '' },
+      'the first location edit is stored');
+
 } finally {
     SupabaseClient.getAdmin = original;
     await new Promise((r) => rest.server.close(r));
