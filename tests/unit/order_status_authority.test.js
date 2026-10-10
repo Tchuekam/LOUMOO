@@ -80,4 +80,43 @@ async function run() {
   assert.strictEqual(done.fulfillmentStatus, FULFILLMENT_STATUS.DELIVERED);
   assert.strictEqual(done.paymentStatus, PAYMENT_STATUS.RELEASED, 'a pickup handed over is settled (it has no delivery to do it)');
 
+  // 5. The buyer's order detail is read FRESH. Two repository instances over one "database"
+  //    stand in for the order service and the delivery module.
+  const rows = new Map();
+  const toRow = (o) => ({
+    id: o.id, buyer_id: o.buyerId, seller_id: o.sellerId, order_number: o.orderNumber, total_amount_xaf: String(o.totalAmountXaf),
+    items: o.items.map((i) => i.toJSON()),
+    shipping_address: { _deliveryMethod: o.deliveryMethod, _subtotalXaf: o.subtotalXaf, _shippingFeeXaf: o.shippingFeeXaf, _timeline: [] },
+    payment_status: o.paymentStatus, fulfillment_status: o.fulfillmentStatus, created_at: o.createdAt, updated_at: o.updatedAt
+  });
+  const sharedDb = {
+    from: () => ({
+      select: () => {
+        let id = null;
+        const q = new Proxy({}, {
+          get: (_t, prop) => {
+            if (prop === 'eq') return (col, val) => { if (col === 'id' || col === 'order_number') id = val; return q; };
+            if (prop === 'maybeSingle' || prop === 'single') return () => Promise.resolve({ data: [...rows.values()].find((r) => r.id === id || r.order_number === id) || null, error: null });
+            if (prop === 'then') return undefined;
+            return () => q;
+          }
+        });
+        return q;
+      }
+    })
+  };
+  const orderService = new OrderQueryService(new OrderRepository({ db: sharedDb }));
+  const seed = new Order({ id: 'ord-9', orderNumber: 'KM-9', buyerId: 'buyer-1', sellerId: 'seller-1', items: [item()], subtotalXaf: 15000, shippingFeeXaf: 1500, totalAmountXaf: 16500 });
+  rows.set('ord-9', toRow(seed));
+  const first = await orderService.getOrderById('ord-9', 'buyer-1');
+  assert.strictEqual(first.fulfillmentStatus, 'processing');
+  // the delivery module delivers and releases the order, through its own repository
+  Object.assign(rows.get('ord-9'), { fulfillment_status: 'delivered', payment_status: 'released' });
+  const second = await orderService.getOrderById('ord-9', 'buyer-1');
+  assert.strictEqual(second.fulfillmentStatus, 'delivered', 'the detail read reflects the delivered order, not a cached copy');
+  assert.strictEqual(second.paymentStatus, 'released');
+
+  console.log('    ✓ order_status_authority: a home delivery moves only through its rider; order reads are fresh');
 }
+
+module.exports = { run };
