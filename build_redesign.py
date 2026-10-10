@@ -8247,19 +8247,37 @@ class Component extends DCLogic {
   // that is no longer offered is dropped.
   _loadProviders = (city, force) => {
     const api = (typeof window !== 'undefined') && window.deliveryApi;
-    if (!api || typeof api.getProviders !== 'function') return;
     const normCity = String(city || '').trim();
-    if (this.state.providersLoading) return;
+    if (!api || typeof api.getProviders !== 'function') {
+      // The delivery client did not load (a stale or broken deploy). Say so: returning silently
+      // left the "no delivery providers list your area yet" sentence on screen with no request made.
+      if (!this.state.providersError) {
+        this.setState({ providers: [], providersLoading: false, providersCity: normCity, providersError: 'Delivery options could not be loaded. You can still place your order and the store will arrange a rider.' });
+      }
+      return;
+    }
+    // A forced reload (TRY AGAIN) is allowed while a load is "in progress": a request that hangs
+    // must never leave the picker stuck on "Finding delivery providers…" with no way out.
+    if (this.state.providersLoading && !force) return;
     if (!force && this.state.providersCity === normCity && (this.state.providers.length || this.state.providersError)) return;
     this.setState({ providersLoading: true, providersError: '', providersCity: normCity });
+    const token = (this._providersToken = (this._providersToken || 0) + 1);
+    const current = () => !this._unmounted && token === this._providersToken;
+    const timer = setTimeout(() => {
+      if (!current()) return;
+      this._providersToken += 1; // the late reply, if it ever comes, is ignored
+      this.setState({ providers: [], providersLoading: false, selectedProviderId: null, providersError: 'Loading delivery options is taking too long. Check your connection and try again, or place your order and the store will arrange a rider.' });
+    }, 15000);
     api.getProviders(normCity).then((res) => {
-      if (this._unmounted) return;
+      clearTimeout(timer);
+      if (!current()) return;
       const list = (res && res.providers) || [];
       const keep = this.state.selectedProviderId && list.some((p) => p.id === this.state.selectedProviderId)
         ? this.state.selectedProviderId : null;
       this.setState({ providers: list, providersLoading: false, selectedProviderId: keep });
     }).catch((e) => {
-      if (this._unmounted) return;
+      clearTimeout(timer);
+      if (!current()) return;
       this.setState({ providers: [], providersLoading: false, selectedProviderId: null, providersError: (e && e.message) || 'Could not load delivery options.' });
     });
   };
