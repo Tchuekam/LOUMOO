@@ -33,3 +33,20 @@ async function hit(mw, req) {
     mw(req, response(), (err) => resolve(err ? (err.statusCode || err.code || 'error') : 'ok'));
   });
 }
+
+async function run() {
+  assert.ok(LIMITS.api.peerMaxRequests >= 10 * LIMITS.api.maxRequests, 'the shared-ingress backstop is far above one client\'s budget');
+
+  // A fresh limiter per scenario so buckets do not carry over.
+  const mw = RateLimitService.middleware({ ...LIMITS.api, keyPrefix: `t1-${process.pid}` });
+
+  // 1. 400 DIFFERENT users arriving through ONE ingress peer, each making a normal handful of calls.
+  let limited = 0;
+  for (let user = 0; user < 400; user++) {
+    for (let call = 0; call < 2; call++) {
+      if ((await hit(mw, request(clientIp(user), '10.0.0.1'))) !== 'ok') limited++;
+    }
+  }
+  assert.strictEqual(limited, 0, '800 requests from 400 different clients through one proxy are all served');
+
+}
