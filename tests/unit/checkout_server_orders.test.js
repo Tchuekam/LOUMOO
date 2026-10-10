@@ -522,6 +522,24 @@ async function testNullFeeProvider() {
   assert.strictEqual(vals.checkoutProviders[0].feeLabel, 'XAF 1 000', 'and the card shows that rate, not "XAF 0"');
 }
 
+// Signing out must not leave the previous account's orders for the next person on this browser.
+async function testSignOutForgetsTheAccount() {
+  const server = fakeServer();
+  const apiRef = { current: server.api };
+  const { comp, sandbox } = buildApp(apiRef);
+  comp.state.orders = [{ id: 'ord_1', orderNumber: 'KM-1', totalXaf: 16500, serverSynced: true }];
+  comp.state.lastOrder = { id: 'ord_1' };
+  comp.state.notifications = [{ id: 'n1', title: 'Order placed' }];
+  sandbox.localStorage.setItem('loumoo_orders', '[{"id":"ord_1"}]');
+  sandbox.localStorage.setItem('loumoo_notifs', '[{"id":"n1"}]');
+  comp._applyAnonymous();
+  assert.deepStrictEqual(plain(comp.state.orders), [], 'the previous account\'s orders are gone from memory');
+  assert.strictEqual(comp.state.lastOrder, null);
+  assert.deepStrictEqual(plain(comp.state.notifications), []);
+  assert.strictEqual(sandbox.localStorage.getItem('loumoo_orders'), null, 'and from this browser\'s storage');
+  assert.strictEqual(sandbox.localStorage.getItem('loumoo_notifs'), null);
+}
+
 async function run() {
   console.log('  Testing checkout and orders against the server\'s rules...');
   await testGuestAndAddress();
@@ -530,6 +548,7 @@ async function run() {
   await testHappyPath();
   await testIdempotencyKeys();
   await testNullFeeProvider();
+  await testSignOutForgetsTheAccount();
   await testRefusalKeepsTheBag();
   await testDoubleTap();
   await testOrdersAndDetail();
