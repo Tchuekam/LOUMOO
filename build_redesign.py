@@ -8150,6 +8150,29 @@ class Component extends DCLogic {
   // the placed items leave the bag, so if a later store fails the shopper is left
   // with exactly what was not ordered and can try again. Resolves with the orders
   // that were placed and, if one was refused, why.
+  // One idempotency key per order ATTEMPT. The attempt is identified by what is being ordered
+  // (the payload), and its key is remembered for the session until the order is confirmed or
+  // definitively refused. So a retry after a lost response, a reload, a second tab or a double
+  // tap sends the SAME key and the server returns the original order instead of placing another
+  // (the checkout used to send no key: every retry of an order whose reply was lost, and every
+  // second tab, created a duplicate order and a second notification to the seller).
+  _orderAttempt = (payload) => {
+    const store = () => { try { return window.sessionStorage; } catch (e) { return null; } };
+    let map = {};
+    try { map = JSON.parse((store() && store().getItem('loumoo_order_attempts')) || '{}') || {}; } catch (e) { map = {}; }
+    const text = JSON.stringify(payload);
+    let h = 5381;
+    for (let i = 0; i < text.length; i++) h = ((h << 5) + h + text.charCodeAt(i)) | 0;
+    const id = 'p' + (h >>> 0).toString(36) + '.' + text.length;
+    const save = () => { try { store() && store().setItem('loumoo_order_attempts', JSON.stringify(map)); } catch (e) {} };
+    if (!map[id]) {
+      let rand = '';
+      try { const a = new Uint8Array(12); window.crypto.getRandomValues(a); rand = Array.from(a, (b) => b.toString(16).padStart(2, '0')).join(''); } catch (e) { rand = Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2); }
+      map[id] = 'ord-' + Date.now().toString(36) + '-' + rand;
+      save();
+    }
+    return { key: map[id], done: () => { delete map[id]; save(); } };
+  };
   _placeBagAsOrders(groups, address, method, images, deliveryMethod, preferredDriverId) {
     const api = getApi();
     const circuit = window.LoumooCircuit;
