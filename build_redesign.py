@@ -8915,8 +8915,21 @@ class Component extends DCLogic {
     if (guard) guard.invalidate();
     // The next account must never inherit the previous one's counts.
     this._dashboardRequested = false;
+    // ...nor its orders, notifications or delivery choice. They are kept in this browser's
+    // localStorage and reloaded for any visitor, so signing out used to leave the previous
+    // buyer's orders (items, totals, name, phone, street, city) for the next person to sign in
+    // here. The server is the source of truth: the next sign-in loads that account's own.
+    try { localStorage.removeItem('loumoo_orders'); localStorage.removeItem('loumoo_notifs'); } catch (e) {}
 
     this.setState({
+      orders: [],
+      lastOrder: null,
+      lastOrders: [],
+      currentOrder: null,
+      notifications: [],
+      providers: [],
+      selectedProviderId: null,
+      providersCity: '',
       isLoggedIn: false,
       authStatus: 'anonymous',
       sessionUser: null,
