@@ -74,3 +74,25 @@ function runChild(nodeEnv) {
   if (!m) throw new Error(`child (${nodeEnv}) produced no result.\nstdout: ${(r.stdout || '').slice(-700)}\nstderr: ${(r.stderr || '').slice(-700)}`);
   return JSON.parse(m[1]);
 }
+
+async function run() {
+  const prod = runChild('production');
+  assert.deepStrictEqual(prod.healthy, { ok: true, providers: ['rider-1'] }, 'production: a healthy database lists the registered rider');
+  assert.deepStrictEqual(prod['no-riders-registered'], { ok: true, providers: [] }, 'production: genuinely no riders is a legitimate empty list');
+  assert.strictEqual(prod['riders-read-fails'].ok, false, 'production: a failed rider read must NOT be answered as an empty list');
+  assert.strictEqual(prod['riders-read-fails'].code, 'INFRASTRUCTURE_ERROR', 'production: it surfaces as an infrastructure error (HTTP 500) the picker can retry');
+  assert.strictEqual(prod['everything-fails'].ok, false, 'production: a total outage is a visible failure too');
+
+  const dev = runChild('test');
+  assert.deepStrictEqual(dev.healthy, { ok: true, providers: ['rider-1'] });
+  assert.strictEqual(dev['riders-read-fails'].ok, true, 'development keeps its documented in-memory fallback');
+  assert.deepStrictEqual(dev['riders-read-fails'].providers, []);
+
+  console.log('    ✓ delivery_picker_failure: a failed rider read is a retryable error in production, never "no riders"');
+}
+
+module.exports = { run };
+
+if (CHILD) {
+  childScenarios().then(() => process.exit(0), (e) => { console.error(e); process.exit(1); });
+}
