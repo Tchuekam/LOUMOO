@@ -71,4 +71,13 @@ async function run() {
   makeOrder(repo, 'home-2', DELIVERY_METHOD.HOME_DELIVERY);
   await rejects(() => lifecycle.updateFulfillmentStatus('home-2', FULFILLMENT_STATUS.CANCELLED, 'someone-else', seller), NotFoundError);
 
+  // 4. A store pickup has no delivery: the seller moves it, and handing it over settles it.
+  makeOrder(repo, 'pick-1', DELIVERY_METHOD.STORE_PICKUP);
+  const ready = await lifecycle.updateFulfillmentStatus('pick-1', FULFILLMENT_STATUS.IN_TRANSIT, 'seller-1', seller);
+  assert.strictEqual(ready.fulfillmentStatus, FULFILLMENT_STATUS.IN_TRANSIT);
+  assert.strictEqual(ready.paymentStatus, PAYMENT_STATUS.PENDING, 'ready for pickup is not yet a handover');
+  const done = await lifecycle.updateFulfillmentStatus('pick-1', FULFILLMENT_STATUS.DELIVERED, 'seller-1', seller);
+  assert.strictEqual(done.fulfillmentStatus, FULFILLMENT_STATUS.DELIVERED);
+  assert.strictEqual(done.paymentStatus, PAYMENT_STATUS.RELEASED, 'a pickup handed over is settled (it has no delivery to do it)');
+
 }
