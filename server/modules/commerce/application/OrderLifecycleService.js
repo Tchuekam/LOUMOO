@@ -7,7 +7,7 @@
 
 const { OrderRepository } = require('../infrastructure/OrderRepository');
 const { OrderStateMachine } = require('../domain/OrderStateMachine');
-const { FULFILLMENT_STATUS, PAYMENT_STATUS } = require('../domain/Order');
+const { FULFILLMENT_STATUS, PAYMENT_STATUS, DELIVERY_METHOD } = require('../domain/Order');
 const CacheService = require('../../../infrastructure/cache/CacheService');
 const { NotFoundError, ValidationError, AuthorizationError, ConflictError } = require('../../../shared/errors/AppError');
 const logger = require('../../../shared/logging/logger');
@@ -178,6 +178,23 @@ class OrderLifecycleService {
 
     if (!isSeller && !isAdmin) {
       throw new NotFoundError('Order not found');
+    }
+
+    // A home delivery is moved by its DELIVERY, never by a status edit: it becomes
+    // in_transit when the rider reports the parcel picked up and delivered only when
+    // the buyer's handover code is confirmed, and those same events carry the
+    // buyer-protection attestation (escrow_held, released). Letting the seller (or an
+    // admin) write in_transit/delivered here marked an order delivered with no
+    // handover, left payment_status 'pending' forever, and made the order impossible
+    // to track (a delivery can only be created while the order is processing). An
+    // administrator repairs a stuck delivery through the delivery reconcile route.
+    // Cancelling is still allowed (from processing, by the state machine).
+    const isHomeDelivery = (order.deliveryMethod || DELIVERY_METHOD.HOME_DELIVERY) !== DELIVERY_METHOD.STORE_PICKUP;
+    if (isHomeDelivery && (nextStatus === FULFILLMENT_STATUS.IN_TRANSIT || nextStatus === FULFILLMENT_STATUS.DELIVERED)) {
+      throw new ConflictError(
+        'A home delivery is moved by its rider: it is in transit once the rider picks it up and delivered once ' +
+        'the buyer\'s handover code is confirmed. Arrange a delivery for this order instead of changing its status.'
+      );
     }
 
     // Enforce state transition rules
