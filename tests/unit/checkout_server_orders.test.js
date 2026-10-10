@@ -268,8 +268,15 @@ async function testHappyPath() {
   comp.setState({ authStatus: 'authenticated', cartItems: bag(), addressesList: [ADDRESS], screen: 'checkout' });
 
   const vals = comp.renderVals();
-  assert.strictEqual(vals.placeOrderLabel, 'PLACE ORDER · XAF 61 000', 'the button shows the total the order will have');
-  assert.strictEqual(vals.cartTotal, 'XAF 61 000', 'items (60 000) + the Douala delivery fee (1 000), and no escrow fee that is never charged');
+  // The bag holds two stores, so it becomes TWO orders and the server prices each with its own
+  // delivery fee: items 60 000 + 2 x the Douala fee (1 000). The button used to show one fee
+  // (61 000) and the buyer was then charged 62 000.
+  assert.strictEqual(vals.placeOrderLabel, 'PLACE ORDER · XAF 62 000', 'the button shows the total the orders will have');
+  assert.strictEqual(vals.cartTotal, 'XAF 62 000', 'items (60 000) + one Douala delivery fee (1 000) per store, and no escrow fee that is never charged');
+  assert.strictEqual(vals.cartDeliveryRowValue, 'XAF 2 000', 'the bag summary shows the delivery charge, not "FREE"');
+  assert.ok(/2 stores/.test(vals.cartDeliveryRowLabel), 'and says it is one fee per store: ' + vals.cartDeliveryRowLabel);
+  assert.strictEqual(vals.cartDeliveryIsFree, false);
+  assert.ok(!/FREE/i.test(vals.cartDeliveryBanner), 'the banner does not claim free delivery while the total includes a fee: ' + vals.cartDeliveryBanner);
   vals.placeOrder();
   assert.strictEqual(comp.state.placingOrder, true, 'the button is busy straight away');
   assert.strictEqual(comp.renderVals().placeOrderLabel, 'PLACING YOUR ORDER…');
