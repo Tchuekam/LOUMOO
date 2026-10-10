@@ -156,8 +156,9 @@ app.use('/api', (req, res, next) => {
 // assets. In production Netlify's CDN serves those static files and only
 // routes /api/* to this app, so limiting /api mirrors production exactly while
 // keeping local dev (which also serves the frontend here) usable.
-const commerceLimit = RateLimitService.middleware({ maxRequests: 120, windowSeconds: 60 });
-const discoveryLimit = RateLimitService.middleware({ maxRequests: 180, peerMaxRequests: 3000, windowSeconds: 60, keyPrefix: 'discovery' });
+const RATE_LIMITS = require('./config/rateLimits');
+const commerceLimit = RateLimitService.middleware({ ...RATE_LIMITS.api });
+const discoveryLimit = RateLimitService.middleware({ ...RATE_LIMITS.discovery });
 app.use('/api', (req, res, next) => /^\/v1\/search(?:\/|$)/.test(req.path) ? discoveryLimit(req,res,next) : commerceLimit(req,res,next));
 
 /**
