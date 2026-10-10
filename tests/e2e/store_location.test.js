@@ -54,9 +54,21 @@ async function run() {
     assert.deepStrictEqual(await row('s-old'), { city: 'Yaoundé', region: 'Littoral', landmark: 'Near the post office', street_address: 'Rue de la Joie' },
       'a partial edit is stored and does not blank the street');
 
-} finally {
+    // 3. Editing again (the row now exists, nothing about the street is sent) still works.
+    await StoreLocationUseCase.updateLocation({ id: 's-old', slug: 's-old' }, { landmark: 'Opposite the market' });
+    assert.strictEqual((await row('s-old')).landmark, 'Opposite the market');
+    assert.strictEqual((await row('s-old')).city, 'Yaoundé');
+
+    console.log('    ✓ store_location: a location edit is stored, partial edits included');
+  } finally {
     SupabaseClient.getAdmin = original;
     await new Promise((r) => rest.server.close(r));
     await db.close();
+  }
 }
+
+module.exports = { run };
+
+if (require.main === module) {
+  run().then(() => process.exit(0), (e) => { console.error(e); process.exit(1); });
 }
