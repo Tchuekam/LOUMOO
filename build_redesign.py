@@ -17348,7 +17348,7 @@ class Component extends DCLogic {
         const escrow = (() => {
           switch (o.paymentStatus) {
             case 'escrow_held': return { title: 'Protected — on its way', note: 'Your order is under LOUMOO Buyer Protection while the rider has it. You pay ' + totalLabel + ' on delivery' + via + '.', tone: 'ok' };
-            case 'released': return { title: 'Delivered & settled', note: 'Your handover code was verified, so the seller has been paid. Nothing else is owed.', tone: 'ok' };
+            case 'released': return { title: 'Delivered & settled', note: 'Your handover code was verified, so this order is complete.', tone: 'ok' };
             case 'refundable': return { title: 'Refund due', note: 'This order was cancelled. With pay-on-delivery no charge was taken; if you had already paid, a refund is due.', tone: 'muted' };
             case 'refunded': return { title: 'Refunded', note: 'This order has been refunded.', tone: 'muted' };
             case 'paid': return { title: 'Paid', note: 'Your payment is recorded.', tone: 'ok' };
