@@ -17174,7 +17174,7 @@ class Component extends DCLogic {
       checkoutIsPickup: isPickup,
       checkoutHasDestination: checkoutDest.hasDestination,
       checkoutRecipientName: checkoutDest.address.fullName,
-      checkoutRecipientPhone: checkoutDest.address.phone,
+      checkoutRecipientPhone: String(checkoutDest.address.phone || '').trim().replace(/^\+?237[\s-]*/, ''),
       checkoutDeliveryAddress: checkoutDest.address.street
         ? checkoutDest.address.street
           + (checkoutDest.address.city ? ', ' + (checkoutDest.address.city.charAt(0).toUpperCase() + checkoutDest.address.city.slice(1)) : '')
