@@ -12862,11 +12862,20 @@ class Component extends DCLogic {
       cartSubtotalLabel: 'XAF ' + fmt(items),
       cartDeliveryFee: deliveryFee,
       cartDeliveryFeeLabel: 'XAF ' + fmt(deliveryFee),
+      // What the bag says about delivery is computed from the same numbers as the total, never static.
+      cartDeliveryIsFree: !isPickup && cartSubtotal > 0 && deliveryTotal === 0,
+      cartDeliveryRowLabel: isPickup ? 'Store pickup' : ('Courier delivery (' + deliveryCity + (storeGroupCount > 1 ? ', ' + storeGroupCount + ' stores' : '') + ')'),
+      cartDeliveryRowValue: isPickup ? 'No fee' : (deliveryTotal === 0 ? 'FREE' : 'XAF ' + fmt(deliveryTotal)),
+      cartDeliveryBanner: isPickup
+        ? 'Store pickup: there is no delivery fee.'
+        : (deliveryTotal === 0
+          ? 'You have unlocked FREE Courier Delivery in ' + deliveryCity + '!'
+          : 'Courier delivery to ' + deliveryCity + ' is XAF ' + fmt(deliveryFee) + (storeGroupCount > 1 ? ' per store' : '') + '. You can choose your rider at checkout.'),
       // Items + delivery: exactly what the server will price the order at. (The
       // 3 000 "escrow protection fee" that used to be added here was never part of
       // the order, and no payment is taken yet, so it cannot be charged.)
-      cartTotal: 'XAF ' + fmt(items + deliveryFee),
-      payLabel: 'PAY XAF ' + fmt(items + deliveryFee) + ' WITH MOMO',
+      cartTotal: 'XAF ' + fmt(items + deliveryTotal),
+      payLabel: 'PAY XAF ' + fmt(items + deliveryTotal) + ' WITH MOMO',
       hasAnnouncementBanner: Boolean(dynamicSettings.announcement_banner && (dynamicSettings.announcement_banner.enabled !== false && dynamicSettings.announcement_banner.active !== false)),
       announcementBannerText: (dynamicSettings.announcement_banner && (dynamicSettings.announcement_banner.text_fr || dynamicSettings.announcement_banner.message)) || '',
       isMaintenanceMode: Boolean(dynamicSettings.maintenance_mode && dynamicSettings.maintenance_mode.enabled),
@@ -17234,7 +17243,7 @@ class Component extends DCLogic {
       markNotifsRead: () => this._markNotifsRead(),
       // ── Placing an order (checkout) ──
       placingOrder: Boolean(this.state.placingOrder),
-      placeOrderLabel: this.state.placingOrder ? 'PLACING YOUR ORDER…' : 'PLACE ORDER · XAF ' + fmt(items + deliveryFee),
+      placeOrderLabel: this.state.placingOrder ? 'PLACING YOUR ORDER…' : 'PLACE ORDER · XAF ' + fmt(items + deliveryTotal),
       placeOrderArrow: this.state.placingOrder ? '' : '→',
       orderError: this.state.orderError || '',
       orderErrorHasItems: (this.state.orderErrorItemIds || []).length > 0,
