@@ -54,6 +54,27 @@ async function markOrderRefundable(repository, order, actorId, reason) {
   }
 }
 
+/**
+ * A pickup order the seller marks delivered has been handed over: settle its
+ * buyer-protection attestation to `released`. Best-effort and guarded: never fails the
+ * status change and never walks back a settled, refunded or refundable order.
+ */
+async function markOrderReleased(repository, order, actorId, note) {
+  const current = order.paymentStatus;
+  if (current === PAYMENT_STATUS.RELEASED || current === PAYMENT_STATUS.REFUNDED || current === PAYMENT_STATUS.REFUNDABLE) {
+    return order;
+  }
+  try {
+    return await repository.updatePaymentStatusAtomic(order.id, current, PAYMENT_STATUS.RELEASED, {
+      note: note || 'Handed over to the buyer',
+      updatedBy: actorId || 'system'
+    });
+  } catch (e) {
+    logger.warn(`[OrderLifecycle] Could not mark order ${order.id} released: ${e.message}`);
+    return order;
+  }
+}
+
 class OrderLifecycleService {
   constructor(repository = null) {
     this.repository = repository || new OrderRepository();
@@ -208,6 +229,11 @@ class OrderLifecycleService {
     );
 
     let result = updated;
+    if (nextStatus === FULFILLMENT_STATUS.DELIVERED) {
+      // A pickup order has no delivery to carry the attestation: the seller handing it
+      // over is the handover, so settle it here (best-effort, same guards as a cancel).
+      result = await markOrderReleased(this.repository, updated, callerId, note);
+    }
     if (nextStatus === FULFILLMENT_STATUS.CANCELLED) {
       // Cancelling the order makes its escrow attestation refundable (no money
       // moves — pay on delivery), then releases any open delivery.
