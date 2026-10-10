@@ -104,10 +104,19 @@ const PRICE = { l1: 50000, l2: 3000, l3: 4000 };
 
 /** A fake API that behaves like the server's order endpoint. */
 function fakeServer() {
-  const server = { payloads: [], orders: [], notifications: [], seq: 0, hold: null };
+  const server = { payloads: [], keys: [], orders: [], notifications: [], seq: 0, hold: null, failWith: null };
   server.api = {
-    createOrder: async (payload) => {
+    createOrder: async (payload, options) => {
       server.payloads.push(JSON.parse(JSON.stringify(payload)));
+      server.keys.push((options && options.idempotencyKey) || null);
+      if (server.failWith) {
+        // A transport/5xx failure AFTER the server may have stored the order: the reply is lost.
+        const status = server.failWith;
+        server.failWith = null;
+        const err = new Error('Service unavailable');
+        err.status = status;
+        throw err;
+      }
       if (server.hold) await server.hold;
       for (const it of payload.items) {
         if (!(it.listingId in STORE_OF)) {
