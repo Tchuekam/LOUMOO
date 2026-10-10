@@ -60,6 +60,18 @@ class OrderLifecycleService {
   }
 
   /**
+   * The order as the database has it NOW. findOrderById answers from a per-instance
+   * cache that is never refreshed, and the delivery module writes through a different
+   * repository instance, so a cancel or a status change decided on the cached copy
+   * could act on a status the order no longer has.
+   */
+  _freshOrder(idOrNumber) {
+    return typeof this.repository.findOrderByIdFresh === 'function'
+      ? this.repository.findOrderByIdFresh(idOrNumber)
+      : this.repository.findOrderById(idOrNumber);
+  }
+
+  /**
    * Cancels an order on behalf of the authenticated buyer (or merchant/admin).
    *
    * @param {string} orderId - ID or Order Number
@@ -73,7 +85,7 @@ class OrderLifecycleService {
     if (!orderId) throw new ValidationError('Order ID is required.');
     if (!callerId) throw new AuthorizationError('Authentication required.');
 
-    const order = await this.repository.findOrderById(orderId);
+    const order = await this._freshOrder(orderId);
     if (!order) {
       throw new NotFoundError('Order not found');
     }
@@ -156,7 +168,7 @@ class OrderLifecycleService {
     if (!nextStatus) throw new ValidationError('Target status is required.');
     if (!callerId) throw new AuthorizationError('Authentication required.');
 
-    const order = await this.repository.findOrderById(orderId);
+    const order = await this._freshOrder(orderId);
     if (!order) {
       throw new NotFoundError('Order not found');
     }
