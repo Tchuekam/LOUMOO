@@ -237,7 +237,7 @@ def get_checkout_view():
             <div class="pay-method-badge" style="background:#ffcc00;color:#111">MTN</div>
             <div style="text-align:left">
               <div style="font:700 14px/1.2 var(--font-heading);color:var(--color-text)">MTN Mobile Money (MoMo)</div>
-              <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Instant push notification on +237 67X XXX XXX</div>
+              <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">You pay on delivery with MTN Mobile Money</div>
             </div>
           </div>
           <div class="pay-radio-dot {{ st.pay.mtn.w === '2px' ? 'selected' : '' }}"></div>
@@ -249,7 +249,7 @@ def get_checkout_view():
             <div class="pay-method-badge" style="background:#ff6600;color:#fff">OM</div>
             <div style="text-align:left">
               <div style="font:700 14px/1.2 var(--font-heading);color:var(--color-text)">Orange Money Cameroon</div>
-              <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">Direct USSD prompt on #150#</div>
+              <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">You pay on delivery with Orange Money</div>
             </div>
           </div>
           <div class="pay-radio-dot {{ st.pay.om.w === '2px' ? 'selected' : '' }}"></div>
@@ -263,7 +263,7 @@ def get_checkout_view():
             </div>
             <div style="text-align:left">
               <div style="font:700 14px/1.2 var(--font-heading);color:var(--color-text)">Visa / Mastercard / UBA Africard</div>
-              <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">3D Secure Verified Bank Card</div>
+              <div style="font:400 11.5px/1 var(--font-body);color:var(--color-text-secondary);margin-top:2px">You pay on delivery by card</div>
             </div>
           </div>
           <div class="pay-radio-dot {{ st.pay.card.w === '2px' ? 'selected' : '' }}"></div>
