@@ -12335,8 +12335,12 @@ class Component extends DCLogic {
         localStorage.removeItem('loumoo_token');
         localStorage.removeItem('loumoo_auth_user');
         localStorage.removeItem('loumoo_onboarding_draft');
+        // An explicit sign-out also empties the bag: on a shared device it is the previous
+        // person's shopping. (A token that merely expires keeps the bag.)
+        localStorage.removeItem('loumoo_cart');
       } catch (_) {}
     }
+    this.setState({ cartItems: [] });
     this._applyAnonymous();
     this.toast('Signed out of LOUMOO');
     this.go('home');
