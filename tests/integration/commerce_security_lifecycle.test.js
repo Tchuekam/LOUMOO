@@ -397,9 +397,27 @@ async function run() {
   }
   assert.strictEqual(repeatCancelBlocked, true, 'Repeated cancellation must be rejected with ConflictError');
 
-  // 6.4 Merchant transitions order to IN_TRANSIT and buyer can no longer cancel
-  const orderForTransit = await creationService.createOrder(aliceId, {
+  // 6.3b A HOME DELIVERY is moved by its rider (picked up -> in_transit, handover code ->
+  // delivered), never by a merchant status edit: that marked orders delivered with no
+  // handover and left payment_status 'pending' forever.
+  const homeOrder = await creationService.createOrder(aliceId, {
     items: [{ listingId: phoneListing.id, variantId: variant256.id, quantity: 1 }]
+  });
+  for (const forbidden of [FULFILLMENT_STATUS.IN_TRANSIT, FULFILLMENT_STATUS.DELIVERED]) {
+    let blocked = false;
+    try {
+      await lifecycleService.updateFulfillmentStatus(homeOrder.id, forbidden, sellerId, { userRole: 'seller' });
+    } catch (err) {
+      blocked = err instanceof ConflictError && /moved by its rider/i.test(err.message);
+    }
+    assert.strictEqual(blocked, true, `A merchant cannot mark a home delivery ${forbidden} by editing its status`);
+  }
+
+  // 6.4 For a STORE PICKUP the merchant is the one handing the parcel over, so the merchant
+  // transitions it to IN_TRANSIT (ready) and the buyer can no longer cancel
+  const orderForTransit = await creationService.createOrder(aliceId, {
+    items: [{ listingId: phoneListing.id, variantId: variant256.id, quantity: 1 }],
+    deliveryMethod: 'STORE_PICKUP'
   });
   await lifecycleService.updateFulfillmentStatus(
     orderForTransit.id,

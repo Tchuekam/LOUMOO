@@ -7,7 +7,7 @@
 
 const { OrderRepository } = require('../infrastructure/OrderRepository');
 const { OrderStateMachine } = require('../domain/OrderStateMachine');
-const { FULFILLMENT_STATUS, PAYMENT_STATUS } = require('../domain/Order');
+const { FULFILLMENT_STATUS, PAYMENT_STATUS, DELIVERY_METHOD } = require('../domain/Order');
 const CacheService = require('../../../infrastructure/cache/CacheService');
 const { NotFoundError, ValidationError, AuthorizationError, ConflictError } = require('../../../shared/errors/AppError');
 const logger = require('../../../shared/logging/logger');
@@ -54,9 +54,42 @@ async function markOrderRefundable(repository, order, actorId, reason) {
   }
 }
 
+/**
+ * A pickup order the seller marks delivered has been handed over: settle its
+ * buyer-protection attestation to `released`. Best-effort and guarded: never fails the
+ * status change and never walks back a settled, refunded or refundable order.
+ */
+async function markOrderReleased(repository, order, actorId, note) {
+  const current = order.paymentStatus;
+  if (current === PAYMENT_STATUS.RELEASED || current === PAYMENT_STATUS.REFUNDED || current === PAYMENT_STATUS.REFUNDABLE) {
+    return order;
+  }
+  try {
+    return await repository.updatePaymentStatusAtomic(order.id, current, PAYMENT_STATUS.RELEASED, {
+      note: note || 'Handed over to the buyer',
+      updatedBy: actorId || 'system'
+    });
+  } catch (e) {
+    logger.warn(`[OrderLifecycle] Could not mark order ${order.id} released: ${e.message}`);
+    return order;
+  }
+}
+
 class OrderLifecycleService {
   constructor(repository = null) {
     this.repository = repository || new OrderRepository();
+  }
+
+  /**
+   * The order as the database has it NOW. findOrderById answers from a per-instance
+   * cache that is never refreshed, and the delivery module writes through a different
+   * repository instance, so a cancel or a status change decided on the cached copy
+   * could act on a status the order no longer has.
+   */
+  _freshOrder(idOrNumber) {
+    return typeof this.repository.findOrderByIdFresh === 'function'
+      ? this.repository.findOrderByIdFresh(idOrNumber)
+      : this.repository.findOrderById(idOrNumber);
   }
 
   /**
@@ -73,7 +106,7 @@ class OrderLifecycleService {
     if (!orderId) throw new ValidationError('Order ID is required.');
     if (!callerId) throw new AuthorizationError('Authentication required.');
 
-    const order = await this.repository.findOrderById(orderId);
+    const order = await this._freshOrder(orderId);
     if (!order) {
       throw new NotFoundError('Order not found');
     }
@@ -156,7 +189,7 @@ class OrderLifecycleService {
     if (!nextStatus) throw new ValidationError('Target status is required.');
     if (!callerId) throw new AuthorizationError('Authentication required.');
 
-    const order = await this.repository.findOrderById(orderId);
+    const order = await this._freshOrder(orderId);
     if (!order) {
       throw new NotFoundError('Order not found');
     }
@@ -166,6 +199,23 @@ class OrderLifecycleService {
 
     if (!isSeller && !isAdmin) {
       throw new NotFoundError('Order not found');
+    }
+
+    // A home delivery is moved by its DELIVERY, never by a status edit: it becomes
+    // in_transit when the rider reports the parcel picked up and delivered only when
+    // the buyer's handover code is confirmed, and those same events carry the
+    // buyer-protection attestation (escrow_held, released). Letting the seller (or an
+    // admin) write in_transit/delivered here marked an order delivered with no
+    // handover, left payment_status 'pending' forever, and made the order impossible
+    // to track (a delivery can only be created while the order is processing). An
+    // administrator repairs a stuck delivery through the delivery reconcile route.
+    // Cancelling is still allowed (from processing, by the state machine).
+    const isHomeDelivery = (order.deliveryMethod || DELIVERY_METHOD.HOME_DELIVERY) !== DELIVERY_METHOD.STORE_PICKUP;
+    if (isHomeDelivery && (nextStatus === FULFILLMENT_STATUS.IN_TRANSIT || nextStatus === FULFILLMENT_STATUS.DELIVERED)) {
+      throw new ConflictError(
+        'A home delivery is moved by its rider: it is in transit once the rider picks it up and delivered once ' +
+        'the buyer\'s handover code is confirmed. Arrange a delivery for this order instead of changing its status.'
+      );
     }
 
     // Enforce state transition rules
@@ -179,6 +229,11 @@ class OrderLifecycleService {
     );
 
     let result = updated;
+    if (nextStatus === FULFILLMENT_STATUS.DELIVERED) {
+      // A pickup order has no delivery to carry the attestation: the seller handing it
+      // over is the handover, so settle it here (best-effort, same guards as a cancel).
+      result = await markOrderReleased(this.repository, updated, callerId, note);
+    }
     if (nextStatus === FULFILLMENT_STATUS.CANCELLED) {
       // Cancelling the order makes its escrow attestation refundable (no money
       // moves — pay on delivery), then releases any open delivery.

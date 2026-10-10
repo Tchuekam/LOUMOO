@@ -259,17 +259,63 @@ try {
   Sentry = require('@sentry/node');
 } catch (_) {}
 
+/**
+ * The words of a failure context, split on punctuation AND camelCase, lowercased:
+ * 'OrderRepository.saveOrder' -> order repository save order;
+ * 'Follow target' -> follow target.
+ */
+function contextWords(context) {
+  return String(context || '')
+    .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+    .toLowerCase()
+    .split(/[^a-z0-9]+/)
+    .filter(Boolean);
+}
+
+// A context containing any of these is a WRITE. Matched as whole words (and, for
+// the original six, as substrings, as before) so that 'Follow target' is a write:
+// the old substring test read it as the read verb "get" hiding inside "target".
+const WRITE_SUBSTRINGS = ['insert', 'update', 'delete', 'upsert', 'create', 'remove', 'submit', 'mutate', 'provision'];
+const WRITE_WORDS = new Set([
+  'save', 'follow', 'unfollow', 'block', 'unblock', 'record', 'cancel', 'assign', 'accept', 'decline',
+  'claim', 'write', 'persist', 'register', 'publish', 'patch', 'post', 'add', 'revoke', 'restore'
+]);
+// 'get' is matched as a whole word only: as a substring it is inside "target", "widget", "budget".
+const READ_SUBSTRINGS = ['query', 'list', 'select', 'count', 'check', 'fetch', 'read', 'aggregation', 'search', 'find', 'preferences', 'profile', 'addresses', 'analytics', 'history'];
+
+// A context that LEADS with one of these is a lookup even when a write word follows:
+// 'Get follow status', 'Check block status', 'List followers' read; 'Follow target' writes.
+const READ_LEAD_WORDS = new Set(['get', 'list', 'find', 'check', 'fetch', 'count', 'read', 'query', 'select', 'search', 'load', 'lookup']);
+
+function isWriteContext(context) {
+  const ctx = String(context || '').toLowerCase();
+  if (WRITE_SUBSTRINGS.some(w => ctx.includes(w))) return true;
+  const words = contextWords(context);
+  // 'DeliveryRepository.findDriver' leads with the class name, so look at the first
+  // word of each dotted segment as well as of the whole phrase.
+  const segments = String(context || '').split('.').map(s => contextWords(s)[0]).filter(Boolean);
+  if (READ_LEAD_WORDS.has(words[0]) || segments.some(w => READ_LEAD_WORDS.has(w))) return false;
+  return words.some(w => WRITE_WORDS.has(w));
+}
+
+/**
+ * Whether a failed operation was a READ, i.e. one the caller may answer from an
+ * in-memory/empty model in production instead of failing the request.
+ *
+ * A WRITE is never a read: that decision comes first, before the error code. The
+ * PostgREST codes below (an invalid/expired key, "no row matched" from .single(), a
+ * stale schema cache) are harmless for a lookup that finds nothing, but for an
+ * insert or a compare-and-swap update they mean the write did NOT happen, and
+ * answering "fine" would report an order that was never stored.
+ */
 function isReadOperation(context, err) {
+  if (isWriteContext(context)) return false;
   if (err && (err.code === 'PGRST301' || err.code === 'PGRST116' || err.code === 'PGRST204')) {
     return true;
   }
   const ctx = String(context || '').toLowerCase();
-  const writeVerbs = ['insert', 'update', 'delete', 'upsert', 'create', 'remove', 'submit', 'mutate', 'provision'];
-  if (writeVerbs.some(w => ctx.includes(w))) {
-    return false;
-  }
-  const readVerbs = ['query', 'get', 'list', 'select', 'count', 'check', 'fetch', 'read', 'aggregation', 'search', 'find', 'preferences', 'profile', 'addresses', 'analytics', 'history'];
-  return readVerbs.some(r => ctx.includes(r));
+  if (contextWords(context).includes('get')) return true;
+  return READ_SUBSTRINGS.some(r => ctx.includes(r));
 }
 
 /**
@@ -333,6 +379,7 @@ module.exports = {
   getAdminClient: () => adminClient,
   getPublicClient: () => publicClient,
   handleDatabaseFailure,
+  isReadOperation,
   SupabaseClient: {
     getAdmin: SupabaseDatabase.getAdmin,
     getPublic: SupabaseDatabase.getPublic,

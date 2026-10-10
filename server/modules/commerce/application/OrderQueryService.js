@@ -28,7 +28,13 @@ class OrderQueryService {
     if (!orderId) throw new ValidationError('Order ID is required.');
     if (!callerId) throw new AuthorizationError('Authentication required.');
 
-    const order = await this.repository.findOrderById(orderId);
+    // Fresh from the database: findOrderById answers from a per-instance cache that is never
+    // refreshed, while the delivery module updates the order through another repository
+    // instance, so the buyer's detail view kept showing processing/pending for an order the
+    // database already had delivered/released.
+    const order = typeof this.repository.findOrderByIdFresh === 'function'
+      ? await this.repository.findOrderByIdFresh(orderId)
+      : await this.repository.findOrderById(orderId);
     if (!order) {
       throw new NotFoundError('Order not found');
     }

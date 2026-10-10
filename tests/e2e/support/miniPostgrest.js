@@ -1,0 +1,673 @@
+/**
+ * LOUMOO — a small PostgREST stand-in over a Postgres engine (PGlite).
+ * ---------------------------------------------------------------------------
+ * The server talks to its database through the UNMODIFIED @supabase/supabase-js
+ * client, i.e. over the PostgREST HTTP protocol. To run the real application
+ * against a real Postgres (the repo's migrations applied, real constraints, real
+ * row-level security and grants) on a machine with no Docker and no hosted
+ * project, this file answers that protocol:
+ *
+ *   GET    /rest/v1/<table>?select=&<col>=<op>.<val>&order=&limit=&offset=
+ *   POST   /rest/v1/<table>            insert / upsert (Prefer: resolution=...)
+ *   PATCH  /rest/v1/<table>?<filters>  update
+ *   DELETE /rest/v1/<table>?<filters>  delete
+ *   POST   /rest/v1/rpc/<fn>           call a function
+ *
+ * What it reproduces on purpose (because the application's behaviour depends on
+ * it): the schema selected by Accept-Profile / Content-Profile; the Postgres role
+ * taken from the JWT's `role` claim, applied with SET LOCAL ROLE so grants and RLS
+ * are enforced by Postgres itself; `Accept: application/vnd.pgrst.object+json`
+ * (supabase-js `.single()`) and its 406 / PGRST116; `Prefer: return=...`,
+ * `count=exact` + Content-Range; `resolution=merge|ignore-duplicates` +
+ * `on_conflict`; PGRST204 / PGRST205 for an unknown column / table (what a missing
+ * migration looks like in production); and SQLSTATE codes passed through in the
+ * error body with PostgREST's HTTP status mapping.
+ *
+ * What it does NOT reproduce, and says so instead of guessing: resource embedding
+ * (`select=a,rel(*)`), full-text-search operators, and the Auth / Storage /
+ * Realtime services. Those answer 501 with an explicit message so a test can never
+ * pass by accident on an unsupported feature.
+ *
+ * This is test infrastructure. It is NOT PostgREST: an emulation difference is
+ * possible, which is why the end-to-end report lists "not run against a real
+ * Supabase project" as an unverified item.
+ */
+'use strict';
+
+const http = require('http');
+const { verifyJwt, mintKey } = require('./jwt');
+
+const IDENT = /^[A-Za-z_][A-Za-z0-9_]*$/;
+const RESERVED = new Set(['select', 'order', 'limit', 'offset', 'on_conflict', 'columns']);
+const ROLES = new Set(['anon', 'authenticated', 'service_role']);
+
+class RestError extends Error {
+  constructor(status, code, message, details = null, hint = null) {
+    super(message);
+    this.status = status;
+    this.body = { code, details, hint, message };
+  }
+}
+
+const q = (id) => {
+  if (!IDENT.test(id)) throw new RestError(400, 'PGRST100', `unsupported identifier "${id}"`);
+  return `"${id}"`;
+};
+
+/** Split on top-level separators, ignoring those inside () or "...". */
+function splitTop(str, sep = ',') {
+  const out = [];
+  let depth = 0;
+  let quoted = false;
+  let cur = '';
+  for (let i = 0; i < str.length; i++) {
+    const ch = str[i];
+    if (ch === '"' && str[i - 1] !== '\\') quoted = !quoted;
+    if (!quoted) {
+      if (ch === '(' || ch === '{') depth++;
+      if (ch === ')' || ch === '}') depth--;
+      if (ch === sep && depth === 0) { out.push(cur); cur = ''; continue; }
+    }
+    cur += ch;
+  }
+  if (cur !== '') out.push(cur);
+  return out;
+}
+
+const unquote = (s) => (s.length >= 2 && s[0] === '"' && s[s.length - 1] === '"' ? s.slice(1, -1).replace(/\\(.)/g, '$1') : s);
+
+/** SQLSTATE -> HTTP status, as PostgREST maps it. */
+function statusForSqlstate(code, role) {
+  if (!code) return 400;
+  if (code === '42501') return role === 'anon' ? 401 : 403;
+  if (code === '42P01' || code === '42883') return 404;
+  if (code === '23503' || code === '23505') return 409;
+  if (code === 'P0001') return 400;
+  if (code.startsWith('08') || code.startsWith('53')) return 503;
+  if (code.startsWith('09') || code.startsWith('55') || code.startsWith('57') || code.startsWith('58')) return 500;
+  if (code.startsWith('0L') || code.startsWith('0P')) return 403;
+  return 400;
+}
+
+function createMiniPostgrest({ db, secret, schemas = ['public', 'iam', 'system'], onRequest = null, auth = null, storage = null }) {
+  const typeCache = new Map();   // "schema.table" -> Map(col -> format_type)
+  const pkCache = new Map();     // "schema.table" -> [cols]
+  const relCache = new Map();    // "schema.table" -> boolean
+
+  /* ----------------------------------------------------------------- catalog */
+
+  async function relationExists(tx, schema, table) {
+    const key = `${schema}.${table}`;
+    if (relCache.get(key)) return true;
+    const r = await tx.query(
+      `SELECT 1 FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
+        WHERE n.nspname = $1 AND c.relname = $2 AND c.relkind IN ('r','v','m','p')`, [schema, table]);
+    const ok = r.rows.length > 0;
+    if (ok) relCache.set(key, true);
+    return ok;
+  }
+
+  async function columnTypes(tx, schema, table) {
+    const key = `${schema}.${table}`;
+    if (typeCache.has(key)) return typeCache.get(key);
+    const r = await tx.query(
+      `SELECT a.attname AS name, format_type(a.atttypid, a.atttypmod) AS type
+         FROM pg_attribute a JOIN pg_class c ON c.oid = a.attrelid JOIN pg_namespace n ON n.oid = c.relnamespace
+        WHERE n.nspname = $1 AND c.relname = $2 AND a.attnum > 0 AND NOT a.attisdropped`, [schema, table]);
+    const map = new Map(r.rows.map((x) => [x.name, x.type]));
+    typeCache.set(key, map);
+    return map;
+  }
+
+  async function primaryKey(tx, schema, table) {
+    const key = `${schema}.${table}`;
+    if (pkCache.has(key)) return pkCache.get(key);
+    const r = await tx.query(
+      `SELECT a.attname AS name
+         FROM pg_index i JOIN pg_class c ON c.oid = i.indrelid JOIN pg_namespace n ON n.oid = c.relnamespace
+         JOIN pg_attribute a ON a.attrelid = c.oid AND a.attnum = ANY(i.indkey)
+        WHERE i.indisprimary AND n.nspname = $1 AND c.relname = $2`, [schema, table]);
+    const cols = r.rows.map((x) => x.name);
+    pkCache.set(key, cols);
+    return cols;
+  }
+
+  /* ----------------------------------------------------------------- parsing */
+
+  /* Foreign keys of one schema, for resource embedding. */
+  const fkCache = new Map();
+  async function foreignKeys(tx, schema) {
+    if (fkCache.has(schema)) return fkCache.get(schema);
+    const r = await tx.query(
+      `SELECT c.conname AS name, cl.relname AS from_table, cf.relname AS to_table,
+              (SELECT array_agg(a.attname ORDER BY k.ord) FROM unnest(c.conkey) WITH ORDINALITY k(attnum, ord)
+                 JOIN pg_attribute a ON a.attrelid = c.conrelid AND a.attnum = k.attnum) AS from_cols,
+              (SELECT array_agg(a.attname ORDER BY k.ord) FROM unnest(c.confkey) WITH ORDINALITY k(attnum, ord)
+                 JOIN pg_attribute a ON a.attrelid = c.confrelid AND a.attnum = k.attnum) AS to_cols
+         FROM pg_constraint c
+         JOIN pg_class cl ON cl.oid = c.conrelid JOIN pg_namespace n ON n.oid = cl.relnamespace
+         JOIN pg_class cf ON cf.oid = c.confrelid JOIN pg_namespace nf ON nf.oid = cf.relnamespace
+        WHERE c.contype = 'f' AND n.nspname = $1 AND nf.nspname = $1`, [schema]);
+    fkCache.set(schema, r.rows);
+    return r.rows;
+  }
+
+  const EMBED = /^(?:([A-Za-z_][A-Za-z0-9_]*):)?([A-Za-z_][A-Za-z0-9_]*)((?:![A-Za-z_][A-Za-z0-9_]*)*)\((.*)\)$/s;
+
+  /**
+   * Builds the SELECT list for `table` (aliased `alias`) from a PostgREST `select=` string.
+   * Embedded resources become correlated sub-selects: a many-to-one embed is an object (or
+   * null), a one-to-many embed is an array, `!inner` also requires the related row to exist.
+   * Returns { list, inner } where `inner` are extra WHERE conditions for the parent.
+   */
+  async function buildSelect(tx, schema, table, selectStr, alias = '_t', depth = 0, ctx = null) {
+    const types = await columnTypes(tx, schema, table);
+    if (!selectStr || selectStr === '*') return { list: `${alias}.*`, inner: [] };
+    const out = [];
+    const inner = [];
+    for (const raw of splitTop(selectStr)) {
+      const item = raw.trim();
+      if (item === '*') { out.push(`${alias}.*`); continue; }
+
+      if (item.includes('(')) {
+        const em = EMBED.exec(item);
+        if (!em) throw new RestError(400, 'PGRST100', `unsupported select item "${item}"`);
+        const [, as, rel, hintsRaw, sub] = em;
+        const hints = hintsRaw.split('!').filter(Boolean);
+        const isInner = hints.includes('inner');
+        const hint = hints.find((h) => h !== 'inner' && h !== 'left');
+        const fks = await foreignKeys(tx, schema);
+        const m2o = fks.filter((f) => f.from_table === table && f.to_table === rel
+          && (!hint || f.name === hint || f.from_cols.includes(hint)));
+        const o2m = fks.filter((f) => f.to_table === table && f.from_table === rel
+          && (!hint || f.name === hint || f.from_cols.includes(hint)));
+        const cands = [...m2o.map((f) => ({ f, many: false })), ...o2m.map((f) => ({ f, many: true }))];
+        if (cands.length === 0) {
+          throw new RestError(400, 'PGRST200', `Could not find a relationship between '${table}' and '${rel}' in the schema cache`);
+        }
+        if (cands.length > 1) {
+          throw new RestError(300, 'PGRST201', `Could not embed because more than one relationship was found for '${table}' and '${rel}'`);
+        }
+        const { f, many } = cands[0];
+        const ca = `_c${depth + 1}`;
+        const join = (many ? f.from_cols : f.to_cols)
+          .map((col, i) => `${ca}.${q(col)} = ${alias}.${q((many ? f.to_cols : f.from_cols)[i])}`).join(' AND ');
+        const child = await buildSelect(tx, schema, rel, sub, ca, depth + 1);
+        const fq = `${q(schema)}.${q(rel)}`;
+        // Filters addressed to this embed (`stores.status=eq.ACTIVE`) narrow the embedded rows and,
+        // with !inner, decide whether the parent row is kept at all.
+        const wanted = depth === 0 && ctx && ctx.embedFilters ? ctx.embedFilters.get(as || rel) : null;
+        let extra = [];
+        if (wanted && wanted.length) {
+          const childTypes = await columnTypes(tx, schema, rel);
+          extra = wanted.map((f) => condition(ctx.p, childTypes, f.col, f.rawOp, f.negate, ca));
+          ctx.used.add(as || rel);
+        }
+        const where = [join, ...child.inner, ...extra].join(' AND ');
+        const e = `_e${depth + 1}`;
+        const body = many
+          ? `(SELECT coalesce(json_agg(${e}), '[]'::json) FROM (SELECT ${child.list} FROM ${fq} AS ${ca} WHERE ${where}) ${e})`
+          : `(SELECT to_json(${e}) FROM (SELECT ${child.list} FROM ${fq} AS ${ca} WHERE ${where}) ${e})`;
+        out.push(`${body} AS ${q(as || rel)}`);
+        if (isInner) inner.push(`EXISTS (SELECT 1 FROM ${fq} AS ${ca} WHERE ${where})`);
+        continue;
+      }
+
+      let asName = null;
+      let expr = item;
+      const aliasMatch = /^([A-Za-z_][A-Za-z0-9_]*):(?!:)(.+)$/.exec(item);
+      if (aliasMatch) { asName = aliasMatch[1]; expr = aliasMatch[2]; }
+      let cast = null;
+      const castIdx = expr.lastIndexOf('::');
+      if (castIdx > 0) { cast = expr.slice(castIdx + 2); expr = expr.slice(0, castIdx); }
+      const m = /^([A-Za-z_][A-Za-z0-9_]*)((?:->>?[A-Za-z0-9_]+)*)$/.exec(expr);
+      if (!m) throw new RestError(400, 'PGRST100', `unsupported select item "${item}"`);
+      const col = m[1];
+      if (!types.has(col)) throw new RestError(400, '42703', `column ${table}.${col} does not exist`);
+      let sql = `${alias}.${q(col)}`;
+      let name = col;
+      for (const seg of m[2].match(/->>?[A-Za-z0-9_]+/g) || []) {
+        const op = seg.startsWith('->>') ? '->>' : '->';
+        const key = seg.slice(op.length);
+        sql += `${op}'${key}'`;
+        name = key;
+      }
+      if (cast) {
+        if (!IDENT.test(cast)) throw new RestError(400, 'PGRST100', `unsupported cast "${cast}"`);
+        sql = `(${sql})::${cast}`;
+      }
+      out.push(`${sql} AS ${q(asName || name)}`);
+    }
+    return { list: out.join(', '), inner };
+  }
+
+  function Params(values) {
+    const push = (v) => { values.push(v); return `$${values.length}`; };
+    return { values, push };
+  }
+
+  function typed(p, types, col, value) {
+    const t = types.get(col);
+    if (!t) throw new RestError(400, '42703', `column ${col} does not exist`);
+    return `(${p.push(String(value))}::text)::${t}`;
+  }
+
+  function condition(p, types, col, rawOp, negate, alias = '_t') {
+    if (!types.has(col)) throw new RestError(400, '42703', `column ${col} does not exist`);
+    const colSql = `${alias}.${q(col)}`;
+    const dot = rawOp.indexOf('.');
+    if (dot < 0) throw new RestError(400, 'PGRST100', `failed to parse filter "${col}=${rawOp}"`);
+    let op = rawOp.slice(0, dot);
+    const operand = rawOp.slice(dot + 1);
+    let quant = null;
+    const qm = /^(\w+)\((any|all)\)$/.exec(op);
+    if (qm) { op = qm[1]; quant = qm[2]; }
+
+    let sql;
+    switch (op) {
+      case 'eq': sql = `${colSql} = ${typed(p, types, col, operand)}`; break;
+      case 'neq': sql = `${colSql} <> ${typed(p, types, col, operand)}`; break;
+      case 'gt': sql = `${colSql} > ${typed(p, types, col, operand)}`; break;
+      case 'gte': sql = `${colSql} >= ${typed(p, types, col, operand)}`; break;
+      case 'lt': sql = `${colSql} < ${typed(p, types, col, operand)}`; break;
+      case 'lte': sql = `${colSql} <= ${typed(p, types, col, operand)}`; break;
+      case 'like':
+      case 'ilike': {
+        const kw = op === 'like' ? 'LIKE' : 'ILIKE';
+        if (quant) {
+          const pats = splitTop(operand.replace(/^\{|\}$/g, '')).map((s) => p.push(unquote(s).replace(/\*/g, '%')));
+          sql = `${colSql}::text ${kw} ${quant.toUpperCase()} (ARRAY[${pats.join(',')}])`;
+        } else {
+          sql = `${colSql}::text ${kw} ${p.push(operand.replace(/\*/g, '%'))}`;
+        }
+        break;
+      }
+      case 'match': sql = `${colSql}::text ~ ${p.push(operand)}`; break;
+      case 'imatch': sql = `${colSql}::text ~* ${p.push(operand)}`; break;
+      case 'is': {
+        const v = operand.toLowerCase();
+        if (!['null', 'true', 'false', 'unknown'].includes(v)) throw new RestError(400, 'PGRST100', `bad "is" operand "${operand}"`);
+        sql = `${colSql} IS ${v === 'null' ? 'NULL' : v.toUpperCase()}`;
+        break;
+      }
+      case 'isdistinct': sql = `${colSql} IS DISTINCT FROM ${typed(p, types, col, operand)}`; break;
+      case 'in': {
+        const inner = operand.replace(/^\(/, '').replace(/\)$/, '');
+        const vals = inner === '' ? [] : splitTop(inner).map((s) => typed(p, types, col, unquote(s)));
+        sql = vals.length ? `${colSql} IN (${vals.join(', ')})` : 'FALSE';
+        break;
+      }
+      case 'cs': sql = `${colSql} @> ${typed(p, types, col, operand)}`; break;
+      case 'cd': sql = `${colSql} <@ ${typed(p, types, col, operand)}`; break;
+      case 'ov': sql = `${colSql} && ${typed(p, types, col, operand)}`; break;
+      default:
+        throw new RestError(501, 'LOUMOO_E2E_UNSUPPORTED', `filter operator "${op}" is not supported by the local PostgREST stand-in`);
+    }
+    return negate ? `NOT (${sql})` : sql;
+  }
+
+  /** Parse one `col.op.value` / `not.col...` / `and(...)` / `or(...)` element of a logical group. */
+  function logicalElement(p, types, el) {
+    const t = el.trim();
+    let m = /^(not\.)?(and|or)\((.*)\)$/s.exec(t);
+    if (m) return group(p, types, m[2], m[3], Boolean(m[1]));
+    const firstDot = t.indexOf('.');
+    const col = t.slice(0, firstDot);
+    let rest = t.slice(firstDot + 1);
+    let negate = false;
+    if (rest.startsWith('not.')) { negate = true; rest = rest.slice(4); }
+    return condition(p, types, col, rest, negate);
+  }
+
+  function group(p, types, kind, inner, negate) {
+    const parts = splitTop(inner).map((el) => logicalElement(p, types, el));
+    const sql = `(${parts.join(kind === 'and' ? ' AND ' : ' OR ')})`;
+    return negate ? `NOT ${sql}` : sql;
+  }
+
+  function buildWhere(searchParams, types, p) {
+    const clauses = [];
+    for (const [key, value] of searchParams.entries()) {
+      if (RESERVED.has(key)) continue;
+      if (key === 'and' || key === 'or') {
+        clauses.push(group(p, types, key, value.replace(/^\(/, '').replace(/\)$/, ''), false));
+        continue;
+      }
+      if (key === 'not.and' || key === 'not.or') {
+        clauses.push(group(p, types, key.slice(4), value.replace(/^\(/, '').replace(/\)$/, ''), true));
+        continue;
+      }
+      if (key.includes('.')) continue; // a filter on an embedded resource: applied inside that embed
+      let rest = value;
+      let negate = false;
+      if (rest.startsWith('not.')) { negate = true; rest = rest.slice(4); }
+      clauses.push(condition(p, types, key, rest, negate));
+    }
+    return clauses;
+  }
+
+  const whereSql = (clauses) => (clauses.length ? ` WHERE ${clauses.join(' AND ')}` : '');
+
+  /** `stores.status=eq.ACTIVE` -> Map('stores' -> [{ col: 'status', rawOp: 'eq.ACTIVE', negate: false }]) */
+  function collectEmbedFilters(searchParams) {
+    const out = new Map();
+    for (const [key, value] of searchParams.entries()) {
+      if (RESERVED.has(key) || key === 'and' || key === 'or' || key === 'not.and' || key === 'not.or') continue;
+      const dot = key.indexOf('.');
+      if (dot < 0) continue;
+      const rel = key.slice(0, dot);
+      const col = key.slice(dot + 1);
+      if (!IDENT.test(rel) || !IDENT.test(col)) {
+        throw new RestError(501, 'LOUMOO_E2E_UNSUPPORTED', `filter "${key}" is not supported by the local PostgREST stand-in`);
+      }
+      let rawOp = value;
+      let negate = false;
+      if (rawOp.startsWith('not.')) { negate = true; rawOp = rawOp.slice(4); }
+      if (!out.has(rel)) out.set(rel, []);
+      out.get(rel).push({ col, rawOp, negate });
+    }
+    return out;
+  }
+
+  function buildOrder(searchParams, types) {
+    const raw = searchParams.get('order');
+    if (!raw) return '';
+    const parts = splitTop(raw).map((s) => {
+      const [col, ...mods] = s.split('.');
+      if (types && !types.has(col)) throw new RestError(400, '42703', `column ${col} does not exist`);
+      let sql = `_t.${q(col)}`;
+      for (const m of mods) {
+        if (m === 'asc') sql += ' ASC';
+        else if (m === 'desc') sql += ' DESC';
+        else if (m === 'nullsfirst') sql += ' NULLS FIRST';
+        else if (m === 'nullslast') sql += ' NULLS LAST';
+        else throw new RestError(400, 'PGRST100', `bad order modifier "${m}"`);
+      }
+      return sql;
+    });
+    return ` ORDER BY ${parts.join(', ')}`;
+  }
+
+  function intParam(searchParams, key) {
+    const v = searchParams.get(key);
+    if (v === null) return null;
+    if (!/^\d+$/.test(v)) throw new RestError(400, 'PGRST100', `"${key}" must be a non-negative integer`);
+    return Number(v);
+  }
+
+  /* --------------------------------------------------------------- JWT / role */
+
+  function roleFor(req) {
+    const header = req.headers.authorization || '';
+    const token = header.toLowerCase().startsWith('bearer ') ? header.slice(7).trim() : (req.headers.apikey || '');
+    if (!token) return 'anon';
+    if (token.split('.').length !== 3) throw new RestError(401, 'PGRST301', 'JWSError CompactDecodeError');
+    const v = verifyJwt(token, secret);
+    if (!v.ok) {
+      if (v.reason === 'expired') throw new RestError(401, 'PGRST303', 'JWT expired');
+      throw new RestError(401, 'PGRST301', v.reason === 'signature' ? 'JWSError JWSInvalidSignature' : 'JWSError CompactDecodeError');
+    }
+    const role = v.payload.role || 'anon';
+    if (!ROLES.has(role)) throw new RestError(401, 'PGRST301', `role "${role}" is not permitted`);
+    return role;
+  }
+
+  /* ------------------------------------------------------------------ handlers */
+
+  function schemaFor(req) {
+    const h = req.method === 'GET' || req.method === 'HEAD' ? req.headers['accept-profile'] : req.headers['content-profile'];
+    const schema = h || schemas[0];
+    if (!schemas.includes(schema)) {
+      throw new RestError(406, 'PGRST106', `The schema must be one of the following: ${schemas.join(', ')}`, null, null);
+    }
+    return schema;
+  }
+
+  const prefer = (req) => {
+    const out = {};
+    for (const part of String(req.headers.prefer || '').split(',')) {
+      const [k, v] = part.trim().split('=');
+      if (k) out[k] = v === undefined ? true : v;
+    }
+    return out;
+  };
+
+  const wantsObject = (req) => /application\/vnd\.pgrst\.object\+json/.test(req.headers.accept || '');
+
+  function respondRows(rows, { req, status, content }) {
+    if (wantsObject(req)) {
+      if (rows.length !== 1) {
+        throw new RestError(406, 'PGRST116', 'JSON object requested, multiple (or no) rows returned', `The result contains ${rows.length} rows`);
+      }
+      return { status, body: JSON.stringify(rows[0]), content };
+    }
+    return { status, body: JSON.stringify(rows), content };
+  }
+
+  async function jsonRows(tx, innerSql, values) {
+    const r = await tx.query(`SELECT coalesce(json_agg(_r), '[]'::json)::text AS body FROM (${innerSql}) _r`, values);
+    return JSON.parse(r.rows[0].body);
+  }
+
+  async function handleTable(tx, req, url, schema, table, bodyText, role) {
+    if (!(await relationExists(tx, schema, table))) {
+      throw new RestError(404, 'PGRST205', `Could not find the table '${schema}.${table}' in the schema cache`);
+    }
+    const types = await columnTypes(tx, schema, table);
+    const fq = `${q(schema)}.${q(table)}`;
+    const pref = prefer(req);
+    const sp = url.searchParams;
+    const p = Params([]);
+
+    if (req.method === 'GET' || req.method === 'HEAD') {
+      const ctx = { p, embedFilters: collectEmbedFilters(sp), used: new Set() };
+      const sel = await buildSelect(tx, schema, table, sp.get('select'), '_t', 0, ctx);
+      for (const name of ctx.embedFilters.keys()) {
+        if (!ctx.used.has(name)) throw new RestError(400, 'PGRST108', `'${name}' is not an embedded resource in this request`);
+      }
+      const list = sel.list;
+      const where = whereSql([...sel.inner, ...buildWhere(sp, types, p)]);
+      const order = buildOrder(sp, types);
+      const limit = intParam(sp, 'limit');
+      const offset = intParam(sp, 'offset');
+      const inner = `SELECT ${list} FROM ${fq} AS _t${where}${order}${limit !== null ? ` LIMIT ${limit}` : ''}${offset ? ` OFFSET ${offset}` : ''}`;
+      const rows = await jsonRows(tx, inner, p.values);
+      let range = rows.length ? `${offset || 0}-${(offset || 0) + rows.length - 1}` : '*';
+      let total = '*';
+      if (pref.count) {
+        const c = await tx.query(`SELECT count(*)::int AS n FROM ${fq} AS _t${where}`, p.values);
+        total = String(c.rows[0].n);
+      }
+      const res = req.method === 'HEAD' ? { status: 200, body: '', content: `${range}/${total}` } : respondRows(rows, { req, status: 200, content: `${range}/${total}` });
+      if (pref.count && rows.length < (limit ?? Infinity) && !offset) res.status = 200;
+      return res;
+    }
+
+    if (req.method === 'POST') {
+      let payload;
+      try { payload = JSON.parse(bodyText || '{}'); } catch { throw new RestError(400, 'PGRST102', 'Empty or invalid json'); }
+      const rows = Array.isArray(payload) ? payload : [payload];
+      const colParam = sp.get('columns');
+      const cols = colParam ? colParam.split(',').map((s) => unquote(s.trim())) : [...new Set(rows.flatMap((r) => Object.keys(r)))];
+      for (const c of cols) {
+        if (!types.has(c)) throw new RestError(400, 'PGRST204', `Could not find the '${c}' column of '${table}' in the schema cache`);
+      }
+      const { list } = await buildSelect(tx, schema, table, sp.get('select'));
+      const retRep = pref.return === 'representation';
+      const colSql = cols.map(q).join(', ');
+      const onConflict = sp.get('on_conflict');
+      const resolution = pref.resolution;
+      let conflict = '';
+      if (resolution === 'merge-duplicates' || resolution === 'ignore-duplicates') {
+        const target = onConflict ? onConflict.split(',').map((s) => unquote(s.trim())) : await primaryKey(tx, schema, table);
+        if (!target.length) throw new RestError(400, 'PGRST100', 'upsert needs a primary key or on_conflict');
+        const tgt = target.map(q).join(', ');
+        conflict = resolution === 'ignore-duplicates'
+          ? ` ON CONFLICT (${tgt}) DO NOTHING`
+          : ` ON CONFLICT (${tgt}) DO UPDATE SET ${cols.map((c) => `${q(c)} = EXCLUDED.${q(c)}`).join(', ')}`;
+      }
+      if (!rows.length || !cols.length) {
+        return retRep ? { status: 201, body: '[]' } : { status: 201, body: '' };
+      }
+      const ins = `INSERT INTO ${fq} (${colSql}) SELECT ${colSql} FROM json_populate_recordset(null::${fq}, ${p.push(JSON.stringify(rows))}::json)${conflict} RETURNING *`;
+      if (!retRep) {
+        await tx.query(ins, p.values);
+        return { status: 201, body: '' };
+      }
+      const r = await tx.query(`WITH _ins AS (${ins}) SELECT coalesce(json_agg(_r), '[]'::json)::text AS body FROM (SELECT ${list} FROM _ins AS _t) _r`, p.values);
+      return respondRows(JSON.parse(r.rows[0].body), { req, status: 201 });
+    }
+
+    if (req.method === 'PATCH') {
+      let payload;
+      try { payload = JSON.parse(bodyText || '{}'); } catch { throw new RestError(400, 'PGRST102', 'Empty or invalid json'); }
+      const cols = Object.keys(payload);
+      for (const c of cols) {
+        if (!types.has(c)) throw new RestError(400, 'PGRST204', `Could not find the '${c}' column of '${table}' in the schema cache`);
+      }
+      const retRep = pref.return === 'representation';
+      const { list } = await buildSelect(tx, schema, table, sp.get('select'));
+      if (!cols.length) return retRep ? { status: 200, body: '[]' } : { status: 204, body: '' };
+      const bodyParam = p.push(JSON.stringify(payload));
+      const sets = cols.map((c) => `${q(c)} = (json_populate_record(null::${fq}, ${bodyParam}::json)).${q(c)}`).join(', ');
+      const where = whereSql(buildWhere(sp, types, p));
+      const upd = `UPDATE ${fq} AS _t SET ${sets}${where} RETURNING _t.*`;
+      if (!retRep) {
+        await tx.query(upd, p.values);
+        return { status: 204, body: '' };
+      }
+      const r = await tx.query(`WITH _upd AS (${upd}) SELECT coalesce(json_agg(_r), '[]'::json)::text AS body FROM (SELECT ${list} FROM _upd AS _t) _r`, p.values);
+      return respondRows(JSON.parse(r.rows[0].body), { req, status: 200 });
+    }
+
+    if (req.method === 'DELETE') {
+      const retRep = pref.return === 'representation';
+      const { list } = await buildSelect(tx, schema, table, sp.get('select'));
+      const where = whereSql(buildWhere(sp, types, p));
+      const del = `DELETE FROM ${fq} AS _t${where} RETURNING _t.*`;
+      if (!retRep) {
+        await tx.query(del, p.values);
+        return { status: 204, body: '' };
+      }
+      const r = await tx.query(`WITH _del AS (${del}) SELECT coalesce(json_agg(_r), '[]'::json)::text AS body FROM (SELECT ${list} FROM _del AS _t) _r`, p.values);
+      return respondRows(JSON.parse(r.rows[0].body), { req, status: 200 });
+    }
+
+    throw new RestError(405, 'PGRST117', `Unsupported HTTP method: ${req.method}`);
+  }
+
+  async function handleRpc(tx, req, url, schema, fn, bodyText) {
+    let args = {};
+    if (req.method === 'POST') {
+      try { args = JSON.parse(bodyText || '{}'); } catch { throw new RestError(400, 'PGRST102', 'Empty or invalid json'); }
+    } else {
+      for (const [k, v] of url.searchParams.entries()) args[k] = v;
+    }
+    const meta = await tx.query(
+      `SELECT p.proretset AS "set", format_type(p.prorettype, NULL) AS ret
+         FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace WHERE n.nspname = $1 AND p.proname = $2 LIMIT 1`, [schema, fn]);
+    if (!meta.rows.length) {
+      throw new RestError(404, 'PGRST202', `Could not find the function ${schema}.${fn} in the schema cache`);
+    }
+    const p = Params([]);
+    const named = Object.entries(args).map(([k, v]) => `${q(k)} := ${p.push(typeof v === 'string' ? v : JSON.stringify(v))}`);
+    const call = `${q(schema)}.${q(fn)}(${named.join(', ')})`;
+    if (meta.rows[0].set) {
+      return { status: 200, body: JSON.stringify(await jsonRows(tx, `SELECT * FROM ${call} AS _t`, p.values)) };
+    }
+    const r = await tx.query(`SELECT to_json(${call})::text AS body`, p.values);
+    return { status: 200, body: r.rows[0].body ?? 'null' };
+  }
+
+  /* ------------------------------------------------------------------- server */
+
+  function readBody(req) {
+    return new Promise((resolve, reject) => {
+      const chunks = [];
+      req.on('data', (c) => chunks.push(c));
+      req.on('end', () => resolve(Buffer.concat(chunks)));
+      req.on('error', reject);
+    });
+  }
+
+  function send(res, status, body, extra = {}) {
+    const headers = { 'Content-Type': 'application/json; charset=utf-8', ...extra };
+    res.writeHead(status, headers);
+    res.end(body);
+  }
+
+  const server = http.createServer(async (req, res) => {
+    let url;
+    try { url = new URL(req.url, 'http://local'); } catch { return send(res, 400, '{}'); }
+    const started = Date.now();
+    let logStatus = 0;
+    let logError = null;
+    try {
+      if (url.pathname === '/__health') return send(res, 200, '{"ok":true}');
+      if (url.pathname.startsWith('/auth/v1')) {
+        if (!auth) throw new RestError(501, 'LOUMOO_E2E_UNSUPPORTED', 'auth is not provided by this local stack');
+        const out = await auth.handle(req, url, (await readBody(req)).toString('utf8'));
+        logStatus = out.status;
+        if (out.status >= 400) logError = String(out.body && out.body.error_code);
+        return send(res, out.status, out.body === null ? undefined : JSON.stringify(out.body), out.headers || {});
+      }
+      if (url.pathname.startsWith('/storage/v1') && storage) {
+        const out = await storage.handle(req, url, await readBody(req));
+        logStatus = out.status;
+        if (out.status >= 400) logError = 'storage';
+        if (out.raw) {
+          res.writeHead(out.status, { 'Content-Type': out.type || 'application/octet-stream', 'Access-Control-Allow-Origin': '*', 'Cache-Control': 'private, max-age=60' });
+          return res.end(out.raw);
+        }
+        return send(res, out.status, JSON.stringify(out.body));
+      }
+      if (url.pathname.startsWith('/storage/v1') || url.pathname.startsWith('/realtime/v1')) {
+        throw new RestError(501, 'LOUMOO_E2E_UNSUPPORTED', `${url.pathname.split('/')[1]} is not provided by the local stack`);
+      }
+      const m = /^\/rest\/v1\/(.*)$/.exec(url.pathname);
+      if (!m) throw new RestError(404, 'PGRST125', `Invalid path specified in request URL`);
+      const target = decodeURIComponent(m[1]);
+      if (target === '') return send(res, 200, '{}');
+      const bodyText = (await readBody(req)).toString('utf8');
+      const role = roleFor(req);
+      const schema = schemaFor(req);
+
+      const out = await db.transaction(async (tx) => {
+        await tx.exec(`SET LOCAL ROLE ${role}`);
+        if (target.startsWith('rpc/')) return handleRpc(tx, req, url, schema, target.slice(4), bodyText);
+        return handleTable(tx, req, url, schema, target, bodyText, role);
+      });
+      logStatus = out.status;
+      const extra = {};
+      if (out.content) extra['Content-Range'] = out.content;
+      res.writeHead(out.status, { 'Content-Type': 'application/json; charset=utf-8', ...extra });
+      return res.end(out.status === 204 ? undefined : out.body);
+    } catch (err) {
+      if (err instanceof RestError) {
+        logStatus = err.status;
+        logError = err.body.code;
+        return send(res, err.status, JSON.stringify(err.body));
+      }
+      let role = 'anon';
+      try { role = roleFor(req); } catch { /* keep anon */ }
+      const code = err && err.code && /^[0-9A-Z]{5}$/.test(err.code) ? err.code : null;
+      const status = statusForSqlstate(code, role);
+      logStatus = status;
+      logError = code || 'ERR';
+      return send(res, status, JSON.stringify({
+        code: code || 'PGRST000',
+        details: err && err.detail ? err.detail : null,
+        hint: err && err.hint ? err.hint : null,
+        message: String((err && err.message) || err),
+      }));
+    } finally {
+      if (onRequest) {
+        try { onRequest({ method: req.method, path: url.pathname + url.search, status: logStatus, error: logError, ms: Date.now() - started }); } catch { /* observer must never break a request */ }
+      }
+    }
+  });
+
+  return { server, mintKey: (role, extra) => mintKey(secret, role, extra) };
+}
+
+module.exports = { createMiniPostgrest, RestError };

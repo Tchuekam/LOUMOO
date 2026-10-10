@@ -8150,6 +8150,29 @@ class Component extends DCLogic {
   // the placed items leave the bag, so if a later store fails the shopper is left
   // with exactly what was not ordered and can try again. Resolves with the orders
   // that were placed and, if one was refused, why.
+  // One idempotency key per order ATTEMPT. The attempt is identified by what is being ordered
+  // (the payload), and its key is remembered for the session until the order is confirmed or
+  // definitively refused. So a retry after a lost response, a reload, a second tab or a double
+  // tap sends the SAME key and the server returns the original order instead of placing another
+  // (the checkout used to send no key: every retry of an order whose reply was lost, and every
+  // second tab, created a duplicate order and a second notification to the seller).
+  _orderAttempt = (payload) => {
+    const store = () => { try { return window.sessionStorage; } catch (e) { return null; } };
+    let map = {};
+    try { map = JSON.parse((store() && store().getItem('loumoo_order_attempts')) || '{}') || {}; } catch (e) { map = {}; }
+    const text = JSON.stringify(payload);
+    let h = 5381;
+    for (let i = 0; i < text.length; i++) h = ((h << 5) + h + text.charCodeAt(i)) | 0;
+    const id = 'p' + (h >>> 0).toString(36) + '.' + text.length;
+    const save = () => { try { store() && store().setItem('loumoo_order_attempts', JSON.stringify(map)); } catch (e) {} };
+    if (!map[id]) {
+      let rand = '';
+      try { const a = new Uint8Array(12); window.crypto.getRandomValues(a); rand = Array.from(a, (b) => b.toString(16).padStart(2, '0')).join(''); } catch (e) { rand = Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2); }
+      map[id] = 'ord-' + Date.now().toString(36) + '-' + rand;
+      save();
+    }
+    return { key: map[id], done: () => { delete map[id]; save(); } };
+  };
   _placeBagAsOrders(groups, address, method, images, deliveryMethod, preferredDriverId) {
     const api = getApi();
     const circuit = window.LoumooCircuit;
@@ -8159,13 +8182,16 @@ class Component extends DCLogic {
     const step = (i) => {
       if (i >= groups.length) return Promise.resolve({ placed: placed, failure: null });
       const group = groups[i];
-      return api.createOrder(circuit.toOrderPayload(group.items, address, deliveryMethod, preferredDriverId)).then((serverOrder) => {
+      const payload = circuit.toOrderPayload(group.items, address, deliveryMethod, preferredDriverId);
+      const attempt = this._orderAttempt(payload);
+      return api.createOrder(payload, { idempotencyKey: attempt.key }).then((serverOrder) => {
         if (!serverOrder || !serverOrder.id) {
           // A reply without an order means the seller cannot have been told.
           const unconfirmed = new Error('The order was not confirmed.');
           unconfirmed.status = 502;
           return { placed: placed, failure: { error: unconfirmed, group: group } };
         }
+        attempt.done(); // confirmed: the next order for the same things is a new order
         const order = circuit.orderFromServer(serverOrder, { images: images, paymentMethod: method });
         placed.push(order);
         const gone = new Set(group.items.map((it) => it.id));
@@ -8175,7 +8201,13 @@ class Component extends DCLogic {
         this._persistOrders(list);
         this._persistCart(remaining);
         return step(i + 1);
-      }, (err) => ({ placed: placed, failure: { error: err, group: group } }));
+      }, (err) => {
+        // A definitive refusal (the server looked at the order and said no) ends the attempt; a
+        // network error, a timeout or a 5xx keeps the key, because the order may have been stored.
+        const status = err && err.status;
+        if (status >= 400 && status < 500 && status !== 408 && status !== 409 && status !== 429) attempt.done();
+        return { placed: placed, failure: { error: err, group: group } };
+      });
     };
     return step(0);
   }
@@ -8215,19 +8247,37 @@ class Component extends DCLogic {
   // that is no longer offered is dropped.
   _loadProviders = (city, force) => {
     const api = (typeof window !== 'undefined') && window.deliveryApi;
-    if (!api || typeof api.getProviders !== 'function') return;
     const normCity = String(city || '').trim();
-    if (this.state.providersLoading) return;
+    if (!api || typeof api.getProviders !== 'function') {
+      // The delivery client did not load (a stale or broken deploy). Say so: returning silently
+      // left the "no delivery providers list your area yet" sentence on screen with no request made.
+      if (!this.state.providersError) {
+        this.setState({ providers: [], providersLoading: false, providersCity: normCity, providersError: 'Delivery options could not be loaded. You can still place your order and the store will arrange a rider.' });
+      }
+      return;
+    }
+    // A forced reload (TRY AGAIN) is allowed while a load is "in progress": a request that hangs
+    // must never leave the picker stuck on "Finding delivery providers…" with no way out.
+    if (this.state.providersLoading && !force) return;
     if (!force && this.state.providersCity === normCity && (this.state.providers.length || this.state.providersError)) return;
     this.setState({ providersLoading: true, providersError: '', providersCity: normCity });
+    const token = (this._providersToken = (this._providersToken || 0) + 1);
+    const current = () => !this._unmounted && token === this._providersToken;
+    const timer = setTimeout(() => {
+      if (!current()) return;
+      this._providersToken += 1; // the late reply, if it ever comes, is ignored
+      this.setState({ providers: [], providersLoading: false, selectedProviderId: null, providersError: 'Loading delivery options is taking too long. Check your connection and try again, or place your order and the store will arrange a rider.' });
+    }, 15000);
     api.getProviders(normCity).then((res) => {
-      if (this._unmounted) return;
+      clearTimeout(timer);
+      if (!current()) return;
       const list = (res && res.providers) || [];
       const keep = this.state.selectedProviderId && list.some((p) => p.id === this.state.selectedProviderId)
         ? this.state.selectedProviderId : null;
       this.setState({ providers: list, providersLoading: false, selectedProviderId: keep });
     }).catch((e) => {
-      if (this._unmounted) return;
+      clearTimeout(timer);
+      if (!current()) return;
       this.setState({ providers: [], providersLoading: false, selectedProviderId: null, providersError: (e && e.message) || 'Could not load delivery options.' });
     });
   };
@@ -8865,8 +8915,21 @@ class Component extends DCLogic {
     if (guard) guard.invalidate();
     // The next account must never inherit the previous one's counts.
     this._dashboardRequested = false;
+    // ...nor its orders, notifications or delivery choice. They are kept in this browser's
+    // localStorage and reloaded for any visitor, so signing out used to leave the previous
+    // buyer's orders (items, totals, name, phone, street, city) for the next person to sign in
+    // here. The server is the source of truth: the next sign-in loads that account's own.
+    try { localStorage.removeItem('loumoo_orders'); localStorage.removeItem('loumoo_notifs'); } catch (e) {}
 
     this.setState({
+      orders: [],
+      lastOrder: null,
+      lastOrders: [],
+      currentOrder: null,
+      notifications: [],
+      providers: [],
+      selectedProviderId: null,
+      providersCity: '',
       isLoggedIn: false,
       authStatus: 'anonymous',
       sessionUser: null,
@@ -12272,8 +12335,12 @@ class Component extends DCLogic {
         localStorage.removeItem('loumoo_token');
         localStorage.removeItem('loumoo_auth_user');
         localStorage.removeItem('loumoo_onboarding_draft');
+        // An explicit sign-out also empties the bag: on a shared device it is the previous
+        // person's shopping. (A token that merely expires keeps the bag.)
+        localStorage.removeItem('loumoo_cart');
       } catch (_) {}
     }
+    this.setState({ cartItems: [] });
     this._applyAnonymous();
     this.toast('Signed out of LOUMOO');
     this.go('home');
@@ -12803,11 +12870,20 @@ class Component extends DCLogic {
     // server prices the order the same way, so what is shown is what is charged.
     // Otherwise it is the city's standard rate.
     const selectedProvider = (this.state.providers || []).find(p => p.id === this.state.selectedProviderId) || null;
+    // A provider with no tariff of its own quotes feeXaf null: Number(null) is 0, which used to
+    // zero the fee here while the server charged the city rate. Only a real number is a quote.
+    const providerQuote = (selectedProvider && selectedProvider.feeXaf != null && Number.isFinite(Number(selectedProvider.feeXaf)))
+      ? Number(selectedProvider.feeXaf)
+      : null;
     const deliveryFee = (isPickup || cartSubtotal <= 0)
       ? 0
-      : (selectedProvider && Number.isFinite(Number(selectedProvider.feeXaf))
-          ? Number(selectedProvider.feeXaf)
-          : resolveCityDeliveryFee(deliveryCity));
+      : (providerQuote != null ? providerQuote : resolveCityDeliveryFee(deliveryCity));
+    // Each store in the bag becomes its own order, and the server prices every order with its own
+    // delivery fee, so the bag must show (and the buttons must charge) one fee per store.
+    const storeGroupCount = (isPickup || cartSubtotal <= 0)
+      ? 0
+      : Math.max(1, new Set(cartList.map((it) => String((it && (it.store || it.storeName)) || 'LOUMOO seller'))).size);
+    const deliveryTotal = deliveryFee * storeGroupCount;
     const line = cartSubtotal;
     const items = cartSubtotal;
     const shipStyle = o => ({
@@ -12853,11 +12929,20 @@ class Component extends DCLogic {
       cartSubtotalLabel: 'XAF ' + fmt(items),
       cartDeliveryFee: deliveryFee,
       cartDeliveryFeeLabel: 'XAF ' + fmt(deliveryFee),
+      // What the bag says about delivery is computed from the same numbers as the total, never static.
+      cartDeliveryIsFree: !isPickup && cartSubtotal > 0 && deliveryTotal === 0,
+      cartDeliveryRowLabel: isPickup ? 'Store pickup' : ('Courier delivery (' + deliveryCity + (storeGroupCount > 1 ? ', ' + storeGroupCount + ' stores' : '') + ')'),
+      cartDeliveryRowValue: isPickup ? 'No fee' : (deliveryTotal === 0 ? 'FREE' : 'XAF ' + fmt(deliveryTotal)),
+      cartDeliveryBanner: isPickup
+        ? 'Store pickup: there is no delivery fee.'
+        : (deliveryTotal === 0
+          ? 'You have unlocked FREE Courier Delivery in ' + deliveryCity + '!'
+          : 'Courier delivery to ' + deliveryCity + ' is XAF ' + fmt(deliveryFee) + (storeGroupCount > 1 ? ' per store' : '') + '. You can choose your rider at checkout.'),
       // Items + delivery: exactly what the server will price the order at. (The
       // 3 000 "escrow protection fee" that used to be added here was never part of
       // the order, and no payment is taken yet, so it cannot be charged.)
-      cartTotal: 'XAF ' + fmt(items + deliveryFee),
-      payLabel: 'PAY XAF ' + fmt(items + deliveryFee) + ' WITH MOMO',
+      cartTotal: 'XAF ' + fmt(items + deliveryTotal),
+      payLabel: 'PAY XAF ' + fmt(items + deliveryTotal) + ' WITH MOMO',
       hasAnnouncementBanner: Boolean(dynamicSettings.announcement_banner && (dynamicSettings.announcement_banner.enabled !== false && dynamicSettings.announcement_banner.active !== false)),
       announcementBannerText: (dynamicSettings.announcement_banner && (dynamicSettings.announcement_banner.text_fr || dynamicSettings.announcement_banner.message)) || '',
       isMaintenanceMode: Boolean(dynamicSettings.maintenance_mode && dynamicSettings.maintenance_mode.enabled),
@@ -17156,7 +17241,7 @@ class Component extends DCLogic {
       checkoutIsPickup: isPickup,
       checkoutHasDestination: checkoutDest.hasDestination,
       checkoutRecipientName: checkoutDest.address.fullName,
-      checkoutRecipientPhone: checkoutDest.address.phone,
+      checkoutRecipientPhone: String(checkoutDest.address.phone || '').trim().replace(/^\+?237[\s-]*/, ''),
       checkoutDeliveryAddress: checkoutDest.address.street
         ? checkoutDest.address.street
           + (checkoutDest.address.city ? ', ' + (checkoutDest.address.city.charAt(0).toUpperCase() + checkoutDest.address.city.slice(1)) : '')
@@ -17191,7 +17276,7 @@ class Component extends DCLogic {
           ratingLabel: (p.rating && p.rating.average != null) ? ('★ ' + Number(p.rating.average).toFixed(1)) : 'New',
           ratingCountLabel: (p.rating && p.rating.count) ? (Number(p.rating.count) + ' ratings') : 'No ratings yet',
           completedLabel: (Number(p.completedDeliveries) || 0) + ' deliveries',
-          feeLabel: Number.isFinite(Number(p.feeXaf)) ? ('XAF ' + fmt(Number(p.feeXaf))) : 'Fee at checkout',
+          feeLabel: 'XAF ' + fmt((p.feeXaf != null && Number.isFinite(Number(p.feeXaf))) ? Number(p.feeXaf) : resolveCityDeliveryFee(deliveryCity)),
           selected: p.id === this.state.selectedProviderId,
           select: () => this.setState((s) => ({ selectedProviderId: s.selectedProviderId === p.id ? null : p.id }))
         };
@@ -17225,7 +17310,7 @@ class Component extends DCLogic {
       markNotifsRead: () => this._markNotifsRead(),
       // ── Placing an order (checkout) ──
       placingOrder: Boolean(this.state.placingOrder),
-      placeOrderLabel: this.state.placingOrder ? 'PLACING YOUR ORDER…' : 'PLACE ORDER · XAF ' + fmt(items + deliveryFee),
+      placeOrderLabel: this.state.placingOrder ? 'PLACING YOUR ORDER…' : 'PLACE ORDER · XAF ' + fmt(items + deliveryTotal),
       placeOrderArrow: this.state.placingOrder ? '' : '→',
       orderError: this.state.orderError || '',
       orderErrorHasItems: (this.state.orderErrorItemIds || []).length > 0,
@@ -17263,7 +17348,7 @@ class Component extends DCLogic {
         const escrow = (() => {
           switch (o.paymentStatus) {
             case 'escrow_held': return { title: 'Protected — on its way', note: 'Your order is under LOUMOO Buyer Protection while the rider has it. You pay ' + totalLabel + ' on delivery' + via + '.', tone: 'ok' };
-            case 'released': return { title: 'Delivered & settled', note: 'Your handover code was verified, so the seller has been paid. Nothing else is owed.', tone: 'ok' };
+            case 'released': return { title: 'Delivered & settled', note: 'Your handover code was verified, so this order is complete.', tone: 'ok' };
             case 'refundable': return { title: 'Refund due', note: 'This order was cancelled. With pay-on-delivery no charge was taken; if you had already paid, a refund is due.', tone: 'muted' };
             case 'refunded': return { title: 'Refunded', note: 'This order has been refunded.', tone: 'muted' };
             case 'paid': return { title: 'Paid', note: 'Your payment is recorded.', tone: 'ok' };
