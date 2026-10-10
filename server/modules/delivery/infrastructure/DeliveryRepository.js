@@ -55,7 +55,17 @@ function isMissingTable(err) {
  * let a read fall back to the empty in-memory store, which looks like "no
  * deliveries" and hides a deployment that is simply missing its migration. The
  * operator gets the full detail in the log; the client gets a plain message.
- * Everything else keeps the base policy.
+ *
+ * In production EVERY other database failure here throws as well. The base policy
+ * lets a failed READ fall back to this repository's in-memory maps, but in a
+ * production process those maps are empty and nothing ever fills them, so the
+ * fallback does not mean "serve what we have": it means "answer none". A failed
+ * `delivery_drivers` read became an EMPTY rider list with HTTP 200 (the checkout
+ * picker showed no riders, the admin roster and the seller's ranking showed none),
+ * a failed `findDriver` became "you are not a rider" (the rider's heartbeat
+ * stopped), a failed `findById` became a 404 the clients treat as final. A visible
+ * 5xx is recoverable (the screens offer a retry); a wrong "nothing here" is not.
+ * Development and test keep the in-memory fallback.
  */
 function handleDatabaseFailure(err, context, options) {
   if (err instanceof DeliveryNotReadyError) throw err;
