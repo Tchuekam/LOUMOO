@@ -49,6 +49,11 @@ async function run() {
     assert.deepStrictEqual(await row('s-new'), { city: 'Douala', region: 'Littoral', landmark: null, street_address: '' },
       'the first location edit is stored');
 
+    // 2. A partial edit of an existing location changes what was sent and keeps the rest.
+    await StoreLocationUseCase.updateLocation({ id: 's-old', slug: 's-old' }, { city: 'Yaoundé', landmark: 'Near the post office' });
+    assert.deepStrictEqual(await row('s-old'), { city: 'Yaoundé', region: 'Littoral', landmark: 'Near the post office', street_address: 'Rue de la Joie' },
+      'a partial edit is stored and does not blank the street');
+
 } finally {
     SupabaseClient.getAdmin = original;
     await new Promise((r) => rest.server.close(r));
