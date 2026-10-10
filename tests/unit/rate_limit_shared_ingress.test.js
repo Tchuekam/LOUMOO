@@ -60,4 +60,17 @@ async function run() {
   assert.strictEqual(served, LIMITS.api.maxRequests, 'one client is served exactly its own allowance');
   assert.strictEqual(refused, 30, 'and refused beyond it');
 
+  // 3. The backstop still exists: a flood through one peer with forged, ever-changing client
+  //    addresses is cut off once it passes the (much larger) peer allowance.
+  const mw3 = RateLimitService.middleware({ ...LIMITS.api, keyPrefix: `t3-${process.pid}` });
+  let floodRefused = 0;
+  for (let i = 0; i < LIMITS.api.peerMaxRequests + 50; i++) {
+    const r = await hit(mw3, request(clientIp(i), '10.0.0.9'));
+    if (r !== 'ok') floodRefused++;
+  }
+  assert.ok(floodRefused >= 50, 'a spoofed-address flood through one peer is still stopped by the peer backstop');
+
+  console.log('    ✓ rate_limit_shared_ingress: the limit is per client; the shared ingress is not one 120/min bucket');
 }
+
+module.exports = { run };
