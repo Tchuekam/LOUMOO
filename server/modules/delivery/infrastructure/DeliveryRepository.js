@@ -73,7 +73,9 @@ function handleDatabaseFailure(err, context, options) {
     logger.error(`[Delivery] ${context}: a delivery table is missing. Apply migrations 013, 014 and 017 (node scripts/apply_migration.js --all).`);
     throw new DeliveryNotReadyError();
   }
-  return baseHandleDatabaseFailure(err, context, options);
+  const handled = baseHandleDatabaseFailure(err, context, options);
+  if (config.isProduction) throw new InfrastructureError('Supabase', context, err);
+  return handled;
 }
 const MAX_MEMORY_LOCATIONS_PER_DELIVERY = 500;
 // Rows read to count rider workload and recent lapses. Equal to Supabase's default
