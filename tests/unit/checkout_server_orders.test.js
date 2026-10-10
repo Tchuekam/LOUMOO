@@ -505,6 +505,23 @@ async function testIdempotencyKeys() {
   assert.notStrictEqual(server.keys[4], server.keys[3], 'after a 404 the attempt is over, so a corrected retry is not tied to the refused one');
 }
 
+// A provider without a tariff of its own quotes a null fee. Number(null) is 0, which showed
+// "XAF 0" and dropped the delivery fee from the total while the server charged the city rate.
+async function testNullFeeProvider() {
+  const server = fakeServer();
+  const apiRef = { current: server.api };
+  const { comp } = buildApp(apiRef);
+  comp.setState({
+    authStatus: 'authenticated', cartItems: [{ id: 'l1', name: 'Phone', priceXaf: 50000, qty: 1, store: 'Tech Shop', image: 'p.jpg' }],
+    addressesList: [ADDRESS], screen: 'checkout',
+    providers: [{ id: 'rider_n', name: 'No Tariff', vehicleType: 'motorbike', rating: null, completedDeliveries: 0, openDeliveries: 0, feeXaf: null, serviceAreas: [], isAgency: false }],
+    providersCity: 'Douala', selectedProviderId: 'rider_n'
+  });
+  const vals = comp.renderVals();
+  assert.strictEqual(vals.cartTotal, 'XAF 51 000', 'a rider with no tariff is charged the Douala city rate (1 000), not 0');
+  assert.strictEqual(vals.checkoutProviders[0].feeLabel, 'XAF 1 000', 'and the card shows that rate, not "XAF 0"');
+}
+
 async function run() {
   console.log('  Testing checkout and orders against the server\'s rules...');
   await testGuestAndAddress();
@@ -512,6 +529,7 @@ async function run() {
   await testProviderPreference();
   await testHappyPath();
   await testIdempotencyKeys();
+  await testNullFeeProvider();
   await testRefusalKeepsTheBag();
   await testDoubleTap();
   await testOrdersAndDetail();
