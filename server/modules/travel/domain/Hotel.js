@@ -103,6 +103,9 @@ class Hotel {
     // properties). Management endpoints are scoped to the owner or an admin.
     this.ownerId = data.ownerId || data.owner_id || '';
     this.name = (data.name || '').trim();
+    // What kind of place this is (HOTEL, GUEST_HOUSE, SERVICED_APARTMENT, …).
+    // Collected by the host when they post a stay; defaults to a plain hotel.
+    this.propertyType = (data.propertyType || data.property_type || 'HOTEL');
     this.description = data.description || '';
     this.location = (data.location || '').trim();
     this.city = (data.city || '').trim();
@@ -116,6 +119,8 @@ class Hotel {
     this.priceFrom = Number(data.priceFrom ?? data.price_from ?? 0);
     this.currency = data.currency || 'XAF';
     this.status = data.status || 'ACTIVE';
+    this.paymentMethods = Array.isArray(data.paymentMethods) ? data.paymentMethods
+      : (Array.isArray(data.payment_methods) ? data.payment_methods : []);
     this.contact = data.contact || {};
     this.phone = data.phone || (data.contact && data.contact.phone) || '';
     this.whatsapp = data.whatsapp || (data.contact && (data.contact.whatsapp || data.contact.phone)) || this.phone || '';
@@ -147,6 +152,7 @@ class Hotel {
       providerId: this.providerId,
       ownerId: this.ownerId,
       name: this.name,
+      propertyType: this.propertyType,
       description: this.description,
       location: this.location,
       city: this.city,
@@ -160,6 +166,7 @@ class Hotel {
       priceFrom: this.priceFrom,
       currency: this.currency,
       status: this.status,
+      paymentMethods: this.paymentMethods,
       contact: this.contact,
       phone: this.phone,
       whatsapp: this.whatsapp,

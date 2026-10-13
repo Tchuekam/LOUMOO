@@ -143,6 +143,23 @@ router.get('/hotels', async (req, res, next) => {
   }
 });
 
+// GET /api/travel/hotels/mine - the authenticated host's own posted stays
+// (drafts + live). Declared before /hotels/:id so "mine" is never captured as
+// an id.
+router.get('/hotels/mine', requireAuth, async (req, res, next) => {
+  try {
+    const hotels = await travelService.getHotelsByOwner(req.principal.id);
+    res.json({
+      success: true,
+      count: hotels.length,
+      items: hotels,
+      data: hotels
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
 // GET /api/travel/hotels/:id - Get hotel details
 router.get('/hotels/:id', async (req, res, next) => {
   try {
@@ -226,6 +243,40 @@ router.put('/hotels/:id/spaces', requireAuth, async (req, res, next) => {
       success: true,
       message: `Saved ${hotel.spaces.length} virtual-tour space${hotel.spaces.length === 1 ? '' : 's'}.`,
       data: hotel
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// POST /api/v1/travel/hotels/:id/publish — make a posted stay live in Travel
+router.post('/hotels/:id/publish', requireAuth, async (req, res, next) => {
+  try {
+    const existing = await travelService.getHotelById(req.params.id);
+    assertCanManageHotel(existing, req.principal);
+    const hotel = await travelService.publishHotel(req.params.id);
+    res.json({
+      success: true,
+      message: 'Your stay is live in Travel & Mobility.',
+      data: hotel,
+      hotel
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// POST /api/v1/travel/hotels/:id/unpublish — pull a stay back to a draft
+router.post('/hotels/:id/unpublish', requireAuth, async (req, res, next) => {
+  try {
+    const existing = await travelService.getHotelById(req.params.id);
+    assertCanManageHotel(existing, req.principal);
+    const hotel = await travelService.unpublishHotel(req.params.id);
+    res.json({
+      success: true,
+      message: 'Your stay is now a hidden draft.',
+      data: hotel,
+      hotel
     });
   } catch (err) {
     next(err);

@@ -177,7 +177,10 @@ class TravelService {
     this._validateTourUrl(data.virtualTourUrl, 'virtualTourUrl');
     this._validateSpaces(data.spaces);
     const ownerId = user && user.id ? user.id : '';
-    return this.repo.createHotel({ ...data, providerId: data.providerId || ownerId, ownerId });
+    // providerId is derived from the owner by the repository (prv_host_<owner>)
+    // so iam.hotels.provider_id references a real travel_providers row; never
+    // the raw ownerId, which is not a provider.
+    return this.repo.createHotel({ ...data, providerId: data.providerId || '', ownerId });
   }
 
   async updateHotel(hotelId, patch = {}, { user } = {}) {
@@ -191,6 +194,24 @@ class TravelService {
     await this.getHotelById(hotelId); // asserts existence
     this._validateSpaces(spaces);
     return this.repo.setHotelSpaces(hotelId, spaces);
+  }
+
+  /** A host's own posted stays (drafts + live). */
+  async getHotelsByOwner(ownerId) {
+    if (!ownerId) return [];
+    return this.repo.getHotelsByOwner(ownerId);
+  }
+
+  /** Make a posted stay live in the Travel vertical. */
+  async publishHotel(hotelId) {
+    await this.getHotelById(hotelId); // asserts existence
+    return this.repo.setHotelStatus(hotelId, 'ACTIVE');
+  }
+
+  /** Pull a posted stay back to a hidden draft. */
+  async unpublishHotel(hotelId) {
+    await this.getHotelById(hotelId); // asserts existence
+    return this.repo.setHotelStatus(hotelId, 'INACTIVE');
   }
 
   async checkHotelRoomAvailability(params) {

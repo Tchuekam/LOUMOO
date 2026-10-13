@@ -203,7 +203,23 @@ class TravelRepository {
   }
 
   async getHotels(filters = {}) {
-    let list = Array.from(this.hotels.values());
+    // Start from the in-memory seed (and any hotel created this process), then
+    // overlay durable rows from Supabase so a host-posted stay survives
+    // restarts and is shared across instances. Durable rows win on id.
+    const byId = new Map();
+    Array.from(this.hotels.values()).forEach(h => byId.set(h.id, h));
+    if (this.db) {
+      try {
+        (await this._loadHotelsFromDb({ status: 'ACTIVE' })).forEach(h => byId.set(h.id, h));
+      } catch (err) {
+        logger.warn(`[TravelRepo] Hotels DB read failed, using memory: ${err.message}`);
+      }
+    }
+
+    // The public feed shows only PUBLISHED (ACTIVE) stays. Seed hotels default
+    // to ACTIVE; a host's unpublished draft is INACTIVE and never leaks here.
+    let list = Array.from(byId.values()).filter(h => (h.status || 'ACTIVE') === 'ACTIVE');
+
     if (filters.city) {
       const c = TravelRepository._foldText(filters.city);
       list = list.filter(h =>
@@ -218,6 +234,179 @@ class TravelRepository {
       list = list.filter(h => h.priceFrom <= Number(filters.maxPrice));
     }
     return list.map(h => h.toJSON());
+  }
+
+  /** All stays a given host has posted — drafts AND live — for My Listings. */
+  async getHotelsByOwner(ownerId) {
+    if (!ownerId) return [];
+    const byId = new Map();
+    Array.from(this.hotels.values())
+      .filter(h => h.ownerId && h.ownerId === ownerId)
+      .forEach(h => byId.set(h.id, h));
+    if (this.db) {
+      try {
+        (await this._loadHotelsFromDb({ ownerId })).forEach(h => byId.set(h.id, h));
+      } catch (err) {
+        logger.warn(`[TravelRepo] Owner hotels DB read failed, using memory: ${err.message}`);
+      }
+    }
+    return Array.from(byId.values()).map(h => h.toJSON());
+  }
+
+  /* --- Durable hotel mapping (Supabase iam.hotels + iam.rooms) ----------- */
+
+  async _loadHotelsFromDb({ status, ownerId } = {}) {
+    let q = this.db.from('hotels').select('*');
+    if (status) q = q.eq('status', status);
+    if (ownerId) q = q.eq('owner_id', ownerId);
+    const { data: hotelRows, error } = await q;
+    if (error) throw new Error(error.message);
+    if (!hotelRows || !hotelRows.length) return [];
+
+    const ids = hotelRows.map(r => r.id);
+    const roomsByHotel = {};
+    try {
+      const { data: roomRows } = await this.db.from('rooms').select('*').in('hotel_id', ids);
+      (roomRows || []).forEach(r => {
+        (roomsByHotel[r.hotel_id] = roomsByHotel[r.hotel_id] || []).push(r);
+      });
+    } catch (e) { /* rooms are optional; a hotel can carry priceFrom alone */ }
+
+    return hotelRows.map(row => this._hotelFromRow(row, roomsByHotel[row.id] || []));
+  }
+
+  async _loadHotelFromDb(hotelId) {
+    const { data, error } = await this.db.from('hotels').select('*').eq('id', hotelId).maybeSingle();
+    if (error || !data) return null;
+    let roomRows = [];
+    try {
+      const { data: rr } = await this.db.from('rooms').select('*').eq('hotel_id', hotelId);
+      roomRows = rr || [];
+    } catch (e) { /* rooms optional */ }
+    return this._hotelFromRow(data, roomRows);
+  }
+
+  _hotelFromRow(row, roomRows = []) {
+    return new Hotel({
+      id: row.id,
+      providerId: row.provider_id,
+      ownerId: row.owner_id || '',
+      name: row.name,
+      propertyType: row.property_type || 'HOTEL',
+      description: row.description || '',
+      location: row.location || '',
+      city: row.city || '',
+      country: row.country || 'Cameroon',
+      latitude: row.latitude,
+      longitude: row.longitude,
+      rating: row.rating,
+      starLabel: row.star_label || '',
+      amenities: Array.isArray(row.amenities) ? row.amenities : [],
+      images: Array.isArray(row.images) ? row.images : [],
+      priceFrom: row.price_from,
+      currency: row.currency || 'XAF',
+      status: row.status || 'ACTIVE',
+      paymentMethods: Array.isArray(row.payment_methods) ? row.payment_methods : [],
+      contact: row.contact || {},
+      virtualTourUrl: row.virtual_tour_url || '',
+      spaces: Array.isArray(row.spaces) ? row.spaces : [],
+      rooms: roomRows.map(rr => new Room({
+        id: rr.id, hotelId: rr.hotel_id, name: rr.name, description: rr.description || '',
+        capacity: rr.capacity, price: rr.price, currency: rr.currency || 'XAF',
+        totalInventory: rr.total_inventory, availableInventory: rr.available_inventory,
+        amenities: Array.isArray(rr.amenities) ? rr.amenities : [],
+        images: Array.isArray(rr.images) ? rr.images : [],
+        cancellationPolicy: rr.cancellation_policy,
+        virtualTourUrl: rr.virtual_tour_url || ''
+      }))
+    });
+  }
+
+  /**
+   * One provider row backs all of a host's properties. Derived deterministically
+   * from the owner so re-posting never creates duplicates. Required because
+   * iam.hotels.provider_id is NOT NULL with an FK to iam.travel_providers.
+   */
+  async _ensureProviderForOwner(hotel) {
+    const ownerId = hotel.ownerId || '';
+    const providerId = hotel.providerId
+      || (ownerId ? ('prv_host_' + ownerId) : ('prv_host_' + hotel.id));
+    if (this.db) {
+      try {
+        await this.db.from('travel_providers').upsert({
+          id: providerId,
+          name: hotel.name || 'LOUMOO host',
+          type: 'hotel',
+          description: '',
+          contact: hotel.contact || {}
+          // verification_status keeps its table default — host verification is a
+          // trust signal, not a gate on posting.
+        }, { onConflict: 'id' });
+      } catch (e) {
+        logger.warn(`[TravelRepo] provider upsert failed: ${e.message}`);
+      }
+    }
+    return providerId;
+  }
+
+  async _persistHotel(hotel) {
+    if (!this.db) return;
+    const providerId = await this._ensureProviderForOwner(hotel);
+    hotel.providerId = providerId;
+
+    const row = {
+      id: hotel.id,
+      provider_id: providerId,
+      owner_id: hotel.ownerId || null,
+      name: hotel.name,
+      property_type: hotel.propertyType || 'HOTEL',
+      description: hotel.description || '',
+      location: hotel.location || hotel.city || '',
+      city: hotel.city || '',
+      country: hotel.country || 'Cameroon',
+      latitude: Number(hotel.latitude || 0),
+      longitude: Number(hotel.longitude || 0),
+      rating: Number(hotel.rating || 4.5),
+      star_label: hotel.starLabel || '',
+      amenities: hotel.amenities || [],
+      images: hotel.images || [],
+      price_from: Number(hotel.priceFrom || 0),
+      currency: hotel.currency || 'XAF',
+      status: hotel.status || 'INACTIVE',
+      payment_methods: hotel.paymentMethods || [],
+      contact: hotel.contact || {},
+      virtual_tour_url: hotel.virtualTourUrl || '',
+      spaces: hotel.spaces || [],
+      updated_at: new Date().toISOString()
+    };
+    const { error } = await this.db.from('hotels').upsert(row, { onConflict: 'id' });
+    if (error) throw new Error(`hotels upsert: ${error.message}`);
+
+    // Rooms are replaced wholesale so an edit that removes a room type actually
+    // removes it. A hotel with no rooms still sells on priceFrom alone.
+    if (Array.isArray(hotel.rooms)) {
+      try { await this.db.from('rooms').delete().eq('hotel_id', hotel.id); } catch (e) { /* best effort */ }
+      if (hotel.rooms.length) {
+        const roomRows = hotel.rooms.map(r => ({
+          id: r.id,
+          hotel_id: hotel.id,
+          name: r.name,
+          description: r.description || '',
+          capacity: Number(r.capacity || 2),
+          price: Number(r.price || 0),
+          currency: r.currency || 'XAF',
+          total_inventory: Number(r.totalInventory || 1),
+          available_inventory: Number(r.availableInventory != null ? r.availableInventory : (r.totalInventory || 1)),
+          amenities: r.amenities || [],
+          images: r.images || [],
+          cancellation_policy: r.cancellationPolicy || 'FREE_CANCELLATION_24H',
+          virtual_tour_url: r.virtualTourUrl || '',
+          updated_at: new Date().toISOString()
+        }));
+        const { error: rErr } = await this.db.from('rooms').insert(roomRows);
+        if (rErr) throw new Error(`rooms insert: ${rErr.message}`);
+      }
+    }
   }
 
   _findHotel(hotelId) {
@@ -254,7 +443,22 @@ class TravelRepository {
 
   async getHotelById(hotelId) {
     const hotel = this._findHotel(hotelId);
-    return hotel ? hotel.toJSON() : null;
+    if (hotel) return hotel.toJSON();
+    // Not in the seed / this process — a durable host-posted stay may still
+    // live in Supabase.
+    if (this.db) {
+      try {
+        const fromDb = await this._loadHotelFromDb(hotelId);
+        if (fromDb) {
+          this.hotels.set(fromDb.id, fromDb);
+          fromDb.rooms.forEach(r => this.rooms.set(r.id, r));
+          return fromDb.toJSON();
+        }
+      } catch (err) {
+        logger.warn(`[TravelRepo] Hotel DB read failed for ${hotelId}: ${err.message}`);
+      }
+    }
+    return null;
   }
 
   async getHotelRooms(hotelId, { checkIn, checkOut, guests } = {}) {
@@ -289,21 +493,41 @@ class TravelRepository {
     return this._findRoom(roomId, hotelId);
   }
 
-  // --- HOTEL MANAGEMENT (create / update / virtual tours) ---
-  // Demo-ready persistence: hotels live in the in-memory store (like the seed).
-  // A durable Supabase table is a follow-up; the write path is centralized here
-  // so swapping in a DB later is a localized change.
+  // --- HOTEL MANAGEMENT (create / update / publish / virtual tours) ---
+  // Durable persistence when Supabase is configured (migration 020), with the
+  // in-memory store kept in lock-step so the running process always sees its own
+  // writes and local/test runs without credentials still work.
   async createHotel(data = {}) {
     const hotel = new Hotel(data);
     this.hotels.set(hotel.id, hotel);
     hotel.rooms.forEach(r => this.rooms.set(r.id, r));
-    logger.info(`[TravelRepo] Hotel created (in-memory): ${hotel.id} (${hotel.name}), spaces=${hotel.spaces.length}`);
+    if (this.db) {
+      try {
+        await this._persistHotel(hotel);
+        logger.info(`[TravelRepo] Hotel persisted: ${hotel.id} (${hotel.name}), status=${hotel.status}, spaces=${hotel.spaces.length}`);
+      } catch (err) {
+        logger.warn(`[TravelRepo] Hotel DB persist failed (kept in memory): ${err.message}`);
+      }
+    } else {
+      logger.info(`[TravelRepo] Hotel created (in-memory): ${hotel.id} (${hotel.name}), spaces=${hotel.spaces.length}`);
+    }
     return hotel.toJSON();
   }
 
   async updateHotel(hotelId, patch = {}) {
-    const existing = this._findHotel(hotelId);
+    let existing = this._findHotel(hotelId);
+    if (!existing && this.db) {
+      try {
+        const fromDb = await this._loadHotelFromDb(hotelId);
+        if (fromDb) {
+          existing = fromDb;
+          this.hotels.set(fromDb.id, fromDb);
+          fromDb.rooms.forEach(r => this.rooms.set(r.id, r));
+        }
+      } catch (e) { /* fall through to NotFound */ }
+    }
     if (!existing) throw new NotFoundError('Hotel', hotelId);
+
     // Rebuild from merged data so all normalization (tour URLs, spaces) reruns.
     // Rooms are preserved unless the caller explicitly replaces them.
     const merged = { ...existing.toJSON(), ...patch, id: existing.id };
@@ -311,12 +535,26 @@ class TravelRepository {
     const hotel = new Hotel(merged);
     this.hotels.set(hotel.id, hotel);
     hotel.rooms.forEach(r => this.rooms.set(r.id, r));
-    logger.info(`[TravelRepo] Hotel updated (in-memory): ${hotel.id}, spaces=${hotel.spaces.length}, hotelTour=${hotel.virtualTourUrl ? 'yes' : 'no'}`);
+    if (this.db) {
+      try {
+        await this._persistHotel(hotel);
+      } catch (err) {
+        logger.warn(`[TravelRepo] Hotel DB update failed (kept in memory): ${err.message}`);
+      }
+    } else {
+      logger.info(`[TravelRepo] Hotel updated (in-memory): ${hotel.id}, status=${hotel.status}, hotelTour=${hotel.virtualTourUrl ? 'yes' : 'no'}`);
+    }
     return hotel.toJSON();
   }
 
   async setHotelSpaces(hotelId, spaces = []) {
     return this.updateHotel(hotelId, { spaces: Array.isArray(spaces) ? spaces : [] });
+  }
+
+  /** Flip a posted stay's visibility: ACTIVE (live in Travel) or INACTIVE (draft). */
+  async setHotelStatus(hotelId, status) {
+    const next = status === 'ACTIVE' ? 'ACTIVE' : 'INACTIVE';
+    return this.updateHotel(hotelId, { status: next });
   }
 
   // --- TRANSPORT SERVICES ---
