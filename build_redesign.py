@@ -10043,6 +10043,11 @@ class Component extends DCLogic {
     const api = getApi();
     if (!api) return;
 
+    // A STAY (hotel/hospitality) describes a property, not a catalogue
+    // category, so it needs no taxonomy or broadcast schema — its sections are
+    // entirely self-contained in the publishing engine.
+    if (intent === 'STAY') return;
+
     if (intent === 'BROADCAST') {
       if (!this.state.pubBroadcastSchema) {
         api.getAnnouncementSchema()
@@ -10160,7 +10165,8 @@ class Component extends DCLogic {
     const draft = this.state.pubDraft;
     if (!pub || !api || !draft) return Promise.resolve(null);
 
-    if (draft.intent === 'BROADCAST') {
+    if (draft.intent === 'BROADCAST' || draft.intent === 'STAY') {
+      // A broadcast and a stay are both created from their name, not a category.
       if (!draft.values.title || draft.values.title.trim().length < 3) return Promise.resolve(null);
     } else if (!draft.values.categoryId) {
       return Promise.resolve(null);
@@ -10196,6 +10202,37 @@ class Component extends DCLogic {
         })
         .catch(err => {
           finish(this.state.pubOffline ? 'Saved on this device' : 'Saved on this device — will retry');
+          this._notePublishingOffline(err);
+          throw err;
+        });
+    }
+
+    // A STAY is persisted against the TRAVEL vertical (createTravelHotel /
+    // updateTravelHotel), never the markethub listings endpoint. This is the
+    // branch that keeps a hotel out of the product feed.
+    if (draft.intent === 'STAY') {
+      const hotelPayload = pub.toHotelPayload(draft, ctx);
+      const hotelReq = draft.remoteId
+        ? api.updateTravelHotel(draft.remoteId, hotelPayload)
+        : api.createTravelHotel(hotelPayload);
+
+      return hotelReq
+        .then(hotel => {
+          if (this._unmounted) return null;
+          const updated = Object.assign({}, this.state.pubDraft, {
+            remoteId: hotel.id,
+            remoteStatus: hotel.status === 'ACTIVE' ? 'PUBLISHED' : 'DRAFT'
+          });
+          this.setState({ pubDraft: updated });
+          finish('Saved just now');
+          return hotel;
+        })
+        .catch(err => {
+          const fields = (err && err.details && err.details.fields) || [];
+          finish(
+            fields.length ? 'Saved on this device' : 'Saved on this device — will retry',
+            fields.length ? { pubFieldErrors: mergeFieldErrors(this.state.pubFieldErrors, fields) } : {}
+          );
           this._notePublishingOffline(err);
           throw err;
         });
@@ -10510,6 +10547,9 @@ class Component extends DCLogic {
     return this._syncPublishingDraft()
       .then(() => {
         if (this._unmounted) return null;
+        // A stay carries its image URLs in the hotel payload itself, so it has
+        // no listing-media attach step. Everything else attaches now.
+        if (this.state.pubDraft && this.state.pubDraft.intent === 'STAY') return null;
         this.setState({ pubLifecycle: 'Attaching your photos…' });
         return this._attachPublishingMedia();
       })
@@ -10529,6 +10569,10 @@ class Component extends DCLogic {
             )
             : api.publishAnnouncement(current.remoteId);
         }
+        // A STAY goes live in Travel & Mobility, not the markethub.
+        if (current.intent === 'STAY') {
+          return api.publishTravelHotel(current.remoteId);
+        }
         return api.publishListing(current.remoteId);
       })
       .then(result => {
@@ -10544,7 +10588,11 @@ class Component extends DCLogic {
 
         const finished = Object.assign({}, this.state.pubDraft, {
           remoteId: published.id || this.state.pubDraft.remoteId,
-          remoteStatus: published.status || 'PUBLISHED'
+          // A published hotel comes back status ACTIVE; normalise to PUBLISHED
+          // so the success card reads LIVE like every other publication.
+          remoteStatus: (this.state.pubDraft && this.state.pubDraft.intent === 'STAY')
+            ? 'PUBLISHED'
+            : (published.status || 'PUBLISHED')
         });
 
         this.setState({
@@ -10637,15 +10685,19 @@ class Component extends DCLogic {
 
     this.setState({ pubBusyLabel: 'Opening…', pubServerError: '' });
 
-    const request = kind === 'BROADCAST' ? api.getAnnouncement(id) : api.getListing(id);
+    const request = kind === 'BROADCAST' ? api.getAnnouncement(id)
+      : kind === 'STAY' ? api.getTravelHotel(id)
+      : api.getListing(id);
 
     request
       .then(res => {
         if (this._unmounted) return;
-        const record = (res && res.announcement) || res;
+        const record = (res && res.announcement) || (res && res.hotel) || res;
         const draft = kind === 'BROADCAST'
           ? pub.fromAnnouncement(record, this._pubContext())
-          : pub.fromListing(record, this._pubContext());
+          : kind === 'STAY'
+            ? pub.fromHotel(record, this._pubContext())
+            : pub.fromListing(record, this._pubContext());
 
         const first = pub.sections(draft, this._pubContext())[0];
 
