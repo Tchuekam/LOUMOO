@@ -88,6 +88,34 @@ async function run() {
     ACCOUNT_STATES.SELLER_READY
   );
 
+  /* ── "Boutique but no activation": a store is enough to post ──────────── */
+
+  // A seller who has created a boutique but not yet completed verification
+  // (SELLER_VERIFICATION_REQUIRED) may create and publish listings. The store
+  // is the gate; activation is a trust signal, not a prerequisite.
+  const unverifiedWithStore = deriveAccountState(profile({
+    emailVerifiedAt: NOW,
+    onboardingStatus: ONBOARDING_STATUS.COMPLETED,
+    sellerStatus: SELLER_STATUS.ONBOARDING,
+    primaryStoreId: 'st_boutique_1'
+  }));
+  assert.strictEqual(unverifiedWithStore.state, ACCOUNT_STATES.SELLER_VERIFICATION_REQUIRED);
+  assert.strictEqual(unverifiedWithStore.capabilities.canCreateListing, true,
+    'a boutique that exists may list even before verification');
+  assert.strictEqual(unverifiedWithStore.capabilities.canUploadListingMedia, true);
+  assert.strictEqual(unverifiedWithStore.capabilities.canPublishListing, true);
+
+  // But opting into selling WITHOUT a boutique is not enough — the store itself
+  // remains the gate, so no store means nothing can be listed.
+  const sellerNoStore = deriveAccountState(profile({
+    emailVerifiedAt: NOW,
+    onboardingStatus: ONBOARDING_STATUS.COMPLETED,
+    sellerStatus: SELLER_STATUS.ONBOARDING
+  }));
+  assert.strictEqual(sellerNoStore.state, ACCOUNT_STATES.SELLER_VERIFICATION_REQUIRED);
+  assert.strictEqual(sellerNoStore.capabilities.canCreateListing, false,
+    'no boutique means no listing, even after opting into selling');
+
   /* ── Impossible states are unreachable ────────────────────────────────── */
 
   // The exact combination the brief calls out: onboarding "complete",
