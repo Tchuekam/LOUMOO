@@ -60,6 +60,18 @@
       listingTypes: ['SERVICE', 'BOOKING', 'SUBSCRIPTION'],
       defaultListingType: 'SERVICE'
     },
+    STAY: {
+      key: 'STAY',
+      label: 'Stay or hospitality',
+      blurb: 'A place travellers book a room or a night in.',
+      examples: 'Hotels, guest houses, serviced apartments, resorts, lodges, furnished studios',
+      // The one surface that does NOT land in the markethub: a stay is a travel
+      // offer, so it is created against the Travel vertical and shows up under
+      // Travel & Mobility, never in the product feed.
+      surface: 'travel',
+      listingTypes: ['STAY'],
+      defaultListingType: 'STAY'
+    },
     BROADCAST: {
       key: 'BROADCAST',
       label: 'Broadcast',
@@ -77,9 +89,12 @@
     education: ['SERVICE', 'BROADCAST'],
     professional: ['SERVICE', 'BROADCAST'],
     banks: ['SERVICE', 'BROADCAST'],
-    hotels: ['SERVICE', 'BROADCAST'],
-    hospitality: ['SERVICE', 'BROADCAST'],
-    travel: ['SERVICE', 'BROADCAST']
+    // A hotel/hospitality boutique publishes STAYS, which route to the Travel
+    // vertical rather than the markethub. A travel boutique can also offer a
+    // stay or a regular service (airport transfer, tour) or a broadcast.
+    hotels: ['STAY', 'BROADCAST'],
+    hospitality: ['STAY', 'BROADCAST'],
+    travel: ['STAY', 'SERVICE', 'BROADCAST']
   };
 
   var DEFAULT_INTENTS = ['PRODUCT', 'BROADCAST'];
@@ -210,6 +225,54 @@
     { value: '720', label: 'Ends in 30 days' }
   ];
 
+  /* ---- Stay / hospitality option sets (Travel vertical) ----------------- */
+
+  var PROPERTY_TYPES = [
+    { value: 'HOTEL', label: 'Hotel' },
+    { value: 'GUEST_HOUSE', label: 'Guest house' },
+    { value: 'SERVICED_APARTMENT', label: 'Serviced apartment' },
+    { value: 'RESORT', label: 'Resort' },
+    { value: 'LODGE', label: 'Lodge' },
+    { value: 'FURNISHED_STUDIO', label: 'Furnished studio' },
+    { value: 'VILLA', label: 'Villa' },
+    { value: 'HOSTEL', label: 'Hostel' }
+  ];
+
+  var STAR_RATINGS = [
+    { value: '', label: 'Unrated' },
+    { value: '1', label: '1 star' },
+    { value: '2', label: '2 stars' },
+    { value: '3', label: '3 stars' },
+    { value: '4', label: '4 stars' },
+    { value: '5', label: '5 stars' }
+  ];
+
+  var HOTEL_AMENITIES = [
+    { value: 'WIFI', label: 'Free Wi-Fi' },
+    { value: 'AIR_CONDITIONING', label: 'Air conditioning' },
+    { value: 'BREAKFAST', label: 'Breakfast included' },
+    { value: 'RESTAURANT', label: 'Restaurant' },
+    { value: 'BAR', label: 'Bar' },
+    { value: 'POOL', label: 'Swimming pool' },
+    { value: 'PARKING', label: 'Free parking' },
+    { value: 'GENERATOR', label: 'Backup generator' },
+    { value: 'AIRPORT_SHUTTLE', label: 'Airport shuttle' },
+    { value: 'GYM', label: 'Fitness centre' },
+    { value: 'SPA', label: 'Spa' },
+    { value: 'ROOM_SERVICE', label: 'Room service' },
+    { value: 'LAUNDRY', label: 'Laundry' },
+    { value: 'SECURITY_24H', label: '24h security' },
+    { value: 'HOT_WATER', label: 'Hot water' },
+    { value: 'KITCHEN', label: 'Kitchenette' }
+  ];
+
+  // The three policies iam.rooms.cancellation_policy accepts.
+  var STAY_CANCELLATION_POLICIES = [
+    { value: 'FREE_CANCELLATION_24H', label: 'Free cancellation up to 24h before' },
+    { value: 'MODERATE_48H', label: 'Moderate — 48h before' },
+    { value: 'NON_REFUNDABLE', label: 'Non-refundable' }
+  ];
+
   /* ══════════════════════════════════════════════════════════════════════ */
   /* 3. DRAFT STATE                                                          */
   /* ══════════════════════════════════════════════════════════════════════ */
@@ -235,7 +298,7 @@
       brand: '',
       model: '',
       sku: '',
-      condition: intent === 'SERVICE' ? 'not_applicable' : 'new',
+      condition: (intent === 'SERVICE' || intent === 'STAY') ? 'not_applicable' : 'new',
       tags: [],
       attributes: {},
 
@@ -293,6 +356,21 @@
       neighbourhood: '',
       contactPhone: ctx.storePhone || '',
       visibility: 'PUBLIC',
+
+      // Stay / hospitality (Travel vertical)
+      propertyType: 'HOTEL',
+      starRating: '',
+      hotelAmenities: [],
+      nightlyPrice: '',
+      roomTypeName: '',
+      roomCapacity: '2',
+      roomsAvailable: '',
+      cancellationPolicy: 'FREE_CANCELLATION_24H',
+      checkInTime: '14:00',
+      checkOutTime: '11:00',
+      houseRules: '',
+      virtualTourUrl: '',
+      whatsapp: ctx.storePhone || '',
 
       // Broadcast
       broadcastType: 'PROMOTION',
@@ -406,6 +484,8 @@
 
     if (draft.intent === 'BROADCAST') {
       out = broadcastSections(draft, ctx);
+    } else if (draft.intent === 'STAY') {
+      out = staySections(draft, ctx);
     } else if (draft.intent === 'SERVICE') {
       out = serviceSections(draft, ctx);
     } else {
@@ -739,6 +819,129 @@
     return 'Price';
   }
 
+  /* ------------------------------------------------------------ STAY ----- */
+  /* Hospitality: a hotel, guest house or serviced apartment. Published to    */
+  /* the Travel vertical (not the markethub), so the sections describe the    */
+  /* property a traveller books a night in, not a product that ships.         */
+
+  function staySections(draft, ctx) {
+    var v = draft.values;
+
+    return [
+      {
+        key: 'what', label: 'What kind of stay', icon: 'bed',
+        hint: 'Travellers filter by the kind of place and its rating first.',
+        fields: [
+          field('propertyType', 'Property type', 'select', {
+            required: true, options: PROPERTY_TYPES,
+            help: 'The closest match for what guests will book.'
+          }),
+          field('starRating', 'Star rating', 'select', {
+            options: STAR_RATINGS,
+            help: 'Only claim a rating your property actually holds.'
+          })
+        ]
+      },
+      {
+        key: 'basics', label: 'Tell travellers about it', icon: 'type',
+        hint: 'A clear name and an honest description do most of the booking.',
+        fields: [
+          field('title', 'Property name', 'text', {
+            required: true, minLength: 3, maxLength: 160,
+            placeholder: 'e.g. Résidence Akwa Palm — Bonapriso',
+            help: 'The name guests will see and search for.'
+          }),
+          field('description', 'Description', 'longtext', {
+            required: true, minLength: 30, maxLength: 20000,
+            placeholder: 'The property, the area, what makes a stay here good.',
+            help: 'At least 30 characters. Say what is included and what is nearby.'
+          }),
+          field('hotelAmenities', 'Amenities', 'multiselect', {
+            options: HOTEL_AMENITIES,
+            help: 'The facilities guests care about most.'
+          }),
+          field('highlights', 'Highlights', 'chips', {
+            maxItems: 6, placeholder: 'Add a highlight and press Enter',
+            help: 'Shown as tick marks. Three is plenty — e.g. "Sea view", "Free breakfast".'
+          })
+        ]
+      },
+      {
+        key: 'media', label: 'Photos & tour', icon: 'image',
+        hint: 'The first photo stops the scroll. A virtual tour converts even better.',
+        fields: [
+          field('__media', 'Photos', 'media', { required: true }),
+          field('virtualTourUrl', 'Virtual tour link', 'text', {
+            maxLength: 500, advanced: true,
+            placeholder: 'https://… (Matterport, Kuula, virtualtour.nu)',
+            help: 'Optional. A real https link to a 360°/virtual tour of the property.'
+          })
+        ]
+      },
+      {
+        key: 'rooms', label: 'Rooms & nightly price', icon: 'tag',
+        hint: 'Set your entry-level room now. You can add more room types after publishing.',
+        fields: [
+          field('roomTypeName', 'Room type', 'text', {
+            required: true, maxLength: 120,
+            placeholder: 'e.g. Standard Double, Deluxe Suite',
+            help: 'The room this nightly price is for.'
+          }),
+          field('nightlyPrice', 'Price per night', 'money', {
+            required: true, currency: v.currency,
+            help: 'Shown to travellers as "From …/night".'
+          }),
+          field('roomCapacity', 'Sleeps', 'number', {
+            min: 1, max: 20, placeholder: '2',
+            help: 'Maximum guests in this room.'
+          }),
+          field('roomsAvailable', 'Rooms of this type', 'number', {
+            min: 1, placeholder: 'e.g. 8',
+            help: 'How many of this room you can sell per night.'
+          }),
+          field('cancellationPolicy', 'Cancellation policy', 'select', {
+            required: true, options: STAY_CANCELLATION_POLICIES
+          })
+        ]
+      },
+      {
+        key: 'location', label: 'Where it is', icon: 'map-pin',
+        hint: 'Exactly where the property is — travellers filter and map by it.',
+        fields: [
+          field('city', 'City', 'select', { required: true, options: CITIES.map(toOption) }),
+          field('location', 'Address / area', 'text', {
+            required: true, maxLength: 240,
+            placeholder: 'e.g. Rue Njo-Njo, Bonapriso, Douala',
+            help: 'The neighbourhood and street guests will travel to.'
+          }),
+          field('neighbourhood', 'Landmark', 'text', {
+            maxLength: 120, advanced: true,
+            placeholder: 'e.g. near Akwa Palace'
+          })
+        ]
+      },
+      {
+        key: 'contact', label: 'Check-in & contact', icon: 'clock',
+        hint: 'The questions a guest asks before booking.',
+        fields: [
+          field('checkInTime', 'Check-in from', 'time', {}),
+          field('checkOutTime', 'Check-out by', 'time', {}),
+          field('contactPhone', 'Reception number', 'text', {
+            maxLength: 32, placeholder: '+237…'
+          }),
+          field('whatsapp', 'WhatsApp', 'text', {
+            maxLength: 32, placeholder: '+237… (for booking enquiries)', advanced: true
+          }),
+          field('paymentMethods', 'Payment accepted', 'multiselect', { options: PAYMENT_METHODS }),
+          field('houseRules', 'House rules', 'longtext', {
+            maxLength: 1000, advanced: true,
+            placeholder: 'e.g. No smoking indoors. Quiet hours after 22:00.'
+          })
+        ]
+      }
+    ];
+  }
+
   /* -------------------------------------------------------- BROADCAST ---- */
 
   function broadcastSections(draft, ctx) {
@@ -1012,6 +1215,8 @@
     // Type-specific cross-field rules.
     if (draft.intent === 'BROADCAST') {
       validateBroadcast(draft, ctx, fail, warnings, forPublish);
+    } else if (draft.intent === 'STAY') {
+      validateStay(draft, ctx, fail, warnings, forPublish);
     } else {
       validateListing(draft, ctx, fail, warnings, forPublish);
     }
@@ -1109,6 +1314,42 @@
     }
     if (v.description && v.description.length > 3000) {
       warnings.push('That description is very long. Buyers skim; the first two lines do the work.');
+    }
+  }
+
+  function validateStay(draft, ctx, fail, warnings, forPublish) {
+    var v = draft.values;
+    var nightly = toNumber(v.nightlyPrice);
+
+    if (forPublish && (nightly === null || nightly <= 0)) {
+      fail('nightlyPrice', 'Set a nightly price above zero.');
+    }
+    var cap = toNumber(v.roomCapacity);
+    if (cap !== null && cap <= 0) {
+      fail('roomCapacity', 'A room sleeps at least one guest.');
+    }
+    var rooms = toNumber(v.roomsAvailable);
+    if (rooms !== null && rooms <= 0) {
+      fail('roomsAvailable', 'You need at least one room of this type to sell.');
+    }
+    // A virtual-tour link must be a real https URL or the Travel card hides a
+    // broken CTA — the same rule the server's normalizeTourUrl enforces.
+    if (trim(v.virtualTourUrl) && !/^https:\/\/[^\s]+\.[^\s]+/i.test(trim(v.virtualTourUrl))) {
+      fail('virtualTourUrl', 'The virtual tour must be a full https:// link.');
+    }
+    var star = toNumber(v.starRating);
+    if (star !== null && (star < 1 || star > 5)) {
+      fail('starRating', 'A star rating is between 1 and 5.');
+    }
+
+    if (draft.media.length === 1) {
+      warnings.push('One photo works, but stays with several photos get far more bookings.');
+    }
+    if ((v.hotelAmenities || []).length === 0) {
+      warnings.push('No amenities yet — Wi-Fi, parking and breakfast are what travellers filter on.');
+    }
+    if (!trim(v.virtualTourUrl)) {
+      warnings.push('A virtual-tour link lets travellers walk the property before they book.');
     }
   }
 
@@ -1420,6 +1661,72 @@
     return payload;
   }
 
+  /**
+   * The hotel payload, in the shape the Travel module's createHotel/updateHotel
+   * accepts (server/modules/travel/domain/Hotel.js). This is the projection that
+   * sends a stay to the TRAVEL vertical instead of the markethub catalogue.
+   */
+  function toHotelPayload(draft, ctx) {
+    var v = draft.values;
+    var nightly = toInt(v.nightlyPrice) || 0;
+    var star = toNumber(v.starRating);
+
+    // Hotels carry image URLs directly (no separate media-attach step like
+    // listings): a ready upload exposes its public URL, and an already-attached
+    // image from edit mode is already a URL.
+    var images = draft.media
+      .filter(function (m) { return m.status === 'ready' || m.status === 'attached'; })
+      .map(function (m) { return m.url; })
+      .filter(function (u) { return /^https?:/.test(u || ''); });
+
+    var amenities = (v.hotelAmenities || []).slice();
+    (v.highlights || []).forEach(function (h) {
+      if (amenities.indexOf(h) === -1) amenities.push(h);
+    });
+
+    return {
+      name: trim(v.title),
+      propertyType: v.propertyType || 'HOTEL',
+      description: trim(v.description),
+      city: trim(v.city),
+      location: trim(v.location) || trim(v.city),
+      country: 'Cameroon',
+      currency: v.currency || 'XAF',
+      starLabel: star ? (star + '-star') : '',
+      // The app renders hotel.rating as the property's quality score (there are
+      // no separate hotel reviews yet), so a declared star class seeds it;
+      // otherwise the server default stands.
+      rating: star || undefined,
+      amenities: amenities,
+      images: images,
+      priceFrom: nightly,
+      phone: trim(v.contactPhone),
+      whatsapp: trim(v.whatsapp) || trim(v.contactPhone),
+      contact: {
+        phone: trim(v.contactPhone),
+        whatsapp: trim(v.whatsapp) || trim(v.contactPhone),
+        checkIn: v.checkInTime || '',
+        checkOut: v.checkOutTime || '',
+        houseRules: trim(v.houseRules)
+      },
+      virtualTourUrl: trim(v.virtualTourUrl),
+      paymentMethods: v.paymentMethods || [],
+      rooms: [{
+        name: trim(v.roomTypeName) || 'Standard room',
+        price: nightly,
+        currency: v.currency || 'XAF',
+        capacity: toInt(v.roomCapacity) || 2,
+        totalInventory: toInt(v.roomsAvailable) || 1,
+        availableInventory: toInt(v.roomsAvailable) || 1,
+        cancellationPolicy: v.cancellationPolicy || 'FREE_CANCELLATION_24H',
+        amenities: (v.hotelAmenities || []).slice()
+      }],
+      // A draft stays INACTIVE (hidden from the public Travel feed); publishing
+      // flips it to ACTIVE. The controller sets remoteStatus before publishing.
+      status: draft.remoteStatus === 'PUBLISHED' ? 'ACTIVE' : 'INACTIVE'
+    };
+  }
+
   /* ══════════════════════════════════════════════════════════════════════ */
   /* 8. HYDRATION — server object back into a draft (edit mode)              */
   /* ══════════════════════════════════════════════════════════════════════ */
@@ -1548,6 +1855,46 @@
     return draft;
   }
 
+  /** A Travel hotel (Hotel.toJSON) back into a STAY draft for editing. */
+  function fromHotel(hotel, ctx) {
+    var draft = createDraft('STAY', ctx || {});
+    var v = draft.values;
+    var room = (hotel.rooms && hotel.rooms[0]) || {};
+    var contact = hotel.contact || {};
+
+    v.propertyType = hotel.propertyType || 'HOTEL';
+    v.title = hotel.name || '';
+    v.description = hotel.description || '';
+    v.city = titleCase(hotel.city || '');
+    v.location = hotel.location || '';
+    v.currency = hotel.currency || 'XAF';
+    v.hotelAmenities = Array.isArray(hotel.amenities) ? hotel.amenities.slice() : [];
+    v.nightlyPrice = room.price ? String(room.price) : (hotel.priceFrom ? String(hotel.priceFrom) : '');
+    v.roomTypeName = room.name || '';
+    v.roomCapacity = room.capacity != null ? String(room.capacity) : '2';
+    v.roomsAvailable = room.totalInventory != null ? String(room.totalInventory) : '';
+    v.cancellationPolicy = room.cancellationPolicy || 'FREE_CANCELLATION_24H';
+    v.virtualTourUrl = hotel.virtualTourUrl || '';
+    v.contactPhone = hotel.phone || contact.phone || '';
+    v.whatsapp = hotel.whatsapp || contact.whatsapp || '';
+    v.checkInTime = contact.checkIn || '14:00';
+    v.checkOutTime = contact.checkOut || '11:00';
+    v.houseRules = contact.houseRules || '';
+    v.paymentMethods = Array.isArray(hotel.paymentMethods) ? hotel.paymentMethods : [];
+
+    var starMatch = String(hotel.starLabel || '').match(/(\d)/);
+    if (starMatch) v.starRating = starMatch[1];
+
+    draft.remoteId = hotel.id;
+    draft.remoteStatus = hotel.status === 'ACTIVE' ? 'PUBLISHED' : 'DRAFT';
+    draft.mode = 'edit';
+    draft.media = (hotel.images || []).map(function (url, i) {
+      return { uploadId: 'existing_' + i, url: url, status: 'attached', name: '' };
+    });
+
+    return draft;
+  }
+
   function nearestExpiryPreset(hours) {
     var candidates = [48, 168, 720];
     for (var i = 0; i < candidates.length; i++) {
@@ -1637,6 +1984,8 @@
 
     if (draft.intent === 'BROADCAST') {
       buildBroadcastCard(card, draft, ctx);
+    } else if (draft.intent === 'STAY') {
+      buildStayCard(card, draft, ctx);
     } else if (draft.intent === 'SERVICE') {
       buildServiceCard(card, draft, ctx);
     } else {
@@ -1651,7 +2000,45 @@
   function defaultTitleFor(intent) {
     if (intent === 'BROADCAST') return 'Your announcement headline';
     if (intent === 'SERVICE') return 'Your service name';
+    if (intent === 'STAY') return 'Your property name';
     return 'Your product title';
+  }
+
+  function buildStayCard(card, draft, ctx) {
+    var v = draft.values;
+    var currency = v.currency || 'XAF';
+    var nightly = toNumber(v.nightlyPrice);
+
+    // Stays are lifestyle imagery, never cutouts — the ambience is the pitch.
+    card.mediaStyle = card.hasMedia ? 'lifestyle' : card.mediaStyle;
+
+    card.priceLine = nightly
+      ? 'From ' + formatMoney(nightly, currency) + ' / night'
+      : 'No price yet';
+
+    var star = toNumber(v.starRating);
+    card.badge = star ? (star + '★') : labelFor(PROPERTY_TYPES, v.propertyType);
+    card.badgeTone = 'accent';
+
+    var chips = [];
+    chips.push(labelFor(PROPERTY_TYPES, v.propertyType));
+    var cap = toNumber(v.roomCapacity);
+    if (cap) chips.push('Sleeps ' + cap);
+    (v.hotelAmenities || []).slice(0, 2).forEach(function (a) {
+      chips.push(labelFor(HOTEL_AMENITIES, a));
+    });
+    card.chips = chips.filter(Boolean).slice(0, 4).map(toChip);
+
+    var meta = [];
+    if (v.city) meta.push(titleCase(v.city));
+    if (trim(v.virtualTourUrl)) meta.push('Virtual tour');
+    card.meta = meta.map(toChip);
+
+    card.highlights = (v.highlights || []).slice(0, 4).map(toChip);
+    card.subtitle = firstLine(v.description);
+    card.tagline = card.subtitle;
+    card.ctaLabel = 'Check availability';
+    card.href = draft.remoteId ? '/travel/hotels/' + draft.remoteId : '';
   }
 
   function buildProductCard(card, draft, ctx) {
@@ -2204,8 +2591,10 @@
 
     toListingPayload: toListingPayload,
     toAnnouncementPayload: toAnnouncementPayload,
+    toHotelPayload: toHotelPayload,
     fromListing: fromListing,
     fromAnnouncement: fromAnnouncement,
+    fromHotel: fromHotel,
 
     toFeedCard: toFeedCard,
     cardFromListing: cardFromListing,
