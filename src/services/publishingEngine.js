@@ -1671,13 +1671,18 @@
     var nightly = toInt(v.nightlyPrice) || 0;
     var star = toNumber(v.starRating);
 
-    // Hotels carry image URLs directly (no separate media-attach step like
-    // listings): a ready upload exposes its public URL, and an already-attached
-    // image from edit mode is already a URL.
-    var images = draft.media
-      .filter(function (m) { return m.status === 'ready' || m.status === 'attached'; })
-      .map(function (m) { return m.url; })
-      .filter(function (u) { return /^https?:/.test(u || ''); });
+    // Media travels the same way a broadcast's does: a freshly uploaded image
+    // goes as its staged upload id (the server commits it so the orphan sweep
+    // spares it, then resolves the URL), while an image that is already attached
+    // (edit mode) travels as a URL. Sending a staged id as a URL would be a 404,
+    // and sending a committed URL as an id would be a double-attach.
+    var mediaUploadIds = draft.media
+      .filter(function (m) { return m.status === 'ready'; })
+      .map(function (m) { return m.uploadId; })
+      .filter(Boolean);
+    var mediaUrls = draft.media
+      .filter(function (m) { return m.status === 'attached' && /^https?:/.test(m.url || ''); })
+      .map(function (m) { return m.url; });
 
     var amenities = (v.hotelAmenities || []).slice();
     (v.highlights || []).forEach(function (h) {
@@ -1698,7 +1703,9 @@
       // otherwise the server default stands.
       rating: star || undefined,
       amenities: amenities,
-      images: images,
+      // The server turns these into the durable images[] (commit + resolve).
+      mediaUploadIds: mediaUploadIds,
+      mediaUrls: mediaUrls,
       priceFrom: nightly,
       phone: trim(v.contactPhone),
       whatsapp: trim(v.whatsapp) || trim(v.contactPhone),

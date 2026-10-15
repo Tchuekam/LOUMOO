@@ -10219,9 +10219,22 @@ class Component extends DCLogic {
       return hotelReq
         .then(hotel => {
           if (this._unmounted) return null;
-          const updated = Object.assign({}, this.state.pubDraft, {
+          // Reconcile media to what the server committed: the staged uploads are
+          // now ATTACHED to the hotel and resolved to durable URLs, so the draft
+          // must stop re-sending their ids (a second attach would be rejected and
+          // the photos lost). Replace them with the hotel's images as attached —
+          // but only when nothing is still uploading, so a photo added mid-save
+          // is never dropped.
+          const current = this.state.pubDraft;
+          const stillUploading = (current.media || []).some(m => m.status === 'uploading');
+          const serverImages = Array.isArray(hotel.images) ? hotel.images.filter(Boolean) : [];
+          const reconciledMedia = (!stillUploading && serverImages.length)
+            ? serverImages.map((url, i) => ({ uploadId: 'committed_' + i, url: url, status: 'attached', name: '' }))
+            : current.media;
+          const updated = Object.assign({}, current, {
             remoteId: hotel.id,
-            remoteStatus: hotel.status === 'ACTIVE' ? 'PUBLISHED' : 'DRAFT'
+            remoteStatus: hotel.status === 'ACTIVE' ? 'PUBLISHED' : 'DRAFT',
+            media: reconciledMedia
           });
           this.setState({ pubDraft: updated });
           finish('Saved just now');
@@ -10328,12 +10341,20 @@ class Component extends DCLogic {
     }));
     this._replacePublishingMedia(m => m.concat(pending));
 
+    // A stay uploads its photos standalone: there is no listing to own them,
+    // and they are committed against the hotel (not attached to a listing) when
+    // the stay is saved. So it skips ensuring a listing remote and passes no
+    // listingId, and it never runs the listing-media attach step below.
+    const isStay = this.state.pubDraft.intent === 'STAY';
+
     // Sequential: a partial failure leaves an unambiguous state, and the
     // server's per-seller upload throttle is respected.
     return accepted.reduce((chain, file, i) => chain.then(() => {
       const placeholder = pending[i];
-      return this._ensurePublishingRemote()
-        .then(listingId => api.uploadListingMedia(file, listingId))
+      const uploadPromise = isStay
+        ? api.uploadListingMedia(file)
+        : this._ensurePublishingRemote().then(listingId => api.uploadListingMedia(file, listingId));
+      return uploadPromise
         .then(upload => {
           if (this._unmounted) return;
           this._replacePublishingMedia(media => media.map(m => m.uploadId === placeholder.uploadId
@@ -10360,7 +10381,10 @@ class Component extends DCLogic {
       .then(() => {
         if (this._unmounted) return;
         this.setState({ pubMediaBusy: false });
-        this._attachPublishingMedia();
+        // A stay has no listing to attach to; its photos are committed when the
+        // hotel is saved (toHotelPayload sends their upload ids).
+        if (!isStay) this._attachPublishingMedia();
+        else this._schedulePublishingAutosave(this.state.pubDraft);
       });
   }
 
