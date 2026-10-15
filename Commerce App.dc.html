@@ -14125,7 +14125,11 @@ class Component extends DCLogic {
 
         // A stay carries ACTIVE/INACTIVE; map it to the PUBLISHED/DRAFT
         // vocabulary the tabs and cards already speak.
-        const rawHotels = (resHotels && (resHotels.items || resHotels.data || resHotels.hotels)) || [];
+        // getMyTravelHotels already unwraps to the hotels array; tolerate an
+        // envelope too in case the transport layer changes.
+        const rawHotels = Array.isArray(resHotels)
+          ? resHotels
+          : ((resHotels && (resHotels.items || resHotels.data || resHotels.hotels)) || []);
         const hotels = rawHotels.map(h => Object.assign({}, h, {
           kind: 'STAY',
           title: h.name,
@@ -19154,9 +19158,17 @@ class Component extends DCLogic {
         /* ---- post-publish actions ---- */
         const published = this.state.pubPublished;
         const isBroadcast = draft.intent === 'BROADCAST';
+        const isStay = draft.intent === 'STAY';
         const scheduled = isBroadcast && draft.values.publishMode === 'SCHEDULE';
 
-        const successActions = isBroadcast
+        const successActions = isStay
+          ? [
+            { key: 'view', label: 'View in Travel', primary: true },
+            { key: 'share', label: 'Share' },
+            { key: 'edit', label: 'Edit' },
+            { key: 'another', label: 'Post another stay' }
+          ]
+          : isBroadcast
           ? [
             { key: 'view', label: 'View announcement', primary: true },
             { key: 'share', label: 'Share' },
@@ -19248,7 +19260,7 @@ class Component extends DCLogic {
           pubOffline: this.state.pubOffline,
 
           /* success */
-          pubSuccessTitle: scheduled ? 'Scheduled' : isBroadcast ? 'Your broadcast is live' : 'Your listing is live',
+          pubSuccessTitle: scheduled ? 'Scheduled' : isBroadcast ? 'Your broadcast is live' : isStay ? 'Your stay is live in Travel' : 'Your listing is live',
           pubSuccessBlurb: scheduled
             ? 'It will publish automatically at the time you chose. You can still edit or cancel it until then.'
             : isBroadcast
@@ -19419,11 +19431,18 @@ class Component extends DCLogic {
           pubSuccessAction: (key) => {
             const id = (this.state.pubDraft && this.state.pubDraft.remoteId) || null;
             if (key === 'view') {
-              if (isBroadcast && id) this.openAnnouncement(id);
+              if (isStay && id) {
+                this.setState({
+                  hotelSelectedId: id, hotelRoomIndex: 0, hotelSelectedRoomId: '',
+                  hotelDetailData: null, hotelRooms: [], hotelSubmitError: ''
+                });
+                this.go('hotelDetail');
+                this.loadHotelDetail(id);
+              } else if (isBroadcast && id) this.openAnnouncement(id);
               else if (id) this.openProduct(id);
               return;
             }
-            if (key === 'feed') { this.go(isBroadcast ? 'announce' : 'home'); return; }
+            if (key === 'feed') { this.go(isBroadcast ? 'announce' : isStay ? 'travel' : 'home'); return; }
             if (key === 'manage') { this.go('myListings'); return; }
             if (key === 'performance') { this.go('announceCampaigns'); this.loadStoreAnnounceTelemetry(); return; }
             if (key === 'edit') { this.editPublication(id, draft.intent); return; }
