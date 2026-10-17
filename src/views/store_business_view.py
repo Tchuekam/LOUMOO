@@ -89,8 +89,12 @@ def get_store_business_view():
           <option value="electronics">Electronics &amp; Technology</option>
           <option value="fashion">Fashion, Apparel &amp; Fabrics</option>
           <option value="home">Home, Furniture &amp; Decor</option>
+          <option value="automotive">Vehicles &amp; Automotive</option>
           <option value="services">Professional Services</option>
           <option value="hotels">Hospitality &amp; Lodging</option>
+          <option value="travel">Travel &amp; Mobility</option>
+          <option value="real_estate">Real Estate &amp; Property</option>
+          <option value="digital">Digital Products &amp; Software</option>
           <option value="food">Food &amp; Organic Market</option>
         </select>
       </div>

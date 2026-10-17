@@ -1249,6 +1249,42 @@
     });
   };
 
+  /* --- Travel HOST / provider: post a stay to the Travel vertical --------- */
+  /* These are the counterpart of createListing/publishListing, but they land  */
+  /* a hotel in Travel & Mobility instead of the markethub catalogue.          */
+
+  LoumooApiClient.prototype.createTravelHotel = function (payload) {
+    return this.request('/api/v1/travel/hotels', { method: 'POST', body: payload })
+      .then(function (data) { return (data && data.hotel) || data; });
+  };
+
+  LoumooApiClient.prototype.updateTravelHotel = function (id, payload) {
+    return this.request('/api/v1/travel/hotels/' + encodeURIComponent(id), { method: 'PUT', body: payload })
+      .then(function (data) { return (data && data.hotel) || data; });
+  };
+
+  LoumooApiClient.prototype.setTravelHotelSpaces = function (id, spaces) {
+    return this.request('/api/v1/travel/hotels/' + encodeURIComponent(id) + '/spaces', {
+      method: 'PUT',
+      body: { spaces: Array.isArray(spaces) ? spaces : [] }
+    }).then(function (data) { return (data && data.hotel) || data; });
+  };
+
+  LoumooApiClient.prototype.publishTravelHotel = function (id) {
+    return this.request('/api/v1/travel/hotels/' + encodeURIComponent(id) + '/publish', { method: 'POST' })
+      .then(function (data) { return (data && data.hotel) || data; });
+  };
+
+  LoumooApiClient.prototype.unpublishTravelHotel = function (id) {
+    return this.request('/api/v1/travel/hotels/' + encodeURIComponent(id) + '/unpublish', { method: 'POST' })
+      .then(function (data) { return (data && data.hotel) || data; });
+  };
+
+  /** The caller's own posted stays (drafts + live), for My Listings. */
+  LoumooApiClient.prototype.getMyTravelHotels = function (params) {
+    return this.request('/api/v1/travel/hotels/mine' + qs(params || {}));
+  };
+
   LoumooApiClient.prototype.createTravelBooking = function (payload, idempotencyKey) {
     var headers = {};
     var key = idempotencyKey || ('idem_trv_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8));

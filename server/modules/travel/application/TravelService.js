@@ -13,6 +13,7 @@ const { bookingEngine } = require('./BookingEngine');
 const { paymentVerificationService } = require('./PaymentVerificationService');
 const travelData = require('../data/travelData');
 const { NotFoundError, ValidationError, AuthenticationError, AuthorizationError, ConflictError } = require('../../../shared/errors/AppError');
+const { MediaStorageService } = require('../../../infrastructure/storage/MediaStorageService');
 const logger = require('../../../shared/logging/logger');
 
 class TravelService {
@@ -177,20 +178,94 @@ class TravelService {
     this._validateTourUrl(data.virtualTourUrl, 'virtualTourUrl');
     this._validateSpaces(data.spaces);
     const ownerId = user && user.id ? user.id : '';
-    return this.repo.createHotel({ ...data, providerId: data.providerId || ownerId, ownerId });
+    // Resolve staged photo uploads into durable image URLs before the hotel is
+    // built, then commit them against the new hotel so the orphan sweep spares
+    // them. providerId is derived from the owner by the repository
+    // (prv_host_<owner>) so iam.hotels.provider_id references a real
+    // travel_providers row; never the raw ownerId, which is not a provider.
+    const images = await this._resolveHotelMedia(data, ownerId);
+    const created = await this.repo.createHotel({ ...data, images, providerId: data.providerId || '', ownerId });
+    await this._commitHotelMedia(data, created.id);
+    return created;
   }
 
   async updateHotel(hotelId, patch = {}, { user } = {}) {
     await this.getHotelById(hotelId); // asserts existence
     if (patch.virtualTourUrl !== undefined) this._validateTourUrl(patch.virtualTourUrl, 'virtualTourUrl');
     if (patch.spaces !== undefined) this._validateSpaces(patch.spaces);
-    return this.repo.updateHotel(hotelId, patch);
+    const ownerId = user && user.id ? user.id : '';
+    let nextPatch = patch;
+    // Only recompute images when the caller actually touched media — a
+    // spaces-only or status-only patch must leave the existing photos alone.
+    if (patch.mediaUploadIds !== undefined || patch.mediaUrls !== undefined) {
+      const images = await this._resolveHotelMedia(patch, ownerId);
+      nextPatch = Object.assign({}, patch, { images });
+    }
+    const updated = await this.repo.updateHotel(hotelId, nextPatch);
+    await this._commitHotelMedia(patch, hotelId);
+    return updated;
+  }
+
+  /**
+   * Turns staged photo upload ids into durable URLs, keeping any URLs the host
+   * already holds (edit mode). Mirrors AnnouncementService._resolveMediaUrls;
+   * ownership is enforced by loadOwnedStaged so a host cannot attach another
+   * account's photo by guessing its id. Never throws — a media hiccup must not
+   * sink the whole post.
+   */
+  async _resolveHotelMedia(data = {}, ownerId) {
+    const existing = Array.isArray(data.mediaUrls) ? data.mediaUrls.filter(Boolean) : [];
+    const uploadIds = Array.isArray(data.mediaUploadIds) ? data.mediaUploadIds.filter(Boolean) : [];
+    if (uploadIds.length === 0) {
+      // No fresh uploads: honour explicit images[] (seed/import/claim) or the
+      // URLs already on the draft.
+      if (existing.length) return existing.slice(0, 12);
+      return Array.isArray(data.images) ? data.images.filter(Boolean).slice(0, 12) : [];
+    }
+    let urls = existing.slice();
+    try {
+      const staged = await MediaStorageService.loadOwnedStaged(uploadIds, ownerId);
+      const signed = await Promise.all(staged.map(u => MediaStorageService.createSignedUrl(u.storage_path)));
+      urls = urls.concat(signed.filter(Boolean));
+    } catch (err) {
+      logger.warn(`[TravelService] hotel media resolve failed (kept ${urls.length} existing): ${err.message}`);
+    }
+    return urls.slice(0, 12);
+  }
+
+  /** Marks staged uploads ATTACHED to the hotel so the orphan sweep spares them. */
+  async _commitHotelMedia(data = {}, hotelId) {
+    const uploadIds = Array.isArray(data.mediaUploadIds) ? data.mediaUploadIds.filter(Boolean) : [];
+    if (!uploadIds.length || !hotelId) return;
+    try {
+      await MediaStorageService.markAttached(uploadIds, hotelId);
+    } catch (err) {
+      logger.warn(`[TravelService] hotel media commit failed: ${err.message}`);
+    }
   }
 
   async setHotelSpaces(hotelId, spaces = [], { user } = {}) {
     await this.getHotelById(hotelId); // asserts existence
     this._validateSpaces(spaces);
     return this.repo.setHotelSpaces(hotelId, spaces);
+  }
+
+  /** A host's own posted stays (drafts + live). */
+  async getHotelsByOwner(ownerId) {
+    if (!ownerId) return [];
+    return this.repo.getHotelsByOwner(ownerId);
+  }
+
+  /** Make a posted stay live in the Travel vertical. */
+  async publishHotel(hotelId) {
+    await this.getHotelById(hotelId); // asserts existence
+    return this.repo.setHotelStatus(hotelId, 'ACTIVE');
+  }
+
+  /** Pull a posted stay back to a hidden draft. */
+  async unpublishHotel(hotelId) {
+    await this.getHotelById(hotelId); // asserts existence
+    return this.repo.setHotelStatus(hotelId, 'INACTIVE');
   }
 
   async checkHotelRoomAvailability(params) {

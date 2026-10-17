@@ -92,6 +92,17 @@ function capabilitiesFor(state, opts = {}) {
   const accountReady = !blocked && rank >= STATE_RANK[ACCOUNT_STATES.ACCOUNT_READY];
   const sellerReady = state === ACCOUNT_STATES.SELLER_READY;
 
+  // "Boutique but no activation" (product decision 2026-10-14): once a seller
+  // actually has a boutique, they may list and publish their offers even before
+  // full seller verification. SELLER_VERIFICATION_REQUIRED means "the boutique
+  // exists but is not activated yet" — that is now enough to post. The boutique
+  // itself remains the gate (a user with no store still cannot list), and
+  // suspended/blocked accounts are excluded by `blocked`. Verification stays a
+  // trust signal shown on the listing, not a prerequisite to publishing.
+  const hasBoutique = !blocked && Boolean(opts.hasStore);
+  const canList = sellerReady
+    || (hasBoutique && state === ACCOUNT_STATES.SELLER_VERIFICATION_REQUIRED);
+
   return Object.freeze({
     canBrowse: true,
     canAuthenticate: authenticated,
@@ -109,9 +120,9 @@ function capabilitiesFor(state, opts = {}) {
     // Seller & Team capabilities:
     canManageStore: sellerReady || state === ACCOUNT_STATES.SELLER_VERIFICATION_REQUIRED || verified,
     canManageOrganization: accountReady,
-    canCreateListing: sellerReady,
-    canUploadListingMedia: sellerReady,
-    canPublishListing: sellerReady && opts.storeActive !== false
+    canCreateListing: canList,
+    canUploadListingMedia: canList,
+    canPublishListing: canList && opts.storeActive !== false
   });
 }
 
@@ -221,7 +232,7 @@ function buildResult(state, profile, options) {
   return {
     state,
     rank: STATE_RANK[state],
-    capabilities: capabilitiesFor(state, options),
+    capabilities: capabilitiesFor(state, { ...options, hasStore: Boolean(storeId) }),
     contact,
     onboarding: onboardingSummary(profile),
     seller: {

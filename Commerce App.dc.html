@@ -12865,6 +12865,11 @@ class Component extends DCLogic {
     const api = getApi();
     if (!api) return;
 
+    // A STAY (hotel/hospitality) describes a property, not a catalogue
+    // category, so it needs no taxonomy or broadcast schema — its sections are
+    // entirely self-contained in the publishing engine.
+    if (intent === 'STAY') return;
+
     if (intent === 'BROADCAST') {
       if (!this.state.pubBroadcastSchema) {
         api.getAnnouncementSchema()
@@ -12982,7 +12987,8 @@ class Component extends DCLogic {
     const draft = this.state.pubDraft;
     if (!pub || !api || !draft) return Promise.resolve(null);
 
-    if (draft.intent === 'BROADCAST') {
+    if (draft.intent === 'BROADCAST' || draft.intent === 'STAY') {
+      // A broadcast and a stay are both created from their name, not a category.
       if (!draft.values.title || draft.values.title.trim().length < 3) return Promise.resolve(null);
     } else if (!draft.values.categoryId) {
       return Promise.resolve(null);
@@ -13018,6 +13024,50 @@ class Component extends DCLogic {
         })
         .catch(err => {
           finish(this.state.pubOffline ? 'Saved on this device' : 'Saved on this device — will retry');
+          this._notePublishingOffline(err);
+          throw err;
+        });
+    }
+
+    // A STAY is persisted against the TRAVEL vertical (createTravelHotel /
+    // updateTravelHotel), never the markethub listings endpoint. This is the
+    // branch that keeps a hotel out of the product feed.
+    if (draft.intent === 'STAY') {
+      const hotelPayload = pub.toHotelPayload(draft, ctx);
+      const hotelReq = draft.remoteId
+        ? api.updateTravelHotel(draft.remoteId, hotelPayload)
+        : api.createTravelHotel(hotelPayload);
+
+      return hotelReq
+        .then(hotel => {
+          if (this._unmounted) return null;
+          // Reconcile media to what the server committed: the staged uploads are
+          // now ATTACHED to the hotel and resolved to durable URLs, so the draft
+          // must stop re-sending their ids (a second attach would be rejected and
+          // the photos lost). Replace them with the hotel's images as attached —
+          // but only when nothing is still uploading, so a photo added mid-save
+          // is never dropped.
+          const current = this.state.pubDraft;
+          const stillUploading = (current.media || []).some(m => m.status === 'uploading');
+          const serverImages = Array.isArray(hotel.images) ? hotel.images.filter(Boolean) : [];
+          const reconciledMedia = (!stillUploading && serverImages.length)
+            ? serverImages.map((url, i) => ({ uploadId: 'committed_' + i, url: url, status: 'attached', name: '' }))
+            : current.media;
+          const updated = Object.assign({}, current, {
+            remoteId: hotel.id,
+            remoteStatus: hotel.status === 'ACTIVE' ? 'PUBLISHED' : 'DRAFT',
+            media: reconciledMedia
+          });
+          this.setState({ pubDraft: updated });
+          finish('Saved just now');
+          return hotel;
+        })
+        .catch(err => {
+          const fields = (err && err.details && err.details.fields) || [];
+          finish(
+            fields.length ? 'Saved on this device' : 'Saved on this device — will retry',
+            fields.length ? { pubFieldErrors: mergeFieldErrors(this.state.pubFieldErrors, fields) } : {}
+          );
           this._notePublishingOffline(err);
           throw err;
         });
@@ -13113,12 +13163,20 @@ class Component extends DCLogic {
     }));
     this._replacePublishingMedia(m => m.concat(pending));
 
+    // A stay uploads its photos standalone: there is no listing to own them,
+    // and they are committed against the hotel (not attached to a listing) when
+    // the stay is saved. So it skips ensuring a listing remote and passes no
+    // listingId, and it never runs the listing-media attach step below.
+    const isStay = this.state.pubDraft.intent === 'STAY';
+
     // Sequential: a partial failure leaves an unambiguous state, and the
     // server's per-seller upload throttle is respected.
     return accepted.reduce((chain, file, i) => chain.then(() => {
       const placeholder = pending[i];
-      return this._ensurePublishingRemote()
-        .then(listingId => api.uploadListingMedia(file, listingId))
+      const uploadPromise = isStay
+        ? api.uploadListingMedia(file)
+        : this._ensurePublishingRemote().then(listingId => api.uploadListingMedia(file, listingId));
+      return uploadPromise
         .then(upload => {
           if (this._unmounted) return;
           this._replacePublishingMedia(media => media.map(m => m.uploadId === placeholder.uploadId
@@ -13145,7 +13203,10 @@ class Component extends DCLogic {
       .then(() => {
         if (this._unmounted) return;
         this.setState({ pubMediaBusy: false });
-        this._attachPublishingMedia();
+        // A stay has no listing to attach to; its photos are committed when the
+        // hotel is saved (toHotelPayload sends their upload ids).
+        if (!isStay) this._attachPublishingMedia();
+        else this._schedulePublishingAutosave(this.state.pubDraft);
       });
   }
 
@@ -13332,6 +13393,9 @@ class Component extends DCLogic {
     return this._syncPublishingDraft()
       .then(() => {
         if (this._unmounted) return null;
+        // A stay carries its image URLs in the hotel payload itself, so it has
+        // no listing-media attach step. Everything else attaches now.
+        if (this.state.pubDraft && this.state.pubDraft.intent === 'STAY') return null;
         this.setState({ pubLifecycle: 'Attaching your photos…' });
         return this._attachPublishingMedia();
       })
@@ -13351,6 +13415,10 @@ class Component extends DCLogic {
             )
             : api.publishAnnouncement(current.remoteId);
         }
+        // A STAY goes live in Travel & Mobility, not the markethub.
+        if (current.intent === 'STAY') {
+          return api.publishTravelHotel(current.remoteId);
+        }
         return api.publishListing(current.remoteId);
       })
       .then(result => {
@@ -13366,7 +13434,11 @@ class Component extends DCLogic {
 
         const finished = Object.assign({}, this.state.pubDraft, {
           remoteId: published.id || this.state.pubDraft.remoteId,
-          remoteStatus: published.status || 'PUBLISHED'
+          // A published hotel comes back status ACTIVE; normalise to PUBLISHED
+          // so the success card reads LIVE like every other publication.
+          remoteStatus: (this.state.pubDraft && this.state.pubDraft.intent === 'STAY')
+            ? 'PUBLISHED'
+            : (published.status || 'PUBLISHED')
         });
 
         this.setState({
@@ -13459,15 +13531,19 @@ class Component extends DCLogic {
 
     this.setState({ pubBusyLabel: 'Opening…', pubServerError: '' });
 
-    const request = kind === 'BROADCAST' ? api.getAnnouncement(id) : api.getListing(id);
+    const request = kind === 'BROADCAST' ? api.getAnnouncement(id)
+      : kind === 'STAY' ? api.getTravelHotel(id)
+      : api.getListing(id);
 
     request
       .then(res => {
         if (this._unmounted) return;
-        const record = (res && res.announcement) || res;
+        const record = (res && res.announcement) || (res && res.hotel) || res;
         const draft = kind === 'BROADCAST'
           ? pub.fromAnnouncement(record, this._pubContext())
-          : pub.fromListing(record, this._pubContext());
+          : kind === 'STAY'
+            ? pub.fromHotel(record, this._pubContext())
+            : pub.fromListing(record, this._pubContext());
 
         const first = pub.sections(draft, this._pubContext())[0];
 
@@ -13504,7 +13580,9 @@ class Component extends DCLogic {
 
     const path = kind === 'BROADCAST'
       ? '/announce/' + encodeURIComponent(id)
-      : '/listing/' + encodeURIComponent(id);
+      : kind === 'STAY'
+        ? '/travel/hotels/' + encodeURIComponent(id)
+        : '/listing/' + encodeURIComponent(id);
 
     let url = path;
     try {
@@ -14034,9 +14112,15 @@ class Component extends DCLogic {
     const announcementsPromise = storeId && typeof api.getSellerAnnouncements === 'function'
       ? api.getSellerAnnouncements(storeId, { status: statusFor[tab] || 'all', limit: 60 }).catch(() => null)
       : Promise.resolve(null);
+    // A host's posted stays live in Travel, not the markethub, so they are
+    // fetched from the travel vertical and merged in here. All statuses come
+    // back; the tab filter is applied client-side (hotels have no PAUSED state).
+    const hotelsPromise = typeof api.getMyTravelHotels === 'function'
+      ? api.getMyTravelHotels().catch(() => null)
+      : Promise.resolve(null);
 
-    return Promise.all([listingsPromise, announcementsPromise])
-      .then(([res, resAnn]) => {
+    return Promise.all([listingsPromise, announcementsPromise, hotelsPromise])
+      .then(([res, resAnn, resHotels]) => {
         if (this._unmounted) return;
         const catalogListings = (res && res.listings) || [];
         const rawAnnouncements = (resAnn && resAnn.announcements) || [];
@@ -14047,7 +14131,27 @@ class Component extends DCLogic {
           coverUrl: (a.mediaUrls && a.mediaUrls[0]) || null
         }));
 
-        const combined = catalogListings.concat(announcements).sort((a, b) => {
+        // A stay carries ACTIVE/INACTIVE; map it to the PUBLISHED/DRAFT
+        // vocabulary the tabs and cards already speak.
+        // getMyTravelHotels already unwraps to the hotels array; tolerate an
+        // envelope too in case the transport layer changes.
+        const rawHotels = Array.isArray(resHotels)
+          ? resHotels
+          : ((resHotels && (resHotels.items || resHotels.data || resHotels.hotels)) || []);
+        const hotels = rawHotels.map(h => Object.assign({}, h, {
+          kind: 'STAY',
+          title: h.name,
+          status: h.status === 'ACTIVE' ? 'PUBLISHED' : 'DRAFT',
+          coverUrl: (h.images && h.images[0]) || null,
+          base_price_minor: h.priceFrom || 0,
+          currency: h.currency || 'XAF'
+        }));
+        const wantStatus = statusFor[tab];
+        const hotelsForTab = (wantStatus && wantStatus !== 'all')
+          ? hotels.filter(h => h.status === wantStatus)
+          : hotels;
+
+        const combined = catalogListings.concat(announcements).concat(hotelsForTab).sort((a, b) => {
           const da = new Date(a.published_at || a.created_at || a.createdAt || 0).getTime();
           const db = new Date(b.published_at || b.created_at || b.createdAt || 0).getTime();
           return db - da;
@@ -14060,6 +14164,11 @@ class Component extends DCLogic {
           else if (a.status === 'DRAFT') counts.drafts = (counts.drafts || 0) + 1;
           else if (a.status === 'PAUSED') counts.paused = (counts.paused || 0) + 1;
           else if (a.status === 'ARCHIVED') counts.archived = (counts.archived || 0) + 1;
+        });
+        hotels.forEach(h => {
+          counts.all = (counts.all || 0) + 1;
+          if (h.status === 'PUBLISHED') counts.live = (counts.live || 0) + 1;
+          else counts.drafts = (counts.drafts || 0) + 1;
         });
 
         this.setState({
@@ -14088,9 +14197,16 @@ class Component extends DCLogic {
 
     const item = (this.state.sellerListings || []).find(x => x.id === id);
     const isBroadcast = item && (item.kind === 'BROADCAST' || item.type === 'ANNOUNCEMENT' || item.broadcastType);
+    const isStay = item && item.kind === 'STAY';
 
     let call;
-    if (isBroadcast) {
+    if (isStay) {
+      // A stay lives in Travel: publish makes it live, pause/archive pull it
+      // back to a hidden draft (there is no destructive delete).
+      call = action === 'publish'
+        ? (api.publishTravelHotel ? api.publishTravelHotel(id) : Promise.resolve())
+        : (api.unpublishTravelHotel ? api.unpublishTravelHotel(id) : Promise.resolve());
+    } else if (isBroadcast) {
       call = action === 'publish'
         ? (api.publishAnnouncement ? api.publishAnnouncement(id) : Promise.resolve())
         : action === 'archive'
@@ -14107,9 +14223,13 @@ class Component extends DCLogic {
     call
       .then(() => {
         if (this._unmounted) return;
-        this.toast(action === 'publish' ? 'Back in the marketplace'
-          : action === 'pause' ? 'Paused — buyers can no longer order it'
-            : 'Removed from the marketplace');
+        if (isStay) {
+          this.toast(action === 'publish' ? 'Live in Travel & Mobility' : 'Pulled back to a draft');
+        } else {
+          this.toast(action === 'publish' ? 'Back in the marketplace'
+            : action === 'pause' ? 'Paused — buyers can no longer order it'
+              : 'Removed from the marketplace');
+        }
         this.loadSellerListings();
       })
       .catch(err => {
@@ -19195,9 +19315,17 @@ class Component extends DCLogic {
         /* ---- post-publish actions ---- */
         const published = this.state.pubPublished;
         const isBroadcast = draft.intent === 'BROADCAST';
+        const isStay = draft.intent === 'STAY';
         const scheduled = isBroadcast && draft.values.publishMode === 'SCHEDULE';
 
-        const successActions = isBroadcast
+        const successActions = isStay
+          ? [
+            { key: 'view', label: 'View in Travel', primary: true },
+            { key: 'share', label: 'Share' },
+            { key: 'edit', label: 'Edit' },
+            { key: 'another', label: 'Post another stay' }
+          ]
+          : isBroadcast
           ? [
             { key: 'view', label: 'View announcement', primary: true },
             { key: 'share', label: 'Share' },
@@ -19289,7 +19417,7 @@ class Component extends DCLogic {
           pubOffline: this.state.pubOffline,
 
           /* success */
-          pubSuccessTitle: scheduled ? 'Scheduled' : isBroadcast ? 'Your broadcast is live' : 'Your listing is live',
+          pubSuccessTitle: scheduled ? 'Scheduled' : isBroadcast ? 'Your broadcast is live' : isStay ? 'Your stay is live in Travel' : 'Your listing is live',
           pubSuccessBlurb: scheduled
             ? 'It will publish automatically at the time you chose. You can still edit or cancel it until then.'
             : isBroadcast
@@ -19460,11 +19588,18 @@ class Component extends DCLogic {
           pubSuccessAction: (key) => {
             const id = (this.state.pubDraft && this.state.pubDraft.remoteId) || null;
             if (key === 'view') {
-              if (isBroadcast && id) this.openAnnouncement(id);
+              if (isStay && id) {
+                this.setState({
+                  hotelSelectedId: id, hotelRoomIndex: 0, hotelSelectedRoomId: '',
+                  hotelDetailData: null, hotelRooms: [], hotelSubmitError: ''
+                });
+                this.go('hotelDetail');
+                this.loadHotelDetail(id);
+              } else if (isBroadcast && id) this.openAnnouncement(id);
               else if (id) this.openProduct(id);
               return;
             }
-            if (key === 'feed') { this.go(isBroadcast ? 'announce' : 'home'); return; }
+            if (key === 'feed') { this.go(isBroadcast ? 'announce' : isStay ? 'travel' : 'home'); return; }
             if (key === 'manage') { this.go('myListings'); return; }
             if (key === 'performance') { this.go('announceCampaigns'); this.loadStoreAnnounceTelemetry(); return; }
             if (key === 'edit') { this.editPublication(id, draft.intent); return; }
@@ -19579,6 +19714,20 @@ class Component extends DCLogic {
 
           /* ---------- My Listings ---------- */
           sellerListingCards: listings.map(l => {
+            // A posted stay renders through the engine's own STAY card so My
+            // Listings and the Travel feed agree. "Pause" means unpublish.
+            if (l.kind === 'STAY' && pub && pub.fromHotel && pub.toFeedCard) {
+              try {
+                const card = pub.toFeedCard(pub.fromHotel(l, ctx), ctx);
+                card.kind = 'STAY';
+                card.id = l.id;
+                card.statusLabel = l.status === 'PUBLISHED' ? 'LIVE' : 'DRAFT';
+                card.canPublish = l.status !== 'PUBLISHED';
+                card.canPause = l.status === 'PUBLISHED';
+                card.canResume = false;
+                return card;
+              } catch (e) {}
+            }
             const isBroadcast = l.kind === 'BROADCAST' || l.type === 'ANNOUNCEMENT' || l.broadcastType;
             if (isBroadcast && pub && pub.cardFromAnnouncement) {
               try {
@@ -19629,7 +19778,9 @@ class Component extends DCLogic {
           reloadSellerListings: () => this.loadSellerListings(),
           editListing: (id) => {
             const item = (this.state.sellerListings || []).find(x => x.id === id);
-            const kind = (item && (item.kind === 'BROADCAST' || item.type === 'ANNOUNCEMENT' || item.broadcastType)) ? 'BROADCAST' : 'PRODUCT';
+            const kind = (item && item.kind === 'STAY') ? 'STAY'
+              : (item && (item.kind === 'BROADCAST' || item.type === 'ANNOUNCEMENT' || item.broadcastType)) ? 'BROADCAST'
+                : 'PRODUCT';
             this.editPublication(id, kind);
           },
           publishExisting: (id) => this.transitionListing(id, 'publish'),
@@ -19640,12 +19791,27 @@ class Component extends DCLogic {
           ),
           shareListing: (id, title) => {
             const item = (this.state.sellerListings || []).find(x => x.id === id);
-            const kind = (item && (item.kind === 'BROADCAST' || item.type === 'ANNOUNCEMENT' || item.broadcastType)) ? 'BROADCAST' : 'PRODUCT';
+            const kind = (item && item.kind === 'STAY') ? 'STAY'
+              : (item && (item.kind === 'BROADCAST' || item.type === 'ANNOUNCEMENT' || item.broadcastType)) ? 'BROADCAST'
+                : 'PRODUCT';
             this.sharePublication(id, kind, title);
           },
           openPublication: (card) => {
             if (!card || !card.id) return;
-            if (card.kind === 'BROADCAST' || card.type === 'ANNOUNCEMENT') {
+            if (card.kind === 'STAY') {
+              // A live stay opens its hotel detail (same path as the Travel
+              // feed); a draft reopens the studio.
+              if (card.statusLabel === 'LIVE' || card.statusLabel === 'PUBLISHED') {
+                this.setState({
+                  hotelSelectedId: card.id, hotelRoomIndex: 0, hotelSelectedRoomId: '',
+                  hotelDetailData: null, hotelRooms: [], hotelSubmitError: ''
+                });
+                this.go('hotelDetail');
+                this.loadHotelDetail(card.id);
+              } else {
+                this.editPublication(card.id, 'STAY');
+              }
+            } else if (card.kind === 'BROADCAST' || card.type === 'ANNOUNCEMENT') {
               if (card.statusLabel === 'PUBLISHED') this.openAnnouncement(card.id);
               else this.editPublication(card.id, 'BROADCAST');
             } else {
