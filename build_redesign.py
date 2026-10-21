@@ -50,6 +50,7 @@ header_and_styles = """<!DOCTYPE html>
 <meta name="theme-color" content="#0025E5">
 <script src="./support.js"></script>
 <script defer src="./src/routing/routes.js"></script>
+<script defer src="./src/seo/seoModel.js"></script>
 <script defer src="./src/services/appRouter.js"></script>
 <!-- Keep the critical API/auth bridges non-blocking; they execute before
      DOMContentLoaded, which is when the DC runtime mounts the app. The
@@ -95,6 +96,12 @@ header_and_styles = """<!DOCTYPE html>
   #dc-root .video-player-backdrop { display: flex !important; }
   .toast-banner { display: none !important; }
   #dc-root .toast-banner { display: flex !important; }
+  /* Server-prerendered fallback content: real, crawlable content for bots and
+     during load; hidden the moment the SPA mounts (#dc-root) so humans see the app. */
+  #loumoo-prerender { max-width: 1100px; margin: 0 auto; padding: 24px 16px; font-family: Inter, system-ui, sans-serif; color: #111214; line-height: 1.5; }
+  #loumoo-prerender img { max-width: 100%; height: auto; }
+  #loumoo-prerender nav a { color: #0062cc; margin-right: 8px; }
+  body:has(#dc-root) #loumoo-prerender { display: none !important; }
 </style>
 </head>
 <body>
@@ -7041,7 +7048,6 @@ class Component extends DCLogic {
     ],
     adminSettingsSaveSuccess: false,
     systemSettings: null,
-    adminActiveTab: 'overview',
     adminTabIsOverview: true,
     adminTabIsStores: false,
     adminTabIsListings: false,
@@ -9040,7 +9046,6 @@ class Component extends DCLogic {
       regAddress: '',
       regBusinessName: '',
       regRccm: '',
-      dashboard: null,
       addressesList: [],
       activeSessionsList: [],
       followedStoresList: [],
@@ -9889,7 +9894,7 @@ class Component extends DCLogic {
     const route = (trip && trip.fromLabel && trip.toLabel) ? (trip.fromLabel + ' to ' + trip.toLabel) : 'Cameroon Travel';
     const text = encodeURIComponent('My LOUMOO verified digital travel booking (' + ref + ') for ' + route + '. View booking pass on LOUMOO.');
     if (typeof window !== 'undefined') {
-      window.open('https://wa.me/?text=' + text, '_blank');
+      window.open('https://wa.me/?text=' + text, '_blank', 'noopener,noreferrer');
     }
   }
 
@@ -12031,6 +12036,98 @@ class Component extends DCLogic {
     this.setState({ currentProductActiveImage: imgUrl });
   }
 
+  // The product page's reading of state.currentProduct. Two shapes reach it: a
+  // curated catalogue item (storeName / storeCity / storeVerified, attributes as
+  // [{ key, val }]) and an API product (merchant / merchantCity / verified,
+  // store { name, city, rating, isVerified }, attributes as { slug: value }).
+  // These bindings were defined twice and the later copy, which read only the
+  // curated shape, won: every seller product showed the verified badge, a
+  // product without photos showed MacBook pictures, and the specs never
+  // rendered. Each field reads both shapes and nothing is invented when one is
+  // missing: no demo store, price or photos, no badge a store has not earned.
+  _productDetailView(fmt) {
+    const p = this.state.currentProduct || null;
+    const store = (p && p.store) || {};
+    const has = (v) => v !== undefined && v !== null && v !== '';
+    const localReviews = (this.state.reviews || []).filter((r) => r.productId === this.state.currentProductId).length;
+    const reviewCount = ((p && (p.reviewCount ?? p.reviewsCount)) || 0) + localReviews;
+    const soldCount = (p && p.soldCount) || 0;
+    const humanize = (v) => {
+      const t = String(v || '').replace(/_/g, ' ').trim().toLowerCase();
+      return t ? t.charAt(0).toUpperCase() + t.slice(1) : '';
+    };
+
+    // The lower of price / salePrice is what the buyer pays; the other is struck through.
+    let price = '';
+    let wasPrice = '';
+    if (p) {
+      const rawP = p.priceFormatted || p.price || (p.priceNumeric ? 'XAF ' + fmt(p.priceNumeric) : '');
+      const rawSale = p.salePrice || '';
+      price = rawP || rawSale;
+      if (rawSale && rawP && rawSale !== rawP) {
+        const n1 = parseInt(String(rawP).replace(/[^0-9]/g, ''), 10) || 0;
+        const n2 = parseInt(String(rawSale).replace(/[^0-9]/g, ''), 10) || 0;
+        if (n1 > 0 && n2 > 0 && n1 !== n2) {
+          price = n1 < n2 ? rawP : rawSale;
+          wasPrice = n1 < n2 ? rawSale : rawP;
+        }
+      }
+    }
+
+    let images = [];
+    if (p) {
+      if (Array.isArray(p.images) && p.images.length) images = p.images;
+      else if (Array.isArray(p.media) && p.media.length) images = p.media.map((m) => m && m.url).filter(Boolean);
+      else if (p.coverImage || p.image) images = [p.coverImage || p.image];
+    }
+
+    let attributes = [];
+    if (p && p.attributes) {
+      attributes = Array.isArray(p.attributes)
+        ? p.attributes.filter(Boolean).map((a) => ({ key: String(a.key ?? a.label ?? ''), val: String(a.val ?? a.value ?? '') }))
+        : Object.entries(p.attributes).map(([k, v]) => ({ key: k.replace(/_/g, ' '), val: String(v) }));
+      attributes = attributes.filter((a) => a.key && a.val);
+    }
+
+    const storeVerified = p
+      ? Boolean(has(p.storeVerified) ? p.storeVerified : (has(store.isVerified) ? store.isVerified : p.verified))
+      : false;
+    const storeRatingRaw = p ? (has(p.storeRating) ? p.storeRating : store.rating) : null;
+
+    return {
+      currentProduct: p,
+      productLoading: Boolean(this.state.productLoading),
+      productNotFound: Boolean(this.state.productNotFound),
+      productError: this.state.productError || '',
+      currentProductActiveImage: this.state.currentProductActiveImage || (p && (p.coverImage || p.image)) || images[0] || null,
+      selectProductImage: (img) => this.selectProductImage(img),
+      retryLoadProduct: () => this.loadProductDetails(this.state.currentProductId),
+      openProduct: (id) => this.openProduct(id),
+      loadProductDetails: (id) => this.loadProductDetails(id),
+
+      currentProductTitle: (p && (p.title || p.name)) || '',
+      currentProductBrand: (p && p.brand) || ((p && p.title) ? String(p.title).trim().split(' ')[0] : '') || 'LOUMOO',
+      currentProductCategoryLabel: (p && (p.categoryLabel || p.category)) || '',
+      currentProductConditionLabel: (p && (p.conditionLabel || humanize(p.condition))) || '',
+      currentProductFulfillmentLabel: (p && (p.fulfillmentLabel || humanize(p.fulfillmentModel))) || '',
+      currentProductBadge: (p && p.badge) || (storeVerified ? 'VERIFIED BOUTIQUE' : ''),
+      currentProductRating: (p && has(p.rating)) ? Number(p.rating).toFixed(1) : '',
+      currentProductReviewCount: reviewCount,
+      currentProductHasReviews: reviewCount > 0,
+      currentProductSoldCount: soldCount,
+      currentProductHasSold: soldCount > 0,
+      currentProductPrice: price,
+      currentProductSalePrice: wasPrice,
+      currentProductImages: images,
+      currentProductAttributesList: attributes,
+      currentProductDescription: (p && (p.description || p.shortDescription)) || '',
+      productStoreName: (p && (p.storeName || store.name || p.merchant)) || '',
+      productStoreCity: (p && (p.storeCity || store.city || p.merchantCity)) || '',
+      productStoreRating: has(storeRatingRaw) && Number(storeRatingRaw) > 0 ? Number(storeRatingRaw).toFixed(1) : '',
+      productStoreVerified: storeVerified
+    };
+  }
+
   // The card shown for an id in the compare tray. Sources, most trusted first:
   // the engine's own summary once a comparison has run, the live search result
   // the buyer picked, the curated catalogue entry. Never a made-up price or
@@ -12570,6 +12667,9 @@ class Component extends DCLogic {
     }, 1000);
   }
 
+  // The ONE sign-out. The view used to bind a second, inline copy that won
+  // over this one and skipped emptying the bag and the search session, so on a
+  // shared device the next person inherited the previous shopper's bag.
   signOut() {
     if (this._searchExperience) { this._searchExperience.destroy(true); this._searchExperience = null; }
     const clerk = getClerk();
@@ -12577,7 +12677,10 @@ class Component extends DCLogic {
     if (clerk && typeof clerk.signOut === 'function') {
       clerk.signOut().catch(() => {});
     }
-    if (api && typeof api.clearSession === 'function') {
+    if (api && typeof api.signOut === 'function') {
+      // Tells the server, then clears the local session either way.
+      try { api.signOut(); } catch (_) { if (typeof api.clearSession === 'function') api.clearSession(); }
+    } else if (api && typeof api.clearSession === 'function') {
       api.clearSession();
     }
     if (typeof localStorage !== 'undefined') {
@@ -12593,6 +12696,7 @@ class Component extends DCLogic {
     this.setState({ cartItems: [] });
     const guard = getGuard();
     if (guard && typeof guard.invalidate === 'function') guard.invalidate();
+    if (guard && typeof guard.clearIntent === 'function') guard.clearIntent();
     this._applyAnonymous();
     this.toast('Signed out of LOUMOO');
     this.go('home');
@@ -13233,67 +13337,11 @@ class Component extends DCLogic {
       maintenanceModeBanner: (dynamicSettings.maintenance_mode && (dynamicSettings.maintenance_mode.banner_text || dynamicSettings.maintenance_mode.message)) || '',
       systemSettings: dynamicSettings,
 
-      // ── Canonical Dynamic Product Details Getters & Actions ──
-      productLoading: Boolean(this.state.productLoading),
-      productNotFound: Boolean(this.state.productNotFound),
-      productError: this.state.productError || '',
-      currentProduct: this.state.currentProduct,
-      currentProductTitle: this.state.currentProduct ? this.state.currentProduct.title : 'Apple MacBook Air 13” (M2 Chip)',
-      currentProductPrice: (() => {
-        const p = this.state.currentProduct;
-        if (!p) return ('XAF ' + fmt(line));
-        const rawP = p.price || (p.priceNumeric ? ('XAF ' + fmt(p.priceNumeric)) : (p.base_price_minor ? ('XAF ' + fmt(p.base_price_minor)) : ''));
-        const rawSale = p.salePrice || '';
-        if (rawSale && rawP && rawSale !== rawP) {
-          const n1 = parseInt(String(rawP).replace(/[^0-9]/g, ''), 10) || 0;
-          const n2 = parseInt(String(rawSale).replace(/[^0-9]/g, ''), 10) || 0;
-          if (n1 > 0 && n2 > 0 && n1 !== n2) {
-            return n1 < n2 ? rawP : rawSale;
-          }
-        }
-        return rawP || rawSale || ('XAF ' + fmt(line));
-      })(),
-      currentProductSalePrice: (() => {
-        const p = this.state.currentProduct;
-        if (!p) return null;
-        const rawP = p.price || (p.priceNumeric ? ('XAF ' + fmt(p.priceNumeric)) : (p.base_price_minor ? ('XAF ' + fmt(p.base_price_minor)) : ''));
-        const rawSale = p.salePrice || '';
-        if (rawSale && rawP && rawSale !== rawP) {
-          const n1 = parseInt(String(rawP).replace(/[^0-9]/g, ''), 10) || 0;
-          const n2 = parseInt(String(rawSale).replace(/[^0-9]/g, ''), 10) || 0;
-          if (n1 > 0 && n2 > 0 && n1 !== n2) {
-            return n1 < n2 ? rawSale : rawP;
-          }
-        }
-        return null;
-      })(),
-      currentProductBrand: (this.state.currentProduct && this.state.currentProduct.brand) || ((this.state.currentProduct && this.state.currentProduct.title) ? String(this.state.currentProduct.title).trim().split(' ')[0] : '') || 'LOUMOO',
-      currentProductBadge: this.state.currentProduct && this.state.currentProduct.verified ? 'VERIFIED BOUTIQUE' : 'OFFICIAL PARTNER',
-      currentProductCategoryLabel: this.state.currentProduct ? (this.state.currentProduct.category || 'Electronics') : 'Smartphones & Laptops',
-      currentProductConditionLabel: this.state.currentProduct ? (String(this.state.currentProduct.condition || 'new').toUpperCase() + ' · SEALED') : 'BRAND NEW · SEALED',
-      currentProductFulfillmentLabel: this.state.currentProduct && this.state.currentProduct.fulfillmentModel ? this.state.currentProduct.fulfillmentModel.replace(/_/g, ' ') : 'Courier Delivery & Storefront Pickup',
-      currentProductRating: this.state.currentProduct && this.state.currentProduct.rating ? Number(this.state.currentProduct.rating).toFixed(1) : '4.9',
-      currentProductReviewCount: this.state.currentProduct && this.state.currentProduct.reviewsCount ? this.state.currentProduct.reviewsCount : 218,
-      currentProductSoldCount: this.state.currentProduct && this.state.currentProduct.soldCount ? this.state.currentProduct.soldCount : 1240,
-      currentProductDescription: this.state.currentProduct ? (this.state.currentProduct.description || this.state.currentProduct.shortDescription || '') : 'Brand new sealed unit with 12-month warranty. Instant pickup in Douala or Express courier delivery across Cameroon.',
-      currentProductActiveImage: this.state.currentProductActiveImage || (this.state.currentProduct && (this.state.currentProduct.coverImage || this.state.currentProduct.image)) || null,
+      // ── Product detail page: see _productDetailView (spread below) ──
       pdpHasVideo: Boolean(this.state.currentProduct && this.state.currentProduct.videoUrl && (this.state.currentProductActiveImage === this.state.currentProduct.videoUrl || !this.state.currentProductActiveImage)),
       pdpHasImage: Boolean(this.state.currentProduct && (!this.state.currentProduct.videoUrl || this.state.currentProductActiveImage !== this.state.currentProduct.videoUrl) && (this.state.currentProductActiveImage || this.state.currentProduct.coverImage || this.state.currentProduct.image)),
       pdpVideoUrl: (this.state.currentProduct && this.state.currentProduct.videoUrl) || '',
       pdpVideoPoster: (this.state.currentProduct && (this.state.currentProduct.videoPoster || this.state.currentProduct.coverImage || this.state.currentProduct.image)) || '',
-      currentProductImages: (() => {
-        const p = this.state.currentProduct;
-        if (!p) return [];
-        if (p.images && p.images.length) return p.images;
-        if (p.media && p.media.length) return p.media.map(m => m.url);
-        if (p.image) return [p.image];
-        return [];
-      })(),
-      currentProductAttributesList: (() => {
-        const p = this.state.currentProduct;
-        if (!p || !p.attributes) return [];
-        return Object.entries(p.attributes).map(([k, v]) => ({ key: k.replace(/_/g, ' '), val: String(v) }));
-      })(),
       // "More like this" — the Discovery Engine's neighbours of the open product
       // (content similarity + co-visitation), ranked and de-duplicated locally.
       pdpSimilarCards: (() => {
@@ -13308,15 +13356,18 @@ class Component extends DCLogic {
         }));
       })(),
       hasPdpSimilar: this._pdpSimilarList().length > 0,
-      productStoreName: this.state.currentProduct && (this.state.currentProduct.store ? this.state.currentProduct.store.name : this.state.currentProduct.merchant) ? (this.state.currentProduct.store ? this.state.currentProduct.store.name : this.state.currentProduct.merchant) : 'Orca Electronics',
-      productStoreCity: this.state.currentProduct && (this.state.currentProduct.store ? this.state.currentProduct.store.city : this.state.currentProduct.merchantCity) ? (this.state.currentProduct.store ? this.state.currentProduct.store.city : this.state.currentProduct.merchantCity) : 'Akwa, Douala',
-      productStoreVerified: Boolean(this.state.currentProduct ? (this.state.currentProduct.store ? this.state.currentProduct.store.isVerified : this.state.currentProduct.verified) : true),
-      productStoreRating: this.state.currentProduct && this.state.currentProduct.store && this.state.currentProduct.store.rating ? Number(this.state.currentProduct.store.rating).toFixed(1) : '4.9',
-      openProduct: (id) => this.openProduct(id),
-      retryLoadProduct: () => this.openProduct(this.state.currentProductId),
-      selectProductImage: (url) => this.selectProductImage(url),
       catalogProducts: this.state.catalogProducts || [],
       catalogLoading: Boolean(this.state.catalogLoading),
+      // The feeds end with "You've explored all current listings" when this is
+      // false. It was never exposed, so the template read undefined and showed
+      // that line under every page of a catalogue that still had more.
+      catalogHasMore: this.state.catalogHasMore !== false,
+      // The toast's OK button. It was bound to a name nothing defined, so it
+      // did nothing and the banner stayed until its timer ran out.
+      clearToast: () => {
+        if (this._t) clearTimeout(this._t);
+        this.setState({ toast: '' });
+      },
       catalogError: this.state.catalogError || '',
       // Display-ready cards for the home "Live catalogue" rail, from GET /products.
       catalogHasCards: (this.state.catalogProducts || []).length > 0,
@@ -13906,38 +13957,6 @@ class Component extends DCLogic {
             });
           });
       },
-      resendEmailVerification: () => {
-        if (this.state.emailVerifyCooldown > 0) return;
-        const clerk = getClerk();
-        if (!clerk || !clerk.isReady) {
-          this.setState({ emailVerifyError: 'Verification service is initializing. Please wait.' });
-          return;
-        }
-        this.setState({ emailVerifyError: '', emailVerifyCode: '', emailVerifyState: 'pending' });
-        clerk.resendEmailCode()
-          .then(() => {
-            this._startEmailCooldown();
-            this.toast('New 6-digit verification code sent to ' + (this.state.regEmail || 'your email'));
-          })
-          .catch(err => {
-            const msg = clerk.describeError(err) || (err && err.message) || 'Could not resend code. Please wait a moment.';
-            this.setState({ emailVerifyError: msg });
-          });
-      },
-      changeVerifyEmail: () => {
-        try {
-          if (typeof localStorage !== 'undefined') {
-            localStorage.removeItem('loumoo_onboarding_draft');
-            localStorage.removeItem('loumoo_token');
-            localStorage.removeItem('loumoo_auth_user');
-          }
-          if (typeof sessionStorage !== 'undefined') {
-            sessionStorage.clear();
-          }
-        } catch (e) {}
-        this.setState({ emailVerifyError: '', emailVerifyCode: '', emailVerifyState: 'idle' });
-        this.go('onboardIdentity');
-      },
       continueAfterBuyer: () => {
         if (this.state.editFromReview) {
           this.setState({ editFromReview: false });
@@ -14146,6 +14165,9 @@ class Component extends DCLogic {
         return LABELS[c] || 'General Retail';
       })(),
       storeCategory: (this.state.store && (this.state.store.categoryId || this.state.store.category_id || this.state.store.category)) || 'general',
+      // The owner's own boutique card said "Verified Merchant" to every seller,
+      // verified or not, so an unverified seller had no reason to finish KYC.
+      currentStoreIsVerified: Boolean(this.state.store && (this.state.store.isVerified || this.state.store.is_verified)),
 
       // ── Seller Studio Dynamic Metrics & Empty States ──
       sellerRevenue: this.state.sellerRevenue || 'XAF 0',
@@ -14516,10 +14538,21 @@ class Component extends DCLogic {
        */
       changeVerifyEmail: () => {
         const clerk = getClerk();
+        const api = getApi();
         this.setState({ emailVerifyCode: '', emailVerifyError: '', emailVerifyState: 'pending' });
 
         const done = () => {
           if (this._unmounted) return;
+          // Drop the session of the address being abandoned too, or the next
+          // account sync signs the user straight back into it.
+          if (api && typeof api.clearSession === 'function') api.clearSession();
+          try {
+            if (typeof localStorage !== 'undefined') {
+              localStorage.removeItem('loumoo_onboarding_draft');
+              localStorage.removeItem('loumoo_token');
+              localStorage.removeItem('loumoo_auth_user');
+            }
+          } catch (e) {}
           this._applyAnonymous();
           this.toast('Enter the email address you would like to use.');
           this.go('onboardWelcome');
@@ -17402,32 +17435,6 @@ class Component extends DCLogic {
       signIn: () => this.go('signIn'),
 
       /** Ends the Clerk session, then clears every cached principal. */
-      signOut: () => {
-        const api = getApi();
-        const clerk = getClerk();
-        const guard = getGuard();
-
-        const finish = () => {
-          if (this._unmounted) return;
-          this._applyAnonymous();
-          if (guard) { guard.invalidate(); guard.clearIntent(); }
-          if (typeof localStorage !== 'undefined') {
-            try {
-              localStorage.removeItem('loumoo_auth_user');
-              localStorage.removeItem('loumoo_onboarding_draft');
-            } catch (e) {}
-          }
-          this.toast('Signed out of LOUMOO');
-          this.go('home');
-        };
-
-        if (api) { try { api.signOut(); } catch (e) {} }
-        if (clerk && clerk.isReady) {
-          clerk.signOut().then(finish).catch(finish);
-        } else {
-          finish();
-        }
-      },
 
       // Server-backed onboarding progress, for the review screen and the
       // progress indicator.
@@ -18124,17 +18131,6 @@ class Component extends DCLogic {
       // and classifieds where there is no active product in state.
       contactSellerWhatsApp: (opts) => this.contactSellerWhatsApp(opts),
       // ── Boarding pass actions ──
-      downloadBoardingPass: () => {
-        this.toast('Preparing your boarding pass — use “Save as PDF” in the print dialog.');
-        try { setTimeout(() => { try { window.print(); } catch (_) {} }, 250); } catch (_) {}
-      },
-      shareBoardingPass: () => {
-        const msg = 'My LOUMOO e-ticket — Camair-Co QC 302 · Douala (DLA) → Yaoundé (NSI) · 13 Oct 08:40 · Seat 12A · Booking ref LMR-CMR-4821.';
-        const url = 'https://wa.me/?text=' + encodeURIComponent(msg);
-        try { window.open(url, '_blank', 'noopener,noreferrer'); }
-        catch (_) { try { window.location.href = url; } catch (e) {} }
-        this.toast('Sharing your e-ticket via WhatsApp…');
-      },
       publish: () => this.publishNow(),
 
       // ── Wishlist State & Infinite Discovery Commerce Feed ──
@@ -18381,70 +18377,8 @@ class Component extends DCLogic {
       heroNextSlide: () => this.heroNextSlide(),
       heroPrevSlide: () => this.heroPrevSlide(),
 
-      // ── Dynamic PDP Product Details Bindings ──
-      currentProduct: this.state.currentProduct,
-      productLoading: this.state.productLoading,
-      productNotFound: this.state.productNotFound,
-      productError: this.state.productError,
-      currentProductActiveImage: this.state.currentProductActiveImage,
-      selectProductImage: (img) => this.selectProductImage(img),
-      retryLoadProduct: () => this.loadProductDetails(this.state.currentProductId),
-      openProduct: (id) => this.openProduct(id),
-      loadProductDetails: (id) => this.loadProductDetails(id),
-      
-      currentProductTitle: (this.state.currentProduct && (this.state.currentProduct.title || this.state.currentProduct.name)) || 'Apple MacBook Air 13” M2',
-      currentProductBrand: (this.state.currentProduct && this.state.currentProduct.brand) || ((this.state.currentProduct && this.state.currentProduct.title) ? String(this.state.currentProduct.title).trim().split(' ')[0] : '') || 'LOUMOO',
-      currentProductCategoryLabel: (this.state.currentProduct && (this.state.currentProduct.categoryLabel || this.state.currentProduct.category)) || 'Smartphones & Electronics',
-      currentProductConditionLabel: (this.state.currentProduct && this.state.currentProduct.conditionLabel) || 'Brand New · Sealed Box',
-      currentProductFulfillmentLabel: (this.state.currentProduct && this.state.currentProduct.fulfillmentLabel) || 'Same-Day Express Courier',
-      currentProductBadge: (this.state.currentProduct && this.state.currentProduct.badge) || 'VERIFIED BOUTIQUE',
-      currentProductRating: (this.state.currentProduct && this.state.currentProduct.rating != null) ? Number(this.state.currentProduct.rating).toFixed(1) : '5.0',
-      // Backend detail objects expose `reviewCount` (singular); catalog list
-      // items expose `reviewsCount` (plural). Accept either, then add the
-      // buyer's own locally-submitted reviews so the count stays truthful.
-      currentProductReviewCount: ((this.state.currentProduct && (this.state.currentProduct.reviewCount ?? this.state.currentProduct.reviewsCount)) || 0) + (this.state.reviews || []).filter((r) => r.productId === this.state.currentProductId).length,
-      currentProductHasReviews: (((this.state.currentProduct && (this.state.currentProduct.reviewCount ?? this.state.currentProduct.reviewsCount)) || 0) + (this.state.reviews || []).filter((r) => r.productId === this.state.currentProductId).length) > 0,
-      currentProductSoldCount: (this.state.currentProduct && this.state.currentProduct.soldCount) || 0,
-      currentProductHasSold: ((this.state.currentProduct && this.state.currentProduct.soldCount) || 0) > 0,
-      currentProductPrice: (() => {
-        const p = this.state.currentProduct;
-        if (!p) return 'XAF 745 000';
-        const rawP = p.priceFormatted || p.price || '';
-        const rawSale = p.salePrice || '';
-        if (rawSale && rawP && rawSale !== rawP) {
-          const n1 = parseInt(String(rawP).replace(/[^0-9]/g, ''), 10) || 0;
-          const n2 = parseInt(String(rawSale).replace(/[^0-9]/g, ''), 10) || 0;
-          if (n1 > 0 && n2 > 0 && n1 !== n2) {
-            return n1 < n2 ? rawP : rawSale;
-          }
-        }
-        return rawP || rawSale || 'XAF 745 000';
-      })(),
-      currentProductSalePrice: (() => {
-        const p = this.state.currentProduct;
-        if (!p) return '';
-        const rawP = p.priceFormatted || p.price || '';
-        const rawSale = p.salePrice || '';
-        if (rawSale && rawP && rawSale !== rawP) {
-          const n1 = parseInt(String(rawP).replace(/[^0-9]/g, ''), 10) || 0;
-          const n2 = parseInt(String(rawSale).replace(/[^0-9]/g, ''), 10) || 0;
-          if (n1 > 0 && n2 > 0 && n1 !== n2) {
-            return n1 < n2 ? rawSale : rawP;
-          }
-        }
-        return '';
-      })(),
-      currentProductImages: (this.state.currentProduct && (this.state.currentProduct.images || (this.state.currentProduct.media && this.state.currentProduct.media.map(m => m.url)))) || [
-        './Assets/telephone&PC/Macbook.jfif',
-        './Assets/telephone&PC/Top%20MacBook%20&%20Laptop%20Aesthetic%20Ideas%202026%20%E2%9C%A8%20Cute%20Desk%20Setup,%20Productivity%20&%20Tech%20Inspiration.jfif',
-        './Assets/telephone&PC/Microsoft%20Surface%20Laptop_%20Overview.jfif'
-      ],
-      currentProductAttributesList: (this.state.currentProduct && this.state.currentProduct.attributes) || [],
-      currentProductDescription: (this.state.currentProduct && (this.state.currentProduct.description || this.state.currentProduct.shortDescription)) || '',
-      productStoreName: (this.state.currentProduct && this.state.currentProduct.storeName) || 'Orca Electronics Douala',
-      productStoreCity: (this.state.currentProduct && this.state.currentProduct.storeCity) || 'Douala, Akwa',
-      productStoreRating: (this.state.currentProduct && this.state.currentProduct.storeRating) || '4.9',
-      productStoreVerified: (this.state.currentProduct && this.state.currentProduct.storeVerified !== undefined) ? this.state.currentProduct.storeVerified : true,
+      // ── Product detail page (one definition; both product shapes) ──
+      ...this._productDetailView(fmt),
 
       // ── Video Modal Player State & Actions ──
       hasActiveVideoModal: Boolean(this.state.activeVideoModal),

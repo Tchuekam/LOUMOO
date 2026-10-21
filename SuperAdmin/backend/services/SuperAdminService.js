@@ -275,29 +275,6 @@ class SuperAdminService {
   }
 
   /**
-   * Updates multiple dynamic system settings in batch, invalidating caches.
-   */
-  static async updateSystemSettings(payload = {}, { adminId = 'super_admin', reason = null, ipAddress = null } = {}) {
-    if (!payload || typeof payload !== 'object') {
-      throw new ValidationError('A settings payload object must be provided.');
-    }
-    const updated = {};
-    for (const [k, v] of Object.entries(payload)) {
-      if (k === 'reason' || k === 'adminId') continue;
-      if (v !== undefined && v !== null && typeof v === 'object') {
-        await this.updateSystemSetting(k, v, { adminId, reason: reason || `Batch update setting [${k}]`, ipAddress });
-        updated[k] = v;
-      }
-    }
-    try {
-      if (CacheService && typeof CacheService.delete === 'function') {
-        await CacheService.delete('system_settings:all', 'admin');
-      }
-    } catch (_) {}
-    return { success: true, updated };
-  }
-
-  /**
    * Retrieves overview KPIs and operational metrics.
    */
   static async getOverviewMetrics() {
@@ -585,42 +562,40 @@ class SuperAdminService {
     if (!id) throw new ValidationError('Listing ID is required.');
     if (!actionOrUpdates) throw new ValidationError('Action or updates payload is required.');
 
+    // The moderation verbs in the listing lifecycle's own statuses (migration
+    // 005: DRAFT … PUBLISHED, PAUSED, ARCHIVED, REJECTED). They used to write
+    // ACTIVE / INACTIVE and an `is_approved` flag, none of which a listing has:
+    // "approving" a listing took it out of PUBLISHED, and on the database the
+    // write failed outright.
+    const MODERATION = {
+      APPROVE: { status: 'PUBLISHED', audit: 'listing.approve' },
+      REJECT: { status: 'REJECTED', audit: 'listing.reject' },
+      SUSPEND: { status: 'PAUSED', audit: 'listing.suspend' }
+    };
+    const verbOf = (raw) => {
+      const act = String(raw || '').toUpperCase();
+      if (act === 'APPROVED' || act === 'APPROVE' || act === 'ACTIVE' || act === 'PUBLISHED') return 'APPROVE';
+      if (act === 'REJECTED' || act === 'REJECT') return 'REJECT';
+      if (act === 'SUSPENDED' || act === 'SUSPEND' || act === 'PAUSED') return 'SUSPEND';
+      return null;
+    };
+
     let updates = {};
     let auditAction = 'listing.moderate';
+    const given = typeof actionOrUpdates === 'object' ? { ...actionOrUpdates } : {};
+    const verb = verbOf(typeof actionOrUpdates === 'string' ? actionOrUpdates : given.action);
+    const why = given.reason || reason || null;
+    delete given.action;
+    delete given.reason;
 
-    if (typeof actionOrUpdates === 'string') {
-      const act = actionOrUpdates.toUpperCase();
-      if (act === 'APPROVED' || act === 'APPROVE' || act === 'ACTIVE') {
-        updates = { status: 'ACTIVE', is_approved: true };
-        auditAction = 'listing.approve';
-      } else if (act === 'REJECTED' || act === 'REJECT') {
-        updates = { status: 'ARCHIVED', is_approved: false };
-        auditAction = 'listing.reject';
-      } else if (act === 'SUSPENDED' || act === 'SUSPEND') {
-        updates = { status: 'INACTIVE', is_approved: false };
-        auditAction = 'listing.suspend';
-      } else {
-        updates = { status: actionOrUpdates };
-      }
-    } else if (typeof actionOrUpdates === 'object') {
-      if (actionOrUpdates.action) {
-        const act = String(actionOrUpdates.action).toUpperCase();
-        if (act === 'APPROVED' || act === 'APPROVE' || act === 'ACTIVE') {
-          updates = { status: 'ACTIVE', is_approved: true, ...actionOrUpdates };
-          auditAction = 'listing.approve';
-        } else if (act === 'REJECTED' || act === 'REJECT') {
-          updates = { status: 'ARCHIVED', is_approved: false, ...actionOrUpdates };
-          auditAction = 'listing.reject';
-        } else if (act === 'SUSPENDED' || act === 'SUSPEND') {
-          updates = { status: 'INACTIVE', is_approved: false, ...actionOrUpdates };
-          auditAction = 'listing.suspend';
-        } else {
-          updates = { ...actionOrUpdates };
-        }
-        delete updates.action;
-      } else {
-        updates = { ...actionOrUpdates };
-      }
+    if (verb) {
+      updates = { ...given, status: MODERATION[verb].status };
+      if (verb === 'REJECT' && why) updates.rejection_reason = why;
+      auditAction = MODERATION[verb].audit;
+    } else if (typeof actionOrUpdates === 'string') {
+      updates = { status: actionOrUpdates };
+    } else {
+      updates = given;
     }
 
     const res = await SuperAdminRepository.updateListing(id, updates, adminId);
@@ -713,7 +688,9 @@ class SuperAdminService {
       throw new ValidationError('A valid KYC status must be specified.');
     }
 
-    const VALID_STATUSES = ['unverified', 'pending', 'verified', 'rejected'];
+    // The profile column holds pending / submitted / verified / rejected;
+    // `unverified` is accepted as the console's name for pending.
+    const VALID_STATUSES = ['unverified', 'pending', 'submitted', 'verified', 'rejected'];
     if (!VALID_STATUSES.includes(targetStatus.toLowerCase())) {
       throw new ValidationError(`Invalid KYC status [${targetStatus}]. Allowed: ${VALID_STATUSES.join(', ')}`);
     }
